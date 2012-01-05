@@ -9,7 +9,7 @@
 #include "TObject.h"
 
 //TRootObjects include
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootGenEvent.h"
+#include "TopTreeProducer/interface/TRootGenEvent.h"
 
 //user code
 #include "../config/Datasets.cc"

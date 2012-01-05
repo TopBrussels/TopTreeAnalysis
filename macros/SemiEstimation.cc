@@ -11,9 +11,9 @@
 #include "TList.h"
 #include <stdio.h>
 //user code
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootRun.h"
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootEvent.h"
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootGenEvent.h"
+#include "TopTreeProducer/interface/TRootRun.h"
+#include "TopTreeProducer/interface/TRootEvent.h"
+#include "TopTreeProducer/interface/TRootGenEvent.h"
 
 #include "../config/Datasets.cc"
 #include "../Selection/interface/SelectionTable.h"

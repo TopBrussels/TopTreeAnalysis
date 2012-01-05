@@ -1,7 +1,14 @@
 ObjSuf        = o
 SrcSuf        = cc
 ExeSuf        = 
+UNAME = $(shell uname -s)
+ifeq ($(UNAME), Darwin)
+DllSuf        = dylib
+endif
+ifeq ($(UNAME), Linux)
 DllSuf        = so
+endif
+
 OutPutOpt     = -o
 HeadSuf       = h
 
@@ -15,7 +22,12 @@ CXX           = g++
 CXXFLAGS	= -O -Wall -fPIC $(DEFINES)
 LD		= g++
 LDFLAGS		= -g -O -Wall -fPIC
-SOFLAGS		= -shared
+ifeq ($(UNAME), Darwin)
+SOFLAGS         = -dynamiclib
+endif
+ifeq ($(UNAME), Linux)
+SOFLAGS         = -shared
+endif
 
 CXXFLAGS	+= $(ROOTCFLAGS)
 LIBS		= $(ROOTLIBS) -lEG -I.. -L. -L../TopTreeProducer/src 
@@ -41,15 +53,17 @@ HEADERSBTAG         = $(wildcard BtagEffAnalysis/interface/*.h Tools/interface/M
 OBJECTSBTAG		= $(SOURCESBTAG:.$(SrcSuf)=.$(ObjSuf))
 
 
-all:  libTopTreeAna42.so libTopTreeAnaContent42.so ;  cp libTopTreeAna42.so ~/lib/ ; cp libTopTreeAnaContent42.so ~/lib/
+all:  libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
+	cp libTopTreeAna42.$(DllSuf) ~/lib/ ; cp libTopTreeAnaContent42.$(DllSuf) ~/lib/
 
-btag: libBtagAnalysis42.so; cp libBtagAnalysis42.so ~/lib/
+btag: libBtagAnalysis42.$(DllSuf)
+	cp libBtagAnalysis42.$(DllSuf) ~/lib/
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(OBJECTSDIC) $(OBJECTSBTAG) $(OBJECTBTAGDIC) $(DEPENDS) *Dict.* core 
+	@rm -f $(OBJECTS) $(OBJECTSDIC) $(OBJECTSBTAG) $(OBJECTBTAGDIC) $(DEPENDS) macros/*.exe *Dict.* *.$(DllSuf) core 
 
-.SUFFIXES: .$(SrcSuf) .C .o .so
+.SUFFIXES: .$(SrcSuf) .C .o .$(DllSuf)
 
 ###
 
@@ -57,11 +71,11 @@ Dict.$(SrcSuf): $(HEADERSDIC) ./LinkDef.h
 	@echo "Generating dictionary Dict..."
 	@rootcint -f Dict.$(SrcSuf) -c $(DEFINES) $(HEADERSDIC) ./LinkDef.h
 
-libTopTreeAna42.so: $(OBJECTS) 
+libTopTreeAna42.$(DllSuf): $(OBJECTS) libTopTreeAnaContent42.$(DllSuf)
 	@echo "Building libTopTreeAna42..."
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+	$(LD) $(LIBS) -lTopTreeAnaContent42 $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-libTopTreeAnaContent42.so: $(OBJECTSDIC)  Dict.o  
+libTopTreeAnaContent42.$(DllSuf): $(OBJECTSDIC)  Dict.o  
 	@echo "Building libTopTreeAnaContent42..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
@@ -71,16 +85,18 @@ BtagDict.$(SrcSuf): $(HEADERSBTAGDIC) ./BtagLinkDef.h
 	@echo "Generating dictionary BtagDict..."
 	@rootcint -f BtagDict.$(SrcSuf) -c $(DEFINES) $(HEADERSBTAGDIC) ./BtagLinkDef.h
 
-libBtagAnalysis42.so: $(OBJECTSBTAG) BtagDict.o
+libBtagAnalysis42.$(DllSuf): $(OBJECTSBTAG) BtagDict.o
 	@echo "Building libBtagAnalysis..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 
-macros/Demo.exe: macros/Demo_binning.cc config/Datasets.cc $(HEADERS) libTopTreeAna42.so libTopTreeAnaContent42.so
+macros/Demo.exe: macros/Demo_binning.cc config/Datasets.cc $(HEADERS) libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
 	$(LD) -lTopTreeAna -lTopTreeAnaContent $(LIBS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
 
-macros/Full.exe: macros/FullChainEstimation.cc $(HEADERS) libTopTreeAna42.so libTopTreeAnaContent42.so
-	$(LD) -lTopTreeAna -lTopTreeAnaContent $(LIBS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
+macros/%.exe: macros/%.cc $(HEADERS) libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
+	$(LD) -lTopTreeAna42 -lBtagAnalysis42 -lTopTreeAnaContent42 $(LIBS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
 
-macros/Cross.exe: macros/CrossSectionMeasurement.cc $(HEADERS) libTopTreeAna42.so libTopTreeAnaContent42.so
-	$(LD) -lTopTreeAna -lTopTreeAnaContent $(LIBS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
+SOURCES_MACROS = $(wildcard macros/*.cc)
+
+macros: $(SOURCES_MACROS:.cc=.exe)
+

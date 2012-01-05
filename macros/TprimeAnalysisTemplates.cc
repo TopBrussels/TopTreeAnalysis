@@ -20,9 +20,9 @@
 #include <fstream>
  
 //user code
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootGenEvent.h"
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootRun.h"
-#include "TopTreeAnalysis/TopBrussels/TopTreeProducer/interface/TRootEvent.h"
+#include "TopTreeProducer/interface/TRootGenEvent.h"
+#include "TopTreeProducer/interface/TRootRun.h"
+#include "TopTreeProducer/interface/TRootEvent.h"
 #include "../Selection/interface/SelectionTable.h"
 #include "../BkgEstimationMethods/interface/TtJetEstimation.h"
 #include "../BkgEstimationMethods/interface/TtJetEstPseudoExp.h"

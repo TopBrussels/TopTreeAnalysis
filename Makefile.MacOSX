@@ -77,4 +77,12 @@ libBtagAnalysis.dylib: $(OBJECTSBTAG) BtagDict.o
 	@echo "Building libBtagAnalysis..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
+macros/%.exe: macros/%.cc $(HEADERS) libTopTreeAna.dylib libTopTreeAnaContent.dylib
+	$(LD) -lTopTreeAna -lTopTreeAnaContent $(LIBS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
+
+SOURCES_MACROS = $(wildcard macros/*.cc)
+
+macros: $(SOURCES_MACROS:.cc=.exe)
+
+
 
