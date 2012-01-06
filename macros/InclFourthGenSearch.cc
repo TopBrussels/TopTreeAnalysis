@@ -51,7 +51,8 @@
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
 #include "../Reconstruction/interface/MakeBinning.h"
 #include "../Reconstruction/interface/TTreeObservables.h"
-#include "../MCInformation/interface/LumiReWeighting.h" 
+#include "../MCInformation/interface/Lumi3DReWeighting.h"
+//#include "../MCInformation/interface/LumiReWeighting.h" 
 //for Kinematic Fit
 #include "../MCInformation/interface/ResolutionFit.h"
 #include "../KinFitter/interface/TKinFitter.h"
@@ -100,10 +101,6 @@ int main (int argc, char *argv[])
   int domisTagEffShift = 0; //0: off (except nominal scalefactor for mistag eff) 1: minus 2: plus
   cout << "domisTagEffShift: " << domisTagEffShift << endl;
 
-  bool useMassesAndResolutions = true;
-
-  if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0)
-    useMassesAndResolutions = true;
 
   string btagger = "TCHEM";
 // b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10,    TCHEM: data/MC scalefactor = 0.94 +- 0.09
@@ -181,9 +178,16 @@ int main (int argc, char *argv[])
   /////////////////////
   // Configuration
   /////////////////////
+  bool useMassesAndResolutions = false;
   bool doMVAjetcombination = false; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
   bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
-  bool TrainwithTprime = false;
+  if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0){
+    useMassesAndResolutions = true;
+		doMVAjetcombination = true;
+		TrainMVA = true;
+	}
+  
+	bool TrainwithTprime = false;
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
   bool semiElectron = true; // use semiElectron channel?
@@ -294,27 +298,19 @@ int main (int argc, char *argv[])
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
 
-  MSPlot["MS_NbSSevents_1B_2W"] = new MultiSamplePlot(datasets,"# events with SS leptons in 1B_2W", 1, 0, 1, "");
-  MSPlot["MS_NbSSevents_1B_3W"] = new MultiSamplePlot(datasets,"# events with SS leptons in 1B_3W", 1, 0, 1, "");
-  MSPlot["MS_NbSSevents_1B_4W"] = new MultiSamplePlot(datasets,"# events with SS leptons in 1B_4W", 1, 0, 1, "");
-  MSPlot["MS_NbTrievents_1B_3W"] = new MultiSamplePlot(datasets,"# events with 3 leptons in 1B_3W", 1, 0, 1, "");
-  MSPlot["MS_NbTrievents_1B_4W"] = new MultiSamplePlot(datasets,"# events with 3 leptons in 1B_4W", 1, 0, 1, "");
-  MSPlot["MS_NbSSevents_2B_2W"] = new MultiSamplePlot(datasets,"# events with SS leptons in 2B_2W", 1, 0, 1, "");
-  MSPlot["MS_NbSSevents_2B_3W"] = new MultiSamplePlot(datasets,"# events with SS leptons in 2B_3W", 1, 0, 1, "");
-  MSPlot["MS_NbSSevents_2B_4W"] = new MultiSamplePlot(datasets,"# events with SS leptons in 2B_4W", 1, 0, 1, "");
-  MSPlot["MS_NbTrievents_2B_3W"] = new MultiSamplePlot(datasets,"# events with 3 leptons in 2B_3W", 1, 0, 1, "");
-  MSPlot["MS_NbTrievents_2B_4W"] = new MultiSamplePlot(datasets,"# events with 3 leptons in 2B_4W", 1, 0, 1, "");
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0, 1, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0, 1, "");
   
   cout << " - Declared histograms ..." <<  endl;
-  
+
+	int NbSSevents = 0;  
   int NbSSevents_1B_2W = 0; 
   int NbSSevents_1B_3W = 0; 
   int NbSSevents_1B_4W = 0; 
   int NbSSevents_2B_2W = 0; 
   int NbSSevents_2B_3W = 0; 
   int NbSSevents_2B_4W = 0; 
+  int NbTrievents = 0; 
   int NbTrievents_1B_3W = 0; 
   int NbTrievents_1B_4W = 0; 
   int NbTrievents_2B_3W = 0; 
@@ -354,16 +350,18 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiMu.push_back(string("trigged"));
   CutsSelecTableSemiMu.push_back(string("Good PV"));
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 muon"));
-  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 jet with pt > 50")); //look at LeadingJetcut
+  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
   CutsSelecTableSemiMu.push_back(string("MET > 40 GeV"));  
-//  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet"));
-
-//  CutsSelecTable.push_back(string("box 1B 1W: 1 btag + 1 forward"));
-//  CutsSelecTable.push_back(string("box 2B 0W: 2 btag + 0 forward"));
-//  CutsSelecTable.push_back(string("box 1B 1W: 1 btag + 1 forward"));
-//  CutsSelecTable.push_back(string("box 2B 1W"));
-//  CutsSelecTable.push_back(string("box 2B 2W"));
-//  CutsSelecTable.push_back(string("box 2B $\\geq$ 3W"));
+  CutsSelecTable.push_back(string("SS $\\geq$ 1 muon"));
+  CutsSelecTable.push_back(string("trileptons $\\geq$ 1 muon"));
+  CutsSelecTable.push_back(string("box 1B 1W"));
+  CutsSelecTable.push_back(string("box 1B 2W"));
+  CutsSelecTable.push_back(string("box 1B 3W"));
+  CutsSelecTable.push_back(string("box 1B $\\geq$ 4W"));
+  CutsSelecTable.push_back(string("box 2B 1W"));
+  CutsSelecTable.push_back(string("box 2B 2W"));
+  CutsSelecTable.push_back(string("box 2B 3W"));
+  CutsSelecTable.push_back(string("box 2B $\\geq$ 4W"));
 
   vector<string> CutsSelecTableSemiEl;
   CutsSelecTableSemiEl.push_back(string("initial"));
@@ -373,8 +371,18 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 selected electron"));
   CutsSelecTableSemiEl.push_back(string("Veto muon"));
   CutsSelecTableSemiEl.push_back(string("Conversion veto"));
-  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 jet with pt > 50 (and leading b-jet with pt > 50)")); //look at LeadingJetcut and LeadingBtaggedJetcut
+  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
   CutsSelecTableSemiEl.push_back(string("MET > 40 GeV"));
+  CutsSelecTable.push_back(string("SS 2 electrons"));
+  CutsSelecTable.push_back(string("trileptons 3 electrons"));
+  CutsSelecTable.push_back(string("box 1B 1W"));
+  CutsSelecTable.push_back(string("box 1B 2W"));
+  CutsSelecTable.push_back(string("box 1B 3W"));
+  CutsSelecTable.push_back(string("box 1B $\\geq$ 4W"));
+  CutsSelecTable.push_back(string("box 2B 1W"));
+  CutsSelecTable.push_back(string("box 2B 2W"));
+  CutsSelecTable.push_back(string("box 2B 3W"));
+  CutsSelecTable.push_back(string("box 2B $\\geq$ 4W"));
 
   SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
   selecTableSemiMu.SetLuminosity(Luminosity);
@@ -384,17 +392,15 @@ int main (int argc, char *argv[])
   cout << " - SelectionTable instantiated ..." << endl;
 
   ////////////////////////////////////////////////////
-  // PileUp Reweighting - 'official procedure' (Stijn)//
+  // PileUp Reweighting - 3D//
   ////////////////////////////////////////////////////
-  // initialize LumiReWeighting stuff
-  // Summer11 PU_S4, distribution obtained by averaging the number of interactions, taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupMCReweightingUtilities
-  // in each beam crossing to estimate the true mean.  THIS IS THE RECOMMENDED ONE for reweighting.
-	
-// initialize LumiReWeighting stuff
- //	LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/Pileup_2011_to_173692_LPLumiScale_68mb.root", "pileup", "pileup"); //copied from Gerrit, old
-  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
-  PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
-  PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
+	Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+	Lumi3DWeights.weight3D_init(1.0);
+
+
+//  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
+//  PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
+//  PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
   cout << " - Initialized LumiReWeighting stuff" << endl;
   
   
@@ -404,7 +410,6 @@ int main (int argc, char *argv[])
   JetCombiner* jetCombiner;
   if(!doMVAjetcombination) TrainMVA = false;
   else if(doMVAjetcombination) jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true); //last argument is basically to use also the W mass as constraint
-  //JetCombiner* jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true); //last argument is basically to use also the W mass as constraint
   
   if(doMVAjetcombination && TrainMVA) useMassesAndResolutions = true; //just to make sure the W mass plot is not produced (is not used anyway)
   
@@ -527,10 +532,9 @@ int main (int argc, char *argv[])
      
     if (verbose > 1)
       cout << " - Loop over events " << endl;      
-    for (unsigned int ievt = start; ievt < end; ievt++)
+    
+		for (unsigned int ievt = start; ievt < end; ievt++)
     {        
-      double HT = 0.;
-      //cout << "begin processing new event with current HT: " << HT << endl;
 
 /////      if(ievt%1000 == 0)
 /////        std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
@@ -546,141 +550,124 @@ int main (int argc, char *argv[])
       
       // scale factor for the event
       float scaleFactor = 1.;
-      
-      ////// Load the GenEvent and calculate the branching ratio correction: commented. If applied, should be on background AND signal...
-      //if(dataSetName.find("TTbarJets") == 0)
-      //{
-      //  TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-      //  if( genEvt->isSemiLeptonic() )
-	  	//		scaleFactor *= (0.108*9.)*(0.676*1.5);
-			//	else if( genEvt->isFullHadronic() )
-	  	//		scaleFactor *= (0.676*1.5)*(0.676*1.5);
-			//	else if( genEvt->isFullLeptonic() )
-  	  //	scaleFactor *= (0.108*9.)*(0.108*9.);
-      //}
-          
+                
       // check which file in the dataset it is to have the HLTInfo right
       string currentFilename = datasets[d]->eventTree()->GetFile()->GetName();
       if(previousFilename != currentFilename)
       {
-      	 previousFilename = currentFilename;
-         iFile++;
-	 cout<<"File changed!!! => iFile = "<<iFile<<endl;
+      	previousFilename = currentFilename;
+        iFile++;
+	 			cout<<"File changed!!! => iFile = "<<iFile<<endl;
       }
       
       ///////////////////////////////
       // trigger
       ///////////////////////////////
-      int currentRun = event->runId();
-      if(previousRun != currentRun)
-      {
-        previousRun = currentRun;
-	if(semiMuon)
-	{
-	  if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-	  {    
-  				if (event->runId() >= 160431 && event->runId() <= 163261)//May10ReReco
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);
-  				else if (event->runId() >= 163270 && event->runId() <= 163869)
+			int currentRun = event->runId();
+			if(previousRun != currentRun)
+			{
+			previousRun = currentRun;
+				if(semiMuon)
+				{
+					if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+					{
+						if (event->runId() >= 160431 && event->runId() <= 163261)//May10ReReco
+							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);
+  					else if (event->runId() >= 163270 && event->runId() <= 163869)
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile);
-  				else if (event->runId() >= 165088 && event->runId() <= 165633)//PromptReco_v4; splitted over 2 toptrees: 565 and 641
+  					else if (event->runId() >= 165088 && event->runId() <= 165633)//PromptReco_v4; splitted over 2 toptrees: 565 and 641
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile);
-  				else if (event->runId() >= 165970 && event->runId() <= 167043 && event->runId() != 166346)
+  					else if (event->runId() >= 165970 && event->runId() <= 167043 && event->runId() != 166346)
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile);
-  				else if (event->runId() == 166346)
+  					else if (event->runId() == 166346)
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v10"), currentRun, iFile);
-  				else if (event->runId() >= 167078 && event->runId() <= 167913)
+  					else if (event->runId() >= 167078 && event->runId() <= 167913)
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v11"), currentRun, iFile);
-				else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco: equivalent to the run range of PromptReco_v5 normally, but Aug05 replaces this. Warning: somewhere we last about 5/pb in this data?
-				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
-				else if (event->runId() >= 172620 && event->runId() <= 173198) //first part of PromptReco_v6, same as previous trigger
-                                  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
-				else if (event->runId() >= 173236 && event->runId() <= 173692) //second part of PromptReco_v6
-				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);
+						else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco: equivalent to the run range of PromptReco_v5 normally, but Aug05 replaces this. Warning: somewhere we last about 5/pb in this data?
+				  		itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
+						else if (event->runId() >= 172620 && event->runId() <= 173198) //first part of PromptReco_v6, same as previous trigger
+            	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
+						else if (event->runId() >= 173236 && event->runId() <= 173692) //second part of PromptReco_v6
+				  		itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);
 				
         			// RUN2011B (promptv1)
-   				else if( event->runId() >= 175860 && event->runId() <= 177452 )// TopTree ID 722
-   				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-   				else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
-   				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-   				else if( event->runId() >=  178420 && event->runId() <=  178479 )
-   				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);								
-				else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
-					itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);
-				else if( event->runId() >=  179959 && event->runId() <=  180252 )
-					itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); 
+   					else if( event->runId() >= 175860 && event->runId() <= 177452 )// TopTree ID 722
+   				  	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+   					else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
+   				  	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+   					else if( event->runId() >=  178420 && event->runId() <=  178479 )
+   				  	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);								
+						else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
+							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);
+						else if( event->runId() >=  179959 && event->runId() <=  180252 )
+							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); 
 									   
-  				if(itrigger == 9999)
-				{
+  					if(itrigger == 9999)
+						{
     				  cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
     				  exit(1);
-  				}
-	   }
-	   else 
-	   {  
-   				itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);//Summer11 MC has other triggers!	
+  					}
+	   			}
+	   			else 
+	   			{  
+   					itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);//Summer11 MC has other triggers!	
     
-  				if(itrigger == 9999)
+  					if(itrigger == 9999)
+						{
+    			  	cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
+    			  	exit(1);
+						}
+					}
+				} //end if semiMuon
+	 			else if(semiElectron)
 				{
-    				  cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
-    				  exit(1);
-				}
-  	   }
-	 } //end if semiMuon
-	 else if(semiElectron)
-	 {
-	   if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-	   {      		
-				// /SingleElectron/Run2011A-May10ReReco-v1/AOD 
-				if (event->runId() >= 160404 && event->runId() < 161217)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1"), currentRun, iFile);
-				else if (event->runId() >= 161217 && event->runId() < 163270)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);
+	  			if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+	   			{      		
+						// /SingleElectron/Run2011A-May10ReReco-v1/AOD 
+						if (event->runId() >= 160404 && event->runId() < 161217)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1"), currentRun, iFile);
+						else if (event->runId() >= 161217 && event->runId() < 163270)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);
      				else if (event->runId() >= 163270 && event->runId() <= 163869)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3"), currentRun, iFile);				 
-				// /ElectronHad/Run2011A-PromptReco-v4/AOD
-				else if (event->runId() >= 165088 && event->runId() < 165970)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_BTagIP_v4"), currentRun, iFile);
-				else if (event->runId() >= 165970 && event->runId() < 167038)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v1"), currentRun, iFile);
-				else if (event->runId() >= 167038 && event->runId() <= 167913)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v2"), currentRun, iFile);			  
-				// /ElectronHad/Run2011A-05Aug2011-v1/AOD
-				else if (event->runId() >= 170249 && event->runId() <= 172619)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v4"), currentRun, iFile);  
-				// /ElectronHad/Run2011A-PromptReco-v6/AOD 
-				else if (event->runId() >= 172620 && event->runId() < 173212)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v4"), currentRun, iFile);  
-				else if (event->runId() >= 173212 && event->runId() <= 173692)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   				   	
-				
-				// RUN2011B (promptv1)
-				else if (event->runId() >= 175832 && event->runId() < 178411)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   
-				else if (event->runId() >= 178411 && event->runId() < 179942)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v8"), currentRun, iFile);  				   
-				else if (event->runId() >= 179942 && event->runId() <= 180296)
-    				   itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v9"), currentRun, iFile);  				   
-											   
-  				if(itrigger == 9999)
-				{
-    				   cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
-    				   exit(1);
-  				}// semi-electron
- 
-	   }
-	   else 
-	   {
-   				itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3"), currentRun, iFile);				 
+						// /ElectronHad/Run2011A-PromptReco-v4/AOD
+						else if (event->runId() >= 165088 && event->runId() < 165970)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_BTagIP_v4"), currentRun, iFile);
+						else if (event->runId() >= 165970 && event->runId() < 167038)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v1"), currentRun, iFile);
+						else if (event->runId() >= 167038 && event->runId() <= 167913)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v2"), currentRun, iFile);			  
+						// /ElectronHad/Run2011A-05Aug2011-v1/AOD
+						else if (event->runId() >= 170249 && event->runId() <= 172619)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v4"), currentRun, iFile);  
+						// /ElectronHad/Run2011A-PromptReco-v6/AOD 
+						else if (event->runId() >= 172620 && event->runId() < 173212)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v4"), currentRun, iFile);  
+						else if (event->runId() >= 173212 && event->runId() <= 173692)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   				   	
+						// RUN2011B (promptv1)
+						else if (event->runId() >= 175832 && event->runId() < 178411)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   					else if (event->runId() >= 178411 && event->runId() < 179942)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v8"), currentRun, iFile);  				   					else if (event->runId() >= 179942 && event->runId() <= 180296)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v9"), currentRun, iFile);  				   											   
+  					if(itrigger == 9999)
+						{
+    					cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
+    					exit(1);
+  					}// semi-electron
+ 	   			}
+	   			else 
+	   			{
+   					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
     
-  				if(itrigger == 9999)
-				{
-    				  cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
-    				  exit(1);
-				}
-  	   }	 
-	 } //end if semiElectron	
-       } //end previousRun != currentRun
+  					if(itrigger == 9999)
+						{
+							cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;	
+							exit(1);
+						}
+					}	 
+				} //end if semiElectron	
+			} //end previousRun != currentRun
 
        ///////////////////////////
        // correct MET with jet energy corrections
@@ -701,52 +688,58 @@ int main (int argc, char *argv[])
       }*/
 
 
-      if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-      {
+			if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
+			{
         //taken from Annik, check what is does. NOTE: to be done; I think z-component should not be corrected, should stay 0. To be changed in JetTools? 
         //----------------------------------------------------------
         // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
         //---------------------------------------------------------
-//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
-/////        jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
-//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
+				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
+				//jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
+				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
 
-	// JES systematic! 
-	if (doJESShift == 1)
-	  jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-	else if (doJESShift == 2)
-	  jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
+				// JES systematic! 
+				if (doJESShift == 1)
+					jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
+				else if (doJESShift == 2)
+					jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
 	
-//	coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
+				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
 	
-        if(doJERShift == 1)
-          jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
-        else if(doJERShift == 2)
-          jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
-        else
-          jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
+				if(doJERShift == 1)
+					jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
+				else if(doJERShift == 2)
+					jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
+				else
+					jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
 	  
-//	coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
+				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
       }
 
       ////////////////////////////
       // apply PU Reweighting
       ////////////////////////////
       //////////////////////// CHECK IF THIS IS OK!!!
-      if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"))
-      {
-	////scaleFactor = scaleFactor*weighter->GetWeight(var,event->nPu(0)); //old pu reweighting method by Michael
+			double lumiWeight3D = 1.0;
+			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
+				lumiWeight3D = Lumi3DWeights.weight3D(wTree->nPUBXm1(),wTree->nPU(),wTree->nPUBXp1());
+	 			scaleFactor = scaleFactor*lumiWeight3D;
+			}
+			
+			/*if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"))
+			{
+				////scaleFactor = scaleFactor*weighter->GetWeight(var,event->nPu(0)); //old pu reweighting method by Michael
       	//float avPU = ( (float)event->nPu(-1) + (float)event->nPu(0) + (float)event->nPu(+1) ) / 3.;
         //scaleFactor = scaleFactor*LumiWeights.ITweight(avPU);// official pu reweighting method by Stijn
 	
-	 // official pu reweighting method by Stijn
-         float lumiWeight = LumiWeights.ITweight( (float) event->nPu(0) );
-         float lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) event->nPu(0) );
-         float lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) event->nPu(0) );
+	 			// official pu reweighting method by Stijn
+				float lumiWeight = LumiWeights.ITweight( (float) event->nPu(0) );
+				float lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) event->nPu(0) );
+				float lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) event->nPu(0) );
 	
-	 //not yet for systematics cases
-	 scaleFactor = scaleFactor*lumiWeight;
-      } 
+	 			//not yet for systematics cases
+	 			scaleFactor = scaleFactor*lumiWeight;
+      } */
 					
       histo1D["lumiWeights"]->Fill(scaleFactor);	
 			
@@ -774,8 +767,8 @@ int main (int argc, char *argv[])
       trigged = treeLoader.EventTrigged (itrigger);			
       isGoodPV = selection.isPVSelected(vertex, 4, 24., 2); //in the past this was put in the config, but this is not very useful, since the PV cuts are quite standard
 
-      bool atLeastOneBtag = false;
-																		 //{1.19,1,93,3.41}; trackcountinghighpurity working points: loose, medium, tight
+      bool atLeastOneBtag = false; 
+			
       bool eventSelected = false;
       bool isSingleLepton = false;
       bool isSSLepton = false;
@@ -805,7 +798,7 @@ int main (int argc, char *argv[])
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
       
-      float LeadingJetCut = 50, LeadingBtaggedJetCut = 50, METCut = 40.;
+      float LeadingBtaggedJetCut = 50, METCut = 40.;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
       selection.setMuonCuts(40,2.1,0.1,10,0.02,0.3,1,1,1);
@@ -826,160 +819,154 @@ int main (int argc, char *argv[])
       
       for(int i = 0; i<selectedJetsLargeEtaRange.size(); i++)
       {
-	    if(selectedJetsLargeEtaRange[i]->Eta() > 2.4)
-	      selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
+	    	if(selectedJetsLargeEtaRange[i]->Eta() > 2.4)
+	      	selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
       }
      
       selecTableSemiMu.Fill(d,1,scaleFactor);
       selecTableSemiEl.Fill(d,1,scaleFactor);
 		
-      if(trigged && semiMuon) //need a veto somewhere on additional selected loose muons and electrons!!! -> ?
+			//// EVENTS TRIGGERED BY MUON TRIGGER			
+      if(trigged && semiMuon)
       { 
-        selecTableSemiMu.Fill(d,2,scaleFactor);
-        
+				selecTableSemiMu.Fill(d,2,scaleFactor);
         if(isGoodPV)
-	{
-          selecTableSemiMu.Fill(d,3,scaleFactor);
-          
-	  if(selectedMuons.size()>=1)
-	  { 
-  	     selecTableSemiMu.Fill(d,4,scaleFactor);
-              		        		        
-             sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
-             if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
-	     {  //at least 1 jet!
-            	if( selectedJets[0]->Pt() >= LeadingJetCut)
-		{
-		   for(int j=0;j<selectedJets.size();j++)
-		   {
-		       //now require at least a b-tagged jet larger than a certain pre-defined cut
-		       if((selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue) && (selectedJets[j]->Pt() > LeadingBtaggedJetCut))
-		       {
-		          selecTableSemiMu.Fill(d,5,scaleFactor); 
-							
-	              	  if(mets[0]->Et()> METCut)
-			  {
-              		     selecTableSemiMu.Fill(d,6,scaleFactor);
-		             eventSelected = true;
-			     //cout << "event is selected!" << endl;
-
-                  	     HT = HT + mets[0]->Et();
-									
-			     //cout << "selectedMuons.size() " << selectedMuons.size() << endl;
-			     //cout << "selectedLooseMuons.size() " << selectedLooseMuons.size() << endl;
-			     //cout << "selectedLooseElectronsNoVBTFid.size() " << selectedLooseElectronsNoVBTFid.size() << endl;
-			     //cout << "selectedLooseElectronsVBTFid.size() " << selectedLooseElectronsVBTFid.size() << endl;
-			     //cout << "selectedElectrons.size() " << selectedElectrons.size() << endl;
-			     
-			     ////for single muon require exactly 1 muon, veto for other loose muons and veto for very loose electrons
-			     if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
-			     {
-				isSingleLepton = true; // we have a single muon event
-				isSingleMuon = true;
-				//cout << "is single muon!" << endl;
-			     }
-			     ////for same-sign muons require exactly 2 muons, veto for very loose electrons
-			     else if(selectedMuons.size() == 2 && selectedLooseElectronsNoVBTFid.size() == 0)
-			     { 
-				//require that there are no two muons forming the Z mass
-				if( !selection.foundZCandidate(selectedMuons, selectedLooseMuons, 10.) )
 				{
-				   //require the same charge
-				   if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
-				   {
-				      isSSLepton = true; // we have two same-sign muons
-				      isSSMuon = true;
-				      //cout << "is same-sign muon!" << endl;
-				   }
-				}
-			     }																					
-			     ////for same-sign muon and electron require exactly 1 muon, veto for other loose muons
-			     else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size())
-			     {
-			      	//require exactly 1 electron
-				if(selectedElectrons.size() == 1)
-				{
-				    //require that there are no two electrons forming the Z mass
-				    if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsVBTFid,10.))
-				    { 
- 	             		       //it should not be an electron from a conversion!
-				       if( selection.passConversionRejection(selectedElectrons[0]) )
-               			       {
-				          //require the same charge for muon and electron
-					  if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
-					  {
-					     isSSLepton = true; // we have a same-sign electron and muon
-					     isSSMuEl = true;
-					     //cout << "is same-sign muon+electron!" << endl;
-					  }
-				       }
-				    }
-				}
-			     }
-												
-			     ////three leptons
-			     //require at least 3 muons, veto for very loose electrons							
-  			     else if(selectedMuons.size() >= 3 && selectedLooseElectronsNoVBTFid.size() == 0)
-			     {
-			        //require that there are no two muons forming the Z mass
-			        if( !selection.foundZCandidate(selectedMuons, selectedLooseMuons, 10.) )
-			        {
-			            isTriLepton = true; // at least three muons
-				    isTriMuon = true;
-				    //cout << "is trilepton: 3 muons!" << endl;
-				}
-			     }											
-			     //require at least 2 muons
-			     else if(selectedMuons.size() >= 2)
-			     {													
-			        //require that there are no two muons forming the Z mass
-				if(!selection.foundZCandidate(selectedMuons, selectedLooseMuons, 10.))
-				{
-				    //require exactly 1 electron
-				    if(selectedElectrons.size() == 1)
-				    {
-				       //require that there are no two electrons forming the Z mass
-				       if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsVBTFid,10.))
-				       { 
-				          //it should not be an electron from a conversion!
-					  if( selection.passConversionRejection(selectedElectrons[0]) )
-                			  {
-					     isTriLepton = true; //at least two muons and one electron
-					     isTriMu2El1 = true;
-					     //cout << "is trilepton: 2 muons + 1 electron!" << endl;
-					  }
-				       }
-				    }
-				}
-			     }												
-			     //require exactly 1 muon
-			     else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size())
-			     {
-				//require at least 2 electrons
-				if(selectedElectrons.size() >= 2)
-				{
-				    //require that there are no two electrons forming the Z mass
-				    if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsVBTFid, 10.))
-				    { 
-					if(selection.passConversionRejection(selectedElectrons[0]) && selection.passConversionRejection(selectedElectrons[1]))
+					selecTableSemiMu.Fill(d,3,scaleFactor);
+					if(selectedMuons.size()>=1)
 					{
-					   isTriLepton = true; //one muon and at least two electrons
-					   isTriMu1El2 = true;
-					   //cout << "is trilepton: 1 muon + 2 electrons!" << endl;
-					}
-				    }
-				}
-			     }
-			  } // end MET cut
-		       } // end requirement of at least a b-tagged jet larger than a certain pre-defined cut																		
-		     } // end 'loop' on jets
-		 }
-              }  
+						selecTableSemiMu.Fill(d,4,scaleFactor);
+						sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
+						
+						if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
+						{  //at least 1 jet!
+							for(int j=0;j<selectedJets.size();j++)
+							{
+								//now require at least a b-tagged jet larger than a certain pre-defined cut
+								if((selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue) && (selectedJets[j]->Pt() > LeadingBtaggedJetCut))
+								{
+									selecTableSemiMu.Fill(d,5,scaleFactor); 
+									if(mets[0]->Et()> METCut)
+									{
+										selecTableSemiMu.Fill(d,6,scaleFactor);
+										eventSelected = true; 
+
+										//cout << "event is selected according to the baseline selection!" << endl;
+										
+										////for single muon require exactly 1 muon, veto for other loose muons and veto for very loose electrons
+										if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										{
+											isSingleLepton = true; // we have a single muon event
+											isSingleMuon = true;
+											//cout << "is single muon!" << endl;
+			     					}
+			     					
+										////for same-sign muons require exactly 2 muons, veto for very loose electrons
+										else if(selectedMuons.size() == 2 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										{ 
+											//require that there are no two muons forming the Z mass
+											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
+											{
+												//require the same charge
+												if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
+												{
+													isSSLepton = true; // we have two same-sign muons
+													isSSMuon = true;
+													//cout << "is same-sign muon!" << endl;
+												}
+											}
+										}
+										
+										////for same-sign muon and electron require exactly 1 muon, veto for other loose muons
+										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size())
+										{
+											//require exactly 1 electron
+											if(selectedElectrons.size() == 1 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+											{
+				    						//require that there are no two electrons forming the Z mass
+												if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid,10.))
+												{
+													//it should not be an electron from a conversion!
+													if( selection.passConversionRejection(selectedElectrons[0]) )
+													{
+														//require the same charge for muon and electron
+														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
+														{
+															isSSLepton = true; // we have a same-sign electron and muon
+															isSSMuEl = true;
+															//cout << "is same-sign muon+electron!" << endl;
+														}
+													}
+												}
+											}
+										}
+										
+										////three leptons
+										
+										//require at least 3 muons, veto for very loose electrons
+										else if(selectedMuons.size() >= 3  && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										{
+											//require that there are no two muons forming the Z mass
+											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
+											{
+												isTriLepton = true; // at least three muons
+												isTriMuon = true;
+												//cout << "is trilepton: 3 muons!" << endl;
+											}
+					 					}
+										
+										//require at least 2 muons
+										else if(selectedMuons.size() >= 2  && selectedLooseMuons.size() == selectedMuons.size() )
+										{
+											//require that there are no two muons forming the Z mass
+											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
+											{
+												//require exactly 1 electron
+												if(selectedElectrons.size() == 1 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												{
+													//require that there are no two electrons forming the Z mass
+													if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid,10.))
+													{
+														//it should not be an electron from a conversion!
+														if( selection.passConversionRejection(selectedElectrons[0]) )
+														{
+															isTriLepton = true; //at least two muons and one electron
+															isTriMu2El1 = true;
+															//cout << "is trilepton: 2 muons + 1 electron!" << endl;
+														}
+													}
+												}
+											}
+										}
+										
+										//require exactly 1 muon
+										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() )
+										{
+											//require at least 2 electrons
+											if(selectedElectrons.size() >= 2)
+											{
+												//require that there are no two electrons forming the Z mass
+												if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+												{
+													if(selection.passConversionRejection(selectedElectrons[0]) && selection.passConversionRejection(selectedElectrons[1]))
+													{
+														isTriLepton = true; //one muon and at least two electrons
+														isTriMu1El2 = true;
+														//cout << "is trilepton: 1 muon + 2 electrons!" << endl;
+													}
+												}
+											}
+										}
+									} // end MET cut
+								} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut																		
+							} // end 'loop' on jets
+						} //end 'at least one jet'  
           } // end if selectedMuons.size()>=1
         } // end good PV
-      }
-       
-      else if(trigged && semiElectron)
+      }// end trigged & semiMuon
+      
+			///// EVENTS TRIGGERED BY ELECTRON TRIGGER
+			else if(trigged && semiElectron)
       {
         selecTableSemiEl.Fill(d,2,scaleFactor);
         if( isGoodPV )
@@ -993,124 +980,127 @@ int main (int argc, char *argv[])
               selecTableSemiEl.Fill(d,5,scaleFactor);
               if( selection.passConversionRejection(selectedElectrons[0]) )
               {
-                  selecTableSemiEl.Fill(d,6,scaleFactor);
-		  sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
+								selecTableSemiEl.Fill(d,6,scaleFactor);
+								sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
 
-		  if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
-                  {
-		     if( selectedJets[0]->Pt() >= LeadingJetCut) //this could be removed, but probably useful
-		     {
-		        for(int j=0;j<selectedJets.size();j++)
-		        {
-		          //now require at least a b-tagged jet larger than a certain pre-defined cut
-		          if((selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue) && (selectedJets[j]->Pt() > LeadingBtaggedJetCut))
-		          {
-		             selecTableSemiEl.Fill(d,7,scaleFactor);
-			     if(mets[0]->Et()> METCut)
-			     {
-			        selecTableSemiEl.Fill(d,8,scaleFactor);
-                                eventSelected = true;
-			   
-			       	HT = HT + mets[0]->Et();
+								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
+								{
+									for(int j=0;j<selectedJets.size();j++)
+									{
+										//now require at least a b-tagged jet larger than a certain pre-defined cut
+										if((selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue) && (selectedJets[j]->Pt() > LeadingBtaggedJetCut))
+										{
+		             			selecTableSemiEl.Fill(d,7,scaleFactor);
+											if(mets[0]->Et()> METCut)
+											{
+			        					selecTableSemiEl.Fill(d,8,scaleFactor);
+                        eventSelected = true;
+		
+												//cout << "event is selected according to the baseline selection!" << endl;
 														
-				if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsVBTFid))
-				{
-				   isSingleLepton = true;
-				   isSingleElectron = true;														
-				   //cout << "is single electron!" << endl;
-				}														
-				else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsVBTFid))
-				{
-				   if(selection.passConversionRejection(selectedElectrons[1]))
-				   {
-				      if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
-				      {
-					 isSSLepton = true;
-					 isSSElectron = true;																	
-					 //cout << "is same-sign electron!" << endl;
- 				      }
-				   }
-				}
- 				else if(selectedElectrons.size() >= 3 && selectedLooseMuons.size() == 0 )
-				{
-				   if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsVBTFid))
-				   {
-				      if(selection.passConversionRejection(selectedElectrons[1]) && selection.passConversionRejection(selectedElectrons[2]))
-				      {
-					 isTriLepton = true; // at least three electrons
-					 isTriElectron = true; 
-					 //cout << "is trilepton: 3 electrons!" << endl;
-				      }
-				   }
-				}			       								
-			    } // end MET cut
-		          } // end requirement of at least a b-tagged jet larger than a certain pre-defined cut
-		        } // end 'loop' on jets
-		     }		     
-                  }
-                }
-            }
+												//// single electron
+												if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid))
+												{
+													isSingleLepton = true;
+													isSingleElectron = true;
+													//cout << "is single electron!" << endl;
+												}
+												
+												//// two same-sign electrons
+												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid))
+												{
+													if(selection.passConversionRejection(selectedElectrons[1]))
+													{
+														if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
+														{
+															isSSLepton = true;
+															isSSElectron = true;
+															//cout << "is same-sign electron!" << endl;
+														}
+													}
+												}
+												
+												//// three electrons
+												else if(selectedElectrons.size() >= 3 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid))
+												{
+													if(selection.passConversionRejection(selectedElectrons[1]) && selection.passConversionRejection(selectedElectrons[2]))
+													{
+														isTriLepton = true; // at least three electrons
+														isTriElectron = true;
+														//cout << "is trilepton: 3 electrons!" << endl;
+													}
+												}
+											} // end MET cut
+										} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut
+									} // end 'loop' on jets
+								} // end 'at least one jet'
+							} // end conversion rejection for leading electron
+            } // end veto muons
           } // end if selectedElectrons.size()>=1
         } // end good PV
-      }
+      } // end trigged & semiElectron
 
-      /*if(eventSelected){
-				cout << "isSingleLepton: " << isSingleLepton << endl;
-				if(isSingleLepton)
-					cout <<"	isSingleMuon " << isSingleMuon << " isSingleElectron " << isSingleElectron << endl;
-				cout << "isSSLepton: " << isSSLepton << endl; 
-				if(isSSLepton)
-					cout << "	isSSMuon " << isSSMuon << " isSSElectron " << isSSElectron << " isSSMuEl " << isSSMuEl << endl;
-				cout << "isTriLepton: " << isTriLepton << endl;
- 				if(isTriLepton)
-					cout<<"	isTriMuon "<<isTriMuon<<" isTriElectron "<<isTriElectron<<" isTriMu2El1 "<<isTriMu2El1<<" isTriMu1El2 "<<isTriMu1El2<< endl;
-      }*/
+
 						
       if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
 
-      if(doMVAjetcombination && selectedJets.size()>=4 && (TrainMVA || (doKinematicFit && CalculateResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))))) //otherwise, if the jets vector only has 2 jets selected the jetcombiner crashes... 
-      {
 
-	if(semiElectron || semiMuon) 
-	{
-	   if(!isSingleLepton) continue;
-	}
+			if(isSSLepton)
+			{
+				if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
+				if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
+			}
+			if(isTriLepton)
+			{
+				if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
+				if(semiMuon) selecTableSemiMu.Fill(d,8,scaleFactor);				
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+      // MVA training
+      //////////////////////////////////////////////////////////////////////////
+      if(doMVAjetcombination && selectedJets.size()>=4 && (TrainMVA || (doKinematicFit && CalculateResolutions)) && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))) //otherwise, if the jets vector only has 2 jets selected the jetcombiner crashes... 
+      {
+				if(!isSingleLepton) continue;
 	
         TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
         sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 
-	if(semiMuon) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	//OLD WAY was (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-        else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
+				if(semiMuon) 
+					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        else if(semiElectron) 
+			jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
       }
 
        
       if(TrainMVA) continue; //for the training, only the jetcombiner is relevant, so the following can be skipped (to the next event in the event loop)
       
-      
+			
+      //relevant for the kinematic fit: calculate the resolutions
       if(doMVAjetcombination && selectedJets.size()>=4 && doKinematicFit && CalculateResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
       {
           jetCombiner->FillResolutions(resFitLightJets, resFitBJets);
           continue;
       }
-      //////////////////////////////////////////////////////////////////////////
-      // the event is selected so now we will perform the jet-parton matching
+      
+
+			//////////////////////////////////////////////////////////////////////////
+      // jet-parton matching needed to make the Wmassplot for the W counting
       //////////////////////////////////////////////////////////////////////////
       if(selectedJets.size()>=4 && !useMassesAndResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
-      {
-      	  sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class)     
+			{
+				sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class)     
+				bool Wbosonpartonsmatched = false; // True if the Wboson ttbar semi-mu or semi-el partons are matched to their 2 jets (not necessarily the 4 highest pt jets)
+				int MCPermutation[4]; for (unsigned int i=0;i<4;i++) MCPermutation[i] = -1;
 
-      	  bool Wbosonpartonsmatched = false; // True if the Wboson ttbar semi-mu or semi-el partons are matched to their 2 jets (not necessarily the 4 highest pt jets)
-      	  int MCPermutation[4]; for (unsigned int i=0;i<4;i++) MCPermutation[i] = -1;
+				pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second one is the parton
+				vector<TRootMCParticle*> mcParticlesMatching_; 
+				vector<TRootJet*> selectedJets_; 
 
-      	  pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second one is the parton
-      	  vector<TRootMCParticle*> mcParticlesMatching_; 
-      	  vector<TRootJet*> selectedJets_; 
+				leptonicBJet_ = hadronicBJet_ = hadronicWJet1_ = hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
+				mcParticlesMatching_.clear();
+				selectedJets_.clear();
 
-      	  leptonicBJet_ = hadronicBJet_ = hadronicWJet1_ = hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
-      	  mcParticlesMatching_.clear();
-      	  selectedJets_.clear();
-
-      	  if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))
-	  {
+				if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))
+				{
       
 					vector<TLorentzVector> mcParticlesTLV, selectedJetsTLV;
             
@@ -1123,26 +1113,26 @@ int main (int argc, char *argv[])
 					  leptonPDG = electronPDG; 
 					int nTTbarQuarks = 0;
 					for(unsigned int i=0; i<mcParticles.size(); i++) {
-	  				 if( mcParticles[i]->status() != 3) continue;
-	  
-	  				 if( mcParticles[i]->type() == leptonPDG && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6 )
-					 {
-	    				   //if(muMinusFromTop) cerr<<"muMinusFromTop was already true"<<endl;
-	    				   if(leptonPDG==muonPDG) muMinusFromTop = true;
-					   else if(leptonPDG==electronPDG) elMinusFromTop = true;
-	 				 }
-	  				 if( mcParticles[i]->type() == -leptonPDG && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6 )
-					 {
-	    				   //if(muPlusFromTop) cerr<<"muPlusFromTop was already true"<<endl;
-					   if(leptonPDG==muonPDG) muPlusFromTop = true;
-					   else if(leptonPDG==electronPDG) elPlusFromTop = true;
-	  				 }
-	  
-	  				 if( abs(mcParticles[i]->type()) < 6 || abs(mcParticles[i]->type()) == 21 )
-					 {
-	    				   mcParticlesTLV.push_back(*mcParticles[i]);
-	   				   mcParticlesMatching_.push_back(mcParticles[i]);
-	  				 }
+						if( mcParticles[i]->status() != 3) continue;
+						
+						if( mcParticles[i]->type() == leptonPDG && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6 )
+					 	{
+							//if(muMinusFromTop) cerr<<"muMinusFromTop was already true"<<endl;
+							if(leptonPDG==muonPDG) muMinusFromTop = true;
+							else if(leptonPDG==electronPDG) elMinusFromTop = true;
+						}
+						if( mcParticles[i]->type() == -leptonPDG && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6 )
+						{
+							//if(muPlusFromTop) cerr<<"muPlusFromTop was already true"<<endl;
+							if(leptonPDG==muonPDG) muPlusFromTop = true;
+							else if(leptonPDG==electronPDG) elPlusFromTop = true;
+						}
+						
+						if( abs(mcParticles[i]->type()) < 6 || abs(mcParticles[i]->type()) == 21 )
+						{
+							mcParticlesTLV.push_back(*mcParticles[i]);
+							mcParticlesMatching_.push_back(mcParticles[i]);
+						}
 					}
 	
 					//if(muPlusFromTop && muMinusFromTop)
@@ -1208,125 +1198,132 @@ int main (int argc, char *argv[])
 	  				  histo1D["hadronicPartonWMass"]->Fill((*mcParticlesMatching_[hadronicWJet1_.second]+*mcParticlesMatching_[hadronicWJet2_.second]).M());	  
 	  				  Wbosonpartonsmatched = true;	  
 					}
-      	  } //if dataset ttbar
+				} //if dataset ttbar
 
-      	  if(Wbosonpartonsmatched)
-	  {
-		float WMassmatched_ = (*selectedJets[hadronicWJet1_.first]+*selectedJets[hadronicWJet2_.first]).M();
+      	if(Wbosonpartonsmatched)
+	  		{
+					float WMassmatched_ = (*selectedJets[hadronicWJet1_.first]+*selectedJets[hadronicWJet2_.first]).M();
       		histo1D["hadronicRecoWMass"]->Fill(WMassmatched_);
-	  }
-      } //end selectedJets.size()>=4 !useMassesAndResolutions && dataSetName.find("TTbarJets_SemiMu") == 0
+	  		}
+			} //end selectedJets.size()>=4 !useMassesAndResolutions && dataSetName.find("TTbarJets_SemiMu") == 0
 
-      //// core of the analysis, need to check b-tagging and reconstruct W bosons!	
+      
+			
+
+			/////////////////////////////////////////////////////////////////////////////
+			//// core of the analysis, need to check b-tagging and reconstruct W bosons!	
+			////////////////////////////////////////////////////////////////////////////
       if(useMassesAndResolutions)
       {
-      			vector<TRootJet*> selectedJets_MVAinput; //for the MVA jet combination for the mass reconstruction in the 1B_2W and 2B_2W boxes
+				vector<TRootJet*> selectedJets_MVAinput; //for the MVA jet combination for the mass reconstruction in the 1B_2W and 2B_2W boxes
 			
-			//////////////////////////
-			//b-tagging stuff here
-      			//////////////////////////
-			vector<TRootJet*> selectedJetsForBtagging; //need the jets within the tracker acceptance
-	    		selectedJetsForBtagging = selection.GetSelectedJets(true);
+				//////////////////////////
+				//b-tagging stuff here
+				//////////////////////////
+				vector<TRootJet*> selectedJetsForBtagging; //need the jets within the tracker acceptance
+				selectedJetsForBtagging = selection.GetSelectedJets(true);
 			
-			vector< pair< int, float > > jetindex_btagvalue;
-			vector< pair< int, bool > > jetindex_isb;
-			for(int i = 0; i<selectedJetsForBtagging.size(); i++)
-			{
-				pair<int,float> dummy (i,selectedJetsForBtagging[i]->btag_trackCountingHighEffBJetTags());
-				jetindex_btagvalue.push_back(dummy);
-			}
-			/*cout<<"BEFORE SORTING"<<endl;
-			for(int k=0;k<jetindex_btagvalue.size();k++)
-			{
-				   cout<<" jetindex_btagvalue["<<k<<"].first = "<<jetindex_btagvalue[k].first<<", jetindex_btagvalue["<<k<<"].second = "<<jetindex_btagvalue[k].second<<endl;
-			}*/
-			std::sort(jetindex_btagvalue.begin(), jetindex_btagvalue.end(), sort_pair_decreasing()); // this is sorted according to the second value of the pair and not the first
+				vector< pair< int, float > > jetindex_btagvalue;
+				vector< pair< int, bool > > jetindex_isb;
+				for(int i = 0; i<selectedJetsForBtagging.size(); i++)
+				{
+					pair<int,float> dummy (i,selectedJetsForBtagging[i]->btag_trackCountingHighEffBJetTags());
+					jetindex_btagvalue.push_back(dummy);
+				}
+				/*cout<<"BEFORE SORTING"<<endl;
+				for(int k=0;k<jetindex_btagvalue.size();k++)
+				{
+					cout<<" jetindex_btagvalue["<<k<<"].first = "<<jetindex_btagvalue[k].first<<", jetindex_btagvalue["<<k<<"].second = "<<jetindex_btagvalue[k].second<<endl;
+				}*/
+ 				
+				// this is sorted according to the second value of the pair and not the first
+ 				std::sort(jetindex_btagvalue.begin(), jetindex_btagvalue.end(), sort_pair_decreasing());
 
-			// check if jet is truly from a b-quark or not and make a pair with the result
-			if(! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ))
-			{
+				// check if jet is truly from a b-quark or not and make a pair with the result
+				if(! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ))
+				{
+					for(int i = 0; i<jetindex_btagvalue.size(); i++)
+					{
+						if(fabs(selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()) == 5 )
+						{// is a true b-jet
+							pair<int,float> dummy (jetindex_btagvalue[i].first,true); //not: pair<int,float> dummy (i,true)
+							jetindex_isb.push_back(dummy);
+						}
+						else
+						{// is not a b-jet
+							pair<int,float> dummy (jetindex_btagvalue[i].first,false); //not: pair<int,float> dummy (i,false)
+							jetindex_isb.push_back(dummy);							
+						}
+					}
+				}
+							
+
+				//////////////////
+				// rescale events according to b-tag/mistag eff scalefactors
+				//////////////////
+      	double HT = 0.;
+      	//cout << "begin processing new selected event with current HT: " << HT << endl;
+				HT = HT + mets[0]->Et();
+
+				int nbOfBtags = 0;
+				int bJet1 = 999;
+				int bJet2 = 999;
 				for(int i = 0; i<jetindex_btagvalue.size(); i++)
 				{
-					if(fabs(selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()) == 5 )
-					{// is a true b-jet
-						pair<int,float> dummy (jetindex_btagvalue[i].first,true); //not: pair<int,float> dummy (i,true)
-						jetindex_isb.push_back(dummy);
-					}
-					else
-					{// is not a b-jet
-						pair<int,float> dummy (jetindex_btagvalue[i].first,false); //not: pair<int,float> dummy (i,false)
-						jetindex_isb.push_back(dummy);							
-					}
-				}
-				//not really needed anymore, is done already
-				//std::sort(jetindex_btagvalue.begin(), jetindex_btagvalue.end(), sort_pair_decreasing());
-			}
-							
-			//require at least one b-tagged jet
-			if(jetindex_btagvalue[0].second < workingpointvalue) continue; //probably not needed? Should be required already in the selection			
-
-			//////////////////
-			// rescale events according to b-tag/mistag eff scalefactors
-			//////////////////
-			int nbOfBtags = 0;
-			int bJet1 = 999;
-			int bJet2 = 999;
-			for(int i = 0; i<jetindex_btagvalue.size(); i++)
-			{
-			        //cout<<" jetindex_btagvalue["<<i<<"].first = "<<jetindex_btagvalue[i].first<<", jetindex_btagvalue["<<i<<"].second = "<<jetindex_btagvalue[i].second<<", selectedJetsForBtagging[jetindex_btagvalue["<<i<<"].first]->partonFlavour() = "<<selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()<<endl;
-				if(jetindex_btagvalue[i].second > workingpointvalue)
-				{
-					nbOfBtags++;
-					if(nbOfBtags<=2)
+			  	//cout<<" jetindex_btagvalue["<<i<<"].first = "<<jetindex_btagvalue[i].first<<", jetindex_btagvalue["<<i<<"].second = "<<jetindex_btagvalue[i].second<<", selectedJetsForBtagging[jetindex_btagvalue["<<i<<"].first]->partonFlavour() = "<<selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()<<endl;
+					if(jetindex_btagvalue[i].second > workingpointvalue)
 					{
-					  HT = HT + selectedJetsForBtagging[jetindex_btagvalue[i].first]->Pt(); //only add pt of b-tagged jet for the 2 jets with the highest b-tag value (if more than 2 b-tagged jets, only the 2 highest are taken into account)
-					  selectedJets_MVAinput.push_back((TRootJet*) selectedJetsForBtagging[jetindex_btagvalue[i].first]->Clone());
-					}
-					if(nbOfBtags == 1)
-					{
-						bJet1 = jetindex_btagvalue[i].first;
-						for(int j = 0; j < jetindex_isb.size(); j++)
+						nbOfBtags++;
+						if(nbOfBtags<=2)
 						{
-							if(bJet1 == jetindex_isb[j].first)
+					  	HT = HT + selectedJetsForBtagging[jetindex_btagvalue[i].first]->Pt(); //only add pt of b-tagged jet for the 2 jets with the highest b-tag value (if more than 2 b-tagged jets, only the 2 highest are taken into account)
+					  	selectedJets_MVAinput.push_back((TRootJet*) selectedJetsForBtagging[jetindex_btagvalue[i].first]->Clone());
+						}
+						if(nbOfBtags == 1)
+						{
+							bJet1 = jetindex_btagvalue[i].first;
+							for(int j = 0; j < jetindex_isb.size(); j++)
 							{
-								if(!jetindex_isb[j].second)
-								{ // jet is b-tagged but NOT a true b
-									scaleFactor = scaleFactor * mistagfactor;
+								if(bJet1 == jetindex_isb[j].first)
+								{
+									if(!jetindex_isb[j].second)
+									{ // jet is b-tagged but NOT a true b
+										scaleFactor = scaleFactor * mistagfactor;
+									}
+									else
+									{ // jet is b-tagged and a true b
+										scaleFactor = scaleFactor * scalefactorbtageff;
+									}										
 								}
-								else
-								{ // jet is b-tagged and a true b
-									scaleFactor = scaleFactor * scalefactorbtageff;
-								}										
+							}
+						}
+						if(nbOfBtags == 2)
+						{
+							bJet2 = jetindex_btagvalue[i].first;
+							for(int j = 0; j < jetindex_isb.size(); j++)
+							{								
+								if(bJet2 == jetindex_isb[j].first)
+								{       
+							  	//cout<<"    jetindex_isb["<<j<<"].second = "<<jetindex_isb[j].second<<endl;
+									if(!jetindex_isb[j].second)
+									{ // jet is b-tagged but NOT a true b
+										//cout<<"jet is b-tagged but NOT a true b"<<endl;
+										scaleFactor = scaleFactor * mistagfactor;
+									} 
+									else
+									{ // jet is b-tagged and a true b
+								  	//cout<<"jet is b-tagged and a true b"<<endl;
+										scaleFactor = scaleFactor * scalefactorbtageff;
+									}									
+								}
 							}
 						}
 					}
-					if(nbOfBtags == 2)
-					{
-						bJet2 = jetindex_btagvalue[i].first;
-						for(int j = 0; j < jetindex_isb.size(); j++)
-						{								
-							if(bJet2 == jetindex_isb[j].first)
-							{       
-							        //cout<<"    jetindex_isb["<<j<<"].second = "<<jetindex_isb[j].second<<endl;
-								if(!jetindex_isb[j].second)
-								{ // jet is b-tagged but NOT a true b
-									//cout<<"jet is b-tagged but NOT a true b"<<endl;
-									scaleFactor = scaleFactor * mistagfactor;
-								} 
-								else
-								{ // jet is b-tagged and a true b
-								        //cout<<"jet is b-tagged and a true b"<<endl;
-									scaleFactor = scaleFactor * scalefactorbtageff;
-								}									
-							}
-						}
-					
-					}
-				}
-			} //end loop over jets (~ b-tagging)
+				} //end loop over jets (~ b-tagging)
     
 			///////////////////////
-			//copy the collection of selected jets except for the one or two b-tagged jets (used in the HT calculation), this collection is used for W counting				
+			//copy the collection of selected jets except for the one or two b-tagged jets (used in the HT calculation)
+			//this collection is used for W counting				
 			//////////////////////
 			for(int i = 0; i<selectedJetsForBtagging.size(); i++)
 			{
@@ -1343,7 +1340,9 @@ int main (int argc, char *argv[])
 			if(isSingleLepton) nbOfWs = 1;
 			if(isSSLepton) nbOfWs = 2;
 			if(isTriLepton) nbOfWs = 3;
+			
 			if(nbOfWs == 0){ cout << "WARNING - no W counted yet, this can NOT be!!!" << endl; break;}
+			
 			float recoWmass = 0.; float newrecoWmass = 0.;
 			int indexWjet1 = 999;
 			int indexWjet2 = 999;
@@ -1444,27 +1443,33 @@ int main (int argc, char *argv[])
 					
 					if(isSingleLepton) 
 					{						
+						HT = HT + selectedForwardJets[0]->Pt();
+
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+						if(singleElectron) selecTableSemiEl.Fill(d,11,scaleFactor);
+						if(singleMuon) selecTableSemiMu.Fill(d,9,scaleFactor);
 					}
 					//cout << "done in 1B 1W box" << endl;
-
 				}
 				else if(nbOfWs==2)
 				{
-			             if(isSingleLepton && selectedJets.size()>=4) 
-				     {
-					//cout << "in 1B 2W box" << endl;
+					if(isSingleLepton && selectedJets.size()>=4)
+					{
+						//cout << "in 1B 2W box" << endl;
+						HT = HT + selectedJetsFromW_DropUsedJets[0]->Pt();
 
-					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+						if(singleElectron) selecTableSemiEl.Fill(d,12,scaleFactor);
+						if(singleMuon) selecTableSemiMu.Fill(d,10,scaleFactor);
 			
-					//////////////
-					// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
-					//////////////
-					pair<float, vector<unsigned int> > MVAvals;	
-					if(doMVAjetcombination)
-					{	
+						//////////////
+						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
+						//////////////
+						pair<float, vector<unsigned int> > MVAvals;	
+						if(doMVAjetcombination)
+						{	
 					   //you should put the highest Pt jet in here THAT IS NOT YET IN THE VECTOR!
-       			   		   if(selectedJets_MVAinput.size()==3)
+       			 if(selectedJets_MVAinput.size()==3)
 					   {
 					     selectedJets_MVAinput.push_back((TRootJet*) selectedJetsFromW_DropUsedJets[0]->Clone());
 					   }
@@ -1505,10 +1510,9 @@ int main (int argc, char *argv[])
 				    } 
 				    else if(isSSLepton && selectedJets.size() >=2) 
 				    {
-						//count number of events with SS leptons
-						if(dataSetName.find("NP") != 0) NbSSevents_1B_2W++;
-						MSPlot["MS_NbSSevents_1B_2W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with SS leptons
+							if(dataSetName.find("NP") != 0) NbSSevents_1B_2W++;
+							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				    }
  	
 					//cout << "done in 1B 2W box" << endl;
@@ -1517,21 +1521,21 @@ int main (int argc, char *argv[])
 				{
 				    if(isSingleLepton && selectedJets.size() >=6) 
 				    {
-				        myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);				
+				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);				
+							if(singleElectron) selecTableSemiEl.Fill(d,13,scaleFactor);
+							if(singleMuon) selecTableSemiMu.Fill(d,11,scaleFactor);
 				    }
 				    else if(isSSLepton && selectedJets.size() >=4) 
-			            {
-					//count number of events with SS leptons
-					if(dataSetName.find("NP") != 0) NbSSevents_1B_3W++;
-					MSPlot["MS_NbSSevents_1B_3W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+			      {
+							//count number of events with SS leptons
+							if(dataSetName.find("NP") != 0) NbSSevents_1B_3W++;
+							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				    }
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
-					//count number of events with three leptons
-					if(dataSetName.find("NP") != 0) NbTrievents_1B_3W++;
-					MSPlot["MS_NbTrievents_1B_3W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with three leptons
+							if(dataSetName.find("NP") != 0) NbTrievents_1B_3W++;
+							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				    }
 				    //cout << "done in 1B 3W box" << endl;
 				}
@@ -1539,23 +1543,23 @@ int main (int argc, char *argv[])
 				{
 				   if(isSingleLepton && selectedJets.size() >=8) 
 				   {
-					//cout << "in 1B 4W box" << endl;
-					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+							//cout << "in 1B 4W box" << endl;
+							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+							if(singleElectron) selecTableSemiEl.Fill(d,14,scaleFactor);
+							if(singleMuon) selecTableSemiMu.Fill(d,12,scaleFactor);
 					
 				   }
 				   else if(isSSLepton && selectedJets.size() >=6) 
 				   {
-					//count number of events with SS leptons
-					if(dataSetName.find("NP") != 0) NbSSevents_1B_4W++;
-					MSPlot["MS_NbSSevents_1B_4W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-			           }
+							//count number of events with SS leptons
+							if(dataSetName.find("NP") != 0) NbSSevents_1B_4W++;
+							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+			     }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
-					//count number of events with three leptons
-					if(dataSetName.find("NP") != 0) NbTrievents_1B_4W++;
-					MSPlot["MS_NbTrievents_1B_4W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with three leptons
+							if(dataSetName.find("NP") != 0) NbTrievents_1B_4W++;
+							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				   }
 				   //cout << "done in 1B 4W box" << endl;
 				}
@@ -1581,6 +1585,8 @@ int main (int argc, char *argv[])
 				   if(isSingleLepton) 
 				   {
 				        myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+							if(singleElectron) selecTableSemiEl.Fill(d,15,scaleFactor);
+							if(singleMuon) selecTableSemiMu.Fill(d,13,scaleFactor);
 				   }
 					//cout << "done in 2B 1W box" << endl;
 				}
@@ -1591,6 +1597,8 @@ int main (int argc, char *argv[])
 					//cout << "in 2B 2W box" << endl;
 					
 					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+							if(singleElectron) selecTableSemiEl.Fill(d,16,scaleFactor);
+							if(singleMuon) selecTableSemiMu.Fill(d,14,scaleFactor);
 					
 					//////////////
 					// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
@@ -1607,7 +1615,7 @@ int main (int argc, char *argv[])
                            			
 						TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
 			   			if(semiMuon) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-                           			else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);
+              else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);
 			  
 			   			//vector<unsigned int> goodCombi = jetCombiner->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
 			   			MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
@@ -1641,7 +1649,6 @@ int main (int argc, char *argv[])
 				     {
 					//count number of events with SS leptons
 					if(dataSetName.find("NP") != 0) NbSSevents_2B_2W++;
-					MSPlot["MS_NbSSevents_2B_2W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				     } 
 				}
@@ -1651,20 +1658,20 @@ int main (int argc, char *argv[])
 				     if(isSingleLepton && selectedJets.size() >=6) 
 				     {
 					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+							if(singleElectron) selecTableSemiEl.Fill(d,17,scaleFactor);
+							if(singleMuon) selecTableSemiMu.Fill(d,15,scaleFactor);
 				     }
 				     else if(isSSLepton && selectedJets.size() >=4) 
 				     {
-					//count number of events with SS leptons
-					if(dataSetName.find("NP") != 0) NbSSevents_2B_3W++;
-					MSPlot["MS_NbSSevents_2B_3W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with SS leptons
+							if(dataSetName.find("NP") != 0) NbSSevents_2B_3W++;
+							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
-					//count number of events with three leptons
-					if(dataSetName.find("NP") != 0) NbTrievents_2B_3W++;
-					MSPlot["MS_NbTrievents_2B_3W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with three leptons
+							if(dataSetName.find("NP") != 0) NbTrievents_2B_3W++;
+							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				     }
 					//cout << "done in 2B 3W box" << endl;
 				}
@@ -1674,20 +1681,20 @@ int main (int argc, char *argv[])
 				     if(isSingleLepton && selectedJets.size() >=8 )
 				     {
 					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,mets,selectedJets,scaleFactor);
+							if(singleElectron) selecTableSemiEl.Fill(d,18,scaleFactor);
+							if(singleMuon) selecTableSemiMu.Fill(d,16,scaleFactor);
 				     }
 				     else if(isSSLepton && selectedJets.size() >=6) 
 				     {
-					//count number of events with SS leptons
-					if(dataSetName.find("NP") != 0) NbSSevents_2B_4W++;
-					MSPlot["MS_NbSSevents_2B_4W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with SS leptons
+							if(dataSetName.find("NP") != 0) NbSSevents_2B_4W++;
+							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
-					//count number of events with three leptons
-					if(dataSetName.find("NP") != 0) NbTrievents_2B_4W++;
-					MSPlot["MS_NbTrievents_2B_4W"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with three leptons
+							if(dataSetName.find("NP") != 0) NbTrievents_2B_4W++;
+							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 				     }
 				     //cout << "done in 2B 4W box" << endl;
 				}
