@@ -155,7 +155,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "TEST"; // to relabel the names of the output file
+  string postfix = "_default"; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -178,20 +178,20 @@ int main (int argc, char *argv[])
   /////////////////////
   // Configuration
   /////////////////////
-  bool useMassesAndResolutions = false;
-  bool doMVAjetcombination = false; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
+  bool useMassesAndResolutions = true;
+  bool doMVAjetcombination = true; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
   bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
   if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0){
     useMassesAndResolutions = true;
 		doMVAjetcombination = true;
-		TrainMVA = true;
+		TrainMVA = false;
 	}
   
 	bool TrainwithTprime = false;
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
-  bool semiElectron = true; // use semiElectron channel?
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel?
+  bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -297,9 +297,9 @@ int main (int argc, char *argv[])
   histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
-	histo1D["LeptonPt_TTbar"] = new TH1F("leptonspt","leptonspt ttbar;pt leptons;#events",250,0,500);
-	histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt","leptonspt tprime500;pt leptons;#events",250,0,500);
-	histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt","leptonspt bprime500;pt leptons;#events",250,0,500);
+	histo1D["LeptonPt_TTbar"] = new TH1F("leptonspt ttbar","leptonspt ttbar;pt leptons;#events",250,0,500);
+	histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
+	histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
 
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0, 1, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0, 1, "");
@@ -325,11 +325,11 @@ int main (int argc, char *argv[])
   /////////////////////////////////////////////////////////
   string xvariable = "HT", yvariable = "MTop"; //these are the two variables for which the 2D plane is made
   int nbinsxvariable = 10, nbinsyvariable = 12; //if the binning is already created, make sure these are the same as before!
-  string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W_TTbarJetsFlat.root";
-  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat.root";
+  string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W_TTbarJetsFlat"+channelpostfix+".root";
+  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat"+channelpostfix+".root";
   TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable);
   TwoDimTemplateTools HTvsMTop_2B_2W("2B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable); 
-  if(doMVAjetcombination)
+  if(doMVAjetcombination && !TrainMVA)
   { 
     HTvsMTop_1B_2W.SetDatasets(datasets);
     HTvsMTop_2B_2W.SetDatasets(datasets);
@@ -413,8 +413,9 @@ int main (int argc, char *argv[])
   ///////////////
   JetCombiner* jetCombiner;
   if(!doMVAjetcombination) TrainMVA = false;
-  else if(doMVAjetcombination) jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true); //last argument is basically to use also the W mass as constraint
-  
+  else if(doMVAjetcombination)
+		jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint
+
   if(doMVAjetcombination && TrainMVA) useMassesAndResolutions = true; //just to make sure the W mass plot is not produced (is not used anyway)
   
   cout << " - JetCombiner instantiated ..." << endl;
@@ -800,7 +801,7 @@ int main (int argc, char *argv[])
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
       
-      float LeadingBtaggedJetCut = 50, METCut = 0.;
+      float LeadingBtaggedJetCut = 50, METCut = 40.;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
       selection.setMuonCuts(40,2.1,0.1,10,0.02,0.3,1,1,1);
@@ -1175,7 +1176,7 @@ int main (int argc, char *argv[])
         TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
         sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 
 				if(semiMuon) 
-					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        else if(semiElectron) 
+					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        else if(semiElectron)
 			jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
       }
 
@@ -1851,9 +1852,7 @@ int main (int argc, char *argv[])
       delete fitfunc;
       
       outfile->Close();
-      useMassesAndResolutions=true;
      //delete outfile; 
-      d--;// go back to the ttjets to run again
     }
   } //loop on datasets
   
@@ -1977,14 +1976,14 @@ int main (int argc, char *argv[])
      if (doMVAjetcombination && anaEnv.MCRound==0)
      {	
         HTvsMTop_1B_2W.Write_for2DBinning(binningFileName_HTvsMTop_1B_2W);
-	HTvsMTop_2B_2W.Write_for2DBinning(binningFileName_HTvsMTop_2B_2W);
+				HTvsMTop_2B_2W.Write_for2DBinning(binningFileName_HTvsMTop_2B_2W);
      }    
      else if(doMVAjetcombination && anaEnv.MCRound==1)
      {  
-	HTvsMTop_1B_2W.Convert2Dto1D(postfix);
+				HTvsMTop_1B_2W.Convert2Dto1D(postfix);
         HTvsMTop_2B_2W.Convert2Dto1D(postfix);
         HTvsMTop_1B_2W.Write(fout,th1dir);
-	HTvsMTop_2B_2W.Write(fout,th1dir);
+				HTvsMTop_2B_2W.Write(fout,th1dir);
      }
      
     fout->cd();
