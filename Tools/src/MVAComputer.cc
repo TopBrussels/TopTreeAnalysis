@@ -1,9 +1,9 @@
 #include "../interface/MVAComputer.h"
 
-MVAComputer::MVAComputer(std::string Method, std::string TrainerOutputRootFile, std::string WeightsPrefix, std::vector<std::string> MVAvars) {
+MVAComputer::MVAComputer(std::string Method, std::string TrainerOutputRootFile, std::string WeightsPrefix, std::vector<std::string> MVAvars, std::string postfix) {
 
   Method_ = Method;
-
+	postfix_ = postfix;
   std::cout << std::endl << "==> Start TMVA Computer" << std::endl;
   
   // set the  filenames
@@ -95,8 +95,13 @@ MVAComputer::MVAComputer(std::string Method, std::string TrainerOutputRootFile, 
 
   // book method(s)
   TString prefix = (TString) WeightsPrefix;
-  TString dir = "weights/";
-  for (std::map<std::string,int>::iterator it = Use.begin(); it != Use.end(); it++) {
+  TString dir = "weights" + postfix_ + "/";
+
+	cout << "postfix_" << postfix_ << endl;
+  
+	cout << "name of weights dir " << dir << endl;
+	
+	for (std::map<std::string,int>::iterator it = Use.begin(); it != Use.end(); it++) {
     if (it->second) {
       TString methodName = it->first + " method";
       TString weightfile = dir + prefix + "_" + TString(it->first) + ".weights.xml";
@@ -142,7 +147,7 @@ void MVAComputer::addMethod(std::string Method) {
   
   // book method(s)
   TString prefix = (TString) WeightsPrefix_;
-  TString dir = "weights/";
+  TString dir = "weights" + postfix_ + "/";
  
   TString methodName = Method + " method";
   TString weightfile = dir + prefix + "_" + TString(Method) + ".weights.xml";

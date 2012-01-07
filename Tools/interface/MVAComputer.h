@@ -25,7 +25,7 @@ class MVAComputer {
 
  public: 
 
-  MVAComputer(std::string Method, std::string TrainerOutputRootFile, std::string WeightsFile, std::vector<std::string> MVAvars);
+  MVAComputer(std::string Method, std::string TrainerOutputRootFile, std::string WeightsFile, std::vector<std::string> MVAvars, std::string postfix);
   ~MVAComputer();
 
   void FillVar(std::string var, Float_t val);
@@ -43,6 +43,8 @@ class MVAComputer {
  private:
 
   std::string Method_;
+	
+  std::string postfix_;
 
   void bookInputVar(std::string var);
 

@@ -36,7 +36,7 @@ struct MVAValues {
 class LightJetCombiner {
 
   public:
-    LightJetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, bool measureTopMass = true, string MVAMethod = "Likelihood");
+    LightJetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, bool measureTopMass = true, string MVAMethod = "Likelihood", string postfix="");
     ~LightJetCombiner();
     void ProcessEvent(Dataset* dataSet, Monster* monster, float scaleFactor=1);
 
@@ -53,7 +53,8 @@ class LightJetCombiner {
     float Luminosity_;
     
     bool trainMVA_; // true if the MVA needs to be trained, false if the trained MVA will be used to compute stuff
-    MVATrainer* trainer_;
+    string postfix_;
+		MVATrainer* trainer_;
     MVAComputer* computer_;
 
     vector<MVAValues> vectorMVA_;

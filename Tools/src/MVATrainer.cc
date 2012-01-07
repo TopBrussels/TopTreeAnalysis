@@ -156,9 +156,9 @@ void MVATrainer::addMethod(std::string Method) {
 
 }
 
-void MVATrainer::TrainMVA(std::string SplitMode, std::string CutsS, int nTrainS, int nTestS, std::string CutsB, int nTrainB, int nTestB) {
+void MVATrainer::TrainMVA(std::string SplitMode, std::string CutsS, int nTrainS, int nTestS, std::string CutsB, int nTrainB, int nTestB, std::string postfix) {
 
-  // For more info on the options used for preparing the Train and Testsamples, see section 3.1.4 of the TMVA manual
+	// For more info on the options used for preparing the Train and Testsamples, see section 3.1.4 of the TMVA manual
 
   //Example cut => "abs(var1)<0.5 && abs(var2-0.5)<1";
 
@@ -168,6 +168,10 @@ void MVATrainer::TrainMVA(std::string SplitMode, std::string CutsS, int nTrainS,
   
   std::cout << std::endl << "==> Training the MVA method" << std::endl;
 
+  std::string dirname = "weights" + postfix; 
+	(TMVA::gConfig().GetIONames()).fWeightFileDir = dirname.c_str();
+
+	//std::cout << "dirname changed?" << std::endl;
 
   // global event weights per tree (see below for setting event-wise weights)
   Double_t signalWeight     = 1.0;

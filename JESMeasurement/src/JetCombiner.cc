@@ -10,10 +10,11 @@ bool sortFloat (float f1, float f2)
   return f1 > f2;
 }
 
-JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, string MVAMethod, bool Tprime, string MVAfilePostfix)
+JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, string MVAMethod, bool Tprime, string MVAfilePostfix, string postfix)
 {
   Tprime_ = Tprime;
   MVAfilePostfix_ = MVAfilePostfix;
+  postfix_ = postfix;
 
   trainMVA_ = trainMVA;
   trainer_ = 0;
@@ -32,9 +33,9 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
   	expCorrIncl_ = new ExpCorrCalculator("Inclusive");
   	MVAOut = MVAOut+"_TTbarJES.root";
 	}else{
-  	MVAOut = MVAOut+"_Tprime.root";
+		MVAOut = MVAOut+"_Tprime"+postfix_+".root";
 	}
-			
+
   if(trainMVA_)
   {
    	cout << "The MVA stuff will be trained!" << endl;
@@ -90,8 +91,8 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
 		if(Tprime_)
 			MVAvars.push_back("HadrWmass");
 
-    
-	    computer_ = new MVAComputer(MVAMethod,MVAOut,MVAPrefix,MVAvars);
+	  computer_ = new MVAComputer(MVAMethod,MVAOut,MVAPrefix,MVAvars,postfix_);
+		
 	//    computer_->addMethod("LikelihoodD");
 	//    computer_->addMethod("LikelihoodPCA");
 	//    computer_->addMethod("MLP");
@@ -851,7 +852,7 @@ void JetCombiner::EndJob()
   EndJobWasRun_ = true;
   
   if(trainMVA_)
-    trainer_->TrainMVA("Block","",0,0,"",0,0);
+    trainer_->TrainMVA("Block","",0,0,"",0,0,postfix_);
 
   graphAsymmErr_["PtJetCutEfficiency"] = GraphRatio(histo1D_["PtJetCut_nEventsAfter"],histo1D_["PtJetCut_nEventsBefore"],"PtJetCutEfficiency","cut on p_{T}^{4 leading jets}","Fraction with >= 4 jets");
   graphAsymmErr_["PtJetCut4PartonsMatchingEfficiency"] = GraphRatio(histo1D_["PtJetCut_nEvents4PartonsMatchedAfter"],histo1D_["PtJetCut_nEventsAfter"],"PtJetCut4PartonsMatchingEfficiency","cut on p_{T}^{jets}","Fraction with >= 4 matched jets");

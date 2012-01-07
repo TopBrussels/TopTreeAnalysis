@@ -5,9 +5,10 @@ bool sortMVAValuesAgain (MVAValues f1, MVAValues f2)
   return f1.MVAValue > f2.MVAValue;
 }
 
-LightJetCombiner::LightJetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, bool measureTopMass, string MVAMethod)
+LightJetCombiner::LightJetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, bool measureTopMass, string MVAMethod, string postfix)
 {
   trainMVA_ = trainMVA;
+	postfix_ = postfix;
   trainer_ = 0;
   computer_ = 0;
   
@@ -73,7 +74,7 @@ LightJetCombiner::LightJetCombiner(bool trainMVA, float Luminosity, const vector
 //    MVAvars.push_back("AngleThBh");
 //	  MVAvars.push_back("AngleThMu");
 	  
-	  computer_ = new MVAComputer(MVAMethod,MVAOut,MVAPrefix,MVAvars);
+	  computer_ = new MVAComputer(MVAMethod,MVAOut,MVAPrefix,MVAvars,postfix_);
 	//    computer_->addMethod("LikelihoodD");
 	//    computer_->addMethod("LikelihoodPCA");
 	//    computer_->addMethod("MLP");
@@ -459,7 +460,7 @@ void LightJetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
   if(trainMVA_)
   {
     cout << " - Training the MVA!" << endl;
-    trainer_->TrainMVA("Block","",0,0,"",0,0);
+    trainer_->TrainMVA("Block","",0,0,"",0,0,postfix_);
   }
   
   cout << " - Writing out the LightJetCombiner stuff ..." << endl;

@@ -17,6 +17,7 @@
 
 #include "TopTreeAnalysis/TMVA/src/Factory.h"
 #include "TopTreeAnalysis/TMVA/src/Tools.h"
+#include "TopTreeAnalysis/TMVA/src/Config.h"
 
 
 
@@ -34,7 +35,7 @@ class MVATrainer {
 
   void addMethod(std::string Method);
 
-  void TrainMVA(std::string SplitMode, std::string CutsS, int nTrainS, int nTestS, std::string CutsB, int nTrainB, int nTestB);
+  void TrainMVA(std::string SplitMode, std::string CutsS, int nTrainS, int nTestS, std::string CutsB, int nTrainB, int nTestB, std::string postfix);
 
  private:
 
@@ -54,7 +55,7 @@ class MVATrainer {
   TFile *outFile; // output rootfile
  
   TMVA::Factory *factory; // TMVA workspace
-
+	
 };
 
 

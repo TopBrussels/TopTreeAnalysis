@@ -42,7 +42,7 @@ struct MVAValues {
 class JetCombiner {
 
   public:
-    JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, string MVAMethod = "Likelihood", bool Tprime = false, string MVAfilePostfix = "");
+    JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, string MVAMethod = "Likelihood", bool Tprime = false, string MVAfilePostfix = "", string postfix = "");
     ~JetCombiner();
     void ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> mcParticles, const vector<TRootJet*> selectedJets, const TLorentzVector* selectedMuon, vector<TRootElectron*> vectEl, vector<TRootMuon*> vectMu, const TRootGenEvent* genEvt, float scaleFactor=1, bool TprimeEvaluation=false);
     void FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B=0, ResolutionFit* resFitBJets_Bbar=0);
@@ -76,7 +76,8 @@ class JetCombiner {
 
     bool Tprime_; // true if tprime analysis, false if JES/mtop analysis
     string MVAfilePostfix_;
-    
+    string postfix_;
+		
     ExpCorrCalculator* expCorrIncl_;
     
     float relDiffEJetParton_b_;
