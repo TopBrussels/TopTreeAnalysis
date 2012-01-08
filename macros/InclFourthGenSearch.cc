@@ -300,10 +300,12 @@ int main (int argc, char *argv[])
 	histo1D["LeptonPt_TTbar"] = new TH1F("leptonspt ttbar","leptonspt ttbar;pt leptons;#events",250,0,500);
 	histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
 	histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
+	histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt sbprime500","leptonspt sbprime500;pt leptons;#events",250,0,500);
 
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0, 1, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0, 1, "");
   MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 250, 0, 500, "");
+	MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
   
   cout << " - Declared histograms ..." <<  endl;
 
@@ -865,6 +867,7 @@ int main (int argc, char *argv[])
 											if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());	
 											if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
 											if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());							
+											if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());							
 			     					}
 			     					
 										////for same-sign muons require exactly 2 muons, veto for very loose electrons
@@ -890,6 +893,10 @@ int main (int argc, char *argv[])
 													if(dataSetName.find("NP_Bprime500")==0){
 														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
 														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt());
+													}	  	
+													if(dataSetName.find("NP_SBprime500")==0){
+														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
+														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt());
 													}	  	
 												}
 											}
@@ -925,6 +932,10 @@ int main (int argc, char *argv[])
 																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
 																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
 															}	  	
+															if(dataSetName.find("NP_SBprime500")==0){
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+															}	  	
 														}
 													}
 												}
@@ -956,6 +967,11 @@ int main (int argc, char *argv[])
 													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
 													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt());
 													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[2]->Pt());
+												}	  	
+												if(dataSetName.find("NP_SBprime500")==0){
+													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
+													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt());
+													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[2]->Pt());
 												}	  	
 											}
 					 					}
@@ -993,6 +1009,11 @@ int main (int argc, char *argv[])
 																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt());
 																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
 															}	  	
+															if(dataSetName.find("NP_SBprime500")==0){
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+															}	  	
 														}
 													}
 												}
@@ -1027,6 +1048,11 @@ int main (int argc, char *argv[])
 															histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
 															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
 															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt());
+														}	  	
+														if(dataSetName.find("NP_SBprime500")==0){
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt());
 														}	  	
 													}
 												}
@@ -1082,6 +1108,7 @@ int main (int argc, char *argv[])
 													if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());
 													if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());							
 													if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());							
+													if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());							
 												}
 												
 												//// two same-sign electrons
@@ -1105,6 +1132,10 @@ int main (int argc, char *argv[])
 															if(dataSetName.find("NP_Bprime500")==0){
 																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
 																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt());
+															}	  	
+															if(dataSetName.find("NP_SBprime500")==0){
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt());
 															}	  	
 														}
 													}
@@ -1133,6 +1164,11 @@ int main (int argc, char *argv[])
 															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt());
 															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[2]->Pt());
 														}	  	
+														if(dataSetName.find("NP_SBprime500")==0){
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt());
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[2]->Pt());
+														}	  	
 													}
 												}
 											} // end MET cut
@@ -1148,6 +1184,8 @@ int main (int argc, char *argv[])
 
 						
       if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
+
+			MSPlot["MS_nPV"]->Fill(vertex.size(),datasets[d], true, Luminosity*scaleFactor);				
 
 			if(isSingleLepton){
 				MSPlot["MS_MET"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);				
