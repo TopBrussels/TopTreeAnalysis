@@ -1,0 +1,36 @@
+*** chain.C
+-------
+chain.C is the analysis chain all over again, runs the selection over the result
+of SingleToptW outputs and produces all the histos for plots and tables
+it is very dumb to run it, typically I run everything together in a 
+.csh with this structure:
+
+root.exe -b -l -q chain.C\(0\,0\,0\)
+etc
+
+
+*** plotmaker.C
+-------
+does the basic plots over the results of chain.C
+
+root.exe plotmaker.C works directly, then you only have to feed it with 
+1 -> mumu or 2 -> ee
+
+
+*** tables.C
+-------
+does the tables over the results of chain.C
+runs identically as dumb as plotmaker.C
+
+
+*** control.C 
+-------
+does the control region estimation, it is like chain.C plus an extra guy
+something like this:
+
+root.exe -b -l -q control.C\(0\,0\,0\,1\)
+
+*** controlplots.C
+-------
+does the control region plots
+identical to plotmaker
