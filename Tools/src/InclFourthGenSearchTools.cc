@@ -22,23 +22,23 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
 			histoName_HT = "HT_"+IntToStr(B)+"B_"+IntToStr(W)+"W";
 			MShistoName_HT = "MS_"+histoName_HT;
 			if(B==1 && W==1) {
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 20, 100, 600, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 10, 100, 600, "HT (GeV)");
 			}
 			else if(B==2 && W==1)
 			{
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 30, 100, 900, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 15, 150, 900, "HT (GeV)");
 			}
 			else if((B==1 || B==2) && W==2)
 			{
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 30, 150, 1000, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 17, 150, 1000, "HT (GeV)");
 			}
 			else if((B==1 || B==2) && W==3)
 			{
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 15, 200, 900, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 8, 200, 1000, "HT (GeV)");
 			}
 			else if((B==1 || B==2) && W==4)
 			{
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 6, 400, 1000, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 3, 400, 1200, "HT (GeV)");
 			}
 			
 			for(int prefix=0; prefix<3; prefix++)
@@ -58,10 +58,10 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
 			for(unsigned int d = 0; d < datasets.size (); d++){
 				histoHT_dataset = histoName_HT+(datasets[d]->Name()).c_str(); 
 				if(B==1 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 10, 100, 600);
-				else if(B==2 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 16, 100, 900);
+				else if(B==2 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 15, 150, 900);
 				else if((B==1 || B==2) && W==2) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 17, 150, 1000);
- 				else if((B==1 || B==2) && W==3) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 7, 200, 900);
-				else if((B==1 || B==2) && W==4) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 3, 400, 1000);
+ 				else if((B==1 || B==2) && W==3) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 8, 200, 1000);
+				else if((B==1 || B==2) && W==4) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 3, 400, 1200);
 			}
 		}
   }
