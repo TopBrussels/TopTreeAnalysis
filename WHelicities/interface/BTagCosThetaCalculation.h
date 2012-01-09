@@ -17,6 +17,8 @@ class BTagCosThetaCalculation{
    
    float Calculation(TLorentzVector muon, TLorentzVector Neutrino, TLorentzVector leptonicBJet);
 
+   float CalcOrigKins(int BLeptonicIndex, int BHadronicIndex,  TLorentzVector muon, vector<TLorentzVector> selectedJets, float MassW, float MassTop);
+
 };
 
 #endif
