@@ -175,10 +175,10 @@ void TwoDimTemplateTools::Convert2Dto1D(string postfix)
   {
      string datasetname = datasets_[d]->Name();
      string histoName = ""; //naming convention chosen the same as in macro for 1D histos (templates)...identifier
-     if(datasets_[d]->Name()=="Data" || datasets_[d]->Name()=="data" || datasets_[d]->Name()=="DATA")
+     //if(datasets_[d]->Name()=="Data" || datasets_[d]->Name()=="data" || datasets_[d]->Name()=="DATA")
        histoName = xvariable_ + "_" + yvariable_ + "_" + identifier_ + datasetname;
-     else 
-       histoName = xvariable_ + "_" + yvariable_ + "_" + identifier_ + datasetname + postfix;
+     //else 
+     //  histoName = xvariable_ + "_" + yvariable_ + "_" + identifier_ + datasetname + postfix;
      TH1F* htemp = new TH1F(histoName.c_str(),histoName.c_str(),nbinsxvariable_*nbinsyvariable_,0,nbinsxvariable_*nbinsyvariable_);
      h2D_1Dconverted.push_back(htemp);
   }
