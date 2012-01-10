@@ -30,12 +30,12 @@
 #include "../MCInformation/interface/ResolutionFit.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "../MCInformation/interface/LumiReWeighting.h"
+#include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../macros/Style.C"
 
 using namespace std;
 using namespace TopTree;
-using namespace reweight;
+
 
 int main(int argc, char* argv[]) {
   
@@ -76,7 +76,6 @@ int main(int argc, char* argv[]) {
   bool SystSamples = false;
   bool Spring11 = false;
   bool Special = false;
-  
   
   string xmlfile ="twemu.xml";
   
@@ -292,12 +291,8 @@ int main(int argc, char* argv[]) {
       
       
       //Pile-Up reweighting  
- //   LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup"); 
-      LumiReWeighting LumiWeights = LumiReWeighting("../macros/PileUpReweighting/pileup_WJets_36bins.root", "../macros/PileUpReweighting/pileup_2011Data_UpToRun177515.root", "pileup2", "pileup");	
-
-      //Pile-Up systematic shift
-      PoissonMeanShifter PShiftUp_ = PoissonMeanShifter(0.6); // PU-systematic
-      PoissonMeanShifter PShiftDown_ = PoissonMeanShifter(-0.6); // PU-systematic
+      Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../macros/PileUpReweighting/pileup_MC_Fall11.root","../macros/PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+      Lumi3DWeights.weight3D_init(1.0);
 
       // Initialize JEC factors
       vector<JetCorrectorParameters> vCorrParam;
@@ -341,17 +336,10 @@ int main(int argc, char* argv[]) {
 	  double weight = xlweight;
           
 	  // Pile-Up re-weighting
-	  if (reweightPU && !isData){
-	    if(!Spring11){
-	      float avPU = ( (float)event->nPu(-1) + (float)event->nPu(0) + (float)event->nPu(+1) ) / 3.; // average in 3 BX!!!, as recommended
-	      weight *= LumiWeights.ITweight(avPU);
-	      if (PUsysUp) weight *= PShiftUp_.ShiftWeight(avPU);
-	      else if (PUsysDown) weight *= PShiftDown_.ShiftWeight(avPU);
-	    } else {
-	      weight *= LumiWeights.ITweight((float)event->nPu(0));
-	      if (PUsysUp) weight *= PShiftUp_.ShiftWeight(event->nPu(0));
-	      else if (PUsysDown) weight *= PShiftDown_.ShiftWeight(event->nPu(0));
-	    }
+	  if (reweightPU && !isData && !Special){
+	    double lumiWeight3D = 1.0;
+	    lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
+	    weight *= lumiWeight3D;
 	  }
 	   
 	  //Trigger
@@ -359,6 +347,9 @@ int main(int argc, char* argv[]) {
 	  bool itrigger = false;
 	  bool isecondtrigger = false;
           
+	  bool trigged = true;
+	  
+	  /*
 	  if(isData) { 
 	    if (mode == 0){
 	      if(currentRun >= 150000 && currentRun <= 161176){
@@ -443,9 +434,9 @@ int main(int argc, char* argv[]) {
 	    isecondtrigger = true;
 	  }
           
-	  bool trigged = false;
+	  
 	  if (itrigger || isecondtrigger) trigged = true;
-	
+	 */
 	 
 	  // Correct MET Type I
 	  if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
