@@ -356,16 +356,11 @@ int main(int argc, char* argv[]) {
 	   
 	  //Trigger
 	  int currentRun = event->runId();
-	  int itrigger = -5;
-	  int isecondtrigger = -5;
-          
-	  char triggername[100];
-	  char triggerbase[100];
-	  char secondtriggerbase[100];
+	  bool itrigger = false;
+	  bool isecondtrigger = false;
           
 	  if(isData) { 
-	    
-	    /* if (mode == 0){
+	    if (mode == 0){
 	      if(currentRun >= 150000 && currentRun <= 161176){
 		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v1", currentRun);
 		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v1", currentRun);
@@ -387,12 +382,14 @@ int main(int argc, char* argv[]) {
 	      }else if(currentRun >= 170054 && currentRun <= 173198){
 		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v8", currentRun);
 		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v3", currentRun);
-	      }else if(currentRun >= 173199 && currentRun <= 173199){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v9", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4", currentRun);
+	      }else if(currentRun >= 173199 && currentRun <= 178380){
+		itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4", currentRun);
+		isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v4", currentRun);
+	      }else if(currentRun >= 178381 && currentRun <= 999999){
+		itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v7", currentRun);
+		isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v7", currentRun);
 	      }
-	    }
-	    if (mode == 1){
+	    } else if (mode == 1){
 	      if(currentRun >= 150000 && currentRun <= 161176){
 		itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
 	      }else if(currentRun >= 161179 && currentRun <= 163261){
@@ -407,23 +404,38 @@ int main(int argc, char* argv[]) {
 		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v4", currentRun);
 	      }else if(currentRun >= 170054 && currentRun <= 173198){
 		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v6", currentRun);
-	      }else if(currentRun >= 173199 && currentRun <= 173199){
+	      }else if(currentRun >= 173199 && currentRun <= 178380){
 		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v7", currentRun);
-	      }
+	      }else if(currentRun >= 178381 && currentRun <= 999999){
+		itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v10", currentRun);
+              }
+	    } else if (mode == 2){
+	      if(currentRun >= 150000 && currentRun <= 161176){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
+	      }else if(currentRun >= 161179 && currentRun <= 163261){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2", currentRun);
+	      }else if(currentRun >= 163262 && currentRun <= 164237){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3", currentRun);
+	      }else if(currentRun >= 165085 && currentRun <= 165888){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4", currentRun);
+	      }else if(currentRun >= 165900 && currentRun <= 167043){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5", currentRun);
+	      }else if(currentRun >= 167044 && currentRun <= 170053){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6", currentRun);
+	      }else if(currentRun >= 170054 && currentRun <= 170759){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+	      }else if(currentRun >= 170760 && currentRun <= 173198){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
+	      }else if(currentRun >= 173199 && currentRun <= 178380){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
+	      }else if(currentRun >= 178381 && currentRun <= 999999){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9", currentRun);
+              }
 	    }
-	    if (mode == 2){
-	      sprintf(triggerbase,"HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
-	      for (int i = 1; i < 16; i++){
-		sprintf(triggername,"%s_v%d", triggerbase, i);
-		itrigger = treeLoader.iTrigger (string (triggername), currentRun);
-		if (itrigger != 9999) i = 100;
-		else if (i == 15) cout << "NO VALID TRIGGER FOUND FOR THIS RUN " << event->runId() << endl;
-	      }
-	    }*/
 	    
-	    //No trigger for quick tests
-	    itrigger = true;
-	    isecondtrigger = true;
+	   //No trigger for quicker tests
+	   // itrigger = true;
+	   // isecondtrigger = true;
 	    
 	  } else {
 	    // No trigger in MC
@@ -432,9 +444,8 @@ int main(int argc, char* argv[]) {
 	  }
           
 	  bool trigged = false;
-	  if (mode == 0) trigged = itrigger + isecondtrigger;
-	  else trigged = itrigger;
-        
+	  if (itrigger || isecondtrigger) trigged = true;
+	
 	 
 	  // Correct MET Type I
 	  if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
