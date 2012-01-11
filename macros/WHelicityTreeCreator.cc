@@ -1,3 +1,4 @@
+
 ///////////////////////////
 ///// TODO & COMMENTS /////
 /////////////////////////// 
@@ -118,6 +119,23 @@ int main (int argc, char *argv[])
   else if(IsoMu172024Trigger == true){
     rootFileName = "MacroOutputIsoMu172024Trigger.root";
   }
+
+  ////////////////////////
+  //  Which systematics //
+  ////////////////////////
+
+  int doJESShift = 0; // 0: off 1: minus 2: plus
+  cout << "doJESShift: " << doJESShift << endl;
+
+  int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
+  cout << "doJERShift: " << doJERShift << endl;
+
+  int dobTagEffShift = 0; //0: off (except nominal scalefactor for btag eff) 1: minus 2: plus
+  cout << "dobTagEffShift: " << dobTagEffShift << endl;
+
+  int domisTagEffShift = 0; //0: off (except nominal scalefactor for mistag eff) 1: minus 2: plus
+  cout << "domisTagEffShift: " << domisTagEffShift << endl;
+
 
   //Output ROOT file
   const char *rootfile = rootFileName.c_str();
@@ -326,7 +344,7 @@ int main (int argc, char *argv[])
 
   char LabelNJets[100];
   sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets-3);
-  CutsSelecTableSemiMu.push_back(string(LabelNJets));
+  CutsSelecTableSemiMu.push_back(string(LabelNJets)); 
   CutsSelecTableSemiEl.push_back(string(LabelNJets));
   sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets-2);
   CutsSelecTableSemiMu.push_back(string(LabelNJets));
@@ -647,25 +665,26 @@ int main (int argc, char *argv[])
       //----------------------------------------------------------
       // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
       //---------------------------------------------------------
-      jetTools->correctMETTypeOne(init_jets_corrected,mets[0]);  //Size of mets is never larger than 1 !!
-
-      if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) ){
-	// Correct for the difference in muon efficiency (HLT and Id) between Data and MC
-	//scaleFactor *= 0.965;
-          
-        // Correct jets for JES uncertainy systematics
-	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",1);  
-	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",1);  
-	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",2);  
-	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",2);  
-  	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",3);  
-	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",3);  
- 	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",0.5);  
-	//jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",0.5);  
-          
-	jetTools->correctJetJER(init_jets_corrected, genjets, "nominal");
-          
-      }
+      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+        jetTools->correctMETTypeOne(init_jets,mets[0],true);
+      else
+        jetTools->correctMETTypeOne(init_jets,mets[0],false);
+      
+      if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
+      {	
+	if(doJERShift == 1)
+	  jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
+	else if(doJERShift == 2)
+	  jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
+	else
+	  jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
+	
+	// JES systematic! 
+	if (doJESShift == 1)
+	  jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
+	else if (doJESShift == 2)
+	  jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
+      }      
         
       ///////////////////////////////////////////////////////
       ///     Start of program: Defining variables        ///
@@ -820,8 +839,8 @@ int main (int argc, char *argv[])
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);   //CIEMAT values, not refSel values !!!!
-      selection.setMuonCuts(20,2.1,0.15,10,0.02,0.3,1,1,1); //Values for TriCentralJet trigger
-      //selection.setMuonCuts(25,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
+      if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,0.3,1,1,1); //Values for TriCentralJet trigger
+      if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
       selection.setLooseMuonCuts(10,2.1,0.15);
       selection.setElectronCuts(30,2.5,0.15,0.02,1,0.3);
       selection.setLooseElectronCuts(15,2.5,0.2); // semiMu looseMuon cuts
