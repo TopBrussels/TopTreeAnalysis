@@ -38,7 +38,7 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
 			}
 			else if((B==1 || B==2) && W==4)
 			{
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 3, 400, 1200, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 2, 400, 1200, "HT (GeV)");
 			}
 			
 			for(int prefix=0; prefix<3; prefix++)
@@ -61,7 +61,7 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
 				else if(B==2 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 15, 150, 900);
 				else if((B==1 || B==2) && W==2) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 17, 150, 1000);
  				else if((B==1 || B==2) && W==3) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 8, 200, 1000);
-				else if((B==1 || B==2) && W==4) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 3, 400, 1200);
+				else if((B==1 || B==2) && W==4) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 2, 400, 1200);
 			}
 		}
   }

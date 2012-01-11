@@ -103,11 +103,13 @@ int main (int argc, char *argv[])
   int domisTagEffShift = 0; //0: off (except nominal scalefactor for mistag eff) 1: minus 2: plus
   cout << "domisTagEffShift: " << domisTagEffShift << endl;
 
+  int doPUShift = 0; //0: off (except nominal PU reweighting) 1: minus 2: plus
+  cout << "doPUShift: " << doPUShift << endl;
 
   string btagger = "TCHEM";
 // b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10,    TCHEM: data/MC scalefactor = 0.94 +- 0.09
 // mistag scalefactor => TCHEL: data/MC scalefactor = 1.11 +- 0.12,    TCHEM: data/MC scalefactor = 1.21 +- 0.17
-  float scalefactorbtageff, mistagfactor;
+  float scalefactorbtageff = 1, mistagfactor = 1;
   if(btagger == "TCHEL") //track counting high eff loose working point
   {
 	  if(dobTagEffShift == 0)
@@ -175,6 +177,10 @@ int main (int argc, char *argv[])
     postfix= postfix+"_misTagMinus";
   if(domisTagEffShift == 2)
     postfix= postfix+"_misTagPlus";
+  if(doPUShift == 1)
+    postfix= postfix+"_PUMinus";
+  if(doPUShift == 2)
+    postfix= postfix+"_PUPlus";
 
 
   /////////////////////
@@ -381,7 +387,7 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiMu.push_back(string("trigged"));
   CutsSelecTableSemiMu.push_back(string("Good PV"));
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 muon"));
-  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
+  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet"));
   CutsSelecTableSemiMu.push_back(string("MET > 40 GeV"));  
   CutsSelecTableSemiMu.push_back(string("SS $\\geq$ 1 muon"));
   CutsSelecTableSemiMu.push_back(string("trileptons $\\geq$ 1 muon"));
@@ -402,7 +408,7 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 selected electron"));
   CutsSelecTableSemiEl.push_back(string("Veto muon"));
   CutsSelecTableSemiEl.push_back(string("Conversion veto"));
-  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
+  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet"));
   CutsSelecTableSemiEl.push_back(string("MET > 40 GeV"));
   CutsSelecTableSemiEl.push_back(string("SS 2 electrons"));
   CutsSelecTableSemiEl.push_back(string("trileptons 3 electrons"));
@@ -427,7 +433,12 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////
   Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
-
+	if(doPUShift == 1)
+  	Lumi3DWeights.weight3D_init(0.92);
+	else if(doPUShift == 2)
+  	Lumi3DWeights.weight3D_init(1.08);
+	else
+  	Lumi3DWeights.weight3D_init(1.0);
 
 //  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
 //  PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
@@ -562,7 +573,7 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << " - Loop over events " << endl;      
     
-    for (unsigned int ievt = start; ievt < end; ievt++)
+    for (int ievt = start; ievt < end; ievt++)
     {        
 
       if(ievt%1000 == 0)
@@ -744,28 +755,30 @@ int main (int argc, char *argv[])
 					jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
       }
 
-	double lumiWeight3D = 1.0;
-	if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
+			double lumiWeight3D = 1.0;
+			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
 				////////////////////////////
       	// apply trigger Reweighting
       	////////////////////////////
 				float mceventtriggerweight = 1;
+				float NEWmceventtriggerweight = 1;
 				float prob=0;
       	if(semiElectron){
 					std::vector<float> probabilities;
 					for(size_t i=0; i<init_jets.size(); ++i){
+    				if(fabs(init_jets[i]->Eta())>2.6) continue;
     				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighEffBJetTags()));
 					}
 				
 					//use binary code for objects to be triggered or not triggered
 					for(int i=0; i<pow(2.,(double)probabilities.size());++i){
     				int ntrigobj=0;
-    				for(int j=0; j<probabilities.size();++j){
+    				for(unsigned int j=0; j<probabilities.size();++j){
 							if((int)(i/pow(2.,(double)j))%2) ntrigobj++;
 						}
 						if(ntrigobj<1) continue;  
 						float newprob=1;
-						for(int j=0; j<probabilities.size();++j){
+						for(unsigned int j=0; j<probabilities.size();++j){
 							if((int)(i/pow(2.,(double)j))%2) newprob*=probabilities[j];
 							else newprob*=1-probabilities[j];
 						}
@@ -773,7 +786,10 @@ int main (int argc, char *argv[])
 					}
 					mceventtriggerweight*=prob;
 
-					scaleFactor = scaleFactor*mceventtriggerweight;
+					//stupid workaround, because part (single electron path corresponding to 200/pb) of the MC needs SF of 1 for trigger and part (btag trigger) needs the procedure above
+					NEWmceventtriggerweight = (200./Luminosity +(mceventtriggerweight*(1-(200./Luminosity))));
+
+					scaleFactor = scaleFactor*NEWmceventtriggerweight;
  					//cout << "mcevent triggerweight " << mceventtriggerweight << endl;
  					//cout << "scalefactor (only triggerweight) " << scaleFactor << endl;
       	}
@@ -873,7 +889,7 @@ int main (int argc, char *argv[])
       selectedLooseElectronsVBTFid = selection.GetSelectedLooseElectrons(true); //vbtfid is required 
       selectedLooseMuons = selection.GetSelectedLooseMuons(); //veto muons	
       
-      for(int i = 0; i<selectedJetsLargeEtaRange.size(); i++)
+      for(unsigned int i = 0; i<selectedJetsLargeEtaRange.size(); i++)
       {
 	    	if(selectedJetsLargeEtaRange[i]->Eta() > 2.4)
 	      	selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
@@ -896,7 +912,7 @@ int main (int argc, char *argv[])
 						
 						if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
 						{  //at least 1 jet!
-							for(int j=0;j<selectedJets.size();j++)
+							for(unsigned int j=0;j<selectedJets.size();j++)
 							{
 								//now require at least a b-tagged jet larger than a certain pre-defined cut
 								if(selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue)
@@ -925,7 +941,7 @@ int main (int argc, char *argv[])
 										else if(selectedMuons.size() == 2 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
 										{ 
 											//require that there are no two muons forming the Z mass
-											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
+											if( !selection.foundZCandidate(selectedMuons, selectedLooseMuons, 10.) )
 											{
 												//require the same charge
 												if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
@@ -1138,7 +1154,7 @@ int main (int argc, char *argv[])
 
 								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
 								{
-									for(int j=0;j<selectedJets.size();j++)
+									for(unsigned int j=0;j<selectedJets.size();j++)
 									{
 										//now require at least a b-tagged jet larger than a certain pre-defined cut
 										if(selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue)
@@ -1152,7 +1168,7 @@ int main (int argc, char *argv[])
 												//cout << "event is selected according to the baseline selection!" << endl;
 														
 												//// single electron
-												if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid))
+												if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
 												{
 													isSingleLepton = true;
 													isSingleElectron = true;
@@ -1164,7 +1180,7 @@ int main (int argc, char *argv[])
 												}
 												
 												//// two same-sign electrons
-												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid))
+												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
 												{
 													if(selection.passConversionRejection(selectedElectrons[1]))
 													{
@@ -1194,7 +1210,7 @@ int main (int argc, char *argv[])
 												}
 												
 												//// three electrons
-												else if(selectedElectrons.size() >= 3 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid))
+												else if(selectedElectrons.size() >= 3 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
 												{
 													if(selection.passConversionRejection(selectedElectrons[1]) && selection.passConversionRejection(selectedElectrons[2]))
 													{
@@ -1313,7 +1329,6 @@ int main (int argc, char *argv[])
 					  leptonPDG = muonPDG;
 					else if(semiElectron)
 					  leptonPDG = electronPDG; 
-					int nTTbarQuarks = 0;
 					for(unsigned int i=0; i<mcParticles.size(); i++) {
 						if( mcParticles[i]->status() != 3) continue;
 						
@@ -1427,7 +1442,7 @@ int main (int argc, char *argv[])
 			
 				vector< pair< int, float > > jetindex_btagvalue;
 				vector< pair< int, bool > > jetindex_isb;
-				for(int i = 0; i<selectedJetsForBtagging.size(); i++)
+				for(unsigned int i = 0; i<selectedJetsForBtagging.size(); i++)
 				{
 					pair<int,float> dummy (i,selectedJetsForBtagging[i]->btag_trackCountingHighEffBJetTags());
 					jetindex_btagvalue.push_back(dummy);
@@ -1444,7 +1459,7 @@ int main (int argc, char *argv[])
 				// check if jet is truly from a b-quark or not and make a pair with the result
 				if(! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ))
 				{
-					for(int i = 0; i<jetindex_btagvalue.size(); i++)
+					for(unsigned int i = 0; i<jetindex_btagvalue.size(); i++)
 					{
 						if(fabs(selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()) == 5 )
 						{// is a true b-jet
@@ -1470,7 +1485,7 @@ int main (int argc, char *argv[])
 				int nbOfBtags = 0;
 				int bJet1 = 999;
 				int bJet2 = 999;
-				for(int i = 0; i<jetindex_btagvalue.size(); i++)
+				for(unsigned int i = 0; i<jetindex_btagvalue.size(); i++)
 				{
 			  	//cout<<" jetindex_btagvalue["<<i<<"].first = "<<jetindex_btagvalue[i].first<<", jetindex_btagvalue["<<i<<"].second = "<<jetindex_btagvalue[i].second<<", selectedJetsForBtagging[jetindex_btagvalue["<<i<<"].first]->partonFlavour() = "<<selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()<<endl;
 					if(jetindex_btagvalue[i].second > workingpointvalue)
@@ -1484,7 +1499,7 @@ int main (int argc, char *argv[])
 						if(nbOfBtags == 1)
 						{
 							bJet1 = jetindex_btagvalue[i].first;
-							for(int j = 0; j < jetindex_isb.size(); j++)
+							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{
 								if(bJet1 == jetindex_isb[j].first)
 								{
@@ -1502,7 +1517,7 @@ int main (int argc, char *argv[])
 						if(nbOfBtags == 2)
 						{
 							bJet2 = jetindex_btagvalue[i].first;
-							for(int j = 0; j < jetindex_isb.size(); j++)
+							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{								
 								if(bJet2 == jetindex_isb[j].first)
 								{       
@@ -1527,9 +1542,9 @@ int main (int argc, char *argv[])
 			//copy the collection of selected jets except for the one or two b-tagged jets (used in the HT calculation)
 			//this collection is used for W counting				
 			//////////////////////
-			for(int i = 0; i<selectedJetsForBtagging.size(); i++)
+			for(unsigned int i = 0; i<selectedJetsForBtagging.size(); i++)
 			{
-				if(i != bJet1 && i != bJet2)
+				if((int)i != bJet1 && (int)i != bJet2)
 				{
 					selectedJetsFromW.push_back((TRootJet*) selectedJetsForBtagging[i]->Clone());
 				}
@@ -1551,7 +1566,7 @@ int main (int argc, char *argv[])
 			float massdifference = 100;
 			int previoussize = 0;
 			
-			for(int i = 0; i<selectedJetsFromW.size(); i++)
+			for(unsigned int i = 0; i<selectedJetsFromW.size(); i++)
 			{
 				selectedJetsFromW_DropUsedJets.push_back((TRootJet*) selectedJetsFromW[i]->Clone());
 			}
@@ -1563,9 +1578,9 @@ int main (int argc, char *argv[])
 				previoussize = selectedJetsFromW_DropUsedJets.size();
 			  	indexWjet1 = 999; indexWjet2 = 999;
 				massdifference = 100;
-				for(int i = 0; i<selectedJetsFromW_DropUsedJets.size(); i++)
+				for(unsigned int i = 0; i<selectedJetsFromW_DropUsedJets.size(); i++)
 				{
-					for(int j = 0; j<i; j++)
+					for(unsigned int j = 0; j<i; j++)
 					{
 						recoWmass = (*selectedJetsFromW_DropUsedJets[i]+*selectedJetsFromW_DropUsedJets[j]).M();
 						if(!(dataSetName.find("NP_")<=dataSetName.size()))
@@ -1602,15 +1617,15 @@ int main (int argc, char *argv[])
 					        selectedJets_MVAinput.push_back((TRootJet*) selectedJetsFromW_DropUsedJets[indexWjet2]->Clone());
 					}
 					
-					for(int i = 0; i<selectedJetsFromW_DropUsedJets.size(); i++)
+					for(unsigned int i = 0; i<selectedJetsFromW_DropUsedJets.size(); i++)
 					{
-						if(indexWjet1!=i && indexWjet2!=i)
+						if((unsigned int)indexWjet1!=i && (unsigned int)indexWjet2!=i)
 						{
 							selectedJetsFromW_DropUsedJets_tmp.push_back((TRootJet*) selectedJetsFromW_DropUsedJets[i]->Clone());
 						}
 					}
 					selectedJetsFromW_DropUsedJets.clear();
-					for(int i = 0; i<selectedJetsFromW_DropUsedJets_tmp.size(); i++)
+					for(unsigned int i = 0; i<selectedJetsFromW_DropUsedJets_tmp.size(); i++)
 					{
 						selectedJetsFromW_DropUsedJets.push_back((TRootJet*) selectedJetsFromW_DropUsedJets_tmp[i]->Clone());
 					}
@@ -1618,7 +1633,7 @@ int main (int argc, char *argv[])
 				}
 
 			}
-			while(selectedJetsFromW_DropUsedJets.size()>=2 && selectedJetsFromW_DropUsedJets.size()!= previoussize);
+			while(selectedJetsFromW_DropUsedJets.size()>=2 && selectedJetsFromW_DropUsedJets.size()!= (unsigned int)previoussize);
 				
 			if(nbOfBtags>=2) nbOfBtags = 2; //to make sure that events with more than 2 b-jets end up in the 2 b-jet bin			
 			
@@ -2138,7 +2153,7 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 {
      cout<<Comment<<endl;
      
-     for(int k=0; k<init_muons.size(); k++)
+     for(unsigned int k=0; k<init_muons.size(); k++)
      {
 	   cout<<" init_muons["<<k<<"] -> Px() = "<<init_muons[k]->Px()<<endl;
 	   cout<<"              -> Py() = "<<init_muons[k]->Py()<<endl;
@@ -2146,7 +2161,7 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 	   cout<<"                -> Pt() = "<<init_muons[k]->Pt()<<endl;
 	   cout<<"              -> E() = "<<init_muons[k]->E()<<endl;   
      }
-     for(int k=0; k<init_electrons.size(); k++)
+     for(unsigned int k=0; k<init_electrons.size(); k++)
      {
 	   cout<<" init_electrons["<<k<<"] -> Px() = "<<init_electrons[k]->Px()<<endl;
 	   cout<<"              -> Py() = "<<init_electrons[k]->Py()<<endl;
@@ -2154,7 +2169,7 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 	   cout<<"                -> Pt() = "<<init_electrons[k]->Pt()<<endl;
 	   cout<<"              -> E() = "<<init_electrons[k]->E()<<endl;   
      }         
-     for(int k=0; k<init_jets.size(); k++)
+     for(unsigned int k=0; k<init_jets.size(); k++)
      {
 	   cout<<" init_jets["<<k<<"] -> Px() = "<<init_jets[k]->Px()<<endl;
 	   cout<<"              -> Py() = "<<init_jets[k]->Py()<<endl;
@@ -2162,7 +2177,7 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 	   cout<<"                -> Pt() = "<<init_jets[k]->Pt()<<endl;
 	   cout<<"              -> E() = "<<init_jets[k]->E()<<endl;	   
      }
-     for(int k=0; k<mets.size(); k++)
+     for(unsigned int k=0; k<mets.size(); k++)
      {
            cout<<" mets["<<k<<"] -> Px() = "<<mets[k]->Px()<<endl;
            cout<<"         ->  Py() = "<<mets[k]->Py()<<endl;
@@ -2176,6 +2191,6 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 //https://twiki.cern.ch/twiki/bin/viewauth/CMS/SingleTopTurnOnCurves
 float jetprob(float jetpt, float btagvalue){
 	float prob=0.982*exp(-30.6*exp(-0.151*jetpt));
-	prob*=0.736*exp((-8.01*exp(-0.540*btagvalue)));
+  prob*=0.844*exp((-6.72*exp(-0.720*btagvalue))); //TCHP tagger used for BTAGIP trigger
 	return prob;
 };

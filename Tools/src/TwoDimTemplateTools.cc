@@ -70,14 +70,14 @@ void TwoDimTemplateTools::LoadTwoDimBinning(const string binningFileName)
    sprintf (txAxisName, "Binning_%s_SM", xvariable_.c_str ());
    
    TFile fBinning (binningFileName.c_str(), "READ"); //
-   cout<<" - Reading binning for variable "<<xvariable_<<endl;
+   //cout<<" - Reading binning for variable "<<xvariable_<<endl;
    fBinning.GetObject (txAxisName, xaxis);
    fBinning.Close();
    xbins = xaxis->GetXbins ()->fArray; //this is the "HT" binning
-   cout<<""<<endl;
+   //cout<<""<<endl;
    for (unsigned int b = 0; b < xarraysize; b++)
    {        
-	cout<<" xbins["<<b<<"] = "<<xbins[b]<<endl;
+	//cout<<" xbins["<<b<<"] = "<<xbins[b]<<endl;
    }
    
    //Binning for yvariable (originally "MTop")
@@ -191,28 +191,28 @@ void TwoDimTemplateTools::Convert2Dto1D(string postfix)
   {
      for(unsigned int d=0;d<datasets_.size();d++)
      {
-        cout<<"d = "<<d<<", "<<datasets_[d]->Name()<<endl;
+        //cout<<"d = "<<d<<", "<<datasets_[d]->Name()<<endl;
 	TH1F* htemp =0;
 	htemp = (TH1F*) Histos_xvariableBins[k][d].first;
 	b=b_remember;
-	cout<<"b before loop over htemp bins = "<<b<<endl;
+	//cout<<"b before loop over htemp bins = "<<b<<endl;
         nbins_htemp = htemp->GetNbinsX(); //should be nbinsyvariable_ + 1? (not sure... to be checked)
-	cout<<"nbins_htemp = "<<nbins_htemp<<endl;	
+	//cout<<"nbins_htemp = "<<nbins_htemp<<endl;	
 	
 	for(int j=2;j<nbins_htemp+1;j++)
 	{
 	    float bincontentj = 0;
 	    bincontentj = htemp->GetBinContent(j);
-	    cout<<" b = "<<b<<endl;
-	    cout<<"      bincontent "<<j<<" = "<<bincontentj<<endl;
+	    //cout<<" b = "<<b<<endl;
+	    //cout<<"      bincontent "<<j<<" = "<<bincontentj<<endl;
 	    h2D_1Dconverted[d]->SetBinContent(b,bincontentj);
 	    b++;
 	}	
      }
      
-     cout<<" b_remember before update = "<<b_remember<<endl;
+     //cout<<" b_remember before update = "<<b_remember<<endl;
      b_remember = b_remember + nbins_htemp - 1;
-     cout<<" b_remember after update = "<<b_remember<<endl;  
+     //cout<<" b_remember after update = "<<b_remember<<endl;  
   }
   
   //fout->cd();
@@ -226,7 +226,7 @@ void TwoDimTemplateTools::Convert2Dto1D(string postfix)
     if(!(datasets_[d]->Name().find("NP") <= datasets_[d]->Name().size()) || (datasets_[d]->Name().find("NP_overlay") <= datasets_[d]->Name().size()))
     {
       histoname = h2D_1Dconverted[d]->GetName();
-      cout<<" histoname = "<<histoname<<endl;   
+      //cout<<" histoname = "<<histoname<<endl;   
       templates1D_forMS.push_back(make_pair(h2D_1Dconverted[d],datasets_[d]));
     }
 
