@@ -208,18 +208,20 @@ void JetTools::scaleJets(vector<TRootJet*> inJets, float scale)
     scaleJet(inJets[i],scale);
 }
 
-void JetTools::correctMETTypeOne(TRootJet* inJet, TRootMET* inMET)  //Do not apply for |eta| > 4.7
+void JetTools::correctMETTypeOne(TRootJet* inJet, TRootMET* inMET, bool isData)  //Do not apply for |eta| > 4.7
 {
-  float corr = inJet->getJetCorrFactor("L1FastJetL2L3");
+  float corr = -9999;
+  if(!isData) corr = inJet->getJetCorrFactor("L1FastJetL2L3");
+  else corr = inJet->getJetCorrFactor("L1FastJetL2L3L23Residual"); //see JetAnalyzer.cc in TopTreeProducer
   float L1corr = inJet->getJetCorrFactor("L1FastJet");
-  inMET->SetPxPyPzE(inMET->Px()+(inJet->Px()-inJet->Px()*L1corr/corr), inMET->Py()+(inJet->Py()-inJet->Py()*L1corr/corr), inMET->Pz()+(inJet->Pz()-inJet->Pz()*L1corr/corr), inMET->E()+(inJet->E()-inJet->E()*L1corr/corr) );
+  inMET->SetPxPyPzE(inMET->Px()-(inJet->Px()-inJet->Px()*L1corr/corr), inMET->Py()-(inJet->Py()-inJet->Py()*L1corr/corr), 0, sqrt(pow(inMET->Px()-(inJet->Px()-inJet->Px()*L1corr/corr),2) + pow(inMET->Py()-(inJet->Py()-inJet->Py()*L1corr/corr),2)) ); //METx_raw = METx_raw + Px_raw - Px_corr    
 }
 
-void JetTools::correctMETTypeOne(vector<TRootJet*> inJets, TRootMET* inMET)
+void JetTools::correctMETTypeOne(vector<TRootJet*> inJets, TRootMET* inMET, bool isData)
 {
   for(unsigned int i=0; i<inJets.size();i++){
     if(fabs(inJets[i]->Eta()) <=4.7)  //EtaValuesAbs already contains the absolute value of the Eta values.
-      correctMETTypeOne(inJets[i],inMET);
+      correctMETTypeOne(inJets[i],inMET, isData);
       
   }
 }

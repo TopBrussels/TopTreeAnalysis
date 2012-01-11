@@ -183,13 +183,14 @@ int main (int argc, char *argv[])
   bool useMassesAndResolutions = true;
   bool doMVAjetcombination = true; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
   bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
-  if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0){
-    useMassesAndResolutions = true;
+  if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0)
+  {
+   		useMassesAndResolutions = true;
 		doMVAjetcombination = true;
 		TrainMVA = false;
-	}
+  }
   
-	bool TrainwithTprime = false;
+  bool TrainwithTprime = false;
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
   bool semiElectron = false; // use semiElectron channel?
@@ -299,30 +300,31 @@ int main (int argc, char *argv[])
   histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
-	histo1D["LeptonPt_TTbar"] = new TH1F("leptonspt ttbar","leptonspt ttbar;pt leptons;#events",250,0,500);
-	histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
-	histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
-	histo1D["LeptonPt_SBprime500"] = new TH1F("leptonspt sbprime500","leptonspt sbprime500;pt leptons;#events",250,0,500);
+  histo1D["LeptonPt_TTbar"] = new TH1F("leptonspt ttbar","leptonspt ttbar;pt leptons;#events",250,0,500);
+  histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
+  histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
+  histo1D["LeptonPt_SBprime500"] = new TH1F("leptonspt sbprime500","leptonspt sbprime500;pt leptons;#events",250,0,500);
   
-	string multileptons[2] = {"SSLeptons","TriLeptons"};
-	string histoName,histo_dataset;
-	for(int i = 0; i<2; i++){
+  string multileptons[2] = {"SSLeptons","TriLeptons"};
+  string histoName,histo_dataset;
+  for(int i = 0; i<2; i++)
+  {
 		histoName = "NbEvents_"+multileptons[i];
 		for(unsigned int d = 0; d < datasets.size (); d++){
 			histo_dataset = histoName+(datasets[d]->Name()).c_str(); 
 			histo1D[histo_dataset.c_str()] = new TH1F(histo_dataset.c_str(),histo_dataset.c_str(), 1, 0, 1);
 		}
-	}
+  }
 	
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0, 1, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0, 1, "");
   MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 250, 0, 500, "");
   MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
-	MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
+  MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
   
   cout << " - Declared histograms ..." <<  endl;
 
-	float NbSSevents = 0;  
+  float NbSSevents = 0;  
   float NbSSevents_1B_2W = 0; 
   float NbSSevents_1B_3W = 0; 
   float NbSSevents_1B_4W = 0; 
@@ -354,7 +356,7 @@ int main (int argc, char *argv[])
   string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat"+channelpostfix+".root";
   TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable);
   TwoDimTemplateTools HTvsMTop_2B_2W("2B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable); 
-  if(doMVAjetcombination && !TrainMVA)
+  if(doMVAjetcombination && !TrainMVA && useMassesAndResolutions) //Note: the boolean 'useMassesAndResolutions'is not needed when a Wmass file exists
   { 
     HTvsMTop_1B_2W.SetDatasets(datasets);
     HTvsMTop_2B_2W.SetDatasets(datasets);
@@ -423,8 +425,8 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////
   // PileUp Reweighting - 3D//
   ////////////////////////////////////////////////////
-	Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-	Lumi3DWeights.weight3D_init(1.0);
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DWeights.weight3D_init(1.0);
 
 
 //  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
@@ -439,7 +441,7 @@ int main (int argc, char *argv[])
   JetCombiner* jetCombiner;
   if(!doMVAjetcombination) TrainMVA = false;
   else if(doMVAjetcombination)
-		jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint
+     jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint
 
   if(doMVAjetcombination && TrainMVA) useMassesAndResolutions = true; //just to make sure the W mass plot is not produced (is not used anyway)
   
@@ -542,32 +544,29 @@ int main (int argc, char *argv[])
     //Don't forget to change the eqLumi in the config depending on training or evaluation (not safe, to be changed? Not so trivial...)
     int start = 0;
     int end = datasets[d]->NofEvtsToRunOver();
-    if(doMVAjetcombination)
-    {
-      if(TrainMVA && (datasets[d]->Name () == "TTbarJets_SemiMuon" || datasets[d]->Name () == "TTbarJets_SemiElectron"))
-      { 
+    if(TrainMVA && (datasets[d]->Name () == "TTbarJets_SemiMuon" || datasets[d]->Name () == "TTbarJets_SemiElectron"))
+    { 
         start = 0;
         end = int(datasets[d]->NofEvtsToRunOver()/3);
-      }
-      else if (!TrainMVA && (datasets[d]->Name () == "TTbarJets_SemiMuon" || datasets[d]->Name () == "TTbarJets_SemiElectron"))
-      {    
+    }
+    else if (!TrainMVA && (datasets[d]->Name () == "TTbarJets_SemiMuon" || datasets[d]->Name () == "TTbarJets_SemiElectron"))
+    {    
         start = int(datasets[d]->NofEvtsToRunOver()/3);
         end = datasets[d]->NofEvtsToRunOver();
-      }
-      else{
+    }
+    else{
         start = 0;
         end = datasets[d]->NofEvtsToRunOver();
-      }
     }
      
     if (verbose > 1)
       cout << " - Loop over events " << endl;      
     
-		for (unsigned int ievt = start; ievt < end; ievt++)
+    for (unsigned int ievt = start; ievt < end; ievt++)
     {        
 
-/////      if(ievt%1000 == 0)
-/////        std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
+      if(ievt%1000 == 0)
+        std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
         
       //load event
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
@@ -603,20 +602,20 @@ int main (int argc, char *argv[])
 					{
 						if (event->runId() >= 160431 && event->runId() <= 163261)//May10ReReco
 							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);
-  					else if (event->runId() >= 163270 && event->runId() <= 163869)
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile);
-  					else if (event->runId() >= 165088 && event->runId() <= 165633)//PromptReco_v4; splitted over 2 toptrees: 565 and 641
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile);
-  					else if (event->runId() >= 165970 && event->runId() <= 167043 && event->runId() != 166346)
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile);
+  						else if (event->runId() >= 163270 && event->runId() <= 163869)
+    				  			itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile);
+  						else if (event->runId() >= 165088 && event->runId() <= 165633)//PromptReco_v4; splitted over 2 toptrees: 565 and 641
+    							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile);
+  						else if (event->runId() >= 165970 && event->runId() <= 167043 && event->runId() != 166346)
+    						        itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile);
   					else if (event->runId() == 166346)
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v10"), currentRun, iFile);
   					else if (event->runId() >= 167078 && event->runId() <= 167913)
     				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v11"), currentRun, iFile);
-						else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco: equivalent to the run range of PromptReco_v5 normally, but Aug05 replaces this. Warning: somewhere we last about 5/pb in this data?
+					else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco: equivalent to the run range of PromptReco_v5 normally, but Aug05 replaces this. Warning: somewhere we last about 5/pb in this data?
 				  		itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
 						else if (event->runId() >= 172620 && event->runId() <= 173198) //first part of PromptReco_v6, same as previous trigger
-            	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
+            			  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
 						else if (event->runId() >= 173236 && event->runId() <= 173692) //second part of PromptReco_v6
 				  		itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);
 				
@@ -716,38 +715,37 @@ int main (int argc, char *argv[])
 				}	
       }*/
 
-
-			if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-			{
-        //taken from Annik, check what is does. NOTE: to be done; I think z-component should not be corrected, should stay 0. To be changed in JetTools? 
-        //----------------------------------------------------------
-        // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
-        //---------------------------------------------------------
-				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
-				//jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
-				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-
-				// JES systematic! 
-				if (doJESShift == 1)
-					jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-				else if (doJESShift == 2)
-					jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
-	
-				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
-	
+      //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
+      //----------------------------------------------------------
+      // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
+      //---------------------------------------------------------
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
+      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+        jetTools->correctMETTypeOne(init_jets,mets[0],true);
+      else
+        jetTools->correctMETTypeOne(init_jets,mets[0],false);
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
+      
+      if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
+      {	
+      				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
 				if(doJERShift == 1)
 					jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
 				else if(doJERShift == 2)
 					jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
 				else
 					jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
-	  
 				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
+		
+				// JES systematic! 
+				if (doJESShift == 1)
+					jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
+				else if (doJESShift == 2)
+					jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
       }
 
-
-			double lumiWeight3D = 1.0;
-			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
+	double lumiWeight3D = 1.0;
+	if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
 				////////////////////////////
       	// apply trigger Reweighting
       	////////////////////////////
@@ -856,7 +854,7 @@ int main (int argc, char *argv[])
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
       
-      float METCut = 40.;
+      float METCut = 40;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
       selection.setMuonCuts(40,2.1,0.1,10,0.02,0.3,1,1,1);
