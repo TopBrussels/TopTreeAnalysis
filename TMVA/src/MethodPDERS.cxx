@@ -1,4 +1,4 @@
-// @(#)root/tmva $Id: MethodPDERS.cxx,v 1.1.2.1 2010/07/27 13:18:28 mmaes Exp $
+// @(#)root/tmva $Id: MethodPDERS.cxx,v 1.1.2.1 2012/01/04 18:54:03 caebergs Exp $
 // Author: Andreas Hoecker, Yair Mahalalel, Joerg Stelzer, Helge Voss, Kai Voss
 
 /***********************************************************************************
@@ -945,7 +945,7 @@ Double_t TMVA::MethodPDERS::KernelNormalization (Double_t pdf)
    }
 
    // Normalizing by the full volume
-   ret *= ( TMath::Power (2., GetNvar()) * TMath::Gamma (1 + (((Double_t) GetNvar()) / 2.)) ) /
+   ret *= ( TMath::Power (2., (Double_t)GetNvar()) * TMath::Gamma (1 + (((Double_t) GetNvar()) / 2.)) ) /
       TMath::Power (TMath::Pi(), ((Double_t) GetNvar()) / 2.);
 
    return ret*pdf;
@@ -980,9 +980,9 @@ Double_t TMVA::MethodPDERS::NormSinc (Double_t x)
    Double_t ret;
 
    if (GetNvar() % 2)
-      ret = TMath::Power (sinc, GetNvar());
+     ret = TMath::Power (sinc, (Double_t)GetNvar());
    else
-      ret = TMath::Abs (sinc) * TMath::Power (sinc, GetNvar() - 1);
+     ret = TMath::Abs (sinc) * TMath::Power (sinc, (Double_t)GetNvar() - 1);
 
    return ret;
 }
@@ -1000,8 +1000,8 @@ Double_t TMVA::MethodPDERS::LanczosFilter (Int_t level, Double_t x)
    Double_t lanczos = (TMath::Sin(pix) / pix) * (TMath::Sin(pixtimesn) / pixtimesn);
    Double_t ret;
 
-   if (GetNvar() % 2) ret = TMath::Power (lanczos, GetNvar());
-   else               ret = TMath::Abs (lanczos) * TMath::Power (lanczos, GetNvar() - 1);
+   if (GetNvar() % 2) ret = TMath::Power (lanczos, (Double_t)GetNvar());
+   else               ret = TMath::Abs (lanczos) * TMath::Power (lanczos, (Double_t)GetNvar() - 1);
 
    return ret;
 }
