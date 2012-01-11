@@ -322,28 +322,28 @@ int main (int argc, char *argv[])
   
   cout << " - Declared histograms ..." <<  endl;
 
-	int NbSSevents = 0;  
-  int NbSSevents_1B_2W = 0; 
-  int NbSSevents_1B_3W = 0; 
-  int NbSSevents_1B_4W = 0; 
-  int NbSSevents_2B_2W = 0; 
-  int NbSSevents_2B_3W = 0; 
-  int NbSSevents_2B_4W = 0; 
-  int NP_NbSSevents_1B_2W = 0; 
-  int NP_NbSSevents_1B_3W = 0; 
-  int NP_NbSSevents_1B_4W = 0; 
-  int NP_NbSSevents_2B_2W = 0; 
-  int NP_NbSSevents_2B_3W = 0; 
-  int NP_NbSSevents_2B_4W = 0; 
-  int NbTrievents = 0; 
-  int NbTrievents_1B_3W = 0; 
-  int NbTrievents_1B_4W = 0; 
-  int NbTrievents_2B_3W = 0; 
-  int NbTrievents_2B_4W = 0; 
-  int NP_NbTrievents_1B_3W = 0; 
-  int NP_NbTrievents_1B_4W = 0; 
-  int NP_NbTrievents_2B_3W = 0; 
-  int NP_NbTrievents_2B_4W = 0; 
+	float NbSSevents = 0;  
+  float NbSSevents_1B_2W = 0; 
+  float NbSSevents_1B_3W = 0; 
+  float NbSSevents_1B_4W = 0; 
+  float NbSSevents_2B_2W = 0; 
+  float NbSSevents_2B_3W = 0; 
+  float NbSSevents_2B_4W = 0; 
+  float NP_NbSSevents_1B_2W = 0; 
+  float NP_NbSSevents_1B_3W = 0; 
+  float NP_NbSSevents_1B_4W = 0; 
+  float NP_NbSSevents_2B_2W = 0; 
+  float NP_NbSSevents_2B_3W = 0; 
+  float NP_NbSSevents_2B_4W = 0; 
+  float NbTrievents = 0; 
+  float NbTrievents_1B_3W = 0; 
+  float NbTrievents_1B_4W = 0; 
+  float NbTrievents_2B_3W = 0; 
+  float NbTrievents_2B_4W = 0; 
+  float NP_NbTrievents_1B_3W = 0; 
+  float NP_NbTrievents_1B_4W = 0; 
+  float NP_NbTrievents_2B_3W = 0; 
+  float NP_NbTrievents_2B_4W = 0; 
   
   /////////////////////////////////////////////////////////
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
@@ -1249,13 +1249,13 @@ int main (int argc, char *argv[])
 
 			if(isSSLepton)
 			{
-				NbSSevents++;
+				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
 				if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
 			}
 			if(isTriLepton)
 			{
-				NbTrievents++;
+				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
 				if(semiMuon) selecTableSemiMu.Fill(d,8,scaleFactor);				
 			}
@@ -1720,8 +1720,8 @@ int main (int argc, char *argv[])
 				    else if(isSSLepton && selectedJets.size() >=2) 
 				    {
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_1B_2W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_2W++;
+							if(dataSetName.find("NP") != 0) NbSSevents_1B_2W = NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_2W = NP_NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor ;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
@@ -1739,16 +1739,16 @@ int main (int argc, char *argv[])
 				    else if(isSSLepton && selectedJets.size() >=4) 
 			      {
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_1B_3W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W++;
+							if(dataSetName.find("NP") != 0) NbSSevents_1B_3W = NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_1B_3W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W++;
+							if(dataSetName.find("NP") != 0) NbTrievents_1B_3W = NbTrievents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
@@ -1767,16 +1767,16 @@ int main (int argc, char *argv[])
 				   else if(isSSLepton && selectedJets.size() >=6) 
 				   {
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_1B_4W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_4W++;
+							if(dataSetName.find("NP") != 0) NbSSevents_1B_4W = NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_4W = NP_NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 			     }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_1B_4W++;
-							if(dataSetName.find("rime500")) NP_NbTrievents_1B_4W++;
+							if(dataSetName.find("NP") != 0) NbTrievents_1B_4W = NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbTrievents_1B_4W = NP_NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				   }
@@ -1867,8 +1867,8 @@ int main (int argc, char *argv[])
 				     else if(isSSLepton && selectedJets.size() >=2) 
 				     {
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_2B_2W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_2B_2W++;
+							if(dataSetName.find("NP") != 0) NbSSevents_2B_2W = NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_2B_2W = NP_NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     } 
@@ -1885,16 +1885,16 @@ int main (int argc, char *argv[])
 				     else if(isSSLepton && selectedJets.size() >=4) 
 				     {
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_2B_3W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_2B_3W++;
+							if(dataSetName.find("NP") != 0) NbSSevents_2B_3W = NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_2B_3W = NP_NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_2B_3W++;
-							if(dataSetName.find("rime500")) NP_NbTrievents_2B_3W++;
+							if(dataSetName.find("NP") != 0) NbTrievents_2B_3W = NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbTrievents_2B_3W = NP_NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
@@ -1912,16 +1912,16 @@ int main (int argc, char *argv[])
 				     else if(isSSLepton && selectedJets.size() >=6) 
 				     {
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_2B_4W++;
-							if(dataSetName.find("rime500")) NP_NbSSevents_2B_4W++;
+							if(dataSetName.find("NP") != 0) NbSSevents_2B_4W = NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbSSevents_2B_4W = NP_NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_2B_4W++;
-							if(dataSetName.find("rime500")) NP_NbTrievents_2B_4W++;
+							if(dataSetName.find("NP") != 0) NbTrievents_2B_4W = NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("rime500")) NP_NbTrievents_2B_4W = NP_NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
