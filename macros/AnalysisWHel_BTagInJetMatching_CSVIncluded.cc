@@ -528,16 +528,16 @@ int main (int argc, char *argv[])
   // MSPlot["MuonDeltaRAfterKinFit"] = new MultiSamplePlot(datasets,"MuonDeltaRAfterKinFit",100,0,0.15,"MuonDeltaRAfterKinFit");
   // MSPlot["NeutrinoDeltaPhiAfterKinFit"] = new MultiSamplePlot(datasets,"NeutrinoDeltaPhiAfterKinFit",100,-2,2,"NeutrinoDeltaPhiAfterKinFit");
 
-  MSPlot["BLeptPxBeforeKinFit"]= new MultiSamplePlot(datasets,"BLeptPxBeforeKinFit",,100,-200,200"BLeptPxBeforeKinFit");
-  MSPlot["BLeptPxAfterKinFit"]= new MultiSamplePlot(datasets,"BLeptPxAfterKinFit",,100,-200,200"BLeptPxAfterKinFit");
-  MSPlot["MetPxBeforeKinFit"] = new MultiSamplePlot(datasets,"MetPxBeforeKinFit",,100,-200,200"MetPxBeforeKinFit");
-  MSPlot["MetPxAfterKinFit"] = new MultiSamplePlot(datasets,"MetPxAfterKinFit",,100,-200,200"MetPxAfterKinFit");
-  MSPlot["MuonPxBeforeKinFit"] = new MultiSamplePlot(datasets,"MuonPxBeforeKinFit",,100,-200,200"MuonPxBeforeKinFit");
-  MSPlot["MuonPxAfterKinFit"] = new MultiSamplePlot(datasets,"MuonPxAfterKinFit",,100,-200,200"MuonPxAfterKinFit");
-  MSPlot["WLeptPxBeforeKinFit"] = new MultiSamplePlot(datasets,"WLeptPxBeforeKinFit",,100,-200,200"WLeptPxBeforeKinFit");
-  MSPlot["WLeptPxAfterKinFit"] = new MultiSamplePlot(datasets,"WLeptPxAfterKinFit",,100,-200,200"WLeptPxAfterKinFit");
-  MSPlot["TopLeptPxBeforeKinFit"] = new MultiSamplePlot(datasets,"TopLeptPxBeforeKinFit",,100,-200,200"TopLeptPxBeforeKinFit");
-  MSPlot["TopLeptPxAfterKinFit"] = new MultiSamplePlot(datasets,"TopLeptPxAfterKinFit",,100,-200,200"TopLeptPxAfterKinFit");
+  MSPlot["BLeptPxBeforeKinFit"]= new MultiSamplePlot(datasets,"BLeptPxBeforeKinFit",100,-200,200,"BLeptPxBeforeKinFit");
+  MSPlot["BLeptPxAfterKinFit"]= new MultiSamplePlot(datasets,"BLeptPxAfterKinFit",100,-200,200,"BLeptPxAfterKinFit");
+  MSPlot["MetPxBeforeKinFit"] = new MultiSamplePlot(datasets,"MetPxBeforeKinFit",100,-200,200,"MetPxBeforeKinFit");
+  MSPlot["MetPxAfterKinFit"] = new MultiSamplePlot(datasets,"MetPxAfterKinFit",100,-200,200,"MetPxAfterKinFit");
+  MSPlot["MuonPxBeforeKinFit"] = new MultiSamplePlot(datasets,"MuonPxBeforeKinFit",100,-200,200,"MuonPxBeforeKinFit");
+  MSPlot["MuonPxAfterKinFit"] = new MultiSamplePlot(datasets,"MuonPxAfterKinFit",100,-200,200,"MuonPxAfterKinFit");
+  MSPlot["WLeptPxBeforeKinFit"] = new MultiSamplePlot(datasets,"WLeptPxBeforeKinFit",100,-200,200,"WLeptPxBeforeKinFit");
+  MSPlot["WLeptPxAfterKinFit"] = new MultiSamplePlot(datasets,"WLeptPxAfterKinFit",100,-200,200,"WLeptPxAfterKinFit");
+  MSPlot["TopLeptPxBeforeKinFit"] = new MultiSamplePlot(datasets,"TopLeptPxBeforeKinFit",100,-200,200,"TopLeptPxBeforeKinFit");
+  MSPlot["TopLeptPxAfterKinFit"] = new MultiSamplePlot(datasets,"TopLeptPxAfterKinFit",100,-200,200,"TopLeptPxAfterKinFit");
 
   std::cout << " MSPlots defined " << endl;
   
@@ -1250,7 +1250,27 @@ int main (int argc, char *argv[])
 			if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
 			  NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
 			}
+		      }//end of semi-mu
+
+		      if(TCHEbTagLoop == 7){ //optimal bTag case
+			MSPlot["CosThetaOptOrigKins"]->Fill(CosThetaOrigKins,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["KinFitProbOptOrigKins"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);  	
 		      }
+
+		      if(TCHEbTagLoop == 1){ //No bTag case
+			histo1D["BLeptPxBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]).Px());
+			histo1D["MetPxBeforeKinFit"]->Fill(MET.Px());
+			histo1D["MuonPxBeforeKinFit"]->Fill(muon.Px());
+			histo1D["WLeptPxBeforeKinFit"]->Fill((MET+muon).Px());
+			histo1D["TopLeptPxBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]+MET+muon).Px());
+
+			MSPlot["BLeptPxBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["MetPxBeforeKinFit"]->Fill(MET.Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["MuonPxBeforeKinFit"]->Fill(muon.Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["WLeptPxBeforeKinFit"]->Fill((MET+muon).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["TopLeptPxBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]+MET+muon).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+		      }
+			
 		    }
 		  }
 		    
@@ -1271,33 +1291,20 @@ int main (int argc, char *argv[])
 
 		      if(TCHEbTagLoop == 7){ //optimal bTag case
 			MSPlot["CosThetaOpt"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["KinFitProbOpt"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["CosThetaOptOrigKins"]->Fill(CosThetaOrigKins,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["KinFitProbOptOrigKins"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);  	
-	
+			MSPlot["KinFitProbOpt"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
 		      }		
 		      
 		      if(TCHEbTagLoop == 1){ //No bTag case
-			histo1D["BLeptPxBeforeKinFit"]->Fill((*selectedJets[BLeptIndexOrig]).Px());
 			histo1D["BLeptPxAfterKinFit"]->Fill(leptBJetKinFit[JetCombination].Px());
-			histo1D["MetPxBeforeKinFit"]->Fill(MET.Px());
 			histo1D["MetPxAfterKinFit"]->Fill(neutrinoKinFit[JetCombination].Px());
-			histo1D["MuonPxBeforeKinFit"]->Fill(muon.Px());
 			histo1D["MuonPxAfterKinFit"]->Fill(muonKinFit[JetCombination].Px());
-			histo1D["WLeptPxBeforeKinFit"]->Fill((MET+muon).Px());
 			histo1D["WLeptPxAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]).Px());
-			histo1D["TopLeptPxBeforeKinFit"]->Fill((*selectedJets[BLeptIndexOrig]++).Px());
 			histo1D["TopLeptPxAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]+leptBJetKinFit[JetCombination]).Px());
 
-			MSPlot["BLeptPxBeforeKinFit"]->Fill((*selectedJets[BLeptIndexOrig]).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 			MSPlot["BLeptPxAfterKinFit"]->Fill(leptBJetKinFit[JetCombination].Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["MetPxBeforeKinFit"]->Fill(MET.Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 			MSPlot["MetPxAfterKinFit"]->Fill(neutrinoKinFit[JetCombination].Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["MuonPxBeforeKinFit"]->Fill(muon.Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 			MSPlot["MuonPxAfterKinFit"]->Fill(muonKinFit[JetCombination].Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["WLeptPxBeforeKinFit"]->Fill((MET+muon).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 			MSPlot["WLeptPxAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["TopLeptPxBeforeKinFit"]->Fill((*selectedJets[BLeptIndexOrig]++).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 			MSPlot["TopLeptPxAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]+leptBJetKinFit[JetCombination]).Px(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 
 		      }
