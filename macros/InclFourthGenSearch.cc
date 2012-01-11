@@ -80,6 +80,8 @@ struct sort_pair_decreasing
 //To cout the Px, Py, Pz, E and Pt of objects
 void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElectron* > init_electrons, vector < TRootJet* > init_jets, vector < TRootMET* > mets, string Comment);
 
+float jetprob(float jetpt, float btagvalue);
+
 /// Normal Plots (TH1F* and TH2F*)
 map<string,TH1F*> histo1D;
 map<string,TH2F*> histo2D;
@@ -155,7 +157,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_default"; // to relabel the names of the output file
+  string postfix = ""; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -301,7 +303,17 @@ int main (int argc, char *argv[])
 	histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
 	histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
 	histo1D["LeptonPt_SBprime500"] = new TH1F("leptonspt sbprime500","leptonspt sbprime500;pt leptons;#events",250,0,500);
-
+  
+	string multileptons[2] = {"SSLeptons","TriLeptons"};
+	string histoName,histo_dataset;
+	for(int i = 0; i<2; i++){
+		histoName = "NbEvents_"+multileptons[i];
+		for(unsigned int d = 0; d < datasets.size (); d++){
+			histo_dataset = histoName+(datasets[d]->Name()).c_str(); 
+			histo1D[histo_dataset.c_str()] = new TH1F(histo_dataset.c_str(),histo_dataset.c_str(), 1, 0, 1);
+		}
+	}
+	
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0, 1, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0, 1, "");
   MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 250, 0, 500, "");
@@ -317,11 +329,21 @@ int main (int argc, char *argv[])
   int NbSSevents_2B_2W = 0; 
   int NbSSevents_2B_3W = 0; 
   int NbSSevents_2B_4W = 0; 
+  int NP_NbSSevents_1B_2W = 0; 
+  int NP_NbSSevents_1B_3W = 0; 
+  int NP_NbSSevents_1B_4W = 0; 
+  int NP_NbSSevents_2B_2W = 0; 
+  int NP_NbSSevents_2B_3W = 0; 
+  int NP_NbSSevents_2B_4W = 0; 
   int NbTrievents = 0; 
   int NbTrievents_1B_3W = 0; 
   int NbTrievents_1B_4W = 0; 
   int NbTrievents_2B_3W = 0; 
   int NbTrievents_2B_4W = 0; 
+  int NP_NbTrievents_1B_3W = 0; 
+  int NP_NbTrievents_1B_4W = 0; 
+  int NP_NbTrievents_2B_3W = 0; 
+  int NP_NbTrievents_2B_4W = 0; 
   
   /////////////////////////////////////////////////////////
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
@@ -401,7 +423,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////
   // PileUp Reweighting - 3D//
   ////////////////////////////////////////////////////
-	Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+	Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
 	Lumi3DWeights.weight3D_init(1.0);
 
 
@@ -666,9 +688,8 @@ int main (int argc, char *argv[])
  	   			}
 	   			else 
 	   			{
-   					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
-    
-  					if(itrigger == 9999)
+   					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
+						if(itrigger == 9999)
 						{
 							cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;	
 							exit(1);
@@ -724,14 +745,47 @@ int main (int argc, char *argv[])
 				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
       }
 
-      ////////////////////////////
-      // apply PU Reweighting
-      ////////////////////////////
-      //////////////////////// CHECK IF THIS IS OK!!!
+
 			double lumiWeight3D = 1.0;
 			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
+				////////////////////////////
+      	// apply trigger Reweighting
+      	////////////////////////////
+				float mceventtriggerweight = 1;
+				float prob=0;
+      	if(semiElectron){
+					std::vector<float> probabilities;
+					for(size_t i=0; i<init_jets.size(); ++i){
+    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighEffBJetTags()));
+					}
+				
+					//use binary code for objects to be triggered or not triggered
+					for(int i=0; i<pow(2.,(double)probabilities.size());++i){
+    				int ntrigobj=0;
+    				for(int j=0; j<probabilities.size();++j){
+							if((int)(i/pow(2.,(double)j))%2) ntrigobj++;
+						}
+						if(ntrigobj<1) continue;  
+						float newprob=1;
+						for(int j=0; j<probabilities.size();++j){
+							if((int)(i/pow(2.,(double)j))%2) newprob*=probabilities[j];
+							else newprob*=1-probabilities[j];
+						}
+						prob+=newprob;
+					}
+					mceventtriggerweight*=prob;
+
+					scaleFactor = scaleFactor*mceventtriggerweight;
+ 					//cout << "mcevent triggerweight " << mceventtriggerweight << endl;
+ 					//cout << "scalefactor (only triggerweight) " << scaleFactor << endl;
+      	}
+
+      	////////////////////////////
+      	// apply PU Reweighting
+      	////////////////////////////
 				lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
 	 			scaleFactor = scaleFactor*lumiWeight3D;
+      	histo1D["lumiWeights"]->Fill(scaleFactor);	
 			}
 			
 			/*if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"))
@@ -748,9 +802,7 @@ int main (int argc, char *argv[])
 	 			//not yet for systematics cases
 	 			scaleFactor = scaleFactor*lumiWeight;
       } */
-					
-      histo1D["lumiWeights"]->Fill(scaleFactor);	
-			
+								
       /////////////////////////////
       // Selection
       /////////////////////////////
@@ -804,7 +856,7 @@ int main (int argc, char *argv[])
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
       
-      float LeadingBtaggedJetCut = 50, METCut = 40.;
+      float METCut = 40.;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
       selection.setMuonCuts(40,2.1,0.1,10,0.02,0.3,1,1,1);
@@ -849,7 +901,7 @@ int main (int argc, char *argv[])
 							for(int j=0;j<selectedJets.size();j++)
 							{
 								//now require at least a b-tagged jet larger than a certain pre-defined cut
-								if((selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue) && (selectedJets[j]->Pt() > LeadingBtaggedJetCut))
+								if(selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue)
 								{
 									selecTableSemiMu.Fill(d,5,scaleFactor); 
 									if(mets[0]->Et()> METCut)
@@ -865,10 +917,10 @@ int main (int argc, char *argv[])
 											isSingleLepton = true; // we have a single muon event
 											isSingleMuon = true;
 											//cout << "is single muon!" << endl;
-											if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());	
-											if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
-											if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());							
-											if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());							
+											if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);	
+											if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+											if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);							
+											if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);							
 			     					}
 			     					
 										////for same-sign muons require exactly 2 muons, veto for very loose electrons
@@ -884,20 +936,20 @@ int main (int argc, char *argv[])
 													isSSMuon = true;
 													//cout << "is same-sign muon!" << endl;
 													if(dataSetName.find("TTbar")==0){
-														histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());
-														histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt());
+														histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+														histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
 													}
 													if(dataSetName.find("NP_Tprime500")==0){
-														histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
-														histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt());
+														histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+														histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
 													}
 													if(dataSetName.find("NP_Bprime500")==0){
-														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
-														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt());
+														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
 													}	  	
 													if(dataSetName.find("NP_SBprime500")==0){
-														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
-														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt());
+														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
 													}	  	
 												}
 											}
@@ -922,20 +974,20 @@ int main (int argc, char *argv[])
 															isSSMuEl = true;
 															//cout << "is same-sign muon+electron!" << endl;
 															if(dataSetName.find("TTbar")==0){
-																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());	
+																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);	
 															}
 															if(dataSetName.find("NP_Tprime500")==0){
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}
 															if(dataSetName.find("NP_Bprime500")==0){
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}	  	
 															if(dataSetName.find("NP_SBprime500")==0){
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}	  	
 														}
 													}
@@ -955,24 +1007,24 @@ int main (int argc, char *argv[])
 												isTriMuon = true;
 												//cout << "is trilepton: 3 muons!" << endl;
 												if(dataSetName.find("TTbar")==0){
-													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());
-													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt());
-													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[2]->Pt());
+													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
 												}
 												if(dataSetName.find("NP_Tprime500")==0){
-													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
-													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt());
-													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[2]->Pt());
+													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
 												}
 												if(dataSetName.find("NP_Bprime500")==0){
-													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
-													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt());
-													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[2]->Pt());
+													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
 												}	  	
 												if(dataSetName.find("NP_SBprime500")==0){
-													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
-													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt());
-													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[2]->Pt());
+													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
 												}	  	
 											}
 					 					}
@@ -996,24 +1048,24 @@ int main (int argc, char *argv[])
 															isTriMu2El1 = true;
 															//cout << "is trilepton: 2 muons + 1 electron!" << endl;
 															if(dataSetName.find("TTbar")==0){
-																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt());
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}
 															if(dataSetName.find("NP_Tprime500")==0){
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt());
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}
 															if(dataSetName.find("NP_Bprime500")==0){
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt());
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}	  	
 															if(dataSetName.find("NP_SBprime500")==0){
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt());
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
 															}	  	
 														}
 													}
@@ -1036,24 +1088,24 @@ int main (int argc, char *argv[])
 														isTriMu1El2 = true;
 														//cout << "is trilepton: 1 muon + 2 electrons!" << endl;
 														if(dataSetName.find("TTbar")==0){
-															histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt());
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt());
+															histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 														}
 														if(dataSetName.find("NP_Tprime500")==0){
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt());
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt());
+															histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 														}
 														if(dataSetName.find("NP_Bprime500")==0){
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt());
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt());
+															histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 														}	  	
 														if(dataSetName.find("NP_SBprime500")==0){
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt());
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt());
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 														}	  	
 													}
 												}
@@ -1071,6 +1123,7 @@ int main (int argc, char *argv[])
 			else if(trigged && semiElectron)
       {
         selecTableSemiEl.Fill(d,2,scaleFactor);
+    	 	
         if( isGoodPV )
         {
           selecTableSemiEl.Fill(d,3,scaleFactor);
@@ -1090,7 +1143,7 @@ int main (int argc, char *argv[])
 									for(int j=0;j<selectedJets.size();j++)
 									{
 										//now require at least a b-tagged jet larger than a certain pre-defined cut
-										if((selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue) && (selectedJets[j]->Pt() > LeadingBtaggedJetCut))
+										if(selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue)
 										{
 		             			selecTableSemiEl.Fill(d,7,scaleFactor);
 											if(mets[0]->Et()> METCut)
@@ -1106,10 +1159,10 @@ int main (int argc, char *argv[])
 													isSingleLepton = true;
 													isSingleElectron = true;
 													//cout << "is single electron!" << endl;
-													if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());
-													if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());							
-													if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());							
-													if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());							
+													if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+													if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);	
+													if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+													if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);			
 												}
 												
 												//// two same-sign electrons
@@ -1123,20 +1176,20 @@ int main (int argc, char *argv[])
 															isSSElectron = true;
 															//cout << "is same-sign electron!" << endl;
 															if(dataSetName.find("TTbar")==0){
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt());
+																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 															}
 															if(dataSetName.find("NP_Tprime500")==0){
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt());
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 															}
 															if(dataSetName.find("NP_Bprime500")==0){
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt());
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 															}	  	
 															if(dataSetName.find("NP_SBprime500")==0){
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt());
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
 															}	  	
 														}
 													}
@@ -1151,24 +1204,24 @@ int main (int argc, char *argv[])
 														isTriElectron = true;
 														//cout << "is trilepton: 3 electrons!" << endl;
 														if(dataSetName.find("TTbar")==0){
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt());
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[2]->Pt());
+															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
+															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
 														}
 														if(dataSetName.find("NP_Tprime500")==0){
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt());
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[2]->Pt());
+															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
 														}
 														if(dataSetName.find("NP_Bprime500")==0){
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt());
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[2]->Pt());
+															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
+															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
 														}	  	
 														if(dataSetName.find("NP_SBprime500")==0){
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt());
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt());
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[2]->Pt());
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
+															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
 														}	  	
 													}
 												}
@@ -1346,7 +1399,7 @@ int main (int argc, char *argv[])
 	
 					if(hadronicWJet1_.first != 9999 && hadronicWJet2_.first != 9999)
 					{
-	  				  histo1D["hadronicPartonWMass"]->Fill((*mcParticlesMatching_[hadronicWJet1_.second]+*mcParticlesMatching_[hadronicWJet2_.second]).M());	  
+	  				  histo1D["hadronicPartonWMass"]->Fill((*mcParticlesMatching_[hadronicWJet1_.second]+*mcParticlesMatching_[hadronicWJet2_.second]).M(),scaleFactor);	  
 	  				  Wbosonpartonsmatched = true;	  
 					}
 				} //if dataset ttbar
@@ -1354,7 +1407,7 @@ int main (int argc, char *argv[])
       	if(Wbosonpartonsmatched)
 	  		{
 					float WMassmatched_ = (*selectedJets[hadronicWJet1_.first]+*selectedJets[hadronicWJet2_.first]).M();
-      		histo1D["hadronicRecoWMass"]->Fill(WMassmatched_);
+      		histo1D["hadronicRecoWMass"]->Fill(WMassmatched_,scaleFactor);
 	  		}
 			} //end selectedJets.size()>=4 !useMassesAndResolutions && dataSetName.find("TTbarJets_SemiMu") == 0
 
@@ -1575,6 +1628,11 @@ int main (int argc, char *argv[])
 			//// here we put the events into boxes of #b's and #W's
 			////////////////////////////////////
 			if(nbOfWs>=4) nbOfWs = 4; // to make sure that events with more than 4 W bosons end up in the 4W bin
+
+			string histo1_dataset = "NbEvents_SSLeptons";
+			histo1_dataset = histo1_dataset+(datasets[d]->Name()).c_str();
+			string histo2_dataset = "NbEvents_TriLeptons";
+			histo2_dataset = histo2_dataset+(datasets[d]->Name()).c_str();
 			
 			//cout<<"nbOfBtags = "<<nbOfBtags<<endl;						
 			if(nbOfBtags==1)
@@ -1663,7 +1721,9 @@ int main (int argc, char *argv[])
 				    {
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_1B_2W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_2W++;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
  	
 					//cout << "done in 1B 2W box" << endl;
@@ -1680,13 +1740,17 @@ int main (int argc, char *argv[])
 			      {
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_1B_3W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W++;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_1B_3W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W++;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
 				    //cout << "done in 1B 3W box" << endl;
 				}
@@ -1704,13 +1768,17 @@ int main (int argc, char *argv[])
 				   {
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_1B_4W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_1B_4W++;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 			     }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_1B_4W++;
+							if(dataSetName.find("rime500")) NP_NbTrievents_1B_4W++;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				   }
 				   //cout << "done in 1B 4W box" << endl;
 				}
@@ -1798,9 +1866,11 @@ int main (int argc, char *argv[])
 			             } 
 				     else if(isSSLepton && selectedJets.size() >=2) 
 				     {
-					//count number of events with SS leptons
-					if(dataSetName.find("NP") != 0) NbSSevents_2B_2W++;
-					MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							//count number of events with SS leptons
+							if(dataSetName.find("NP") != 0) NbSSevents_2B_2W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_2B_2W++;
+							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     } 
 				}
 				else if(nbOfWs==3)
@@ -1816,13 +1886,17 @@ int main (int argc, char *argv[])
 				     {
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_2B_3W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_2B_3W++;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_2B_3W++;
+							if(dataSetName.find("rime500")) NP_NbTrievents_2B_3W++;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 					//cout << "done in 2B 3W box" << endl;
 				}
@@ -1839,13 +1913,17 @@ int main (int argc, char *argv[])
 				     {
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_2B_4W++;
+							if(dataSetName.find("rime500")) NP_NbSSevents_2B_4W++;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_2B_4W++;
+							if(dataSetName.find("rime500")) NP_NbTrievents_2B_4W++;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     //cout << "done in 2B 4W box" << endl;
 				}
@@ -1903,10 +1981,20 @@ int main (int argc, char *argv[])
   cout << "NbSSevents_2B_2W " << NbSSevents_2B_2W << endl;
   cout << "NbSSevents_2B_3W " << NbSSevents_2B_3W << endl;
   cout << "NbSSevents_2B_4W " << NbSSevents_2B_4W << endl;
+  cout << "signal (500) NbSSevents_1B_2W " << NP_NbSSevents_1B_2W << endl;
+  cout << "signal (500) NbSSevents_1B_3W " << NP_NbSSevents_1B_3W << endl;
+  cout << "signal (500) NbSSevents_1B_4W " << NP_NbSSevents_1B_4W << endl;
+  cout << "signal (500) NbSSevents_2B_2W " << NP_NbSSevents_2B_2W << endl;
+  cout << "signal (500) NbSSevents_2B_3W " << NP_NbSSevents_2B_3W << endl;
+  cout << "signal (500) NbSSevents_2B_4W " << NP_NbSSevents_2B_4W << endl;
   cout << "NbTrievents_1B_3W " << NbTrievents_1B_3W << endl;
   cout << "NbTrievents_1B_4W " << NbTrievents_1B_4W << endl;
   cout << "NbTrievents_2B_3W " << NbTrievents_2B_3W << endl;
   cout << "NbTrievents_2B_4W " << NbTrievents_2B_4W << endl;
+  cout << "signal (500) NbTrievents_1B_3W " << NP_NbTrievents_1B_3W << endl;
+  cout << "signal (500) NbTrievents_1B_4W " << NP_NbTrievents_1B_4W << endl;
+  cout << "signal (500) NbTrievents_2B_3W " << NP_NbTrievents_2B_3W << endl;
+  cout << "signal (500) NbTrievents_2B_4W " << NP_NbTrievents_2B_4W << endl;
   
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
@@ -2085,4 +2173,11 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 	   cout<<"         ->  E() = "<<mets[k]->E()<<endl;
 	   cout<<"              -> Et() = "<<mets[k]->Et()<<endl;
      }
+};
+
+//https://twiki.cern.ch/twiki/bin/viewauth/CMS/SingleTopTurnOnCurves
+float jetprob(float jetpt, float btagvalue){
+	float prob=0.982*exp(-30.6*exp(-0.151*jetpt));
+	prob*=0.736*exp((-8.01*exp(-0.540*btagvalue)));
+	return prob;
 };
