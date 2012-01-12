@@ -159,7 +159,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = ""; // to relabel the names of the output file
+  string postfix = "TESTING"; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -189,9 +189,9 @@ int main (int argc, char *argv[])
   bool useMassesAndResolutions = true;
   bool doMVAjetcombination = true; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
   bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
-  if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0)
+  if (doJESShift != 0 || doJERShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0 || doPUShift != 0)
   {
-   		useMassesAndResolutions = true;
+		useMassesAndResolutions = true;
 		doMVAjetcombination = true;
 		TrainMVA = false;
   }
@@ -318,13 +318,13 @@ int main (int argc, char *argv[])
 		histoName = "NbEvents_"+multileptons[i];
 		for(unsigned int d = 0; d < datasets.size (); d++){
 			histo_dataset = histoName+(datasets[d]->Name()).c_str(); 
-			histo1D[histo_dataset.c_str()] = new TH1F(histo_dataset.c_str(),histo_dataset.c_str(), 1, 0, 1);
+			histo1D[histo_dataset.c_str()] = new TH1F(histo_dataset.c_str(),histo_dataset.c_str(), 1, 0.5, 1.5);
 		}
   }
 	
-  MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0, 1, "");
-  MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0, 1, "");
-  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 250, 0, 500, "");
+  MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0.5, 1.5, "");
+  MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0.5, 1.5, "");
+  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 150, "");
   MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
   MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
   
@@ -1263,12 +1263,14 @@ int main (int argc, char *argv[])
 
 			if(isSSLepton)
 			{
+				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
 				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
 				if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
 			}
 			if(isTriLepton)
 			{
+				//cout << "IS TRI-LEPTON EVENT" << endl;
 				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
 				if(semiMuon) selecTableSemiMu.Fill(d,8,scaleFactor);				
@@ -1732,9 +1734,10 @@ int main (int argc, char *argv[])
 				    } 
 				    else if(isSSLepton && selectedJets.size() >=2) 
 				    {
+							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_1B_2W = NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_2W = NP_NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor ;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_2W = NP_NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor ;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
@@ -1751,17 +1754,19 @@ int main (int argc, char *argv[])
 				    }
 				    else if(isSSLepton && selectedJets.size() >=4) 
 			      {
+							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_1B_3W = NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
+							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_1B_3W = NbTrievents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    }
@@ -1779,17 +1784,19 @@ int main (int argc, char *argv[])
 				   }
 				   else if(isSSLepton && selectedJets.size() >=6) 
 				   {
+							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_1B_4W = NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_1B_4W = NP_NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_4W = NP_NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 			     }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
+							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_1B_4W = NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbTrievents_1B_4W = NP_NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_1B_4W = NP_NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				   }
@@ -1879,9 +1886,10 @@ int main (int argc, char *argv[])
 			             } 
 				     else if(isSSLepton && selectedJets.size() >=2) 
 				     {
+							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_2B_2W = NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_2B_2W = NP_NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_2W = NP_NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     } 
@@ -1897,17 +1905,19 @@ int main (int argc, char *argv[])
 				     }
 				     else if(isSSLepton && selectedJets.size() >=4) 
 				     {
+							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_2B_3W = NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_2B_3W = NP_NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_3W = NP_NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
+							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_2B_3W = NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbTrievents_2B_3W = NP_NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_2B_3W = NP_NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
@@ -1924,17 +1934,19 @@ int main (int argc, char *argv[])
 				     }
 				     else if(isSSLepton && selectedJets.size() >=6) 
 				     {
+							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							if(dataSetName.find("NP") != 0) NbSSevents_2B_4W = NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbSSevents_2B_4W = NP_NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_4W = NP_NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
-							//count number of events with three leptons
+						//cout << "IS TRI-LEPTON" << endl;
+								//count number of events with three leptons
 							if(dataSetName.find("NP") != 0) NbTrievents_2B_4W = NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("rime500")) NP_NbTrievents_2B_4W = NP_NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_2B_4W = NP_NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				     }
