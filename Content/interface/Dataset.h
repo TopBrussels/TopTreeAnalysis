@@ -17,14 +17,14 @@ public:
 	Dataset(string name, string title, bool doIt, int color, int lineStyle, int lineWidth, float normFactor, float xsection): Name_(name), Title_(title), DotIt_(doIt), Color_(color), LineStyle_(lineStyle),LineWidth_(lineWidth), NormFactor_(normFactor), Xsection_(xsection), PreSelEfficiency_(1.), EqLumi_(-1), eventTree_(NULL), runTree_(NULL), NofEvtsToRunOver_(-999) {;};
 	Dataset(string name, string title, bool doIt, int color, int lineStyle, int lineWidth, float normFactor, float xsection, vector<string> filenames): Name_(name), Title_(title), DotIt_(doIt), Color_(color), LineStyle_(lineStyle), LineWidth_(lineWidth), NormFactor_(normFactor), Xsection_(xsection), PreSelEfficiency_(1.), EqLumi_(-1), NofEvtsToRunOver_(-999), Filenames_(filenames) {
 		eventTree_ = new TChain("eventTree"); 
-		runTree_ = new TChain("runTree"); 
-		for(unsigned int i=0;i<Filenames_.size();i++) eventTree_->AddFile(Filenames_[i].c_str());
-		for(unsigned int i=0;i<Filenames_.size();i++) runTree_->AddFile(Filenames_[i].c_str());
+		runTree_   = new TChain("runTree"); 
+		for(unsigned int i=0;i<Filenames_.size();i++) eventTree_->Add(Filenames_[i].c_str());
+		for(unsigned int i=0;i<Filenames_.size();i++)   runTree_->Add(Filenames_[i].c_str());
 	};
 	Dataset(const Dataset &d);
 	~Dataset(){
 		if(eventTree_) eventTree_->Delete();
-		if(runTree_) runTree_->Delete();
+		if(runTree_)     runTree_->Delete();
 	};
 	
 	string Name()  const{return Name_;};
