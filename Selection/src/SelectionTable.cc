@@ -4,12 +4,14 @@ using namespace std;
 
   
 SelectionTable::SelectionTable(){
-	Lumi_ = 100;
+	lumi_ = 1.;
+	precision_ = -1;
 	merge_ = false;
 }
 
 SelectionTable::SelectionTable(vector<string> listOfCuts, vector<Dataset*> listOfDatasets){
-	Lumi_ = 100;
+	lumi_ = 1.;
+	precision_ = -1;
 	merge_ = false;
 	listOfCuts_ = listOfCuts;
 	listOfDatasets_ = listOfDatasets;
@@ -73,7 +75,8 @@ SelectionTable::SelectionTable(vector<string> listOfCuts, vector<Dataset*> listO
 }
 
 SelectionTable::SelectionTable(const SelectionTable& table){
-  Lumi_                        = table.Lumi_;
+  lumi_                        = table.lumi_;
+  precision_                   = table.precision_;
   listOfCuts_                  = table.listOfCuts_;
   listOfDatasets_              = table.listOfDatasets_;
   nofEventsRaw_                = table.nofEventsRaw_;
@@ -121,7 +124,7 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
   if(mergeTT || mergeQCD || mergeW || mergeZ || mergeST) merge_ = true;
 
   //scale to lumi
-  Scale(Lumi_);
+  Scale(lumi_);
   bool addedTT= false, addedQCD = false, addedW = false, addedZ = false, addedSingleTop = false;
 
   //loop on cuts
@@ -143,8 +146,8 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
   		nofEventsExpErrorHigh_[i][j] = nofEvents_[0][j]*WilsonScoreIntervalHigh(nofEvents_[i][j],nofEvents_[0][j])-nofEvents_[i][j];
   		nofEventsExpErrorLow_[i][j]  = nofEvents_[i][j]-nofEvents_[0][j]*WilsonScoreIntervalLow( nofEvents_[i][j],nofEvents_[0][j]);
 		// - rescaled errors from MC :
-  		nofEventsMcErrorHigh_[i][j]  = nofEventsRawErrorHigh_[i][j]*factor*Lumi_;
-  		nofEventsMcErrorLow_[i][j]   = nofEventsRawErrorLow_[i][j]*factor*Lumi_;
+  		nofEventsMcErrorHigh_[i][j]  = nofEventsRawErrorHigh_[i][j]*factor*lumi_;
+  		nofEventsMcErrorLow_[i][j]   = nofEventsRawErrorLow_[i][j]*factor*lumi_;
    		//push_back
   		if(i>0){
   			cutEfficiency_[i][j] =  (float)(nofEventsRaw_[i][j]/nofEventsRaw_[i-1][j]);
@@ -327,23 +330,30 @@ void SelectionTable::Fill( unsigned int DatasetNumber, vector<float> PassTheCuts
 	for(unsigned int i=0;i<PassTheCuts.size();i++) nofEventsRaw_[i][DatasetNumber]+= PassTheCuts[i];
 }
 
-void SelectionTable::Write(string filename, bool WithError){
-	ofstream fout(filename.c_str(), ios::out);
-	SelectionTable::Write(fout, WithError);
-}
 
-void SelectionTable::WriteTable(ofstream& fout, float** listTable_, bool writeMerged){
+void SelectionTable::WriteTable(ofstream& fout, float** listTable_, bool writeMerged, bool useBookTabs, bool writeLandscape){
+
+	unsigned int nDatasets = ( writeMerged ? listOfDatasetsMerged_.size() : listOfDatasets_.size() );
+
+	if(precision_ >= 0) fout << fixed << setprecision(precision_);
+	if(writeLandscape)fout<<"\\begin{landscape}"<<endl;
+	fout<<"\\begin{table}"<<endl;
+  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.}"<<endl;
+  	fout<<"\\label{tab:}"<<endl;
+  	fout<<"\\centering"<<endl;
+  	fout<<"\\begin{tabular}{|c|";
+	for(unsigned int i=0;i<nDatasets;i++) fout<<"c";
+	fout<<"|}"<<endl;
+  	fout<<(useBookTabs ? "\\toprule" : "\\hline")<<endl;
 	fout<<"&";
-	unsigned int nDatasets = listOfDatasets_.size();
-	if(writeMerged) nDatasets = listOfDatasetsMerged_.size();
 	for(unsigned int i=0;i<nDatasets;i++) {
-	  if(writeMerged) fout<<"$"<<listOfDatasetsMerged_[i]->Title()<<"$\t";
-	  else fout<<"$"<<listOfDatasets_[i]->Title()<<"$\t";
+		if(writeMerged) fout<<"$"<<listOfDatasetsMerged_[i]->Title()<<"$\t";
+		else fout<<"$"<<listOfDatasets_[i]->Title()<<"$\t";
 		if(i<nDatasets-1) fout<<"&";
 		else fout<<"\\\\"<<endl;
 	}
 	fout<<endl;
-	fout<<"\\hline"<<endl;
+	fout<<(useBookTabs ? "\\midrule" : "\\hline")<<endl;
 	for(unsigned int i=0;i<listOfCuts_.size();i++){
 		fout<<listOfCuts_[i]<<"&\t";
 		for(unsigned int j=0;j<nDatasets;j++){
@@ -353,11 +363,26 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_, bool writeMe
 		}
 		fout<<endl;
 	}
+  	fout<<(useBookTabs ? "\\bottomrule" : "\\hline")<<endl;
+  	fout<<"\\end{tabular}"<<endl;
+  	fout<<"\\end{table}"<<endl;
+	if(writeLandscape)fout<<"\\end{landscape}"<<endl;
 }
 
-void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listTableError_, bool writeMerged){
+void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listTableError_, bool writeMerged, bool useBookTabs, bool writeLandscape){
+	unsigned int nDatasets = ( writeMerged ? listOfDatasetsMerged_.size() : listOfDatasets_.size() );
+
+	if(precision_ >= 0) fout << fixed << setprecision(precision_);
+	if(writeLandscape)fout<<"\\begin{landscape}"<<endl;
+	fout<<"\\begin{table}"<<endl;
+  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.}"<<endl;
+  	fout<<"\\label{tab:}"<<endl;
+  	fout<<"\\centering"<<endl;
+  	fout<<"\\begin{tabular}{|c|";
+	for(unsigned int i=0;i<nDatasets;i++) fout<<"c";
+	fout<<"|}"<<endl;
+  	fout<<(useBookTabs ? "\\toprule" : "\\hline")<<endl;
 	fout<<"&";
-	unsigned int nDatasets = listOfDatasets_.size();
 	if(writeMerged) nDatasets = listOfDatasetsMerged_.size();
 	for(unsigned int i=0;i<nDatasets;i++) {
 		if(writeMerged) fout<<"$"<<listOfDatasetsMerged_[i]->Title()<<"$\t";
@@ -366,7 +391,7 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listT
 		else fout<<"\\\\"<<endl;
 	}
 	fout<<endl;
-	fout<<"\\hline"<<endl;
+	fout<<(useBookTabs ? "\\midrule" : "\\hline")<<endl;
 	for(unsigned int i=0;i<listOfCuts_.size();i++){
 		fout<<listOfCuts_[i]<<"&\t";
 		for(unsigned int j=0;j<nDatasets;j++){
@@ -376,20 +401,35 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listT
 		}
 		fout<<endl;
 	}
+  	fout<<(useBookTabs ? "\\bottomrule" : "\\hline")<<endl;
+  	fout<<"\\end{tabular}"<<endl;
+  	fout<<"\\end{table}"<<endl;
+	if(writeLandscape)fout<<"\\end{landscape}"<<endl;
 }
 
-void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listTableErrorHigh_ ,float** listTableErrorLow_, bool writeMerged){
+void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listTableErrorHigh_ ,float** listTableErrorLow_, bool writeMerged, bool useBookTabs, bool writeLandscape){
+	unsigned int nDatasets = ( writeMerged ? listOfDatasetsMerged_.size() : listOfDatasets_.size() );
+
+	if(precision_ >= 0) fout << fixed << setprecision(precision_);
+	if(writeLandscape)fout<<"\\begin{landscape}"<<endl;
+	fout<<"\\begin{table}"<<endl;
+  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.}"<<endl;
+  	fout<<"\\label{tab:}"<<endl;
+  	fout<<"\\centering"<<endl;
+  	fout<<"\\begin{tabular}{|c|";
+	for(unsigned int i=0;i<nDatasets;i++) fout<<"c";
+	fout<<"|}"<<endl;
+  	fout<<(useBookTabs ? "\\toprule" : "\\hline")<<endl;
 	fout<<"&";
-	unsigned int nDatasets = listOfDatasets_.size();
 	if(writeMerged) nDatasets = listOfDatasetsMerged_.size();
 	for(unsigned int i=0;i<nDatasets;i++) {
 		if(writeMerged) fout<<"$"<<listOfDatasetsMerged_[i]->Title()<<"$\t";
-	  else fout<<"$"<<listOfDatasets_[i]->Title()<<"$\t";
+	  	else fout<<"$"<<listOfDatasets_[i]->Title()<<"$\t";
 		if(i<nDatasets-1) fout<<"&";
 		else fout<<"\\\\"<<endl;
 	}
 	fout<<endl;
-	fout<<"\\hline"<<endl;
+	fout<<(useBookTabs ? "\\midrule" : "\\hline")<<endl;
 	for(unsigned int i=0;i<listOfCuts_.size();i++){
 		fout<<listOfCuts_[i]<<"&\t";
 		for(unsigned int j=0;j<nDatasets;j++){
@@ -399,190 +439,103 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listT
 		}
 		fout<<endl;
 	}
+  	fout<<(useBookTabs ? "\\bottomrule" : "\\hline")<<endl;
+  	fout<<"\\end{tabular}"<<endl;
+  	fout<<"\\end{table}"<<endl;
+	if(writeLandscape)fout<<"\\end{landscape}"<<endl;
 }
 
-void SelectionTable::Write(ofstream& fout, bool WithError){
-	if(WithError){
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-	fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, nofEventsRaw_, nofEventsRawErrorHigh_, nofEventsRawErrorLow_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Number of events}"<<endl;
-  	fout<<"\\label{tab:SelectionTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-	fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, nofEvents_, nofEventsMcErrorHigh_, nofEventsMcErrorLow_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Expected numbers of events for $"<<Lumi_<<"~pb^{-1}$ of integrated luminosity as calculated from Monte Carlo simulations }"<<endl;
-  	fout<<"\\label{tab:SelectionTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-	fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, nofEvents_, nofEventsExpErrorHigh_, nofEventsExpErrorLow_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Expected numbers of events and errors for $"<<Lumi_<<"~pb^{-1}$ of integrated luminosity }"<<endl;
-  	fout<<"\\label{tab:SelectionTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-		fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, cutEfficiency_, cutEfficiencyErrorHigh_, cutEfficiencyErrorLow_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Cut efficiencies}"<<endl;
-  	fout<<"\\label{tab:EfficienciesTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-		fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, cutEfficiency_, cutEfficiencyError_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Cut efficiencies}"<<endl;
-  	fout<<"\\label{tab:EfficienciesTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-		fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, totalCutEfficiency_, totalCutEfficiencyErrorHigh_, totalCutEfficiencyErrorLow_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Total cut efficiencies}"<<endl;
-  	fout<<"\\label{tab:TotalEfficienciesTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	////////////////////////////
-		fout<<"\\begin{table}"<<endl;
-  	fout<<"\\centering"<<endl;
-  	fout<<"\\begin{tabular}{|c|";
-		for(unsigned int i=0;i<listOfDatasets_.size();i++) fout<<"c";
-		fout<<"|}"<<endl;
-  	fout<<"\\hline"<<endl;
-		WriteTable(fout, totalCutEfficiency_, totalCutEfficiencyError_);
-  	fout<<"\\hline"<<endl;
-  	fout<<"\\end{tabular}"<<endl;
-  	fout<<"\\caption{Total cut efficiencies}"<<endl;
-  	fout<<"\\label{tab:TotalEfficienciesTable}"<<endl;
-  	fout<<"\\end{table}"<<endl;
-  	if(merge_) {
-    	////////////////////////////
-      fout<<"\\begin{table}"<<endl;
-      fout<<"\\centering"<<endl;
-    	fout<<"\\begin{tabular}{|c|";
-      for(unsigned int i=0;i<listOfDatasetsMerged_.size();i++) fout<<"c";
-      fout<<"|}"<<endl;
-  	  fout<<"\\hline"<<endl;
-  	  WriteTable(fout, nofEventsMerged_, nofEventsErrorMerged_, true);
-      fout<<"\\hline"<<endl;
-    	fout<<"\\end{tabular}"<<endl;
-    	fout<<"\\caption{Number of events, Merged}"<<endl;
-    	fout<<"\\label{tab:SelectionTableMerged}"<<endl;
-    	fout<<"\\end{table}"<<endl;
-    	////////////////////////////
-      fout<<"\\begin{table}"<<endl;
-      fout<<"\\centering"<<endl;
-    	fout<<"\\begin{tabular}{|c|";
-      for(unsigned int i=0;i<listOfDatasetsMerged_.size();i++) fout<<"c";
-      fout<<"|}"<<endl;
-  	  fout<<"\\hline"<<endl;
-  	  WriteTable(fout, nofEventsMerged_, nofEventsMcErrorHighMerged_, nofEventsMcErrorLowMerged_, true);
-      fout<<"\\hline"<<endl;
-    	fout<<"\\end{tabular}"<<endl;
-    	fout<<"\\caption{Expected numbers of events for $"<<Lumi_<<"~pb^{-1}$ of integrated luminosity as calculated from Monte Carlo simulations, Merged}"<<endl;
-    	fout<<"\\label{tab:SelectionTableMerged}"<<endl;
-    	fout<<"\\end{table}"<<endl;
-    	////////////////////////////
-      fout<<"\\begin{table}"<<endl;
-      fout<<"\\centering"<<endl;
-    	fout<<"\\begin{tabular}{|c|";
-      for(unsigned int i=0;i<listOfDatasetsMerged_.size();i++) fout<<"c";
-      fout<<"|}"<<endl;
-  	  fout<<"\\hline"<<endl;
-  	  WriteTable(fout, nofEventsMerged_, nofEventsExpErrorHighMerged_, nofEventsExpErrorLowMerged_, true);
-      fout<<"\\hline"<<endl;
-    	fout<<"\\end{tabular}"<<endl;
-    	fout<<"\\caption{Expected numbers of events and errors for $"<<Lumi_<<"~pb^{-1}$ of integrated luminosity, Merged}"<<endl;
-    	fout<<"\\label{tab:SelectionTableMerged}"<<endl;
-    	fout<<"\\end{table}"<<endl;
-    	////////////////////////////
-      fout<<"\\begin{table}"<<endl;
-    	fout<<"\\centering"<<endl;
-    	fout<<"\\begin{tabular}{|c|";
-	  	for(unsigned int i=0;i<listOfDatasetsMerged_.size();i++) fout<<"c";
-	  	fout<<"|}"<<endl;
-    	fout<<"\\hline"<<endl;
-	  	WriteTable(fout, cutEfficiencyMerged_, cutEfficiencyErrorMerged_, true);
-    	fout<<"\\hline"<<endl;
-    	fout<<"\\end{tabular}"<<endl;
-    	fout<<"\\caption{Cut efficiencies, Merged}"<<endl;
-    	fout<<"\\label{tab:EfficienciesTableMerged}"<<endl;
-    	fout<<"\\end{table}"<<endl;
-    	////////////////////////////
-      fout<<"\\begin{table}"<<endl;
-    	fout<<"\\centering"<<endl;
-    	fout<<"\\begin{tabular}{|c|";
-	  	for(unsigned int i=0;i<listOfDatasetsMerged_.size();i++) fout<<"c";
-	  	fout<<"|}"<<endl;
-    	fout<<"\\hline"<<endl;
-	  	WriteTable(fout, cutEfficiencyMerged_, cutEfficiencyErrorHighMerged_, cutEfficiencyErrorLowMerged_, true);
-    	fout<<"\\hline"<<endl;
-    	fout<<"\\end{tabular}"<<endl;
-    	fout<<"\\caption{Cut efficiencies, Merged}"<<endl;
-    	fout<<"\\label{tab:EfficienciesTableMerged}"<<endl;
-    	fout<<"\\end{table}"<<endl;
-    	////////////////////////////
-    	fout<<"\\begin{table}"<<endl;
-    	fout<<"\\centering"<<endl;
-    	fout<<"\\begin{tabular}{|c|";
-	  	for(unsigned int i=0;i<listOfDatasetsMerged_.size();i++) fout<<"c";
-	  	fout<<"|}"<<endl;
-    	fout<<"\\hline"<<endl;
-	  	WriteTable(fout, totalCutEfficiencyMerged_, totalCutEfficiencyErrorMerged_, true);
-    	fout<<"\\hline"<<endl;
-    	fout<<"\\end{tabular}"<<endl;
-    	fout<<"\\caption{Total cut efficiencies, Merged}"<<endl;
-    	fout<<"\\label{tab:TotalEfficienciesTableMerged}"<<endl;
-    	fout<<"\\end{table}"<<endl;
-    }
+void SelectionTable::Write(string filename, bool withError, bool writeMerged, bool useBookTabs, bool addRawNumbers, bool addEfficiencies, bool addTotalEfficiencies, bool writeLandscape){
+	ofstream fout(filename.c_str(), ios::out);
+	SelectionTable::Write(fout, withError, writeMerged, useBookTabs, addRawNumbers, addEfficiencies, addTotalEfficiencies, writeLandscape);
+}
+
+void SelectionTable::Write(ofstream& fout, bool withError, bool writeMerged, bool useBookTabs, bool addRawNumbers, bool addEfficiencies, bool addTotalEfficiencies, bool writeLandscape){
+
+	fout<<"\\documentclass{article}"<<endl;
+	if(useBookTabs)fout<<"\\usepackage{booktabs}"<<endl;
+	if(writeLandscape)fout<<"\\usepackage{lscape}"<<endl;
+	fout<<"\\begin{document}"<<endl;
+//	if(precision_ >= 0) cout << fixed << setprecision(precision_);
+
+  	//////////////////////////////////////////////////////////////
+  	// default table contains rescaled numbers (merged), no errors
+	// - this can be changed by switching the correct booleans
+	// - additional info (raw numbers, selection eff.) can also be added
+  	//////////////////////////////////////////////////////////////
+
+	if(writeMerged){
+		if(!withError)	WriteTable(fout, nofEventsMerged_, writeMerged, useBookTabs, writeLandscape);
+		else 		WriteTable(fout, nofEventsMerged_, nofEventsExpErrorHighMerged_, nofEventsExpErrorLowMerged_, writeMerged, useBookTabs, writeLandscape);
 	}
 	else{
-		fout<<"nof Events"<<endl;
-		WriteTable(fout, nofEvents_);
-		fout<<"Cut Effiency"<<endl;
-		WriteTable(fout, cutEfficiency_);
-		fout<<"Total Cut Effiency"<<endl;
-		WriteTable(fout, totalCutEfficiency_);
+		if(!withError)	WriteTable(fout, nofEvents_, writeMerged, useBookTabs, writeLandscape);
+		else            WriteTable(fout, nofEvents_, nofEventsExpErrorHigh_, nofEventsExpErrorLow_,writeMerged, useBookTabs, writeLandscape);
 	}
+	if(addRawNumbers) WriteTable(fout, nofEventsRaw_, nofEventsRawErrorHigh_, nofEventsRawErrorLow_, false, useBookTabs, writeLandscape);
+
+	if(addEfficiencies) {
+		if(writeMerged) WriteTable(fout, cutEfficiencyMerged_, cutEfficiencyErrorHighMerged_, cutEfficiencyErrorLowMerged_, true, useBookTabs, writeLandscape);
+		else		WriteTable(fout, cutEfficiency_, cutEfficiencyErrorHigh_, cutEfficiencyErrorLow_, false, useBookTabs, writeLandscape);
+	}
+	if(addTotalEfficiencies) {
+		if(writeMerged) WriteTable(fout, totalCutEfficiencyMerged_, totalCutEfficiencyErrorHighMerged_, totalCutEfficiencyErrorLowMerged_, true, useBookTabs, writeLandscape);
+		else		WriteTable(fout, totalCutEfficiency_, totalCutEfficiencyErrorHigh_, totalCutEfficiencyErrorLow_, false, useBookTabs, writeLandscape);
+	}
+/*
+  	////////////////////////////
+  	// table with raw numbers (unmerged)
+  	////////////////////////////
+	WriteTable(fout, nofEventsRaw_, nofEventsRawErrorHigh_, nofEventsRawErrorLow_,);
+  	////////////////////////////
+  	// table with rescaled numbers (unmerged) and MC errors
+  	////////////////////////////
+	WriteTable(fout, nofEvents_, nofEventsMcErrorHigh_, nofEventsMcErrorLow_);
+  	////////////////////////////
+  	// table with rescaled numbers (unmerged) and rescaled errors
+  	////////////////////////////
+	WriteTable(fout, nofEvents_, nofEventsExpErrorHigh_, nofEventsExpErrorLow_);
+  	////////////////////////////
+  	// table with selection efficiencies (unmerged)
+  	////////////////////////////
+	WriteTable(fout, cutEfficiency_, cutEfficiencyErrorHigh_, cutEfficiencyErrorLow_);
+  	////////////////////////////
+  	// table with selection efficiencies (unmerged)
+  	////////////////////////////
+	WriteTable(fout, cutEfficiency_, cutEfficiencyError_);
+  	////////////////////////////
+  	// table with cumulative selection efficiencies (unmerged)
+  	////////////////////////////
+	WriteTable(fout, totalCutEfficiency_, totalCutEfficiencyErrorHigh_, totalCutEfficiencyErrorLow_);
+  	////////////////////////////
+  	// table with cumulative selection efficiencies (unmerged)
+  	////////////////////////////
+	WriteTable(fout, totalCutEfficiency_, totalCutEfficiencyError_);
+
+    	////////////////////////////
+  	// table with rescaled numbers (merged) and no error
+  	////////////////////////////
+	WriteTable(fout, nofEventsMerged_, true);
+    	////////////////////////////
+  	// table with rescaled numbers (merged) and MC errors
+  	////////////////////////////
+	WriteTable(fout, nofEventsMerged_, nofEventsErrorMerged_, true);
+    	////////////////////////////
+  	// table with rescaled numbers (merged) and rescaled errors
+  	////////////////////////////
+	WriteTable(fout, nofEventsMerged_, nofEventsMcErrorHighMerged_, nofEventsMcErrorLowMerged_, true);
+    	////////////////////////////
+  	// table with rescaled numbers (merged) and rescaled errors
+  	////////////////////////////
+	WriteTable(fout, nofEventsMerged_, nofEventsExpErrorHighMerged_, nofEventsExpErrorLowMerged_, true);
+    	////////////////////////////
+  	WriteTable(fout, cutEfficiencyMerged_, cutEfficiencyErrorMerged_, true);
+    	////////////////////////////
+  	WriteTable(fout, cutEfficiencyMerged_, cutEfficiencyErrorHighMerged_, cutEfficiencyErrorLowMerged_, true);
+    	////////////////////////////
+  	WriteTable(fout, totalCutEfficiencyMerged_, totalCutEfficiencyErrorMerged_, true);
+*/
+	fout<<"\\end{document}"<<endl;
 }
 
 float SelectionTable::WilsonScoreIntervalHigh(float Non, float Ntot)
