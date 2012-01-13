@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
   //Systematic calculations 
   bool JESPlus=false;
   bool JESMinus=false;
-  bool JERPlus=false;
+  bool JERPlus= true;
   bool JERMinus=false;
 
   bool SFplus = false;

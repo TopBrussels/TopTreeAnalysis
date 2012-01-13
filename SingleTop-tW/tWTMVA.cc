@@ -50,8 +50,8 @@ int main(int argc, char* argv[]) {
   bool isRAW = false;
   
   // Train and test separation
-  bool isTrain = true;
-  bool isTest = false;
+  bool isTrain = false;
+  bool isTest = true;
   bool controlRegion1 = false;
   bool controlRegion2 = false;
   
