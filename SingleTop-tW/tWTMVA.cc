@@ -2,6 +2,7 @@
 //
 // Fall11 round
 // TMVA flat-tuples
+// adding run and event number (fblekman@cern.ch)
 //
 
 #include "TStyle.h"
@@ -236,6 +237,8 @@ int main(int argc, char* argv[]) {
       double luminosity;
       double weight, weightnopu, savetheweight;
       
+      int num_event, num_lumisec, num_run;
+
       int npu;
       int nvertex;
       
@@ -265,6 +268,10 @@ int main(int argc, char* argv[]) {
       
       TTree* myTree = new TTree("myTree", "   ");
       
+      myTree->Branch("num_event",&num_event,"num_event/I");
+      myTree->Branch("num_lumisec",&num_lumisec,"num_lumisec/I");
+      myTree->Branch("num_run",&num_run,"num_run/I");
+ 
       myTree->Branch("weight", &weight, "weight/D");
       myTree->Branch("weightnopu", &weightnopu, "weightnopu/D");
       myTree->Branch("savetheweight", &savetheweight, "savetheweight/D");
@@ -398,6 +405,10 @@ int main(int argc, char* argv[]) {
 	    
 	    //Trigger
 	    int currentRun = event->runId();
+	    num_run = currentRun;
+	    num_event = event->eventId();
+	    num_lumisec = event->nb();
+
 	    bool itrigger = false;
 	    bool isecondtrigger = false;
 	    
