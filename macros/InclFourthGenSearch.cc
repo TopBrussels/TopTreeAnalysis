@@ -159,7 +159,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "TESTING"; // to relabel the names of the output file
+  string postfix = ""; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -1870,7 +1870,7 @@ int main (int argc, char *argv[])
 					        myInclFourthGenSearchTools.FillMassPlots(d,nbOfBtags,nbOfWs,scaleFactor);
 					   	
 						//for the 2D binning (HT vs Mtop)
-					   	float fillweight = datasets[d]->NormFactor () * Luminosity;
+					   	float fillweight = datasets[d]->NormFactor () * Luminosity * scaleFactor;
 					   	if(anaEnv.MCRound==0)
 					   	{
 					   	  HTvsMTop_2B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
