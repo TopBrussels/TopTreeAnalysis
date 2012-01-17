@@ -778,7 +778,7 @@ int main (int argc, char *argv[])
 					std::vector<float> probabilities;
 					for(size_t i=0; i<init_jets.size(); ++i){
     				if(fabs(init_jets[i]->Eta())>2.6) continue;
-    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighEffBJetTags()));
+    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighPurBJetTags()));
 					}
 				
 					//use binary code for objects to be triggered or not triggered
@@ -1733,7 +1733,7 @@ int main (int argc, char *argv[])
 					   myInclFourthGenSearchTools.FillMassPlots(d,nbOfBtags,nbOfWs,scaleFactor);
 					   	
 					   //for the 2D binning (HT vs Mtop)
-					   float fillweight = datasets[d]->NormFactor () * Luminosity;
+					   float fillweight = datasets[d]->NormFactor () * Luminosity * scaleFactor;
 					   if(anaEnv.MCRound==0)
 					   {
 					        HTvsMTop_1B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
