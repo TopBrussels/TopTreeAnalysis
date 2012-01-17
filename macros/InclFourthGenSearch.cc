@@ -449,10 +449,21 @@ int main (int argc, char *argv[])
   ///////////////
   // JetCombiner
   ///////////////
-  JetCombiner* jetCombiner;
+  JetCombiner* jetCombiner_training;
+  JetCombiner* jetCombiner_1B_2W;
+  JetCombiner* jetCombiner_2B_2W;
   if(!doMVAjetcombination) TrainMVA = false;
   else if(doMVAjetcombination)
-     jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint
+  {
+    if(TrainMVA)
+       jetCombiner_training = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint
+    else
+    {
+      jetCombiner_1B_2W = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "_1B_2W",channelpostfix);
+      jetCombiner_2B_2W = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "_2B_2W",channelpostfix);
+    }
+  }
+  
 
   if(doMVAjetcombination && TrainMVA) useMassesAndResolutions = true; //just to make sure the W mass plot is not produced (is not used anyway)
   
@@ -1283,11 +1294,12 @@ int main (int argc, char *argv[])
       {
 				if(!isSingleLepton) continue;
 	
-        TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-        sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 
+        			TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
+        			sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 
 				if(semiMuon) 
-					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        else if(semiElectron)
-			jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
+					jetCombiner_training->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        
+				else if(semiElectron)
+					jetCombiner_training->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
       }
 
        
@@ -1297,8 +1309,9 @@ int main (int argc, char *argv[])
       //relevant for the kinematic fit: calculate the resolutions
       if(doMVAjetcombination && selectedJets.size()>=4 && doKinematicFit && CalculateResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
       {
-          jetCombiner->FillResolutions(resFitLightJets, resFitBJets);
-          continue;
+          jetCombiner_1B_2W->FillResolutions(resFitLightJets, resFitBJets);
+          jetCombiner_2B_2W->FillResolutions(resFitLightJets, resFitBJets);
+	  continue;
       }
       
 
@@ -1706,11 +1719,11 @@ int main (int argc, char *argv[])
 					        sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
                                                 
 						TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-			   			if(semiMuon) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-                           			else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor);
+			   			if(semiMuon) jetCombiner_1B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
+                           			else if(semiElectron) jetCombiner_1B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor);
 			  
-			   			//vector<unsigned int> goodCombi = jetCombiner->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
-			   			MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
+			   			//vector<unsigned int> goodCombi = jetCombiner_1B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
+			   			MVAvals = jetCombiner_1B_2W->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
 					   }
 					   else
 					     cout<<"WARNING: vector of selected jets for MVA input is not equal to 4 (but to "<<selectedJets_MVAinput.size()<<"); fix this!!"<<endl;					   
@@ -1853,11 +1866,11 @@ int main (int argc, char *argv[])
        			   			sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
                            			
 						TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-			   			if(semiMuon) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-              else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);
+			   			if(semiMuon) jetCombiner_2B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
+              					else if(semiElectron) jetCombiner_2B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);
 			  
-			   			//vector<unsigned int> goodCombi = jetCombiner->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
-			   			MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
+			   			//vector<unsigned int> goodCombi = jetCombiner_2B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
+			   			MVAvals = jetCombiner_2B_2W->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
 
 	   					//coutObjectsFourVector(init_muons,init_electrons,selectedJets_MVAinput,mets,"*** Before kinematic fit ***");
 						
@@ -2033,7 +2046,13 @@ int main (int argc, char *argv[])
   {
     string pathPNGJetCombi = pathPNG+"JetCombination/";
     mkdir(pathPNGJetCombi.c_str(),0777);
-    jetCombiner->Write(fout, true, pathPNGJetCombi);
+    if(TrainMVA)
+      jetCombiner_training->Write(fout, true, pathPNGJetCombi);
+    else
+    {
+      jetCombiner_1B_2W->Write(fout, true, pathPNGJetCombi);
+      jetCombiner_2B_2W->Write(fout, true, pathPNGJetCombi);
+    }
   }
   
   // Fill the resolution histograms and calculate the resolutions
@@ -2059,15 +2078,15 @@ int main (int argc, char *argv[])
     //cout << "mkdir " << (pathPNG+"MSPlot/").c_str()<< endl;
     for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
     {
- 	cout << "run over all MS plots 1" << endl;
+ 				cout << "run over all MS plots 1" << endl;
         MultiSamplePlot *temp = it->second;
- 	cout << "run over all MS plots 2" << endl;
+ 				cout << "run over all MS plots 2" << endl;
         string name = it->first;
- 	cout << "run over all MS plots 3 " << name << endl;
+ 				cout << "run over all MS plots 3 " << name << endl;
         temp->Draw(false, name, true, true, true, true, true,5);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal)
- 	cout << "run over all MS plots 4 " << endl;
+ 				cout << "run over all MS plots 4 " << endl;
         temp->Write(fout, name, true, pathPNG+"MSPlot/");//bool savePNG
- 	cout << "run over all MS plots - writing done" << endl;
+ 				cout << "run over all MS plots - writing done" << endl;
     }
     cout << "MultiSamplePlots written" << endl;
 	
@@ -2147,7 +2166,9 @@ int main (int argc, char *argv[])
   } //end !trainMVA
   
   //delete
-  if(jetCombiner) delete jetCombiner; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
+  if(jetCombiner_training && TrainMVA) delete jetCombiner_training; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
+  if(jetCombiner_1B_2W && !TrainMVA) delete jetCombiner_1B_2W;
+  if(jetCombiner_2B_2W && !TrainMVA) delete jetCombiner_2B_2W;
   
   delete fout;
 
