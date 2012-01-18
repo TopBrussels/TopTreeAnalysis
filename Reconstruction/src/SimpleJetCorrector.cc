@@ -1,12 +1,9 @@
-#include "TopTreeAnalysis/Reconstruction/src/JetMETUtilities.cc"
-#include "TopTreeAnalysis/Reconstruction/interface/SimpleJetCorrector.h"
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
-
+#include "../interface/SimpleJetCorrector.h"
+#include "../interface/JetCorrectorParameters.h"
+#include "JetMETUtilities.cc"
 #include <iostream>
 #include <sstream>
 #include <cmath>
-
-using namespace std;
 
 //------------------------------------------------------------------------ 
 //--- Default SimpleJetCorrector constructor -----------------------------
@@ -64,32 +61,32 @@ float SimpleJetCorrector::correction(const std::vector<float>& fX,const std::vec
   if (!mDoInterpolation)
     result = correctionBin(bin,fY);
   else
-  { 
-    for(unsigned i=0;i<mParameters->definitions().nBinVar();i++)
     { 
-      float xMiddle[3];
-      float xValue[3];
-      int prevBin = mParameters->neighbourBin((unsigned)bin,i,false);
-      int nextBin = mParameters->neighbourBin((unsigned)bin,i,true);
-      if (prevBin>=0 && nextBin>=0)
-      { 
-        xMiddle[0] = mParameters->record(prevBin).xMiddle(i);
-        xMiddle[1] = mParameters->record(bin).xMiddle(i);
-        xMiddle[2] = mParameters->record(nextBin).xMiddle(i);
-        xValue[0]  = correctionBin(prevBin,fY);
-        xValue[1]  = correctionBin(bin,fY);
-        xValue[2]  = correctionBin(nextBin,fY);
-        cor = quadraticInterpolation(fX[i],xMiddle,xValue);
-        tmp+=cor;
-      }
-      else
-      {
-        cor = correctionBin(bin,fY);
-        tmp+=cor;
-      }
+      for(unsigned i=0;i<mParameters->definitions().nBinVar();i++)
+        { 
+          float xMiddle[3];
+          float xValue[3];
+          int prevBin = mParameters->neighbourBin((unsigned)bin,i,false);
+          int nextBin = mParameters->neighbourBin((unsigned)bin,i,true);
+          if (prevBin>=0 && nextBin>=0)
+            { 
+              xMiddle[0] = mParameters->record(prevBin).xMiddle(i);
+              xMiddle[1] = mParameters->record(bin).xMiddle(i);
+              xMiddle[2] = mParameters->record(nextBin).xMiddle(i);
+              xValue[0]  = correctionBin(prevBin,fY);
+              xValue[1]  = correctionBin(bin,fY);
+              xValue[2]  = correctionBin(nextBin,fY);
+              cor = quadraticInterpolation(fX[i],xMiddle,xValue);
+              tmp+=cor;
+            }
+          else
+            {
+              cor = correctionBin(bin,fY);
+              tmp+=cor;
+            }
+        }
+      result = tmp/mParameters->definitions().nBinVar();        
     }
-    result = tmp/mParameters->definitions().nBinVar();        
-  }
   return result;
 }
 //------------------------------------------------------------------------ 
@@ -98,10 +95,18 @@ float SimpleJetCorrector::correction(const std::vector<float>& fX,const std::vec
 float SimpleJetCorrector::correctionBin(unsigned fBin,const std::vector<float>& fY) const 
 {
   if (fBin >= mParameters->size()) 
-    cerr<<"SimpleJetCorrector:  wrong bin: "<<fBin<<": only "<<mParameters->size()<<" available!"<<endl;
+    {
+      std::stringstream sserr;
+      sserr<<"wrong bin: "<<fBin<<": only "<<mParameters->size()<<" available!";
+      handleError("SimpleJetCorrector",sserr.str());
+    }
   unsigned N = fY.size();
   if (N > 4)
-    cerr<<"SimpleJetCorrector:  too many variables: "<<N<<" maximum is 4"<<endl;
+    {
+      std::stringstream sserr;
+      sserr<<"two many variables: "<<N<<" maximum is 4";
+      handleError("SimpleJetCorrector",sserr.str());
+    } 
   float result = -1;
   const std::vector<float>& par = mParameters->record(fBin).parameters();
   for(unsigned int i=2*N;i<par.size();i++)
@@ -133,7 +138,7 @@ unsigned SimpleJetCorrector::findInvertVar()
         break;
       }
   if (result >= vv.size()) 
-    cerr<<"SimpleJetCorrector:  Response inversion is required but JetPt is not specified as parameter"<<endl;
+    handleError("SimpleJetCorrector","Response inversion is required but JetPt is not specified as parameter"); 
   return result;
 }
 //------------------------------------------------------------------------ 
@@ -160,7 +165,6 @@ float SimpleJetCorrector::invert(std::vector<float> fX) const
     }
   return 1./rsp;
 }
-
 
 
 

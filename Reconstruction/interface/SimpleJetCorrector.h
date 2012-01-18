@@ -3,9 +3,8 @@
 
 #include <string>
 #include <vector>
-#include <TFormula.h>
 
-// Ported from CMSSW_3_8_7_patch1 to TopTrees by Stijn Blyweert
+#include <TFormula.h>
 
 using namespace std;
 
@@ -40,4 +39,5 @@ class SimpleJetCorrector
 };
 
 #endif
+
 

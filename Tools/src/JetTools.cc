@@ -16,7 +16,7 @@ JetTools::~JetTools()
 void JetTools::unCorrectJet(TRootJet* inJet)
 {
   float corr = inJet->getJetCorrFactor("L1FastJetL2L3");
-  cout << "uncorrecting!" << endl;
+  //cout << "uncorrecting!" << endl;
   inJet->SetPxPyPzE(inJet->Px()/corr, inJet->Py()/corr, inJet->Pz()/corr, inJet->E()/corr);
 }
 
@@ -56,6 +56,26 @@ void JetTools::correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs)
   for(unsigned int j=0; j<inJets.size(); j++)
     correctJet(inJets[j],nPV);
 }
+
+void JetTools::correctJet(TRootJet* inJet, float rhoPU)
+{
+  if(startFromRaw_)
+    unCorrectJet(inJet);
+  JEC_->setJetEta(inJet->Eta());
+  JEC_->setJetPt(inJet->Pt());
+  JEC_->setJetA(inJet->jetArea());
+  JEC_->setRho(rhoPU);
+ 
+  float corr = JEC_->getCorrection();
+  inJet->SetPxPyPzE(inJet->Px()*corr, inJet->Py()*corr, inJet->Pz()*corr, inJet->E()*corr);
+}
+
+void JetTools::correctJets(vector<TRootJet*> inJets, float rhoPU)
+{
+  for(unsigned int j=0; j<inJets.size(); j++)
+    correctJet(inJets[j],rhoPU);
+}
+
 
 void JetTools::correctJetJESUnc(TRootJet* inJet, string direction, float nSigma) // direction = plus or minus
 {

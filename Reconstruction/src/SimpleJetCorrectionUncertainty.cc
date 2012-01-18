@@ -1,9 +1,8 @@
-#include "TopTreeAnalysis/Reconstruction/interface/SimpleJetCorrectionUncertainty.h"
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
+#include "../interface/SimpleJetCorrectionUncertainty.h"
+#include "../interface/JetCorrectorParameters.h"
 #include <vector>
 #include <string>
-
-using namespace std;
+#include <iostream>
 
 /////////////////////////////////////////////////////////////////////////
 SimpleJetCorrectionUncertainty::SimpleJetCorrectionUncertainty () 
@@ -30,19 +29,25 @@ float SimpleJetCorrectionUncertainty::uncertainty(std::vector<float> fX, float f
 {
   float result = 1.;
   int bin = mParameters->binIndex(fX);
-  if (bin<0) 
-    cerr << "SimpleJetCorrectionUncertainty:  bin variables out of range" << endl;
+  if (bin<0) {
+    cout << "SimpleJetCorrectionUncertainty bin variables out of range" << endl;
+    exit(1);
+  }
   result = uncertaintyBin((unsigned)bin,fY,fDirection);
   return result;
 }
 /////////////////////////////////////////////////////////////////////////
 float SimpleJetCorrectionUncertainty::uncertaintyBin(unsigned fBin, float fY, bool fDirection) const 
 {
-  if (fBin >= mParameters->size()) 
-    cerr<<"SimpleJetCorrectionUncertainty:  wrong bin: "<<fBin<<": only "<<mParameters->size()<<" are available"<<endl;
+  if (fBin >= mParameters->size()) {
+    cout << "SimpleJetCorrectionUncertainty wrong bin: "<<fBin<<": only "<<mParameters->size()<<" are available" << endl;
+    exit(1);
+  }
   const std::vector<float>& p = mParameters->record(fBin).parameters();
-  if ((p.size() % 3) != 0)
-    cerr<<"SimpleJetCorrectionUncertainty:  wrong # of parameters: multiple of 3 expected, "<<p.size()<< " got"<<endl;
+  if ((p.size() % 3) != 0) {
+    cout << "SimpleJetCorrectionUncertainty wrong # of parameters: multiple of 3 expected, "<<p.size()<< " got" << endl;
+    exit(1);
+  }
   std::vector<float> yGrid,value;
   unsigned int N = p.size()/3;
   float result = -1.0;
@@ -82,8 +87,10 @@ float SimpleJetCorrectionUncertainty::linearInterpolation(float fZ, const float 
     {
       if (fY[0] == fY[1])
         r = fY[0];
-      else
-        cerr<<"SimpleJetCorrectionUncertainty:  interpolation error"<<endl;
+      else {
+        cout << "SimpleJetCorrectionUncertainty interpolation error" << endl;
+	exit(1);
+      }
     } 
   else   
     {

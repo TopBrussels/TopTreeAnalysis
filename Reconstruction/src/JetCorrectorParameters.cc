@@ -1,14 +1,11 @@
 //
 // Original Author:  Fedor Ratnikov Nov 9, 2007
-// $Id: JetCorrectorParameters.cc,v 1.1.2.2 2011/03/03 14:12:27 blyweert Exp $
+// $Id: JetCorrectorParameters.cc,v 1.19 2011/01/27 12:14:13 kkousour Exp $
 //
 // Generic parameters for Jet corrections
 //
-
-// Ported from CondFormats/JetMETObjects V03-01-21 to TopTrees by Stijn Blyweert
-
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
-#include "TopTreeAnalysis/Reconstruction/src/JetMETUtilities.cc"
+#include "../interface/JetCorrectorParameters.h"
+#include "JetMETUtilities.cc"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -42,7 +39,11 @@ JetCorrectorParameters::Definitions::Definitions(const std::string& fLine)
   if (!tokens.empty())
     { 
       if (tokens.size() < 6) 
-        cerr<<"JetCorrectorParameters::Definitions:  (line "<<fLine<<"): less than 6 expected tokens:"<<tokens.size()<<endl;
+        {
+          std::stringstream sserr;
+          sserr<<"(line "<<fLine<<"): less than 6 expected tokens:"<<tokens.size();
+          handleError("JetCorrectorParameters::Definitions",sserr.str());
+        }
       unsigned nvar = getUnsigned(tokens[0]);
       unsigned npar = getUnsigned(tokens[nvar+1]);
       for(unsigned i=0;i<nvar;i++)
@@ -60,7 +61,11 @@ JetCorrectorParameters::Definitions::Definitions(const std::string& fLine)
       else if (ss.find("PAR")==0)
 	mIsResponse = false;
       else
-        cerr<<"JetCorrectorParameters::Definitions:  unknown option ("<<ss<<")"<<endl; 
+        {
+          std::stringstream sserr;
+          sserr<<"unknown option ("<<ss<<")"; 
+          handleError("JetCorrectorParameters::Definitions",sserr.str());
+        }
       mLevel = tokens[npar+nvar+4]; 
     }
 }
@@ -76,7 +81,11 @@ JetCorrectorParameters::Record::Record(const std::string& fLine,unsigned fNvar) 
   if (!tokens.empty())
     { 
       if (tokens.size() < 3) 
-        cerr<<"JetCorrectorParameters::Record:  (line "<<fLine<<"): "<<"three tokens expected, "<<tokens.size()<<" provided."<<endl;
+        {
+          std::stringstream sserr;
+	  sserr<<"(line "<<fLine<<"): "<<"three tokens expected, "<<tokens.size()<<" provided.";
+          handleError("JetCorrectorParameters::Record",sserr.str());
+        }
       for(unsigned i=0;i<mNvar;i++)
         {
           mMin.push_back(getFloat(tokens[i*mNvar]));
@@ -84,7 +93,11 @@ JetCorrectorParameters::Record::Record(const std::string& fLine,unsigned fNvar) 
         }
       unsigned nParam = getUnsigned(tokens[2*mNvar]);
       if (nParam != tokens.size()-(2*mNvar+1)) 
-        cerr<<"JetCorrectorParameters::Record:  (line "<<fLine<<"): "<<tokens.size()-(2*mNvar+1)<<" parameters, but nParam="<<nParam<<"."<<endl;
+        {
+          std::stringstream sserr;
+	  sserr<<"(line "<<fLine<<"): "<<tokens.size()-(2*mNvar+1)<<" parameters, but nParam="<<nParam<<".";
+          handleError("JetCorrectorParameters::Record",sserr.str());
+        }
       for (unsigned i = (2*mNvar+1); i < tokens.size(); ++i)
         mParameters.push_back(getFloat(tokens[i]));
     } 
@@ -130,10 +143,14 @@ JetCorrectorParameters::JetCorrectorParameters(const std::string& fFile, const s
         } 
     }
   if (currentDefinitions=="")
-    cerr<<"JetCorrectorParameters:  No definitions found!!!"<<endl;
+    handleError("JetCorrectorParameters","No definitions found!!!");
   if (mRecords.empty() && currentSection == "") mRecords.push_back(Record());
   if (mRecords.empty() && currentSection != "") 
-    cerr<<"JetCorrectorParameters::  the requested section "<<fSection<<" doesn't exist!"<<endl;
+    {
+      std::stringstream sserr; 
+      sserr<<"the requested section "<<fSection<<" doesn't exist!";
+      handleError("JetCorrectorParameters",sserr.str()); 
+    }
   std::sort(mRecords.begin(), mRecords.end());
   valid_ = true;
 }
@@ -145,7 +162,11 @@ int JetCorrectorParameters::binIndex(const std::vector<float>& fX) const
   int result = -1;
   unsigned N = mDefinitions.nBinVar();
   if (N != fX.size()) 
-    cerr<<"JetCorrectorParameters:  # bin variables "<<N<<" doesn't correspont to requested #: "<<fX.size()<<endl;
+    {
+      std::stringstream sserr; 
+      sserr<<"# bin variables "<<N<<" doesn't correspont to requested #: "<<fX.size();
+      handleError("JetCorrectorParameters",sserr.str());
+    }
   unsigned tmp;
   for (unsigned i = 0; i < size(); ++i) 
     {
@@ -169,7 +190,11 @@ int JetCorrectorParameters::neighbourBin(unsigned fIndex, unsigned fVar, bool fN
   int result = -1;
   unsigned N = mDefinitions.nBinVar();
   if (fVar >= N) 
-    cerr<<"JetCorrectorParameters:  # of bin variables "<<N<<" doesn't correspond to requested #: "<<fVar<<endl;
+    {
+      std::stringstream sserr; 
+      sserr<<"# of bin variables "<<N<<" doesn't correspond to requested #: "<<fVar;
+      handleError("JetCorrectorParameters",sserr.str()); 
+    }
   unsigned tmp;
   for (unsigned i = 0; i < size(); ++i) 
     {
@@ -205,7 +230,11 @@ int JetCorrectorParameters::neighbourBin(unsigned fIndex, unsigned fVar, bool fN
 unsigned JetCorrectorParameters::size(unsigned fVar) const
 {
   if (fVar >= mDefinitions.nBinVar()) 
-    cerr<<"JetCorrectorParameters:   requested bin variable index "<<fVar<<" is greater than number of variables "<<mDefinitions.nBinVar()<<endl;
+    { 
+      std::stringstream sserr; 
+      sserr<<"requested bin variable index "<<fVar<<" is greater than number of variables "<<mDefinitions.nBinVar();
+      handleError("JetCorrectorParameters",sserr.str()); 
+    }    
   unsigned result = 0;
   float tmpMin(-9999),tmpMax(-9999);
   for (unsigned i = 0; i < size(); ++i)
@@ -417,7 +446,7 @@ JetCorrectorParameters const & JetCorrectorParametersCollection::operator[]( key
   for ( ; i != iend; ++i ) {
     if ( k == i->first ) return i->second;
   }
-  cerr << "InvalidInput:  cannot find key " << static_cast<int>(k) << endl;
+  cout << "JetCorrectorParameters:: InvalidInput cannot find key " << static_cast<int>(k) << std::endl;
   exit(1);
 }
 
@@ -499,7 +528,15 @@ JetCorrectorParametersCollection::findKey( std::string const & label ) const {
   } 
 
   // Didn't find default corrections, throw exception
-  cerr << "InvalidInput:  Cannot find label " << label << std::endl;
+  cout << "JetCorrParameters:: InvalidInput Cannot find label " << label << std::endl;
   exit(1);
 }
 
+
+//#include "FWCore/Framework/interface/EventSetup.h"
+//#include "FWCore/Framework/interface/ESHandle.h"
+//#include "FWCore/Framework/interface/ModuleFactory.h"
+//#include "FWCore/Utilities/interface/typelookup.h"
+ 
+//TYPELOOKUP_DATA_REG(JetCorrectorParameters);
+//TYPELOOKUP_DATA_REG(JetCorrectorParametersCollection);

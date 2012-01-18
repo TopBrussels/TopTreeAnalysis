@@ -3,19 +3,16 @@
 // Author: Konstantinos Kousouris, Philipp Schieferdecker
 // Email:  kkousour@fnal.gov, philipp.schieferdecker@cern.ch
 
-// Ported from CondFormats/JetMETObjects V03-01-21 to TopTrees by Stijn Blyweert
-
-#include "TopTreeAnalysis/Reconstruction/interface/FactorizedJetCorrector.h"
-#include "TopTreeAnalysis/Reconstruction/interface/SimpleJetCorrector.h"
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
-
-#include "TVector3.h"
-#include "TLorentzVector.h"
+#include "../interface/FactorizedJetCorrector.h"
+#include "../interface/SimpleJetCorrector.h"
+#include "../interface/JetCorrectorParameters.h"
+#include "JetMETUtilities.cc"
+#include "Math/PtEtaPhiE4D.h"
+#include "Math/Vector3D.h"
+#include "Math/LorentzVector.h"
 #include <vector>
 #include <string>
 #include <sstream>
-
-using namespace std;
 
 //------------------------------------------------------------------------ 
 //--- Default FactorizedJetCorrector constructor -------------------------
@@ -170,7 +167,11 @@ void FactorizedJetCorrector::initCorrectors(const std::string& fLevels, const st
       else if (tmp[i] == "L1FastJet")
         mLevels.push_back(kL1fj);
       else
-        cerr<<"FactorizedJetCorrector:  unknown correction level "<<tmp[i]<<endl;
+        {
+          std::stringstream sserr; 
+          sserr<<"unknown correction level "<<tmp[i];
+	  handleError("FactorizedJetCorrector",sserr.str());
+	}							
     }   	 
   //---- Read the parameter filenames string and parse the requested sub-correction tags.
   std::vector<std::string> Files = parseLevels(removeSpaces(fFiles));
@@ -184,16 +185,20 @@ void FactorizedJetCorrector::initCorrectors(const std::string& fLevels, const st
     {     	    
       if (mLevels[i]==kL1 || mLevels[i]==kL2 || mLevels[i]==kL3 || mLevels[i]==kL4 || mLevels[i]==kL6 || mLevels[i]==kL1fj)
         mCorrectors.push_back(new SimpleJetCorrector(Files[i])); 
-      else if (mLevels[i]==kL5 && FlavorOption.length()==0)
-        cerr<<"FactorizedJetCorrector:  must specify flavor option when requesting L5Flavor correction!"<<endl;
+      else if (mLevels[i]==kL5 && FlavorOption.length()==0) 
+        handleError("FactorizedJetCorrector","must specify flavor option when requesting L5Flavor correction!");
       else if (mLevels[i]==kL5 && FlavorOption.length()>0)
         mCorrectors.push_back(new SimpleJetCorrector(Files[i],FlavorOption));
       else if (mLevels[i]==kL7 && PartonOption.length()==0) 
-        cerr<<"FactorizedJetCorrector:  must specify parton option when requesting L7Parton correction!"<<endl;
+        handleError("FactorizedJetCorrector","must specify parton option when requesting L7Parton correction!");
       else if (mLevels[i]==kL7 && PartonOption.length()>0)
         mCorrectors.push_back(new SimpleJetCorrector(Files[i],PartonOption));
       else 
-        cerr<<"FactorizedJetCorrector:  unknown correction level "<<tmp[i]<<endl;
+        {
+          std::stringstream sserr; 
+          sserr<<"unknown correction level "<<tmp[i];
+	  handleError("FactorizedJetCorrector",sserr.str());
+	}
       mBinTypes.push_back(mapping(mCorrectors[i]->parameters().definitions().binVar())); 
       mParTypes.push_back(mapping(mCorrectors[i]->parameters().definitions().parVar()));	
     } 
@@ -208,19 +213,19 @@ std::vector<FactorizedJetCorrector::VarTypes> FactorizedJetCorrector::mapping(co
     {
       std::string ss = fNames[i]; 
       if (ss=="JetPt")
-	      result.push_back(kJetPt);
+	 result.push_back(kJetPt);
       else if (ss=="JetEta")
-        result.push_back(kJetEta); 
+         result.push_back(kJetEta); 
       else if (ss=="JetPhi")
-	      result.push_back(kJetPhi);
+	 result.push_back(kJetPhi);
       else if (ss=="JetE")
-	      result.push_back(kJetE);
+	 result.push_back(kJetE);
       else if (ss=="JetEMF")
-	      result.push_back(kJetEMF);
+	 result.push_back(kJetEMF);
       else if (ss=="RelLepPt")
-	      result.push_back(kRelLepPt);
+	result.push_back(kRelLepPt);
       else if (ss=="PtRel")
-	      result.push_back(kPtRel);
+	result.push_back(kPtRel);
       else if (ss=="NPV")
         result.push_back(kNPV);
       else if (ss=="JetA")
@@ -228,7 +233,11 @@ std::vector<FactorizedJetCorrector::VarTypes> FactorizedJetCorrector::mapping(co
       else if (ss=="Rho")
         result.push_back(kRho);
       else
-        cerr<<"FactorizedJetCorrector:  unknown parameter name: "<<ss<<endl;
+         {
+           std::stringstream sserr; 
+           sserr<<"unknown parameter name: "<<ss;
+	   handleError("FactorizedJetCorrector",sserr.str());
+	 }
     }
   return result;  
 }
@@ -239,11 +248,19 @@ void FactorizedJetCorrector::checkConsistency(const std::vector<std::string>& fL
 {
   //---- First check: the number of tags must be equal to the number of sub-corrections.
   if (fLevels.size() != fTags.size()) 
-    cerr<<"FactorizedJetCorrector:  number of correction levels: "<<fLevels.size()<<" doesn't match # of tags: "<<fTags.size()<<endl;
+    {
+      std::stringstream sserr; 
+      sserr<<"number of correction levels: "<<fLevels.size()<<" doesn't match # of tags: "<<fTags.size();
+      handleError("FactorizedJetCorrector",sserr.str());
+    }
   //---- Second check: each tag must contain the corresponding sub-correction level.
   for(unsigned int i=0;i<fTags.size();i++) 
     if ((int)fTags[i].find(fLevels[i])<0) 
-      cerr<<"FactorizedJetCorrector:  inconsistent tag: "<<fTags[i]<<" for "<<"the requested correction: "<<fLevels[i]<<endl;
+      {
+        std::stringstream sserr; 
+        sserr<<"inconsistent tag: "<<fTags[i]<<" for "<<"the requested correction: "<<fLevels[i];
+        handleError("FactorizedJetCorrector",sserr.str());
+      }
 }
 //------------------------------------------------------------------------ 
 //--- String parser ------------------------------------------------------
@@ -373,65 +390,70 @@ std::vector<float> FactorizedJetCorrector::fillVector(std::vector<VarTypes> fVar
       if (fVarTypes[i] == kJetEta)
         {
           if (!mIsJetEtaset) 
-            cerr<<"FactorizedJetCorrector:  jet eta is not set"<<endl;
+            handleError("FactorizedJetCorrector","jet eta is not set");
           result.push_back(mJetEta);
         }
       else if (fVarTypes[i] == kNPV)
         {
           if (!mIsNPVset)
-            cerr<<"FactorizedJetCorrector:  number of primary vertices is not set"<<endl;
+            handleError("FactorizedJetCorrector","number of primary vertices is not set");
           result.push_back(mNPV);
         }
       else if (fVarTypes[i] == kJetPt) 
         {
           if (!mIsJetPtset)
-            cerr<<"FactorizedJetCorrector:  jet pt is not set"<<endl;
+            handleError("FactorizedJetCorrector","jet pt is not set");
           result.push_back(mJetPt);
         }
       else if (fVarTypes[i] == kJetPhi) 
         {
           if (!mIsJetPhiset) 
-            cerr<<"FactorizedJetCorrector:  jet phi is not set"<<endl;
+            handleError("FactorizedJetCorrector","jet phi is not set");
           result.push_back(mJetPhi);
         }
       else if (fVarTypes[i] == kJetE) 
         {
           if (!mIsJetEset) 
-            cerr<<"FactorizedJetCorrector:  jet E is not set"<<endl;
+            handleError("FactorizedJetCorrector","jet E is not set");
           result.push_back(mJetE);
         }
       else if (fVarTypes[i] == kJetEMF) 
         {
           if (!mIsJetEMFset) 
-            cerr<<"FactorizedJetCorrector:  jet EMF is not set"<<endl;
+            handleError("FactorizedJetCorrector","jet EMF is not set");
           result.push_back(mJetEMF);
         } 
       else if (fVarTypes[i] == kJetA) 
         {
           if (!mIsJetAset) 
-            cerr<<"FactorizedJetCorrector:  jet area is not set"<<endl;
+            handleError("FactorizedJetCorrector","jet area is not set");
           result.push_back(mJetA);
         }
       else if (fVarTypes[i] == kRho) 
         {
-          if (!mIsRhoset)
-            cerr<<"FactorizedJetCorrector:  fastjet density Rho is not set"<<endl;
+          if (!mIsRhoset) 
+            handleError("FactorizedJetCorrector","fastjet density Rho is not set");
           result.push_back(mRho);
         }
       else if (fVarTypes[i] == kRelLepPt) 
         {
-          if (!mIsJetPtset||!mIsAddLepToJetset||!mIsLepPxset||!mIsLepPyset)
-            cerr<<"FactorizedJetCorrector:  can't calculate rel lepton pt"<<endl;
+          if (!mIsJetPtset||!mIsAddLepToJetset||!mIsLepPxset||!mIsLepPyset) 
+            handleError("FactorizedJetCorrector","can't calculate rel lepton pt");
           result.push_back(getRelLepPt());
         }
       else if (fVarTypes[i] == kPtRel) 
         {
-          if (!mIsJetPtset||!mIsJetEtaset||!mIsJetPhiset||!mIsJetEset||!mIsAddLepToJetset||!mIsLepPxset||!mIsLepPyset||!mIsLepPzset)
-	          cerr<<"FactorizedJetCorrector:  can't calculate ptrel"<<endl;
+          if (!mIsJetPtset||!mIsJetEtaset||!mIsJetPhiset||!mIsJetEset||
+	      !mIsAddLepToJetset||!mIsLepPxset||!mIsLepPyset||!mIsLepPzset) 
+            handleError("FactorizedJetCorrector","can't calculate ptrel");
           result.push_back(getPtRel());
         }
       else 
-        cerr<<"FactorizedJetCorrector:  unknown parameter "<<fVarTypes[i]<<endl;
+        {
+          std::stringstream sserr; 
+          sserr<<"unknown parameter "<<fVarTypes[i];
+          handleError("FactorizedJetCorrector",sserr.str());
+        }
     }
   return result;      
 }
@@ -440,7 +462,7 @@ std::vector<float> FactorizedJetCorrector::fillVector(std::vector<VarTypes> fVar
 //------------------------------------------------------------------------
 float FactorizedJetCorrector::getLepPt() const
 {
-  return sqrt(mLepPx*mLepPx + mLepPy*mLepPy);
+  return std::sqrt(mLepPx*mLepPx + mLepPy*mLepPy);
 }
 //------------------------------------------------------------------------ 
 //--- Calculate the relLepPt (needed for the SLB) ---------------------------
@@ -455,17 +477,27 @@ float FactorizedJetCorrector::getRelLepPt() const
 //------------------------------------------------------------------------
 float FactorizedJetCorrector::getPtRel() const
 {
-  TLorentzVector jet;
-  TVector3 lep;
-  jet.SetPtEtaPhiE(mJetPt, mJetEta, mJetPhi, mJetE);
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> >
+    PtEtaPhiELorentzVector;
+  typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<float> >
+    XYZVector;
+  PtEtaPhiELorentzVector jet;
+  XYZVector lep;
+  jet.SetPt(mJetPt);
+  jet.SetEta(mJetEta);
+  jet.SetPhi(mJetPhi);
+  jet.SetE(mJetE);
   lep.SetXYZ(mLepPx,mLepPy,mLepPz);
   float lj_x = (mAddLepToJet) ? lep.X()+jet.Px() : jet.Px();
   float lj_y = (mAddLepToJet) ? lep.Y()+jet.Py() : jet.Py();
   float lj_z = (mAddLepToJet) ? lep.Z()+jet.Pz() : jet.Pz();
   // absolute values squared
   float lj2  = lj_x*lj_x+lj_y*lj_y+lj_z*lj_z;
-  if (lj2<=0)
-    cerr<<"FactorizedJetCorrector:  lepton+jet momentum sq is not positive: "<<lj2<<endl;
+  if (lj2<=0) {
+    std::stringstream sserr; 
+    sserr<<"lepton+jet momentum sq is not positive: "<<lj2;
+    handleError("FactorizedJetCorrector",sserr.str());
+  }
   float lep2 = lep.X()*lep.X()+lep.Y()*lep.Y()+lep.Z()*lep.Z();
   // projection vec(mu) to lepjet axis
   float lepXlj = lep.X()*lj_x+lep.Y()*lj_y+lep.Z()*lj_z;
@@ -473,7 +505,7 @@ float FactorizedJetCorrector::getPtRel() const
   float pLrel2 = lepXlj*lepXlj/lj2;
   // lep2 = pTrel2 + pLrel2
   float pTrel2 = lep2-pLrel2;
-  return (pTrel2 > 0) ? sqrt(pTrel2) : 0.0;
+  return (pTrel2 > 0) ? std::sqrt(pTrel2) : 0.0;
 }
 //------------------------------------------------------------------------ 
 //--- Setters ------------------------------------------------------------
@@ -548,4 +580,3 @@ void FactorizedJetCorrector::setAddLepToJet(bool fAddLepToJet)
   mAddLepToJet = fAddLepToJet;
   mIsAddLepToJetset = true;
 }
-

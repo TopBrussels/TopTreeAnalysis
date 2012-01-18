@@ -1,14 +1,11 @@
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "TopTreeAnalysis/Reconstruction/interface/SimpleJetCorrectionUncertainty.h"
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
-
-#include "TVector3.h"
-#include "TLorentzVector.h"
+#include "../interface/JetCorrectionUncertainty.h"
+#include "../interface/SimpleJetCorrectionUncertainty.h"
+#include "../interface/JetCorrectorParameters.h"
+#include "Math/PtEtaPhiE4D.h"
+#include "Math/Vector3D.h"
+#include "Math/LorentzVector.h"
 #include <vector>
 #include <string>
-#include <cmath>
-
-using namespace std;
 
 /////////////////////////////////////////////////////////////////////////
 JetCorrectionUncertainty::JetCorrectionUncertainty () 
@@ -116,54 +113,72 @@ std::vector<float> JetCorrectionUncertainty::fillVector(const std::vector<std::s
     {
       if (fNames[i] == "JetEta")
         {
-          if (!mIsJetEtaset)
-            cerr<<"JetCorrectionUncertainty:  jet eta is not set"<<endl;
+          if (!mIsJetEtaset) {
+            cout << "JetCorrectionUncertainty:: jet eta is not set" << endl;
+	    exit(1);
+	  }
           result.push_back(mJetEta);
         }
       else if (fNames[i] == "JetPt")
         {
-          if (!mIsJetPtset)
-            cerr<<"JetCorrectionUncertainty:  jet pt is not set"<<endl;
+          if (!mIsJetPtset) {
+            cout << "JetCorrectionUncertainty: jet pt is not set" << endl;  
+	    exit(1);
+	  }
           result.push_back(mJetPt);
         }
-      else if (fNames[i] == "JetPhi")
+      else if (fNames[i] == "JetPhi") 
         {
-          if (!mIsJetPhiset)
-            cerr<<"JetCorrectionUncertainty:  jet phi is not set"<<endl;
+          if (!mIsJetPhiset) {
+            cout << "JetCorrectionUncertainty: jet phi is not set" << endl;  
+	    exit(1);
+	  }
           result.push_back(mJetPt);
         }
       else if (fNames[i] == "JetE")
         {
-          if (!mIsJetEset)
-            cerr<<"JetCorrectionUncertainty:  jet energy is not set"<<endl;
+          if (!mIsJetEset) {
+            cout << "JetCorrectionUncertainty: jet energy is not set" << endl;
+	    exit(1);
+	  }
           result.push_back(mJetE);
         }
       else if (fNames[i] == "JetEMF")
         {
-          if (!mIsJetEMFset)
-            cerr<<"JetCorrectionUncertainty:  jet emf is not set"<<endl;
+          if (!mIsJetEMFset) {
+            cout << "JetCorrectionUncertainty: jet emf is not set" << endl;
+	    exit(1);
+	  }
           result.push_back(mJetEMF);
         } 
       else if (fNames[i] == "LepPx")
         {
-          if (!mIsLepPxset)
-            cerr<<"JetCorrectionUncertainty:  lepton px is not set"<<endl;
+          if (!mIsLepPxset) {
+            cout << "JetCorrectionUncertainty: lepton px is not set" << endl;  
+	    exit(1);
+	  }
           result.push_back(mLepPx);
         }
       else if (fNames[i] == "LepPy")
         {
-          if (!mIsLepPyset)
-            cerr<<"JetCorrectionUncertainty:  lepton py is not set"<<endl;
+          if (!mIsLepPyset) {
+            cout << "JetCorrectionUncertainty::lepton py is not set" << endl; 
+	    exit(1);
+	  } 
           result.push_back(mLepPy);
         }
       else if (fNames[i] == "LepPz")
         {
-          if (!mIsLepPzset)
-            cerr<<"JetCorrectionUncertainty:  lepton pz is not set"<<endl;
+          if (!mIsLepPzset) {
+            cout << "JetCorrectionUncertainty:: lepton pz is not set" << endl;  
+	    exit(1);
+	  }
           result.push_back(mLepPz);
         }
-      else
-        cerr<<"JetCorrectionUncertainty:  unknown parameter "<<fNames[i]<<endl;
+      else {
+        cout << "JetCorrectionUncertainty:: unknown parameter "<<fNames[i] << endl;
+	exit(1);
+      }
     }     
   return result;      
 }
@@ -172,17 +187,24 @@ std::vector<float> JetCorrectionUncertainty::fillVector(const std::vector<std::s
 //------------------------------------------------------------------------
 float JetCorrectionUncertainty::getPtRel()
 {
-  TLorentzVector jet;
-  TVector3 lep;
-  jet.SetPtEtaPhiE(mJetPt, mJetEta, mJetPhi, mJetE);
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > PtEtaPhiELorentzVector;
+  typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<float> > XYZVector;
+  PtEtaPhiELorentzVector jet;
+  XYZVector lep;
+  jet.SetPt(mJetPt);
+  jet.SetEta(mJetEta);
+  jet.SetPhi(mJetPhi);
+  jet.SetE(mJetE);
   lep.SetXYZ(mLepPx,mLepPy,mLepPz);
   float lj_x = (mAddLepToJet) ? lep.X()+jet.Px() : jet.Px();
   float lj_y = (mAddLepToJet) ? lep.Y()+jet.Py() : jet.Py();
   float lj_z = (mAddLepToJet) ? lep.Z()+jet.Pz() : jet.Pz();
   // absolute values squared
   float lj2  = lj_x*lj_x+lj_y*lj_y+lj_z*lj_z;
-  if (!(lj2 > 0))
-    cerr<<"JetCorrectionUncertainty:  not positive lepton-jet momentum: "<<lj2<<endl;
+  if (!(lj2 > 0)) {
+    cout << "JetCorrectionUncertainty not positive lepton-jet momentum: "<<lj2 << endl;
+    exit(1);
+  }
   float lep2 = lep.X()*lep.X()+lep.Y()*lep.Y()+lep.Z()*lep.Z();
   // projection vec(mu) to lepjet axis
   float lepXlj = lep.X()*lj_x+lep.Y()*lj_y+lep.Z()*lj_z;

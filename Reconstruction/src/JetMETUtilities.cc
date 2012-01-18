@@ -1,6 +1,3 @@
-#ifndef UTIL_H
-#define UTIL_H
-
 #include <cstdlib>
 #include <sstream>
 #include <string>
@@ -12,12 +9,18 @@ using namespace std;
 
 namespace 
 {
+  void handleError(const std::string& fClass, const std::string& fMessage);
+  //----------------------------------------------------------------------
   float getFloat(const std::string& token) 
   {
     char* endptr;
     float result = strtod (token.c_str(), &endptr);
     if (endptr == token.c_str()) 
-      cerr<<"getFloat:  can't convert token "<<token<<" to float value"<<endl;
+      {
+        std::stringstream sserr; 
+        sserr<<"can't convert token "<<token<<" to float value";
+	handleError("getFloat",sserr.str());
+      }
     return result;
   } 
   //----------------------------------------------------------------------
@@ -26,7 +29,11 @@ namespace
     char* endptr;
     unsigned result = strtoul (token.c_str(), &endptr, 0);
     if (endptr == token.c_str()) 
-      cerr<<"getUnsigned:  can't convert token "<<token<<" to unsigned value"<<endl;
+      {
+        std::stringstream sserr; 
+        sserr<<"can't convert token "<<token<<" to unsigned value";
+	handleError("getUnsigned",sserr.str());
+      }
     return result;
   }
   //----------------------------------------------------------------------
@@ -71,6 +78,17 @@ namespace
     return "";
   }
   //------------------------------------------------------------------------ 
+  void handleError(const std::string& fClass, const std::string& fMessage)
+  {
+    std::stringstream sserr;
+    sserr<<fClass<<" ERROR: "<<fMessage;
+    
+    std::cout << "JetMETUtilities::" << sserr.str() << std::endl;
+
+    exit(1);
+
+  }
+  //------------------------------------------------------------------------ 
   float quadraticInterpolation(float fZ, const float fX[3], const float fY[3])
   {
     // Quadratic interpolation through the points (x[i],y[i]). First find the parabola that
@@ -96,5 +114,3 @@ namespace
     return r;
   }
 }
-#endif
-

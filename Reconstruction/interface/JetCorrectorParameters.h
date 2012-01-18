@@ -1,11 +1,10 @@
 //
 // Original Author:  Fedor Ratnikov Nov 9, 2007
-// $Id: JetCorrectorParameters.h,v 1.1.2.2 2011/03/03 14:12:27 blyweert Exp $
+// $Id: JetCorrectorParameters.h,v 1.14 2011/01/27 12:14:13 kkousour Exp $
 //
 // Generic parameters for Jet corrections
 //
-
-// Ported from CondFormats/JetMETObjects V03-01-21 to TopTrees by Stijn Blyweert
+// PORTED FROM CMSSW_4_2_8_patch5 by Michael Maes
 
 #ifndef JetCorrectorParameters_h
 #define JetCorrectorParameters_h
@@ -14,6 +13,8 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+
+using namespace std;
 
 class JetCorrectorParameters 
 {
@@ -204,4 +205,3 @@ class JetCorrectorParametersCollection {
 
 
 #endif
-

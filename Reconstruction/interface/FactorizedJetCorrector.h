@@ -3,13 +3,13 @@
 // Author: Konstantinos Kousouris, Philipp Schieferdecker
 // Email:  kkousour@fnal.gov, philipp.schieferdecker@cern.ch
 
-// Ported from CondFormats/JetMETObjects V03-01-21 to TopTrees by Stijn Blyweert
-
 #ifndef FACTORIZED_JET_CORRECTOR_H
 #define FACTORIZED_JET_CORRECTOR_H
 
 #include <vector>
 #include <string>
+
+using namespace std;
 
 class SimpleJetCorrector;
 class JetCorrectorParameters;
@@ -83,4 +83,3 @@ class FactorizedJetCorrector
     std::vector<SimpleJetCorrector*> mCorrectors;
 };
 #endif
-
