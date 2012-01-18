@@ -778,7 +778,7 @@ int main (int argc, char *argv[])
 					std::vector<float> probabilities;
 					for(size_t i=0; i<init_jets.size(); ++i){
     				if(fabs(init_jets[i]->Eta())>2.6) continue;
-    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighPurBJetTags()));
+    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighEffBJetTags()));
 					}
 				
 					//use binary code for objects to be triggered or not triggered
@@ -798,7 +798,7 @@ int main (int argc, char *argv[])
 					mceventtriggerweight*=prob;
 
 					//stupid workaround, because part (single electron path corresponding to 200/pb) of the MC needs SF of 1 for trigger and part (btag trigger) needs the procedure above
-					NEWmceventtriggerweight = (200./Luminosity +(mceventtriggerweight*(1-(200./Luminosity))));
+					NEWmceventtriggerweight = (218./Luminosity +(mceventtriggerweight*(1-(218./Luminosity))));
 
 					scaleFactor = scaleFactor*NEWmceventtriggerweight;
  					//cout << "mcevent triggerweight " << mceventtriggerweight << endl;
