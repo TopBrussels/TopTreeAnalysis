@@ -22,12 +22,14 @@ public:
 	  ,eventId_(-999)
 	  ,runId_(-999)
 	  ,lumiBlockId_(-999)
+	  ,nPV_(-999)
 	  ,mlj_(-999.) //property of signal sample jet
 	  ,pt_(-999.) //property of signal sample jet
 	  ,E_(-999.) //property of signal sample jet
 	  ,eta_(-999) //property of signal sample jet
 	  ,weight_(-999.) //general event property
 	  ,scalefactor_(-999.) //general event property
+	  ,scalefactor3D_(-999.) //general event property
 	  ,dataSetNumber_(-1) //general event property
 	  ,partonFlavour_(-999) //property of signal sample jet
 	  ,nConstituents_(-999) //property of signal sample jet
@@ -112,7 +114,9 @@ public:
 	  Int_t eventId() const { return eventId_; }
 	  Int_t runId() const { return runId_; }
 	  Int_t lumiBlockId() const { return lumiBlockId_; }
-	
+	  
+	  Int_t setnPV ( ) const { return nPV_; }
+
 	Double_t mlj() const { return mlj_;}
 	
 	Double_t Btag(unsigned int index) const { return Btag_[index]; }
@@ -122,6 +126,7 @@ public:
 	Double_t eta() const { return eta_;}
 	Double_t weight() const { return weight_;}
 	Double_t scalefactor() const { return scalefactor_;}
+	Double_t scalefactor3D() const { return scalefactor3D_;}
 	Int_t dataSetNumber() const { return dataSetNumber_;}
 	string dataSetName() const { return dataSetName_;}
 	Int_t partonFlavour() const { return partonFlavour_;}
@@ -214,6 +219,8 @@ public:
 	void setEventId( int i ) { eventId_ = i ; }
 	void setRunId( int i ) { runId_ = i; }
 	void setLumiBlockId( int i ) { lumiBlockId_ = i; }
+
+	void setnPV ( int i ) { nPV_ = i; }
 	
 	void setMlj(Double_t mlj) { mlj_=mlj;}
 	
@@ -224,6 +231,7 @@ public:
 	void setEta(Double_t eta) { eta_=eta;}
 	void setWeight(Double_t weight) { weight_=weight;}
 	void setScaleFactor(Double_t f) { scalefactor_=f;}
+	void setScaleFactor3D(Double_t f) { scalefactor3D_=f;}
 	void setDataSetNumber(Int_t dataSetNumber) { dataSetNumber_=dataSetNumber;} 
 	void setDataSetName(string dataSetName) { dataSetName_=dataSetName;} 
 	void setPartonFlavour(Int_t partonFlavour) { partonFlavour_=partonFlavour;}
@@ -314,6 +322,8 @@ private:
 	Int_t runId_;
 	Int_t lumiBlockId_;
 
+	Int_t nPV_;
+
 	Double_t mlj_;
 	
 	Double_t Btag_[20];
@@ -323,6 +333,7 @@ private:
 	Double_t eta_;
 	Double_t weight_;
 	Double_t scalefactor_;
+	Double_t scalefactor3D_;
 	Int_t dataSetNumber_;
 	string dataSetName_;
 	Int_t partonFlavour_;
