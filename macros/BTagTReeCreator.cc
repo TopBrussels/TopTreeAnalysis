@@ -30,6 +30,7 @@
 #include "../BtagEffAnalysis/interface/TRootNTuple.h"
 #include "Style.C"
 #include "../MCInformation/interface/LumiReWeighting.h"
+#include "../MCInformation/interface/Lumi3DReWeighting.h"
 
 using namespace std;
 using namespace reweight;
@@ -45,7 +46,7 @@ int main (int argc, char *argv[])
   int systematic = 0; // 0: off 1: minus 2: plus
   
   if (argc > 1) // JES shift is command line parameter 1
-    if (atoi(argv[1]) == 0 || atoi(argv[1]) == 1 || atoi(argv[1]) == 2 || atoi(argv[1]) == 3 || atoi(argv[1]) == 4  || atoi(argv[1]) == 5 || atoi(argv[1]) == 6  || atoi(argv[1]) == 7 || atoi(argv[1]) == 8 || atoi(argv[1]) == 9 || atoi(argv[1]) == 10 || atoi(argv[1]) == 11)
+    if (atoi(argv[1]) == 0 || atoi(argv[1]) == 1 || atoi(argv[1]) == 2 || atoi(argv[1]) == 3 || atoi(argv[1]) == 4  || atoi(argv[1]) == 5 || atoi(argv[1]) == 6  || atoi(argv[1]) == 7 || atoi(argv[1]) == 8 || atoi(argv[1]) == 9 || atoi(argv[1]) == 10 || atoi(argv[1]) == 11 || atoi(argv[1]) == 12)
       systematic=atoi(argv[1]);
   
   bool runSpecificSample=false;
@@ -80,6 +81,8 @@ int main (int argc, char *argv[])
     postfix="_MorePU";
   if (systematic == 11)
     postfix="_LessPU";
+  if (systematic == 12)
+    postfix="_NomPU";
 
   cout << "systematic: " << systematic << " -> Postfix = " << postfix << endl;
 
@@ -88,6 +91,8 @@ int main (int argc, char *argv[])
   bool doPF2PAT = false;
 
   bool useMassesAndResolutions = false;
+
+  useMassesAndResolutions = true;
 
   if (systematic != 0 || runSpecificSample)
     useMassesAndResolutions = true;
@@ -110,6 +115,7 @@ int main (int argc, char *argv[])
 
   //xml file
   string xmlFileName ="../config/myBTAGconfig.xml";
+  //string xmlFileName ="../config/myBTAGconfig_fall11.xml";
   
   if (systematic == 8)
     xmlFileName ="../config/myBTAGconfig_ttjetsyst.xml";
@@ -250,11 +256,18 @@ int main (int argc, char *argv[])
   ////////////////////////
   // PileUp Reweighting //
   ////////////////////////
-  
-  LumiReWeighting LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets.root", "ReweightHistos/pileup/data.root", "pileup2", "pileup");
 
-  reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
-  reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup"); // 2.1/fb Run2011A
+  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
+
+  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // FALL114.6/fb Run2011A+B
+
+  if (systematic == 10)
+    Lumi3DWeights.weight3D_init(1.08);
+  else if (systematic == 11)
+    Lumi3DWeights.weight3D_init(0.92);
+  else
+    Lumi3DWeights.weight3D_init(1.0);
 
   cout << " Initialized LumiReWeighting stuff" << endl;
   
@@ -289,16 +302,32 @@ int main (int argc, char *argv[])
     /////////////////////////////////////
    	    
     vector<JetCorrectorParameters> vCorrParam;
+
+    // Create the JetCorrectorParameter objects, the order does not matter.
+   // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
+
+    //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vCorrParam.push_back(*L1JetPar);
+    vCorrParam.push_back(*L2JetPar);
+    vCorrParam.push_back(*L3JetPar);
+
     if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
       {
-	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
+	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
 	vCorrParam.push_back(*ResJetCorPar);
       }
     
-
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
     
-    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
+    //OLD
+    //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
+    //NEW
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    
+    // true means redo also the L1
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
     
     ////////////////////////////////////////////////////////////
     // CREATE OUTPUT FILE AND TTREE FOR STORAGE OF THE NTUPLE //
@@ -396,13 +425,13 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
 
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-      //    for (unsigned int ievt = 0; ievt < 10000; ievt++)
+      //for (unsigned int ievt = 0; ievt < 500; ievt++)
     {
       
       vector < TRootVertex* > vertex;
       vector < TRootMuon* > init_muons;
       vector < TRootElectron* > init_electrons;
-      vector < TRootJet* > init_jets_uncorr;
+      vector < TRootJet* > init_jets_corrected;
       vector < TRootJet* > init_jets;
       vector < TRootMET* > mets;
       vector < TRootGenJet* > genjets;
@@ -445,29 +474,60 @@ int main (int argc, char *argv[])
 
       }*/
 
-      // Clone the init_jets vector, otherwise the corrections will be removed
-      //for(unsigned int i=0; i<init_jets.size(); i++)
-      //  if(init_jets[i]) delete init_jets[i];
-      //init_jets.clear();      
+      // JES CORRECTION
 
-      //for(unsigned int i=0; i<init_jets_uncorr.size(); i++)
-      //  init_jets.push_back( (TRootJet*) init_jets_uncorr[i]->Clone() );
+      // before correction
+      //for (unsigned int j=0;j<init_jets.size();j++)
+      //cout << "jet " << j << " pt " << init_jets[j]->Pt() << " eta " << init_jets[j]->Eta() << endl;
+
+      // Clone the init_jets vector, otherwise the corrections will be removed
+      for(unsigned int i=0; i<init_jets_corrected.size(); i++)
+        if(init_jets_corrected[i]) delete init_jets_corrected[i];
+      init_jets_corrected.clear();
+      
+      for(unsigned int i=0; i<init_jets.size(); i++)
+        init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );
       
       // Apply Jet Corrections on-the-fly
-      //if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-      //  jetTools->correctJets(init_jets, vertex);
-      
-      // PU reweighting
-      //float avPU = ( (float)event->nPu(-1) + (float)event->nPU(0) + (float)event->nPu(1) ) / 3.; // average in 3 BX!!!, as recommended
-      float lumiWeight = LumiWeights.ITweight( event->nPu(0) );
-      
-      if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" || systematic == 8)
-	lumiWeight=1;
+      if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) {
+	//jetTools->correctJets(init_jets, vertex);
+      } else {
+	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho());
+      }
 
-      if (systematic == 10)
-	lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
-      else if (systematic == 11) 
-	lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
+      // after correction
+      //for (unsigned int j=0;j<init_jets_corrected.size();j++)
+      //cout << "after new JES jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
+      //cout << "****** end event *******"<< endl;
+      //cout << endl;
+      //exit(1);
+
+      // PU reweighting
+      //double avPU = ((double)event->nPu(-1) + (double)event->nPu(0) + (double)event->nPu(1))/3. ; // average in 3 BX!!!, as recommended
+      //double lumiWeight = LumiWeights.ITweight( (int)avPU );
+
+      double lumiWeight = 1;//LumiWeights.ITweight( event->nPu(0) );
+
+      if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+	lumiWeight=1;
+      else if(dataSetName.find("Spring11") != string::npos) {
+	lumiWeight=Lumi3DWeights.weight3D(event->nPu(0),event->nPu(0),event->nPu(0));
+	//cout << "lol" << endl;
+	//exit(0);
+      } else
+	lumiWeight=Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
+
+      //if (event->nPu(0) >= 25) cout << "#pu " << event->nPu(0) << " shift +0.6 " << PShiftUp_.ShiftWeight( event->nPu(0) ) << endl;
+
+      //if (systematic == 10)
+	//lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
+	//lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( (int)avPU );
+	//lumiWeight=Lumi3DWeights_UP.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
+	
+      //else if (systematic == 11) 
+	//lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
+	//lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( (int)avPU );
+	//lumiWeight=Lumi3DWeights_DOWN.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
 
       //cout << "scaleFactor before = " << scaleFactor << " " << lumiWeight <<endl;
       scaleFactor = scaleFactor*lumiWeight;
@@ -537,6 +597,14 @@ int main (int argc, char *argv[])
 	  else if( event->runId() >=  176765 && event->runId() <=  176796 )
 	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
 	  
+	  else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
+	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+	  else if( event->runId() >=  178420 && event->runId() <=  178479 )
+	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);                                
+	  else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
+	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);
+	  else if( event->runId() >=  179959 && event->runId() <=  180252 )
+	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile);
 
 	  else
 	    cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
@@ -554,6 +622,10 @@ int main (int argc, char *argv[])
 	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); // Spring11: HLT_Mu15_v1
 	  if (itrigger == 9999)
 	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); // Fall10: HLT_Mu9
+	  if (itrigger == 9999)
+	  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v14"), currentRun); // Fall11
+
+	  //itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_v1"), currentRun);
 	  //  Summer11 MC:        HLT_IsoMu17_v5        HLT_Mu15_v2
 	  //  Spring11 MC:        HLT_IsoMu17_v4        HLT_Mu15_v1 or HLT_Mu17_v1
 	  //  Fall10 MC:          HLT_IsoMu9            HLT_Mu9 or HLT_Mu11
@@ -575,27 +647,17 @@ int main (int argc, char *argv[])
 
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) ) {
 	
-	// Correct jets for JES uncertainy systematics
-	
-	//for (unsigned int j=0;j<init_jets.size();j++)
-	//  cout << "jet " << j << " pt " << init_jets[j]->Pt() << " eta " << init_jets[j]->Eta() << endl;
-
-	if (systematic == 1)
-	  jetTools->correctJetJESUnc(init_jets, "minus",1);
-	else if (systematic == 2)
-	  jetTools->correctJetJESUnc(init_jets, "plus",1);
-	
 	// Match RecoJets with GenJets
 	vector< pair<size_t, size_t> > indexVector; //first index = RecoJet, second index = GenJet
 	vector<bool> mLock(genjets.size(),false);   // when locked, genJet is already matched to a recoJet
-	for(size_t i=0; i<init_jets.size(); i++) {
+	for(size_t i=0; i<init_jets_corrected.size(); i++) {
 	  pair<size_t, size_t> tmpIndex;
 	  float minDR = 9999.;
 	  for(size_t j=0; j<genjets.size(); j++) {
 	    //cout << "Do I smell GenJets?" << endl;
 	    if( ! mLock[j] ) {
-	      if( init_jets[i]->DeltaR(*genjets[j]) < 0.4 && init_jets[i]->DeltaR(*genjets[j]) < minDR ) {
-		minDR = init_jets[i]->DeltaR(*genjets[j]);
+	      if( init_jets_corrected[i]->DeltaR(*genjets[j]) < 0.4 && init_jets_corrected[i]->DeltaR(*genjets[j]) < minDR ) {
+		minDR = init_jets_corrected[i]->DeltaR(*genjets[j]);
 		tmpIndex = pair<size_t, size_t>(i,j);
 	      }
 	    }
@@ -617,7 +679,7 @@ int main (int argc, char *argv[])
 	  else if (systematic == 7)
 	    JER_plus=true;
 	  
-	  float fabsEta = fabs(init_jets[indexVector[i].first]->Eta());
+	  float fabsEta = fabs(init_jets_corrected[indexVector[i].first]->Eta());
 	  if(JER_minus) {
 	    if(fabsEta <= 1.5) corrFactor = 0.0;
 	    else if(fabsEta < 2.0 && fabsEta > 1.5) corrFactor = -0.05;
@@ -628,12 +690,28 @@ int main (int argc, char *argv[])
 	    else if(fabsEta < 2.0 && fabsEta > 1.5) corrFactor = 0.25;
 	    else corrFactor = 0.3;
 	  }
-	  float deltapt = ( init_jets[indexVector[i].first]->Pt() - genjets[indexVector[i].second]->Pt() ) * corrFactor;
-	  float ptscale = max(0.0, ( init_jets[indexVector[i].first]->Pt() + deltapt) / init_jets[indexVector[i].first]->Pt() );
+	  float deltapt = ( init_jets_corrected[indexVector[i].first]->Pt() - genjets[indexVector[i].second]->Pt() ) * corrFactor;
+	  float ptscale = max(0.0, ( init_jets_corrected[indexVector[i].first]->Pt() + deltapt) / init_jets_corrected[indexVector[i].first]->Pt() );
 	  if(ptscale > 0.0)
-	    init_jets[indexVector[i].first]->SetPxPyPzE(init_jets[indexVector[i].first]->Px()*ptscale, init_jets[indexVector[i].first]->Py()*ptscale,init_jets[indexVector[i].first]->Pz()*ptscale, init_jets[indexVector[i].first]->E()*ptscale);
+	    init_jets_corrected[indexVector[i].first]->SetPxPyPzE(init_jets_corrected[indexVector[i].first]->Px()*ptscale, init_jets_corrected[indexVector[i].first]->Py()*ptscale,init_jets_corrected[indexVector[i].first]->Pz()*ptscale, init_jets_corrected[indexVector[i].first]->E()*ptscale);
 	  
 	}
+
+	// Correct jets for JES uncertainy systematics
+	
+	//for (unsigned int j=0;j<init_jets_corrected.size();j++)
+	//cout << "jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
+	
+	if (systematic == 1)
+	  jetTools->correctJetJESUnc(init_jets_corrected, "minus",1);
+	else if (systematic == 2)
+	  jetTools->correctJetJESUnc(init_jets_corrected, "plus",1);
+	
+	//for (unsigned int j=0;j<init_jets_corrected.size();j++)
+	//cout << "after jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
+	
+	//exit(1);
+
 	
       }
 
@@ -642,7 +720,7 @@ int main (int argc, char *argv[])
       /////////////////////
       
       //Declare selection instance    
-      Selection selection(init_jets, init_muons, init_electrons, mets);
+      Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
 
       //selection.setJetCuts();
       //selection.setLooseMuonCuts();
@@ -651,7 +729,8 @@ int main (int argc, char *argv[])
       // SYNC WITH GERRIT
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
 
-      selection.setMuonCuts(35.,2.1,0.125,10,0.02,0.3,1,1,1);
+      selection.setMuonCuts(30.,2.1,0.125,10,0.02,0.3,1,1,1);
+      //selection.setMuonCuts(35.,2.1,0.125,10,0.02,0.3,1,1,1);
       //selection.setMuonCuts(20.,2.1,0.125,10,0.02,0.3,1,1,1); // refSelV4 values
 
       
@@ -682,8 +761,8 @@ int main (int argc, char *argv[])
       vector<TRootJet*> selectedJets;
       vector<TRootMuon*> selectedMuons;
 
-      if (init_jets.size() > 0) {
-	//if (init_jets[0]->jetType() == 1 || doPF2PAT) { // calojets
+      if (init_jets_corrected.size() > 0) {
+	//if (init_jets_corrected[0]->jetType() == 1 || doPF2PAT) { // calojets
 	  //cout << "Selecting for caloJets" << endl;
 	selectedJets = selection.GetSelectedJets(true);
 	selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
@@ -724,8 +803,19 @@ int main (int argc, char *argv[])
 	  }
 	}
       }
-      
+
+      /*if (eventselected) {
+	if (selectedJets[0]->Pt() < 70 || selectedJets[1]->Pt() < 50) 
+	  eventselected=false;
+	  }*/
+
       if (!eventselected) continue;
+
+      //for (unsigned int j=0;j<selectedJets.size();j++)
+      //cout << "after event selection jet " << j << " pt " << selectedJets[j]->Pt() << " eta " << selectedJets[j]->Eta() << endl;
+      //cout << "****** end event *******"<< endl;
+      //cout << endl;
+      //exit(1);
 
       if (systematic == 3)
 	jetTools->correctJetJESUnc(selectedJets, "minus");
@@ -878,8 +968,13 @@ int main (int argc, char *argv[])
 	float WMass = (*selectedJets[hadronicWJet1_.first]+*selectedJets[hadronicWJet2_.first]).M();
 	float TopMass = (*selectedJets[hadronicWJet1_.first]+*selectedJets[hadronicWJet2_.first]+*selectedJets[hadronicBJet_.first]).M();
       
+	//histo1D["hadronicRecoWMass"]->Fill(WMass,lumiWeight);
+	//histo1D["hadronicRecoTopMass"]->Fill(TopMass,lumiWeight);
+
 	histo1D["hadronicRecoWMass"]->Fill(WMass);
 	histo1D["hadronicRecoTopMass"]->Fill(TopMass);
+
+	// to be fixed
 
 	//cout << "WMass " << WMass << " TopMass " << TopMass << endl; exit(0);
 	
@@ -930,6 +1025,7 @@ int main (int argc, char *argv[])
 
 	nAll++;
 	if (all4PartonsMatched) {
+	  //cout << "first yeah " << endl;
 	  nGoodCombi++;
 
 	  if ( (Permutation[0] == hadronicWJet1_.first && Permutation[1] == hadronicWJet2_.first) || (Permutation[1] == hadronicWJet1_.first && Permutation[0] == hadronicWJet2_.first)) {
@@ -979,6 +1075,44 @@ int main (int argc, char *argv[])
 	//-----------------//
 	// do some data-mc //
 	//-----------------//
+
+	// jet plots for the BTV guys
+	
+	if (MSPlot.find("Selected_Events_pT_jet1") == MSPlot.end()){
+	  MSPlot["Selected_Events_pT_jet1"] = new MultiSamplePlot(datasets, "Selected_Events_pT_jet1", 30, 0, 600, "p_{T} (GeV)");
+	  MSPlot["Selected_Events_pT_jet2"] = new MultiSamplePlot(datasets, "Selected_Events_pT_jet2", 30, 0, 600, "p_{T} (GeV)");
+	  MSPlot["Selected_Events_pT_jet3"] = new MultiSamplePlot(datasets, "Selected_Events_pT_jet3", 30, 0, 600, "p_{T} (GeV)");
+	  MSPlot["Selected_Events_pT_jet4"] = new MultiSamplePlot(datasets, "Selected_Events_pT_jet4", 30, 0, 600, "p_{T} (GeV)");
+	  //MSPlot["Selected_Events_pT_jet4"] = new MultiSamplePlot(datasets, "Selected_Events_pT_jet4", 30, 0, 600, "p_{T} (GeV)");
+	  MSPlot["Selected_Events_pT_4leadingjets"] = new MultiSamplePlot(datasets, "Selected_Events_pT_4leadingjets", 30, 0, 600, "p_{T} (GeV)");
+	  MSPlot["Selected_Events_pT_alljets"] = new MultiSamplePlot(datasets, "Selected_Events_pT_alljets", 30, 0, 600, "p_{T} (GeV)");
+	}
+
+	MSPlot["Selected_Events_pT_jet1"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["Selected_Events_pT_jet2"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["Selected_Events_pT_jet3"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["Selected_Events_pT_jet4"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+
+	for (unsigned int q=0; q<selectedJets.size(); q++) {
+
+	  MSPlot["Selected_Events_pT_alljets"]->Fill(selectedJets[q]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+
+	  if (q<4)
+	    MSPlot["Selected_Events_pT_4leadingjets"]->Fill(selectedJets[q]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+
+	}
+
+	// other data-mc
+
+	if (MSPlot.find("Selected_Events_nPV") == MSPlot.end())
+	  MSPlot["Selected_Events_nPV"] = new MultiSamplePlot(datasets, "Selected_Events_nPV", 36, -0.5, 35.5, "nPV");
+
+	MSPlot["Selected_Events_nPV"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+
+	if (MSPlot.find("Selected_Events_nPV_NONREW") == MSPlot.end())
+	  MSPlot["Selected_Events_nPV_NONREW"] = new MultiSamplePlot(datasets, "Selected_Events_nPV_NONREW", 36, -0.5, 35.5, "nPV");
+
+	MSPlot["Selected_Events_nPV_NONREW"]->Fill(vertex.size(), datasets[d], true, Luminosity);
 	
 	if (MSPlot.find("Selected_Events_JetCombMinChi2") == MSPlot.end())
 	  MSPlot["Selected_Events_JetCombMinChi2"] = new MultiSamplePlot(datasets, "Selected_Events_JetCombMinChi2", 100, 0, 100, "JetCombMinChi2");
@@ -1004,10 +1138,15 @@ int main (int argc, char *argv[])
 
 	// MTOP
 	if (MSPlot.find("BestJetCombMTop") == MSPlot.end())
-	  MSPlot["BestJetCombMTop"] = new MultiSamplePlot(datasets, "BestJetCombMTop", 50, 0, 600, "BestJetCombMTop");
+	  MSPlot["BestJetCombMTop"] = new MultiSamplePlot(datasets, "BestJetCombMTop", 400, 0, 600, "m_{top} (GeV)","Events / 20 GeV");
 
 	MSPlot["BestJetCombMTop"] ->Fill((*selectedJets[Permutation[0]]+*selectedJets[Permutation[1]]+*selectedJets[Permutation[2]]).M(), datasets[d], true, Luminosity*scaleFactor);
 	
+	if (MSPlot.find("BestJetCombMTop_CHI2") == MSPlot.end())
+	  MSPlot["BestJetCombMTop_CHI2"] = new MultiSamplePlot(datasets, "BestJetCombMTop_CHI2", 40, 0, 600 ,"m_{top} (GeV)","Events / 20 GeV");
+	
+	if (smallestChi2 < 90)
+	  MSPlot["BestJetCombMTop_CHI2"] ->Fill((*selectedJets[Permutation[0]]+*selectedJets[Permutation[1]]+*selectedJets[Permutation[2]]).M(), datasets[d], true, Luminosity*scaleFactor);
 	
 	/*///////////////////////////////////////////
 	// NOW WE FILL THE NTUPLE FOR THE BTAGTREE //
@@ -1300,7 +1439,7 @@ int main (int argc, char *argv[])
 
 	//Setting some extra variables which could help reducing the amount of background:
 	
-	NTuple->setnJets(init_jets.size());
+	NTuple->setnJets(init_jets_corrected.size());
 	NTuple->setBtag_trackCountingHighEffBJetTags_hadb((*(selectedJets[Permutation[2]])).btag_trackCountingHighEffBJetTags());
 	
 	
@@ -1623,7 +1762,7 @@ int main (int argc, char *argv[])
       {
 	MultiSamplePlot *temp = it->second;
 	string name = it->first;
-	temp->Draw(false, name, true, true, true, true, true);
+	temp->Draw(false, name, false, true, true, true, true);
 	temp->Write(fout, name, true, pathPNG+"MSPlot/");
       }
     
