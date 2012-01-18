@@ -51,8 +51,8 @@ int main(int argc, char* argv[]) {
   bool isRAW = false;
   
   // Train and test separation
-  bool isTrain = false;
-  bool isTest = true;
+  bool isTrain = true;
+  bool isTest = false;
   bool controlRegion1 = false;
   bool controlRegion2 = false;
   
@@ -208,9 +208,9 @@ int main(int argc, char* argv[]) {
       }
       
       char rootFileName[100];
-      sprintf(rootFileName,"outputs/tmva_05_%s_%d_%s.root", dname, mode, name);
-      if (controlRegion1) sprintf(rootFileName,"outputs/tmva_05_%s_2j1t_%d_%s.root", dname, mode, name);
-      if (controlRegion2) sprintf(rootFileName,"outputs/tmva_05_%s_2j2t_%d_%s.root", dname, mode, name);
+      sprintf(rootFileName,"outputs/tmva_06_%s_%d_%s.root", dname, mode, name);
+      if (controlRegion1) sprintf(rootFileName,"outputs/tmva_06_%s_2j1t_%d_%s.root", dname, mode, name);
+      if (controlRegion2) sprintf(rootFileName,"outputs/tmva_06_%s_2j2t_%d_%s.root", dname, mode, name);
       
       
       // Objects

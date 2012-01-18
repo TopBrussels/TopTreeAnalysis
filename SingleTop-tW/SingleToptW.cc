@@ -1,4 +1,4 @@
-// rebeca@cern.ch
+ // rebeca@cern.ch
 //
 // Fall11 round
 
@@ -58,10 +58,11 @@ int main(int argc, char* argv[]) {
   bool metTypeI = false; 
  
   //Systematic calculations 
-  bool JESPlus=false;
-  bool JESMinus=false;
-  bool JERPlus= true;
-  bool JERMinus=false;
+  bool JESPlus= false;
+  bool JESMinus= false;
+
+  bool JERPlus= false;
+  bool JERMinus= false;
 
   bool SFplus = false;
   bool SFminus = false;
@@ -292,7 +293,10 @@ int main(int argc, char* argv[]) {
       
       //Pile-Up reweighting  
       Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../macros/PileUpReweighting/pileup_MC_Fall11.root","../macros/PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-      Lumi3DWeights.weight3D_init(1.0);
+     
+      if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
+      else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);
+      else Lumi3DWeights.weight3D_init(1.0);
 
       // Initialize JEC factors
       vector<JetCorrectorParameters> vCorrParam;
@@ -441,20 +445,23 @@ int main(int argc, char* argv[]) {
 	  // Correct MET Type I
 	  if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
 	  
-	
+	  
 	  // Systematics
 	  //JES and JER
 	  //Special = true;
 	  if (!Special && !isData){
-	    if (JESPlus) jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
+	   
+            vector<TRootGenJet*> genjets = treeLoader.LoadGenJet(ievt);
+
+            if(JERPlus)  jetTools->correctJetJER(init_jets, genjets, "plus");
+            else if(JERMinus) jetTools->correctJetJER(init_jets, genjets, "minus");
+            else jetTools->correctJetJER(init_jets, genjets, "nominal");
+
+            if (JESPlus) jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
 	    else if (JESMinus) jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-	    
-	    vector<TRootGenJet*> genjets = treeLoader.LoadGenJet(ievt);
-	    
-	    if(JERPlus)  jetTools->correctJetJER(init_jets, genjets, "plus");
-	    else if(JERMinus) jetTools->correctJetJER(init_jets, genjets, "minus");
-	    else jetTools->correctJetJER(init_jets, genjets, "nominal");
 	  }  
+	   
+	   
 	   
 	  //Start selection
 	  Selection selection(init_jets, init_muons, init_electrons, mets);

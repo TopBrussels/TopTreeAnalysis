@@ -37,7 +37,7 @@ void syst(int mode = 0){
   }
   
   
-  TString SystName = "JESsysUp";
+  TString SystName = "JESsysDown";
   cout << endl;
   
   cout << "Systematic calculated: " << SystName << endl;
@@ -45,7 +45,7 @@ void syst(int mode = 0){
   for (int iProcess = 0; iProcess < 4; iProcess++){
     sprintf(myRootFile,"_%d_", mode);
     
-    TFile *_file0 = TFile::Open("outputs/sys" + SystName + myRootFile + processName[iProcess]+".root");
+    TFile *_file0 = TFile::Open("outputs/" + SystName + myRootFile + processName[iProcess]+".root");
     
     h[iProcess] = (TH1F*) _file0->Get("cutflow");
     if (iProcess<2)  cout << "[" << processName[iProcess] << "]:		" ;
