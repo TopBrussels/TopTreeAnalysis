@@ -571,7 +571,7 @@ int main (int argc, char *argv[])
 
       //cout << "scaleFactor before = " << scaleFactor << " " << lumiWeight <<endl;
       scaleFactor = scaleFactor*lumiWeight;
-      scaleFactorOLDREW = scaleFactor*lumiWeightOLD;
+      scaleFactorOLDREW = scaleFactorOLDREW*lumiWeightOLD;
       //cout << "scaleFactor after = " << scaleFactor << " " << scaleFactorOLDREW <<  endl;
 
       ///////////////////
