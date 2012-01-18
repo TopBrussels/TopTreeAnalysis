@@ -1,4 +1,4 @@
-///////////////////////////
+////////////////////////////
 ///// TODO & COMMENTS /////
 /////////////////////////// 
 
@@ -92,7 +92,7 @@ int main (int argc, char *argv[])
 
   bool useMassesAndResolutions = false;
 
-  useMassesAndResolutions = true;
+  //useMassesAndResolutions = true;
 
   if (systematic != 0 || runSpecificSample)
     useMassesAndResolutions = true;
@@ -257,6 +257,22 @@ int main (int argc, char *argv[])
   // PileUp Reweighting //
   ////////////////////////
 
+  // OLD 2D REWEIGHING
+
+  LumiReWeighting LumiWeights;
+  if (systematic == 10 || systematic == 11 || systematic == 12) { // take 1/fb histo for PU syst for now
+    cout << "PU Reweighing, taking 1/fb histogram for PU Syst!!!" << endl;
+    LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_1fb.root", "pileup2", "pileup"); // summer 11 1.1/fb
+  }
+  else {
+    cout << "PU Reweighing, taking 2/fb histogram!!!" << endl;
+    LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_2fb.root", "pileup2", "pileup"); // summer 11 2.14/fb
+  }
+
+  reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
+  reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
+
+  // NEW 3D REWEIGHING
   Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup"); // 2.1/fb Run2011A
   //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
 
@@ -425,7 +441,7 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
 
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-      //for (unsigned int ievt = 0; ievt < 500; ievt++)
+      //  for (unsigned int ievt = 0; ievt < 500; ievt++)
     {
       
       vector < TRootVertex* > vertex;
@@ -445,7 +461,8 @@ int main (int argc, char *argv[])
       // LOAD EVENT //
       ////////////////
 
-      TRootEvent* event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
+      //TRootEvent* event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
+      TRootEvent* event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets_corrected, mets);
            
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {
@@ -459,6 +476,7 @@ int main (int argc, char *argv[])
       
       // scale factor for the event
       float scaleFactor = 1.;
+      float scaleFactorOLDREW = 1.;
       
       // Load the GenEvent and calculate the branching ratio correction
       /*if(dataSetName.find("TTbarJets") == 0)
@@ -478,19 +496,23 @@ int main (int argc, char *argv[])
 
       // before correction
       //for (unsigned int j=0;j<init_jets.size();j++)
-      //cout << "jet " << j << " pt " << init_jets[j]->Pt() << " eta " << init_jets[j]->Eta() << endl;
+      //	cout << "jet " << j << " pt " << init_jets[j]->Pt() << " eta " << init_jets[j]->Eta() << endl;
 
-      // Clone the init_jets vector, otherwise the corrections will be removed
-      for(unsigned int i=0; i<init_jets_corrected.size(); i++)
-        if(init_jets_corrected[i]) delete init_jets_corrected[i];
-      init_jets_corrected.clear();
+      //for (unsigned int j=0;j<init_jets_corrected.size();j++)
+      //cout << "jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
       
-      for(unsigned int i=0; i<init_jets.size(); i++)
-        init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );
+      // Clone the init_jets vector, otherwise the corrections will be removed
+      //for(unsigned int i=0; i<init_jets_corrected.size(); i++)
+      //if(init_jets_corrected[i]) delete init_jets_corrected[i];
+      //init_jets_corrected.clear();
+      
+      //for(unsigned int i=0; i<init_jets.size(); i++)
+      //  init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );
       
       // Apply Jet Corrections on-the-fly
       if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) {
 	//jetTools->correctJets(init_jets, vertex);
+	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho());
       } else {
 	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho());
       }
@@ -503,6 +525,24 @@ int main (int argc, char *argv[])
       //exit(1);
 
       // PU reweighting
+
+      // old method
+
+      double lumiWeightOLD = LumiWeights.ITweight( event->nPu(0) );
+
+      if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+	lumiWeightOLD=1;
+
+      //if (event->nPu(0) >= 25) cout << "#pu " << event->nPu(0) << " shift +0.6 " << PShiftUp_.ShiftWeight( event->nPu(0) ) << endl;
+
+      if (systematic == 10)
+	lumiWeightOLD = lumiWeightOLD*PShiftUp_.ShiftWeight( event->nPu(0) );
+	
+      else if (systematic == 11) 
+	lumiWeightOLD = lumiWeightOLD*PShiftDown_.ShiftWeight( event->nPu(0) );
+
+      // 3D method
+
       //double avPU = ((double)event->nPu(-1) + (double)event->nPu(0) + (double)event->nPu(1))/3. ; // average in 3 BX!!!, as recommended
       //double lumiWeight = LumiWeights.ITweight( (int)avPU );
 
@@ -531,7 +571,8 @@ int main (int argc, char *argv[])
 
       //cout << "scaleFactor before = " << scaleFactor << " " << lumiWeight <<endl;
       scaleFactor = scaleFactor*lumiWeight;
-      //cout << "scaleFactor after = " << scaleFactor << endl;
+      scaleFactorOLDREW = scaleFactor*lumiWeightOLD;
+      //cout << "scaleFactor after = " << scaleFactor << " " << scaleFactorOLDREW <<  endl;
 
       ///////////////////
       // TRIGGER SETUP //
@@ -692,8 +733,8 @@ int main (int argc, char *argv[])
 	  }
 	  float deltapt = ( init_jets_corrected[indexVector[i].first]->Pt() - genjets[indexVector[i].second]->Pt() ) * corrFactor;
 	  float ptscale = max(0.0, ( init_jets_corrected[indexVector[i].first]->Pt() + deltapt) / init_jets_corrected[indexVector[i].first]->Pt() );
-	  if(ptscale > 0.0)
-	    init_jets_corrected[indexVector[i].first]->SetPxPyPzE(init_jets_corrected[indexVector[i].first]->Px()*ptscale, init_jets_corrected[indexVector[i].first]->Py()*ptscale,init_jets_corrected[indexVector[i].first]->Pz()*ptscale, init_jets_corrected[indexVector[i].first]->E()*ptscale);
+	  //if(ptscale > 0.0)
+	  //init_jets_corrected[indexVector[i].first]->SetPxPyPzE(init_jets_corrected[indexVector[i].first]->Px()*ptscale, init_jets_corrected[indexVector[i].first]->Py()*ptscale,init_jets_corrected[indexVector[i].first]->Pz()*ptscale, init_jets_corrected[indexVector[i].first]->E()*ptscale);
 	  
 	}
 
@@ -812,7 +853,7 @@ int main (int argc, char *argv[])
       if (!eventselected) continue;
 
       //for (unsigned int j=0;j<selectedJets.size();j++)
-      //cout << "after event selection jet " << j << " pt " << selectedJets[j]->Pt() << " eta " << selectedJets[j]->Eta() << endl;
+	//cout << "after event selection jet " << j << " pt " << selectedJets[j]->Pt() << " eta " << selectedJets[j]->Eta() << endl;
       //cout << "****** end event *******"<< endl;
       //cout << endl;
       //exit(1);
@@ -1104,10 +1145,15 @@ int main (int argc, char *argv[])
 
 	// other data-mc
 
+	if (MSPlot.find("Selected_Events_nPV3D") == MSPlot.end())
+	  MSPlot["Selected_Events_nPV3D"] = new MultiSamplePlot(datasets, "Selected_Events_nPV3D", 36, -0.5, 35.5, "nPV");
+
+	MSPlot["Selected_Events_nPV3D"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+
 	if (MSPlot.find("Selected_Events_nPV") == MSPlot.end())
 	  MSPlot["Selected_Events_nPV"] = new MultiSamplePlot(datasets, "Selected_Events_nPV", 36, -0.5, 35.5, "nPV");
 
-	MSPlot["Selected_Events_nPV"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["Selected_Events_nPV"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactorOLDREW);
 
 	if (MSPlot.find("Selected_Events_nPV_NONREW") == MSPlot.end())
 	  MSPlot["Selected_Events_nPV_NONREW"] = new MultiSamplePlot(datasets, "Selected_Events_nPV_NONREW", 36, -0.5, 35.5, "nPV");
@@ -1398,7 +1444,8 @@ int main (int argc, char *argv[])
 	NTuple->setE((*(selectedJets[Permutation[3]])).E());
 	NTuple->setEta((*(selectedJets[Permutation[3]])).Eta());//commented for deltaR
 	NTuple->setWeight(1/(datasets[d]->EquivalentLumi()));
-	NTuple->setScaleFactor(scaleFactor);
+	NTuple->setScaleFactor3D(scaleFactor);
+	NTuple->setScaleFactor(scaleFactorOLDREW);
 
 	// For PDF Unc
 
