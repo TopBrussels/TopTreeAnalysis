@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <datasets>
-
- 
-
+<!--
   <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/data_4593.root"/>  
-
+--->
 
   <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/T_tW_DR.root"/> 
  

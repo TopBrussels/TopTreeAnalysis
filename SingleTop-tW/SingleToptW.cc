@@ -330,7 +330,7 @@ int main(int argc, char* argv[]) {
       cout << "[Info:] " << datasets[d]->NofEvtsToRunOver() << " total events" << endl;
       
       
-      for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+      for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
 	{
 	  
 	  if(ievt%500 == 0) std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
@@ -347,13 +347,14 @@ int main(int argc, char* argv[]) {
 	  }
 	   
 	  //Trigger
-	  int currentRun = event->runId();
-	  bool itrigger = false;
-	  bool isecondtrigger = false;
-          
+	 
+          //No trigger after first test
 	  bool trigged = true;
 	  
 	  /*
+	  int currentRun = event->runId();
+	  bool itrigger = false;
+	  bool isecondtrigger = false;
 	  if(isData) { 
 	    if (mode == 0){
 	      if(currentRun >= 150000 && currentRun <= 161176){
@@ -467,8 +468,8 @@ int main(int argc, char* argv[]) {
 	  Selection selection(init_jets, init_muons, init_electrons, mets);
 	  
 	  // PV cut (useless)
-	  bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
-
+	  //bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
+	  bool isGoodPV = true;
 	  
 	  // Set up the unclustered MET systematic
 	  double uncmet_px = mets[0]->Px();
@@ -633,7 +634,7 @@ int main(int argc, char* argv[]) {
 		      qLepton->push_back(q0);
 		      qLepton->push_back(q1);
                       
-		      for (int i =0; i < selectedJets.size(); i ++){
+		      for (unsigned int i =0; i < selectedJets.size(); i ++){
 			TRootJet* tempJet = (TRootJet*) selectedJets[i];
 			ptJet->push_back(tempJet->Pt());
 			pxJet->push_back(tempJet->Px());
@@ -650,7 +651,7 @@ int main(int argc, char* argv[]) {
                       
 		      allForTopoCalc.push_back(lepton0);
 		      allForTopoCalc.push_back(lepton1);
-		      for(int ijet=0;ijet<selectedJets.size(); ijet++){
+		      for(unsigned int ijet=0;ijet<selectedJets.size(); ijet++){
 			TRootJet* tempJet = (TRootJet*) selectedJets[ijet];
 			TLorentzVector tempLV(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->E());
 			allForTopoCalc.push_back(tempLV);
@@ -712,15 +713,16 @@ int main(int argc, char* argv[]) {
 			  double tempSF = SFval;
 			  if (SFminus) 	tempSF = SFval - SFval*10/100;
 			  if (SFplus) 	tempSF = SFval + SFval*10/100;
-			  int SFvalue = tempSF*100 + 1;
+			  int SFvalue = int(tempSF*100 + 1);
 			  
 			  if (isData || !scaleFactor){
-			    for (int i =0; i < selectedJets.size(); i ++){
+			    for (unsigned int i =0; i < selectedJets.size(); i ++){
 			      TRootJet* tempJet = (TRootJet*) selectedJets[i];
 			      TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 			      if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 				nJets++;
-				if (iJet == -5) iJet = i;
+				//if (iJet == -5) iJet = i;
+				iJet = i;
 				if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				  bTagged = true;
 				  nJetsBT++;
@@ -730,12 +732,13 @@ int main(int argc, char* argv[]) {
 			  } else {
 			    //// Regular SF
 			    if (SFvalue < 101){
-			      for (int i =0; i < selectedJets.size(); i ++){
+			      for (unsigned int i =0; i < selectedJets.size(); i ++){
 				TRootJet* tempJet = (TRootJet*) selectedJets[i];
 				TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 				if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 				  nJets++;
-				  if (iJet == -5) iJet = i;
+				  //if (iJet == -5) iJet = i;
+				  iJet = i;
 				  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				    iSF = rand() % 101;
 				    if (iSF < SFvalue ){
@@ -750,12 +753,13 @@ int main(int argc, char* argv[]) {
 			      }
 			    } else {
 			      //// Large SF
-			      for (int i =0; i < selectedJets.size(); i ++){
+			      for (unsigned int i =0; i < selectedJets.size(); i ++){
 				TRootJet* tempJet = (TRootJet*) selectedJets[i];
 				TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 				if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 				  nJets++;
-				  if (iJet == -5) iJet = i;
+				  //if (iJet == -5) iJet = i;
+				  iJet = i;
 				  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				    bTagged = true;
 				    nJetsBT++;
