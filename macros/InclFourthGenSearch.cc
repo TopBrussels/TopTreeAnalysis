@@ -382,7 +382,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
 
   vector<string> CutsSelecTableSemiMu;
-  CutsSelecTableSemiMu.push_back(string("initial"));
+  CutsSelecTableSemiMu.push_back(string("initial")); //0
   CutsSelecTableSemiMu.push_back(string("preselected"));
   CutsSelecTableSemiMu.push_back(string("trigged"));
   CutsSelecTableSemiMu.push_back(string("Good PV"));
@@ -392,16 +392,18 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiMu.push_back(string("SS $\\geq$ 1 muon"));
   CutsSelecTableSemiMu.push_back(string("trileptons $\\geq$ 1 muon"));
   CutsSelecTableSemiMu.push_back(string("box 1B 1W"));
-  CutsSelecTableSemiMu.push_back(string("box 1B 2W"));
+  CutsSelecTableSemiMu.push_back(string("box 1B 2W"));//10
   CutsSelecTableSemiMu.push_back(string("box 1B 3W"));
   CutsSelecTableSemiMu.push_back(string("box 1B $\\geq$ 4W"));
   CutsSelecTableSemiMu.push_back(string("box 2B 1W"));
   CutsSelecTableSemiMu.push_back(string("box 2B 2W"));
   CutsSelecTableSemiMu.push_back(string("box 2B 3W"));
   CutsSelecTableSemiMu.push_back(string("box 2B $\\geq$ 4W"));
+  CutsSelecTableSemiMu.push_back(string("SS leptons in all boxes combined")); //17
+  CutsSelecTableSemiMu.push_back(string("trileptons in all boxes combined")); //18
 
   vector<string> CutsSelecTableSemiEl;
-  CutsSelecTableSemiEl.push_back(string("initial"));
+  CutsSelecTableSemiEl.push_back(string("initial")); //0
   CutsSelecTableSemiEl.push_back(string("preselected"));
   CutsSelecTableSemiEl.push_back(string("trigged"));
   CutsSelecTableSemiEl.push_back(string("Good PV"));
@@ -411,7 +413,7 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet"));
   CutsSelecTableSemiEl.push_back(string("MET > 40 GeV"));
   CutsSelecTableSemiEl.push_back(string("SS 2 electrons"));
-  CutsSelecTableSemiEl.push_back(string("trileptons 3 electrons"));
+  CutsSelecTableSemiEl.push_back(string("trileptons 3 electrons")); //10
   CutsSelecTableSemiEl.push_back(string("box 1B 1W"));
   CutsSelecTableSemiEl.push_back(string("box 1B 2W"));
   CutsSelecTableSemiEl.push_back(string("box 1B 3W"));
@@ -420,6 +422,8 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("box 2B 2W"));
   CutsSelecTableSemiEl.push_back(string("box 2B 3W"));
   CutsSelecTableSemiEl.push_back(string("box 2B $\\geq$ 4W"));
+  CutsSelecTableSemiEl.push_back(string("SS leptons in all boxes combined")); //19
+  CutsSelecTableSemiEl.push_back(string("trileptons in all boxes combined")); //20
 
   SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
   selecTableSemiMu.SetLuminosity(Luminosity);
@@ -449,19 +453,11 @@ int main (int argc, char *argv[])
   ///////////////
   // JetCombiner
   ///////////////
-  JetCombiner* jetCombiner_training;
-  JetCombiner* jetCombiner_1B_2W;
-  JetCombiner* jetCombiner_2B_2W;
+  JetCombiner* jetCombiner;
   if(!doMVAjetcombination) TrainMVA = false;
   else if(doMVAjetcombination)
   {
-    if(TrainMVA)
-       jetCombiner_training = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint
-    else
-    {
-      jetCombiner_1B_2W = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "_1B_2W",channelpostfix);
-      jetCombiner_2B_2W = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "_2B_2W",channelpostfix);
-    }
+    jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint    
   }
   
 
@@ -1297,9 +1293,9 @@ int main (int argc, char *argv[])
         			TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
         			sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 
 				if(semiMuon) 
-					jetCombiner_training->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        
+					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);	        
 				else if(semiElectron)
-					jetCombiner_training->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
+					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TrainwithTprime);
       }
 
        
@@ -1309,9 +1305,8 @@ int main (int argc, char *argv[])
       //relevant for the kinematic fit: calculate the resolutions
       if(doMVAjetcombination && selectedJets.size()>=4 && doKinematicFit && CalculateResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
       {
-          jetCombiner_1B_2W->FillResolutions(resFitLightJets, resFitBJets);
-          jetCombiner_2B_2W->FillResolutions(resFitLightJets, resFitBJets);
-	  continue;
+          jetCombiner->FillResolutions(resFitLightJets, resFitBJets);
+	  			continue;
       }
       
 
@@ -1716,14 +1711,14 @@ int main (int argc, char *argv[])
 					   if(selectedJets_MVAinput.size()==4)
 					   {	
 					
-					        sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
+					     sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
                                                 
-						TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-			   			if(semiMuon) jetCombiner_1B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-                           			else if(semiElectron) jetCombiner_1B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor);
+						   TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
+			   			 if(semiMuon) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
+               else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor);
 			  
-			   			//vector<unsigned int> goodCombi = jetCombiner_1B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
-			   			MVAvals = jetCombiner_1B_2W->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
+			   			 //vector<unsigned int> goodCombi = jetCombiner_1B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
+			   			 MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
 					   }
 					   else
 					     cout<<"WARNING: vector of selected jets for MVA input is not equal to 4 (but to "<<selectedJets_MVAinput.size()<<"); fix this!!"<<endl;					   
@@ -1753,6 +1748,8 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_2W = NP_NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor ;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+							if(semiElectron) selecTableSemiEl.Fill(d,19,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,17,scaleFactor);	
 				    }
  	
 					//cout << "done in 1B 2W box" << endl;
@@ -1773,7 +1770,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				    }
+							if(semiElectron) selecTableSemiEl.Fill(d,19,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,17,scaleFactor);
+						}
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
 							//cout << "IS TRI-LEPTON" << endl;
@@ -1782,7 +1781,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				    }
+				    	if(semiElectron) selecTableSemiEl.Fill(d,20,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,18,scaleFactor);
+						}
 				    //cout << "done in 1B 3W box" << endl;
 				}
 				else
@@ -1803,7 +1804,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_4W = NP_NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-			     }
+			     		if(semiElectron) selecTableSemiEl.Fill(d,19,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,17,scaleFactor);
+					 }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
 							//cout << "IS TRI-LEPTON" << endl;
@@ -1812,7 +1815,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_1B_4W = NP_NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				   }
+				      if(semiElectron) selecTableSemiEl.Fill(d,20,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,18,scaleFactor);
+					  }
 				   //cout << "done in 1B 4W box" << endl;
 				}
 				
@@ -1866,11 +1871,11 @@ int main (int argc, char *argv[])
        			   			sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
                            			
 						TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-			   			if(semiMuon) jetCombiner_2B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-              					else if(semiElectron) jetCombiner_2B_2W->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);
+			   			if(semiMuon) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
+              else if(semiElectron) jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets_MVAinput,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,TprimeEvaluation);
 			  
 			   			//vector<unsigned int> goodCombi = jetCombiner_2B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
-			   			MVAvals = jetCombiner_2B_2W->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
+			   			MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
 
 	   					//coutObjectsFourVector(init_muons,init_electrons,selectedJets_MVAinput,mets,"*** Before kinematic fit ***");
 						
@@ -1905,7 +1910,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_2W = NP_NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				     } 
+				      if(semiElectron) selecTableSemiEl.Fill(d,19,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,17,scaleFactor);
+					  } 
 				}
 				else if(nbOfWs==3)
 				{    
@@ -1924,7 +1931,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_3W = NP_NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				     }
+				      if(semiElectron) selecTableSemiEl.Fill(d,19,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,17,scaleFactor);
+						 }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
 							//cout << "IS TRI-LEPTON" << endl;
@@ -1933,7 +1942,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_2B_3W = NP_NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				     }
+				      if(semiElectron) selecTableSemiEl.Fill(d,20,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,18,scaleFactor);
+						 }
 					//cout << "done in 2B 3W box" << endl;
 				}
 				else
@@ -1953,7 +1964,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_4W = NP_NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				     }
+				      if(semiElectron) selecTableSemiEl.Fill(d,19,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,17,scaleFactor);
+						 }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
 						//cout << "IS TRI-LEPTON" << endl;
@@ -1962,7 +1975,9 @@ int main (int argc, char *argv[])
 							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_2B_4W = NP_NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				     }
+				      if(semiElectron) selecTableSemiEl.Fill(d,20,scaleFactor);
+						  if(semiMuon) selecTableSemiMu.Fill(d,18,scaleFactor);
+						}
 				     //cout << "done in 2B 4W box" << endl;
 				}
 			} //end number of btags == 2
@@ -2046,13 +2061,7 @@ int main (int argc, char *argv[])
   {
     string pathPNGJetCombi = pathPNG+"JetCombination/";
     mkdir(pathPNGJetCombi.c_str(),0777);
-    if(TrainMVA)
-      jetCombiner_training->Write(fout, true, pathPNGJetCombi);
-    else
-    {
-      jetCombiner_1B_2W->Write(fout, true, pathPNGJetCombi);
-      jetCombiner_2B_2W->Write(fout, true, pathPNGJetCombi);
-    }
+    jetCombiner->Write(fout, true, pathPNGJetCombi);
   }
   
   // Fill the resolution histograms and calculate the resolutions
@@ -2166,9 +2175,7 @@ int main (int argc, char *argv[])
   } //end !trainMVA
   
   //delete
-  if(jetCombiner_training && TrainMVA) delete jetCombiner_training; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
-  if(jetCombiner_1B_2W && !TrainMVA) delete jetCombiner_1B_2W;
-  if(jetCombiner_2B_2W && !TrainMVA) delete jetCombiner_2B_2W;
+  if(jetCombiner) delete jetCombiner; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
   
   delete fout;
 
