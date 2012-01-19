@@ -253,7 +253,7 @@ void TwoDimTemplateTools::Write(TFile* fout,TDirectory* th1dir)
         int name_int = it->first;
 	char HTbin[150];
 	sprintf (HTbin, "%s_%s_%sbin%i",yvariable_.c_str (),identifier_.c_str (),xvariable_.c_str (),name_int);
-        temp->Draw(false, HTbin, true, true, true, true, true, 1);
+        temp->Draw(false, HTbin, true, true, true, true, true, 5);
         temp->Write(fout, HTbin, false, "");
    }
    
@@ -271,7 +271,7 @@ void TwoDimTemplateTools::Write(TFile* fout,TDirectory* th1dir)
    MultiSamplePlot* templates1D_MS = new MultiSamplePlot(templates1D_forMS);
    char TemplateName[150];
    sprintf (TemplateName, "Template_%s_%s_%s",identifier_.c_str (),xvariable_.c_str (),yvariable_.c_str ());
-   templates1D_MS->Draw(false, TemplateName, true, true, true, true, true, 1);// templates1D_MS->Draw(false, "Templates", true, true, true, true, true, 1);
+   templates1D_MS->Draw(false, TemplateName, true, true, true, true, true, 5);// templates1D_MS->Draw(false, "Templates", true, true, true, true, true, 1);
    templates1D_MS->Write(fout, TemplateName, false, "");
 }
 
