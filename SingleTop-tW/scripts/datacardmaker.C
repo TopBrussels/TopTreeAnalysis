@@ -87,7 +87,6 @@ void datacardmaker(){
  
  TH1F*  hup [3][3];
  TH1F*  hdown [3][3];
- 
  for (int i = 0; i < 3; i++){
    int mode = 0;
    if (i < 2) mode = i+1;
@@ -143,10 +142,8 @@ void datacardmaker(){
  }
  datacard << endl;
  
- 
  TH1F*  hup [3][3];
  TH1F*  hdown [3][3];
- 
  for (int i = 0; i < 3; i++){
    int mode = 0;
    if (i < 2) mode = i+1;
@@ -163,8 +160,154 @@ void datacardmaker(){
  } 
 
  datacard << "ttmatch   lnN  ";
+  for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 1){
+       double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
+       if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - average)/average) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 1){
+       double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
+       if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - average)/average) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 1){
+       double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
+       if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - average)/average) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ datacard << endl;
+
+ TH1F*  hup [3][3];
+ TH1F*  hdown [3][3];
+ for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     if (j == 1) {
+       sprintf(myRootFile,"outputs/noPU_%d_tt_largeISR.root", i);
+       TFile* _file1 = TFile::Open(myRootFile);
+       hup[mode][j] = (TH1F*) _file1->Get("R");
+       sprintf(myRootFile,"outputs/noPU_%d_tt_smallISR.root", i);
+       TFile* _file1 = TFile::Open(myRootFile);
+       hdown[mode][j] = (TH1F*) _file1->Get("R");
+     }
+   }
+ } 
+
+ datacard << "ttifsr    lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 1){
+       double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
+       if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - average)/average) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 1){
+       double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
+       if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - average)/average) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 1){
+       double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
+       if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - average)/average) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ datacard << endl;
  
+ TH1F*  h [3][3];
+ for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     if (j == 0) {
+       sprintf(myRootFile,"outputs/out_%d_twds.root", i);
+       TFile* _file1 = TFile::Open(myRootFile);
+       h[mode][j] = (TH1F*) _file1->Get("R");
+     }
+   }
+ } 
  
+ datacard << "twdrds    lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + fabs((h[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + fabs((h[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + fabs((h[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
+       else datacard << "-            ";
+     }
+     else datacard << "-            ";
+   }
+ }
+ datacard << endl;
+
+  TString SystName = "PU";
+  TH1F*  hup [3][3];
+  TH1F*  hdown [3][3];
+  for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     
+       sprintf(myRootFile,"_%d_", i);
+       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
+       /*
+       
+       hup[mode][j] = (TH1F*) _file1->Get("R");
+       sprintf(myRootFile,"outputs/noPU_%d_tt_smallISR.root", i);
+       TFile* _file1 = TFile::Open(myRootFile);
+       hdown[mode][j] = (TH1F*) _file1->Get("R");
+     */
+   }
+ } 
+
+
+
+
 }
 
 
