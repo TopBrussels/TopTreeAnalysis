@@ -83,7 +83,7 @@ void datacardmaker(){
  datacard << "hltmu     lnN  -            -            -         1.011        1.011       1.011      1.015        1.015        -           -           -            -         1.011        1.011       1.011      1.015        1.015        1.015     -          -           -        1.011       1.011        1.011    1.015        1.015        1.015 " << endl;
  datacard << "ele       lnN  1.02         1.02         -         1.02         1.02        1.02       -            -            -           1.02        1.02         1.02      1.02         1.02        1.02       -            -            -         1.02       1.02        1.02     1.02        1.02         1.02     -            -            - " << endl;
  datacard << "mu        lnN  -            -            -         1.01         1.01        1.01       1.01         1.01         -           -           -            -         1.01         1.01        1.01       1.01         1.01         1.01      -          -           -        1.01        1.01         1.01     1.01         1.01         1.01 " << endl;
- datacard.precision(3);
+ datacard.precision(4);
  
  TH1F*  hup [3][3];
  TH1F*  hdown [3][3];
@@ -284,27 +284,236 @@ void datacardmaker(){
    }
  }
  datacard << endl;
-
-  TString SystName = "PU";
-  TH1F*  hup [3][3];
-  TH1F*  hdown [3][3];
-  for (int i = 0; i < 3; i++){
+ 
+ TString SystName = "PU";
+ TH1F*  hup [3][3];
+ TH1F*  hdown [3][3];
+ for (int i = 0; i < 3; i++){
    int mode = 0;
    if (i < 2) mode = i+1;
    for (int j = 0; j < 3; j++){
-     
-       sprintf(myRootFile,"_%d_", i);
-       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-       /*
-       
-       hup[mode][j] = (TH1F*) _file1->Get("R");
-       sprintf(myRootFile,"outputs/noPU_%d_tt_smallISR.root", i);
-       TFile* _file1 = TFile::Open(myRootFile);
-       hdown[mode][j] = (TH1F*) _file1->Get("R");
-     */
+     sprintf(myRootFile,"_%d_", i);
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
+     hup[mode][j] = (TH1F*) _file1->Get("R");
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
+     hdown[mode][j] = (TH1F*) _file1->Get("R"); 
+    }
+ } 
+ 
+ datacard << "pu        lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)), fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
    }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)), fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)), fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ datacard << "ttxs      lnN  -            1.15         -         -            1.15        -          -            1.15         -           -           1.15         -         -            1.15        -          -            1.15         -         -          1.15        -        -           1.15         -        -            1.15         -" << endl;
+
+ TString SystName = "JES";
+ TH1F*  hup [3][3];
+ TH1F*  hdown [3][3];
+ for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     sprintf(myRootFile,"_%d_", i);
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
+     hup[mode][j] = (TH1F*) _file1->Get("R");
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
+     hdown[mode][j] = (TH1F*) _file1->Get("R"); 
+    }
  } 
 
+ datacard << "jes       lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ } 
+for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ TString SystName = "SF";
+ TH1F*  hup [3][3];
+ TH1F*  hdown [3][3];
+ for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     sprintf(myRootFile,"_%d_", i);
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
+     hup[mode][j] = (TH1F*) _file1->Get("R");
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
+     hdown[mode][j] = (TH1F*) _file1->Get("R"); 
+    }
+ } 
+
+ datacard << "btag      lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ } 
+for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;  
+
+ TString SystName = "JER";
+ TH1F*  hup [3][3];
+ TH1F*  hdown [3][3];
+ for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     sprintf(myRootFile,"_%d_", i);
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
+     hup[mode][j] = (TH1F*) _file1->Get("R");
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
+     hdown[mode][j] = (TH1F*) _file1->Get("R"); 
+    }
+ } 
+ 
+ datacard << "jer       lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)), fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)), fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j < 2){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)), fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+
+
+ TString SystName = "MET";
+ TH1F*  hup [3][3];
+ TH1F*  hdown [3][3];
+ for (int i = 0; i < 3; i++){
+   int mode = 0;
+   if (i < 2) mode = i+1;
+   for (int j = 0; j < 3; j++){
+     sprintf(myRootFile,"_%d_", i);
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
+     hup[mode][j] = (TH1F*) _file1->Get("R");
+     TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
+     hdown[mode][j] = (TH1F*) _file1->Get("R"); 
+    }
+ } 
+ 
+ datacard << "met       lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)), fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)), fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)), fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) ) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ datacard << "pdf       lnN  1.045        -            -         1.045        -           -          1.045        -            -           1.045       -            -         1.045        -           -          1.045        -            -         1.045      -           -        1.045       -            -        1.045        -            -" << endl;
 
 
 
