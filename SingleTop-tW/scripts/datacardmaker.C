@@ -514,8 +514,68 @@ for (int i = 0; i < 3; i++){
  datacard << endl;
  
  datacard << "pdf       lnN  1.045        -            -         1.045        -           -          1.045        -            -           1.045       -            -         1.045        -           -          1.045        -            -         1.045      -           -        1.045       -            -        1.045        -            -" << endl;
-
-
+ 
+ datacard << "# mc statistics for signal:" << endl;
+ datacard << "mcstatst1 lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 0){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ datacard << "# mc statitics for other: use from Z+jets for ee and mumu and from other for emu; they are very similar anyway ..." << endl;
+ datacard << "mcstatot1 lnN  ";
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2){
+       if (i == 0 || i == 2) datacard << "1.5      " ;
+       else datacard << "1.2      ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2){
+       if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ for (int i = 0; i < 3; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2){
+       if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
 
 }
 
