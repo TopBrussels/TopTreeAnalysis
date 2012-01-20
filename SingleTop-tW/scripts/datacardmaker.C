@@ -32,6 +32,9 @@ void datacardmaker(){
      sprintf(myRootFile,"outputs/out_%d_", i);
      TFile *_file1 = TFile::Open(myRootFile + processName[j] + ".root");
      hnominal[mode][j] = (TH1F*) _file1->Get("R");
+     if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 59.2);
+     if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 19.8);
+     if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 132.3);
    }
  } 
 
