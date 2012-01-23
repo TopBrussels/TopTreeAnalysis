@@ -473,6 +473,8 @@ int main (int argc, char *argv[])
 //      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); // Spring11: HLT_Mu15_v1
 //      	  if (itriggerSemiMu == 9999)
 //      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); // Fall10: HLT_Mu9
+      	  if (itriggerSemiMu == 9999)
+      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
         }
         
         // semi-electron
@@ -507,6 +509,8 @@ int main (int argc, char *argv[])
         else
         {
           itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun);
+      	  if (itriggerSemiEl == 9999)
+      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
         }
       }
       // Apply Jet Corrections on-the-fly

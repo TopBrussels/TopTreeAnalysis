@@ -27,6 +27,7 @@
 #include "RooLandau.h"
 #include "RooCBShape.h"
 
+#include "../Selection/interface/SelectionTable.h"
 #include "../Tools/interface/PlottingTools.h"
 #include "../Tools/interface/MultiSamplePlot.h"
 #include "../Content/interface/AnalysisEnvironment.h"
@@ -35,6 +36,7 @@
 #include "../JESMeasurement/interface/FullKinFit.h"
 #include "../JESMeasurement/interface/MonsterTools.h"
 #include "../MCInformation/interface/LumiReWeighting.h"
+#include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../MCInformation/interface/ResolutionFit.h"
 
 #include "Style.C"
@@ -70,10 +72,14 @@ int main (int argc, char *argv[])
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
   
   float LuminosityMu = 4656, LuminosityEl = 4666;
+//  float LuminosityMu = 2145.959, LuminosityEl = 2161.744;
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
   vector<string> inputMonsters;
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
+  
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
   
@@ -301,9 +307,9 @@ int main (int argc, char *argv[])
   MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
   MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonMinus"]->setMaxY(50000.);
-  MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMaxY(18000.);
-  MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(18000.);
   MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 20 GeV");
   MSPlot["mTop_Fit_leptonPlus"]->setMaxY(6000.);
@@ -432,10 +438,10 @@ int main (int argc, char *argv[])
   MSPlot["sigmaMtop_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_muMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
   MSPlot["sigmaMtop_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_elPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
   MSPlot["sigmaMtop_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_elMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["MinChi2ndf_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muPlus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muMinus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elPlus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elMinus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["Prob_MinChi2_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Prob_MinChi2_Fit_muPlus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
   MSPlot["Prob_MinChi2_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Prob_MinChi2_Fit_muMinus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
   MSPlot["Prob_MinChi2_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Prob_MinChi2_Fit_elPlus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
@@ -453,17 +459,24 @@ int main (int argc, char *argv[])
   MSPlot["sigmaMtop_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_AllCombi_muMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
   MSPlot["sigmaMtop_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_AllCombi_elPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
   MSPlot["sigmaMtop_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_AllCombi_elMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["MinChi2ndf_Fit_AllCombi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muPlus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muMinus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",88,0,22,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   
   // initialize LumiReWeighting stuff
   cout << "Initializing LumiReWeighting stuff" << endl;
-  LumiReWeighting LumiWeightsMu = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
-  LumiReWeighting LumiWeightsEl = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
+//  LumiReWeighting LumiWeightsMu = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
+//  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
+  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
   PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
   PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
+  
+  // 3D-reweighting
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+//  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+  Lumi3DWeights.weight3D_init(1.);
+  
   cout << " Initialized LumiReWeighting stuff" << endl;
   
   // load L7Corrections
@@ -471,6 +484,21 @@ int main (int argc, char *argv[])
   resFitLightJets->LoadResolutions("/home/stijn/JES+MTop/Presentatie/11_07_2011_L7Corrections/Summer11/lightJetReso.root");
   ResolutionFit* resFitBJets = new ResolutionFit("BJet");
   resFitBJets->LoadResolutions("/home/stijn/JES+MTop/Presentatie/11_07_2011_L7Corrections/Summer11/bJetReso.root");
+  
+  // SelectionTable
+  vector<string> CutsSelecTable;
+  CutsSelecTable.push_back("Event Selection");
+  CutsSelecTable.push_back("Chi2 cut");
+  
+  SelectionTable selecTableMuPlus(CutsSelecTable, dataSetsAll);
+  selecTableMuPlus.SetLuminosity(LuminosityMu);
+  SelectionTable selecTableMuMinus(CutsSelecTable, dataSetsAll);
+  selecTableMuMinus.SetLuminosity(LuminosityMu);
+  SelectionTable selecTableElPlus(CutsSelecTable, dataSetsAll);
+  selecTableElPlus.SetLuminosity(LuminosityEl);
+  SelectionTable selecTableElMinus(CutsSelecTable, dataSetsAll);
+  selecTableElMinus.SetLuminosity(LuminosityEl);
+  cout << " - SelectionTable instantiated ..." << endl;
   
   for(unsigned int iDataSet=0; iDataSet<inputMonsters.size(); iDataSet++)
   {
@@ -524,24 +552,23 @@ int main (int argc, char *argv[])
       if(iEvt%10000 == 0)
         std::cout<<"Processing the "<<iEvt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC <<endl;
       
+//      if( monster->runID() > 174000 ) continue;
+      
       // PU reweighting???
 //      float avPU = ( (float)monster->nPUBXm1() + (float)monster->nPU() + (float)monster->nPUBXp1() ) / 3.; // average in 3 BX!!!, as recommended
-      float lumiWeightMu = LumiWeightsMu.ITweight( (float) monster->nPU() );
-      float lumiWeightMuUp = lumiWeightMu * PShiftUp.ShiftWeight( (float) monster->nPU() );
-      float lumiWeightMuDown = lumiWeightMu * PShiftDown.ShiftWeight( (float) monster->nPU() );
-      float lumiWeightEl = LumiWeightsEl.ITweight( (float) monster->nPU() );
-      float lumiWeightElUp = lumiWeightEl * PShiftUp.ShiftWeight( (float) monster->nPU() );
-      float lumiWeightElDown = lumiWeightEl * PShiftDown.ShiftWeight( (float) monster->nPU() );
+      float lumiWeight = LumiWeights.ITweight( (float) monster->nPU() );
+//      float lumiWeight = 1;
+//      if( dataSetName.find("DAtaDriven") == string::npos &&  dataSetName.find("Data") != 0 )
+//        lumiWeight = Lumi3DWeights.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
+      float lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) monster->nPU() );
+      float lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) monster->nPU() );
       
       // muoncharge-string
       string leptonCharge, leptonDecay, leptonChargeIncl;
-      float Luminosity, lumiWeight, lumiWeightUp, lumiWeightDown;
+      float Luminosity;
       if(monster->selectedSemiMu())
       {
         Luminosity = LuminosityMu;
-        lumiWeight = lumiWeightMu;
-        lumiWeightUp = lumiWeightMuUp;
-        lumiWeightDown = lumiWeightMuDown;
         leptonCharge = "_mu";
         leptonDecay = "_mu";
         if(monster->semiMuDecay()) nSemiMu_TTSemiMu++;
@@ -550,9 +577,6 @@ int main (int argc, char *argv[])
       else
       {
         Luminosity = LuminosityEl;
-        lumiWeight = lumiWeightEl;
-        lumiWeightUp = lumiWeightElUp;
-        lumiWeightDown = lumiWeightElDown;
         leptonCharge = "_el";
         leptonDecay = "_el";
         if(monster->semiElDecay()) nSemiEl_TTSemiEl++;
@@ -632,7 +656,7 @@ int main (int argc, char *argv[])
       
       // Extra mTop and sigma(mTop) from fitresults
       vector<float> mTop, sigmaMtop, minChi2, hadrBindex, light1index, light2index;
-      int nFinalCombis=0; // final means after chi2<20 cut
+      int nFinalCombis=0; // final means after chi2<10 cut
       int mcCombiIndex = -1;
       for(unsigned int iCombi=0; iCombi<12; iCombi++)
       {
@@ -647,7 +671,7 @@ int main (int argc, char *argv[])
         float chi2MTopFit = monster->chi2MTopFit(iCombi);
         
 //        if( chi2MTopFit < 99999 ) // 99999 means no mTopFit value was calculated, see FullKinFit.cc
-        if( chi2MTopFit < 20 )
+        if( chi2MTopFit < 10 )
         {
           nFinalCombis++;
           light1index.push_back(combi[0]);
@@ -701,8 +725,19 @@ int main (int argc, char *argv[])
     	  histo1D["nUsedCombis_WJets"]->Fill(mTop.size());
       MSPlot["nUsedCombis"+leptonCharge]->Fill(mTop.size(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
       
+      if(leptonCharge == "_muPlus") selecTableMuPlus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+      else if(leptonCharge == "_muMinus") selecTableMuMinus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+      else if(leptonCharge == "_elPlus") selecTableElPlus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+      else if(leptonCharge == "_elMinus") selecTableElMinus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+      else cout << "Unknown leptonCharge:  " << leptonCharge << endl;
+      
       if( mTop.size() > 0 ) // event still has at least one good kinFitted jet-combi
       {
+        if(leptonCharge == "_muPlus") selecTableMuPlus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+        else if(leptonCharge == "_muMinus") selecTableMuMinus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+        else if(leptonCharge == "_elPlus") selecTableElPlus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+        else if(leptonCharge == "_elMinus") selecTableElMinus.Fill(iDataSet,0,monster->eventWeight()*lumiWeight);
+        
         MSPlot["nPV"+leptonDecay]->Fill(monster->nPV(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
         
         MSPlot["Nr_of_jets"+leptonChargeIncl]->Fill(selectedJets.size(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
@@ -779,7 +814,7 @@ int main (int argc, char *argv[])
           outFileSemiMu << "RunNr: " << monster->runID() << endl;
           outFileSemiMu << "LumiSection: " << monster->lumiBlockID() << endl;
           outFileSemiMu << "EventNr: " << monster->eventID() << endl;
-          outFileSemiMu << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightMuDown << "  " << lumiWeightMuUp << endl;
+          outFileSemiMu << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightDown << "  " << lumiWeightUp << endl;
           outFileSemiMu << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nPU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
           outFileSemiMu << lepton.Phi() << "  " << lepton.Eta() << "  " << lepton.Pt() << "  " << monster->leptonCharge() << "  " << MET.Px() << "  " << MET.Py() << endl;
           outFileSemiMu << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagSSVHE[0] << "  "
@@ -800,7 +835,7 @@ int main (int argc, char *argv[])
           outFileSemiEl << "RunNr: " << monster->runID() << endl;
           outFileSemiEl << "LumiSection: " << monster->lumiBlockID() << endl;
           outFileSemiEl << "EventNr: " << monster->eventID() << endl;
-          outFileSemiEl << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightElDown << "  " << lumiWeightElUp << endl;
+          outFileSemiEl << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightDown << "  " << lumiWeightUp << endl;
           outFileSemiEl << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nPU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
           outFileSemiEl << lepton.Phi() << "  " << lepton.Eta() << "  " << lepton.Pt() << "  " << monster->leptonCharge() << "  " << MET.Px() << "  " << MET.Py() << endl;
           outFileSemiEl << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagSSVHE[0] << "  "
@@ -1044,6 +1079,15 @@ int main (int argc, char *argv[])
   
   cout << "Writing out..." << endl;
   fout->cd();
+  
+  selecTableMuPlus.TableCalculator(true, true, true, true, true);
+  selecTableMuPlus.Write("SelectionTable_MuPlus_MTopDiff.tex");
+  selecTableMuMinus.TableCalculator(true, true, true, true, true);
+  selecTableMuMinus.Write("SelectionTable_MuMinus_MTopDiff.tex");
+  selecTableElPlus.TableCalculator(true, true, true, true, true);
+  selecTableElPlus.Write("SelectionTable_ElPlus_MTopDiff.tex");
+  selecTableElMinus.TableCalculator(true, true, true, true, true);
+  selecTableElMinus.Write("SelectionTable_ElMinus_MTopDiff.tex");
   
   TDirectory* th1dir = fout->mkdir("1D_histograms");
   th1dir->cd();
