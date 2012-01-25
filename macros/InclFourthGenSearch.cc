@@ -106,9 +106,10 @@ int main (int argc, char *argv[])
   int doPUShift = 0; //0: off (except nominal PU reweighting) 1: minus 2: plus
   cout << "doPUShift: " << doPUShift << endl;
 
-  string btagger = "TCHEM";
-// b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10,    TCHEM: data/MC scalefactor = 0.94 +- 0.09
-// mistag scalefactor => TCHEL: data/MC scalefactor = 1.11 +- 0.12,    TCHEM: data/MC scalefactor = 1.21 +- 0.17
+  string btagger = "TCHPM";
+//from BTV-11-001; WARNING: btag SFs are for jets of 20-240 GeV, averaged over eta; and mistag SFs are for jets of 50-80 GeV
+// b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10,    TCHEM: data/MC scalefactor = 0.94 +- 0.09,	TCHPM: data/MC scalefactor =  0.91 +- 0.09
+// mistag scalefactor => TCHEL: data/MC scalefactor = 1.11 +- 0.12,    TCHEM: data/MC scalefactor = 1.21 +- 0.17,	TCHPM: data/MC scalefactor =  1.27 +- 0.15
   float scalefactorbtageff = 1, mistagfactor = 1;
   if(btagger == "TCHEL") //track counting high eff loose working point
   {
@@ -143,11 +144,48 @@ int main (int argc, char *argv[])
 	  if(domisTagEffShift == 2)
 		mistagfactor = 1.38;
   }
+	else if(btagger == "TCHPM") //track counting high pur medium working point
+  {
+  	  if(dobTagEffShift == 0)
+		scalefactorbtageff = 0.91;
+	  if(dobTagEffShift == 1)
+		scalefactorbtageff = 0.8194;
+	  if(dobTagEffShift == 2)
+		scalefactorbtageff = 1.0006;
+		
+	  if(domisTagEffShift == 0)
+		mistagfactor = 1.27;
+	  if(domisTagEffShift == 1)
+		mistagfactor = 1.1187;
+	  if(domisTagEffShift == 2)
+		mistagfactor = 1.4213;
+  }
+	else if(btagger == "TCHPT") //track counting high pur tight working point
+  {
+	  cout<<"WARNING: look up SFs for TCHPT"<<endl;
+  	 /* if(dobTagEffShift == 0)
+		scalefactorbtageff = 0.91;
+	  if(dobTagEffShift == 1)
+		scalefactorbtageff = 0.8194;
+	  if(dobTagEffShift == 2)
+		scalefactorbtageff = 1.0006;
+		
+	  if(domisTagEffShift == 0)
+		mistagfactor = 1.27;
+	  if(domisTagEffShift == 1)
+		mistagfactor = 1.1187;
+	  if(domisTagEffShift == 2)
+		mistagfactor = 1.4213;*/
+  }
   float workingpointvalue = 9999; //{1.7,3.3,10.2}; trackcountinghighefficiency working points: loose, medium, tight
   if(btagger == "TCHEL")
      workingpointvalue = 1.7;
   else if(btagger == "TCHEM")
-     workingpointvalue = 3.3;	
+     workingpointvalue = 3.3;
+  else if(btagger == "TCHPM")
+     workingpointvalue = 1.93;
+	else if(btagger == "TCHPT")
+     workingpointvalue = 3.41;
 
   clock_t start = clock();
 
@@ -159,7 +197,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = ""; // to relabel the names of the output file
+  string postfix = "JetMultiplicityTEST_25Jan12"; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -327,8 +365,15 @@ int main (int argc, char *argv[])
   MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 150, "");
   MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
   MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
-  
-  cout << " - Declared histograms ..." <<  endl;
+  MSPlot["MS_JetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicity", 10, -0.5, 9.5, "Jet Multiplicity");
+  MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "BtaggedJetMultiplicity", 7, -0.5, 6.5, "b-tagged jet multiplicity");
+	MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicityAtleast1Btag", 10, -0.5, 9.5, "Jet multiplicity (>=1 b-tag)");
+
+  MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
+	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
+	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
+	
+	cout << " - Declared histograms ..." <<  endl;
 
   float NbSSevents = 0;  
   float NbSSevents_1B_2W = 0; 
@@ -774,7 +819,7 @@ int main (int argc, char *argv[])
 					std::vector<float> probabilities;
 					for(size_t i=0; i<init_jets.size(); ++i){
     				if(fabs(init_jets[i]->Eta())>2.6) continue;
-    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighEffBJetTags()));
+    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighPurBJetTags())); //highEff when this is used offline
 					}
 				
 					//use binary code for objects to be triggered or not triggered
@@ -800,7 +845,7 @@ int main (int argc, char *argv[])
  					//cout << "mcevent triggerweight " << mceventtriggerweight << endl;
  					//cout << "scalefactor (only triggerweight) " << scaleFactor << endl;
       	}
-
+        
       	////////////////////////////
       	// apply PU Reweighting
       	////////////////////////////
@@ -808,21 +853,7 @@ int main (int argc, char *argv[])
 	 			scaleFactor = scaleFactor*lumiWeight3D;
       	histo1D["lumiWeights"]->Fill(scaleFactor);	
 			}
-			
-			/*if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"))
-			{
-				////scaleFactor = scaleFactor*weighter->GetWeight(var,event->nPu(0)); //old pu reweighting method by Michael
-      	//float avPU = ( (float)event->nPu(-1) + (float)event->nPu(0) + (float)event->nPu(+1) ) / 3.;
-        //scaleFactor = scaleFactor*LumiWeights.ITweight(avPU);// official pu reweighting method by Stijn
-	
-	 			// official pu reweighting method by Stijn
-				float lumiWeight = LumiWeights.ITweight( (float) event->nPu(0) );
-				float lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) event->nPu(0) );
-				float lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) event->nPu(0) );
-	
-	 			//not yet for systematics cases
-	 			scaleFactor = scaleFactor*lumiWeight;
-      } */
+						
 								
       /////////////////////////////
       // Selection
@@ -919,10 +950,32 @@ int main (int argc, char *argv[])
 						
 						if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
 						{  //at least 1 jet!
+						
+						  //block for the jet multiplicity plot
+							if(mets[0]->Et()> METCut)
+							{							
+							      if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										{
+										  int nBtags = 0;
+											for(unsigned int j=0;j<selectedJets.size();j++)
+											{
+											   if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+												 {
+												    nBtags++;
+												 }
+											}
+											MSPlot["MS_JetMultiplicity_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+											MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"]->Fill(nBtags,datasets[d], true, Luminosity*scaleFactor);
+										  if(nBtags>0)
+											  MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+										}
+							}
+								
+							//continuing for the selection 	
 							for(unsigned int j=0;j<selectedJets.size();j++)
 							{
 								//now require at least a b-tagged jet larger than a certain pre-defined cut
-								if(selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue)
+								if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 								{
 									selecTableSemiMu.Fill(d,5,scaleFactor); 
 									if(mets[0]->Et()> METCut)
@@ -1161,10 +1214,30 @@ int main (int argc, char *argv[])
 
 								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
 								{
+									//block for the jet multiplicity plot
+									if(mets[0]->Et()> METCut)
+									{							
+										if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+										{
+										  int nBtags = 0;
+											for(unsigned int j=0;j<selectedJets.size();j++)
+											{
+											   if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+												 {
+												    nBtags++;
+												 }
+											}
+											MSPlot["MS_JetMultiplicity_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+											MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"]->Fill(nBtags,datasets[d], true, Luminosity*scaleFactor);
+											if(nBtags>0)
+											  MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+										}
+									}
+									
 									for(unsigned int j=0;j<selectedJets.size();j++)
 									{
 										//now require at least a b-tagged jet larger than a certain pre-defined cut
-										if(selectedJets[j]->btag_trackCountingHighEffBJetTags() > workingpointvalue)
+										if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 										{
 		             			selecTableSemiEl.Fill(d,7,scaleFactor);
 											if(mets[0]->Et()> METCut)
@@ -1266,6 +1339,15 @@ int main (int argc, char *argv[])
 				MSPlot["MS_MET"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);				
 				if(semiElectron) MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);				
 				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);				
+			
+				for(unsigned int j=0;j<selectedJets.size();j++)
+				{
+				  MSPlot["MS_JetPt_all_SingleLepton"]->Fill(selectedJets[j]->Pt(),datasets[d], true, Luminosity*scaleFactor);
+					if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+					  MSPlot["MS_JetPt_btagged_SingleLepton"]->Fill(selectedJets[j]->Pt(),datasets[d], true, Luminosity*scaleFactor);
+					else
+					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j]->Pt(),datasets[d], true, Luminosity*scaleFactor);
+				}			
 			}
 
 			if(isSSLepton)
@@ -1454,7 +1536,7 @@ int main (int argc, char *argv[])
 				vector< pair< int, bool > > jetindex_isb;
 				for(unsigned int i = 0; i<selectedJetsForBtagging.size(); i++)
 				{
-					pair<int,float> dummy (i,selectedJetsForBtagging[i]->btag_trackCountingHighEffBJetTags());
+					pair<int,float> dummy (i,selectedJetsForBtagging[i]->btag_trackCountingHighPurBJetTags());
 					jetindex_btagvalue.push_back(dummy);
 				}
 				/*cout<<"BEFORE SORTING"<<endl;
@@ -2231,6 +2313,7 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 //https://twiki.cern.ch/twiki/bin/viewauth/CMS/SingleTopTurnOnCurves
 float jetprob(float jetpt, float btagvalue){
 	float prob=0.982*exp(-30.6*exp(-0.151*jetpt));
-  prob*=0.844*exp((-6.72*exp(-0.720*btagvalue))); //TCHP tagger used for BTAGIP trigger
+  prob*=0.844*exp((-6.72*exp(-0.720*btagvalue))); //"for the offline TCHP tagger"
+	//prob*=0.736*exp((-8.01*exp(-0.540*btagvalue))); //"for the offline TCHE tagger"
 	return prob;
 };
