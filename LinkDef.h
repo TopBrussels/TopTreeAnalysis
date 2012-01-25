@@ -21,6 +21,7 @@
 #include "TopTreeProducer/interface/TRootVertex.h"
 #include "JESMeasurement/interface/Monster.h"
 #include "JESMeasurement/interface/LightMonster.h"
+#include "TopTreeAnalysis/TopFCNC/interface/TopFCNC_Evt.h"
 #include "TopTreeAnalysis/WHelicities/interface/WTree.h"
 #include "Content/interface/MCExpectation.h"
 #include "Content/interface/MCObsExpectation.h"
@@ -48,6 +49,7 @@
 #include "TopTreeProducer/interface/TRootSpinCorrGen.h"
 #include "TopTreeProducer/interface/TRootVertex.h"
 #include "JESMeasurement/interface/LightMonster.h"
+#include "TopTreeAnalysis/TopFCNC/interface/TopFCNC_Evt.h"
 #include "TopTreeAnalysis/WHelicities/interface/WTree.h"
 #include "JESMeasurement/interface/Monster.h"
 #include "Content/interface/MCExpectation.h"
@@ -92,6 +94,7 @@
 #pragma link C++ class AnalysisEnvironment;
 #pragma link C++ class BinningFirstGuess;
 #pragma link C++ class Container;
+#pragma link C++ class TopFCNC_Evt;
 
 #pragma link C++ struct TopTree::triggeredObject;
 
