@@ -11,8 +11,6 @@
 #include <cmath>
 #include "inputs.h"
 
-
-
 using namespace std;
 void datacardmaker(){
 
@@ -29,12 +27,12 @@ void datacardmaker(){
     TFile *_file0 = TFile::Open(myRootFile);
     hdata[mode] = (TH1F*) _file0->Get("R");
     for (int j = 0; j < 3; j++){
-     sprintf(myRootFile,"outputs/out_%d_", i);
-     TFile *_file1 = TFile::Open(myRootFile + processName[j] + ".root");
-     hnominal[mode][j] = (TH1F*) _file1->Get("R");
-     if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 59.2);
-     if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 19.8);
-     if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 132.3);
+      sprintf(myRootFile,"outputs/out_%d_", i);
+      TFile *_file1 = TFile::Open(myRootFile + processName[j] + ".root");
+      hnominal[mode][j] = (TH1F*) _file1->Get("R");
+      if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 59.2);
+      if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 19.8);
+      if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 132.3);
     }
   } 
   
@@ -56,14 +54,14 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     datacard << "	" << hdata[i]->GetBinContent(8) ;
   }
- 
+  
   datacard << endl;
   datacard << "------------ " << endl;
   datacard << "bin            ee1j1t       ee1j1t       ee1j1t    emu1j1t      emu1j1t     emu1j1t    mumu1j1t     mumu1j1t     mumu1j1t    ee2j1t      ee2j1t       ee2j1t    emu2j1t      emu2j1t     emu2j1t   mumu2j1t     mumu2j1t     mumu2j1t  ee2j2t     ee2j2t      ee2j2t   emu2j2t     emu2j2t      emu2j2t  mumu2j2t     mumu2j2t     mumu2j2t" << endl;
   datacard << "process        st           tt           other     st           tt          other      st           tt           other       st          tt           other     st           tt          other      st           tt           other     st         tt          other    st          tt           other    st           tt           other" << endl;
   datacard << "process        0            1            2         0            1           2          0            1            2           0           1            2         0            1           2          0            1            2         0          1           2        0           1            2        0            1            2" << endl;
   datacard << "rate           " ;
-
+  
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       datacard << hnominal[i][j]->GetBinContent(2) << "          ";
@@ -71,7 +69,7 @@ void datacardmaker(){
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-     datacard << hnominal[i][j]->GetBinContent(7) << "          ";
+      datacard << hnominal[i][j]->GetBinContent(7) << "          ";
     }
   }
   for (int i = 0; i < 3; i++){
@@ -332,7 +330,7 @@ void datacardmaker(){
     }
   }
   datacard << endl;
- 
+  
   datacard << "ttxs      lnN  -            1.15         -         -            1.15        -          -            1.15         -           -           1.15         -         -            1.15        -          -            1.15         -         -          1.15        -        -           1.15         -        -            1.15         -" << endl;
   
   TString SystName = "JES";
@@ -354,7 +352,7 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 2){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "/" << 1+ ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -363,7 +361,7 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 2){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
+	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "/" << 1+ ((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -372,7 +370,7 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 2){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
+	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "/" << 1+ ((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -388,9 +386,9 @@ void datacardmaker(){
     if (i < 2) mode = i+1;
     for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-      hup[mode][j] = (TH1F*) _file1->Get("R");
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
+      hup[mode][j] = (TH1F*) _file1->Get("R");
+      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hdown[mode][j] = (TH1F*) _file1->Get("R"); 
     }
   } 
@@ -399,7 +397,7 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 2){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << 1 + ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "/" << 1+ ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -408,7 +406,7 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 2){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
+	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "/" << 1+ ((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -417,7 +415,7 @@ void datacardmaker(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 2){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "/" << 1+ fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
+	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "/" << 1+ ((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -500,7 +498,7 @@ void datacardmaker(){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
 	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)), fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7)) ) << "         ";
-       else datacard << "-          ";
+	else datacard << "-          ";
       }
       else datacard << "-          ";
     }
@@ -552,27 +550,44 @@ void datacardmaker(){
   datacard << "# mc statitics for other: use from Z+jets for ee and mumu and from other for emu; they are very similar anyway ..." << endl;
   datacard << "mcstatot1 lnN  ";
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
+    for (int j = 0; j <9; j++){ 
       if(j == 2){
-	if (i == 0 || i == 2) datacard << "1.5      " ;
-	else datacard << "1.2      ";
+	if (i == 0) datacard << "1.5      " ;
+	else datacard << "-        ";
       }
       else datacard << "-          ";
     }
   }
+  datacard << endl;
+  
+  datacard << "mcstatot2 lnN  ";
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 2){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "         ";
-	else datacard << "-          ";
+    for (int j = 0; j <9; j++){ 
+      if(j == 5 && i == 0){
+	datacard << "1.2      ";
       }
       else datacard << "-          ";
     }
   }
+  datacard << endl;
+
+  datacard << "mcstatot3 lnN  ";
   for (int i = 0; i < 3; i++){
+    for (int j = 0; j <9; j++){ 
+      if(j == 8 && i == 0){
+	datacard << "1.5      ";
+      }
+      else datacard << "-          ";
+    }
+  }
+  datacard << endl;
+  
+  
+  datacard << "mcstatot4 lnN  ";
+  for (int i = 0; i < 9; i++){
     for (int j = 0; j <3; j++){ 
-      if(j == 2){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "         ";
+      if(j == 2 && i == 3){
+	if (hnominal[0][j]->GetBinContent(7) !=0) datacard << 1 + (hnominal[0][j]->GetBinError(7)/hnominal[0][j]->GetBinContent(7)) << "         ";
 	else datacard << "-          ";
       }
       else datacard << "-          ";
@@ -580,6 +595,67 @@ void datacardmaker(){
   }
   datacard << endl;
   
+ datacard << "mcstatot5 lnN  ";
+ for (int i = 0; i < 9; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2 && i == 4){
+       if (hnominal[1][j]->GetBinContent(7) !=0) datacard << 1 + (hnominal[1][j]->GetBinError(7)/hnominal[1][j]->GetBinContent(7)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+    }
+ }
+ datacard << endl;
+ 
+ 
+ datacard << "mcstatot6 lnN  ";
+ for (int i = 0; i < 9; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2 && i == 5){
+       if (hnominal[2][j]->GetBinContent(7) !=0) datacard << 1 + (hnominal[2][j]->GetBinError(7)/hnominal[2][j]->GetBinContent(7)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ datacard << "mcstatot7 lnN  ";
+ for (int i = 0; i < 9; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2 && i == 6){
+       if (hnominal[0][j]->GetBinContent(8) !=0) datacard << 1 + (hnominal[0][j]->GetBinError(8)/hnominal[0][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ datacard << "mcstatot8 lnN  ";
+ for (int i = 0; i < 9; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2 && i == 7){
+       if (hnominal[1][j]->GetBinContent(8) !=0) datacard << 1 + (hnominal[1][j]->GetBinError(8)/hnominal[1][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+     }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
+ 
+ 
+ datacard << "mcstatot9 lnN  ";
+ for (int i = 0; i < 9; i++){
+   for (int j = 0; j <3; j++){ 
+     if(j == 2 && i == 8){
+       if (hnominal[2][j]->GetBinContent(8) !=0) datacard << 1 + (hnominal[2][j]->GetBinError(8)/hnominal[2][j]->GetBinContent(8)) << "         ";
+       else datacard << "-          ";
+      }
+     else datacard << "-          ";
+   }
+ }
+ datacard << endl;
 }
 
 
