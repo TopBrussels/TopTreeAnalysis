@@ -1,3 +1,4 @@
+
 ////////////////////////////
 ///// TODO & COMMENTS /////
 /////////////////////////// 
@@ -214,6 +215,11 @@ int main (int argc, char *argv[])
   histo1D["hadronicPartonWMass"] = new TH1F("hadronicPartonWMass","Hadronic W Mass, using the Partons",100,0,200);
   histo1D["hadronicRecoTopMass"] = new TH1F("hadronicRecoTopMass","Hadronic Top Mass, using the RecoJets", 100, 100, 300);
   histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
+
+  histo1D["hadronicRecoTopMass-REW"] = new TH1F("hadronicRecoTopMass-REW","Hadronic Top Mass, using the RecoJets", 100, 100, 300);
+  histo1D["hadronicRecoWMass-REW"] = new TH1F("hadronicRecoWMass-REW","Hadronic W Mass, using the RecoJets",100,0,200);
+  histo1D["hadronicRecoTopMass-REW3D"] = new TH1F("hadronicRecoTopMass-REW3D","Hadronic Top Mass, using the RecoJets", 100, 100, 300);
+  histo1D["hadronicRecoWMass-REW3D"] = new TH1F("hadronicRecoWMass-REW3D","Hadronic W Mass, using the RecoJets",100,0,200);
   
   ////////////////////////////////////
   /// MultiSamplePlot
@@ -259,23 +265,47 @@ int main (int argc, char *argv[])
 
   // OLD 2D REWEIGHING
 
+  //cout << Luminosity << endl;
+
   LumiReWeighting LumiWeights;
   if (systematic == 10 || systematic == 11 || systematic == 12) { // take 1/fb histo for PU syst for now
     cout << "PU Reweighing, taking 1/fb histogram for PU Syst!!!" << endl;
     LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_1fb.root", "pileup2", "pileup"); // summer 11 1.1/fb
   }
   else {
-    cout << "PU Reweighing, taking 2/fb histogram!!!" << endl;
-    LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_2fb.root", "pileup2", "pileup"); // summer 11 2.14/fb
+    if (Luminosity > 4500) {
+      cout << "PU Reweighing, taking 4.6/fb histogram!!!" << endl;
+      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_4fb.root", "pileup2", "pileup"); // summer 11 4.6/fb
+    }
+    else if (Luminosity > 2100) {
+      cout << "PU Reweighing, taking 2.1/fb histogram!!!" << endl;
+      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_2fb.root", "pileup2", "pileup"); // summer 11 2.14/fb
+    }
+    else {
+      cout << "PU Reweighing, taking 1.1/fb histogram!!!" << endl;
+      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_1fb.root", "pileup2", "pileup"); // summer 11 1.1/fb
+    }
   }
 
   reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
   reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
 
   // NEW 3D REWEIGHING
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup"); // 2.1/fb Run2011A
-  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
 
+  Lumi3DReWeighting Lumi3DWeights;
+
+  if (Luminosity > 4500) {
+      cout << "3DPU Reweighing, taking 4.6/fb histogram!!!" << endl;
+    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
+  }
+  else if (Luminosity > 2100) {
+    cout << "3DPU Reweighing, taking 2.1/fb histogram!!!" << endl;
+    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup"); // 2.1/fb Run2011A
+  } 
+  else {
+    cout << "3DPU Reweighing, NO HISTOGRAM DEFINED!!!" << endl;
+  }
+    
   //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // FALL114.6/fb Run2011A+B
 
   if (systematic == 10)
@@ -287,6 +317,8 @@ int main (int argc, char *argv[])
 
   cout << " Initialized LumiReWeighting stuff" << endl;
   
+  exit(1);
+
   ////////////////////////////////////
   //	Loop on datasets
   ////////////////////////////////////
@@ -466,7 +498,7 @@ int main (int argc, char *argv[])
            
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {
-        genjets = treeLoader.LoadGenJet(ievt);
+        genjets = treeLoader.LoadGenJet(ievt,false);
         sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
 
@@ -510,6 +542,7 @@ int main (int argc, char *argv[])
       //  init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );
       
       // Apply Jet Corrections on-the-fly
+
       if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) {
 	//jetTools->correctJets(init_jets, vertex);
 	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho());
@@ -546,7 +579,7 @@ int main (int argc, char *argv[])
       //double avPU = ((double)event->nPu(-1) + (double)event->nPu(0) + (double)event->nPu(1))/3. ; // average in 3 BX!!!, as recommended
       //double lumiWeight = LumiWeights.ITweight( (int)avPU );
 
-      double lumiWeight = 1;//LumiWeights.ITweight( event->nPu(0) );
+      double lumiWeight = -999999;//LumiWeights.ITweight( event->nPu(0) );
 
       if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
 	lumiWeight=1;
@@ -557,6 +590,7 @@ int main (int argc, char *argv[])
       } else
 	lumiWeight=Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
 
+      //cout << lumiWeight << endl;
       //if (event->nPu(0) >= 25) cout << "#pu " << event->nPu(0) << " shift +0.6 " << PShiftUp_.ShiftWeight( event->nPu(0) ) << endl;
 
       //if (systematic == 10)
@@ -733,8 +767,8 @@ int main (int argc, char *argv[])
 	  }
 	  float deltapt = ( init_jets_corrected[indexVector[i].first]->Pt() - genjets[indexVector[i].second]->Pt() ) * corrFactor;
 	  float ptscale = max(0.0, ( init_jets_corrected[indexVector[i].first]->Pt() + deltapt) / init_jets_corrected[indexVector[i].first]->Pt() );
-	  //if(ptscale > 0.0)
-	  //init_jets_corrected[indexVector[i].first]->SetPxPyPzE(init_jets_corrected[indexVector[i].first]->Px()*ptscale, init_jets_corrected[indexVector[i].first]->Py()*ptscale,init_jets_corrected[indexVector[i].first]->Pz()*ptscale, init_jets_corrected[indexVector[i].first]->E()*ptscale);
+	  if(ptscale > 0.0)
+	    init_jets_corrected[indexVector[i].first]->SetPxPyPzE(init_jets_corrected[indexVector[i].first]->Px()*ptscale, init_jets_corrected[indexVector[i].first]->Py()*ptscale,init_jets_corrected[indexVector[i].first]->Pz()*ptscale, init_jets_corrected[indexVector[i].first]->E()*ptscale);
 	  
 	}
 
@@ -770,8 +804,8 @@ int main (int argc, char *argv[])
       // SYNC WITH GERRIT
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
 
-      selection.setMuonCuts(30.,2.1,0.125,10,0.02,0.3,1,1,1);
-      //selection.setMuonCuts(35.,2.1,0.125,10,0.02,0.3,1,1,1);
+      //selection.setMuonCuts(30.,2.1,0.125,10,0.02,0.3,1,1,1);
+      selection.setMuonCuts(35.,2.1,0.125,10,0.02,0.3,1,1,1);
       //selection.setMuonCuts(20.,2.1,0.125,10,0.02,0.3,1,1,1); // refSelV4 values
 
       
@@ -1015,6 +1049,11 @@ int main (int argc, char *argv[])
 	histo1D["hadronicRecoWMass"]->Fill(WMass);
 	histo1D["hadronicRecoTopMass"]->Fill(TopMass);
 
+	histo1D["hadronicRecoWMass-REW"]->Fill(WMass,lumiWeightOLD);
+	histo1D["hadronicRecoTopMass-REW"]->Fill(TopMass,lumiWeightOLD);
+
+	histo1D["hadronicRecoWMass-REW3D"]->Fill(WMass,lumiWeight);
+	histo1D["hadronicRecoTopMass-REW3D"]->Fill(TopMass,lumiWeight);
 	// to be fixed
 
 	//cout << "WMass " << WMass << " TopMass " << TopMass << endl; exit(0);
@@ -1390,6 +1429,8 @@ int main (int argc, char *argv[])
 	NTuple->setRunId(event->runId());
 	NTuple->setLumiBlockId(event->lumiBlockId());
 	
+	NTuple->setnPV(vertex.size());
+
 	NTuple->setMlj((*(selectedJets[Permutation[3]])+*selectedMuons[0]).M());
 
 	NTuple->setBtag(0,(*(selectedJets[Permutation[3]])).btag_trackCountingHighEffBJetTags());
@@ -1486,7 +1527,7 @@ int main (int argc, char *argv[])
 
 	//Setting some extra variables which could help reducing the amount of background:
 	
-	NTuple->setnJets(init_jets_corrected.size());
+	NTuple->setnJets(selectedJets.size());
 	NTuple->setBtag_trackCountingHighEffBJetTags_hadb((*(selectedJets[Permutation[2]])).btag_trackCountingHighEffBJetTags());
 	
 	
@@ -1658,14 +1699,21 @@ int main (int argc, char *argv[])
       histo1D["hadronicRecoWMass"]->Write();
       histo1D["hadronicRecoTopMass"]->Write();
 
+      histo1D["hadronicRecoWMass-REW"]->Write();
+      histo1D["hadronicRecoTopMass-REW"]->Write();
+      
+      histo1D["hadronicRecoWMass-REW3D"]->Write();
+      histo1D["hadronicRecoTopMass-REW3D"]->Write();
+
       // fit the distributions
       
-      for (unsigned int f=0; f<2;f++) {
+      for (unsigned int f=0; f<6;f++) {
 
 	TH1F* histo;
 
 	if (f==0) histo=histo1D["hadronicRecoWMass"]; if (f==1) histo=histo1D["hadronicRecoTopMass"];
-
+	if (f==2) histo=histo1D["hadronicRecoWMass-REW"]; if (f==3) histo=histo1D["hadronicRecoTopMass-REW"];
+	if (f==4) histo=histo1D["hadronicRecoWMass-REW3D"]; if (f==5) histo=histo1D["hadronicRecoTopMass-REW3D"];
 	TF1 *fitfunc;
 	
 	string func_title = string(histo->GetName())+"_Fitted";
