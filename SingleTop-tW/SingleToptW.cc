@@ -87,14 +87,16 @@ int main(int argc, char* argv[]) {
       cout << "--ee: Di-Electron" << endl;
       cout << "--emu: Electron-Muon" << endl;
       cout << "--mumu: Di-Muon" << endl;
-      cout << "--uncMETUp: Unclustered MET syst. Up " << endl;
-      cout << "--uncMETDown: Unclustered MET syst. Down " << endl;
-      cout << "--JESPlus: JES sys +1 sigma MET included" << endl;
-      cout << "--JESMinus: JES sys -1 sigma MET included" << endl;
-      cout << "--JERPlus: JER +" << endl;
-      cout << "--JERMinus: JER -" << endl;
+      cout << "--JESplus: JES sys +1 sigma MET included" << endl;
+      cout << "--JESminus: JES sys -1 sigma MET included" << endl;
+      cout << "--JERplus: JER +" << endl;
+      cout << "--JERminus: JER -" << endl;
       cout << "--SFplus: SF up +10% syst" << endl;
       cout << "--SFminus: SF down -10% syst" << endl;
+      cout << "--PUup: PU reweghting scaled up " << endl;
+      cout << "--PUdown: PU reweghting scaled down " << endl;
+      cout << "--uncMETup: Unclustered MET syst. Up " << endl;
+      cout << "--uncMETdown: Unclustered MET syst. Down " << endl;
       cout << "--NoPU: Do not apply pileup re-weighting" << endl;
       cout << "--NoSF: Do not apply b-tag scale factor" << endl;
       cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
@@ -103,12 +105,14 @@ int main(int argc, char* argv[]) {
     if (argval=="--ee") mode = 2;
     if (argval=="--emu") mode = 0;
     if (argval=="--mumu") mode = 1;
-    if (argval=="--uncMETUp") unclusteredUp = true;
-    if (argval=="--uncMETDown") unclusteredDown = true;
-    if (argval=="--JESPlus") {JESPlus = true;}
-    if (argval=="--JESMinus") {JESMinus = true;}
-    if (argval=="--JERPlus") {JERPlus = true;}
-    if (argval=="--JERMinus") {JERMinus = true;}
+    if (argval=="--uncMETup") unclusteredUp = true;
+    if (argval=="--uncMETdown") unclusteredDown = true;
+    if (argval=="--PUup" ){PUsysUp = true;}
+    if (argval=="--PUdown" ){PUsysDown = true;}
+    if (argval=="--JESplus") {JESPlus = true;}
+    if (argval=="--JESminus") {JESMinus = true;}
+    if (argval=="--JERplus") {JERPlus = true;}
+    if (argval=="--JERminus") {JERMinus = true;}
     if (argval=="--SFplus") SFplus = true;
     if (argval=="--SFminus") SFminus = true;
     if (argval=="--NoPU") reweightPU = false;
