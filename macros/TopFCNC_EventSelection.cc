@@ -1,72 +1,30 @@
 #include "TStyle.h"
-#include "TF2.h"
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
 #include "TRandom3.h"
 
-// RooFit librairies
-
-#include "RooArgSet.h"
-#include "RooAddition.h"
-#include "RooCategory.h"
-#include "RooConstVar.h"
-#include "RooDataSet.h"
-#include "RooDataHist.h"
-#include "RooHist.h"
-#include "RooHistPdf.h"
-#include "RooRealVar.h"
-#include "RooWorkspace.h"
-#include "RooAddPdf.h"
-#include "RooExtendPdf.h"
-#include "RooGenericPdf.h"
-#include "RooMCStudy.h"
-#include "RooMinuit.h"
-#include "RooPlot.h"
-#include "RooFitResult.h"
-
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
 #include "../Selection/interface/SelectionTable.h"
+#include "../Content/interface/AnalysisEnvironment.h"
+#include "../Content/interface/Dataset.h"
+#include "../Tools/interface/JetTools.h"
 #include "../Tools/interface/PlottingTools.h"
 #include "../Tools/interface/MultiSamplePlot.h"
 #include "../Tools/interface/TTreeLoader.h"
 #include "../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../Content/interface/AnalysisEnvironment.h"
-#include "../Content/interface/Dataset.h"
-#include "../MCInformation/interface/MCWeighter.h"
-/*
-#include "../Selection/interface/ElectronPlotter.h"
-#include "../Selection/interface/MuonPlotter.h"
-#include "../Selection/interface/JetPlotter.h"
-#include "../Selection/interface/VertexPlotter.h"
-#include "../Tools/interface/MVATrainer.h"
-#include "../Tools/interface/MVAComputer.h"
-*/
-#include "../Tools/interface/JetTools.h"
-//#include "../Tools/interface/TwoDimTemplateTools.h"
-//#include "../Tools/interface/InclFourthGenSearchTools.h"
-#include "../JESMeasurement/interface/JetCombiner.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
 #include "../Reconstruction/interface/MakeBinning.h"
-#include "../Reconstruction/interface/TTreeObservables.h"
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
-//#include "../MCInformation/interface/LumiReWeighting.h" 
-//for Kinematic Fit
-//#include "../MCInformation/interface/ResolutionFit.h"
-//#include "../KinFitter/interface/TKinFitter.h"
-//#include "../KinFitter/interface/TFitConstraintM.h"
-//#include "../KinFitter/interface/TFitParticleEtThetaPhi.h"
 
 #include "Style.C"
 
 using namespace std;
 using namespace TopTree;
-using namespace RooFit;
-//using namespace reweight;
 
 
 struct sort_pair_decreasing
@@ -282,6 +240,13 @@ int main (int argc, char *argv[])
   MSPlot["NbOfSelectedJets_mme_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mme_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mmm_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mmm_ch", 15, 0, 15, "Nb. of jets");
 
+  MSPlot["BdiscSelectedJets_mm_ch_CVSMVA"]          = new MultiSamplePlot(datasets, "BdiscSelectedJets_mm_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
+  MSPlot["BdiscSelectedJets_mm_ch_TCHE"]            = new MultiSamplePlot(datasets, "BdiscSelectedJets_mm_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscSelectedJets_mme_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mme_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
+  MSPlot["BdiscSelectedJets_mme_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mme_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscSelectedJets_mmm_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
+  MSPlot["BdiscSelectedJets_mmm_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
+
   MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch", 500, 0, 500, "MET");
   MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 500, 0, 500, "MET");
   MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 500, 0, 500, "MET");
@@ -316,12 +281,12 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
   vector<string> CutsSelecTableDiMu;
   CutsSelecTableDiMu.push_back(string("initial"));
-  CutsSelecTableDiMu.push_back(string("preselected"));
-  CutsSelecTableDiMu.push_back(string("trigged"));
+  CutsSelecTableDiMu.push_back(string("PU reweighting"));
+  CutsSelecTableDiMu.push_back(string("Trigger"));
   CutsSelecTableDiMu.push_back(string("Good PV"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 isolated muon"));
   CutsSelecTableDiMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
-  CutsSelecTableDiMu.push_back(string("$Veto on 3rd iso. lept."));
+  CutsSelecTableDiMu.push_back(string("Veto on 3rd iso. lept."));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 3 jet"));
@@ -338,12 +303,12 @@ int main (int argc, char *argv[])
 
   vector<string> CutsSelecTableTriMu;
   CutsSelecTableTriMu.push_back(string("initial"));
-  CutsSelecTableTriMu.push_back(string("preselected"));
-  CutsSelecTableTriMu.push_back(string("trigged"));
+  CutsSelecTableTriMu.push_back(string("PU reweighting"));
+  CutsSelecTableTriMu.push_back(string("Trigger"));
   CutsSelecTableTriMu.push_back(string("Good PV"));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 2 isolated muon"));
   CutsSelecTableTriMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
-  CutsSelecTableTriMu.push_back(string("$3rd iso. mu."));
+  CutsSelecTableTriMu.push_back(string("3rd iso. mu."));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 3 jet"));
@@ -359,12 +324,12 @@ int main (int argc, char *argv[])
 
   vector<string> CutsSelecTableDiMuElec;
   CutsSelecTableDiMuElec.push_back(string("initial"));
-  CutsSelecTableDiMuElec.push_back(string("preselected"));
-  CutsSelecTableDiMuElec.push_back(string("trigged"));
+  CutsSelecTableDiMuElec.push_back(string("PU reweighting"));
+  CutsSelecTableDiMuElec.push_back(string("Trigger"));
   CutsSelecTableDiMuElec.push_back(string("Good PV"));
   CutsSelecTableDiMuElec.push_back(string("$\\geq$ 2 isolated muon"));
   CutsSelecTableDiMuElec.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
-  CutsSelecTableDiMuElec.push_back(string("$3rd iso. elec."));
+  CutsSelecTableDiMuElec.push_back(string("3rd iso. elec."));
   CutsSelecTableDiMuElec.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableDiMuElec.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiMuElec.push_back(string("$\\geq$ 3 jet"));
@@ -380,8 +345,8 @@ int main (int argc, char *argv[])
 /*
   vector<string> CutsSelecTableDiEl;
   CutsSelecTableDiEl.push_back(string("initial"));
-  CutsSelecTableDiEl.push_back(string("preselected"));
-  CutsSelecTableDiEl.push_back(string("trigged"));
+  CutsSelecTableDiEl.push_back(string("PU reweighting"));
+  CutsSelecTableDiEl.push_back(string("Trigger"));
   CutsSelecTableDiEl.push_back(string("Good PV"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 1 selected electron"));
   CutsSelecTableDiEl.push_back(string("Veto muon"));
@@ -400,8 +365,8 @@ int main (int argc, char *argv[])
 /*
   vector<string> CutsSelecTableTriEl;
   CutsSelecTableTriEl.push_back(string("initial"));
-  CutsSelecTableTriEl.push_back(string("preselected"));
-  CutsSelecTableTriEl.push_back(string("trigged"));
+  CutsSelecTableTriEl.push_back(string("PU reweighting"));
+  CutsSelecTableTriEl.push_back(string("Trigger"));
   CutsSelecTableTriEl.push_back(string("Good PV"));
   CutsSelecTableTriEl.push_back(string("$\\geq$ 1 selected electron"));
   CutsSelecTableTriEl.push_back(string("Veto muon"));
@@ -421,8 +386,8 @@ int main (int argc, char *argv[])
 /*
   vector<string> CutsSelecTableDiElMu;
   CutsSelecTableDiElMu.push_back(string("initial"));
-  CutsSelecTableDiElMu.push_back(string("preselected"));
-  CutsSelecTableDiElMu.push_back(string("trigged"));
+  CutsSelecTableDiElMu.push_back(string("PU reweighting"));
+  CutsSelecTableDiElMu.push_back(string("Trigger"));
   CutsSelecTableDiElMu.push_back(string("Good PV"));
   CutsSelecTableDiElMu.push_back(string("$\\geq$ 1 selected electron"));
   CutsSelecTableDiElMu.push_back(string("Veto muon"));
@@ -830,6 +795,10 @@ int main (int argc, char *argv[])
 						if(selectedJets.size()>3){ //at least 4 jets
 							selecTableDiMu.Fill(d,10,scaleFactor);
 							MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+							for(unsigned int i=0;i<selectedJets.size();i++){
+								MSPlot["BdiscSelectedJets_mm_ch_CVSMVA"]->Fill(selectedJets[i]->btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+								MSPlot["BdiscSelectedJets_mm_ch_TCHE"]->Fill(selectedJets[i]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+							}
 						}
 					}
 				}
@@ -845,6 +814,10 @@ int main (int argc, char *argv[])
 					if(selectedJets.size()>2){ //at least 3 jets
 						selecTableDiMuElec.Fill(d,9,scaleFactor);
 						MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+						for(unsigned int i=0;i<selectedJets.size();i++){
+							MSPlot["BdiscSelectedJets_mme_ch_CVSMVA"]->Fill(selectedJets[i]->btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+							MSPlot["BdiscSelectedJets_mme_ch_TCHE"]->Fill(selectedJets[i]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						}
 					}
 				}
 			}
@@ -860,6 +833,10 @@ int main (int argc, char *argv[])
 				if(selectedJets.size()>2){ //at least 3 jets
 					selecTableTriMu.Fill(d,9,scaleFactor);
 					MSPlot["MET_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+					for(unsigned int i=0;i<selectedJets.size();i++){
+						MSPlot["BdiscSelectedJets_mmm_ch_CVSMVA"]->Fill(selectedJets[i]->btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["BdiscSelectedJets_mmm_ch_TCHE"]->Fill(selectedJets[i]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+					}
 				}
 			}
 		}
