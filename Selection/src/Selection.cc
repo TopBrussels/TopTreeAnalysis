@@ -373,6 +373,7 @@ std::vector<TRootJet*> Selection::GetSelectedBJets(const std::vector<TRootJet*>&
     else if(btagAlgo == 4) btagDisc = seljets[i]->btag_simpleSecondaryVertexHighEffBJetTags();
     else if(btagAlgo == 5) btagDisc = seljets[i]->btag_simpleSecondaryVertexHighPurBJetTags();
     else if(btagAlgo == 6) btagDisc = seljets[i]->btag_combinedSecondaryVertexBJetTags();
+    else if(btagAlgo == 7) btagDisc = seljets[i]->btag_combinedSecondaryVertexMVABJetTags();
     else                   btagDisc = -999999;
     if(btagDisc>btagCut) bjets.push_back(seljets[i]);
   }

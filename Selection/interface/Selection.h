@@ -55,8 +55,8 @@ struct HighestPt{
     }
 };
 struct HighestBtag{
-    bool operator()( TRootJet j1, TRootJet j2 ) const{
-    	return j1.btag_trackCountingHighEffBJetTags() > j2.btag_trackCountingHighEffBJetTags();
+    bool operator()( TRootJet* j1, TRootJet* j2 ) const{
+    	return j1->btag_trackCountingHighEffBJetTags() > j2->btag_trackCountingHighEffBJetTags();
     }
 };
 				
