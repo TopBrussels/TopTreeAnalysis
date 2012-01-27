@@ -211,10 +211,11 @@ int main(int argc, char* argv[]) {
       vector < TRootVertex* > vertex;
       vector < TRootMuon* > init_muons;
       vector < TRootElectron* > init_electrons;
+      vector < TRootJet* > init_jets_corrected;
       vector < TRootJet* > init_jets;
       vector < TRootMET* > mets;
       vector < TLorentzVector > allForTopoCalc;
-
+      vector<TRootGenJet*> genjets;
       
       TFile *fout = new TFile (rootFileName, "RECREATE");
       
@@ -304,8 +305,31 @@ int main(int argc, char* argv[]) {
 
       // Initialize JEC factors
       vector<JetCorrectorParameters> vCorrParam;
-      JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
-      JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
+      
+      // Create the JetCorrectorParameter objects, the order does not matter.
+      // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
+      JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
+      JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
+      JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
+      
+      //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+      vCorrParam.push_back(*L1JetPar);
+      vCorrParam.push_back(*L2JetPar);
+      vCorrParam.push_back(*L3JetPar);
+      
+      if(isData){
+	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
+	vCorrParam.push_back(*ResJetCorPar);
+      }
+	  
+      //OLD
+      //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
+      //NEW
+      JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+      
+      // true means redo also the L1
+      JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
+
      
       /// Start message
       
@@ -339,7 +363,11 @@ int main(int argc, char* argv[]) {
 	  
 	  if(ievt%500 == 0) std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
 	  event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-          
+	  if(!isData)
+	    {
+	      genjets = treeLoader.LoadGenJet(ievt,false);
+	      sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
+	    }
 	  // Weight given by the theoretical cross-section and lumi
 	  double weight = xlweight;
           
@@ -447,16 +475,21 @@ int main(int argc, char* argv[]) {
 	  if (itrigger || isecondtrigger) trigged = true;
 	 */
 	 
+	 
+	  // JES CORRECTION
+	  // Apply Jet Corrections on-the-fly
+	  jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho());
+
 	  // Correct MET Type I
 	  if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
 	  
-	  
+
 	  // Systematics
 	  //JES and JER
 	  //Special = true;
 	  if (!Special && !isData){
 	   
-            vector<TRootGenJet*> genjets = treeLoader.LoadGenJet(ievt);
+	    // vector<TRootGenJet*> genjets = treeLoader.LoadGenJet(ievt);
 
             if(JERPlus)  jetTools->correctJetJER(init_jets, genjets, "plus");
             else if(JERMinus) jetTools->correctJetJER(init_jets, genjets, "minus");
