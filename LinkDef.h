@@ -23,6 +23,7 @@
 #include "JESMeasurement/interface/LightMonster.h"
 #include "TopTreeAnalysis/TopFCNC/interface/TopFCNC_Evt.h"
 #include "TopTreeAnalysis/WHelicities/interface/WTree.h"
+#include "TopTreeAnalysis/InclFourthGenSearch/interface/InclFourthGenTree.h"
 #include "Content/interface/MCExpectation.h"
 #include "Content/interface/MCObsExpectation.h"
 #include "Content/interface/AnalysisEnvironment.h"
@@ -51,6 +52,7 @@
 #include "JESMeasurement/interface/LightMonster.h"
 #include "TopTreeAnalysis/TopFCNC/interface/TopFCNC_Evt.h"
 #include "TopTreeAnalysis/WHelicities/interface/WTree.h"
+#include "TopTreeAnalysis/InclFourthGenSearch/interface/InclFourthGenTree.h"
 #include "JESMeasurement/interface/Monster.h"
 #include "Content/interface/MCExpectation.h"
 #include "Content/interface/MCObsExpectation.h"
@@ -88,6 +90,7 @@
 #pragma link C++ class LightMonster;
 #pragma link C++ class Monster;
 #pragma link C++ class WTree;
+#pragma link C++ class InclFourthGenTree;
 #pragma link C++ class MCExpectation;
 #pragma link C++ class MCObsExpectation;
 #pragma link C++ class Dataset;
