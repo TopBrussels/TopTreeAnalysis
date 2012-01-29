@@ -204,9 +204,10 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
         elMinusFromTop = true;
       if( mcParticles[i]->type() == -11 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top )
         elPlusFromTop = true;
-      
+				
+      //if( (fabs(mcParticles[i]->type()) < 6 && fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == pdgID_top) || (fabs(mcParticles[i]->type()) == 5 && fabs(mcParticles[i]->motherType()) == pdgID_top)) //this if statement to be in sync with other processevent method
       if( abs(mcParticles[i]->type()) < 6 || abs(mcParticles[i]->type()) == 21 ) //light/b quarks, 6 should stay hardcoded
-      {
+			{
         mcParticlesTLV.push_back(*mcParticles[i]);
         mcParticlesMatching_.push_back(mcParticles[i]);
             
@@ -268,7 +269,7 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
         if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticlesMatching_[j]->motherType() == -24 && mcParticlesMatching_[j]->grannyType() == -pdgID_top )
           || ( ( muMinusFromTop || elMinusFromTop ) && mcParticlesMatching_[j]->motherType() == 24 && mcParticlesMatching_[j]->grannyType() == pdgID_top ) )
         {
-          if(hadronicWJet1_.first == 9999) 
+          if(hadronicWJet1_.first == 9999)
 		        hadronicWJet1_ = JetPartonPair[i];
           else if(hadronicWJet2_.first == 9999) 
 		        hadronicWJet2_ = JetPartonPair[i];
@@ -631,9 +632,303 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
   }
 }
 
+
+
+void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mcParticlesForMatching, const vector<TLorentzVector> selectedJets, const vector<float> bTagValues, const TLorentzVector selectedLepton, bool isSemiLep, float scaleFactor, bool TprimeEvaluation)
+{ 
+	//initialize stuff for each event
+  bool all4PartonsMatched = false; // True if the 4 ttbar semi-lep partons are matched to 4 jets (not necessarily the 4 highest pt jets)
+  all4JetsMatched_MCdef_ = false; // True if the 4 highest pt jets are matched to the 4 ttbar semi-lep partons
+  hadronictopJetsMatched_MCdef_ = false;
+  
+  vectorMVA_.clear();
+  leptonicBJet_ = pair<unsigned int,unsigned int>(9999,9999);
+  hadronicBJet_ = pair<unsigned int,unsigned int>(9999,9999);
+  hadronicWJet1_ = pair<unsigned int,unsigned int>(9999,9999);
+  hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
+ 
+  string dataSetName = dataSet->Name();
+  int pdgID_top = 6; //top quark
+  if(TprimeEvaluation)
+    pdgID_top = 8; //4th generation t' quark; currently not supported for matching
+  if( isSemiLep  || TprimeEvaluation )
+  {
+    TLorentzVector topQuark, antiTopQuark;     
+    
+		//for(unsigned int i=0; i<selectedJets.size(); i++)
+		//	cout<<"selectedJets["<<i<<"].Pt() = "<<selectedJets[i].Pt()<<endl;
+
+    JetPartonMatching matching = JetPartonMatching(mcParticlesForMatching, selectedJets, 2, true, true, 0.3);
+        
+    if(matching.getNumberOfAvailableCombinations() != 1)
+      cerr << "matching.getNumberOfAvailableCombinations() = "<<matching.getNumberOfAvailableCombinations()<<"  This should be equal to 1 !!!"<<endl;
+
+    vector< pair<unsigned int, unsigned int> > JetPartonPair; // First one is jet number, second one is mcParticle number
+        
+    for(unsigned int i=0; i<mcParticlesForMatching.size(); i++)
+    {
+      int matchedJetNumber = matching.getMatchForParton(i, 0);
+			//cout<<"matchedJetNumber = "<<matchedJetNumber<<endl;
+      if(matchedJetNumber != -1)
+			{
+			  //cout<<"mcParticlesForMatching["<<i<<"].Pt() = "<<mcParticlesForMatching[i].Pt()<<endl;
+        JetPartonPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );
+			}
+			else
+			  JetPartonPair.push_back( pair<unsigned int, unsigned int> (9999,9999) ); //a bit different than the other processEvent function	
+    }  
+    
+		//ordering was defined in InclFourthGen_TreeCreator
+		if(JetPartonPair.size() == 4)
+		{ 
+		  hadronicWJet1_ = JetPartonPair[0];
+		  hadronicWJet2_ = JetPartonPair[1];
+      hadronicBJet_ = JetPartonPair[2];
+      leptonicBJet_ = JetPartonPair[3];
+			//cout<<"hadronicWJet1_.first = "<<hadronicWJet1_.first<<endl;
+			//cout<<"hadronicWJet2_.first = "<<hadronicWJet2_.first<<endl;
+			//cout<<"hadronicBJet_.first = "<<hadronicBJet_.first<<endl;
+		  //cout<<"leptonicBJet_.first = "<<leptonicBJet_.first<<endl;
+		}
+		else
+		  cout<<"Problem!! JetPartonPair.size() != 4"<<endl;     
+   
+    if(hadronicWJet1_.first != 9999 && hadronicWJet2_.first != 9999 && hadronicBJet_.first != 9999 && leptonicBJet_.first != 9999)
+    {  
+      all4PartonsMatched = true;
+      if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4 && leptonicBJet_.first < 4)
+        all4JetsMatched_MCdef_ = true;
+    }
+		//cout<<"   ------> according to JetCombiner: hadronicWJet1_.first = "<<hadronicWJet1_.first<<", hadronicWJet2_.first = "<<hadronicWJet2_.first<<", hadronicBJet_.first = "<<hadronicBJet_.first<<endl;
+    if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4)
+      hadronictopJetsMatched_MCdef_ = true;
+			
+  } //if Semi mu or semi el ttbar
+   	
+  ///////////////////////
+  // Train/Compute MVA //
+  ///////////////////////
+  
+  float previousMaxMVA = -9999;
+  
+  float maxMVA_btag = -9999;
+  float maxMVA_AngleThWh = -9999;
+  float maxMVA_AngleBlMu = -9999;
+  float maxMVA_AngleThBl = -9999;
+  float maxMVA_AngleThBh = -9999;
+  float maxMVA_AngleThMu = -9999;
+  float maxMVA_ThPtOverSumPt = -9999;
+  float maxMVA_HadrWmass = -9999;
+
+  // index convention -> i,j: jets from Hadronic W  k: Hadronic b and l: leptonic b
+  for (unsigned int i=0; i<4; i++) {
+	  for (unsigned int j=0; j<4; j++) {
+ 	    for (unsigned int k=0; k<4; k++) {
+ 	      for (unsigned int l=0; l<4; l++) {
+          if (i < j && i != j && i != k && i != l && j != k && j != l && k != l) {
+            //calculate the vars
+            // btag
+            float btag_i = bTagValues[i];
+            if(btag_i < -90) btag_i = 0;
+            float btag_j = bTagValues[j];
+            if(btag_j < -90) btag_j = 0;
+            float btag_k = bTagValues[k];
+            if(btag_k < -90) btag_k = 0;
+            float btag_l = bTagValues[l];
+            if(btag_l < -90) btag_l = 0;
+            
+            float btag = pow(btag_k,2) + pow(btag_l,2);
+            btag = btag / ( pow(btag_i,2) + pow(btag_j,2) + pow(btag_k,2) + pow(btag_l,2) );
+                            
+            // build the lorentz-vectors
+            TLorentzVector Wh = selectedJets[i]+selectedJets[j];
+            TLorentzVector Bh = selectedJets[k];
+            TLorentzVector Th = Wh+Bh;
+            TLorentzVector Bl = selectedJets[l];
+            TLorentzVector Mu = selectedLepton;
+  
+            float AngleThWh = Th.Angle(Wh.Vect());
+            float AngleBlMu = Bl.Angle(Mu.Vect());
+            float AngleThBl = Th.Angle(Bl.Vect());
+            float AngleThBh = Th.Angle(Bh.Vect());
+            float AngleThMu = Th.Angle(Mu.Vect());
+              
+            // pt(Th)/SumPt 3j - possible 3 jet combinations are 012 013 023 and 123
+              
+            vector<float> PTJetComb;
+            float sumPt = 0;
+            sumPt += (selectedJets[0]+selectedJets[1]+selectedJets[2]).Pt();
+            sumPt += (selectedJets[0]+selectedJets[1]+selectedJets[3]).Pt();
+            sumPt += (selectedJets[0]+selectedJets[2]+selectedJets[3]).Pt();
+            sumPt += (selectedJets[1]+selectedJets[2]+selectedJets[3]).Pt();
+              
+            float ThPtOverSumPt = Th.Pt()/sumPt;
+      
+            if(isSemiLep  || TprimeEvaluation)
+            {             
+              if( trainMVA_ && all4JetsMatched_MCdef_ ) // Only train for events where you are sure what is S and B
+              {
+                // fill the MVA trainer variables and check what should be the good combination
+                if ( (i == hadronicWJet1_.first || i ==  hadronicWJet2_.first) && (j == hadronicWJet2_.first || j == hadronicWJet1_.first) && k == hadronicBJet_.first && l == leptonicBJet_.first)
+								{
+  	              trainer_->Fill("S","btag",btag);
+  	              trainer_->Fill("S","ThPtOverSumPt",ThPtOverSumPt);
+//    	              trainer_->Fill("S","AngleThWh",AngleThWh);
+  	              trainer_->Fill("S","AngleBlMu",AngleBlMu);
+  	              trainer_->Fill("S","AngleThBl",AngleThBl);
+//    	              trainer_->Fill("S","AngleThBh",AngleThBh);
+  	              trainer_->Fill("S","AngleThMu",AngleThMu);
+									if(Tprime_)
+										trainer_->Fill("S","HadrWmass",Wh.M());
+								}
+ 		            else
+ 		            {
+ 		              trainer_->Fill("B","btag",btag);
+ 		              trainer_->Fill("B","ThPtOverSumPt",ThPtOverSumPt);
+//   		              trainer_->Fill("B","AngleThWh",AngleThWh);
+ 		              trainer_->Fill("B","AngleBlMu",AngleBlMu);
+ 		              trainer_->Fill("B","AngleThBl",AngleThBl);
+//   		              trainer_->Fill("B","AngleThBh",AngleThBh);
+ 		              trainer_->Fill("B","AngleThMu",AngleThMu);
+ 		            	if(Tprime_)
+										trainer_->Fill("B","HadrWmass",Wh.M());
+ 		            }
+              }
+            }
+   
+            if( !trainMVA_ )
+            {
+              // compute MVA stuff
+              MSPlot_["MVA_input_btag"]->Fill(btag, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_ThPtOverSumPt"]->Fill(ThPtOverSumPt, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_AngleThWh"]->Fill(AngleThWh, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_AngleBlMu"]->Fill(AngleBlMu, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_AngleThBl"]->Fill(AngleThBl, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_AngleThBh"]->Fill(AngleThBh, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_AngleThMu"]->Fill(AngleThMu, dataSet, true, Luminosity_*scaleFactor);
+              MSPlot_["MVA_input_HadrWmass"]->Fill(Wh.M(), dataSet, true, Luminosity_*scaleFactor);
+
+              computer_->FillVar("btag",btag);
+              computer_->FillVar("ThPtOverSumPt",ThPtOverSumPt);
+//                computer_->FillVar("AngleThWh",AngleThWh);
+              computer_->FillVar("AngleBlMu",AngleBlMu);
+              computer_->FillVar("AngleThBl",AngleThBl);
+//                computer_->FillVar("AngleThBh",AngleThBh);
+              computer_->FillVar("AngleThMu",AngleThMu);
+ 		          if(Tprime_)
+              	computer_->FillVar("HadrWmass",Wh.M());              
+              
+              // get map of  MVAValues  
+              std::map<std::string,Float_t> MVAVals = computer_->GetMVAValues();
+  
+              // vectorMVA_
+              for (std::map<std::string,Float_t>::const_iterator it = MVAVals.begin(); it != MVAVals.end(); ++it)
+              {
+                MVAValues tempMVA;
+                tempMVA.MVAAlgo = it->first;
+                tempMVA.MVAValue = it->second;
+                tempMVA.WJet1 = i;
+                tempMVA.WJet2 = j;
+                tempMVA.HadrBJet = k;
+                tempMVA.LeptBJet = l;
+                
+                vectorMVA_.push_back(tempMVA);
+                
+                if(tempMVA.MVAValue > previousMaxMVA)
+                {
+                  previousMaxMVA = tempMVA.MVAValue;
+  
+                  maxMVA_btag = btag;
+                  maxMVA_AngleThWh = AngleThWh;
+                  maxMVA_AngleBlMu = AngleBlMu;
+                  maxMVA_AngleThBl = AngleThBl;
+                  maxMVA_AngleThBh = AngleThBh;
+                  maxMVA_AngleThMu = AngleThMu;
+                  maxMVA_ThPtOverSumPt = ThPtOverSumPt;
+									maxMVA_HadrWmass = Wh.M();
+                }
+              }
+            }
+          }
+	      }
+	    }
+    }
+  } // end of jetcomb loop
+  if( !trainMVA_ )
+  {
+    vector<string> MVAnames = computer_->GetAllMethods();
+    for(unsigned int i=0; i<MVAnames.size(); i++)
+    {
+      pair<float, vector<unsigned int> > MVAResult = getMVAValue(MVAnames[i], 1); // 1 means the highest MVA value
+      if(MVAResult.first != previousMaxMVA)
+        cout << "MVAResult.first != previousMaxMVA ???" << endl;
+      
+      //only the jets from the hadronic top should be matched
+      ////cout<<"   ------> according to JetCombiner MVA: MVAResult.second[0] = "<<MVAResult.second[0]<<", MVAResult.second[1] = "<<MVAResult.second[1]<<", MVAResult.second[2] = "<<MVAResult.second[2]<<endl;
+      hadronictopJetsMatched_MVAdef_ = false;
+      if ( ((MVAResult.second[0] == hadronicWJet1_.first && MVAResult.second[1] ==  hadronicWJet2_.first) 
+        || (MVAResult.second[0] == hadronicWJet2_.first && MVAResult.second[1] == hadronicWJet1_.first)) 
+        && MVAResult.second[2] == hadronicBJet_.first)
+        hadronictopJetsMatched_MVAdef_ = true;
+
+      float mW_maxMVA = (selectedJets[MVAResult.second[0]] + selectedJets[MVAResult.second[1]]).M();
+      float mTop_maxMVA = (selectedJets[MVAResult.second[0]] + selectedJets[MVAResult.second[1]] + selectedJets[MVAResult.second[2]]).M();
+      
+      MSPlot_["maxMVA_btag"]->Fill(maxMVA_btag, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_ThPtOverSumPt"]->Fill(maxMVA_ThPtOverSumPt, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_AngleThWh"]->Fill(maxMVA_AngleThWh, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_AngleBlMu"]->Fill(maxMVA_AngleBlMu, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_AngleThBl"]->Fill(maxMVA_AngleThBl, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_AngleThBh"]->Fill(maxMVA_AngleThBh, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_AngleThMu"]->Fill(maxMVA_AngleThMu, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_HadrWmass"]->Fill(maxMVA_HadrWmass, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_HadrWMassCalc"]->Fill(mW_maxMVA, dataSet, true, Luminosity_*scaleFactor);
+      MSPlot_["maxMVA_HadrTopMass"]->Fill(mTop_maxMVA, dataSet, true, Luminosity_*scaleFactor);
+      
+      string title = "MaxMVA_"+MVAnames[i]+"_allcomb";
+      string titleSemiMuBG = "MaxMVA_"+MVAnames[i]+"_allSemiMuBGcomb"; //alSemiMulBGcomb contains badcomb events and also events where the mcParticle matching was not successful
+      string axisTitle = "MVA "+MVAnames[i]+" response";
+   
+      // check if plots exist, else create them
+      if (MSPlot_.find(title) == MSPlot_.end())
+        MSPlot_[title] = new MultiSamplePlot(datasets_, title.c_str(), 20, 0, 1, axisTitle.c_str());
+      if(histo1D_.find(titleSemiMuBG) == histo1D_.end())
+        histo1D_[titleSemiMuBG] = new TH1F(titleSemiMuBG.c_str(),axisTitle.c_str(),50,0,1);
+    
+      MSPlot_[title]->Fill(MVAResult.first, dataSet, true, Luminosity_*scaleFactor);
+      if( hadronictopJetsMatched_MVAdef_ == false && dataSetName.find("TTbarJets_SemiMu") == 0 )
+        histo1D_[titleSemiMuBG]->Fill(MVAResult.first);
+
+      if(isSemiLep || TprimeEvaluation)
+      {
+        std::string titleGood = "MaxMVA_"+MVAnames[i]+"_goodcomb";
+   	    std::string titleBad = "MaxMVA_"+MVAnames[i]+"_badcomb";
+   	    std::string axisTitle = "MVA "+MVAnames[i]+" response";
+      	    
+ 	      // check if goodcomb badcomb histo exists, else create it
+   	    if (histo1D_.find(titleGood) == histo1D_.end())
+   	    {
+   	      histo1D_[titleGood] = new TH1F(titleGood.c_str(),axisTitle.c_str(),50,0,1);
+   	      histo1D_[titleBad] = new TH1F(titleBad.c_str(),axisTitle.c_str(),50,0,1);
+   	    }
+
+   	    //cout << MVAnames[i] << " " << MVAResult->first << " " << hadronictopJetsMatched_MVAdef_ << endl;
+   	    if ( hadronictopJetsMatched_MVAdef_ )
+   	    {
+				  histo1D_[titleGood]->Fill( MVAResult.first );
+   	    }
+				else if ( hadronictopJetsMatched_MCdef_ )
+				{
+   	      histo1D_[titleBad]->Fill( MVAResult.first );
+      	}
+			}
+    }
+  }
+}
+
 void JetCombiner::FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B, ResolutionFit* resFitBJets_Bbar)
 {
-  // Fill the resolution-stuff for events where the 4 ttbar semi-lep partons are all matched to jets
+  // Fill the resolution-stuff6for events where the 4 ttbar semi-lep partons are all matched to jets
   if(hadronicWJet1_.first < 9999 && hadronicWJet2_.first < 9999 && hadronicBJet_.first < 9999 && leptonicBJet_.first < 9999)
   {
     resFitLightJets->Fill(selectedJets_[hadronicWJet1_.first], mcParticlesMatching_[hadronicWJet1_.second]);

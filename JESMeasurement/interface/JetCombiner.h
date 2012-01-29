@@ -45,7 +45,8 @@ class JetCombiner {
     JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>& datasets, string MVAMethod = "Likelihood", bool Tprime = false, string MVAfilePostfix = "", string postfix = "");
     ~JetCombiner();
     void ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> mcParticles, const vector<TRootJet*> selectedJets, const TLorentzVector* selectedMuon, vector<TRootElectron*> vectEl, vector<TRootMuon*> vectMu, const TRootGenEvent* genEvt, float scaleFactor=1, bool TprimeEvaluation=false);
-    void FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B=0, ResolutionFit* resFitBJets_Bbar=0);
+    void ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mcParticlesForMatching, const vector<TLorentzVector> selectedJets, const vector<float> bTagValues, const TLorentzVector selectedLepton, bool isSemiLep, float scaleFactor, bool TprimeEvaluation);
+		void FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B=0, ResolutionFit* resFitBJets_Bbar=0);
     void FillExpCorr(ExpCorrCalculator* expCorr, const vector<TRootMuon*> muons, const vector<TRootElectron*> electrons, float maxMVA);
     pair<float, vector<unsigned int> > getMVAValue(string MVAMethod, int rank); // rank 1 means the highest MVA value for this method, rank 2 the second highest, ...
     vector<unsigned int> GetGoodJetCombination(); // Good according to MC!
@@ -92,8 +93,8 @@ class JetCombiner {
     
     pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second one is the parton
     vector<TRootMCParticle*> mcParticlesMatching_; // MCParticles used for the matching, need to be stored to be used after the ProcessEvent fuction was called
-    vector<TRootJet*> selectedJets_; // need to be stored to be used after the ProcessEvent function was called
-    
+    vector<TRootJet*> selectedJets_; // need to be stored to be used after the ProcessEvent function was called    
+		
     bool EndJobWasRun_;
     
 };
