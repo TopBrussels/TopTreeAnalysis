@@ -20,21 +20,12 @@
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
 #include "../Reconstruction/interface/MakeBinning.h"
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
+#include "../TopFCNC/interface/TopFCNC_Evt.h"
 
 #include "Style.C"
 
 using namespace std;
 using namespace TopTree;
-
-
-struct sort_pair_decreasing
-{
-    bool operator()(const std::pair<int,float> &left, const std::pair<int,float> &right)
-    {
-        return left.second > right.second;
-    }
-};
-
 
 /// Normal Plots (TH1F* and TH2F*)
 map<string,TH1F*> histo1D;
@@ -210,6 +201,7 @@ int main (int argc, char *argv[])
 
   //Global variable
   TRootEvent* event = 0;
+  TopFCNC_Evt* MyTopFCNC_EvtCand = 0;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,19 +215,19 @@ int main (int argc, char *argv[])
 
   MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 20, 0, 20, "Nb. of vertices");
 
-  MSPlot["1stLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingMuonRelIsolation", 500, 0, 2.5, "RelIso");
-  MSPlot["2ndLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingMuonRelIsolation", 500, 0, 2.5, "RelIso");
-  MSPlot["3rdLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 500, 0, 2.5, "RelIso");
+  MSPlot["1stLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["2ndLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
 
   MSPlot["NbOfIsolatedMuons"]          = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]      = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
 
-  MSPlot["DiMuonInvMass"]              = new MultiSamplePlot(datasets, "DiMuonInvMass", 500, 40, 140, "m_{ll}");
+  MSPlot["DiMuonInvMass"]              = new MultiSamplePlot(datasets, "DiMuonInvMass", 500, 50, 130, "m_{ll}");
 
   MSPlot["NbOfExtraIsolatedMuons"]     = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfExtraIsolatedElectrons"] = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
 
-  MSPlot["NbOfSelectedJets_Before3rdLeptCut"] = new MultiSamplePlot(datasets, "NbOfSelectedJets_Before3rdLeptCut", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_Before3rdLeptCut"]       = new MultiSamplePlot(datasets, "NbOfSelectedJets_Before3rdLeptCut", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mm_ch"]                  = new MultiSamplePlot(datasets, "NbOfSelectedJets_mm_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mme_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mme_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mmm_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mmm_ch", 15, 0, 15, "Nb. of jets");
@@ -247,9 +239,17 @@ int main (int argc, char *argv[])
   MSPlot["BdiscSelectedJets_mmm_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
   MSPlot["BdiscSelectedJets_mmm_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
 
-  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch", 500, 0, 500, "MET");
-  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 500, 0, 500, "MET");
-  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 500, 0, 500, "MET");
+  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "MET");
+  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "MET");
+  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 100, 0, 200, "MET");
+
+  MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  100, 0, 1000, "m_{t#bar{t}}");
+  MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 100, 0, 1000, "m_{t#bar{t}}");
+  MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 100, 0, 1000, "m_{t#bar{t}}");
+
+  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 0, 300, "m_{Zq}");
+  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 0, 300, "m_{Zq}");
+  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 0, 300, "m_{Zq}");
 //  MSPlot["NbOfLooseMuon"]     = new MultiSamplePlot(datasets, "NbOfLooseMuon", 10, 0, 10, "Nb. of loose muons");
 //  MSPlot["NbOfLooseElectron"] = new MultiSamplePlot(datasets, "NbOfLooseElectron", 10, 0, 10, "Nb. of loose electrons");
 
@@ -583,7 +583,8 @@ int main (int argc, char *argv[])
 	   		}
 	   		else 
 	   		{
-				itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v8"), currentRun, iFile);
+				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v8"), currentRun, iFile);
+				else itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
     
   				if(itrigger == 9999)
 				{
@@ -772,16 +773,20 @@ int main (int argc, char *argv[])
 	selecTableDiMuElec.Fill(d,5, scaleFactor);
 
 	// Erase Z boson lepton candidates
-	selectedMuons.erase(selectedMuons.begin()+idx_Z_2);
-	selectedMuons.erase(selectedMuons.begin()+idx_Z_1);
+	vector<TRootMuon*> selectedExtraMuons = selectedMuons;
+	selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
+	selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
 
-	MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedExtraMuons.size(), datasets[d], true, Luminosity*scaleFactor);
 	MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	MSPlot["NbOfSelectedJets_Before3rdLeptCut"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 
+	MyTopFCNC_EvtCand = 0;
+	MEzCalculator MyMEzCalc;
+	MyMEzCalc.SetMET(*mets[0]);
 	// Select events based on the presence of *exactly one* extra isolated lepton
-	if(selectedMuons.size()==0)
+	if(selectedExtraMuons.size()==0)
 	{ 
 		if(selectedElectrons.size()==0){
 			selecTableDiMu.Fill(d,6,scaleFactor);
@@ -799,6 +804,10 @@ int main (int argc, char *argv[])
 								MSPlot["BdiscSelectedJets_mm_ch_CVSMVA"]->Fill(selectedJets[i]->btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
 								MSPlot["BdiscSelectedJets_mm_ch_TCHE"]->Fill(selectedJets[i]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 							}
+							MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
+							MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets);
+							MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+							MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 						}
 					}
 				}
@@ -823,7 +832,7 @@ int main (int argc, char *argv[])
 			}
 		}
 	}
-	else if(selectedMuons.size()==1 && selectedElectrons.size()==0){
+	else if(selectedExtraMuons.size()==1 && selectedElectrons.size()==0){
 		selecTableTriMu.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_mmm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
@@ -852,6 +861,7 @@ int main (int argc, char *argv[])
 
 
 	//delete selection;
+	if(MyTopFCNC_EvtCand) delete MyTopFCNC_EvtCand;
     }//loop on events
     
     cout<<endl;

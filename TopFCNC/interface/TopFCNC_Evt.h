@@ -6,6 +6,10 @@
 #include <string>
 #include <vector>
 #include "TLorentzVector.h"
+#include "TopTreeProducer/interface/TRootJet.h"
+#include "TopTreeProducer/interface/TRootMET.h"
+#include "TopTreeAnalysis/Reconstruction/interface/MEzCalculator.h"
+#include "TopTreeAnalysis/Selection/interface/Selection.h"
 
 using namespace std;
 
@@ -21,6 +25,22 @@ class TopFCNC_Evt : public TObject
 			ZLeptonicChannel_(kNone),
 			isDiLeptonic_(false),
 			isTriLeptonic_(false)
+			{;}
+
+		TopFCNC_Evt(LeptonType type) :
+			TObject(),
+			WLeptonicChannel_(kNone),
+			ZLeptonicChannel_(type),
+			isDiLeptonic_(true),
+			isTriLeptonic_(false)
+			{;}
+
+		TopFCNC_Evt(LeptonType type1, LeptonType type2) :
+			TObject(),
+			WLeptonicChannel_(type1),
+			ZLeptonicChannel_(type2),
+			isDiLeptonic_(false),
+			isTriLeptonic_(true)
 			{;}
 
 		TopFCNC_Evt(const TopFCNC_Evt& evt) :
@@ -145,6 +165,109 @@ class TopFCNC_Evt : public TObject
 			smDecayTop_ = B_ + W_ ;
 			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
 			fcncDecayTop_ = Q_ + Z_ ;
+		}
+
+		void ReconstructDiLeptEvt()
+		{
+			if(!isDiLeptonic_)
+			{
+				cerr << "Top FCNC event candidate is not di-leptonic. Cannot be reconstructed as such" << endl;
+				exit(1);
+			}
+			W_ = quarkFromW_ + quarkBarFromW_ ;
+			smDecayTop_ = B_ + W_ ;
+			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
+			fcncDecayTop_ = Q_ + Z_ ;
+		}
+		void ReconstructTriLeptEvt()
+		{
+			if(!isTriLeptonic_)
+			{
+				cerr << "Top FCNC event candidate is not tri-leptonic. Cannot be reconstructed as such" << endl;
+				exit(1);
+			}
+			W_ = leptonFromW_+ neutrino_ ;
+			smDecayTop_ = B_ + W_ ;
+			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
+			fcncDecayTop_ = Q_ + Z_ ;
+		}
+
+		void ReconstructDiLeptEvt(const TLorentzVector* lept1, const TLorentzVector* lept2, const std::vector<TopTree::TRootJet*> &init_jets)
+		{
+			// Topology to reconstruct : tt-> bW + qZ -> bqq + qll
+			lepton1FromZ_ = *lept1;
+			lepton2FromZ_ = *lept2;
+			// Search for jet pairs with an invariant mass matching the W boson mass.
+			std::vector<TRootJet*> jets = init_jets;
+			int W_idx_1 = -1;
+			int W_idx_2 = -1;
+			float W_mass     = 80.4;
+			float W_massDiff = 99999.;
+			for(unsigned int i=0;i<jets.size()-1;i++){
+				for(unsigned int j=i+1;j<jets.size();j++){
+					if(W_massDiff>fabs((*jets[i]+*jets[j]).M()-W_mass)){
+						W_idx_1 = (int)i;
+						W_idx_2 = (int)j;
+						W_massDiff = fabs((*jets[i]+*jets[j]).M()-W_mass);
+					}
+				}
+			}
+			quarkFromW_    = *jets[W_idx_1];
+			quarkBarFromW_ = *jets[W_idx_2];
+			// Erase W boson jets candidates from the jet list
+			jets.erase(jets.begin()+W_idx_2);
+			jets.erase(jets.begin()+W_idx_1);
+			sort(jets.begin(),jets.end(),HighestBtag());
+			B_ = *jets[0];
+			// Erase b-jet candidates from the jet list
+			jets.erase(jets.begin());
+			sort(jets.begin(),jets.end(),HighestPt());
+			// Search for the jet giving with the Z candidate an invariant mass close to the top mass
+			int Q_idx = 0;
+			float Top_mass     = 172.5;
+			float Top_massDiff = 99999.;
+			for(unsigned int i=0;i<jets.size();i++){
+				if(Top_massDiff>fabs((*jets[i]+lepton1FromZ_+lepton2FromZ_).M()-Top_mass)){
+					Q_idx = i;
+					Top_massDiff = fabs((*jets[i]+lepton1FromZ_+lepton2FromZ_).M()-Top_mass);
+				}
+			}
+			Q_ = *jets[Q_idx];
+			ReconstructDiLeptEvt();
+		}
+
+		void ReconstructTriLeptEvt(const TLorentzVector* leptZ1, const TLorentzVector* leptZ2, const TLorentzVector* leptW, const TLorentzVector *MET, const std::vector<TopTree::TRootJet*> &init_jets)
+		{
+			// Topology to reconstruct : tt-> bW + qZ -> blv + qll
+			lepton1FromZ_ = *leptZ1;
+			lepton2FromZ_ = *leptZ2;
+			leptonFromW_  = *leptW;
+			neutrino_     = *MET;
+			// Recover the kinematics of the neutrino from the MET
+			MEzCalculator MyMEzCalc;
+			MyMEzCalc.SetMET(*MET);
+			MyMEzCalc.SetMuon(*leptW);
+			float MEz = MyMEzCalc.Calculate();
+			neutrino_.SetPz(MEz);
+			// Use b-jet candidate with the highest b-disc.
+			std::vector<TRootJet*> jets = init_jets;
+			sort(jets.begin(),jets.end(),HighestBtag());
+			B_ = *jets[0];
+			// Erase b-jet candidates from the jet list
+			jets.erase(jets.begin());
+			sort(jets.begin(),jets.end(),HighestPt());
+			// Search for the jet giving with the Z candidate an invariant mass close to the top mass
+			int Q_idx = 0;
+			float Top_mass     = 172.5;
+			float Top_massDiff = 99999.;
+			for(unsigned int i=0;i<jets.size()-1;i++){
+				if(Top_massDiff>fabs((*jets[i]+lepton1FromZ_+lepton2FromZ_).M()-Top_mass)){
+					Q_idx = i;
+					Top_massDiff = fabs((*jets[i]+lepton1FromZ_+lepton2FromZ_).M()-Top_mass);
+				}
+			}
+			Q_ = *jets[Q_idx];
+			ReconstructTriLeptEvt();
 		}
 
 		virtual TString typeName() const { return "TopFCNC_Evt"; }
