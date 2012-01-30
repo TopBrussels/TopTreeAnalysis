@@ -616,7 +616,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 	delete SummedBins;
 }
 
-void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string pathPNG) {
+void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string pathPNG, string ext) {
 	fout->cd();
 	string dirname = "MultiSamplePlot_"+label;
 	if(fout->Get(dirname.c_str())==0)
@@ -631,7 +631,7 @@ void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string path
 	if(hCanvas_) {
 	  if(savePNG)
 	  {
-	    hCanvas_->SaveAs( (pathPNG+label+"_Normalized.png").c_str() );
+	    hCanvas_->SaveAs( (pathPNG+label+"_Normalized."+ext).c_str() );
 //	    hCanvas_->SaveAs( (pathPNG+label+"_Normalized.pdf").c_str() );
 	  }
 	  hCanvas_->Write();
@@ -642,7 +642,7 @@ void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string path
 	  hCanvasStack_->Write();
 	  if(savePNG)
 	  {
-	    hCanvasStack_->SaveAs( (pathPNG+label+"_Stack.png").c_str() );
+	    hCanvasStack_->SaveAs( (pathPNG+label+"_Stack."+ext).c_str() );
 //	    hCanvasStack_->SaveAs( (pathPNG+label+"_Stack.pdf").c_str() );
 	  }
 	}
@@ -652,8 +652,8 @@ void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string path
 	  hCanvasStackLogY_->Write();
 	  if(savePNG)
 	  {
+	    hCanvasStackLogY_->SaveAs( (pathPNG+label+"_StackLogY."+ext).c_str() );
 //	    hCanvasStackLogY_->SaveAs( (pathPNG+label+"_StackLogY.pdf").c_str() );
-	    hCanvasStackLogY_->SaveAs( (pathPNG+label+"_StackLogY.png").c_str() );
 	  }
 	}
   
@@ -662,8 +662,8 @@ void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string path
 	  hCanvasStackAreaNorm_->Write();
 	  if(savePNG)
 	  {
+	    hCanvasStackAreaNorm_->SaveAs( (pathPNG+label+"_StackAreaNorm."+ext).c_str() );
 //	    hCanvasStackAreaNorm_->SaveAs( (pathPNG+label+"_StackAreaNorm.pdf").c_str() );
-	    hCanvasStackAreaNorm_->SaveAs( (pathPNG+label+"_StackAreaNorm.png").c_str() );
 	  }
 	}
   
@@ -672,7 +672,7 @@ void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string path
 	  hCanvasStackAreaNormLogY_->Write();
 	  if(savePNG)
 	  {
-	    hCanvasStackAreaNormLogY_->SaveAs( (pathPNG+label+"_StackAreaNormLogY.png").c_str() );
+	    hCanvasStackAreaNormLogY_->SaveAs( (pathPNG+label+"_StackAreaNormLogY."+ext).c_str() );
 //	    hCanvasStackAreaNormLogY_->SaveAs( (pathPNG+label+"_StackAreaNormLogY.pdf").c_str() );
 	  }
 	}
