@@ -17,8 +17,10 @@ class MEzCalculator {
   ~MEzCalculator();
   /// Set MET
   void SetMET(const TRootMET& MET) { MET_ = MET; } ;
+  void SetMET(const TLorentzVector& MET) { MET_ = MET; } ;
   /// Set Muon
   void SetMuon(const TRootMuon& lepton) { lepton_ = lepton; };
+  void SetMuon(const TLorentzVector& lepton) { lepton_ = lepton; };
   /// Calculate MEz
   /// options to choose roots from quadratic equation:
   /// type = 0 (defalut): if real roots, pick the one nearest to
@@ -36,8 +38,10 @@ class MEzCalculator {
  private:
   
   bool isComplex_;
-  TRootMuon lepton_;
-  TRootMET MET_;  
+  //TRootMuon lepton_;
+  //TRootMET MET_;  
+  TLorentzVector lepton_;
+  TLorentzVector MET_;  
 };
 
 #endif
