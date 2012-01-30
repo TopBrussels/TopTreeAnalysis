@@ -21,32 +21,32 @@ class TopFCNC_Evt : public TObject
 
 		TopFCNC_Evt() :
 			TObject(),
-			WLeptonicChannel_(kNone),
 			ZLeptonicChannel_(kNone),
+			WLeptonicChannel_(kNone),
 			isDiLeptonic_(false),
 			isTriLeptonic_(false)
 			{;}
 
 		TopFCNC_Evt(LeptonType type) :
 			TObject(),
-			WLeptonicChannel_(kNone),
 			ZLeptonicChannel_(type),
+			WLeptonicChannel_(kNone),
 			isDiLeptonic_(true),
 			isTriLeptonic_(false)
 			{;}
 
 		TopFCNC_Evt(LeptonType type1, LeptonType type2) :
 			TObject(),
-			WLeptonicChannel_(type1),
-			ZLeptonicChannel_(type2),
+			ZLeptonicChannel_(type1),
+			WLeptonicChannel_(type2),
 			isDiLeptonic_(false),
 			isTriLeptonic_(true)
 			{;}
 
 		TopFCNC_Evt(const TopFCNC_Evt& evt) :
 			TObject(evt),
-			WLeptonicChannel_(evt.WLeptonicChannel_),
 			ZLeptonicChannel_(evt.ZLeptonicChannel_),
+			WLeptonicChannel_(evt.WLeptonicChannel_),
 			isDiLeptonic_(evt.isDiLeptonic_),
 			isTriLeptonic_(evt.isTriLeptonic_),	
 			smDecayTop_(evt.smDecayTop_),
@@ -70,8 +70,8 @@ class TopFCNC_Evt : public TObject
 
 		Bool_t isDiLeptonic() const {return isDiLeptonic_;}
 		Bool_t isTriLeptonic() const {return isTriLeptonic_;}
-		LeptonType WLeptonicChannel() const { return WLeptonicChannel_;}
 		LeptonType ZLeptonicChannel() const { return ZLeptonicChannel_;}
+		LeptonType WLeptonicChannel() const { return WLeptonicChannel_;}
 		Bool_t isDiLeptonic(LeptonType type) const { return (ZLeptonicChannel()==type ? true : false); }
 		Bool_t isTriLeptonic(LeptonType type1, LeptonType type2) const { return ((WLeptonicChannel()==type1 && ZLeptonicChannel()==type2) ? true : false); }
 	  
@@ -105,8 +105,8 @@ class TopFCNC_Evt : public TObject
 		{
 			isDiLeptonic_  = false;
 			isTriLeptonic_ = true;
-			WLeptonicChannel_ = type1;
-			ZLeptonicChannel_ = type2;
+			ZLeptonicChannel_ = type1;
+			WLeptonicChannel_ = type2;
 		}
 
 		void SetTLorentzVector(TLorentzVector &smDecayTop, TLorentzVector &W, TLorentzVector &B, TLorentzVector &fcncDecayTop, TLorentzVector &Z, TLorentzVector &Q, TLorentzVector &leptonFromW, TLorentzVector &neutrino, TLorentzVector &quarkFromW, TLorentzVector &quarkBarFromW, TLorentzVector &lepton1FromZ, TLorentzVector &lepton2FromZ)
@@ -236,7 +236,7 @@ class TopFCNC_Evt : public TObject
 			ReconstructDiLeptEvt();
 		}
 
-		void ReconstructTriLeptEvt(const TLorentzVector* leptZ1, const TLorentzVector* leptZ2, const TLorentzVector* leptW, const TLorentzVector *MET, const std::vector<TopTree::TRootJet*> &init_jets)
+		void ReconstructTriLeptEvt(const TLorentzVector* leptZ1, const TLorentzVector* leptZ2, const TLorentzVector* leptW, const std::vector<TopTree::TRootJet*> &init_jets, const TLorentzVector *MET)
 		{
 			// Topology to reconstruct : tt-> bW + qZ -> blv + qll
 			lepton1FromZ_ = *leptZ1;
@@ -304,8 +304,8 @@ class TopFCNC_Evt : public TObject
 
 //	private:
 	protected:
-		LeptonType WLeptonicChannel_;
 		LeptonType ZLeptonicChannel_;
+		LeptonType WLeptonicChannel_;
 
 		Bool_t isDiLeptonic_;
 		Bool_t isTriLeptonic_;
