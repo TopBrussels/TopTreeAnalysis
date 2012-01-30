@@ -101,10 +101,11 @@ int main (int argc, char *argv[])
   cout << "*************************************************************" << endl;
 
   //SetStyle if needed
-  setTDRStyle();
+  //setTDRStyle();
+  setGregStyle();
   //setMyStyle();
 
-  string postfix = "EvtSelection"; // to relabel the names of the output file
+  string postfix = "_EventSelection"; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -232,12 +233,12 @@ int main (int argc, char *argv[])
   MSPlot["NbOfSelectedJets_mme_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mme_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mmm_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mmm_ch", 15, 0, 15, "Nb. of jets");
 
-  MSPlot["BdiscSelectedJets_mm_ch_CVSMVA"]          = new MultiSamplePlot(datasets, "BdiscSelectedJets_mm_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
-  MSPlot["BdiscSelectedJets_mm_ch_TCHE"]            = new MultiSamplePlot(datasets, "BdiscSelectedJets_mm_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscSelectedJets_mme_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mme_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
-  MSPlot["BdiscSelectedJets_mme_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mme_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscSelectedJets_mmm_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_CVSMVA", 500, 0, 1, "CSV(MVA) b-disc.");
-  MSPlot["BdiscSelectedJets_mmm_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_TCHE", 500, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscSelectedJets_mm_ch_CVSMVA"]          = new MultiSamplePlot(datasets, "BdiscSelectedJets_mm_ch_CVSMVA", 100, 0, 1, "CSV(MVA) b-disc.");
+  MSPlot["BdiscSelectedJets_mm_ch_TCHE"]            = new MultiSamplePlot(datasets, "BdiscSelectedJets_mm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscSelectedJets_mme_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mme_ch_CVSMVA", 100, 0, 1, "CSV(MVA) b-disc.");
+  MSPlot["BdiscSelectedJets_mme_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mme_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscSelectedJets_mmm_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_CVSMVA", 100, 0, 1, "CSV(MVA) b-disc.");
+  MSPlot["BdiscSelectedJets_mmm_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscSelectedJets_mmm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
 
   MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "MET");
   MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "MET");
@@ -265,9 +266,9 @@ int main (int argc, char *argv[])
   ////////////////// Plots  //////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
-  string pathPNG = "TopFCNC_Plots"+postfix+channelpostfix;
-  pathPNG = pathPNG +"/"; 	
-  pathPNG = pathPNG +"/"; 	
+  string pathPNG = "TopFCNC"+postfix+channelpostfix;
+  pathPNG += "_MSPlots/"; 	
+//  pathPNG = pathPNG +"/"; 	
   mkdir(pathPNG.c_str(),0777);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -783,8 +784,6 @@ int main (int argc, char *argv[])
 	MSPlot["NbOfSelectedJets_Before3rdLeptCut"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	MyTopFCNC_EvtCand = 0;
-	MEzCalculator MyMEzCalc;
-	MyMEzCalc.SetMET(*mets[0]);
 	// Select events based on the presence of *exactly one* extra isolated lepton
 	if(selectedExtraMuons.size()==0)
 	{ 
@@ -827,6 +826,11 @@ int main (int argc, char *argv[])
 							MSPlot["BdiscSelectedJets_mme_ch_CVSMVA"]->Fill(selectedJets[i]->btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["BdiscSelectedJets_mme_ch_TCHE"]->Fill(selectedJets[i]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						}
+						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
+						MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0]);
+						MSPlot["Mtt_mme_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mzq_mme_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+
 					}
 				}
 			}
@@ -846,6 +850,10 @@ int main (int argc, char *argv[])
 						MSPlot["BdiscSelectedJets_mmm_ch_CVSMVA"]->Fill(selectedJets[i]->btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["BdiscSelectedJets_mmm_ch_TCHE"]->Fill(selectedJets[i]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 					}
+					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
+					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedExtraMuons[0], selectedJets, mets[0]);
+					MSPlot["Mtt_mmm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mzq_mmm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 				}
 			}
 		}
@@ -899,7 +907,7 @@ int main (int argc, char *argv[])
 	string name = it->first;
 	temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
 	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false);
-	temp->Write(fout, name, false, "");
+	temp->Write(fout, name, true, pathPNG, "pdf");
   }
   TDirectory* th1dir = fout->mkdir("Histos1D");
   th1dir->cd();
