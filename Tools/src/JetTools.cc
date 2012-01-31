@@ -16,7 +16,7 @@ JetTools::~JetTools()
 void JetTools::unCorrectJet(TRootJet* inJet)
 {
   float corr = inJet->getJetCorrFactor("L1FastJetL2L3");
-  cout << "uncorrecting!" << endl;
+  //cout << "uncorrecting!" << endl;
   inJet->SetPxPyPzE(inJet->Px()/corr, inJet->Py()/corr, inJet->Pz()/corr, inJet->E()/corr);
 }
 
@@ -56,6 +56,26 @@ void JetTools::correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs)
   for(unsigned int j=0; j<inJets.size(); j++)
     correctJet(inJets[j],nPV);
 }
+
+void JetTools::correctJet(TRootJet* inJet, float rhoPU)
+{
+  if(startFromRaw_)
+    unCorrectJet(inJet);
+  JEC_->setJetEta(inJet->Eta());
+  JEC_->setJetPt(inJet->Pt());
+  JEC_->setJetA(inJet->jetArea());
+  JEC_->setRho(rhoPU);
+ 
+  float corr = JEC_->getCorrection();
+  inJet->SetPxPyPzE(inJet->Px()*corr, inJet->Py()*corr, inJet->Pz()*corr, inJet->E()*corr);
+}
+
+void JetTools::correctJets(vector<TRootJet*> inJets, float rhoPU)
+{
+  for(unsigned int j=0; j<inJets.size(); j++)
+    correctJet(inJets[j],rhoPU);
+}
+
 
 void JetTools::correctJetJESUnc(TRootJet* inJet, string direction, float nSigma) // direction = plus or minus
 {
@@ -98,7 +118,7 @@ void JetTools::correctJetJESUnc(vector<TRootJet*> inJets, TRootMET* inMET, strin
     correctJetJESUnc(inJets[i],inMET,direction,nSigma);
 }
 
-void JetTools::correctJetJER(TRootJet* inJet, TRootGenJet* inGenJet, string direction)
+void JetTools::correctJetJER(TRootJet* inJet, TRootGenJet* inGenJet, string direction, bool oldnumbers)
 {
   float corrFactor;
   bool JER_minus = false, JER_plus = false; // only one of them true! never both of them!
@@ -107,38 +127,59 @@ void JetTools::correctJetJER(TRootJet* inJet, TRootGenJet* inGenJet, string dire
   else if(direction != "nominal") cout << "Unknown JER direction: " << direction << endl;
   float fabsEta = fabs(inJet->Eta());
 	
-	//numbers from https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution
-  if(JER_minus)
-  {
-    if(fabsEta <= 1.1) corrFactor = -0.006;
-    else if(fabsEta <= 1.7 && fabsEta > 1.1) corrFactor = 0.129;
-		else if(fabsEta <= 2.3 && fabsEta > 1.7) corrFactor = 0.011;
-		else if(fabsEta <= 5.0 && fabsEta > 2.3) corrFactor = -0.033;
-    else corrFactor = -0.033; //fabsEta > 5.0
-  }
-  else if(JER_plus)
-  {
-    if(fabsEta <= 1.1) corrFactor = 0.136;
-    else if(fabsEta <= 1.7 && fabsEta > 1.1) corrFactor = 0.251;
-		else if(fabsEta <= 2.3 && fabsEta > 1.7) corrFactor = 0.176;
-		else if(fabsEta <= 5.0 && fabsEta > 2.3) corrFactor = 0.356;
-    else corrFactor = 0.356; //fabsEta > 5.0
-  }
+	if(!oldnumbers)
+	{
+	  //numbers from https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution
+    if(JER_minus)
+    {
+    	if(fabsEta <= 1.1) corrFactor = -0.006;
+    	else if(fabsEta <= 1.7 && fabsEta > 1.1) corrFactor = 0.129;
+			else if(fabsEta <= 2.3 && fabsEta > 1.7) corrFactor = 0.011;
+			else if(fabsEta <= 5.0 && fabsEta > 2.3) corrFactor = -0.033;
+    	else corrFactor = -0.033; //fabsEta > 5.0
+  	}
+  	else if(JER_plus)
+  	{
+    	if(fabsEta <= 1.1) corrFactor = 0.136;
+    	else if(fabsEta <= 1.7 && fabsEta > 1.1) corrFactor = 0.251;
+			else if(fabsEta <= 2.3 && fabsEta > 1.7) corrFactor = 0.176;
+			else if(fabsEta <= 5.0 && fabsEta > 2.3) corrFactor = 0.356;
+    	else corrFactor = 0.356; //fabsEta > 5.0
+  	}
+		else
+		{
+	  	if(fabsEta <= 1.1) corrFactor = 0.066;
+    	else if(fabsEta <= 1.7 && fabsEta > 1.1) corrFactor = 0.191;
+			else if(fabsEta <= 2.3 && fabsEta > 1.7) corrFactor = 0.096;
+			else if(fabsEta <= 5.0 && fabsEta > 2.3) corrFactor = 0.166;
+    	else corrFactor = 0.166; //fabsEta > 5.0
+		}
+	}
 	else
 	{
-	  if(fabsEta <= 1.1) corrFactor = 0.066;
-    else if(fabsEta <= 1.7 && fabsEta > 1.1) corrFactor = 0.191;
-		else if(fabsEta <= 2.3 && fabsEta > 1.7) corrFactor = 0.096;
-		else if(fabsEta <= 5.0 && fabsEta > 2.3) corrFactor = 0.166;
-    else corrFactor = 0.166; //fabsEta > 5.0
+	  if(JER_minus)
+  	{
+    	if(fabsEta <= 1.5) corrFactor = 0.0;
+    	else if(fabsEta < 2.0 && fabsEta > 1.5) corrFactor = -0.05;
+    	else corrFactor = -0.1;
+  	}
+  	else if(JER_plus)
+  	{
+    	if(fabsEta <= 1.5) corrFactor = 0.2;
+    	else if(fabsEta < 2.0 && fabsEta > 1.5) corrFactor = 0.25;
+    	else corrFactor = 0.3;
+  	}
+		else 
+			corrFactor = 0.1;	
 	}
+		
   float deltapt = ( inJet->Pt() - inGenJet->Pt() ) * corrFactor;
   float ptscale = max(0.0, ( inJet->Pt() + deltapt) / inJet->Pt() );
   if(ptscale > 0.0)
     inJet->SetPxPyPzE(inJet->Px()*ptscale, inJet->Py()*ptscale, inJet->Pz()*ptscale, inJet->E()*ptscale);
 }
 
-void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGenJets, string direction)
+void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGenJets, string direction, bool oldnumbers)
 {
   // Match RecoJets with GenJets
   vector< pair<size_t, size_t> > indexVector; //first index = RecoJet, second index = GenJet
@@ -168,10 +209,10 @@ void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGe
   // Apply correction for jet energy resolution on-the-fly, only for recoJets matched with a genJet
   for(size_t i=0; i<indexVector.size(); i++)
     if( inGenJets[indexVector[i].second]->Pt() >= 15 )
-      correctJetJER(inJets[indexVector[i].first], inGenJets[indexVector[i].second], direction);
+      correctJetJER(inJets[indexVector[i].first], inGenJets[indexVector[i].second], direction, oldnumbers);
 }
 
-void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGenJets, TRootMET* inMET, string direction)
+void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGenJets, TRootMET* inMET, string direction, bool oldnumbers)
 {
   // Match RecoJets with GenJets
   vector< pair<size_t, size_t> > indexVector; //first index = RecoJet, second index = GenJet
@@ -204,7 +245,7 @@ void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGe
     {
       inMET->SetPx(inMET->Px() + inJets[indexVector[i].first]->Px());
       inMET->SetPy(inMET->Py() + inJets[indexVector[i].first]->Py());
-      correctJetJER(inJets[indexVector[i].first], inGenJets[indexVector[i].second], direction);
+      correctJetJER(inJets[indexVector[i].first], inGenJets[indexVector[i].second], direction, oldnumbers);
       inMET->SetPx(inMET->Px() - inJets[indexVector[i].first]->Px());
       inMET->SetPy(inMET->Py() - inJets[indexVector[i].first]->Py());
       inMET->SetE(sqrt(pow(inMET->Px(),2) + pow(inMET->Py(),2)));
