@@ -176,7 +176,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfixOld = "_TreeTEST"; // to relabel the names of the output file  
+  string postfixOld = "_Test"; // to relabel the names of the output file  
 	string postfix= postfixOld+"_"+systematic;
 
   string TreespathPNG = "InclFourthGenTrees";
@@ -199,8 +199,8 @@ int main (int argc, char *argv[])
   //bool TrainwithTprime = false; //temporarily not supported
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
-  bool semiElectron = false; // use semiElectron channel?
-  bool semiMuon = true; // use semiMuon channel?
+  bool semiElectron = true; // use semiElectron channel?
+  bool semiMuon = false; // use semiMuon channel?
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -273,7 +273,7 @@ int main (int argc, char *argv[])
 	}
 	
   //Output ROOT file
-  string rootFileName ("InclFourthGenSearch"+postfix+channelpostfix+".root");
+  string rootFileName ("InclFourthGenSearch_TreeAnalyzer"+postfix+channelpostfix+".root");
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
 
  
@@ -625,7 +625,7 @@ int main (int argc, char *argv[])
 			vector<TLorentzVector> selectedMuons = myTree->selectedMuons();
 			vector<TLorentzVector> selectedElectrons = myTree->selectedElectrons();
 			vector<float> bTagValues, bTagValuesForMVA;
-			bTagValuesForMVA = myTree->bTagTCHE();
+			bTagValuesForMVA = myTree->bTagTCHP(); //choice...
 			if(btagger.find("TCHE")<=0)
 			  bTagValues = myTree->bTagTCHE();
 			else if(btagger.find("TCHP")<=0)
