@@ -340,13 +340,13 @@ int main (int argc, char *argv[])
 
   SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
   selecTableSemiMu.SetLuminosity(Luminosity);
-  selecTableSemiMu.SetPrecision(2);
+  selecTableSemiMu.SetPrecision(1);
   SelectionTable selecTableSemiEl(CutsSelecTableSemiEl, datasets);
   selecTableSemiEl.SetLuminosity(Luminosity);
-  selecTableSemiEl.SetPrecision(2);
+  selecTableSemiEl.SetPrecision(1);
   SelectionTable selecTableMultiLepton(CutsSelecTableMultiLepton, datasets);
   selecTableMultiLepton.SetLuminosity(Luminosity);
-  selecTableMultiLepton.SetPrecision(2);
+  selecTableMultiLepton.SetPrecision(1);
   
   cout << " - SelectionTable instantiated ..." << endl;
 
@@ -1609,17 +1609,17 @@ int main (int argc, char *argv[])
     fout->cd();
     
     //Selection tables
-    selecTableSemiMu.TableCalculator(false, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    selecTableSemiMu.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableSemiMu = "InclFourthGenSearch_SelectionTable_SemiMu"+postfix;
     selectiontableSemiMu = selectiontableSemiMu +".tex"; 	
     if(semiMuon) selecTableSemiMu.Write(selectiontableSemiMu.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
 	
-    selecTableSemiEl.TableCalculator(false, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    selecTableSemiEl.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableSemiEl = "InclFourthGenSearch_SelectionTable_SemiEl"+postfix;		
     selectiontableSemiEl = selectiontableSemiEl +".tex"; 	
     if(semiElectron) selecTableSemiEl.Write(selectiontableSemiEl.c_str(),false, true, false, false, false, false, false);
     
-    selecTableMultiLepton.TableCalculator(false, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    selecTableMultiLepton.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableMultiLepton = "InclFourthGenSearch_SelectionTable_MultiLepton"+postfix+channelpostfix;
     selectiontableMultiLepton = selectiontableMultiLepton +".tex"; 	
     selecTableMultiLepton.Write(selectiontableMultiLepton.c_str(),false, true, false, false, false, false, false);
