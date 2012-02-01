@@ -44,8 +44,6 @@
 #include "../Tools/interface/MVATrainer.h"
 #include "../Tools/interface/MVAComputer.h"
 #include "../Tools/interface/JetTools.h"
-#include "../Tools/interface/TwoDimTemplateTools.h"
-#include "../Tools/interface/InclFourthGenSearchTools.h"
 #include "../JESMeasurement/interface/JetCombiner.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
@@ -53,6 +51,8 @@
 #include "../Reconstruction/interface/TTreeObservables.h"
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../InclFourthGenSearch/interface/InclFourthGenTree.h"
+#include "../InclFourthGenSearch/interface/InclFourthGenSearchTools.h"
+#include "../InclFourthGenSearch/interface/TwoDimTemplateTools.h"
 //#include "../MCInformation/interface/LumiReWeighting.h" 
 //for Kinematic Fit
 #include "../MCInformation/interface/ResolutionFit.h"
@@ -166,9 +166,10 @@ int main (int argc, char *argv[])
   string postfix = "_TEST"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string TreespathPNG = "InclFourthGenTrees";
-  TreespathPNG = TreespathPNG +"/"; 		
-  mkdir(TreespathPNG.c_str(),0777);
+  string Treespath = "InclFourthGenTrees";
+  Treespath = Treespath +"/";
+  mkdir(Treespath.c_str(),0777);
+	bool savePNG = false;	
 	
   /////////////////////
   // Configuration
@@ -265,7 +266,7 @@ int main (int argc, char *argv[])
   string pathPNG = "InclFourthGenSearchPlots_TreeCreator"+postfix+channelpostfix;
   pathPNG = pathPNG +"/"; 	
   pathPNG = pathPNG +"/"; 	
-  mkdir(pathPNG.c_str(),0777);
+  if(savePNG) mkdir(pathPNG.c_str(),0777);
 
 
   MSPlot["allDiJetMasses"] = new MultiSamplePlot(datasets, "allDiJetMasses", 50, 0, 1000, "m_{jj}");
@@ -438,7 +439,7 @@ int main (int argc, char *argv[])
 
 
     string TreeFileName;
-		TreeFileName = TreespathPNG+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
+		TreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
     cout << "INFO: creating InclFourthGenTree file "+TreeFileName << endl;        
     TFile* treeFile = new TFile(TreeFileName.c_str(),"RECREATE");      
 		
@@ -1550,8 +1551,8 @@ int main (int argc, char *argv[])
   if(doMVAjetcombination)
   {
     string pathPNGJetCombi = pathPNG+"JetCombination/";
-    mkdir(pathPNGJetCombi.c_str(),0777);
-    jetCombiner->Write(fout, true, pathPNGJetCombi);
+    if(savePNG) mkdir(pathPNGJetCombi.c_str(),0777);
+    jetCombiner->Write(fout, savePNG, pathPNGJetCombi);
   }
 */	
 	
@@ -1560,19 +1561,15 @@ int main (int argc, char *argv[])
   {
     fout->cd();
     //Write histograms: MSPlots
-    mkdir((pathPNG+"MSPlot/").c_str(),0777);
+    if(savePNG) mkdir((pathPNG+"MSPlot/").c_str(),0777);
     //cout << "mkdir " << (pathPNG+"MSPlot/").c_str()<< endl;
+		cout << "Running over all MS plots" << endl;
     for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
     {
- 				cout << "run over all MS plots 1" << endl;
         MultiSamplePlot *temp = it->second;
- 				cout << "run over all MS plots 2" << endl;
         string name = it->first;
- 				cout << "run over all MS plots 3 " << name << endl;
         temp->Draw(false, name, true, true, true, true, true,5,false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
- 				cout << "run over all MS plots 4 " << endl;
-        temp->Write(fout, name, true, pathPNG+"MSPlot/");//bool savePNG
- 				cout << "run over all MS plots - writing done" << endl;
+        temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     cout << "MultiSamplePlots written" << endl;
 	
@@ -1589,7 +1586,7 @@ int main (int argc, char *argv[])
  	//		temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries...
 			temp->Write();
 			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-			tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
+			if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() ); //well, is actually not png but pdf...
     }    
     cout << "1D plots written" << endl;
     
@@ -1602,7 +1599,7 @@ int main (int argc, char *argv[])
 			TH2F *temp = it->second;
 			temp->Write();
 			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-			tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
+			if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
     }
     //delete th2dir;
     cout << "2D plots written" << endl;
