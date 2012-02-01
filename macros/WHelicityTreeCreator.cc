@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
   // Which decay channel //
   /////////////////////////
   
-  bool semiElectron = false; // use semiElectron channel?
-  bool semiMuon = true; // use semiMuon channel?
+  bool semiElectron = true; // use semiElectron channel,
+  bool semiMuon = false; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
   {
@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   //  Which systematics //
   ////////////////////////
 
-  int doJESShift = 2; // 0: off 1: minus 2: plus
+  int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
@@ -288,7 +288,9 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
 
-  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
+  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
+
+  std::cout << " CalculateResolutions = " << CalculateResolutions << endl;
 
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitMuon = 0, *resFitElectron = 0, *resFitNeutrino = 0;
     
@@ -303,8 +305,8 @@ int main (int argc, char *argv[])
     resFitBJets->LoadResolutions("resolutions/bJetReso.root");
     if(semiMuon == true){
       resFitMuon->LoadResolutions("resolutions/muonReso.root");
-      resFitNeutrino->LoadResolutions("resolutions/neutrinoReso.root");
-      //resFitNeutrino->LoadResolutions("resolutions/neutrinoSemiMuReso.root");  //Once resolutions are newly created they will be split up for SemiMu and SemiEl for Neutrino !!
+      //resFitNeutrino->LoadResolutions("resolutions/neutrinoReso.root");
+      resFitNeutrino->LoadResolutions("resolutions/neutrinoSemiMuReso.root");  //Once resolutions are newly created they will be split up for SemiMu and SemiEl for Neutrino !!
     }
     else if(semiElectron == true){
       resFitNeutrino->LoadResolutions("resolutions/neutrinoSemiElReso.root");
@@ -460,8 +462,8 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
     
     for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined
-    //for(unsigned int ievt = 0; ievt < 2000; ievt++){     
-    
+    //for(unsigned int ievt = 0; ievt < 5000; ievt++){  
+
       nEvents[d]++;
       if(ievt%2000 == 0)
 	std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
@@ -473,7 +475,7 @@ int main (int argc, char *argv[])
         {
           genjets = treeLoader.LoadGenJet(ievt);
           sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
-        }
+        } 
         
       // scale factor for the event
       float scaleFactor = 1.;
@@ -836,6 +838,10 @@ int main (int argc, char *argv[])
       /////////////////////////////
       //   Selection
       /////////////////////////////
+      //if(event->runId() != 173692 && event->eventId() != -2061789364) continue;
+      //std::cout << " runId : " << event->runId() << " | eventid : " << event->eventId() << endl;
+
+      //if(event->eventId() != 2233177932) continue;
         
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
@@ -882,6 +888,13 @@ int main (int argc, char *argv[])
       MSPlot["nLooseElectronsSemiEl"]->Fill(vetoElectronsSemiEl.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["nSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 
+//       std::cout << " event id : " << event->eventId() << " run id : " << event->runId() << endl;
+//       if(selectedJets.size() > 0 && selectedMuons.size() > 0){
+//       for(int ii=0; ii < selectedJets.size(); ii++){
+// 	std::cout << "       " << ii << " Jet pt : " << selectedJets[ii]->Pt() << " Jet Eta : " << selectedJets[ii]->Eta() << " relIso of muon : " << (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt() << endl;  
+//       }
+//       }
+      
       MSPlot["nEventsAfterCutsSemiMu"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
       selecTableSemiMu.Fill(d,0,scaleFactor*lumiWeight);
       if( triggedSemiMu && semiMuon )
@@ -922,7 +935,18 @@ int main (int argc, char *argv[])
 					selecTableSemiMu.Fill(d,9,scaleFactor*lumiWeight);
 					eventSelectedSemiMu = true;
 					float reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
-					MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);                   
+					MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);               
+
+// 					if(event->runId() == 173692){// && event->eventId() == 2233177932){
+// 					  int NumberbTags=0;
+// 					  for(int ii=0; ii< selectedJets.size(); ii++){
+// 					    if(selectedJets[ii]->btag_simpleSecondaryVertexHighEffBJetTags() >= 1.74) NumberbTags++;
+// 					  }
+// 					  TLorentzVector muons=*selectedMuons[0];
+// 					  TLorentzVector METS =*mets[0];
+// 					  float TransverseMass = sqrt(2*(abs(selectedMuons[0]->Pt()))*abs(mets[0]->Pt())*(1-cos(muons.DeltaPhi(METS))));	
+// 					  if(NumberbTags >= 1 && TransverseMass > 30.) std::cout << " | run id : " << event->runId() << " | event id : " << event->eventId() << " | lumiblockId : " << event->lumiBlockId() << " | transverse mass : " << TransverseMass << " | # btags : " << NumberbTags <<  endl;
+// 					}
 				      }
 				  }
 			      }
@@ -978,6 +1002,10 @@ int main (int argc, char *argv[])
 					      eventSelectedSemiEl = true;
 					      float reliso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
 					      MSPlot["SelectedEventsElectronsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
+// 					      if(event->runId() == 173692){// && event->eventId() == 2233177932){						
+// 						std::cout << " run id : " << event->runId() << " event id : " << event->eventId() << " semiEl selected " << endl;					  
+// 					      }
+					      
 					    }
 					}
 				    }
@@ -1158,8 +1186,8 @@ int main (int argc, char *argv[])
 	    resFitBJets->Fill(selectedJets[leptonicBJet_.first], mcParticles[leptonicBJet_.second]);
 	    if(semiMuon == true) resFitMuon->Fill(selectedMuons[0], &standardLepton);
 	    else if(semiElectron == true) resFitElectron->Fill(selectedElectrons[0], &standardLepton);
-	    histo1D["ElectronPt"]->Fill(selectedElectrons[0]->Pt());
-	    histo1D["ElectronEta"]->Fill(selectedElectrons[0]->Eta());
+	    //histo1D["ElectronPt"]->Fill(selectedElectrons[0]->Pt());
+	    //histo1D["ElectronEta"]->Fill(selectedElectrons[0]->Eta());
 	    resFitNeutrino->Fill(mets[0], &standardNeutrino);
 	  }
 	}
@@ -1375,6 +1403,7 @@ int main (int argc, char *argv[])
 	  wTree->setHadrLJet2( jetCombi[1] );
 	  wTree->setLeptBJet( jetCombi[3] );
 	  wTree->setMET( *mets[0] );
+	  //cout << "met: " << mets[0]->Pt() << endl;
 	  wTree->setSelectedJets( SelectedJets );
 	  wTree->setBTagTCHE(TCHEbTagValues);  
 	  wTree->setBTagTCHP(TCHPbTagValues);
@@ -1393,7 +1422,7 @@ int main (int argc, char *argv[])
 	  WTreeTree->Fill();
 	  delete wTree;
 	}  // end of !CalculateResolutions
-      }  //delete selection;
+      }  //delete selection;    
     }//loop on events
 
     //////////////////////////////
