@@ -248,9 +248,9 @@ int main (int argc, char *argv[])
   MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 100, 0, 1000, "m_{t#bar{t}}");
   MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 100, 0, 1000, "m_{t#bar{t}}");
 
-  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 0, 300, "m_{Zq}");
-  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 0, 300, "m_{Zq}");
-  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 0, 300, "m_{Zq}");
+  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 80, 300, "m_{Zq}");
+  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 80, 300, "m_{Zq}");
+  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 80, 300, "m_{Zq}");
 //  MSPlot["NbOfLooseMuon"]     = new MultiSamplePlot(datasets, "NbOfLooseMuon", 10, 0, 10, "Nb. of loose muons");
 //  MSPlot["NbOfLooseElectron"] = new MultiSamplePlot(datasets, "NbOfLooseElectron", 10, 0, 10, "Nb. of loose electrons");
 
@@ -292,6 +292,7 @@ int main (int argc, char *argv[])
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 4 jet"));
+  CutsSelecTableDiMu.push_back(string("$b-disc_{CSV} \\geq 0.1$"));
 //  CutsSelecTableDiMu.push_back(string("$MET \\leq 30$ GeV"));  
 
   SelectionTable selecTableDiMu(CutsSelecTableDiMu, datasets);
@@ -798,11 +799,14 @@ int main (int argc, char *argv[])
 						selecTableDiMu.Fill(d,9,scaleFactor);
 						if(selectedJets.size()>3){ //at least 4 jets
 							selecTableDiMu.Fill(d,10,scaleFactor);
-							MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+
 							MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
 							MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets);
 							MSPlot["BdiscBJetCand_mm_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["BdiscBJetCand_mm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+							if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags()<0.65) continue;
+							selecTableDiMu.Fill(d,11,scaleFactor);
+							MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 						}
