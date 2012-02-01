@@ -259,7 +259,7 @@ void InclFourthGenSearchTools::FillMassPlots(int d, int nbOfBtags, int nbOfWs, f
 					   	
 }
 
-void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, string pathPNG)
+void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, bool savePNG, string pathPNG)
 {
     cout<<" ... Writings MS plots of InclFourthGenSearchTools"<<endl;
     for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
@@ -267,7 +267,7 @@ void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, strin
         MultiSamplePlot *temp = it->second;
         string name = it->first;
         temp->Draw(false, name, true, true, true, true, true,5);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal)
-        temp->Write(fout, name, true, pathPNG+"MSPlot/");//bool savePNG
+        temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     
     //1D
@@ -276,10 +276,10 @@ void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, strin
     cout<<" ... Writing 1D plots of InclFourthGenSearchTools"<<endl;
     for(std::map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
     {
-	TH1F *temp = it->second;
-	temp->Write();
-	TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-	tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
+			TH1F *temp = it->second;
+			temp->Write();
+			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+			if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
     } 
 
 }

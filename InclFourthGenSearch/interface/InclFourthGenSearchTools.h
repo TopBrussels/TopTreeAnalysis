@@ -53,7 +53,7 @@ class InclFourthGenSearchTools
    float GetMtop() const {return Mtop_;};
    float GetMtop_kinfit() const {return Mtop_kinfit_;};
    void FillMassPlots(int d, int nbOfBtags, int nbOfWs, float scaleFactor);
-   void WritePlots(TFile* fout, TDirectory* th1dir, string pathPNG);
+   void WritePlots(TFile* fout, TDirectory* th1dir, bool savePNG, string pathPNG);
    void TestPurityGoodCombinations(int d, int nbOfBtags, int nbOfWs, TRootGenEvent* genEvt, vector<TRootMCParticle*> mcParticles, vector<TRootJet*> selectedJets_MVAinput, bool TprimeEvaluation, float scaleFactor);
    void PrintPurityGoodCombinations();
    
