@@ -49,7 +49,7 @@ class SelectionTable {
   void Clear(){;}; /** Clear the tables */
   void Fill(unsigned int DatasetNumber, vector<float> PassTheCuts); /** Method to fill the tables */
   void Fill(unsigned int DatasetNumber, unsigned int CutNumber, float value); /** Method to fill the tables */
-  void TableCalculator(bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false); /** Calculate the different selection efficiencies and rescaled number of events */
+  void TableCalculator(bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, bool mergeVV = false, bool mergeTTV = false, bool NP_mass = false); /** Calculate the different selection efficiencies and rescaled number of events */
   void Scale(float Lumi);
   void WriteTable(ofstream& fout, float** listTable_, bool writeMerged = true, bool useBookTabs = false, bool writeLandscape = false);
   /**

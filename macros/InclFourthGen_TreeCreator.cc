@@ -163,7 +163,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_TreeTEST"; // to relabel the names of the output file  
+  string postfix = "_TreeTESTNEW"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
   string TreespathPNG = "InclFourthGenTrees";
@@ -321,18 +321,7 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 muon"));
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet"));
   CutsSelecTableSemiMu.push_back(string("MET > 40 GeV"));  
-  CutsSelecTableSemiMu.push_back(string("SS $\\geq$ 1 muon"));
-  CutsSelecTableSemiMu.push_back(string("trileptons $\\geq$ 1 muon"));
-  CutsSelecTableSemiMu.push_back(string("box 1B 1W"));
-  CutsSelecTableSemiMu.push_back(string("box 1B 2W"));//10
-  CutsSelecTableSemiMu.push_back(string("box 1B 3W"));
-  CutsSelecTableSemiMu.push_back(string("box 1B $\\geq$ 4W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B 1W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B 2W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B 3W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B $\\geq$ 4W"));
-  CutsSelecTableSemiMu.push_back(string("SS leptons in all boxes combined")); //17
-  CutsSelecTableSemiMu.push_back(string("trileptons in all boxes combined")); //18
+  CutsSelecTableSemiMu.push_back(string("single muon"));
 
   vector<string> CutsSelecTableSemiEl;
   CutsSelecTableSemiEl.push_back(string("initial")); //0
@@ -340,27 +329,24 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("trigged"));
   CutsSelecTableSemiEl.push_back(string("Good PV"));
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 selected electron"));
-  CutsSelecTableSemiEl.push_back(string("Veto muon"));
   CutsSelecTableSemiEl.push_back(string("Conversion veto"));
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet"));
   CutsSelecTableSemiEl.push_back(string("MET > 40 GeV"));
-  CutsSelecTableSemiEl.push_back(string("SS 2 electrons"));
-  CutsSelecTableSemiEl.push_back(string("trileptons 3 electrons")); //10
-  CutsSelecTableSemiEl.push_back(string("box 1B 1W"));
-  CutsSelecTableSemiEl.push_back(string("box 1B 2W"));
-  CutsSelecTableSemiEl.push_back(string("box 1B 3W"));
-  CutsSelecTableSemiEl.push_back(string("box 1B $\\geq$ 4W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B 1W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B 2W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B 3W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B $\\geq$ 4W"));
-  CutsSelecTableSemiEl.push_back(string("SS leptons in all boxes combined")); //19
-  CutsSelecTableSemiEl.push_back(string("trileptons in all boxes combined")); //20
+  CutsSelecTableSemiEl.push_back(string("single electron"));
+
+  vector<string> CutsSelecTableMultiLepton;
+  CutsSelecTableMultiLepton.push_back(string("SS leptons"));
+  CutsSelecTableMultiLepton.push_back(string("trileptons"));
 
   SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
   selecTableSemiMu.SetLuminosity(Luminosity);
+  selecTableSemiMu.SetPrecision(2);
   SelectionTable selecTableSemiEl(CutsSelecTableSemiEl, datasets);
   selecTableSemiEl.SetLuminosity(Luminosity);
+  selecTableSemiEl.SetPrecision(2);
+  SelectionTable selecTableMultiLepton(CutsSelecTableMultiLepton, datasets);
+  selecTableMultiLepton.SetLuminosity(Luminosity);
+  selecTableMultiLepton.SetPrecision(2);
   
   cout << " - SelectionTable instantiated ..." << endl;
 
@@ -501,8 +487,8 @@ int main (int argc, char *argv[])
 
       if(ievt%1000 == 0)
         std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
-        
-      //load event
+      
+			//load event
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
       vector<TRootGenJet*> genjets;
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
@@ -765,9 +751,9 @@ int main (int argc, char *argv[])
       float METCut = 40;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
-      selection.setMuonCuts(40,2.1,0.1,10,0.02,0.3,1,1,1);
+      selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
       selection.setLooseMuonCuts(10,2.5,0.2);
-      selection.setElectronCuts(40,2.5,0.125,0.02,1,0.3);
+      selection.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
       selection.setLooseElectronCuts(15,2.5,0.2);	 				 
       
       if (init_jets.size() > 0)
@@ -790,6 +776,8 @@ int main (int argc, char *argv[])
       selecTableSemiMu.Fill(d,1,scaleFactor);
       selecTableSemiEl.Fill(d,1,scaleFactor);
 		
+			
+			
 			//// EVENTS TRIGGERED BY MUON TRIGGER			
       if(trigged && semiMuon)
       { 
@@ -797,7 +785,7 @@ int main (int argc, char *argv[])
         if(isGoodPV)
 				{
 					selecTableSemiMu.Fill(d,3,scaleFactor);
-					if(selectedMuons.size()>=1)
+					if(selectedMuons.size()>=1 && selectedMuons[0]->Pt()>40)
 					{
 						selecTableSemiMu.Fill(d,4,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
@@ -808,7 +796,7 @@ int main (int argc, char *argv[])
 						  //block for the jet multiplicity plot
 							if(mets[0]->Et()> METCut)
 							{							
-							      if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+							      if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsVBTFid.size() == 0)
 										{
 										  int nBtags = 0;
 											for(unsigned int j=0;j<selectedJets.size();j++)
@@ -829,7 +817,7 @@ int main (int argc, char *argv[])
 							for(unsigned int j=0;j<selectedJets.size();j++)
 							{
 								//now require at least a b-tagged jet larger than a certain pre-defined cut
-								if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+								if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
 								{
 									selecTableSemiMu.Fill(d,5,scaleFactor); 
 									if(mets[0]->Et()> METCut)
@@ -840,45 +828,31 @@ int main (int argc, char *argv[])
 										//cout << "event is selected according to the baseline selection!" << endl;
 										
 										////for single muon require exactly 1 muon, veto for other loose muons and veto for very loose electrons
-										if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsVBTFid.size() == 0)
 										{
 											isSingleLepton = true; // we have a single muon event
 											isSingleMuon = true;
+											//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 											//cout << "is single muon!" << endl;
-											if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);	
-											if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-											if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);							
-											if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);							
+											//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
 			     					}
 			     					
+										
 										////for same-sign muons require exactly 2 muons, veto for very loose electrons
-										else if(selectedMuons.size() == 2 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										else if(selectedMuons.size() == 2 && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsVBTFid.size() == 0)
 										{ 
-											//require that there are no two muons forming the Z mass
-											if( !selection.foundZCandidate(selectedMuons, selectedLooseMuons, 10.) )
+											//require that there are the two muons do not form the Z mass
+											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
 											{
 												//require the same charge
 												if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
 												{
 													isSSLepton = true; // we have two same-sign muons
 													isSSMuon = true;
+													//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 													//cout << "is same-sign muon!" << endl;
-													if(dataSetName.find("TTbar")==0){
-														histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-														histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													}
-													if(dataSetName.find("NP_Tprime500")==0){
-														histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-														histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													}
-													if(dataSetName.find("NP_Bprime500")==0){
-														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-														histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													}	  	
-													if(dataSetName.find("NP_SBprime500")==0){
-														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-														histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													}	  	
+													//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
+													//cout << "-> muon 2 pt: " << selectedMuons[1]->Pt() << endl;
 												}
 											}
 										}
@@ -900,23 +874,10 @@ int main (int argc, char *argv[])
 														{
 															isSSLepton = true; // we have a same-sign electron and muon
 															isSSMuEl = true;
+															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 															//cout << "is same-sign muon+electron!" << endl;
-															if(dataSetName.find("TTbar")==0){
-																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);	
-															}
-															if(dataSetName.find("NP_Tprime500")==0){
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}
-															if(dataSetName.find("NP_Bprime500")==0){
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}	  	
-															if(dataSetName.find("NP_SBprime500")==0){
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}	  	
+															//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
+															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
 														}
 													}
 												}
@@ -926,46 +887,28 @@ int main (int argc, char *argv[])
 										////three leptons
 										
 										//require at least 3 muons, veto for very loose electrons
-										else if(selectedMuons.size() >= 3  && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsNoVBTFid.size() == 0)
+										else if(selectedMuons.size() == 3  && selectedLooseMuons.size() == selectedMuons.size() && selectedLooseElectronsVBTFid.size() == 0)
 										{
 											//require that there are no two muons forming the Z mass
 											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
 											{
 												isTriLepton = true; // at least three muons
 												isTriMuon = true;
+												std::cout<<"Processing the "<<ievt<<"th event" << endl;
 												//cout << "is trilepton: 3 muons!" << endl;
-												if(dataSetName.find("TTbar")==0){
-													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
-												}
-												if(dataSetName.find("NP_Tprime500")==0){
-													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
-												}
-												if(dataSetName.find("NP_Bprime500")==0){
-													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
-												}	  	
-												if(dataSetName.find("NP_SBprime500")==0){
-													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-													histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[2]->Pt(),scaleFactor);
-												}	  	
+												//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
+												//cout << "-> muon 2 pt: " << selectedMuons[1]->Pt() << endl;
+												//cout << "-> muon 3 pt: " << selectedMuons[2]->Pt() << endl;
 											}
 					 					}
 										
-										//require at least 2 muons
-										else if(selectedMuons.size() >= 2  && selectedLooseMuons.size() == selectedMuons.size() )
+										//require 2 muons and an electron
+										else if(selectedMuons.size() == 2  && selectedLooseMuons.size() == selectedMuons.size() && selectedElectrons.size() == 1 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 										{
 											//require that there are no two muons forming the Z mass
 											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
 											{
 												//require exactly 1 electron
-												if(selectedElectrons.size() == 1 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
-												{
 													//require that there are no two electrons forming the Z mass
 													if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid,10.))
 													{
@@ -974,30 +917,13 @@ int main (int argc, char *argv[])
 														{
 															isTriLepton = true; //at least two muons and one electron
 															isTriMu2El1 = true;
+															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 															//cout << "is trilepton: 2 muons + 1 electron!" << endl;
-															if(dataSetName.find("TTbar")==0){
-																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}
-															if(dataSetName.find("NP_Tprime500")==0){
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}
-															if(dataSetName.find("NP_Bprime500")==0){
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}	  	
-															if(dataSetName.find("NP_SBprime500")==0){
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[1]->Pt(),scaleFactor);
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															}	  	
+															//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
+															//cout << "-> muon 2 pt: " << selectedMuons[1]->Pt() << endl;
+															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
 														}
 													}
-												}
 											}
 										}
 										
@@ -1005,7 +931,7 @@ int main (int argc, char *argv[])
 										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() )
 										{
 											//require at least 2 electrons
-											if(selectedElectrons.size() >= 2)
+											if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 											{
 												//require that there are no two electrons forming the Z mass
 												if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
@@ -1014,27 +940,11 @@ int main (int argc, char *argv[])
 													{
 														isTriLepton = true; //one muon and at least two electrons
 														isTriMu1El2 = true;
+														//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 														//cout << "is trilepton: 1 muon + 2 electrons!" << endl;
-														if(dataSetName.find("TTbar")==0){
-															histo1D["LeptonPt_TTbar"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-														}
-														if(dataSetName.find("NP_Tprime500")==0){
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-														}
-														if(dataSetName.find("NP_Bprime500")==0){
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-														}	  	
-														if(dataSetName.find("NP_SBprime500")==0){
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedMuons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-														}	  	
+														//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
+														//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
+														//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
 													}
 												}
 											}
@@ -1055,15 +965,12 @@ int main (int argc, char *argv[])
         if( isGoodPV )
         {
           selecTableSemiEl.Fill(d,3,scaleFactor);
-          if( selectedElectrons.size() >= 1 )
+          if( selectedElectrons.size() >= 1 && selectedElectrons[0]->Pt()>40)
           {
             selecTableSemiEl.Fill(d,4,scaleFactor);
-            if( selectedLooseMuons.size() == 0 ) 
-            {
-              selecTableSemiEl.Fill(d,5,scaleFactor);
               if( selection.passConversionRejection(selectedElectrons[0]) )
               {
-								selecTableSemiEl.Fill(d,6,scaleFactor);
+								selecTableSemiEl.Fill(d,5,scaleFactor);
 								sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
 
 								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
@@ -1071,7 +978,7 @@ int main (int argc, char *argv[])
 									//block for the jet multiplicity plot
 									if(mets[0]->Et()> METCut)
 									{							
-										if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+										if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseMuons.size() == 0 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 										{
 										  int nBtags = 0;
 											for(unsigned int j=0;j<selectedJets.size();j++)
@@ -1091,30 +998,28 @@ int main (int argc, char *argv[])
 									for(unsigned int j=0;j<selectedJets.size();j++)
 									{
 										//now require at least a b-tagged jet larger than a certain pre-defined cut
-										if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+										if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
 										{
-		             			selecTableSemiEl.Fill(d,7,scaleFactor);
+		             			selecTableSemiEl.Fill(d,6,scaleFactor);
 											if(mets[0]->Et()> METCut)
 											{
-			        					selecTableSemiEl.Fill(d,8,scaleFactor);
+			        					selecTableSemiEl.Fill(d,7,scaleFactor);
                         eventSelected = true;
 		
 												//cout << "event is selected according to the baseline selection!" << endl;
 														
 												//// single electron
-												if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+												if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseMuons.size() == 0 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 												{
 													isSingleLepton = true;
 													isSingleElectron = true;
+													//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 													//cout << "is single electron!" << endl;
-													if(dataSetName.find("TTbar")==0) histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-													if(dataSetName.find("NP_Tprime500")==0) histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);	
-													if(dataSetName.find("NP_Bprime500")==0) histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-													if(dataSetName.find("NP_SBprime500")==0) histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);			
+													//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
 												}
 												
 												//// two same-sign electrons
-												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 												{
 													if(selection.passConversionRejection(selectedElectrons[1]))
 													{
@@ -1122,55 +1027,76 @@ int main (int argc, char *argv[])
 														{
 															isSSLepton = true;
 															isSSElectron = true;
+															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 															//cout << "is same-sign electron!" << endl;
-															if(dataSetName.find("TTbar")==0){
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															}
-															if(dataSetName.find("NP_Tprime500")==0){
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															}
-															if(dataSetName.find("NP_Bprime500")==0){
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															}	  	
-															if(dataSetName.find("NP_SBprime500")==0){
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-																histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															}	  	
+															//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
+															//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
+														}
+													}
+												}
+												
+												//// a same-sign electron and muon
+												else if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												{
+													if(selectedMuons.size() == 1 && selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
+													{
+														if(selectedElectrons[0]->charge()== selectedMuons[1]->charge())
+														{
+															isSSLepton = true;
+															isSSMuEl = true;
+															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
+															//cout << "is same-sign electron + muon!" << endl;
+															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
+															//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
+														}
+													}
+												}
+											
+												//// 1 electron and 2 muons
+												else if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												{
+													if(selectedMuons.size() == 2 && selectedMuons[1]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
+													{
+														isTriLepton = true;
+														isTriMu2El1 = true;
+														//std::cout<<"Processing the "<<ievt<<"th event" << endl;
+														//cout << "is tri-lepton: 1 electron and 2 muons!" << endl;
+														//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
+														//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
+														//cout << "-> muon 2 pt: " << selectedMuons[1]->Pt() << endl;
+													}
+												}
+												
+												//// 2 electrons and 1 muon
+												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												{
+													if(selection.passConversionRejection(selectedElectrons[1])&& selectedElectrons[1]->Pt()<40)
+													{
+														if(selectedMuons.size() == 1 && selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
+														{
+															isTriLepton = true;
+															isTriMu1El2 = true;
+															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
+															//cout << "is tri-lepton: 2 electrons and 1 muon!" << endl;
+															//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
+															//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
+															//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
 														}
 													}
 												}
 												
 												//// three electrons
-												else if(selectedElectrons.size() >= 3 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+												else if(selectedElectrons.size() == 3 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 												{
 													if(selection.passConversionRejection(selectedElectrons[1]) && selection.passConversionRejection(selectedElectrons[2]))
 													{
 														isTriLepton = true; // at least three electrons
 														isTriElectron = true;
+														//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 														//cout << "is trilepton: 3 electrons!" << endl;
-														if(dataSetName.find("TTbar")==0){
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															histo1D["LeptonPt_TTbar"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
-														}
-														if(dataSetName.find("NP_Tprime500")==0){
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Tprime500"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
-														}
-														if(dataSetName.find("NP_Bprime500")==0){
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															histo1D["LeptonPt_Bprime500"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
-														}	  	
-														if(dataSetName.find("NP_SBprime500")==0){
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[0]->Pt(),scaleFactor);
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[1]->Pt(),scaleFactor);
-															histo1D["LeptonPt_SBprime500"]->Fill(selectedElectrons[2]->Pt(),scaleFactor);
-														}	  	
+														//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
+														//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
+														//cout << "-> electron 3 pt: " << selectedElectrons[2]->Pt() << endl;
 													}
 												}
 											} // end MET cut
@@ -1178,11 +1104,9 @@ int main (int argc, char *argv[])
 									} // end 'loop' on jets
 								} // end 'at least one jet'
 							} // end conversion rejection for leading electron
-            } // end veto muons
           } // end if selectedElectrons.size()>=1
         } // end good PV
       } // end trigged & semiElectron
-
 
 						
       if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
@@ -1202,21 +1126,21 @@ int main (int argc, char *argv[])
 					else
 					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j]->Pt(),datasets[d], true, Luminosity*scaleFactor);
 				}			
+				if(semiElectron) selecTableSemiEl.Fill(d,8,scaleFactor);
+				if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
 			}
 
 			if(isSSLepton)
 			{
 				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
 				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-				if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-				if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
+				selecTableMultiLepton.Fill(d,0,scaleFactor);
 			}
 			if(isTriLepton)
 			{
 				//cout << "IS TRI-LEPTON EVENT" << endl;
 				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-				if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
-				if(semiMuon) selecTableSemiMu.Fill(d,8,scaleFactor);				
+				selecTableMultiLepton.Fill(d,1,scaleFactor);				
 			}			
 			
 			
@@ -1645,7 +1569,7 @@ int main (int argc, char *argv[])
  				cout << "run over all MS plots 2" << endl;
         string name = it->first;
  				cout << "run over all MS plots 3 " << name << endl;
-        temp->Draw(false, name, true, true, true, true, true,5);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal)
+        temp->Draw(false, name, true, true, true, true, true,5,false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
  				cout << "run over all MS plots 4 " << endl;
         temp->Write(fout, name, true, pathPNG+"MSPlot/");//bool savePNG
  				cout << "run over all MS plots - writing done" << endl;
@@ -1685,16 +1609,21 @@ int main (int argc, char *argv[])
     fout->cd();
     
     //Selection tables
-    selecTableSemiMu.TableCalculator(false, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+    selecTableSemiMu.TableCalculator(false, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableSemiMu = "InclFourthGenSearch_SelectionTable_SemiMu"+postfix;
     selectiontableSemiMu = selectiontableSemiMu +".tex"; 	
-    if(semiMuon) selecTableSemiMu.Write(selectiontableSemiMu.c_str());
+    if(semiMuon) selecTableSemiMu.Write(selectiontableSemiMu.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
 	
-    selecTableSemiEl.TableCalculator(false, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+    selecTableSemiEl.TableCalculator(false, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableSemiEl = "InclFourthGenSearch_SelectionTable_SemiEl"+postfix;		
     selectiontableSemiEl = selectiontableSemiEl +".tex"; 	
-    if(semiElectron) selecTableSemiEl.Write(selectiontableSemiEl.c_str());
+    if(semiElectron) selecTableSemiEl.Write(selectiontableSemiEl.c_str(),false, true, false, false, false, false, false);
     
+    selecTableMultiLepton.TableCalculator(false, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    string selectiontableMultiLepton = "InclFourthGenSearch_SelectionTable_MultiLepton"+postfix+channelpostfix;
+    selectiontableMultiLepton = selectiontableMultiLepton +".tex"; 	
+    selecTableMultiLepton.Write(selectiontableMultiLepton.c_str(),false, true, false, false, false, false, false);
+
     cout << " - Closing the output file now..." << endl;
     fout->Close();
   } //end !trainMVA

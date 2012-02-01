@@ -119,13 +119,13 @@ void SelectionTable::Scale(float Lumi){
 	}
 }
 
-void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass)
 {
-  if(mergeTT || mergeQCD || mergeW || mergeZ || mergeST) merge_ = true;
+  if(mergeTT || mergeQCD || mergeW || mergeZ || mergeST || mergeVV || mergeTTV) merge_ = true;
 
   //scale to lumi
   Scale(lumi_);
-  bool addedTT= false, addedQCD = false, addedW = false, addedZ = false, addedSingleTop = false;
+  bool addedTT= false, addedQCD = false, addedW = false, addedZ = false, addedSingleTop = false, addedDiBoson = false, addedTTV = false;
 
   //loop on cuts
   for(unsigned int i=0;i<listOfCuts_.size();i++)
@@ -133,6 +133,10 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
 	//loop on datasets
   	for(unsigned int j=0;j<listOfDatasets_.size();j++)
   	{
+  		string datasetName = listOfDatasets_[j]->Name();
+
+			if(NP_mass && datasetName.find("NP_") == 0 && datasetName.find("NP_overlay_") != 0) continue; // write only the NP_overlay new physics sample if NP_mass is true
+		
 		float factor = listOfDatasets_[j]->NormFactor();
 		//Errors on the raw numbers of events (Wald formula)
 		nofEventsRawError_[i][j]     = ErrorCalculator(nofEventsRaw_[i][j],nofEventsRaw_[i][j]/nofEventsRaw_[0][j],1);
@@ -159,7 +163,6 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
   			cutEfficiency_[i][j] = 1.;
   			cutEfficiencyError_[i][j] = 0.;
 			
-  			string datasetName = listOfDatasets_[j]->Name();
 
   			if(mergeTT && datasetName.find("TT_") == 0) {
   			  if(!addedTT) {
@@ -189,6 +192,18 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
   			  if(!addedSingleTop) {
   			    listOfDatasetsMerged_.push_back(new Dataset("ST_Merged","st+jets, merged",true,listOfDatasets_[j]->Color(),listOfDatasets_[j]->LineStyle(),listOfDatasets_[j]->LineWidth(),1.,1.));
   			    addedSingleTop = true;
+  			  }
+  			}
+  			else if(mergeVV && (datasetName.find("WW") == 0 || datasetName.find("WZ") == 0 || datasetName.find("ZZ") == 0) ){
+  			  if(!addedDiBoson) {
+  			    listOfDatasetsMerged_.push_back(new Dataset("VV_Merged","VV, merged",true,listOfDatasets_[j]->Color(),listOfDatasets_[j]->LineStyle(),listOfDatasets_[j]->LineWidth(),1.,1.));
+  			    addedDiBoson = true;
+  			  }
+  			}
+  			else if(mergeTTV && (datasetName.find("ttW") == 0 || datasetName.find("ttZ") == 0) ){
+  			  if(!addedTTV) {
+  			    listOfDatasetsMerged_.push_back(new Dataset("ttV_Merged","ttV, merged",true,listOfDatasets_[j]->Color(),listOfDatasets_[j]->LineStyle(),listOfDatasets_[j]->LineWidth(),1.,1.));
+  			    addedTTV = true;
   			  }
   			}
 			else listOfDatasetsMerged_.push_back(listOfDatasets_[j]);
@@ -275,7 +290,10 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
 				    (mergeQCD && datasetName.find("QCD_") == 0 && datasetMergedName.find("QCD_Merged")   == 0) ||
 				    (mergeW   && datasetName.find("W_")   == 0 && datasetMergedName.find("WJets_Merged") == 0) ||
 				    (mergeZ   && datasetName.find("Z_")   == 0 && datasetMergedName.find("ZJets_Merged") == 0) ||
-				    (mergeST  && datasetName.find("ST_")  == 0 && datasetMergedName.find("ST_Merged")    == 0) ) {
+				    (mergeST  && datasetName.find("ST_")  == 0 && datasetMergedName.find("ST_Merged")    == 0) ||
+						(mergeVV  && (datasetName.find("WW") == 0 || datasetName.find("WZ") == 0 || datasetName.find("ZZ") == 0) && datasetMergedName.find("VV_Merged") == 0)  ||
+				    (mergeTTV && (datasetName.find("ttW") == 0 || datasetName.find("ttZ") == 0) && datasetMergedName.find("ttV_Merged") == 0) ) 
+					{
 					nofEventsRawMerged_[i][j]      += nofEventsRaw_[i][k];
 					//nofEventsRawErrorMerged_[i][j] = sqrt( pow(nofEventsRawErrorMerged_[i][j],2.) + pow(nofEventsRawError_[i][k],2.);
 					nofEventsMerged_[i][j]     += nofEvents_[i][k];
@@ -297,7 +315,8 @@ void SelectionTable::TableCalculator(bool mergeTT, bool mergeQCD, bool mergeW, b
       		    			totalCutEfficiencyMerged_[i][j] = (float)(nofEventsMerged_[i][j]/nofEventsMerged_[0][j]);
           				totalCutEfficiencyErrorMerged_[i][j] =  BinomialeError((float)(nofEventsMerged_[i][j]/nofEventsMerged_[0][j]),nofEventsRawMerged_[0][j]);
   					totalCutEfficiencyErrorHigh_[i][j] =  WilsonScoreIntervalHigh(nofEventsMerged_[i][j],nofEventsMerged_[0][j])-(nofEventsMerged_[i][j]/nofEventsMerged_[0][j]);
-  					totalCutEfficiencyErrorLow_[i][j]  =  (nofEventsMerged_[i][j]/nofEventsMerged_[0][j])-WilsonScoreIntervalLow(nofEventsMerged_[i][j],nofEventsMerged_[0][j]);      		  		}
+  					totalCutEfficiencyErrorLow_[i][j]  =  (nofEventsMerged_[i][j]/nofEventsMerged_[0][j])-WilsonScoreIntervalLow(nofEventsMerged_[i][j],nofEventsMerged_[0][j]);      		  		
+						}
       		  		else if(datasetMergedName.compare(datasetName) == 0)
       		  		{
       		    			nofEventsRawMerged_[i][j] = nofEventsRaw_[i][k];
