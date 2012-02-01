@@ -44,8 +44,6 @@
 #include "../Tools/interface/MVATrainer.h"
 #include "../Tools/interface/MVAComputer.h"
 #include "../Tools/interface/JetTools.h"
-#include "../Tools/interface/TwoDimTemplateTools.h"
-#include "../Tools/interface/InclFourthGenSearchTools.h"
 #include "../JESMeasurement/interface/JetCombiner.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
@@ -53,6 +51,8 @@
 #include "../Reconstruction/interface/TTreeObservables.h"
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../InclFourthGenSearch/interface/InclFourthGenTree.h"
+#include "../InclFourthGenSearch/interface/InclFourthGenSearchTools.h"
+#include "../InclFourthGenSearch/interface/TwoDimTemplateTools.h"
 //#include "../MCInformation/interface/LumiReWeighting.h" 
 //for Kinematic Fit
 #include "../MCInformation/interface/ResolutionFit.h"
@@ -176,12 +176,13 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfixOld = "_Test"; // to relabel the names of the output file  
+  string postfixOld = "_TEST"; // to relabel the names of the output file  
 	string postfix= postfixOld+"_"+systematic;
 
-  string TreespathPNG = "InclFourthGenTrees";
-  TreespathPNG = TreespathPNG +"/"; 		
+  string Treespath = "InclFourthGenTrees";
+  Treespath = Treespath +"/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
+	bool savePNG = false;
 
   /////////////////////
   // Configuration
@@ -199,8 +200,8 @@ int main (int argc, char *argv[])
   //bool TrainwithTprime = false; //temporarily not supported
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
-  bool semiElectron = true; // use semiElectron channel?
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel?
+  bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -267,8 +268,8 @@ int main (int argc, char *argv[])
     cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;    
     string dataSetName = datasets[d]->Name();
 		string inputTreeFileName; //should follow convention of TreeFileName in InclFourthGen_TreeCreator.cc
-		if(systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus") inputTreeFileName = TreespathPNG+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
-		else inputTreeFileName = TreespathPNG+"InclFourthGenTree_"+dataSetName+postfixOld+"_Nominal"+channelpostfix+".root";
+		if(systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus") inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
+		else inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfixOld+"_Nominal"+channelpostfix+".root";
 		inputTrees.push_back(inputTreeFileName);
 	}
 	
@@ -285,7 +286,7 @@ int main (int argc, char *argv[])
   string pathPNG = "InclFourthGenSearchPlots_TreeAnalyzer"+postfix+channelpostfix;
   pathPNG = pathPNG +"/"; 	
   pathPNG = pathPNG +"/"; 	
-  mkdir(pathPNG.c_str(),0777);
+  if(savePNG) mkdir(pathPNG.c_str(),0777);
 
   //Most 1D and MS plots are declared inside this class
   InclFourthGenSearchTools myInclFourthGenSearchTools(semiMuon, semiElectron, datasets, Luminosity,false); //last argument is doKinematicFit
@@ -1341,9 +1342,12 @@ int main (int argc, char *argv[])
 	
   if(doMVAjetcombination)
   {
-    string pathPNGJetCombi = pathPNG+"JetCombination/";
-    mkdir(pathPNGJetCombi.c_str(),0777);
-    jetCombiner->Write(fout, true, pathPNGJetCombi);
+	  string pathPNGJetCombi = pathPNG+"JetCombination/";
+    if(savePNG)
+		{
+      mkdir(pathPNGJetCombi.c_str(),0777);
+		}
+		jetCombiner->Write(fout, savePNG, pathPNGJetCombi);
   }  
 
   
@@ -1351,19 +1355,14 @@ int main (int argc, char *argv[])
   {
     fout->cd();
     //Write histograms: MSPlots
-    mkdir((pathPNG+"MSPlot/").c_str(),0777);
-    //cout << "mkdir " << (pathPNG+"MSPlot/").c_str()<< endl;
+    if(savePNG) mkdir((pathPNG+"MSPlot/").c_str(),0777);
+		cout << "Running over all MS plots" << endl;
     for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
     {
- 				cout << "run over all MS plots 1" << endl;
         MultiSamplePlot *temp = it->second;
- 				cout << "run over all MS plots 2" << endl;
         string name = it->first;
- 				cout << "run over all MS plots 3 " << name << endl;
         temp->Draw(false, name, true, true, true, true, true,5);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal)
- 				cout << "run over all MS plots 4 " << endl;
-        temp->Write(fout, name, true, pathPNG+"MSPlot/");//bool savePNG
- 				cout << "run over all MS plots - writing done" << endl;
+        temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     cout << "MultiSamplePlots written" << endl;
 	
@@ -1380,11 +1379,11 @@ int main (int argc, char *argv[])
  	//		temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries...
 			temp->Write();
 			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-			tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
+			if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
     }    
     cout << "1D plots written" << endl;
     
-    myInclFourthGenSearchTools.WritePlots(fout,th1dir,pathPNG);
+    myInclFourthGenSearchTools.WritePlots(fout,th1dir,savePNG,pathPNG);
     
     //delete th1dir;
     // 2D
@@ -1395,7 +1394,7 @@ int main (int argc, char *argv[])
 			TH2F *temp = it->second;
 			temp->Write();
 			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-			tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
+			if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
     }
     //delete th2dir;
     cout << "2D plots written" << endl;
