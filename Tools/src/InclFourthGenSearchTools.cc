@@ -109,15 +109,28 @@ void InclFourthGenSearchTools::SetResolutionFit(ResolutionFit* resFitLightJets)
 
 void InclFourthGenSearchTools::FillPlots(int d, int nbOfBtags, int nbOfWs, float HT, vector<TRootMuon*> selectedMuons, vector<TRootElectron*> selectedElectrons, vector<TRootMET*> mets, vector<TRootJet*> selectedJets, float scaleFactor)
 {
+  vector<TLorentzVector> selectedMuonsTLV,selectedElectronsTLV,selectedJetsTLV;
+	for(unsigned int i=0; i<selectedMuons.size(); i++)
+  	selectedMuonsTLV.push_back((TLorentzVector) (*selectedMuons[i]));
+	for(unsigned int i=0; i<selectedElectrons.size(); i++)
+  	selectedElectronsTLV.push_back((TLorentzVector) (*selectedElectrons[i]));
+	for(unsigned int i=0; i<selectedJets.size(); i++)
+  	selectedJetsTLV.push_back((TLorentzVector) (*selectedJets[i]));
+		
+	FillPlots(d, nbOfBtags, nbOfWs, HT, selectedMuonsTLV, selectedElectronsTLV, mets[0]->Et(), selectedJetsTLV, scaleFactor);
+}
+
+void InclFourthGenSearchTools::FillPlots(int d, int nbOfBtags, int nbOfWs, float HT, vector<TLorentzVector> selectedMuons, vector<TLorentzVector> selectedElectrons, float met, vector<TLorentzVector> selectedJets, float scaleFactor) 
+{
 	string histoName_HT,MShistoName_HT,histoName_HT_dataset,MShistoName;
 	histoName_HT = "HT_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
 	MShistoName_HT = "MS_"+histoName_HT; //MSPlot for HT
 	histoName_HT_dataset = histoName_HT+(datasets_[d]->Name()).c_str(); //1D plot HT for each dataset
 	string histoPreFixes_SemiMu[3] = {"JetsPt","MET","MuonsPt"};
-        string histoPreFixes_SemiEl[3] = {"JetsPt","MET","ElectronsPt"};
+  string histoPreFixes_SemiEl[3] = {"JetsPt","MET","ElectronsPt"};
   
-	if(semiMuon_) HT_ = HT + selectedMuons[0]->Pt();
-	else if(semiElectron_) HT_ = HT + selectedElectrons[0]->Pt();
+	if(semiMuon_) HT_ = HT + selectedMuons[0].Pt();
+	else if(semiElectron_) HT_ = HT + selectedElectrons[0].Pt();
 											
 	MSPlot[MShistoName_HT.c_str()] -> Fill(HT_, datasets_[d], true, Luminosity_*scaleFactor);
 	histo1D[histoName_HT_dataset.c_str()] -> Fill(HT_,datasets_[d]->NormFactor()*Luminosity_*scaleFactor);
@@ -130,24 +143,24 @@ void InclFourthGenSearchTools::FillPlots(int d, int nbOfBtags, int nbOfWs, float
 		{
 			for(unsigned int j =0; j < selectedJets.size(); j++)
 			{
-				MSPlot[MShistoName.c_str()]->Fill(selectedJets[j]->Pt(), datasets_[d], true, Luminosity_*scaleFactor);
+				MSPlot[MShistoName.c_str()]->Fill(selectedJets[j].Pt(), datasets_[d], true, Luminosity_*scaleFactor);
 			}
 		}
 		else if(prefix==1)
 		{
-			MSPlot[MShistoName.c_str()]->Fill(mets[0]->Et(), datasets_[d], true, Luminosity_*scaleFactor);
+			MSPlot[MShistoName.c_str()]->Fill(met, datasets_[d], true, Luminosity_*scaleFactor);
 		}
 		else
 		{
-			if(semiMuon_) MSPlot[MShistoName.c_str()]->Fill(selectedMuons[0]->Pt(), datasets_[d], true, Luminosity_*scaleFactor);
-			else if(semiElectron_) MSPlot[MShistoName.c_str()]->Fill(selectedElectrons[0]->Pt(), datasets_[d], true, Luminosity_*scaleFactor);
+			if(semiMuon_) MSPlot[MShistoName.c_str()]->Fill(selectedMuons[0].Pt(), datasets_[d], true, Luminosity_*scaleFactor);
+			else if(semiElectron_) MSPlot[MShistoName.c_str()]->Fill(selectedElectrons[0].Pt(), datasets_[d], true, Luminosity_*scaleFactor);
 		}							
 	}
 }
 
 void InclFourthGenSearchTools::CalculateTopMass(TRootJet* WJet1, TRootJet* WJet2, TRootJet* HadBJet)
 {
-        TLorentzVector Top;
+  TLorentzVector Top;
 	Top = (*WJet1 + *WJet2 + *HadBJet);
 	Mtop_ = Top.M();
 	
@@ -221,6 +234,13 @@ void InclFourthGenSearchTools::CalculateTopMass(TRootJet* WJet1, TRootJet* WJet2
 		}
 		Mtop_kinfit_ = Top.M();		
 	}	
+}
+
+void InclFourthGenSearchTools::CalculateTopMass(TLorentzVector WJet1, TLorentzVector WJet2, TLorentzVector HadBJet)
+{
+  TLorentzVector Top;
+	Top = (WJet1 + WJet2 + HadBJet);
+	Mtop_ = Top.M();	
 }
 
 void InclFourthGenSearchTools::FillMassPlots(int d, int nbOfBtags, int nbOfWs, float scaleFactor)
