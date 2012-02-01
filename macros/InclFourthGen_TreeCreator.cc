@@ -163,7 +163,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_TreeTESTNEW"; // to relabel the names of the output file  
+  string postfix = "_TEST"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
   string TreespathPNG = "InclFourthGenTrees";
@@ -320,7 +320,7 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiMu.push_back(string("Good PV"));
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 muon"));
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet"));
-  CutsSelecTableSemiMu.push_back(string("MET > 40 GeV"));  
+  CutsSelecTableSemiMu.push_back(string("MET $>$ 40 GeV"));  
   CutsSelecTableSemiMu.push_back(string("single muon"));
 
   vector<string> CutsSelecTableSemiEl;
@@ -331,7 +331,7 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 selected electron"));
   CutsSelecTableSemiEl.push_back(string("Conversion veto"));
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet"));
-  CutsSelecTableSemiEl.push_back(string("MET > 40 GeV"));
+  CutsSelecTableSemiEl.push_back(string("MET $>$ 40 GeV"));
   CutsSelecTableSemiEl.push_back(string("single electron"));
 
   vector<string> CutsSelecTableMultiLepton;
@@ -631,13 +631,13 @@ int main (int argc, char *argv[])
       
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {	
-      				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
+      	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
 				if(systematic == "JERMinus")
-					jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
+					jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
 				else if(systematic == "JERPlus")
-					jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
+					jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
 				else
-					jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
+					jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
 		
 				// JES systematic! 
