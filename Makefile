@@ -39,8 +39,8 @@ OBJECTS		= $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 DEPENDS		= $(SOURCES:.$(SrcSuf)=.d)
 SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 #for libTopTreeAnaContent.so
-SOURCESDIC	= $(wildcard Reconstruction/src/Observables.cc Reconstruction/src/MEzCalculator.cc Content/src/*.cc ../TopTreeProducer/src/TRoot*.cc JESMeasurement/src/Monster.cc JESMeasurement/src/LightMonster.cc WHelicities/src/WTree.cc TopFCNC/src/*.cc InclFourthGenSearch/src/*.cc)
-HEADERSDIC	= $(wildcard Content/interface/*.h ../TopTreeProducer/interface/TRoot*.h JESMeasurement/interface/Monster.h JESMeasurement/interface/LightMonster.h WHelicities/interface/WTree.h TopFCNC/interface/*.h InclFourthGenSearch/interface/*.h)
+SOURCESDIC	= $(wildcard Reconstruction/src/Observables.cc Reconstruction/src/MEzCalculator.cc Content/src/*.cc ../TopTreeProducer/src/TRoot*.cc JESMeasurement/src/Monster.cc JESMeasurement/src/LightMonster.cc WHelicities/src/WTree.cc TopFCNC/src/*.cc InclFourthGenSearch/src/InclFourthGenTree.cc)
+HEADERSDIC	= $(wildcard Content/interface/*.h ../TopTreeProducer/interface/TRoot*.h JESMeasurement/interface/Monster.h JESMeasurement/interface/LightMonster.h WHelicities/interface/WTree.h TopFCNC/interface/*.h InclFourthGenSearch/interface/InclFourthGenTree.h)
 OBJECTSDIC	= $(SOURCESDIC:.$(SrcSuf)=.$(ObjSuf))
 
 # headers and sources for btag eff analysis lib
