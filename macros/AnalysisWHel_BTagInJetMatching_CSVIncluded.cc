@@ -27,6 +27,7 @@
 #include "../JESMeasurement/interface/FullKinFit.h"
 #include "../MCInformation/interface/LumiReWeighting.h"
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
+#include "../Selection/interface/SelectionTable.h"
 
 #include "Style.C"
 
@@ -187,8 +188,8 @@ int main (int argc, char *argv[])
   //--------------------------------------------------------------
   
   string UsedTrigger;
-  bool IsoMu172024Trigger = true;
-  bool TriCentralJet30Trigger = false;
+  bool IsoMu172024Trigger = false;
+  bool TriCentralJet30Trigger = true;
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
     Luminosity = 2141.96; 
@@ -198,6 +199,9 @@ int main (int argc, char *argv[])
     Luminosity = 2145.959; 
   }
   cout << "Executing the W Helicities analysis for an integrated luminosity of " << Luminosity << " pb^-1" << endl;
+
+  //Probability cut value:
+  float KinFitCut = 0.;
 
   string decayChannel;
   bool semiMuon = true;
@@ -226,42 +230,42 @@ int main (int argc, char *argv[])
   nameDataSet.push_back("ZJets");
 
   //2) JES Plus/Min samples:
-  /*
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_TTbarJets_Other");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_WJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_WJets");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ZJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ZJets");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_TTbarJets_SemiMuon");
-  */
-  /*
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_TTbarJets_Other");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_WJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_WJets");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ZJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_ZJets");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("JES_TTbarJets_SemiMuon");
-  */
+
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_TTbarJets_Other");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_WJets_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_WJets");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ZJets_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ZJets");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_TTbarJets_SemiMuon");
+  
+    
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_TTbarJets_Other");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_WJets_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_WJets");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ZJets_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_ZJets");
+//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+//     nameDataSet.push_back("JES_TTbarJets_SemiMuon");
+  
   
   //3) WJets systematics:  
   //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
@@ -296,22 +300,29 @@ int main (int argc, char *argv[])
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
 
   ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFitted.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedNoProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedMonteCarlo.tex").c_str());
-  // ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESMin.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESMin.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESMinNoProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESPlus.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESPlusNoProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWMin.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWMin100.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWMinNoProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWPlus.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWPlus100.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWPlusNoProbCut.tex").c_str());
 
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
   //2) Ciemat results: SSVHEM btag at event selection, leptonic top mass left free in KinFit and offline muon pt cut of 25
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
 
-  //ofstream PresentationTex("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+".tex");
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/CiematTest"+UsedTrigger+".tex").c_str());
   //ofstream PresentationTex("BTagPerformanceStudy_CSV/CiematMonteCarlo.tex");
-  //ofstream PresentationTex("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"JESMin.tex");
-  //ofstream PresentationTex("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"JESPlus.tex");
-  //ofstream PresentationTex("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"WMin.tex");
-  //ofstream PresentationTex("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"WPlus.tex");
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"JESMin.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"JESPlus.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"WMin100.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/Ciemat"+UsedTrigger+"WPlus100.tex").c_str());
 
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
   //3) Cross checks with OWN results to compare statistical (and eventually systematic uncertainties)
@@ -431,6 +442,26 @@ int main (int argc, char *argv[])
   // histo1D["TopLeptPzAfterKinFit"] = new TH1F("TopLeptPzAfterKinFit","TopLeptPzAfterKinFit",100,-200,200);
   // histo1D["TopLeptPtAfterKinFit"] = new TH1F("TopLeptPtAfterKinFit","TopLeptPtAfterKinFit",100,-200,200);
 
+  //Prob cut histos:
+  histo1D["KinFitProbDistrWrongEventsRejected"] = new TH1F("KinFitProbDistrWrongEventsRejected","KinFitProbDistrWrongEventsRejected",25,0,1);
+  histo1D["KinFitProbDistrCorrectEventsRejected"] = new TH1F("KinFitProbDistrCorrectEventsRejected","KinFitProbDistrCorrectEventsRejected",25,0,1);
+  histo1D["KinFitProbDistrAllRejectedEvents"] = new TH1F("KinFitProbDistrAllRejectedEvents","KinFitProbDistrAllRejectedEvents",25,0,1);
+  histo1D["KinFitProbDistrWrongEventsAccepted"] = new TH1F("KinFitProbDistrWrongEventsAccepted","KinFitProbDistrWrongEventsAccepted",25,0,1);
+  histo1D["KinFitProbDistrCorrectEventsAccepted"] = new TH1F("KinFitProbDistrCorrectEventsAccepted","KinFitProbDistrCorrectEventsAccepted",25,0,1);
+  histo1D["KinFitProbDistrAllAcceptedEvents"] = new TH1F("KinFitProbDistrAllAcceptedEvents","KinFitProbDistrAllAcceptedEvents",25,0,1);
+
+  histo1D["KinFitProbCorrectBLept"] = new TH1F("KinFitProbCorrectBLept","KinFitProbCorrectBLept",25,0,1);
+  histo1D["KinFitProbWrongBLept"] = new TH1F("KinFitProbWrongBLept","KinFitProbWrongBLept",25,0,1);
+  histo1D["KinFitProbOtherBLept"] = new TH1F("KinFitProbOtherBLept","KinFitProbOtherBLept",25,0,1);
+
+  histo1D["KinFitProbCorrectBLeptSSVHEM"] = new TH1F("KinFitProbCorrectBLeptSSVHEM","KinFitProbCorrectBLeptSSVHEM",25,0,1);
+  histo1D["KinFitProbWrongBLeptSSVHEM"] = new TH1F("KinFitProbWrongBLeptSSVHEM","KinFitProbWrongBLeptSSVHEM",25,0,1);
+
+  histo1D["CosThetaCorrectBLept"]=new TH1F("CosThetaCorrectBLept","CosThetaCorrectBLept",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaWrongBLept"]=new TH1F("CosThetaWrongBLept","CosThetaWrongBLept",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaCorrectBLeptSSVHEM"]=new TH1F("CosThetaCorrectBLeptSSVHEM","CosThetaCorrectBLeptSSVHEM",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaWrongBLeptSSVHEM"]=new TH1F("CosThetaWrongBLeptSSVHEM","CosThetaWrongBLeptSSVHEM",CosThetaBinNumber,-1,1);
+
   float XSection;
   float EqLumi;
   vector<Dataset*> datasets; // needed for MSPlots
@@ -465,6 +496,18 @@ int main (int argc, char *argv[])
   }
   
   //MSPlots
+  MSPlot["CosThetaSSVHEMLept"]= new MultiSamplePlot(datasets, "CosThetaSSVHEMLept", CosThetaBinNumber,-1,1,"CosThetaSSVHEMLept");  
+  MSPlot["KinFitProbSSVHEMLept"]= new MultiSamplePlot(datasets, "KinFitProbSSVHEMLept", CosThetaBinNumber,0,1,"KinFitProbSSVHEMLept");  
+  MSPlot["CosThetaTCHEMLept"]= new MultiSamplePlot(datasets, "CosThetaTCHEMLept", CosThetaBinNumber,-1,1,"CosThetaTCHEMLept");  
+  MSPlot["CosThetaTCHPMLept"]= new MultiSamplePlot(datasets, "CosThetaTCHPMLept", CosThetaBinNumber,-1,1,"CosThetaTCHPMLept");  
+  MSPlot["CosThetaSSVHPMLept"]= new MultiSamplePlot(datasets, "CosThetaSSVHPMLept", CosThetaBinNumber,-1,1,"CosThetaSSVHPMLept");  
+  MSPlot["KinFitProbSSVHPMLept"]= new MultiSamplePlot(datasets, "KinFitProbSSVHPMLept", CosThetaBinNumber,0,1,"KinFitProbSSVHPMLept");  
+  MSPlot["CosThetaCSVMLept"]= new MultiSamplePlot(datasets, "CosThetaCSVMLept", CosThetaBinNumber,-1,1,"CosThetaCSVMLept");
+
+  histo1D["CosThetaResSSVHEMLept"] = new TH1F("CosThetaResSSVHEMLept","CosThetaResSSVHEMLept",200,-2,2);
+  histo1D["CosThetaResNobTag"] = new TH1F("CosThetaResNobTag","CosThetaResNobTag",200,-2,2);
+
+ 
   MSPlot["CosThetaOpt"]= new MultiSamplePlot(datasets, "CosThetaOpt", CosThetaBinNumber,-1,1,"CosThetaOpt");  
   MSPlot["KinFitProbOpt"]=new MultiSamplePlot(datasets, "KinFitProbOpt", 50,0,1,"KinFitProbObt");
   MSPlot["CosThetaOptOrigKins"]= new MultiSamplePlot(datasets, "CosThetaOptOrigKins", CosThetaBinNumber,-1,1,"CosThetaOptOrigKins");  
@@ -482,6 +525,7 @@ int main (int argc, char *argv[])
   MSPlot["nPVFullKinFitHighestProbNotMin2"] = new MultiSamplePlot(datasets,"nPVFullKinFitHighestProbNotMin2" , 20, 0, 20, "nPVFullKinFitHighestProbNotMin2");
   MSPlot["nPVHadrKinFitHighestProbNotMin1"] = new MultiSamplePlot(datasets,"nPVHadrKinFitHighestProbNotMin1" , 20, 0, 20, "nPVHadrKinFitHighestProbNotMin1");
   MSPlot["nPVHadrKinFitHighestProbNotMin2"] = new MultiSamplePlot(datasets,"nPVHadrKinFitHighestProbNotMin2" , 20, 0, 20, "nPVHadrKinFitHighestProbNotMin2");
+  MSPlot["nPVBeforeFoundJetComb"] = new MultiSamplePlot(datasets, "nPVBeforeFoundJetComb", 20, 0, 20,"nPVBeforeFoundJetComb");
   MSPlot["nPVAfterFoundJetComb"] = new MultiSamplePlot(datasets, "nPVAfterFoundJetComb", 20, 0, 20,"nPVAfterFoundJetComb");
   MSPlot["nPVAfterFoundJetCombbTag"] = new MultiSamplePlot(datasets, "nPVAfterFoundJetCombbTab", 20, 0, 20,"nPVAfterFoundJetCombbTag");
   MSPlot["nPVAfterFoundJetCombOrigKins"] = new MultiSamplePlot(datasets, "nPVAfterFoundJetCombOrigKins", 20, 0, 20,"nPVAfterFoundJetCombOrigKins");
@@ -489,11 +533,37 @@ int main (int argc, char *argv[])
   MSPlot["nPVAfterFoundCosTheta"] = new MultiSamplePlot(datasets, "nPVAfterFoundCosTheta", 20, 0, 20,"nPVAfterFoundCosTheta");
   MSPlot["nPVAfterFoundCosThetabTag"] = new MultiSamplePlot(datasets, "nPVAfterFoundCosThetabTag", 20, 0, 20,"nPVAfterFoundCosThetabTag");
   MSPlot["nPVAfterFoundCosThetaOrigKins"] = new MultiSamplePlot(datasets, "nPVAfterFoundCosThetaOrigKins", 20, 0, 20,"nPVAfterFoundCosThetaOrigKins");
-  MSPlot["nPVAfterFoundCosThetaOrigKinsbTag"] = new MultiSamplePlot(datasets, "nPVAfterFoundCosThetaOrigKinsbTag", 20, 0, 20,"nPVAfterFoundCosThetaOrigKinsbTag");
+  MSPlot["nPVAfterFoundCosThetaOrigKinsbTag"] = new MultiSamplePlot(datasets, "nPVAfterFoundCosThetaOrigKinsbTag", 20, 0, 20,"nPVAfterFoundCosThetaOrigKinsbTag");  
 
-  MSPlot["TransverseMassBeforeCut"]=new MultiSamplePlot(datasets,"TransverseMassBeforeCut",150,0,200);
-  MSPlot["TransverseMassAfterCut"]=new MultiSamplePlot(datasets,"TransverseMassAfterCut",150,0,200); 
+  MSPlot["TransverseMassBeforeCut"]=new MultiSamplePlot(datasets,"TransverseMassBeforeCut",150,0,200,"TransverseMassBeforeCut");
+  MSPlot["TransverseMassAfterCut"]=new MultiSamplePlot(datasets,"TransverseMassAfterCut",150,0,200,"TransverseMassAfterCut"); 
 
+  //Histograms to check differences between events with Negative and positive DSquared (And check influence of probability cut) 
+  MSPlot["CosThetaDistrPositiveDSqProbCut"]=new MultiSamplePlot(datasets,"CosThetaDistrPositiveDSqProbCut" ,CosThetaBinNumber*2,-2,2,"CosThetaDistrPositiveDSqProbCut" );
+  MSPlot["CosThetaDistrPositiveDSq"]=new MultiSamplePlot(datasets,"CosThetaDistrPositiveDSq" ,CosThetaBinNumber*2,-2,2,"CosThetaDistrPositiveDSq" );
+  MSPlot["CosThetaDistrNegativeDSq"]=new MultiSamplePlot(datasets,"CosThetaDistrNegativeDSq" ,CosThetaBinNumber*2,-2,2,"CosThetaDistrNegativeDSq" );
+  MSPlot["CosThetaDistrNegativeDSqProbCut"]=new MultiSamplePlot(datasets,"CosThetaDistrNegativeDSqProbCut" ,CosThetaBinNumber*2,-2,2,"CosThetaDistrNegativeDSqProbCut" );
+  MSPlot["CosThetaNobTag"]=new MultiSamplePlot(datasets,"CosThetaNobTag" ,CosThetaBinNumber,-1,1, "CosThetaNobTag");
+  MSPlot["CosThetaNobTagProbCut"]=new MultiSamplePlot(datasets,"CosThetaNobTagProbCut" ,CosThetaBinNumber*2,-2,2,"CosThetaNobTagProbCut" );
+  MSPlot["CosThetaOrigKinsNobTag"]=new MultiSamplePlot(datasets, "CosThetaOrigKinsNobTag",CosThetaBinNumber*2,-2,2, "CosThetaOrigKinsNobTag");
+  MSPlot["ProbDistrPositiveDSqProbCut"]=new MultiSamplePlot(datasets,"ProbDistrPositiveDSqProbCut" ,50,-1,2,"ProbDistrPositiveDSqProbCut");
+  MSPlot["ProbDistrPositiveDSq"]=new MultiSamplePlot(datasets, "ProbDistrPositiveDSq",50,-1,2,"ProbDistrPositiveDSq");
+  MSPlot["ProbDistrNegativeDSq"]=new MultiSamplePlot(datasets,"ProbDistrNegativeDSq" ,50,-1,2,"ProbDistrNegativeDSq");
+  MSPlot["ProbDistrNegativeDSqProbCut"]=new MultiSamplePlot(datasets,"ProbDistrNegativeDSqProbCut" ,50,-1,2,"ProbDistrNegativeDSqProbCut");
+  MSPlot["KinFitProbNobTag"]=new MultiSamplePlot(datasets, "KinFitProbNobTag",25,0,1,"KinFitProbNobTag");
+  MSPlot["KinFitProbNobTagProbCut"]=new MultiSamplePlot(datasets,"KinFitProbNobTagProbCut" ,50,-1,2,"KinFitProbNobTagProbCut");
+  MSPlot["KinFitProbOrigKinsNobTagAllDSq"]=new MultiSamplePlot(datasets,"KinFitProbOrigKinsNobTagAllDSq" ,50,-1,2,"KinFitProbOrigKinsNobTagAllDSq");
+  MSPlot["KinFitProbOrigKinsNobTagPosDSq"]=new MultiSamplePlot(datasets,"KinFitProbOrigKinsNobTagPosDSq" ,50,-1,2, "KinFitProbOrigKinsNobTagPosDSq");
+  MSPlot["KinFitProbOrigKinsNobTagNegDSq"]=new MultiSamplePlot(datasets,"KinFitProbOrigKinsNobTagNegDSq" ,50,-1,2, "KinFitProbOrigKinsNobTagNegDSq");
+
+  //Probability cut:
+  MSPlot["CosThetaNobTagRejected"]=new MultiSamplePlot(datasets,"CosThetaNobTagRejected",20,0,1,"CosThetaNobTagRejected");
+
+  histo1D["CosThetaNobTag1D"] = new TH1F("CosThetaNobTag1D","CosThetaNobTag1D",25,0,1);
+  histo1D["CosThetaNobTagProbCut1D"] = new TH1F("CosThetaNobTagProbCut1D","CosThetaNobTagProbCut1D",25,0,1);
+  TH1F* CosThetaNobTagHisto = new TH1F("CosThetaNobTagHisto","CosThetaNobTagHisto",25,0,1);
+  TH1F* CosThetaNobTagProbCutHisto = new TH1F("CosThetaNobTagProbCutHisto","CosThetaNobTagProbCutHisto",25,0,1);
+  
   // MSPlot["SelectedMuonPt"] = new MultiSamplePlot(datasets, "SelectedMuonPt", 100, 0, 250, "Muon Pt");
   // MSPlot["SelectedMuonM"] = new MultiSamplePlot(datasets, "SelectedMuonM", 100, 0.09,0.12, "Muon M");
   // MSPlot["LeptonFitPt"] = new MultiSamplePlot(datasets, "LeptonFitPt",100,0,250, "Lepton KinFit Pt");
@@ -503,30 +573,21 @@ int main (int argc, char *argv[])
   MSPlot["Jet3Pt"] = new MultiSamplePlot(datasets, "Jet3Pt", 100,0,500,"Jet3Pt");
   MSPlot["Jet4Pt"] = new MultiSamplePlot(datasets, "Jet4Pt", 100,0,500,"Jet4Pt");
   
-  // MSPlot["GenNeutrinoPx"] = new MultiSamplePlot(datasets,"GenNeutrinoPx",50,-200,200,"GenNeutrinoPx");
-  // MSPlot["GenNeutrinoPy"] = new MultiSamplePlot(datasets,"GenNeutrinoPy",50,-200,200,"GenNeutrinoPy");
-  // MSPlot["GenNeutrinoPz"] = new MultiSamplePlot(datasets,"GenNeutrinoPz",50,-200,200,"GenNeutrinoPz");    
-  // MSPlot["MetPx"]= new MultiSamplePlot(datasets,"MetPx" ,50,-200,200,"MetPx");
-  // MSPlot["MetPy"]= new MultiSamplePlot(datasets,"MetPy" ,50,-200,200,"MetPy");
-  // MSPlot["NeutrinoKinFitPx"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPx" ,50,-200,200,"NeutrinoKinFitPx");
-  // MSPlot["NeutrinoKinFitPy"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPy" ,50,-200,200,"NeutrinoKinFitPy");
-  // MSPlot["NeutrinoKinFitPz"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPz" ,100,-400,400,"NeutrinoKinFitPz");
-
   // MSPlot["NoConvNeutrinoKinFitTheta"]= new MultiSamplePlot(datasets, "NoConvNeutrinoKinFitTheta",50,0,3.3,"NoConvNeutrinoKinFitTheta");
   // MSPlot["NoConvGenNeutrinoTheta"]= new MultiSamplePlot(datasets, "NoConvGenNeutrinoTheta",50,-0.5,3.3,"NoConvGenNeutrinoTheta");
   // MSPlot["NoConvNeutrinoThetaDiff"]= new MultiSamplePlot(datasets,"NoConvNeutrinoThetaDiff" ,100,-3.2,3.2,"NoConvNeutrinoThetaDiff");
 
-  // MSPlot["MetPhi"]= new MultiSamplePlot(datasets, "MetPhi",50,-3.3,3.3,"MetPhi");
+  MSPlot["MetPhi"]= new MultiSamplePlot(datasets, "MetPhi",200,-3.3,3.3,"MetPhi");
   // MSPlot["NeutrinoKinFitPhi"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPhi" ,50,-3.3,3.3,"NeutrinoKinFitPhi");
   // MSPlot["GenNeutrinoPhi"]= new MultiSamplePlot(datasets,"GenNeutrinoPhi" ,50,-3.3,3.3,"GenNeutrinoPhi");
   // //MSPlot["NeutrinoPhiDiff"]= new MultiSamplePlot(datasets, "NoConvNeutrinoPhiDiff",100,-7,7,"NoConvNeutrinoPhiDiff");
 
-  // MSPlot["MetPx"]= new MultiSamplePlot(datasets, "MetPx",50,-200,200,"MetPx");
+  MSPlot["MetPx"]= new MultiSamplePlot(datasets, "MetPx",200,-400,20000,"MetPx");
   // MSPlot["NeutrinoKinFitPx"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPx" ,50,-200,200,"NeutrinoKinFitPx");
   // MSPlot["GenNeutrinoPx"]= new MultiSamplePlot(datasets,"GenNeutrinoPx" ,50,-200,200,"GenNeutrinoPx");
   // //MSPlot["NeutrinoPxDiff"]= new MultiSamplePlot(datasets, "NeutrinoPxDiff",100,-400,400,"NeutrinoPxDiff");
 
-  // MSPlot["MetPy"]= new MultiSamplePlot(datasets, "MetPy",50,-200,200,"MetPy");
+  MSPlot["MetPy"]= new MultiSamplePlot(datasets, "MetPy",200,-26000,400,"MetPy");
   // MSPlot["NeutrinoKinFitPy"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPy" ,50,-200,200,"NeutrinoKinFitPy");
   // MSPlot["GenNeutrinoPy"]= new MultiSamplePlot(datasets,"GenNeutrinoPy" ,50,-200,200,"GenNeutrinoPy");
   // //MSPlot["NeutrinoPyDiff"]= new MultiSamplePlot(datasets, "NeutrinoPyDiff",100,-400,400,"NeutrinoPyDiff");
@@ -561,7 +622,20 @@ int main (int argc, char *argv[])
   std::cout << " MSPlots defined " << endl;
   
   // Zie Code Stijn voor alle gebruikte controle plots
- 
+
+  ////////////////////////////////
+  //     Selection Table        // 
+  ////////////////////////////////
+
+  vector<string> CutsSelecTableMacro;
+  CutsSelecTableMacro.push_back(string("offline cuts"));
+  CutsSelecTableMacro.push_back(string("M SSVHE bTag"));
+  CutsSelecTableMacro.push_back(string("Muon Pt Cut"));
+  CutsSelecTableMacro.push_back(string("TransverseMass Cut"));
+
+  SelectionTable selecTableMacro(CutsSelecTableMacro,datasets);
+  selecTableMacro.SetLuminosity(Luminosity);
+
   // initialize LumiReWeighting stuff
   // Summer11 PU_S4, distribution obtained by averaging the number of interactions, taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupMCReweightingUtilities
   // in each beam crossing to estimate the true mean.  THIS IS THE RECOMMENDED ONE for reweighting.
@@ -764,6 +838,17 @@ int main (int argc, char *argv[])
 
   int LengthOfPresentationArray=0;
 
+  int NumberSelectedEvents =0;
+  int NumberEventsBeforeCuts = 0;
+  int NumberEventsAfterbTag = 0;
+  int NumberEventsAfterTransverseMass = 0;
+  int NumberUsedEvents = 0;
+  int NumberUsedCorrectEvents = 0;
+  int NumberUsedWrongEvents = 0;
+  int NumberUsedDataEvents = 0;
+  int NumberSelectedDataEvents = 0;
+  int NumberDataEventsBeforeCuts = 0;
+
   /////////////////////////////////////////
   // Loop on datasets
   /////////////////////////////////////////
@@ -798,8 +883,10 @@ int main (int argc, char *argv[])
     cout << "Before changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
     float NominalNormFactor = dataSet->NormFactor();
     if( dataSetName.find("Syst_WJets") == 0 ){
-      //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() * 1.3 );  //WJets Minus 30%
-      //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi()*0.7 ); //WJets Plus 30 %
+      //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
+      //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
+      //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (1.3) ); //WJets Plus 30 %
+      dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (2.) ); //WJets Plus 100 %
       //Normfactor value changes without having to change XSection value !!
     }
     cout << "After changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
@@ -984,7 +1071,7 @@ int main (int argc, char *argv[])
       vector<float> ChiSqKinFit;
       
       vector<TLorentzVector> selectedJets = wTree->selectedJets();
-      TLorentzVector muon = wTree->muon(); //Needed for offline muon cut!
+      TLorentzVector muon = wTree->muon(); //Needed for offline muon cut!  
       TLorentzVector MET = wTree->met();
       
       vector<TLorentzVector> leptBJetKinFit;
@@ -1020,7 +1107,7 @@ int main (int argc, char *argv[])
 	    }
 	  }
 	  else{
-	    if(iEvt == 0) std::cout << "   --  Performing analysis with kinematics changed after KinFit on hadronic + leptonic side with leptonic top mass left free !!!! " << std::endl;
+	    if(iEvt == 0) std::cout << "   --  Performing analysis with original kinematics before KinFit on hadronic + leptonic side with leptonic top mass left free !!!! " << std::endl;
 	    for(unsigned int iCombi=0; iCombi<12; iCombi++){      	
 	      ChiSqKinFit.push_back(wTree->chi2FullKinFitMassFit(iCombi));   
 	    }
@@ -1083,42 +1170,54 @@ int main (int argc, char *argv[])
 	  }
 	}
       }
-
+      
       //ooooooooOOOOOOOOOOOOooooooooooooOOOOOOOOOOOOooooooooooooOOOOO
       //ooOOooOOoo      Reading out nTuples done           ooOOooOOoo
       //ooOOooOOoo-----------------------------------------ooOOooOOoo
       //ooOOooOOoo      Start of actual analysis           ooOOooOOoo
       //ooooooooOOOOOOOOOOOOooooooooooooOOOOOOOOOOOOooooooooooooOOOOO
-      
+      float TransverseMass = sqrt(2*(abs(muon.Pt()))*abs(MET.Pt())*(1-cos(muon.DeltaPhi(MET))));	
+
       //----------------------------------
       //     Require some extra cuts:
       //----------------------------------
       bool eventSelected = false;
       //bool eventSelected = true;
+
+      if(dataSetName.find("TTbarJets_SemiMu") ==0) NumberEventsBeforeCuts++;
+      if(dataSetName.find("Data") ==0) NumberDataEventsBeforeCuts++;
       
       MSPlot["nPVBeforeCuts"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	
+      selecTableMacro.Fill(iDataSet,0,scaleFactor*lumiWeight3D);
+
       //Medium SSVHE bTag:
-      //if( btagSSVHE[0] > 1.74 || btagSSVHE[1] > 1.74 || btagSSVHE[2] > 1.74 || btagSSVHE[3] > 1.74){
+      if( btagSSVHE[0] > 1.74 || btagSSVHE[1] > 1.74 || btagSSVHE[2] > 1.74 || btagSSVHE[3] > 1.74){
+      selecTableMacro.Fill(iDataSet,1,scaleFactor*lumiWeight3D);
 
-      //MSPlot["nPVAfterSSVHEMbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	if(dataSetName.find("TTbarJets_SemiMu") ==0) NumberEventsAfterbTag++;
+	
+	MSPlot["nPVAfterSSVHEMbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 
-      //Require offline muon cut of 27 (to avoid turn-on of IsoMu17/20/24 triggers)  -- Use 25 for CIEMAT comparison (value applied in tree)!
-      //No extra offline muon cut for IsoMu17_TriCentralJet30 trigger --> Cut of 20 GeV is already applied
-	if(muon.Pt() >=27){
-	  
-	  MSPlot["nPVAfterMuon27Cut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	  
-	  float TransverseMass = sqrt(2*(abs(muon.Pt()))*abs(MET.Pt())*(1-cos(muon.DeltaPhi(MET))));
-	  MSPlot["TransverseMassBeforeCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);	  
-	  if(TransverseMass > 30){
-	    MSPlot["TransverseMassAfterCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);	      	  
-	    MSPlot["nPVAfterTransverseMassCut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-            
-	    eventSelected = true;
+	//Require offline muon cut of 27 (to avoid turn-on of IsoMu17/20/24 triggers)  -- Use 25 for CIEMAT comparison (value applied in tree)!
+	//No extra offline muon cut for IsoMu17_TriCentralJet30 trigger --> Cut of 20 GeV is already applied
+	//if(muon.Pt() >=27){
+	selecTableMacro.Fill(iDataSet,2,scaleFactor*lumiWeight3D);
+	
+	MSPlot["nPVAfterMuon27Cut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	
+	MSPlot["TransverseMassBeforeCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);	  
+	if(TransverseMass > 30){
+	selecTableMacro.Fill(iDataSet,3,scaleFactor*lumiWeight3D);
+
+	  if(dataSetName.find("TTbarJets_SemiMu") ==0) NumberEventsAfterTransverseMass++;
+
+	  MSPlot["TransverseMassAfterCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);	      	  
+	  MSPlot["nPVAfterTransverseMassCut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+          
+	  eventSelected = true;
 	  }
 	}
-	//}
+      //}
       
       // 2) Muon Pt cut of 30 GeV: (current offline cut is 27 GeV)
       //if(muon.Pt() > 30){eventSelected = true;}
@@ -1129,26 +1228,29 @@ int main (int argc, char *argv[])
       
       if(eventSelected == true){
 
-	float LowestChiSq = 99999;
-	int LowestChiSqComb = 999;
-	for(int ii = 0; ii<12; ii++){
-	  if(LowestChiSq < ChiSqKinFit[ii]){
-	    LowestChiSq = ChiSqKinFit[ii];
-	    LowestChiSqComb = ii;
-	  }
-	}      
-	histo1D["MinChi2ndf_Fit"]->Fill(LowestChiSq);
-	histo1D["Prob_MinChi2_Fit"]->Fill(TMath::Prob(LowestChiSq,2));
 
+	if(dataSetName.find("TTbarJets_SemiMu") ==0) NumberSelectedEvents++;
+	if(dataSetName.find("Data") ==0) NumberSelectedDataEvents++;
+
+	//float reliso = (muon.chargedHadronIso()+muon.neutralHadronIso()+muon.photonIso())/muon.Pt();
+
+// 	if(dataSetName.find("Data") == 0 && wTree->runID() == 173692){
+// 	  //std::cout << " Run Id : " << wTree->runID() << " | Event Id : " << wTree->eventID() << " | LumiBlockID : " << wTree->lumiBlockID() << std::endl;
+// 	  if(wTree->eventID() == 236303070 || wTree->eventID() == 825837349 || wTree->eventID() ==  1711040724|| wTree->eventID() == 2233177932 || wTree->eventID() == 3176202360 || wTree->eventID() == 223649619|| wTree->eventID() == 417423803|| wTree->eventID() == 509027191 || wTree->eventID() ==777530156 || wTree->eventID() == 1154092526|| wTree->eventID() == 1329331940|| wTree->eventID() == 1499887936|| wTree->eventID() ==1747119621 || wTree->eventID() == 1892264482){
+// 	    std::cout << " Selected ! Id =" << wTree->eventID() << " )   Transverse mass : " << TransverseMass;
+// 	    int NumberbTags=0;
+// 	    for(int ii=0; ii<4;ii++){
+// 	      if(btagSSVHE[ii]>1.74){
+// 		NumberbTags++;
+// 	      }
+// 	    }
+// 	    std::cout << " Number of btags : " << NumberbTags;
+// 	    std::cout << " Number of selected jets : " << selectedJets.size() << endl;
+// 	  }
+// 	}
+	
 	MSPlot["nPrimaryVert"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);    
 	
-	//MSPlot["SelectedMuonPt"]->Fill(muon.Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);    
-	//MSPlot["SelectedMuonM"]->Fill(muon.M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);    
-	// for(int ii = 0; ii<12; ii++){
-	//   MSPlot["LeptonFitPt"]->Fill(muonKinFit[ii].Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	//   MSPlot["LeptonFitM"]->Fill(muonKinFit[ii].M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	// }
-
 	MSPlot["Jet1Pt"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);    
 	MSPlot["Jet2Pt"]->Fill(selectedJets[1].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
 	MSPlot["Jet3Pt"]->Fill(selectedJets[2].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
@@ -1220,15 +1322,15 @@ int main (int argc, char *argv[])
 
 	// }
 
-	// MSPlot["MetPhi"]->Fill(MET.Phi(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
-	// MSPlot["NeutrinoKinFitPhi"]->Fill(neutrinoKinFit[HighestProbComb].Phi(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
+	 MSPlot["MetPhi"]->Fill(MET.Phi(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
+	 //MSPlot["NeutrinoKinFitPhi"]->Fill(neutrinoKinFit[HighestProbComb].Phi(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
 	// //MSPlot["NeutrinoPhiDiff"]->Fill((genNeutrino.Phi()-neutrinoKinFit[HighestProbComb].Phi()),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 
-	// MSPlot["MetPx"]->Fill(MET.Px(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);         
-	// MSPlot["NeutrinoKinFitPx"]->Fill(neutrinoKinFit[HighestProbComb].Px(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
+	 MSPlot["MetPx"]->Fill(MET.Px(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);         
+	 //MSPlot["NeutrinoKinFitPx"]->Fill(neutrinoKinFit[HighestProbComb].Px(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
 	// //MSPlot["NeutrinoPxDiff"]->Fill((genNeutrino.Px()-neutrinoKinFit[HighestProbComb].Px()),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
 
-	// MSPlot["MetPy"]->Fill(MET.Py(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
+	 MSPlot["MetPy"]->Fill(MET.Py(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
 	// MSPlot["NeutrinoKinFitPy"]->Fill(neutrinoKinFit[HighestProbComb].Py(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
 	// //MSPlot["NeutrinoPyDiff"]->Fill((genNeutrino.Py()-neutrinoKinFit[HighestProbComb].Py()),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
  
@@ -1274,105 +1376,218 @@ int main (int argc, char *argv[])
 	  while(SSVHPbTagLoop <=NumberSSVHPbTags ){
 	    while(SSVHEbTagLoop <=NumberSSVHEbTags ){
 	      while(TCHPbTagLoop <= NumberTCHPbTags){
-		while(TCHEbTagLoop <= NumberTCHEbTags){	     
+		while(TCHEbTagLoop <= NumberTCHEbTags){	   
 		  ConsideredBTagger=0;
-		
+		  
+
 		  int JetCombination = bTagJetSelection.HighestProbSelection(TCHEbTagLoop,ConsideredBTagger,ProbabilityOfKinFit,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
-		  int JetCombOrigKins = bTagJetSelection.HighestProbSelection(TCHEbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
+		  //int JetCombOrigKins = bTagJetSelection.HighestProbSelection(TCHEbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
+
+		  if(TCHEbTagLoop == 1){
+		    MSPlot["nPVBeforeFoundJetComb"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+		    //std::cout << " jet combination : " << JetCombination << endl;
+// 		    for(int ii=0; ii<12; ii++){
+// 		      if(ProbabilityOfKinFit[ii] < 0){
+// 			std::cout << " Value of kinfit probability : " << ProbabilityOfKinFit[ii] << endl;
+// 		      }
+// 		    }
+// 		    std::cout << " " << endl;
+		  }
 		  
 		  int BLeptonicIndex = BLeptIndex[JetCombination];
 		  int BHadronicIndex = BHadrIndex[JetCombination];
-		  int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
-		  int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
-		      
-		  if(JetCombOrigKins != 999 ){//&& JetCombOrigKins == CorrectKinFitIndex){
+		  //int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
+		  //int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
+
+		  float CosThetaOrigKins;
+
+// 		  if(JetCombOrigKins != 999 && UseChangedKinematics == false){		    
+// 		    CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
 		    
-		    if(TCHEbTagLoop == 1){MSPlot["nPVAfterFoundJetCombOrigKins"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
-		    if(TCHEbTagLoop == 7){MSPlot["nPVAfterFoundJetCombOrigKinsbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
-
-		    float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
-
-		    if(CosThetaOrigKins != 999){
+// 		    if(TCHEbTagLoop == 1){
+// 		      MSPlot["nPVAfterFoundJetCombOrigKins"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+// 		      MSPlot["KinFitProbOrigKinsNobTagAllDSq"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D); 
+// 		      if(CosThetaOrigKins == 999) MSPlot["KinFitProbOrigKinsNobTagNegDSq"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D); 
+// 		    }
+// 		    if(TCHEbTagLoop == 7){MSPlot["nPVAfterFoundJetCombOrigKinsbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
+		    
+// 		    if(CosThetaOrigKins != 999){
 		      
-		      if(TCHEbTagLoop == 1){MSPlot["nPVAfterFoundCosThetaOrigKins"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
-		      if(TCHEbTagLoop == 7){MSPlot["nPVAfterFoundCosThetaOrigKinsbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
-
-		      CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
-		      LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
-		      NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		      if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
-			CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
-			EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
-			if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
-			  NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-			}
-		      }//end of semi-mu
-
-		      if(TCHEbTagLoop == 7){ //optimal bTag case
-			MSPlot["CosThetaOptOrigKins"]->Fill(CosThetaOrigKins,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["KinFitProbOptOrigKins"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);  	
-		      }
-
-		      if(TCHEbTagLoop == 1){ //No bTag case
-			histo1D["BLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]).Pt());
-			histo1D["MetPtBeforeKinFit"]->Fill(MET.Pt());
-			histo1D["MuonPtBeforeKinFit"]->Fill(muon.Pt());
-			histo1D["WLeptPtBeforeKinFit"]->Fill((MET+muon).Pt());
-			histo1D["TopLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]+MET+muon).Pt());
-
-			MSPlot["BLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["MetPtBeforeKinFit"]->Fill(MET.Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["MuonPtBeforeKinFit"]->Fill(muon.Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["WLeptPtBeforeKinFit"]->Fill((MET+muon).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["TopLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]+MET+muon).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-		      }
+// 		      CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
+// 		      LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
+// 		      NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		      if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+// 			CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+// 			EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
+// 			if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
+// 			  NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 			}
+// 		      }//end of semi-mu
+		      
+// 		      if(TCHEbTagLoop == 7){ //optimal bTag case
+// 			MSPlot["nPVAfterFoundCosThetaOrigKinsbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 			
-		    }
-		  }
-		    
-		  if(JetCombination != 999 ){//&& JetCombination == CorrectKinFitIndex){
+// 			MSPlot["CosThetaOptOrigKins"]->Fill(CosThetaOrigKins,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["KinFitProbOptOrigKins"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);  	
+// 		      }
+		      
+// 		      if(TCHEbTagLoop == 1){ //No bTag case
+// 			MSPlot["nPVAfterFoundCosThetaOrigKins"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			
+// 			MSPlot["CosThetaOrigKinsNobTag"]->Fill(CosThetaOrigKins,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["KinFitProbOrigKinsNobTagPosDSq"]->Fill(KinFitProbOrigKins[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);  
 
+// 			histo1D["BLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]).Pt());
+// 			histo1D["MetPtBeforeKinFit"]->Fill(MET.Pt());
+// 			histo1D["MuonPtBeforeKinFit"]->Fill(muon.Pt());
+// 			histo1D["WLeptPtBeforeKinFit"]->Fill((MET+muon).Pt());
+// 			histo1D["TopLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]+MET+muon).Pt());
+
+// 			MSPlot["BLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["MetPtBeforeKinFit"]->Fill(MET.Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["MuonPtBeforeKinFit"]->Fill(muon.Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["WLeptPtBeforeKinFit"]->Fill((MET+muon).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["TopLeptPtBeforeKinFit"]->Fill((selectedJets[BLeptIndexOrig]+MET+muon).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+
+// 			if(dataSetName.find("TTbarJets_SemiMu") ==0){
+// 			  NumberUsedEvents++;
+// 			  if(BLeptonicIndex == CorrectBLept) NumberUsedCorrectEvents++;
+// 			  else if(BLeptonicIndex != CorrectBLept) NumberUsedWrongEvents++;
+
+// 			  histo1D["CosThetaResNobTag"]->Fill(CosThetaOrigKins - CosThetaGenerator);
+
+// 			}		      
+			
+// 		      }			
+// 		    }
+		    
+// 		  }
+		    
+		  if(JetCombination != 999){//&& JetCombination == CorrectKinFitIndex){
+		    
 		    if(TCHEbTagLoop == 1){MSPlot["nPVAfterFoundJetComb"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
 		    if(TCHEbTagLoop == 7){MSPlot["nPVAfterFoundJetCombbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
+		    
+		    float CosThetaCalculation;
+		    if(UseChangedKinematics == true) CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
+		    else if(UseChangedKinematics == false) CosThetaCalculation = bTagCosThetaCalculation.CalcOrigKins(BLeptonicIndex,BHadronicIndex,muon,selectedJets,MassW, MassTop);
 
-		    float CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
-		
-		    if(CosThetaCalculation != 999){		    
+
+// 		    if(CosThetaOrigKins != 999 && TCHEbTagLoop == 1){
+// 		      MSPlot["CosThetaDistrPositiveDSq"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 		      MSPlot["ProbDistrPositiveDSq"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
 		      
-		      if(TCHEbTagLoop == 1){MSPlot["nPVAfterFoundCosTheta"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
-		      if(TCHEbTagLoop == 7){MSPlot["nPVAfterFoundCosThetabTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
+// 		      if(ProbabilityOfKinFit[JetCombination] >= 0.1){
+// 			MSPlot["CosThetaDistrPositiveDSqProbCut"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["ProbDistrPositiveDSqProbCut"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
+// 		      }
+// 		    }
+		    
+// 		    if(CosThetaOrigKins == 999 && TCHEbTagLoop == 1){
+// 		      MSPlot["CosThetaDistrNegativeDSq"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 		      MSPlot["ProbDistrNegativeDSq"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
+		      
+// 		      if(ProbabilityOfKinFit[JetCombination] >= 0.1){
+// 			MSPlot["CosThetaDistrNegativeDSqProbCut"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+// 			MSPlot["ProbDistrNegativeDSqProbCut"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
+// 		      }
+// 		    }		    
+		
+		    if(CosThetaCalculation != 999){	
 
-		      NumberRemainingEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		      CosThetaValues[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaCalculation);
-		      LumiWeightVector[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
-		      if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
-			if(BLeptonicIndex == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
-			  NumberBLeptCorrectEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		      if(dataSetName.find("Data") == 0 && wTree->runID() == 173692 && TCHEbTagLoop == 1){
+// 			//std::cout << " Run Id : " << wTree->runID() << " | Event Id : " << wTree->eventID() << " | LumiBlockID : " << wTree->lumiBlockID() << std::endl;
+// 			//if(wTree->eventID() == 236303070 || wTree->eventID() == 825837349 || wTree->eventID() ==  1711040724|| wTree->eventID() == 2233177932 || wTree->eventID() == 3176202360){ //|| wTree->eventID() == 223649619|| wTree->eventID() == 417423803|| wTree->eventID() == 509027191 || wTree->eventID() ==777530156 || wTree->eventID() == 1154092526|| wTree->eventID() == 1329331940|| wTree->eventID() == 1499887936|| wTree->eventID() ==1747119621 || wTree->eventID() == 1892264482){
+// 			  if(wTree->eventID() == 2233177932){
+// 			  std::cout << " Event " << wTree->eventID() << " passed the KinFit requirement ! " << endl;
+// 			  for(int ii = 0; ii<selectedJets.size(); ii++){
+// 			    std::cout << " Pt : " << selectedJets[ii].Pt() << " Eta : " << selectedJets[ii].Eta() << " DeltaR with muon : " << selectedJets[ii].DeltaR(muon)  << endl;
+// 			  }
+// 			}
+// 		      }
+		      
+		      if(TCHEbTagLoop == 1){
+
+			MSPlot["nPVAfterFoundCosTheta"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+
+			if(dataSetName.find("TTbarJets_SemiMu") ==0){
+			  NumberUsedEvents++;
+			  if(BLeptonicIndex == CorrectBLept) NumberUsedCorrectEvents++;
+			  else if(BLeptonicIndex != CorrectBLept) NumberUsedWrongEvents++;
 			}
-			CosThGen[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
-			EventCorrectionWeight[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
-		      }//End of semiMu sample
+			if(dataSetName.find("Data") ==0) NumberUsedDataEvents++;
 
+		      }
+		      if(TCHEbTagLoop == 7){MSPlot["nPVAfterFoundCosThetabTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);}
+		      
+		      if(ProbabilityOfKinFit[JetCombination] >= KinFitCut){
+		      
+			NumberRemainingEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+			CosThetaValues[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaCalculation);
+			LumiWeightVector[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
+			if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+			  if(BLeptonicIndex == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
+			    NumberBLeptCorrectEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+			  }
+			  CosThGen[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+			  EventCorrectionWeight[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
+			}//End of semiMu sample
+		      }
+		      
 		      if(TCHEbTagLoop == 7){ //optimal bTag case
-			MSPlot["CosThetaOpt"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["CosThetaTCHEMLept"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
 			MSPlot["KinFitProbOpt"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
 		      }		
 		      
 		      if(TCHEbTagLoop == 1){ //No bTag case
-			histo1D["BLeptPtAfterKinFit"]->Fill(leptBJetKinFit[JetCombination].Pt());
-			histo1D["MetPtAfterKinFit"]->Fill(neutrinoKinFit[JetCombination].Pt());
-			histo1D["MuonPtAfterKinFit"]->Fill(muonKinFit[JetCombination].Pt());
-			histo1D["WLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]).Pt());
-			histo1D["TopLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]+leptBJetKinFit[JetCombination]).Pt());
+			if(UseChangedKinematics == true){
+			  histo1D["BLeptPtAfterKinFit"]->Fill(leptBJetKinFit[JetCombination].Pt());
+			  histo1D["MetPtAfterKinFit"]->Fill(neutrinoKinFit[JetCombination].Pt());
+			  histo1D["MuonPtAfterKinFit"]->Fill(muonKinFit[JetCombination].Pt());
+			  histo1D["WLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]).Pt());
+			  histo1D["TopLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]+leptBJetKinFit[JetCombination]).Pt());
 
-			MSPlot["BLeptPtAfterKinFit"]->Fill(leptBJetKinFit[JetCombination].Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["MetPtAfterKinFit"]->Fill(neutrinoKinFit[JetCombination].Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["MuonPtAfterKinFit"]->Fill(muonKinFit[JetCombination].Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["WLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["TopLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]+leptBJetKinFit[JetCombination]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["BLeptPtAfterKinFit"]->Fill(leptBJetKinFit[JetCombination].Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["MetPtAfterKinFit"]->Fill(neutrinoKinFit[JetCombination].Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["MuonPtAfterKinFit"]->Fill(muonKinFit[JetCombination].Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["WLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["TopLeptPtAfterKinFit"]->Fill((neutrinoKinFit[JetCombination]+muonKinFit[JetCombination]+leptBJetKinFit[JetCombination]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			}
+			else{
+			  histo1D["BLeptPtAfterKinFit"]->Fill((selectedJets[BLeptonicIndex]).Pt());
+			  histo1D["MetPtAfterKinFit"]->Fill(MET.Pt());
+			  histo1D["MuonPtAfterKinFit"]->Fill(muon.Pt());
+			  histo1D["WLeptPtAfterKinFit"]->Fill((MET+muon).Pt());
+			  histo1D["TopLeptPtAfterKinFit"]->Fill((selectedJets[BLeptonicIndex]+MET+muon).Pt());
 
+			  MSPlot["BLeptPtAfterKinFit"]->Fill((selectedJets[BLeptonicIndex]).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["MetPtAfterKinFit"]->Fill(MET.Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["MuonPtAfterKinFit"]->Fill(muon.Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["WLeptPtAfterKinFit"]->Fill((MET+muon).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["TopLeptPtAfterKinFit"]->Fill((selectedJets[BLeptonicIndex]+MET+muon).Pt(),datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			}
+			MSPlot["CosThetaNobTag"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+			MSPlot["KinFitProbNobTag"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+
+			if(dataSetName.find("TTbarJets_SemiMu") == 0){
+			  if(BLeptonicIndex == CorrectBLept) histo1D["CosThetaResNobTag"]->Fill(CosThetaCalculation - CosThetaGenerator);
+
+			  histo1D["CosThetaNobTag1D"]->Fill(CosThetaCalculation);//,Luminosity*scaleFactor*lumiWeight3D);
+			  CosThetaNobTagHisto->Fill(CosThetaCalculation,Luminosity*scaleFactor*lumiWeight3D);
+
+			  if(BLeptonicIndex == CorrectBLept){
+			    histo1D["KinFitProbCorrectBLept"]->Fill(ProbabilityOfKinFit[JetCombination]);
+			    histo1D["CosThetaCorrectBLept"]->Fill(CosThetaCalculation);
+			  }
+			  else if(BLeptonicIndex != CorrectBLept){
+			    histo1D["KinFitProbWrongBLept"]->Fill(ProbabilityOfKinFit[JetCombination]);
+			    histo1D["CosThetaWrongBLeptSSVHEM"]->Fill(CosThetaCalculation);
+			  }
+			  else 
+			    histo1D["KinFitProbOtherBLept"]->Fill(ProbabilityOfKinFit[JetCombination]);
+			}
 		      }
-		      
+			
 		    }
 		  }	      
 
@@ -1387,34 +1602,42 @@ int main (int argc, char *argv[])
 		ConsideredBTagger=1;
 	      
 		int JetCombination = bTagJetSelection.HighestProbSelection(TCHPbTagLoop,ConsideredBTagger,ProbabilityOfKinFit,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
-		int JetCombOrigKins = bTagJetSelection.HighestProbSelection(TCHPbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
+		//int JetCombOrigKins = bTagJetSelection.HighestProbSelection(TCHPbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
 		  
 		int BLeptonicIndex = BLeptIndex[JetCombination];
 		int BHadronicIndex = BHadrIndex[JetCombination];
-		int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
-		int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
+		//int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
+		//int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
 		      
-		if(JetCombOrigKins != 999 ){//&& JetCombOrigKins == CorrectKinFitIndex){
-		  float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
+// 		if(JetCombOrigKins != 999 && UseChangedKinematics == false){//&& JetCombOrigKins == CorrectKinFitIndex){
+// 		  float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
 
-		  if(CosThetaOrigKins != 999){
-		    CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
-		    LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
-		    NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		    if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
-		      CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
-		      EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
-		      if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
-			NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		      }
-		    }
-		  }
-		}
+// 		  if(CosThetaOrigKins != 999){
 		    
-		if(JetCombination != 999 ){//&& JetCombination == CorrectKinFitIndex){
-		  float CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
+// 		    CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
+// 		    LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
+// 		    NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		    if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+// 		      CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+// 		      EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
+// 		      if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
+// 			NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		      }
+// 		    }
+// 		  }
+// 		}
+		    
+		if(JetCombination != 999){//&& JetCombination == CorrectKinFitIndex){
+		  float CosThetaCalculation;
+		  if(UseChangedKinematics == true) CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
+		  else if(UseChangedKinematics == false) CosThetaCalculation = bTagCosThetaCalculation.CalcOrigKins(BLeptonicIndex,BHadronicIndex,muon,selectedJets,MassW, MassTop);
 		  
-		  if(CosThetaCalculation != 999){		    
+		  if(CosThetaCalculation != 999 && ProbabilityOfKinFit[JetCombination] >= KinFitCut){	
+
+		    if(TCHPbTagLoop == 7){
+		      MSPlot["CosThetaTCHPMLept"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+		    }
+	    
 		    NumberRemainingEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
 		    CosThetaValues[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaCalculation);
 		    LumiWeightVector[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
@@ -1433,34 +1656,55 @@ int main (int argc, char *argv[])
 	      ConsideredBTagger=2;
 
 	      int JetCombination = bTagJetSelection.HighestProbSelection(SSVHEbTagLoop,ConsideredBTagger,ProbabilityOfKinFit,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
-	      int JetCombOrigKins = bTagJetSelection.HighestProbSelection(SSVHEbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
+	      //int JetCombOrigKins = bTagJetSelection.HighestProbSelection(SSVHEbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
 		  
 	      int BLeptonicIndex = BLeptIndex[JetCombination];
 	      int BHadronicIndex = BHadrIndex[JetCombination];
-	      int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
-	      int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
+	      //int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
+	      //int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
 		      
-	      if(JetCombOrigKins != 999 ){//&& JetCombOrigKins == CorrectKinFitIndex){
-		float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
+// 	      if(JetCombOrigKins != 999 && UseChangedKinematics == false){//&& JetCombOrigKins == CorrectKinFitIndex){
+// 		float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
 
-		if(CosThetaOrigKins != 999){
-		  CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
-		  LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
-		  NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		  if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
-		    CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
-		    EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
-		    if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
-		      NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		if(CosThetaOrigKins != 999){
+// 		  CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
+// 		  LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
+// 		  NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		  if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+// 		    CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+// 		    EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
+// 		    if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
+// 		      NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		    }
+// 		  }
+// 		}
+// 	      }
+		    
+	      if(JetCombination != 999){//&& JetCombination == CorrectKinFitIndex){
+		float CosThetaCalculation;
+		if(UseChangedKinematics == true) CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
+		else if(UseChangedKinematics == false) CosThetaCalculation = bTagCosThetaCalculation.CalcOrigKins(BLeptonicIndex,BHadronicIndex,muon,selectedJets,MassW, MassTop);
+		
+		if(CosThetaCalculation != 999 && ProbabilityOfKinFit[JetCombination] >= KinFitCut){
+
+		  if(SSVHEbTagLoop == 7){
+		    MSPlot["CosThetaSSVHEMLept"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+		    MSPlot["KinFitProbSSVHEMLept"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+
+		    if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+		      histo1D["CosThetaResSSVHEMLept"]->Fill(CosThetaCalculation - CosThetaGenerator);
+		      if(BLeptonicIndex == CorrectBLept){
+			histo1D["KinFitProbCorrectBLeptSSVHEM"]->Fill(ProbabilityOfKinFit[JetCombination]);
+			histo1D["CosThetaCorrectBLeptSSVHEM"]->Fill(CosThetaCalculation);
+		      }
+		      else if(BLeptonicIndex != CorrectBLept){
+			histo1D["KinFitProbWrongBLeptSSVHEM"]->Fill(ProbabilityOfKinFit[JetCombination]);
+			histo1D["CosThetaWrongBLeptSSVHEM"]->Fill(CosThetaCalculation);
+		      }
+
 		    }
 		  }
-		}
-	      }
-		    
-	      if(JetCombination != 999 ){//&& JetCombination == CorrectKinFitIndex){
-		float CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
-		
-		if(CosThetaCalculation != 999){		    
+
 		  NumberRemainingEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
 		  CosThetaValues[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaCalculation);
 		  LumiWeightVector[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
@@ -1479,34 +1723,43 @@ int main (int argc, char *argv[])
 	    ConsideredBTagger=3;
 
 	    int JetCombination = bTagJetSelection.HighestProbSelection(SSVHPbTagLoop,ConsideredBTagger,ProbabilityOfKinFit,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
-	    int JetCombOrigKins = bTagJetSelection.HighestProbSelection(SSVHPbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
+	    //int JetCombOrigKins = bTagJetSelection.HighestProbSelection(SSVHPbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
 		  
 	    int BLeptonicIndex = BLeptIndex[JetCombination];
 	    int BHadronicIndex = BHadrIndex[JetCombination];
-	    int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
-	    int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
+	    //int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
+	    //int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
 		      
-	    if(JetCombOrigKins != 999 ){//&& JetCombOrigKins == CorrectKinFitIndex){
-	      float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
+// 	    if(JetCombOrigKins != 999){//&& JetCombOrigKins == CorrectKinFitIndex){
+// 	      float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
 
-	      if(CosThetaOrigKins != 999){
-		CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
-		LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
-		NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
-		  CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
-		  EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
-		  if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
-		    NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		  }
-		}
-	      }
-	    }
+// 	      if(CosThetaOrigKins != 999){		
+
+// 		CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
+// 		LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
+// 		NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+// 		  CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+// 		  EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
+// 		  if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
+// 		    NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		  }
+// 		}
+// 	      }
+//  	    }
 		    
-	    if(JetCombination != 999 ){//&& JetCombination == CorrectKinFitIndex){
-	      float CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
-		
-	      if(CosThetaCalculation != 999){		    
+	    if(JetCombination != 999){//&& JetCombination == CorrectKinFitIndex){		
+	      float CosThetaCalculation;
+	      if(UseChangedKinematics == true) CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);	      
+	      else if(UseChangedKinematics == false) CosThetaCalculation = bTagCosThetaCalculation.CalcOrigKins(BLeptonicIndex,BHadronicIndex,muon,selectedJets,MassW, MassTop);
+
+	      if(CosThetaCalculation != 999 && ProbabilityOfKinFit[JetCombination] >= KinFitCut){
+
+		if(SSVHPbTagLoop == 7){
+		  MSPlot["CosThetaSSVHPMLept"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+		  MSPlot["KinFitProbSSVHPMLept"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+		}
+		    
 		NumberRemainingEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
 		CosThetaValues[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaCalculation);
 		LumiWeightVector[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
@@ -1524,34 +1777,42 @@ int main (int argc, char *argv[])
 	  ConsideredBTagger=4;
 
 	  int JetCombination = bTagJetSelection.HighestProbSelection(CSVbTagLoop,ConsideredBTagger,ProbabilityOfKinFit,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
-	  int JetCombOrigKins = bTagJetSelection.HighestProbSelection(CSVbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
+	  //int JetCombOrigKins = bTagJetSelection.HighestProbSelection(CSVbTagLoop,ConsideredBTagger,KinFitProbOrigKins,ProbSOverSB,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV);
 		  
 	  int BLeptonicIndex = BLeptIndex[JetCombination];
 	  int BHadronicIndex = BHadrIndex[JetCombination];
-	  int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
-	  int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
+	  //int BLeptIndexOrig = BLeptIndex[JetCombOrigKins];
+	  //int BHadrIndexOrig = BHadrIndex[JetCombOrigKins];
 		      
-	  if(JetCombOrigKins != 999 ){//&& JetCombOrigKins == CorrectKinFitIndex){
-	    float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
+// 	  if(JetCombOrigKins != 999 ){//&& JetCombOrigKins == CorrectKinFitIndex){
+// 	    float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndexOrig,BHadrIndexOrig,muon,selectedJets,MassW, MassTop);
 
-	    if(CosThetaOrigKins != 999){
-	      CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
-	      LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
-	      NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-	      if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
-		CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
-		EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
-		if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
-		  NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
-		}
-	      }
-	    }
-	  }
+// 	    if(CosThetaOrigKins != 999){
+// 	      CosThetaValuesOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaOrigKins);
+// 	      LumiWeightVectorOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
+// 	      NumberRemainingEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 	      if(dataSetName.find("TTbarJets_SemiMu") ==0 && dataSetName.find("JES") != 0){
+// 		CosThGenOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+// 		EventCorrWeightOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
+// 		if(BLeptIndexOrig == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
+// 		  NumberBLeptCorrectEventsOrigKins[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
+// 		}
+// 	      }
+// 	    }
+// 	  }
 		    
 	  if(JetCombination != 999 ){//&& JetCombination == CorrectKinFitIndex){
-	    float CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
-		
-	    if(CosThetaCalculation != 999){		    
+	    float CosThetaCalculation;
+	    if(UseChangedKinematics == true) CosThetaCalculation = bTagCosThetaCalculation.Calculation(muonKinFit[JetCombination],neutrinoKinFit[JetCombination],leptBJetKinFit[JetCombination]);
+	    else if(UseChangedKinematics == false) CosThetaCalculation = bTagCosThetaCalculation.CalcOrigKins(BLeptonicIndex,BHadronicIndex,muon,selectedJets,MassW, MassTop);
+	    
+	    if(CosThetaCalculation != 999 && ProbabilityOfKinFit[JetCombination] >= KinFitCut){
+
+	      
+	      if(CSVbTagLoop == 7){
+		MSPlot["CosThetaCSVMLept"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
+	      }
+		    
 	      NumberRemainingEvents[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
 	      CosThetaValues[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaCalculation);
 	      LumiWeightVector[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(lumiWeight3D);
@@ -1573,7 +1834,12 @@ int main (int argc, char *argv[])
 	
       }// End of loop over selected events
       
-    } // end loop over events in wTrees        
+    } // end loop over events in wTrees    
+
+    std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
+    std::cout << " size of cos theta : " << CosThetaValues[0].size() << endl;
+    std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
+
     
     int TCHE=0;
     int TCHP=0;
@@ -1584,10 +1850,16 @@ int main (int argc, char *argv[])
     int ndimen=3;
     
     while(CSV<13){
+      //std::cout << " CSV : " << CSV << endl;
       while(SSVHP<13){ //Try to improve code by making a Minuit fitter class !!
+	//cout << " SSVHP : " << SSVHP << endl;
 	while(SSVHE<13){
+	  //cout << " SSVHE : " << SSVHE << endl;
 	  while(TCHP<13){
+	    //cout << " TCHP : " << TCHP << endl;
 	    while(TCHE<13){
+	      //cout << " TCHE : " << TCHE << endl;
+
 	      
 	      std::string CosThetaDataString = "CosThetaData_TCHE"+bTagValues[TCHE]+"_TCHP"+bTagValues[TCHP]+"_SSVHE"+bTagValues[SSVHE]+"_SSVHP"+bTagValues[SSVHP]+"_CSV"+bTagValues[CSV];
 	      std::string CosThetaSignalString = "CosThetaSignal_TCHE"+bTagValues[TCHE]+"_TCHP"+bTagValues[TCHP]+"_SSVHE"+bTagValues[SSVHE]+"_SSVHP"+bTagValues[SSVHP]+"_CSV"+bTagValues[CSV];
@@ -1902,6 +2174,7 @@ int main (int argc, char *argv[])
 	  }
 	  
 	  if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
+
 	    
 	    MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 
 	    
@@ -2112,7 +2385,7 @@ int main (int argc, char *argv[])
       std::string CosThetaSignalString = "CosThetaSignal_TCHE"+bTagValues[TCHE]+"_TCHP"+bTagValues[TCHP]+"_SSVHE"+bTagValues[SSVHE]+"_SSVHP"+bTagValues[SSVHP]+"_CSV"+bTagValues[CSV];
       std::string CosThetaBckgString = "CosThetaBckg_TCHE"+bTagValues[TCHE]+"_TCHP"+bTagValues[TCHP]+"_SSVHE"+bTagValues[SSVHE]+"_SSVHP"+bTagValues[SSVHP]+"_CSV"+bTagValues[CSV];
       std::string CosThetaGeneratorString = "CosThetaGenerator_TCHE"+bTagValues[TCHE]+"_TCHP"+bTagValues[TCHP]+"_SSVHE"+bTagValues[SSVHE]+"_SSVHP"+bTagValues[SSVHP]+"_CSV"+bTagValues[CSV];
-      
+	
       if(iDataSet == 0){
 	histo1D[CosThetaDataString]=new TH1F(CosThetaDataString.c_str(),CosThetaDataString.c_str(),CosThetaBinNumber,-1,1);
 	histo1D[CosThetaDataString]->SetDirectory(0);
@@ -2121,7 +2394,7 @@ int main (int argc, char *argv[])
 	histo1D[CosThetaBckgString]=new TH1F(CosThetaBckgString.c_str(),CosThetaBckgString.c_str(),CosThetaBinNumber,-1,1);
 	histo1D[CosThetaBckgString]->SetDirectory(0);
       }
-      
+	
       if(dataSetName.find("TTbarJets_SemiMu")==0 ){   //Filling of the genttbar histo
 	char hisname[100];
 	sprintf(hisname,"CosThetaGenerator_TCHE%s_TCHP%s_SSVHE%s_SSVHP%s_CSV%s", bTagValues[TCHE].c_str(),bTagValues[TCHP].c_str(),bTagValues[SSVHE].c_str(),bTagValues[SSVHP].c_str(),bTagValues[CSV].c_str());
@@ -2131,7 +2404,7 @@ int main (int argc, char *argv[])
 	}
 	for(int ii=0; ii<CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV].size();ii++){		
 	  for(int iBin=0; iBin< CosThetaBinNumber; iBin++){
-	    
+	      
 	    if(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] >= binEdge[iBin] && CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] < binEdge[iBin+1]){
 	      double costhgood = CosThGen[TCHE+TCHP+SSVHE+SSVHP+CSV][ii]; 
 	      double thisWeight = EventCorrectionWeight[TCHE+TCHP+SSVHE+SSVHP+CSV][ii];
@@ -2143,32 +2416,33 @@ int main (int argc, char *argv[])
 	  }
 	}
       }
-      
+	
       float scaleFactor = 1.;  //Make an array of the scaleFactor such that it can be different for every event !!
-      
+	
       for(int ii=0;ii<CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV].size();ii++){
 	//Change data to systematics since then nominal values will be reweighted!!
 	//if(dataSetName.find("WJets_Nominal") != 0)  //WJets syst
 	if(dataSetName.find("Data") == 0 || dataSetName.find("JES") == 0)//Nominal and JES systematics
 	  histo1D[CosThetaDataString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],scaleFactor*LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii]*Luminosity*dataSet->NormFactor());    
-	
+	  
 	if(dataSetName.find("TTbarJets_SemiMu") == 0)
 	  histo1D[CosThetaSignalString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],Luminosity*scaleFactor*LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii]*NominalNormFactor);
 	else if(dataSetName.find("WJets_Nominal")==0 || dataSetName.find("TTbarJets_Other") ==0) //Syst
 	  histo1D[CosThetaBckgString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],Luminosity*scaleFactor*LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii]*NominalNormFactor); 
       }
-      
+	
       if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
 
+	  
 	MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 
-	
+	  
 	TMinuitMinimizer minimizer;
 	minimizer.SetFunction(myChi2);
 	minimizer.SetErrorDef(1.0);   // 1.0 for chi2, 0.5 for -logL
 	minimizer.SetVariable(0, "F0", 0.6671, 1.e-4);
 	minimizer.SetVariable(1, "FL", 0.3325, 1.e-4);
 	if (ndimen==3)  minimizer.SetVariable(2, "Normal", 1., 1.e-4); 
-	
+	  
 	bool isValid = minimizer.Minimize();
 	double f0result, frresult,flresult;
 	double ef0result, efrresult,eflresult;
@@ -2176,7 +2450,7 @@ int main (int argc, char *argv[])
 	  //minimizer.PrintResults();
 	  f0result =minimizer.X()[0]; ef0result= minimizer.Errors()[0];
 	  flresult= minimizer.X()[1]; eflresult= minimizer.Errors()[1];
-	  
+	    
 	  PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
 	  for(int ii=0; ii< nameDataSet.size(); ii++){
 	    if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
@@ -2187,28 +2461,28 @@ int main (int argc, char *argv[])
 	      PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
 	    }
 	  }
-	  
+	    
 	  if (ndimen==3){
 	    frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
 	    double er0=minimizer.Errors()[0];
 	    double er1=minimizer.Errors()[1];
 	    double cov01 = minimizer.CovMatrix(0,1);		  
 	    efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-	    
+	      
 	    PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
 	  } 
 	  else {
 	    frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
 	    double er0=minimizer.Errors()[0];
 	    double er1=minimizer.Errors()[1];
-	    double cov01 = minimizer.CovMatrix(0,1);	    
+	    double cov01 = minimizer.CovMatrix(0,1);	      
 	    efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-	    
+	      
 	    PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
 	  }
 	} 
 	PresentationTex << " \\hline " << endl;
-	
+	  
 	LengthOfPresentationArray++;
 	/*if(LengthOfPresentationArray==20 || LengthOfPresentationArray == 40){
 	  PresentationTex << " \\end{tabular} " << endl;
@@ -2225,12 +2499,12 @@ int main (int argc, char *argv[])
 	  PresentationTex << " \\hline " << endl;
 	  PresentationTex << " & $t\\bar{t}$ other & WJets & $t\\bar{t}$ semiMu & F+ & $\\delta$ F+ & F- & $\\delta$ F- & F0 & $\\delta$ F0 \\\\ " << endl;
 	  PresentationTex << " \\hline " << endl;
-	  }*/	
+	  }  */
 	for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
 	  delete genttbarhisto[ibinn];
 	}
 
-      }//End of Minuit fitter loop	      
+      }//End of Minuit fitter loop	
       
       CSV++;
     }
@@ -2243,6 +2517,53 @@ int main (int argc, char *argv[])
     delete inFile;
     
   } // end loop over datasets
+
+  //Selection tables:
+  selecTableMacro.TableCalculator(false,true,true,true);
+  string selectiontableMacro = "SelectionTable_Analysis_Macro";
+  if(argc >= 3){
+    string sample = string(argv[2]);
+    selectiontableMacro = selectiontableMacro+"_"+sample;
+  }
+  selectiontableMacro = selectiontableMacro+".tex";
+  selecTableMacro.Write(selectiontableMacro.c_str(),1);
+
+  //Write output of number of events:
+  cout << " " << endl;
+  cout << " TTbar SemiMu " << endl;
+  std::cout << " Comparing efficiency of selected events " << endl;
+  cout << " NumberEventsBeforeCuts : " << NumberEventsBeforeCuts << endl;
+  cout << " NumberEventsAfterbTag : " <<  NumberEventsAfterbTag << endl;
+  cout << " NumberEventsAfterTransverseMass : " << NumberEventsAfterTransverseMass  <<endl;
+  cout << " NumberSelectedEvents : " <<  NumberSelectedEvents << endl;
+  cout << " NumberUsedEvents : " <<  NumberUsedEvents << endl;
+  cout << " NumberUsedCorrectEvents : " << NumberUsedCorrectEvents << endl;
+  cout << " NumberUsedWrongEvents : " <<  NumberUsedWrongEvents  << endl;
+  cout << "                -------        " << endl;
+  cout << " NumberDataEventsBeforeCuts : " << NumberDataEventsBeforeCuts << endl;
+  cout << " NumberSelectedDataEvents : " << NumberSelectedDataEvents  << endl;
+  cout << " NumberUsedDataEvents : " << NumberUsedDataEvents  << endl;
+  std::cout << " " << endl;
+
+  //Calculate ratio for cut on probability of Kinematic Fit:
+  histo1D["CosThetaNobTagProbCut1D"]->Scale(100./(histo1D["CosThetaNobTagProbCut1D"]->Integral()));
+  histo1D["CosThetaNobTag1D"]->Scale(100./(histo1D["CosThetaNobTag1D"]->Integral()));
+  
+  histo1D["ratioHisto"] = (TH1F*) histo1D["CosThetaNobTagProbCut1D"]->Clone();
+  //ratioHisto->SetName("Ratio");
+  //ratioHisto->Reset();
+  histo1D["CosThetaNobTagClone"] = (TH1F*) histo1D["CosThetaNobTag1D"]->Clone();
+  histo1D["ratioHisto"]->Divide(histo1D["CosThetaNobTagClone"]);
+  histo1D["ratioHisto"]->SaveAs("ratioHisto.root");
+  histo1D["ratioHisto"]->SaveAs("ratioHisto.png");
+
+  //histo1D["KinFitProbCorrectBLept"]->Scale(100./(histo1D["KinFitProbCorrectBLept"]->Integral()));
+  //histo1D["KinFitProbWrongBLept"]->Scale(100./(histo1D["KinFitProbCorrectBLept"]->Integral()));
+  histo1D["KinFitRatio"] = (TH1F*) histo1D["KinFitProbCorrectBLept"]->Clone();
+  histo1D["KinFitProbWrongBLeptClone"] = (TH1F*) histo1D["KinFitProbWrongBLept"]->Clone();
+  histo1D["KinFitRatio"]->Divide(histo1D["KinFitProbWrongBLeptClone"]);
+  histo1D["KinFitRatio"]->SaveAs("KinFitRatioHisto.root");
+  histo1D["KinFitRatio"]->SaveAs("KinFitRatioHisto.png");
 
   PresentationTex << " \\end{tabular} " << endl;
   PresentationTex << " \\end{center} " << endl;
