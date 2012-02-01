@@ -1204,7 +1204,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	      SoverSB->GetYaxis()->SetTitle("S/(S+B)");
 	
 	      TCanvas* tempCanvas2 = TCanvasCreator(SoverSB, "c1");
-	      tempCanvas2->SaveAs( (pathPNG+"SoverSB_"+it->first+".png").c_str() );
+	      if(savePNG) tempCanvas2->SaveAs( (pathPNG+"SoverSB_"+it->first+".png").c_str() );
 	      tempCanvas2->Write();
 	      
 	      ///////////////////////////////////
@@ -1251,7 +1251,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	      histos.push_back(std::pair<TH1F*,std::string>(histo1D_[titleBad],"Bad Jet Combinations"));
 	
 	      TCanvas* tempCanvas = TCanvasCreator(histos, "LF",label,false);
-	      tempCanvas->SaveAs( (pathPNG+"MaxMVA_"+it->first+".png").c_str() );
+	      if(savePNG) tempCanvas->SaveAs( (pathPNG+"MaxMVA_"+it->first+".png").c_str() );
 	
 	      tempCanvas->Write();
 	
@@ -1275,7 +1275,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
       effpurplots[0].first->SetLineWidth(3);
     }
     TCanvas* tempCanvas3 = TCanvasCreator(effpurplots, effpurtitle.c_str());
-    tempCanvas3->SaveAs( (pathPNG+effpurtitle+".png").c_str() );
+    if(savePNG) tempCanvas3->SaveAs( (pathPNG+effpurtitle+".png").c_str() );
     tempCanvas3->Write();
     
     effpurtitle= "Eff_Pur_MVA_AllSemiMuBG";
@@ -1287,18 +1287,18 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
       effpurplotsAllSemiMuBG[0].first->SetLineWidth(3);
     }
     TCanvas* tempCanvas5 = TCanvasCreator(effpurplotsAllSemiMuBG, effpurtitle.c_str());
-    tempCanvas5->SaveAs( (pathPNG+effpurtitle+".png").c_str() );
+    if(savePNG) tempCanvas5->SaveAs( (pathPNG+effpurtitle+".png").c_str() );
     tempCanvas5->Write();
   } // done with MVA plotting
   
-  mkdir( (pathPNG+"MSPlot/").c_str(),0777);
+  if(savePNG) mkdir( (pathPNG+"MSPlot/").c_str(),0777);
   // Write out the MSPlot
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot_.begin(); it != MSPlot_.end(); it++)
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first + MVAfilePostfix_;
     temp->Draw(false, name, true, true, true, true, true);
-    temp->Write(fout, name, true, pathPNG+"MSPlot/");
+    temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");
   }
   
   for(std::map<std::string,TH1F*>::const_iterator it = histo1D_.begin(); it != histo1D_.end(); it++)
@@ -1310,7 +1310,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 		temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries...
 		temp->Write();
 		TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-		tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+		if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
 	}
   
   // 2D
@@ -1324,7 +1324,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 		TH2F *temp = it->second;
 		temp->Write();
 		TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-		tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+		if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
 	}
 	
 	//Write TGraphAsymmErrors
@@ -1332,7 +1332,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	{
 	  TGraphAsymmErrors *temp = it->second;
 	  temp->Write();
-    	  TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-	  tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+    TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+	  if(savePNG) tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
 	}
 }
