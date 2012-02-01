@@ -46,8 +46,10 @@ class InclFourthGenSearchTools
    ~InclFourthGenSearchTools();
    void SetResolutionFit(ResolutionFit* resFitLightJets);
    void FillPlots(int dataset, int nbOfBtags, int nbOfWs, float HT, vector<TRootMuon*> selectedMuons, vector<TRootElectron*> selectedElectrons, vector<TRootMET*> mets, vector<TRootJet*> selectedJets, float scaleFactor);
-   void CalculateTopMass(TRootJet* WJet1, TRootJet* WJet2, TRootJet* HadBJet);
-   float GetHT() const {return HT_;};
+   void FillPlots(int dataset, int nbOfBtags, int nbOfWs, float HT, vector<TLorentzVector> selectedMuons, vector<TLorentzVector> selectedElectrons, float met, vector<TLorentzVector> selectedJets, float scaleFactor); 
+	 void CalculateTopMass(TRootJet* WJet1, TRootJet* WJet2, TRootJet* HadBJet);
+   void CalculateTopMass(TLorentzVector WJet1, TLorentzVector WJet2, TLorentzVector HadBJet);
+	 float GetHT() const {return HT_;};
    float GetMtop() const {return Mtop_;};
    float GetMtop_kinfit() const {return Mtop_kinfit_;};
    void FillMassPlots(int d, int nbOfBtags, int nbOfWs, float scaleFactor);
