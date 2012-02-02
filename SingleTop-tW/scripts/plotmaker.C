@@ -14,7 +14,6 @@ using namespace std;
 
 void plotmaker(int mode = 0){
   
-  //gROOT->SetStyle("Plain");
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
   gStyle->SetErrorX(0);
@@ -27,7 +26,6 @@ void plotmaker(int mode = 0){
   labelcms->SetFillColor(kWhite);
   labelcms->AddText("CMS Preliminary, #sqrt{s} = 7 TeV");
   labelcms->SetBorderSize(0);
-  
     
   labelcms2  = new TPaveText(0.12,0.85,0.5,0.88,"NDCBR");
   labelcms2->SetTextAlign(12);
@@ -37,7 +35,6 @@ void plotmaker(int mode = 0){
   if (mode == 0) labelcms2->AddText("4.5 fb^{-1}, e#mu channel  ");
   if (mode == 1) labelcms2->AddText("4.5 fb^{-1}, #mu#mu channel  ");
   if (mode == 2) labelcms2->AddText("4.5 fb^{-1}, ee channel  ");
-  
   
   labelcms2->SetBorderSize(0);
   
@@ -63,30 +60,30 @@ void plotmaker(int mode = 0){
   
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   
-  
   TFile *_file0 = TFile::Open(myRootFile);
   cout << myRootFile << endl;
   
-  TString processName[8] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
-  TString processTitle[8] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
-  Color_t color[8] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
+  const int nProcess = 8;
+  const int nPlots = 9;
+  TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
+  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
+  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
-  TString cutLabel[8] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading"};
-  int rebinHisto[8] =       {1, 4, 4, 1, 1, 4, 12, 4};
-  TString cutTitle[8] =     {"Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex"};
+  int rebinHisto[nPlots] =       {1, 4, 4, 1, 1, 4, 12, 4, 1};
+  TString cutTitle[nPlots] =     {"Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex"};
   TString modeString[3] = {"0", "1", "2"};
   
-  TH1F*  h [8][8];
-  THStack* hStack[8];
+  TH1F*  h [nPlots][nProcess];
+  THStack* hStack[nPlots];
   
-  for (int iVariable = 0; iVariable < 8; iVariable++){
+  for (int iVariable = 0; iVariable < nProcess; iVariable++){
     leg = new TLegend(0.7,0.7,0.94,0.94);
     leg ->SetFillStyle(1);
     leg ->SetFillColor(kWhite);
     leg ->SetBorderSize(1);
-    // leg ->SetTextSize(0.027);
     hStack[iVariable] = new THStack(cutLabel[iVariable],cutLabel[iVariable]);
-    for (int iProcess = 0; iProcess < 8; iProcess++){
+    for (int iProcess = 0; iProcess < nProcess; iProcess++){
       h[iVariable][iProcess] = (TH1F*) _file0->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
       h[iVariable][iProcess]->Rebin(rebinHisto[iVariable]);
       h[iVariable][iProcess]->SetFillColor(color[iProcess]);
@@ -106,6 +103,7 @@ void plotmaker(int mode = 0){
     if (mode == 0) leg->AddEntry(h[iVariable][7],  processTitle[7], "p");
     if (mode == 1) leg->AddEntry(h[iVariable][7],  processTitle[7], "p");
     if (mode == 2) leg->AddEntry(h[iVariable][7], processTitle[7], "p");
+    
     leg->AddEntry(h[iVariable][0], processTitle[0], "f");
     leg->AddEntry(h[iVariable][2], processTitle[2], "f");
     leg->AddEntry(h[iVariable][4], processTitle[4], "f");
@@ -116,7 +114,6 @@ void plotmaker(int mode = 0){
     h[iVariable][7]->SetLineWidth(4);
     h[iVariable][7]->SetMarkerColor(kBlack);
     h[iVariable][7]->SetLineColor(kBlack);
-    
     
     double max = TMath::Max(hStack[iVariable]->GetMaximum(), h[iVariable][7]->GetMaximum());
     TCanvas *c1 = new TCanvas();
@@ -145,11 +142,11 @@ void plotmaker(int mode = 0){
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
     
   }
- 
+  
 }
