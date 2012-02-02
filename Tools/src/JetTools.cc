@@ -13,23 +13,27 @@ JetTools::~JetTools()
 }
 
 //_____Jet correctors and uncorrectors_______________________
-void JetTools::unCorrectJet(TRootJet* inJet)
+void JetTools::unCorrectJet(TRootJet* inJet, bool isData)
 {
-  float corr = inJet->getJetCorrFactor("L1FastJetL2L3");
+  float corr;
+	if(!isData)
+	  corr = inJet->getJetCorrFactor("L1FastJetL2L3");
+	else
+	  corr = inJet->getJetCorrFactor("L1FastJetL2L3L23Residual");
   //cout << "uncorrecting!" << endl;
   inJet->SetPxPyPzE(inJet->Px()/corr, inJet->Py()/corr, inJet->Pz()/corr, inJet->E()/corr);
 }
 
-void JetTools::unCorrectJets(vector<TRootJet*> inJets)
+void JetTools::unCorrectJets(vector<TRootJet*> inJets, bool isData)
 {
   for(unsigned int i=0; i<inJets.size(); i++)
-    unCorrectJet(inJets[i]);
+    unCorrectJet(inJets[i],isData);
 }
 
-void JetTools::correctJet(TRootJet* inJet, int nPV)
+void JetTools::correctJet(TRootJet* inJet, int nPV, bool isData)
 {
   if(startFromRaw_)
-    unCorrectJet(inJet);
+    unCorrectJet(inJet, isData);
   JEC_->setJetEta(inJet->Eta());
   JEC_->setJetPt(inJet->Pt());
   if(nPV > -1) // do the L1 correction
@@ -41,39 +45,51 @@ void JetTools::correctJet(TRootJet* inJet, int nPV)
   inJet->SetPxPyPzE(inJet->Px()*corr, inJet->Py()*corr, inJet->Pz()*corr, inJet->E()*corr);
 }
 
-void JetTools::correctJets(vector<TRootJet*> inJets)
+void JetTools::correctJets(vector<TRootJet*> inJets, bool isData)
 {
   for(unsigned int i=0; i<inJets.size(); i++)
-    correctJet(inJets[i]);
+    correctJet(inJets[i],isData);
 }
 
-void JetTools::correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs)
+void JetTools::correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs, bool isData)
 {
   int nPV = 0;
   for(unsigned int i=0; i<PVs.size(); i++)
     if(!PVs[i]->isFake() && PVs[i]->ndof()>4)
       nPV++;
   for(unsigned int j=0; j<inJets.size(); j++)
-    correctJet(inJets[j],nPV);
+    correctJet(inJets[j],nPV,isData);
 }
 
-void JetTools::correctJet(TRootJet* inJet, float rhoPU)
+void JetTools::correctJet(TRootJet* inJet, float rhoPU, bool isData)
 {
   if(startFromRaw_)
-    unCorrectJet(inJet);
+    unCorrectJet(inJet, isData);
   JEC_->setJetEta(inJet->Eta());
   JEC_->setJetPt(inJet->Pt());
   JEC_->setJetA(inJet->jetArea());
   JEC_->setRho(rhoPU);
+	
+	/*std::vector<float> SubCorrections = JEC_->getSubCorrections(); //0: L1FastJet, 1: L1FastJetL2, 2: L1FastJetL2L3, and if data: 3: L1FastJetL2L3L23Residual
+  for(unsigned int c=0; c<SubCorrections.size(); c++)
+	{
+	  cout<<"SubCorrections["<<c<<"] = "<<SubCorrections[c]<<endl;	
+	}
+	inJet->setJetCorrFactor(0,"L1FastJet",SubCorrections[0]);
+  inJet->setJetCorrFactor(1,"L1FastJetL2",SubCorrections[1]);
+	inJet->setJetCorrFactor(2,"L1FastJetL2L3",SubCorrections[2]);
+	if(isData)
+	  inJet->setJetCorrFactor(3,"L1FastJetL2L3L23Residual",SubCorrections[3]);
+  */
  
   float corr = JEC_->getCorrection();
   inJet->SetPxPyPzE(inJet->Px()*corr, inJet->Py()*corr, inJet->Pz()*corr, inJet->E()*corr);
 }
 
-void JetTools::correctJets(vector<TRootJet*> inJets, float rhoPU)
+void JetTools::correctJets(vector<TRootJet*> inJets, float rhoPU, bool isData)
 {
   for(unsigned int j=0; j<inJets.size(); j++)
-    correctJet(inJets[j],rhoPU);
+    correctJet(inJets[j],rhoPU,isData);
 }
 
 

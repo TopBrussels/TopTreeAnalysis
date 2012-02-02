@@ -29,15 +29,15 @@ class JetTools
     ~JetTools();
     
     // Jet uncorrectors (back from L2L3 corrected jets to raw jets), input is assumed to be L1L2L3 corrected!!!
-    void unCorrectJet(TRootJet* inJet);
-    void unCorrectJets(vector<TRootJet*> inJets);
+    void unCorrectJet(TRootJet* inJet, bool isData = false);
+    void unCorrectJets(vector<TRootJet*> inJets, bool isData = false);
     
     // Jet correctors
-    void correctJet(TRootJet* inJet, int nPV = -1);
-    void correctJets(vector<TRootJet*> inJets);
-    void correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs);
-    void correctJet(TRootJet* inJet, float rhoPU);
-    void correctJets(vector<TRootJet*> inJets, float rhoPU);
+    void correctJet(TRootJet* inJet, int nPV = -1, bool isData = false);
+    void correctJets(vector<TRootJet*> inJets, bool isData = false);
+    void correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs, bool isData = false);
+    void correctJet(TRootJet* inJet, float rhoPU, bool isData = false);
+    void correctJets(vector<TRootJet*> inJets, float rhoPU, bool isData = false);
 
     
     // Jet correctors for JES systematic
