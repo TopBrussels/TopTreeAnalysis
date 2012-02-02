@@ -259,7 +259,9 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
 
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
-  
+  for (unsigned int d = 0; d < datasets.size(); d++){
+	histo2D[("MET_vs_Mzq_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
+  }
   cout << " - Declared histograms ..." <<  endl;
 	
   ////////////////////////////////////////////////////////////////////
@@ -809,6 +811,7 @@ int main (int argc, char *argv[])
 							MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+							histo2D[("MET_vs_Mzq_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 						}
 					}
 				}
@@ -912,6 +915,15 @@ int main (int argc, char *argv[])
   for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
   {
 	TH1F *temp = it->second;
+	temp->Write();
+	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+  }
+  TDirectory* th2dir = fout->mkdir("Histos2D");
+  th2dir->cd();
+   for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
+  {
+	TH2F *temp = it->second;
 	temp->Write();
 	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
 	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
