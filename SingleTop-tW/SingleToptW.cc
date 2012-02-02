@@ -78,6 +78,11 @@ int main(int argc, char* argv[]) {
   bool Spring11 = false;
   bool Special = false;
   
+
+  //Run A/B separation
+  bool RunA = false;
+  bool RunB = false;
+
   string xmlfile ="twemu.xml";
   
   // Arguments
@@ -154,6 +159,8 @@ int main(int argc, char* argv[]) {
       
       // cross sections and weights
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; isData = true;}
+      else if (dataSetName == "data1"){		sprintf(name, "data1");  	xlweight = 1; isData = true; RunA = true;}
+      else if (dataSetName == "data2"){		sprintf(name, "data2");  	xlweight = 1; isData = true; RunB = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3160707;} //
       else if (dataSetName == "tt2l"){		sprintf(name, "tt2l");  	xlweight = lumi*17.10/8576584;} //
       else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/813743;} //
@@ -364,500 +371,497 @@ int main(int argc, char* argv[]) {
 	      sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
 	    }
 
-	  // Weight given by the theoretical cross-section and lumi
-	  double weight = xlweight;
-          
-	  // Pile-Up re-weighting
-	  if (reweightPU && !isData && !Special){
-	    double lumiWeight3D = 1.0;
-	    lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
-	    weight *= lumiWeight3D;
-	  }
-	  
-	  //Trigger
-	 
-          //No trigger after first test
-	  bool trigged = true;
-	  
-	  /*
-	  int currentRun = event->runId();
-	  bool itrigger = false;
-	  bool isecondtrigger = false;
-	  if(isData) { 
-	    if (mode == 0){
-	      if(currentRun >= 150000 && currentRun <= 161176){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v1", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v1", currentRun);
-	      }else if(currentRun >= 161179 && currentRun <= 163261){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v2", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v2", currentRun);
-	      }else if(currentRun >= 163262 && currentRun <= 164237){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v3", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v3", currentRun);
-	      }else if(currentRun >= 165085 && currentRun <= 165888){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v4", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v4", currentRun);
-	      }else if(currentRun >= 165900 && currentRun <= 166967){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v5", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v5", currentRun);
-	      }else if(currentRun >= 166968 && currentRun <= 170053){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v6", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v6", currentRun);
-	      }else if(currentRun >= 170054 && currentRun <= 173198){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v8", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v3", currentRun);
-	      }else if(currentRun >= 173199 && currentRun <= 178380){
-		itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v4", currentRun);
-	      }else if(currentRun >= 178381 && currentRun <= 999999){
-		itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v7", currentRun);
-		isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v7", currentRun);
-	      }
-	    } else if (mode == 1){
-	      if(currentRun >= 150000 && currentRun <= 161176){
-		itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
-	      }else if(currentRun >= 161179 && currentRun <= 163261){
-		itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
-	      }else if(currentRun >= 163262 && currentRun <= 164237){
-		itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v2", currentRun);
-	      }else if(currentRun >= 165085 && currentRun <= 165888){
-		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
-	      }else if(currentRun >= 165900 && currentRun <= 167043){
-		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
-	      }else if(currentRun >= 167044 && currentRun <= 170053){
-		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v4", currentRun);
-	      }else if(currentRun >= 170054 && currentRun <= 173198){
-		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v6", currentRun);
-	      }else if(currentRun >= 173199 && currentRun <= 178380){
-		itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v7", currentRun);
-	      }else if(currentRun >= 178381 && currentRun <= 999999){
-		itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v10", currentRun);
-              }
-	    } else if (mode == 2){
-	      if(currentRun >= 150000 && currentRun <= 161176){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
-	      }else if(currentRun >= 161179 && currentRun <= 163261){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2", currentRun);
-	      }else if(currentRun >= 163262 && currentRun <= 164237){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3", currentRun);
-	      }else if(currentRun >= 165085 && currentRun <= 165888){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4", currentRun);
-	      }else if(currentRun >= 165900 && currentRun <= 167043){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5", currentRun);
-	      }else if(currentRun >= 167044 && currentRun <= 170053){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6", currentRun);
-	      }else if(currentRun >= 170054 && currentRun <= 170759){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
-	      }else if(currentRun >= 170760 && currentRun <= 173198){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
-	      }else if(currentRun >= 173199 && currentRun <= 178380){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
-	      }else if(currentRun >= 178381 && currentRun <= 999999){
-		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9", currentRun);
-              }
+
+	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() <= 175860) || !RunA && !RunB){
+	    // Weight given by the theoretical cross-section and lumi
+	    double weight = xlweight;
+	    
+	    // Pile-Up re-weighting
+	    if (reweightPU && !isData && !Special){
+	      double lumiWeight3D = 1.0;
+	      lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
+	      weight *= lumiWeight3D;
 	    }
 	    
-	   //No trigger for quicker tests
-	   // itrigger = true;
-	   // isecondtrigger = true;
+	    //Trigger
+	 
+	    //No trigger after first test
+	    bool trigged = true;
 	    
-	  } else {
-	    // No trigger in MC
-	    itrigger = true;
-	    isecondtrigger = true;
-	  }
-          
+	    /*
+	    int currentRun = event->runId();
+	    bool itrigger = false;
+	    bool isecondtrigger = false;
+	    if(isData) { 
+	      if (mode == 0){
+		if(currentRun >= 150000 && currentRun <= 161176){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v1", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v1", currentRun);
+		}else if(currentRun >= 161179 && currentRun <= 163261){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v2", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v2", currentRun);
+		}else if(currentRun >= 163262 && currentRun <= 164237){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v3", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v3", currentRun);
+		}else if(currentRun >= 165085 && currentRun <= 165888){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v4", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v4", currentRun);
+		}else if(currentRun >= 165900 && currentRun <= 166967){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v5", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v5", currentRun);
+		}else if(currentRun >= 166968 && currentRun <= 170053){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v6", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v6", currentRun);
+		}else if(currentRun >= 170054 && currentRun <= 173198){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v8", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v3", currentRun);
+		}else if(currentRun >= 173199 && currentRun <= 178380){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v4", currentRun);
+		}else if(currentRun >= 178381 && currentRun <= 999999){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v7", currentRun);
+		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v7", currentRun);
+		}
+	      } else if (mode == 1){
+		if(currentRun >= 150000 && currentRun <= 161176){
+		  itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
+		}else if(currentRun >= 161179 && currentRun <= 163261){
+		  itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
+		}else if(currentRun >= 163262 && currentRun <= 164237){
+		  itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v2", currentRun);
+		}else if(currentRun >= 165085 && currentRun <= 165888){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
+		}else if(currentRun >= 165900 && currentRun <= 167043){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
+		}else if(currentRun >= 167044 && currentRun <= 170053){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v4", currentRun);
+		}else if(currentRun >= 170054 && currentRun <= 173198){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v6", currentRun);
+		}else if(currentRun >= 173199 && currentRun <= 178380){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v7", currentRun);
+		}else if(currentRun >= 178381 && currentRun <= 999999){
+		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v10", currentRun);
+		}
+	      } else if (mode == 2){
+		if(currentRun >= 150000 && currentRun <= 161176){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
+		}else if(currentRun >= 161179 && currentRun <= 163261){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2", currentRun);
+		}else if(currentRun >= 163262 && currentRun <= 164237){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3", currentRun);
+		}else if(currentRun >= 165085 && currentRun <= 165888){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4", currentRun);
+		}else if(currentRun >= 165900 && currentRun <= 167043){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5", currentRun);
+	      }else if(currentRun >= 167044 && currentRun <= 170053){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6", currentRun);
+		}else if(currentRun >= 170054 && currentRun <= 170759){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+		}else if(currentRun >= 170760 && currentRun <= 173198){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
+		}else if(currentRun >= 173199 && currentRun <= 178380){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
+		}else if(currentRun >= 178381 && currentRun <= 999999){
+		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9", currentRun);
+		}
+	      }
+	      
+	      //No trigger for quicker tests
+	      // itrigger = true;
+	      // isecondtrigger = true;
+	      
+	    } else {
+	      // No trigger in MC
+	      itrigger = true;
+	      isecondtrigger = true;
+	    }
+	   
 	  
 	  if (itrigger || isecondtrigger) trigged = true;
 	 */
+	    
 	 
-	 
-	  // JES CORRECTION
-	  // Apply Jet Corrections on-the-fly
-	  jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho());
-
-	  // Correct MET Type I
-	  if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
-	  
-
-	  // Systematics
-	  //JES and JER
-	  //Special = true;
-	  if (!Special && !isData){
-	   
-	    // vector<TRootGenJet*> genjets = treeLoader.LoadGenJet(ievt);
-
-            if(JERPlus)  jetTools->correctJetJER(init_jets, genjets, "plus");
-            else if(JERMinus) jetTools->correctJetJER(init_jets, genjets, "minus");
-            else jetTools->correctJetJER(init_jets, genjets, "nominal");
-
-            if (JESPlus) jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
-	    else if (JESMinus) jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-	  }  
-	   
-	   
-	   
-	  //Start selection
-	  Selection selection(init_jets, init_muons, init_electrons, mets);
-	  
-	  // PV cut (useless)
-	  //bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
-	  bool isGoodPV = true;
-	  
-	  // Set up the unclustered MET systematic
-	  double uncmet_px = mets[0]->Px();
-	  double uncmet_py = mets[0]->Py();
-	  for(unsigned int i=0; i<init_jets.size(); i++){
-	    uncmet_px += init_jets[i]->Px();
-	    uncmet_py += init_jets[i]->Py();
-	  }
-	  for(unsigned int i=0; i<init_muons.size(); i++){
-	    uncmet_px += init_muons[i]->Px();
-	    uncmet_py += init_muons[i]->Py();
-	  }	
-	  for(unsigned int i=0; i<init_electrons.size(); i++){
-	    uncmet_px += init_electrons[i]->Px();
-	    uncmet_py += init_electrons[i]->Py();
-	  }	
-	  
-	  double met_px = mets[0]->Px();
-	  double met_py = mets[0]->Py();
-	  
-	  if(unclusteredUp){
-	    met_px += uncmet_px*0.1;
-	    met_py += uncmet_py*0.1;
-	  } if(unclusteredDown){
-	    met_px -= uncmet_px*0.1;
-	    met_py -= uncmet_py*0.1;
-	  }
-	  
-	  double met_pt = sqrt(met_px*met_px + met_py*met_py);
-
-	  // Cut Flow Starts
-	  cutflow->Fill(1, weight);
-	  cutflow_raw->Fill(1);
-	  if(trigged){
-	    cutflow->Fill(2, weight);
-	    cutflow_raw->Fill(2);
-	    if(isGoodPV){
-	      cutflow->Fill(3, weight);
-	      cutflow_raw->Fill(3);
-            
-              // Select Objects -> Cuts
-	      selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
-	      selection.setDiElectronCuts(20,2.5,0.15,0.02,1);
-	      selection.setLooseElectronCuts(15,2.5,0.2);
-	      selection.setDiMuonCuts(20,2.4,0.15,10,0.02);
-	      selection.setLooseMuonCuts(10,2.5,0.2);
-	  
-	      //Select Objects 
-	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons(vertex[0]);
-	      vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
-	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true);
-	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
-	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(20,2.4,true);                    
-	  
-	      // Tight lepton selection
-	      bool leptonSelection = false;
-	      if 	(mode == 0 && selectedElectrons.size()== 1 && selectedMuons.size()== 1) leptonSelection = true;
-	      else if 	(mode == 1 && selectedElectrons.size()== 0 && selectedMuons.size()== 2) leptonSelection = true;
-	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
-              
-	      if (leptonSelection) {
-	  
-		bool charge = false;
-		double q0, q1;
-		TLorentzVector lepton0, lepton1;
-		if (mode == 0){
-		  TRootElectron* electron = (TRootElectron*) selectedElectrons[0];
-		  TRootMuon* muon = (TRootMuon*) selectedMuons[0];
-		  if (electron->charge()*muon->charge() < 0) charge = true;
-		  if (electron->Pt() > muon->Pt()){
-		    lepton0.SetPxPyPzE(electron->Px(), electron->Py(), electron->Pz(), electron->Energy());
-		    lepton1.SetPxPyPzE(muon->Px(), muon->Py(), muon->Pz(), muon->Energy());
-		    q0 = electron->charge();
-		    q1 = muon->charge();
+	    // JES CORRECTION
+	    // Apply Jet Corrections on-the-fly
+	    jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho());
+	    
+	    // Correct MET Type I
+	    if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
+	    
+	    
+	    // Systematics
+	    //JES and JER
+	    //Special = true;
+	    if (!Special && !isData){
+	      if(JERPlus)  jetTools->correctJetJER(init_jets, genjets, "plus");
+	      else if(JERMinus) jetTools->correctJetJER(init_jets, genjets, "minus");
+	      else jetTools->correctJetJER(init_jets, genjets, "nominal");
+	      
+	      if (JESPlus) jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
+	      else if (JESMinus) jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
+	    }  
+	    
+	    //Start selection
+	    Selection selection(init_jets, init_muons, init_electrons, mets);
+	    
+	    // PV cut (useless)
+	    //bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
+	    bool isGoodPV = true;
+	    
+	    // Set up the unclustered MET systematic
+	    double uncmet_px = mets[0]->Px();
+	    double uncmet_py = mets[0]->Py();
+	    for(unsigned int i=0; i<init_jets.size(); i++){
+	      uncmet_px += init_jets[i]->Px();
+	      uncmet_py += init_jets[i]->Py();
+	    }
+	    for(unsigned int i=0; i<init_muons.size(); i++){
+	      uncmet_px += init_muons[i]->Px();
+	      uncmet_py += init_muons[i]->Py();
+	    }	
+	    for(unsigned int i=0; i<init_electrons.size(); i++){
+	      uncmet_px += init_electrons[i]->Px();
+	      uncmet_py += init_electrons[i]->Py();
+	    }	
+	    
+	    double met_px = mets[0]->Px();
+	    double met_py = mets[0]->Py();
+	    
+	    if(unclusteredUp){
+	      met_px += uncmet_px*0.1;
+	      met_py += uncmet_py*0.1;
+	    } if(unclusteredDown){
+	      met_px -= uncmet_px*0.1;
+	      met_py -= uncmet_py*0.1;
+	    }
+	    
+	    double met_pt = sqrt(met_px*met_px + met_py*met_py);
+	    
+	    // Cut Flow Starts
+	    cutflow->Fill(1, weight);
+	    cutflow_raw->Fill(1);
+	    if(trigged){
+	      cutflow->Fill(2, weight);
+	      cutflow_raw->Fill(2);
+	      if(isGoodPV){
+		cutflow->Fill(3, weight);
+		cutflow_raw->Fill(3);
+		
+		// Select Objects -> Cuts
+		selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
+		selection.setDiElectronCuts(20,2.5,0.15,0.02,1);
+		selection.setLooseElectronCuts(15,2.5,0.2);
+		selection.setDiMuonCuts(20,2.4,0.15,10,0.02);
+		selection.setLooseMuonCuts(10,2.5,0.2);
+		
+		//Select Objects 
+		vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons(vertex[0]);
+		vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
+		vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true);
+		vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
+		vector<TRootJet*> selectedJets = selection.GetSelectedJets(20,2.4,true);                    
+		
+		// Tight lepton selection
+		bool leptonSelection = false;
+		if 	(mode == 0 && selectedElectrons.size()== 1 && selectedMuons.size()== 1) leptonSelection = true;
+		else if 	(mode == 1 && selectedElectrons.size()== 0 && selectedMuons.size()== 2) leptonSelection = true;
+		else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
+		
+		if (leptonSelection) {
+		  
+		  bool charge = false;
+		  double q0, q1;
+		  TLorentzVector lepton0, lepton1;
+		  if (mode == 0){
+		    TRootElectron* electron = (TRootElectron*) selectedElectrons[0];
+		    TRootMuon* muon = (TRootMuon*) selectedMuons[0];
+		    if (electron->charge()*muon->charge() < 0) charge = true;
+		    if (electron->Pt() > muon->Pt()){
+		      lepton0.SetPxPyPzE(electron->Px(), electron->Py(), electron->Pz(), electron->Energy());
+		      lepton1.SetPxPyPzE(muon->Px(), muon->Py(), muon->Pz(), muon->Energy());
+		      q0 = electron->charge();
+		      q1 = muon->charge();
+		    } else {
+		      lepton0.SetPxPyPzE(muon->Px(), muon->Py(), muon->Pz(), muon->Energy());
+		      lepton1.SetPxPyPzE(electron->Px(), electron->Py(), electron->Pz(), electron->Energy());
+		      q0 = muon->charge();
+		      q1 = electron->charge();
+		    }
+		  } else if (mode == 1){
+		    TRootMuon* muon0 = (TRootMuon*) selectedMuons[0];
+		    TRootMuon* muon1 = (TRootMuon*) selectedMuons[1];
+		    if (muon0->charge()*muon1->charge() < 0) charge = true;
+		    lepton0.SetPxPyPzE(muon0->Px(), muon0->Py(), muon0->Pz(), muon0->Energy());
+		    lepton1.SetPxPyPzE(muon1->Px(), muon1->Py(), muon1->Pz(), muon1->Energy());
+		    q0 = muon0->charge();
+		    q1 = muon1->charge();
 		  } else {
-		    lepton0.SetPxPyPzE(muon->Px(), muon->Py(), muon->Pz(), muon->Energy());
-		    lepton1.SetPxPyPzE(electron->Px(), electron->Py(), electron->Pz(), electron->Energy());
-		    q0 = muon->charge();
-		    q1 = electron->charge();
+		    TRootElectron* electron0 = (TRootElectron*) selectedElectrons[0];
+		    TRootElectron* electron1 = (TRootElectron*) selectedElectrons[1];
+		    if (electron0->charge()*electron1->charge() < 0) charge = true;
+		    lepton0.SetPxPyPzE(electron0->Px(), electron0->Py(), electron0->Pz(), electron0->Energy());
+		    lepton1.SetPxPyPzE(electron1->Px(), electron1->Py(), electron1->Pz(), electron1->Energy());
+		    q0 = electron0->charge();
+		    q1 = electron1->charge();
 		  }
-		} else if (mode == 1){
-		  TRootMuon* muon0 = (TRootMuon*) selectedMuons[0];
-		  TRootMuon* muon1 = (TRootMuon*) selectedMuons[1];
-		  if (muon0->charge()*muon1->charge() < 0) charge = true;
-		  lepton0.SetPxPyPzE(muon0->Px(), muon0->Py(), muon0->Pz(), muon0->Energy());
-		  lepton1.SetPxPyPzE(muon1->Px(), muon1->Py(), muon1->Pz(), muon1->Energy());
-		  q0 = muon0->charge();
-		  q1 = muon1->charge();
-		} else {
-		  TRootElectron* electron0 = (TRootElectron*) selectedElectrons[0];
-		  TRootElectron* electron1 = (TRootElectron*) selectedElectrons[1];
-		  if (electron0->charge()*electron1->charge() < 0) charge = true;
-		  lepton0.SetPxPyPzE(electron0->Px(), electron0->Py(), electron0->Pz(), electron0->Energy());
-		  lepton1.SetPxPyPzE(electron1->Px(), electron1->Py(), electron1->Pz(), electron1->Energy());
-		  q0 = electron0->charge();
-		  q1 = electron1->charge();
-		}
-                
-		if (charge){
-		  cutflow->Fill(4, weight);
-		  cutflow_raw->Fill(4);
-		  // Loose lepton veto
-		  bool leptonVeto = false;
-		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
-		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
-		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
-                  
-		  if (leptonVeto) {
-		    cutflow->Fill(5, weight);
-		    cutflow_raw->Fill(5);
-                   
-		    // Low mll cut (all final states)
-		    TLorentzVector pair = lepton0 + lepton1;   
-		    if (pair.M() > 20){
+		  
+		  if (charge){
+		    cutflow->Fill(4, weight);
+		    cutflow_raw->Fill(4);
+		    // Loose lepton veto
+		    bool leptonVeto = false;
+		    if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
+		    else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
+		    else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
+		    
+		    if (leptonVeto) {
+		      cutflow->Fill(5, weight);
+		      cutflow_raw->Fill(5);
 		      
-		      //Filling the Tree (at pre-selection level, leptons and mll)
-		      lum = lumi;
-                      
-		      if (isRAW) weight = 1;
-		      xlWeight = weight;
-		      
-		      npu = event->nPu(0);
-		      nvertex = vertex.size();
-		      
-		      metPt = met_pt;
-		      metPx = met_px;
-		      metPy = met_py;
-		      
-		      ptLepton = new std::vector<double>; 
-		      pxLepton = new std::vector<double>; 
-		      pyLepton = new std::vector<double>; 
-		      pzLepton = new std::vector<double>; 
-		      eLepton = new std::vector<double>; 
-		      qLepton = new std::vector<double>;
-                      
-		      ptJet = new std::vector<double>; 
-		      pxJet = new std::vector<double>; 
-		      pyJet = new std::vector<double>; 
-		      pzJet = new std::vector<double>; 
-		      eJet = new std::vector<double>; 
-		      qJet = new std::vector<double>; 
-		      btTCHPJet = new std::vector<double>; 
-		      btTCHEJet = new std::vector<double>; 
-		      btSSVHPJet = new std::vector<double>;
-		      btSSVHEJet = new std::vector<double>; 
-                      
-		      ptLepton->push_back(lepton0.Pt());
-		      ptLepton->push_back(lepton1.Pt());
-                      
-		      pxLepton->push_back(lepton0.Px());
-		      pxLepton->push_back(lepton1.Px());
-                      
-		      pyLepton->push_back(lepton0.Py());
-		      pyLepton->push_back(lepton1.Py());
-                      
-		      pzLepton->push_back(lepton0.Pz());
-		      pzLepton->push_back(lepton1.Pz());
-                      
-		      eLepton->push_back(lepton0.Energy());
-		      eLepton->push_back(lepton1.Energy());
-                      
-		      qLepton->push_back(q0);
-		      qLepton->push_back(q1);
-                      
-		      for (unsigned int i =0; i < selectedJets.size(); i ++){
-			TRootJet* tempJet = (TRootJet*) selectedJets[i];
-			ptJet->push_back(tempJet->Pt());
-			pxJet->push_back(tempJet->Px());
-			pyJet->push_back(tempJet->Py());
-			pzJet->push_back(tempJet->Pz());
-			eJet->push_back(tempJet->Energy());
-			qJet->push_back(tempJet->charge());
-			btTCHPJet->push_back(tempJet->btag_trackCountingHighPurBJetTags() );
-			btTCHEJet->push_back(tempJet->btag_trackCountingHighEffBJetTags() );
-			btSSVHPJet->push_back(tempJet->btag_simpleSecondaryVertexHighPurBJetTags() );
-			btSSVHEJet->push_back(tempJet->btag_simpleSecondaryVertexHighEffBJetTags() );  
-		      }
-                      
-		      myTree->Fill();
-                      
-		      delete ptLepton;
-		      delete pxLepton;
-		      delete pyLepton;
-		      delete pzLepton;
-		      delete eLepton;
-		      delete qLepton;
-                      
-		      delete ptJet;
-		      delete pxJet;
-		      delete pyJet;
-		      delete pzJet;
-		      delete eJet;
-		      delete qJet;
-		      delete btTCHPJet;
-		      delete btTCHEJet;
-		      delete btSSVHPJet;
-		      delete btSSVHEJet;
-                      
-		      // Invariant mass in ee and mumu
-		      if (pair.M() > 101 || pair.M() < 81 || mode == 0){
-			cutflow->Fill(6, weight);
-			cutflow_raw->Fill(6);
-			// MET in ee and mumu
-			if (met_pt > 30 || mode == 0){
-			  cutflow->Fill(7, weight);
-			  cutflow_raw->Fill(7);
-                          
-			  //Jet and b-tag selection
-			  int nJetsBT = 0;
-			  int nTightJetsBT = 0;
-			  int nJets = 0;
-			  bool bTagged = false;
-			  int iJet = -5;
-			  int iSF;
-			  double tempSF = SFval;
-			  if (SFminus) 	tempSF = SFval - SFval*10/100;
-			  if (SFplus) 	tempSF = SFval + SFval*10/100;
-			  int SFvalue = int(tempSF*100 + 1);
-			  
-			  if (isData || !scaleFactor){
-			    for (unsigned int i =0; i < selectedJets.size(); i ++){
-			      TRootJet* tempJet = (TRootJet*) selectedJets[i];
-			      TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
-			      if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
-				nJets++;
-				//if (iJet == -5) iJet = i;
-				iJet = i; // we take the softer jet for the calculation of ht etc -to remove signal from the CR- can be negotiated ;)
-				if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				  bTagged = true;
-				  nJetsBT++;
-				  nTightJetsBT++;
-				} 
-			      } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74) nJetsBT++;
-			    }
-			  } else {
-			    //// Regular SF
-			    if (SFvalue < 101){
+		      // Low mll cut (all final states)
+		      TLorentzVector pair = lepton0 + lepton1;   
+		      if (pair.M() > 20){
+			
+			//Filling the Tree (at pre-selection level, leptons and mll)
+			lum = lumi;
+			
+			if (isRAW) weight = 1;
+			xlWeight = weight;
+			
+			npu = event->nPu(0);
+			nvertex = vertex.size();
+			
+			metPt = met_pt;
+			metPx = met_px;
+			metPy = met_py;
+			
+			ptLepton = new std::vector<double>; 
+			pxLepton = new std::vector<double>; 
+			pyLepton = new std::vector<double>; 
+			pzLepton = new std::vector<double>; 
+			eLepton = new std::vector<double>; 
+			qLepton = new std::vector<double>;
+			
+			ptJet = new std::vector<double>; 
+			pxJet = new std::vector<double>; 
+			pyJet = new std::vector<double>; 
+			pzJet = new std::vector<double>; 
+			eJet = new std::vector<double>; 
+			qJet = new std::vector<double>; 
+			btTCHPJet = new std::vector<double>; 
+			btTCHEJet = new std::vector<double>; 
+			btSSVHPJet = new std::vector<double>;
+			btSSVHEJet = new std::vector<double>; 
+			
+			ptLepton->push_back(lepton0.Pt());
+			ptLepton->push_back(lepton1.Pt());
+			
+			pxLepton->push_back(lepton0.Px());
+			pxLepton->push_back(lepton1.Px());
+			
+			pyLepton->push_back(lepton0.Py());
+			pyLepton->push_back(lepton1.Py());
+			
+			pzLepton->push_back(lepton0.Pz());
+			pzLepton->push_back(lepton1.Pz());
+			
+			eLepton->push_back(lepton0.Energy());
+			eLepton->push_back(lepton1.Energy());
+			
+			qLepton->push_back(q0);
+			qLepton->push_back(q1);
+			
+			for (unsigned int i =0; i < selectedJets.size(); i ++){
+			  TRootJet* tempJet = (TRootJet*) selectedJets[i];
+			  ptJet->push_back(tempJet->Pt());
+			  pxJet->push_back(tempJet->Px());
+			  pyJet->push_back(tempJet->Py());
+			  pzJet->push_back(tempJet->Pz());
+			  eJet->push_back(tempJet->Energy());
+			  qJet->push_back(tempJet->charge());
+			  btTCHPJet->push_back(tempJet->btag_trackCountingHighPurBJetTags() );
+			  btTCHEJet->push_back(tempJet->btag_trackCountingHighEffBJetTags() );
+			  btSSVHPJet->push_back(tempJet->btag_simpleSecondaryVertexHighPurBJetTags() );
+			  btSSVHEJet->push_back(tempJet->btag_simpleSecondaryVertexHighEffBJetTags() );  
+			}
+			
+			myTree->Fill();
+			
+			delete ptLepton;
+			delete pxLepton;
+			delete pyLepton;
+			delete pzLepton;
+			delete eLepton;
+			delete qLepton;
+			
+			delete ptJet;
+			delete pxJet;
+			delete pyJet;
+			delete pzJet;
+			delete eJet;
+			delete qJet;
+			delete btTCHPJet;
+			delete btTCHEJet;
+			delete btSSVHPJet;
+			delete btSSVHEJet;
+			
+			// Invariant mass in ee and mumu
+			if (pair.M() > 101 || pair.M() < 81 || mode == 0){
+			  cutflow->Fill(6, weight);
+			  cutflow_raw->Fill(6);
+			  // MET in ee and mumu
+			  if (met_pt > 30 || mode == 0){
+			    cutflow->Fill(7, weight);
+			    cutflow_raw->Fill(7);
+			    
+			    //Jet and b-tag selection
+			    int nJetsBT = 0;
+			    int nTightJetsBT = 0;
+			    int nJets = 0;
+			    bool bTagged = false;
+			    int iJet = -5;
+			    int iSF;
+			    double tempSF = SFval;
+			    if (SFminus) 	tempSF = SFval - SFval*10/100;
+			    if (SFplus) 	tempSF = SFval + SFval*10/100;
+			    int SFvalue = int(tempSF*100 + 1);
+			    
+			    if (isData || !scaleFactor){
 			      for (unsigned int i =0; i < selectedJets.size(); i ++){
 				TRootJet* tempJet = (TRootJet*) selectedJets[i];
 				TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 				if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 				  nJets++;
 				  //if (iJet == -5) iJet = i;
-				  iJet = i;
-				  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				    iSF = rand() % 101;
-				    if (iSF < SFvalue ){
-				      bTagged = true;
-				      nJetsBT++;
-				      nTightJetsBT++;
-				    } 
-				  } 
-				} else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				  iSF = rand() % 101;
-				  if (iSF < SFvalue ) nJetsBT++;
-				}
-			      }
-			    } else {
-			      //// Large SF
-			      for (unsigned int i =0; i < selectedJets.size(); i ++){
-				TRootJet* tempJet = (TRootJet*) selectedJets[i];
-				TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
-				if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
-				  nJets++;
-				  //if (iJet == -5) iJet = i;
-				  iJet = i;
+				  iJet = i; // we take the softer jet for the calculation of ht etc -to remove signal from the CR- can be negotiated ;)
 				  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				    bTagged = true;
 				    nJetsBT++;
 				    nTightJetsBT++;
-				  } else {
+				  } 
+				} else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74) nJetsBT++;
+			      }
+			    } else {
+			      //// Regular SF
+			      if (SFvalue < 101){
+				for (unsigned int i =0; i < selectedJets.size(); i ++){
+				  TRootJet* tempJet = (TRootJet*) selectedJets[i];
+				  TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
+				  if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
+				    nJets++;
+				    //if (iJet == -5) iJet = i;
+				    iJet = i;
+				    if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+				      iSF = rand() % 101;
+				      if (iSF < SFvalue ){
+					bTagged = true;
+					nJetsBT++;
+					nTightJetsBT++;
+				      } 
+				    } 
+				  } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				    iSF = rand() % 101;
-				    if (iSF < abs(100 - SFvalue)){
+				    if (iSF < SFvalue ) nJetsBT++;
+				  }
+				}
+			      } else {
+				//// Large SF
+				for (unsigned int i =0; i < selectedJets.size(); i ++){
+				  TRootJet* tempJet = (TRootJet*) selectedJets[i];
+				  TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
+				  if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
+				    nJets++;
+				    //if (iJet == -5) iJet = i;
+				    iJet = i;
+				    if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+				      bTagged = true;
 				      nJetsBT++;
 				      nTightJetsBT++;
-				      bTagged = true;
+				    } else {
+				      iSF = rand() % 101;
+				      if (iSF < abs(100 - SFvalue)){
+					nJetsBT++;
+					nTightJetsBT++;
+					bTagged = true;
+				      }
 				    }
+				  } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+				    nJetsBT++;
+				  } else {
+				    iSF = rand() % 101;
+				    if (iSF < abs(100 - SFvalue)) nJetsBT++;
 				  }
-				} else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				  nJetsBT++;
-				} else {
-				  iSF = rand() % 101;
-				  if (iSF < abs(100 - SFvalue)) nJetsBT++;
 				}
 			      }
 			    }
-			  }
-			  
-			  
-			  // Filling all the regions
-			  if (nJets !=0){
-			    TRootJet* jet = (TRootJet*) selectedJets[iJet];
-                  	    double ptSysPx = lepton0.Px() + lepton1.Px() + jet->Px() + met_px;
-			    double ptSysPy = lepton0.Py() + lepton1.Py() + jet->Py() + met_py;
-			    double ptSys = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-			    double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
-			    if (ptSys < 60){
-			      if (Ht > 160 || mode != 0){
-				if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged)R->Fill(1, weight);
-				if (nJets == 1 && nTightJetsBT == 2)  R->Fill(2, weight);
-				if (nJets == 1 && nTightJetsBT > 0)  R->Fill(3, weight);
-				if (nJets == 1 && nTightJetsBT > 1)  R->Fill(4, weight);
-				if (nJets == 2 && nTightJetsBT == 0)  R->Fill(5, weight);
-				if (nJets == 2 && nTightJetsBT == 1)  R->Fill(6, weight);
-				if (nJets == 2 && nTightJetsBT == 2)  R->Fill(7, weight);
-				if (nJets == 2 && nTightJetsBT > 0)  R->Fill(8, weight);
-				if (nJets == 2 && nTightJetsBT > 1)  R->Fill(9, weight);
-				if (nJets > 1 && nTightJetsBT == 0)  R->Fill(10, weight);
-				if (nJets > 1 && nTightJetsBT == 1)  R->Fill(11, weight);
-				if (nJets > 1 && nTightJetsBT == 2)  R->Fill(12, weight);
-				if (nJets > 1 && nTightJetsBT !=0 )  R->Fill(13, weight);
-				if (nJets > 1 && nTightJetsBT > 1 )  R->Fill(14, weight);
-				if (nJets == 3 && nTightJetsBT ==0 )  R->Fill(15, weight);
-				if (nJets == 3 && nTightJetsBT ==1 )  R->Fill(16, weight);
-				if (nJets == 3 && nTightJetsBT ==2 )  R->Fill(17, weight);
-				if (nJets == 3 && nTightJetsBT ==3 )  R->Fill(18, weight);
-			      }
-			    }
-			  }
-			  
-			  // Filling the signal region
-			  if(nJets == 1){
-			    TRootJet* jet = (TRootJet*) selectedJets[iJet];
-			    cutflow->Fill(8, weight);
-			    cutflow_raw->Fill(8);
-			    if (bTagged && nJetsBT == 1){
-			      cutflow->Fill(9,weight);
-			      cutflow_raw->Fill(9);
-                              
+			    
+			    
+			    // Filling all the regions
+			    if (nJets !=0){
+			      TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			      double ptSysPx = lepton0.Px() + lepton1.Px() + jet->Px() + met_px;
 			      double ptSysPy = lepton0.Py() + lepton1.Py() + jet->Py() + met_py;
 			      double ptSys = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 			      double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
-                              
 			      if (ptSys < 60){
-				cutflow->Fill(10, weight);
-				cutflow_raw->Fill(10);
 				if (Ht > 160 || mode != 0){
-				  cutflow->Fill(11, weight);
-				  cutflow_raw->Fill(11);
+				  if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged)R->Fill(1, weight);
+				  if (nJets == 1 && nTightJetsBT == 2)  R->Fill(2, weight);
+				  if (nJets == 1 && nTightJetsBT > 0)  R->Fill(3, weight);
+				  if (nJets == 1 && nTightJetsBT > 1)  R->Fill(4, weight);
+				  if (nJets == 2 && nTightJetsBT == 0)  R->Fill(5, weight);
+				  if (nJets == 2 && nTightJetsBT == 1)  R->Fill(6, weight);
+				  if (nJets == 2 && nTightJetsBT == 2)  R->Fill(7, weight);
+				  if (nJets == 2 && nTightJetsBT > 0)  R->Fill(8, weight);
+				  if (nJets == 2 && nTightJetsBT > 1)  R->Fill(9, weight);
+				  if (nJets > 1 && nTightJetsBT == 0)  R->Fill(10, weight);
+				  if (nJets > 1 && nTightJetsBT == 1)  R->Fill(11, weight);
+				  if (nJets > 1 && nTightJetsBT == 2)  R->Fill(12, weight);
+				  if (nJets > 1 && nTightJetsBT !=0 )  R->Fill(13, weight);
+				  if (nJets > 1 && nTightJetsBT > 1 )  R->Fill(14, weight);
+				  if (nJets == 3 && nTightJetsBT ==0 )  R->Fill(15, weight);
+				  if (nJets == 3 && nTightJetsBT ==1 )  R->Fill(16, weight);
+				  if (nJets == 3 && nTightJetsBT ==2 )  R->Fill(17, weight);
+				  if (nJets == 3 && nTightJetsBT ==3 )  R->Fill(18, weight);
 				}
 			      }
 			    }
-			  }
-			  //
-
-			}	      
-		      }      
+			    
+			    // Filling the signal region
+			    if(nJets == 1){
+			      TRootJet* jet = (TRootJet*) selectedJets[iJet];
+			      cutflow->Fill(8, weight);
+			      cutflow_raw->Fill(8);
+			      if (bTagged && nJetsBT == 1){
+				cutflow->Fill(9,weight);
+				cutflow_raw->Fill(9);
+				
+				double ptSysPx = lepton0.Px() + lepton1.Px() + jet->Px() + met_px;
+				double ptSysPy = lepton0.Py() + lepton1.Py() + jet->Py() + met_py;
+				double ptSys = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
+				double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
+				
+				if (ptSys < 60){
+				  cutflow->Fill(10, weight);
+				  cutflow_raw->Fill(10);
+				  if (Ht > 160 || mode != 0){
+				    cutflow->Fill(11, weight);
+				    cutflow_raw->Fill(11);
+				  }
+				}
+			      }
+			    }
+			    //
+			    
+			  }	      
+			}      
+		      }
 		    }
 		  }
 		}
-	      }
-	    }      
+	      }      
+	    }
 	  }
-	
 	} // event loop
       
       // cleanup
