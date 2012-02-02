@@ -736,7 +736,7 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float
 	if ( fabs(el->d0()) < Electrond0Cut_ )
 	  if ( RelIso < ElectronRelIso )
 	    if (passvbtf)
-	     // if((fabs(el->Dist()) >= 0.02 || fabs(el->DCot()) >= 0.02) && el->missingHits() == 0) 
+	      if((fabs(el->Dist()) >= 0.02 || fabs(el->DCot()) >= 0.02) && el->missingHits() == 0) 
 	      selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
