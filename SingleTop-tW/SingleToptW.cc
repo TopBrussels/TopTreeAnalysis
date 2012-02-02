@@ -307,7 +307,6 @@ int main(int argc, char* argv[]) {
       vector<JetCorrectorParameters> vCorrParam;
       
       // Create the JetCorrectorParameter objects, the order does not matter.
-      // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
       JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
       JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
       JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
@@ -321,15 +320,11 @@ int main(int argc, char* argv[]) {
 	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
 	vCorrParam.push_back(*ResJetCorPar);
       }
-	  
-      //OLD
-      //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
-      //NEW
+      
       JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
       
       // true means redo also the L1
       JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
-
      
       /// Start message
       
@@ -368,6 +363,7 @@ int main(int argc, char* argv[]) {
 	      genjets = treeLoader.LoadGenJet(ievt,false);
 	      sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
 	    }
+
 	  // Weight given by the theoretical cross-section and lumi
 	  double weight = xlweight;
           
@@ -377,7 +373,7 @@ int main(int argc, char* argv[]) {
 	    lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
 	    weight *= lumiWeight3D;
 	  }
-	   
+	  
 	  //Trigger
 	 
           //No trigger after first test
@@ -684,33 +680,6 @@ int main(int argc, char* argv[]) {
 			btSSVHPJet->push_back(tempJet->btag_simpleSecondaryVertexHighPurBJetTags() );
 			btSSVHEJet->push_back(tempJet->btag_simpleSecondaryVertexHighEffBJetTags() );  
 		      }
-		      // do calculations as far as topology goes:
-                      
-		      allForTopoCalc.push_back(lepton0);
-		      allForTopoCalc.push_back(lepton1);
-		      for(unsigned int ijet=0;ijet<selectedJets.size(); ijet++){
-			TRootJet* tempJet = (TRootJet*) selectedJets[ijet];
-			TLorentzVector tempLV(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->E());
-			allForTopoCalc.push_back(tempLV);
-		      }
-		      // std::cout << "creating topology worker " << std::endl;
-		      TopologyWorker::TopologyWorker topoWorkerNoBoost(false); // set the bool to true to un-boost events
-		      topoWorkerNoBoost.setPartList(allForTopoCalc,allForTopoCalc);
-		      topoWorkerNoBoost.setVerbose(true);
-		      // see for other methods: header file of TopologyWorker
-                      
-		      /*
-			std::cout << "summary: " << std::endl;
-			std::cout << "oblateness: " << topoWorkerNoBoost.oblateness() << std::endl;
-			std::cout << "sphericity: " << topoWorkerNoBoost.get_sphericity() << std::endl;
-			std::cout << "aplanarity: " << topoWorkerNoBoost.get_aplanarity() << std::endl;
-			std::cout << "njetW: " << topoWorkerNoBoost.get_njetW() <<std::endl;
-			std::cout << "sqrts: " << topoWorkerNoBoost.get_sqrts() << std::endl; 
-		      */
-		      
-		      // 
-		      allForTopoCalc.clear();
-		      allForTopoCalc.resize(0);
                       
 		      myTree->Fill();
                       
@@ -743,6 +712,7 @@ int main(int argc, char* argv[]) {
                           
 			  //Jet and b-tag selection
 			  int nJetsBT = 0;
+			  int nTightJetsBT = 0;
 			  int nJets = 0;
 			  bool bTagged = false;
 			  int iJet = -5;
@@ -759,10 +729,11 @@ int main(int argc, char* argv[]) {
 			      if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 				nJets++;
 				//if (iJet == -5) iJet = i;
-				iJet = i;
+				iJet = i; // we take the softer jet for the calculation of ht etc -to remove signal from the CR- can be negotiated ;)
 				if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				  bTagged = true;
 				  nJetsBT++;
+				  nTightJetsBT++;
 				} 
 			      } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74) nJetsBT++;
 			    }
@@ -781,6 +752,7 @@ int main(int argc, char* argv[]) {
 				    if (iSF < SFvalue ){
 				      bTagged = true;
 				      nJetsBT++;
+				      nTightJetsBT++;
 				    } 
 				  } 
 				} else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
@@ -800,10 +772,12 @@ int main(int argc, char* argv[]) {
 				  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
 				    bTagged = true;
 				    nJetsBT++;
+				    nTightJetsBT++;
 				  } else {
 				    iSF = rand() % 101;
 				    if (iSF < abs(100 - SFvalue)){
 				      nJetsBT++;
+				      nTightJetsBT++;
 				      bTagged = true;
 				    }
 				  }
@@ -827,24 +801,24 @@ int main(int argc, char* argv[]) {
 			    double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
 			    if (ptSys < 60){
 			      if (Ht > 160 || mode != 0){
-				if (nJets == 1 && nJetsBT == 1 && bTagged)R->Fill(1, weight);
-				if (nJets == 1 && nJetsBT == 2)  R->Fill(2, weight);
-				if (nJets == 1 && nJetsBT > 0)  R->Fill(3, weight);
-				if (nJets == 1 && nJetsBT > 1)  R->Fill(4, weight);
-				if (nJets == 2 && nJetsBT == 0)  R->Fill(5, weight);
-				if (nJets == 2 && nJetsBT == 1)  R->Fill(6, weight);
-				if (nJets == 2 && nJetsBT == 2)  R->Fill(7, weight);
-				if (nJets == 2 && nJetsBT > 0)  R->Fill(8, weight);
-				if (nJets == 2 && nJetsBT > 1)  R->Fill(9, weight);
-				if (nJets > 1 && nJetsBT == 0)  R->Fill(10, weight);
-				if (nJets > 1 && nJetsBT == 1)  R->Fill(11, weight);
-				if (nJets > 1 && nJetsBT == 2)  R->Fill(12, weight);
-				if (nJets > 1 && nJetsBT !=0 )  R->Fill(13, weight);
-				if (nJets > 1 && nJetsBT > 1 )  R->Fill(14, weight);
-				if (nJets == 3 && nJetsBT ==0 )  R->Fill(15, weight);
-				if (nJets == 3 && nJetsBT ==1 )  R->Fill(16, weight);
-				if (nJets == 3 && nJetsBT ==2 )  R->Fill(17, weight);
-				if (nJets == 3 && nJetsBT ==3 )  R->Fill(18, weight);
+				if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged)R->Fill(1, weight);
+				if (nJets == 1 && nTightJetsBT == 2)  R->Fill(2, weight);
+				if (nJets == 1 && nTightJetsBT > 0)  R->Fill(3, weight);
+				if (nJets == 1 && nTightJetsBT > 1)  R->Fill(4, weight);
+				if (nJets == 2 && nTightJetsBT == 0)  R->Fill(5, weight);
+				if (nJets == 2 && nTightJetsBT == 1)  R->Fill(6, weight);
+				if (nJets == 2 && nTightJetsBT == 2)  R->Fill(7, weight);
+				if (nJets == 2 && nTightJetsBT > 0)  R->Fill(8, weight);
+				if (nJets == 2 && nTightJetsBT > 1)  R->Fill(9, weight);
+				if (nJets > 1 && nTightJetsBT == 0)  R->Fill(10, weight);
+				if (nJets > 1 && nTightJetsBT == 1)  R->Fill(11, weight);
+				if (nJets > 1 && nTightJetsBT == 2)  R->Fill(12, weight);
+				if (nJets > 1 && nTightJetsBT !=0 )  R->Fill(13, weight);
+				if (nJets > 1 && nTightJetsBT > 1 )  R->Fill(14, weight);
+				if (nJets == 3 && nTightJetsBT ==0 )  R->Fill(15, weight);
+				if (nJets == 3 && nTightJetsBT ==1 )  R->Fill(16, weight);
+				if (nJets == 3 && nTightJetsBT ==2 )  R->Fill(17, weight);
+				if (nJets == 3 && nTightJetsBT ==3 )  R->Fill(18, weight);
 			      }
 			    }
 			  }
