@@ -70,19 +70,19 @@ void JetTools::correctJet(TRootJet* inJet, float rhoPU, bool isData)
   JEC_->setJetA(inJet->jetArea());
   JEC_->setRho(rhoPU);
 	
-	/*std::vector<float> SubCorrections = JEC_->getSubCorrections(); //0: L1FastJet, 1: L1FastJetL2, 2: L1FastJetL2L3, and if data: 3: L1FastJetL2L3L23Residual
-  for(unsigned int c=0; c<SubCorrections.size(); c++)
-	{
-	  cout<<"SubCorrections["<<c<<"] = "<<SubCorrections[c]<<endl;	
-	}
+	//set the correction factors for the type 1 MET correction
+	std::vector<float> SubCorrections = JEC_->getSubCorrections(); //0: L1FastJet, 1: L1FastJetL2, 2: L1FastJetL2L3, and if data: 3: L1FastJetL2L3L23Residual  
+	/*for(unsigned int c=0; c<SubCorrections.size(); c++)
+	  	cout<<"SubCorrections["<<c<<"] = "<<SubCorrections[c]<<endl;	
+  */
 	inJet->setJetCorrFactor(0,"L1FastJet",SubCorrections[0]);
   inJet->setJetCorrFactor(1,"L1FastJetL2",SubCorrections[1]);
 	inJet->setJetCorrFactor(2,"L1FastJetL2L3",SubCorrections[2]);
 	if(isData)
 	  inJet->setJetCorrFactor(3,"L1FastJetL2L3L23Residual",SubCorrections[3]);
-  */
  
-  float corr = JEC_->getCorrection();
+  //float corr = JEC_->getCorrection(); //strangely enough, this starts complaining when JEC_->getSubCorrections() is called first
+	float corr = SubCorrections[SubCorrections.size()-1]; //this is the correction UP TO the last level; so the complete correction
   inJet->SetPxPyPzE(inJet->Px()*corr, inJet->Py()*corr, inJet->Pz()*corr, inJet->E()*corr);
 }
 
