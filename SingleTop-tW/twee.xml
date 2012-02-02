@@ -28,6 +28,10 @@
   
   <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2e/QCD_mu.root"/> 
 
+  <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/data_4593.root"/>  
+  <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/data_4593.root"/>  
+
+
 <!--
   <d name="dymumu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/DYToMuMu_M20.root"/> 
   <d name="dyee" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/DYToEE_M20.root"/> 
