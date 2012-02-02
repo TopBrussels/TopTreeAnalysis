@@ -432,7 +432,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
 	       histo->Fill(4, xlWeight);
 	       histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
 	       
-	       if (nTightJetsBT == 1 && bTagged){
+	       if (nJetsBT == 1 && bTagged){
 		 histo->Fill(5, xlWeight);
 		 
 		 double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
