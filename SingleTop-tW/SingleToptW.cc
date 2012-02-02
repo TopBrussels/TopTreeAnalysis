@@ -372,7 +372,7 @@ int main(int argc, char* argv[]) {
 	    }
 
 
-	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() <= 175860) || !RunA && !RunB){
+	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() <= 175860) || (!RunA && !RunB)){
 	    // Weight given by the theoretical cross-section and lumi
 	    double weight = xlweight;
 	    

@@ -4,7 +4,7 @@
 #include "inputs.h"
 
 
-void chain(int nsel, int mode = 0, bool silent = false){  
+void chain(int nsel = 0, int mode = 0, bool silent = false){  
   
   double SFval = 0.95;
   bool SFplus = false;
