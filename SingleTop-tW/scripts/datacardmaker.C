@@ -12,9 +12,11 @@
 #include "inputs.h"
 
 using namespace std;
-void datacardmaker(){
+void datacardmaker(int kindofdata = 0){
 
   ofstream datacard("singletop_tW45.txt"); 
+  if (kindofdata == 1) ofstream datacard("singletop_tW45A.txt"); 
+  if (kindofdata == 2) ofstream datacard("singletop_tW45B.txt"); 
   
   TString processName[3] =  { "twdr", "tt","others"};
   char myRootFile[300]; 
@@ -24,6 +26,8 @@ void datacardmaker(){
     int mode = 0;
     if (i < 2) mode = i+1;
     sprintf(myRootFile,"outputs/out_%d_data.root", i);
+    if (kindofdata == 1) sprintf(myRootFile,"outputs/out_%d_data1.root", i);
+    if (kindofdata == 2) sprintf(myRootFile,"outputs/out_%d_data2.root", i);
     TFile *_file0 = TFile::Open(myRootFile);
     hdata[mode] = (TH1F*) _file0->Get("R");
     for (int j = 0; j < 3; j++){
@@ -33,6 +37,10 @@ void datacardmaker(){
       if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 59.2);
       if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 19.8);
       if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 132.3);
+    
+      if (kindofdata == 1) hnominal[mode][j]->Scale(2.1/4.5);
+      if (kindofdata == 2) hnominal[mode][j]->Scale(2.5/4.5);
+    
     }
   } 
   
