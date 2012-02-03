@@ -169,7 +169,7 @@ int main (int argc, char *argv[])
   string Treespath = "InclFourthGenTrees";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
-	bool savePNG = false;	
+	bool savePNG = false;
 	
   /////////////////////
   // Configuration
@@ -405,47 +405,53 @@ int main (int argc, char *argv[])
     selecTableSemiMu.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
     selecTableSemiEl.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
     
+		
+		
     /////////////////////////////////////
     /// Initialize JEC factors 
     /////////////////////////////////////
 		
-    //L2L3 residual corrections already in data Toptrees now! (because a global tag is used where these corrections are included)
-    vector<JetCorrectorParameters> vCorrParam;
-    /*if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
-    {
-	   JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
-	   vCorrParam.push_back(*ResJetCorPar);
-    }*/
-    
+		//"OLD way, no JEC corrections on the fly"
+    /*//L2L3 residual corrections already in data Toptrees now! (because a global tag is used where these corrections are included)
+    vector<JetCorrectorParameters> vCorrParam;    
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
-    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false); // last boolean ('startFromRaw') = false!
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
+    */
+   	    
+    vector<JetCorrectorParameters> vCorrParam;
 
-    /*if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
-    {
-     	JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("JECFiles/GR_R_38X_V15_AK5PF_L2Relative.txt");
-      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/GR_R_38X_V15_AK5PF_L3Absolute.txt");
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/GR_R_38X_V15_AK5PF_L2L3Residual.txt");
-      vCorrParam.push_back(*L2JetCorPar);
-      vCorrParam.push_back(*L3JetCorPar);
-      vCorrParam.push_back(*ResJetCorPar);
-    }
-    else // MC!
-    {
-      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("JECFiles/START38_V14_AK5PF_L2Relative.txt");
-      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/START38_V14_AK5PF_L3Absolute.txt");
-      vCorrParam.push_back(*L2JetCorPar);
-      vCorrParam.push_back(*L3JetCorPar);
-    }*/     
+    // Create the JetCorrectorParameter objects, the order does not matter.
+   // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
 
+    //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vCorrParam.push_back(*L1JetPar);
+    vCorrParam.push_back(*L2JetPar);
+    vCorrParam.push_back(*L3JetPar);
+
+    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
+    {
+			JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
+			vCorrParam.push_back(*ResJetCorPar);
+    }    
+ 
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    
+    // true means redo also the L1
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);// last boolean ('startFromRaw') = true!
+		
+		
 
     string TreeFileName;
 		TreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
     cout << "INFO: creating InclFourthGenTree file "+TreeFileName << endl;        
-    TFile* treeFile = new TFile(TreeFileName.c_str(),"RECREATE");      
+    TFile* treeFile = new TFile(TreeFileName.c_str(),"RECREATE");
 		
-    InclFourthGenTree* myTree = 0;		
-    TTree* myInclFourthGenTree = new TTree("myInclFourthGenTree","Tree containing the FourthGen information");
-    myInclFourthGenTree->Branch("TheInclFourthGenTree","InclFourthGenTree",&myTree);
+    InclFourthGenTree* myBranch_selectedEvents = 0;		
+    TTree* myInclFourthGenTree = new TTree("myInclFourthGenTree","Tree containing the FourthGen information");    
+		myInclFourthGenTree->Branch("InclFourthGenBranch_selectedEvents","InclFourthGenTree",&myBranch_selectedEvents);
 
 
 
@@ -491,13 +497,17 @@ int main (int argc, char *argv[])
       
 			//load event
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-      vector<TRootGenJet*> genjets;
-      if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
+
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"First cout after loading event:");
+			
+		  vector<TRootGenJet*> genjets;
+			if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {
         genjets = treeLoader.LoadGenJet(ievt,false);
         sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
-      }
-      
+      }			
+			
+			
       // scale factor for the event
       float scaleFactor = 1.;
                 
@@ -618,20 +628,32 @@ int main (int argc, char *argv[])
 				} //end if semiElectron	
 			} //end previousRun != currentRun
 
+			// JES CORRECTION      
+      // Apply Jet Corrections on-the-fly
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
+			if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
+			else
+				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+		  //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
 
       //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
       //----------------------------------------------------------
       // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
       //---------------------------------------------------------
-      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
+      
+			
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
       if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
         jetTools->correctMETTypeOne(init_jets,mets[0],true);
       else
         jetTools->correctMETTypeOne(init_jets,mets[0],false);
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-      
+     	 
+		  
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {	
+	
       	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
 				if(systematic == "JERMinus")
 					jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
@@ -641,12 +663,15 @@ int main (int argc, char *argv[])
 					jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
 		
+
 				// JES systematic! 
 				if (systematic == "JESMinus")
 					jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
 				else if (systematic == "JESPlus")
 					jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
       }
+
+
 
 			double lumiWeight3D = 1.0;
 			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
@@ -742,12 +767,16 @@ int main (int argc, char *argv[])
       vector<TRootElectron*> selectedLooseElectronsVBTFid;
       vector<TRootMuon*> selectedLooseMuons;
       vector<TRootMCParticle*> mcParticles;
-      
+
+
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before treeLoader.LoadMCEvent:");      
       if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || dataSetName.find("NP_Tprime")==0 || dataSetName.find("NP_overlay_Tprime")==0)
       {
         treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After treeLoader.LoadMCEvent:");
+
       
       float METCut = 40;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
@@ -1041,7 +1070,7 @@ int main (int argc, char *argv[])
 												{
 													if(selectedMuons.size() == 1 && selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
 													{
-														if(selectedElectrons[0]->charge()== selectedMuons[1]->charge())
+														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
 															isSSLepton = true;
 															isSSMuEl = true;
@@ -1142,14 +1171,16 @@ int main (int argc, char *argv[])
 				//cout << "IS TRI-LEPTON EVENT" << endl;
 				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				selecTableMultiLepton.Fill(d,1,scaleFactor);				
-			}			
+			}
 			
 			
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before treeLoader.LoadGenEvent:");					
 			TRootGenEvent* genEvt = 0;
 			if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))
 			  genEvt = treeLoader.LoadGenEvent(ievt,false);
-
-						
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After treeLoader.LoadGenEvent:");		
+			
+			
 			bool Wbosonpartonsmatched = false; // True if the Wboson ttbar semi-mu or semi-el partons are matched to their 2 jets (not necessarily the 4 highest pt jets)
 			float WMassmatched_ = -9999;
 			//////////////////////////////////////////////////////////////////////////
@@ -1433,77 +1464,77 @@ int main (int argc, char *argv[])
 */
 
 
-			myTree = new InclFourthGenTree();
-      myTree->setEventID( event->eventId() );
-      myTree->setRunID( event->runId() );
-      myTree->setLumiBlockID( event->lumiBlockId() );
-      myTree->setNPV( vertex.size() );
-      myTree->setNPUBXm1( event->nPu(-1) );
-      myTree->setNPU( event->nPu(0) );
-      myTree->setNPUBXp1( event->nPu(1) );
+			myBranch_selectedEvents = new InclFourthGenTree();
+      myBranch_selectedEvents->setEventID( event->eventId() );
+      myBranch_selectedEvents->setRunID( event->runId() );
+      myBranch_selectedEvents->setLumiBlockID( event->lumiBlockId() );
+      myBranch_selectedEvents->setNPV( vertex.size() );
+      myBranch_selectedEvents->setNPUBXm1( event->nPu(-1) );
+      myBranch_selectedEvents->setNPU( event->nPu(0) );
+      myBranch_selectedEvents->setNPUBXp1( event->nPu(1) );
 			
-      myTree->setSelectedSingleLepton( isSingleLepton );
-			myTree->setSelectedSingleMu( isSingleMuon );
-			myTree->setSelectedSingleEl( isSingleElectron );
-			myTree->setSelectedSSLepton( isSSLepton );
-			myTree->setSelectedSSMu( isSSMuon );
-			myTree->setSelectedSSEl( isSSElectron );
-			myTree->setSelectedSSMuEl( isSSMuEl );
-			myTree->setSelectedTriLepton( isTriLepton );
-			myTree->setSelectedMuMuMu( isTriMuon );
-			myTree->setSelectedMuMuEl( isTriMu2El1 );
-			myTree->setSelectedMuElEl( isTriMu1El2 );
-			myTree->setSelectedElElEl( isTriElectron );
+      myBranch_selectedEvents->setSelectedSingleLepton( isSingleLepton );
+			myBranch_selectedEvents->setSelectedSingleMu( isSingleMuon );
+			myBranch_selectedEvents->setSelectedSingleEl( isSingleElectron );
+			myBranch_selectedEvents->setSelectedSSLepton( isSSLepton );
+			myBranch_selectedEvents->setSelectedSSMu( isSSMuon );
+			myBranch_selectedEvents->setSelectedSSEl( isSSElectron );
+			myBranch_selectedEvents->setSelectedSSMuEl( isSSMuEl );
+			myBranch_selectedEvents->setSelectedTriLepton( isTriLepton );
+			myBranch_selectedEvents->setSelectedMuMuMu( isTriMuon );
+			myBranch_selectedEvents->setSelectedMuMuEl( isTriMu2El1 );
+			myBranch_selectedEvents->setSelectedMuElEl( isTriMu1El2 );
+			myBranch_selectedEvents->setSelectedElElEl( isTriElectron );
 			
       if(dataSetName.find("TTbarJets_Semi") == 0)
       {
-      	myTree->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
-      	myTree->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
-				myTree->setWbosonpartonsmatched(Wbosonpartonsmatched);
+      	myBranch_selectedEvents->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
+      	myBranch_selectedEvents->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
+				myBranch_selectedEvents->setWbosonpartonsmatched(Wbosonpartonsmatched);
 				if(Wbosonpartonsmatched)
-				  myTree->setWMassmatched(WMassmatched_);
-				myTree->setmcQuarksForMatching( mcQuarksForMatching );
-				//myTree->setAll4JetsMCMatched( all4JetsMatched_MCdef );
-        //myTree->setAllHadronicJetsMCMatched( hadronictopJetsMatched_MCdef );
+				  myBranch_selectedEvents->setWMassmatched(WMassmatched_);
+				myBranch_selectedEvents->setmcQuarksForMatching( mcQuarksForMatching );
+				//myBranch_selectedEvents->setAll4JetsMCMatched( all4JetsMatched_MCdef );
+        //myBranch_selectedEvents->setAllHadronicJetsMCMatched( hadronictopJetsMatched_MCdef );
 				//vector<unsigned int> MatchedJetsIndices;
 				//MatchedJetsIndices.push_back(hadronicWJet1_.first);
 				//MatchedJetsIndices.push_back(hadronicWJet2_.first);
 				//MatchedJetsIndices.push_back(hadronicBJet_.first);
 				//MatchedJetsIndices.push_back(leptonicBJet_.first);
-				//myTree->setMatchedJetsIndices( MatchedJetsIndices );
+				//myBranch_selectedEvents->setMatchedJetsIndices( MatchedJetsIndices );
       }
-			myTree->setEventWeight( scaleFactor );
-			myTree->setMET( *mets[0] );
-      myTree->setSelectedJets( SelectedJetsTLV );
-			myTree->setBTagTCHE( bTagTCHE );
-      myTree->setBTagTCHP( bTagTCHP );
-			myTree->setpartonFlavourJet( partonFlavourJet );
-			myTree->setSelectedForwardJets( SelectedForwardJetsTLV );
-			myTree->setInitJets( InitJets );
-			myTree->setInitJetsBTagTCHE( InitJetsbTagTCHE );
-      myTree->setInitJetsBTagTCHP( InitJetsbTagTCHP );				     						
-      myTree->setMuons( SelectedMuonsTLV );
-      myTree->setElectrons( SelectedElectronsTLV );
+			myBranch_selectedEvents->setEventWeight( scaleFactor );
+			myBranch_selectedEvents->setMET( *mets[0] );
+      myBranch_selectedEvents->setSelectedJets( SelectedJetsTLV );
+			myBranch_selectedEvents->setBTagTCHE( bTagTCHE );
+      myBranch_selectedEvents->setBTagTCHP( bTagTCHP );
+			myBranch_selectedEvents->setpartonFlavourJet( partonFlavourJet );
+			myBranch_selectedEvents->setSelectedForwardJets( SelectedForwardJetsTLV );
+			myBranch_selectedEvents->setInitJets( InitJets );
+			myBranch_selectedEvents->setInitJetsBTagTCHE( InitJetsbTagTCHE );
+      myBranch_selectedEvents->setInitJetsBTagTCHP( InitJetsbTagTCHP );				     						
+      myBranch_selectedEvents->setMuons( SelectedMuonsTLV );
+      myBranch_selectedEvents->setElectrons( SelectedElectronsTLV );
 			
 			
-			//myTree->setTopDecayedLept( topDecayedLept );
-      //myTree->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
-      //myTree->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
-      //myTree->setMvaVals(mvaValsVector);
-      //myTree->setMvaResults(mvaResultsVector);
-      //myTree->setHadrBJet( hadrBJetIndex );
-      //myTree->setHadrLJet1( lightJet1Index );
-      //myTree->setHadrLJet2( lightJet2Index );
-      //myTree->setLeptBJet( leptBJetIndex );      
-      //myTree->setHadrBQuark( jetCombiner->GetHadrBQuark() );
-      //myTree->setHadrLQuark1( jetCombiner->GetLightQuark1() );
-      //myTree->setHadrLQuark2( jetCombiner->GetLightQuark2() );
-      //myTree->setLeptBQuark( jetCombiner->GetLeptBQuark() );
+			//myBranch_selectedEvents->setTopDecayedLept( topDecayedLept );
+      //myBranch_selectedEvents->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
+      //myBranch_selectedEvents->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
+      //myBranch_selectedEvents->setMvaVals(mvaValsVector);
+      //myBranch_selectedEvents->setMvaResults(mvaResultsVector);
+      //myBranch_selectedEvents->setHadrBJet( hadrBJetIndex );
+      //myBranch_selectedEvents->setHadrLJet1( lightJet1Index );
+      //myBranch_selectedEvents->setHadrLJet2( lightJet2Index );
+      //myBranch_selectedEvents->setLeptBJet( leptBJetIndex );      
+      //myBranch_selectedEvents->setHadrBQuark( jetCombiner->GetHadrBQuark() );
+      //myBranch_selectedEvents->setHadrLQuark1( jetCombiner->GetLightQuark1() );
+      //myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
+      //myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
 			
 			
             
       myInclFourthGenTree->Fill();
-	    delete myTree;
+	    delete myBranch_selectedEvents;
 
 	
     }//loop on events
@@ -1663,7 +1694,7 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 	   cout<<"                -> Pt() = "<<init_electrons[k]->Pt()<<endl;
 	   cout<<"              -> E() = "<<init_electrons[k]->E()<<endl;   
      }         
-     for(unsigned int k=0; k<init_jets.size(); k++)
+     for(unsigned int k=0; k<init_jets.size(); k++) //init_jets.size()
      {
 	   cout<<" init_jets["<<k<<"] -> Px() = "<<init_jets[k]->Px()<<endl;
 	   cout<<"              -> Py() = "<<init_jets[k]->Py()<<endl;
