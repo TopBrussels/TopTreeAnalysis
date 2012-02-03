@@ -470,45 +470,45 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
 	       }
 	     }
 	   }
-	 }
-
-	 //tt control region from here
-	 if (metPt >= metCut || mode ==0){
 	   
-	   if (nJets != 0){
+	   
+	   //tt control region from here
+	   if (metPt >= metCut || mode ==0){
 	     
-	     TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	     if (nJets != 0){
 	     
-	     double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-	     double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
-	     double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-	     double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	     
-	      if (ptSystem <= ptsysCut){
-		
-		if (ht > htMin || mode !=0){
-		  
-		  if (nJets == 1 && nTightJetsBT == 1 && bTagged)histo_R->Fill(1, xlWeight);
-		  if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
-		  if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
-		  if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight);
-		  if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
-		  if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
-		  if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
-		  if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
-		  if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
-		}
-	      }
-	   }
-	 } //tt CR
-	 
-      } //mll
+	       TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	       
+	       double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
+	       double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
+	       double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
+	       double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	       
+	       if (ptSystem <= ptsysCut){
+		 
+		 if (ht > htMin || mode !=0){
+		   
+		   if (nJets == 1 && nTightJetsBT == 1 && bTagged)histo_R->Fill(1, xlWeight);
+		   if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
+		   if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
+		   if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
+		   if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
+		   if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight);
+		   if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight);
+		   if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
+		   if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
+		   if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
+		   if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
+		   if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
+		   if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
+		   if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
+		   if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
+		 }
+	       }
+	     }
+	   } //tt CR
+	 } // mll
+      } //mll pre
     } // 2 leptons
   } // events
   
