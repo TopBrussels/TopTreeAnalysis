@@ -52,7 +52,6 @@ int main(int argc, char* argv[]) {
   
   //b-tag scale factor
   bool scaleFactor = true;
-  double SFval = 0.95; 
  
  // Met Type I correction	
   bool metTypeI = false; 
@@ -154,6 +153,7 @@ int main(int argc, char* argv[]) {
       string dataSetName = datasets[d]->Name();
       
       bool isData = false;
+      bool isTop = false;
       char name[100];
       double xlweight;
       
@@ -161,8 +161,8 @@ int main(int argc, char* argv[]) {
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; isData = true;}
       else if (dataSetName == "data1"){		sprintf(name, "data1");  	xlweight = 1; isData = true; RunA = true;}
       else if (dataSetName == "data2"){		sprintf(name, "data2");  	xlweight = 1; isData = true; RunB = true;}
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3160707;} //
-      else if (dataSetName == "tt2l"){		sprintf(name, "tt2l");  	xlweight = lumi*17.10/8576584;} //
+      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3160707; isTop = true;} //
+      else if (dataSetName == "tt2l"){		sprintf(name, "tt2l");  	xlweight = lumi*17.10/8576584; isTop = true;} //
       else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/813743;} //
       else if (dataSetName == "atwdr"){ 	sprintf(name, "atw_dr");        xlweight = lumi*7.87/689462;} //
       else if (dataSetName == "twds"){ 	     	sprintf(name, "tw_ds");	        xlweight = lumi*7.87/794802;} //
@@ -370,6 +370,7 @@ int main(int argc, char* argv[]) {
 	      genjets = treeLoader.LoadGenJet(ievt,false);
 	      sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
 	    }
+
 
 
 	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() <= 175860) || (!RunA && !RunB)){
@@ -717,6 +718,20 @@ int main(int argc, char* argv[]) {
 			    cutflow->Fill(7, weight);
 			    cutflow_raw->Fill(7);
 			    
+			    
+			    // double SFval = 0.95;  //Summer11 version
+			    double SFval, SFerror;
+			    if (isData || !scaleFactor){
+			      SFval = 1;
+			      SFerror = 0;
+			    } else if (isTop){
+			      SFval = 0.956;
+			      SFerror = 0.030;
+			    } else {
+			      SFval = 0.96;
+			      SFerror = 0.04;
+			    } 
+			    
 			    //Jet and b-tag selection
 			    int nJetsBT = 0;
 			    int nTightJetsBT = 0;
@@ -725,78 +740,30 @@ int main(int argc, char* argv[]) {
 			    int iJet = -5;
 			    int iSF;
 			    double tempSF = SFval;
-			    if (SFminus) 	tempSF = SFval - SFval*10/100;
-			    if (SFplus) 	tempSF = SFval + SFval*10/100;
-			    int SFvalue = int(tempSF*100 + 1);
-			    
-			    if (isData || !scaleFactor){
-			      for (unsigned int i =0; i < selectedJets.size(); i ++){
-				TRootJet* tempJet = (TRootJet*) selectedJets[i];
-				TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
-				if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
-				  nJets++;
-				  //if (iJet == -5) iJet = i;
-				  iJet = i; // we take the softer jet for the calculation of ht etc -to remove signal from the CR- can be negotiated ;)
-				  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+			    if (SFminus) 	tempSF = SFval - SFerror;
+			    if (SFplus) 	tempSF = SFval + SFerror;
+			    int SFvalue = int(tempSF*100);
+
+			    for (unsigned int i =0; i < selectedJets.size(); i ++){
+			      TRootJet* tempJet = (TRootJet*) selectedJets[i];
+			      TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
+			      if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
+				nJets++;
+				iJet = i;
+				if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+				  iSF = rand() % 100;
+				  if (iSF < SFvalue || SFval == 1){
 				    bTagged = true;
 				    nJetsBT++;
 				    nTightJetsBT++;
 				  } 
-				} else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74) nJetsBT++;
-			      }
-			    } else {
-			      //// Regular SF
-			      if (SFvalue < 101){
-				for (unsigned int i =0; i < selectedJets.size(); i ++){
-				  TRootJet* tempJet = (TRootJet*) selectedJets[i];
-				  TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
-				  if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
-				    nJets++;
-				    //if (iJet == -5) iJet = i;
-				    iJet = i;
-				    if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				      iSF = rand() % 101;
-				      if (iSF < SFvalue ){
-					bTagged = true;
-					nJetsBT++;
-					nTightJetsBT++;
-				      } 
-				    } 
-				  } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				    iSF = rand() % 101;
-				    if (iSF < SFvalue ) nJetsBT++;
-				  }
-				}
-			      } else {
-				//// Large SF
-				for (unsigned int i =0; i < selectedJets.size(); i ++){
-				  TRootJet* tempJet = (TRootJet*) selectedJets[i];
-				  TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
-				  if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
-				    nJets++;
-				    //if (iJet == -5) iJet = i;
-				    iJet = i;
-				    if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				      bTagged = true;
-				      nJetsBT++;
-				      nTightJetsBT++;
-				    } else {
-				      iSF = rand() % 101;
-				      if (iSF < abs(100 - SFvalue)){
-					nJetsBT++;
-					nTightJetsBT++;
-					bTagged = true;
-				      }
-				    }
-				  } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
-				    nJetsBT++;
-				  } else {
-				    iSF = rand() % 101;
-				    if (iSF < abs(100 - SFvalue)) nJetsBT++;
-				  }
-				}
+				} 
+			      } else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+				iSF = rand() % 100;
+				if (iSF < SFvalue  || SFval == 1) nJetsBT++;
 			      }
 			    }
+			    
 			    
 			    
 			    // Filling all the regions
@@ -835,7 +802,7 @@ int main(int argc, char* argv[]) {
 			      TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			      cutflow->Fill(8, weight);
 			      cutflow_raw->Fill(8);
-			      if (bTagged && nJetsBT == 1){
+			      if (bTagged && nTightJetsBT == 1){
 				cutflow->Fill(9,weight);
 				cutflow_raw->Fill(9);
 				

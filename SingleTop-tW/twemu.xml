@@ -2,6 +2,7 @@
 <datasets> 
 
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/data_4626.root"/> 
+
  
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/T_tW_DR.root"/> 
 
@@ -24,21 +25,22 @@
  <d name="zz" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/ZZ.root"/> 
  
  <d name="wjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/WJets.root"/>
- <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/ZJets.root"/>
-  
  <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/QCD_mu.root"/> 
+
+
+ <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/ZJets.root"/>
 
  <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/data_4626.root"/> 
  <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/data_4626.root"/> 
 
 
-<!----
+<!---
  <d name="dymumu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/DYToMuMu_M20.root"/> 
  <d name="dyee" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/DYToEE_M20.root"/> 
  <d name="dytautau" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/DYToTauTau_M20.root"/> 
  --->
 
-<!---
+
 <d name="tt2l" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/TT2L.root"/>
 
 
@@ -54,7 +56,7 @@
  <d name="t_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/T_scaleup_tW.root"/> 
  <d name="tbar_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/Tbar_scaleup_tW.root"/> 
  <d name="tbar_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/Tbar_scaledown_tW.root"/> 
---->
+
 
 </datasets>
 

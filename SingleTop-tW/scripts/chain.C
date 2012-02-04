@@ -6,7 +6,7 @@
 
 void chain(int nsel = 0, int mode = 0, bool silent = false){  
   
-  double SFval = 0.95;
+ 
   bool SFplus = false;
   bool SFminus = false;
   // samples used
@@ -305,6 +305,20 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
       if (pair.M() > 20){
 	histo->Fill(1, xlWeight);
 	
+	// double SFval = 0.95;  //Summer11 version
+	double SFval, SFerror;
+	if ( nsel == 666 || !nosf){
+	  SFval = 1;
+	  SFerror = 0;
+	} else if (nsel == 0){
+	  SFval = 0.956;
+	  SFerror = 0.030;
+	} else {
+	  SFval = 0.96;
+	  SFerror = 0.04;
+	}
+	
+	
 	int nJetsBT = 0;
 	int nTightJetsBT = 0;
 	int nJets = 0;
@@ -312,127 +326,81 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
 	int iJet = -5;
 	int iSF;
 	double tempSF = SFval;
-	if (SFminus)  tempSF = SFval - SFval*10/100;
-	if (SFplus)   tempSF = SFval + SFval*10/100;
-	int SFvalue = tempSF*100 + 1;
-	//
-	 if ( nsel == 666 || !nosf){
-	 for (int i =0; i < ptJet->size(); i ++){ 
+	if (SFminus) 	tempSF = SFval - SFerror;
+	if (SFplus) 	tempSF = SFval + SFerror;
+	int SFvalue = int(tempSF*100);
+
+	for (int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	  if (ptJet->at(i) >= 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
+	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	    nJets++;
 	    iJet = i;
 	    if (btSSVHEJet->at(i) > 1.74){
-	      bTagged = true;
-	      nJetsBT++;
-	      nTightJetsBT++;
+	      iSF = rand() % 100;
+	      if (iSF < SFvalue ){
+		bTagged = true;
+		nJetsBT++;
+		nTightJetsBT++;
+	      } 
 	    } 
-	  } else if (btSSVHEJet->at(i) > 1.74) nJetsBT++;
-	 }
-	 } else {
-	   //// Regular SF
-	   if (SFvalue < 101){
-	     for (int i =0; i < ptJet->size(); i ++){ 
-	       TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	       if (ptJet->at(i) >= 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-		 nJets++;
-		 iJet = i;
-		 if (btSSVHEJet->at(i) > 1.74){
-		   iSF = rand() % 101;
-		   if (iSF < SFvalue ){
-		     bTagged = true;
-		     nJetsBT++;
-		     nTightJetsBT++;
-		   } 
-		 } 
-	       } else if (btSSVHEJet->at(i) > 1.74){
-		 iSF = rand() % 101;
-		 if (iSF < SFvalue ) nJetsBT++;
-	       }
-	     }
-	   } else {
-	     //// Large SF
-	     
-	     for (int i =0; i < ptJet->size(); i ++){ 
-	       TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	       if (ptJet->at(i) >= 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-		 nJets++;
-		 iJet = i;
-		 if (btSSVHEJet->at(i) > 1.74 > 1.74){
-		   bTagged = true;
-		   nJetsBT++;
-		   nTightJetsBT++;
-		 } else {
-		   iSF = rand() % 101;
-		   if (iSF < abs(100 - SFvalue)){
-		     nJetsBT++;
-		     nTightJetsBT++;
-		     bTagged = true;
-		   }
-		 }
-	       } else if (btSSVHEJet->at(i) > 1.74){
-		 nJetsBT++;
-	       } else {
-		 iSF = rand() % 101;
-		 if (iSF < abs(100 - SFvalue)) nJetsBT++;
-	       }
-	     }
-	   }
-	 }
-	 
-	 //
-	 
-	 
-	 
-	 histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
-	 histo_pt_min->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
-	 histo_njets->Fill(nJets,  xlWeight);
-	 histo_njetsbt->Fill(nJetsBT,  xlWeight);
-	 histo_mll->Fill(pair.M(),  xlWeight);
-	 histo_met->Fill(metPt,  xlWeight);
-	 histo_promet->Fill(promet, xlWeight);
-	 
-	 if (nvertex > 5){
-	   histo_met_high->Fill(metPt,  xlWeight);
-	   histo_njets_high->Fill(nJets,  xlWeight);
-	   histo_njetsbt_high->Fill(nJetsBT,  xlWeight);
-	 } else {
-	   histo_met_low->Fill(metPt,  xlWeight);
-	   histo_njets_low->Fill(nJets,  xlWeight);
-	   histo_njetsbt_low->Fill(nJetsBT,  xlWeight);  
-	 }
-	 
-	 if (nJets) histo_pt_leading->Fill(ptJet->at(0), xlWeight);
-	 if (nJets == 1){
-	   histo_etalepton->Fill(lepton0.Eta(), xlWeight);
-	   TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	  } else if (btSSVHEJet->at(i) > 1.74){
+	    iSF = rand() % 100;
+	    if (iSF < SFvalue ) nJetsBT++;
+	  }
+	}
+	//
+      
+	
+	
+	histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
+	histo_pt_min->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
+	histo_njets->Fill(nJets,  xlWeight);
+	histo_njetsbt->Fill(nJetsBT,  xlWeight);
+	histo_mll->Fill(pair.M(),  xlWeight);
+	histo_met->Fill(metPt,  xlWeight);
+	histo_promet->Fill(promet, xlWeight);
+	
+	if (nvertex > 5){
+	  histo_met_high->Fill(metPt,  xlWeight);
+	  histo_njets_high->Fill(nJets,  xlWeight);
+	  histo_njetsbt_high->Fill(nJetsBT,  xlWeight);
+	} else {
+	  histo_met_low->Fill(metPt,  xlWeight);
+	  histo_njets_low->Fill(nJets,  xlWeight);
+	  histo_njetsbt_low->Fill(nJetsBT,  xlWeight);  
+	}
+	
+	if (nJets) histo_pt_leading->Fill(ptJet->at(0), xlWeight);
+	if (nJets == 1){
+	  histo_etalepton->Fill(lepton0.Eta(), xlWeight);
+	  TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
 	   
-	   double ptSysPx1 = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-	   double ptSysPy1 = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
-	   double ptSystem1 = sqrt(ptSysPx1*ptSysPx1 + ptSysPy1*ptSysPy1);
-	   double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	   histo_ptsys_bf->Fill(ptSystem1, xlWeight);
-	   histo_ht_bf->Fill(ht1, xlWeight);
+	  double ptSysPx1 = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
+	  double ptSysPy1 = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
+	  double ptSystem1 = sqrt(ptSysPx1*ptSysPx1 + ptSysPy1*ptSysPy1);
+	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
+	  histo_ht_bf->Fill(ht1, xlWeight);
 	 }
-	 bool invMass = false;
-	 if      (mode == 0) invMass = true;
-	 else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
-	 else if (mode == 2 && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
-	 
-	 if (invMass){
-	   histo->Fill(2, xlWeight);
-	   histo_mll_after->Fill(pair.M(),  xlWeight);
-	   histo_met_cut->Fill(metPt,  xlWeight);
-	   
-	   if (metPt >= metCut || mode ==0){
-	     //if (promet >= metCut || mode ==0){
-	     histo->Fill(3, xlWeight);
-	     histo_njets_cut->Fill(nJets, xlWeight);
-	     if (nJets == 1){
+	bool invMass = false;
+	if      (mode == 0) invMass = true;
+	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
+	else if (mode == 2 && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
+	
+	if (invMass){
+	  histo->Fill(2, xlWeight);
+	  histo_mll_after->Fill(pair.M(),  xlWeight);
+	  histo_met_cut->Fill(metPt,  xlWeight);
+	  
+	  if (metPt >= metCut || mode ==0){
+	    //if (promet >= metCut || mode ==0){
+	    histo->Fill(3, xlWeight);
+	    histo_njets_cut->Fill(nJets, xlWeight);
+	    if (nJets == 1){
 	       histo->Fill(4, xlWeight);
 	       histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
 	       
-	       if (nJetsBT == 1 && bTagged){
+	       if (nTightJetsBT == 1 && bTagged){
 		 histo->Fill(5, xlWeight);
 		 
 		 double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
