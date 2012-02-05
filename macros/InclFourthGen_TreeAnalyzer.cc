@@ -468,9 +468,9 @@ int main (int argc, char *argv[])
 		string dataSetName = datasets[d]->Name();
 		
 		TTree* inInclFourthGenTree = (TTree*) inFile->Get("myInclFourthGenTree");
-    TBranch* m_br = (TBranch*) inInclFourthGenTree->GetBranch("TheInclFourthGenTree");
-    InclFourthGenTree* myTree = 0;
-    m_br->SetAddress(&myTree);
+    TBranch* m_br = (TBranch*) inInclFourthGenTree->GetBranch("InclFourthGenBranch_selectedEvents");
+    InclFourthGenTree* myBranch_selectedEvents = 0;
+    m_br->SetAddress(&myBranch_selectedEvents);
     int nEvents = inInclFourthGenTree->GetEntries();
 
 		cout << " Processing DataSet: " << dataSetName << "  containing " << nEvents << " events" << endl;
@@ -547,10 +547,10 @@ int main (int argc, char *argv[])
 	    vector<TLorentzVector> InitJets;
 			vector<float> InitJetsbTagValues;
 			if(btagger.find("TCHE")<=0)
-			  InitJetsbTagValues = myTree->InitJetsbTagTCHE();
+			  InitJetsbTagValues = myBranch_selectedEvents->InitJetsbTagTCHE();
 			else if(btagger.find("TCHP")<=0)
-			  InitJetsbTagValues = myTree->InitJetsbTagTCHP(); 
-			InitJets = myTree->InitJets();
+			  InitJetsbTagValues = myBranch_selectedEvents->InitJetsbTagTCHP(); 
+			InitJets = myBranch_selectedEvents->InitJets();
 	 
       // scale factor for the event
       float scaleFactor = 1.;
@@ -597,43 +597,43 @@ int main (int argc, char *argv[])
       	////////////////////////////
       	// apply PU Reweighting
       	////////////////////////////
-				lumiWeight3D = Lumi3DWeights.weight3D(myTree->nPUBXm1(),myTree->nPU(),myTree->nPUBXp1());
+				lumiWeight3D = Lumi3DWeights.weight3D(myBranch_selectedEvents->nPUBXm1(),myBranch_selectedEvents->nPU(),myBranch_selectedEvents->nPUBXp1());
 	 			scaleFactor = scaleFactor*lumiWeight3D;
       	histo1D["lumiWeights"]->Fill(scaleFactor);	
 			}
       
 			//reading variables from the tree
-      bool isSingleLepton = myTree->SelectedSingleLepton();
-      bool isSSLepton = myTree->SelectedSSLepton();
-      bool isTriLepton = myTree->SelectedTriLepton();
-      bool isSingleMuon = myTree->SelectedSingleMu();
-      bool isSingleElectron = myTree->SelectedSingleEl();
-      bool isSSMuon = myTree->SelectedSSMu();
-      bool isSSElectron = myTree->SelectedSSEl();
-      bool isSSMuEl = myTree->SelectedSSMuEl();
-      bool isTriMuon = myTree->SelectedMuMuMu();
-      bool isTriElectron = myTree->SelectedElElEl();
-      bool isTriMu2El1 = myTree->SelectedMuMuEl();
-      bool isTriMu1El2 = myTree->SelectedMuElEl();
+      bool isSingleLepton = myBranch_selectedEvents->SelectedSingleLepton();
+      bool isSSLepton = myBranch_selectedEvents->SelectedSSLepton();
+      bool isTriLepton = myBranch_selectedEvents->SelectedTriLepton();
+      bool isSingleMuon = myBranch_selectedEvents->SelectedSingleMu();
+      bool isSingleElectron = myBranch_selectedEvents->SelectedSingleEl();
+      bool isSSMuon = myBranch_selectedEvents->SelectedSSMu();
+      bool isSSElectron = myBranch_selectedEvents->SelectedSSEl();
+      bool isSSMuEl = myBranch_selectedEvents->SelectedSSMuEl();
+      bool isTriMuon = myBranch_selectedEvents->SelectedMuMuMu();
+      bool isTriElectron = myBranch_selectedEvents->SelectedElElEl();
+      bool isTriMu2El1 = myBranch_selectedEvents->SelectedMuMuEl();
+      bool isTriMu1El2 = myBranch_selectedEvents->SelectedMuElEl();
 		  
 			bool isSemiLep_MC = false;
-			if(myTree->semiMuDecay() || myTree->semiElDecay())
+			if(myBranch_selectedEvents->semiMuDecay() || myBranch_selectedEvents->semiElDecay())
 			  isSemiLep_MC = true;
 			
-			float met = (myTree->met()).Et();
-      vector<TLorentzVector> selectedJets = myTree->selectedJets();
-			vector<TLorentzVector> selectedForwardJets = myTree->selectedForwardJets();
-			vector<TLorentzVector> selectedMuons = myTree->selectedMuons();
-			vector<TLorentzVector> selectedElectrons = myTree->selectedElectrons();
+			float met = (myBranch_selectedEvents->met()).Et();
+      vector<TLorentzVector> selectedJets = myBranch_selectedEvents->selectedJets();
+			vector<TLorentzVector> selectedForwardJets = myBranch_selectedEvents->selectedForwardJets();
+			vector<TLorentzVector> selectedMuons = myBranch_selectedEvents->selectedMuons();
+			vector<TLorentzVector> selectedElectrons = myBranch_selectedEvents->selectedElectrons();
 			vector<float> bTagValues, bTagValuesForMVA;
-			bTagValuesForMVA = myTree->bTagTCHP(); //choice...
+			bTagValuesForMVA = myBranch_selectedEvents->bTagTCHP(); //choice...
 			if(btagger.find("TCHE")<=0)
-			  bTagValues = myTree->bTagTCHE();
+			  bTagValues = myBranch_selectedEvents->bTagTCHE();
 			else if(btagger.find("TCHP")<=0)
-			  bTagValues = myTree->bTagTCHP();
+			  bTagValues = myBranch_selectedEvents->bTagTCHP();
 
 						
-			MSPlot["MS_nPV"]->Fill(myTree->nPV(),datasets[d], true, Luminosity*scaleFactor);				
+			MSPlot["MS_nPV"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);				
 
 			if(isSingleLepton){
 				MSPlot["MS_MET"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);				
@@ -675,9 +675,9 @@ int main (int argc, char *argv[])
         //the jets are sorted according to Pt in the TreeCreator, with everything conistently sorted along (should be), because the sorting was done before matching and pushing back b-tag values in vectors... Check and be careful!!
 				//sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 				
 				if(semiMuon) 
-					jetCombiner->ProcessEvent(datasets[d], myTree->mcQuarksForMatching(), selectedJets, bTagValuesForMVA, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);	        
+					jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets, bTagValuesForMVA, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);	        
 				else if(semiElectron)
-					jetCombiner->ProcessEvent(datasets[d], myTree->mcQuarksForMatching(), selectedJets, bTagValuesForMVA, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);	        
+					jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets, bTagValuesForMVA, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);	        
       }
 
        
@@ -688,9 +688,9 @@ int main (int argc, char *argv[])
       //////////////////////////////////////////////////////////////////////////
       if(selectedJets.size()>=4 && !useMassesAndResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
 			{
-      	if(myTree->Wbosonpartonsmatched())
+      	if(myBranch_selectedEvents->Wbosonpartonsmatched())
 	  		{ 					
-					float WMassmatched_ = myTree->WMassmatched();
+					float WMassmatched_ = myBranch_selectedEvents->WMassmatched();
       		histo1D["hadronicRecoWMass"]->Fill(WMassmatched_,scaleFactor);
 	  		}
 			}
@@ -734,7 +734,7 @@ int main (int argc, char *argv[])
 				{
 					for(unsigned int i = 0; i<jetindex_btagvalue.size(); i++)
 					{
-						if(fabs((myTree->partonFlavourJet())[jetindex_btagvalue[i].first]) == 5 )
+						if(fabs((myBranch_selectedEvents->partonFlavourJet())[jetindex_btagvalue[i].first]) == 5 )
 						{// is a true b-jet
 							pair<int,float> dummy (jetindex_btagvalue[i].first,true); //not: pair<int,float> dummy (i,true)
 							jetindex_isb.push_back(dummy);
@@ -995,8 +995,8 @@ int main (int argc, char *argv[])
 					
 					     //sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
  	                          
-			   			 if(semiMuon) jetCombiner->ProcessEvent(datasets[d], myTree->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_1B_2W, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation); //datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-               else if(semiElectron) jetCombiner->ProcessEvent(datasets[d], myTree->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_1B_2W, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);
+			   			 if(semiMuon) jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_1B_2W, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation); //datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
+               else if(semiElectron) jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_1B_2W, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);
 	  
 			   			 //vector<unsigned int> goodCombi = jetCombiner_1B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
 			   			 MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
@@ -1151,8 +1151,8 @@ int main (int argc, char *argv[])
 					   {
        			   			//sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
 	                          			
-			  						if(semiMuon) jetCombiner->ProcessEvent(datasets[d], myTree->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_2B_2W, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation); //datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
-              			else if(semiElectron) jetCombiner->ProcessEvent(datasets[d], myTree->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_2B_2W, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);
+			  						if(semiMuon) jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_2B_2W, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation); //datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
+              			else if(semiElectron) jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_2B_2W, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);
 		  
 			   					//vector<unsigned int> goodCombi = jetCombiner_2B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
 			   					MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
