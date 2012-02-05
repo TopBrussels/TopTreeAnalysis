@@ -339,7 +339,7 @@ void datacardmaker(int kindofdata = 0){
   }
   datacard << endl;
   
-  datacard << "ttxs      lnN  -            1.15         -         -            1.15        -          -            1.15         -           -           1.15         -         -            1.15        -          -            1.15         -         -          1.15        -        -           1.15         -        -            1.15         -" << endl;
+  datacard << "ttxs      lnN  -            1.06         -         -            1.06        -          -            1.06         -           -           1.06        -         -            1.06        -          -            1.06         -         -          1.06        -        -           1.06         -        -           1.06         -" << endl;
   
   TString SystName = "JES";
   TH1F*  hup [3][3];
