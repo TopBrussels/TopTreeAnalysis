@@ -84,6 +84,7 @@ int main(int argc, char* argv[]) {
 
   string xmlfile ="twemu.xml";
   
+  bool useTestXML=false;
   // Arguments
   for(int iarg = 0; iarg < argc && argc>1 ; iarg++){
     std::string argval=argv[iarg];
@@ -109,6 +110,7 @@ int main(int argc, char* argv[]) {
     if (argval=="--ee") mode = 2;
     if (argval=="--emu") mode = 0;
     if (argval=="--mumu") mode = 1;
+    if (argval=="--xml") {std::cout << "using test.xml!" << std::endl;useTestXML=true;}
     if (argval=="--uncMETup") unclusteredUp = true;
     if (argval=="--uncMETdown") unclusteredDown = true;
     if (argval=="--PUup" ){PUsysUp = true;}
@@ -129,7 +131,9 @@ int main(int argc, char* argv[]) {
   if      (mode == 0){ 	 lumi = 4626.297;	 xmlfile ="twemu.xml";}
   else if (mode == 1){	 lumi = 4534.871;	 xmlfile = "twmumu.xml";}
   else if (mode == 2){	 lumi = 4593.348;	 xmlfile = "twee.xml";}
-  
+  if(useTestXML)
+    xmlfile="test.xml";
+  std::cout << "using file: " << xmlfile << std::endl;
   
   // Analysis environment
   TTree *configTree = new TTree("configTree","configuration Tree");
