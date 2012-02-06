@@ -5,7 +5,7 @@
 
 void dycontrol(int nsel, int mode = 0, bool silent = false){  
   
-  double SFval = 0.95;
+
   bool SFplus = false;
   bool SFminus = false;
   // samples used
@@ -150,76 +150,52 @@ void dycontrol(int nsel, int mode = 0, bool silent = false){
         if (pair.M() > invMax || pair.M() < invMin) histo_R->Fill(1, xlWeight);
         else histo_R->Fill(2, xlWeight);
 
+	// double SFval = 0.95;  //Summer11 version
+	double SFval, SFerror;
+	if ( nsel == 666 || !nosf){
+	  SFval = 1;
+	  SFerror = 0;
+	} else if (nsel == 0){
+	  SFval = 0.956;
+	  SFerror = 0.030;
+	} else {
+	  SFval = 0.96;
+	  SFerror = 0.04;
+	}
+	
+	
 	int nJetsBT = 0;
+	int nTightJetsBT = 0;
 	int nJets = 0;
 	bool bTagged = false;
 	int iJet = -5;
 	int iSF;
 	double tempSF = SFval;
-	if (SFminus)  tempSF = SFval - SFval*10/100;
-	if (SFplus)   tempSF = SFval + SFval*10/100;
-	int SFvalue = tempSF*100 + 1;
-	//
-	if ( nsel == 666 || !nosf){
-	  for (int i =0; i < ptJet->size(); i ++){ 
-	    TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	    if (ptJet->at(i) >= 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-	      nJets++;
-	      if (iJet == -5) iJet = i;
-	      if (btSSVHEJet->at(i) > 1.74){
+	if (SFminus) 	tempSF = SFval - SFerror;
+	if (SFplus) 	tempSF = SFval + SFerror;
+	int SFvalue = int(tempSF*100);
+
+	for (int i =0; i < ptJet->size(); i ++){ 
+	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
+	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
+	    nJets++;
+	    iJet = i;
+	    if (btSSVHEJet->at(i) > 1.74){
+	      iSF = rand() % 100;
+	      if (iSF < SFvalue ){
 		bTagged = true;
 		nJetsBT++;
+		nTightJetsBT++;
 	      } 
-	    } else if (btSSVHEJet->at(i) > 1.74) nJetsBT++;
-	  }
-	} else {
-	  //// Regular SF
-	  if (SFvalue < 101){
-	    for (int i =0; i < ptJet->size(); i ++){ 
-	      TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	      if (ptJet->at(i) >= 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-		nJets++;
-		if (iJet == -5) iJet = i;
-		if (btSSVHEJet->at(i) > 1.74){
-		  iSF = rand() % 101;
-		  if (iSF < SFvalue ){
-		    bTagged = true;
-		    nJetsBT++;
-		  } 
-		} 
-	      } else if (btSSVHEJet->at(i) > 1.74){
-		iSF = rand() % 101;
-		if (iSF < SFvalue ) nJetsBT++;
-	      }
-	    }
-	  } else {
-	    //// Large SF
-	    
-	    for (int i =0; i < ptJet->size(); i ++){ 
-	      TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	      if (ptJet->at(i) >= 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-		nJets++;
-		if (iJet == -5) iJet = i;
-		if (btSSVHEJet->at(i) > 1.74 > 1.74){
-		  bTagged = true;
-		  nJetsBT++;
-		} else {
-		  iSF = rand() % 101;
-		  if (iSF < abs(100 - SFvalue)){
-		    nJetsBT++;
-		    bTagged = true;
-		  }
-		}
-	      } else if (btSSVHEJet->at(i) > 1.74){
-		nJetsBT++;
-	      } else {
-		iSF = rand() % 101;
-		if (iSF < abs(100 - SFvalue)) nJetsBT++;
-	      }
-	    }
+	    } 
+	  } else if (btSSVHEJet->at(i) > 1.74){
+	    iSF = rand() % 100;
+	    if (iSF < SFvalue ) nJetsBT++;
 	  }
 	}
-	
+	//
+      
+
 	//
 	
 	
