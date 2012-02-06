@@ -13,8 +13,8 @@ OutPutOpt     = -o
 HeadSuf       = h
 
 ROOTCFLAGS    = $(shell root-config --cflags)
-ROOTLIBS      = $(shell root-config --libs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lFoam -lTMVA
-ROOTGLIBS     = $(shell root-config --glibs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lFoam -lTMVA
+ROOTLIBS      = $(shell root-config --libs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
+ROOTGLIBS     = $(shell root-config --glibs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
 
 # Linux with egcs
 DEFINES       = -DNO_ORCA_CLASSES -I.. -I./TMVA/include
@@ -33,14 +33,14 @@ CXXFLAGS	+= $(ROOTCFLAGS)
 LIBS		= -I./TMVA/include -L./TMVA/lib $(ROOTLIBS) -lEG -I.. -L. -L../TopTreeProducer/src 
 GLIBS		= $(ROOTGLIBS)
 #------------------------------------------------------------------------------
-SOURCES         = $(wildcard Tools/src/*.cc StatProcedure/src/*.cc BkgEstimationMethods/src/*.cc  Selection/src/*.cc Reconstruction/src/*.cc MCInformation/src/*.cc tinyxml/*.cc KinFitter/src/*.cc JESMeasurement/src/*.cc WHelicities/src/*.cc TopFCNC/src/*.cc InclFourthGenSearch/src/*.cc)
-HEADERS         = $(wildcard Tools/interface/*.h StatProcedure/interface/*.h BkgEstimationMethods/interface/*.h  Selection/interface/*.h Reconstruction/interface/*.h MCInformation/interface/*.h tinyxml/*.h Kinfitter/interface/*.h JESMeasurement/interface/*.h WHelicities/interface/*.h TopFCNC/interface/*.h InclFourthGenSearch/interface/*.h)
+SOURCES         = $(wildcard Tools/src/*.cc StatProcedure/src/*.cc BkgEstimationMethods/src/*.cc  Selection/src/*.cc Reconstruction/src/*.cc MCInformation/src/*.cc tinyxml/*.cc KinFitter/src/*.cc JESMeasurement/src/*.cc WHelicities/src/*.cc TopFCNC/src/*.cc InclFourthGenSearch/src/*.cc StopSearchesBG/src/*.cc)
+HEADERS         = $(wildcard Tools/interface/*.h StatProcedure/interface/*.h BkgEstimationMethods/interface/*.h  Selection/interface/*.h Reconstruction/interface/*.h MCInformation/interface/*.h tinyxml/*.h Kinfitter/interface/*.h JESMeasurement/interface/*.h WHelicities/interface/*.h TopFCNC/interface/*.h InclFourthGenSearch/interface/*.h StopSearchesBG/interface/*.h)
 OBJECTS		= $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 DEPENDS		= $(SOURCES:.$(SrcSuf)=.d)
 SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
 #for libTopTreeAnaContent.so
-SOURCESDIC	= $(wildcard Reconstruction/src/Observables.cc Reconstruction/src/MEzCalculator.cc Content/src/*.cc ../TopTreeProducer/src/TRoot*.cc JESMeasurement/src/Monster.cc JESMeasurement/src/LightMonster.cc WHelicities/src/WTree.cc TopFCNC/src/*.cc InclFourthGenSearch/src/InclFourthGenTree.cc)
-HEADERSDIC	= $(wildcard Content/interface/*.h ../TopTreeProducer/interface/TRoot*.h JESMeasurement/interface/Monster.h JESMeasurement/interface/LightMonster.h WHelicities/interface/WTree.h TopFCNC/interface/*.h InclFourthGenSearch/interface/InclFourthGenTree.h)
+SOURCESDIC	= $(wildcard Reconstruction/src/Observables.cc Reconstruction/src/MEzCalculator.cc Content/src/*.cc ../TopTreeProducer/src/TRoot*.cc JESMeasurement/src/Monster.cc JESMeasurement/src/LightMonster.cc WHelicities/src/WTree.cc TopFCNC/src/*.cc InclFourthGenSearch/src/InclFourthGenTree.cc StopSearchesBG/src/*.cc)
+HEADERSDIC	= $(wildcard Content/interface/*.h ../TopTreeProducer/interface/TRoot*.h JESMeasurement/interface/Monster.h JESMeasurement/interface/LightMonster.h WHelicities/interface/WTree.h TopFCNC/interface/*.h InclFourthGenSearch/interface/InclFourthGenTree.h StopSearchesBG/interface/*.h)
 OBJECTSDIC	= $(SOURCESDIC:.$(SrcSuf)=.$(ObjSuf))
 
 # headers and sources for btag eff analysis lib
