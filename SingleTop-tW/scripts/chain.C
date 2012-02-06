@@ -400,7 +400,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
 	       histo->Fill(4, xlWeight);
 	       histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
 	       
-	       if (nTightJetsBT == 1 && bTagged){
+	       if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1){
 		 histo->Fill(5, xlWeight);
 		 
 		 double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
@@ -456,7 +456,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
 		 
 		 if (ht > htMin || mode !=0){
 		   
-		   if (nJets == 1 && nTightJetsBT == 1 && bTagged)histo_R->Fill(1, xlWeight);
+		   if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)histo_R->Fill(1, xlWeight);
 		   if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
 		   if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
 		   if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
