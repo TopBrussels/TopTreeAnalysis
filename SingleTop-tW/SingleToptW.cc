@@ -373,7 +373,7 @@ int main(int argc, char* argv[]) {
 
 
 
-	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() <= 175860) || (!RunA && !RunB)){
+	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() >= 175860) || (!RunA && !RunB)){
 	    // Weight given by the theoretical cross-section and lumi
 	    double weight = xlweight;
 	    
@@ -802,7 +802,7 @@ int main(int argc, char* argv[]) {
 			      TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			      cutflow->Fill(8, weight);
 			      cutflow_raw->Fill(8);
-			      if (bTagged && nTightJetsBT == 1){
+			      if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
 				cutflow->Fill(9,weight);
 				cutflow_raw->Fill(9);
 				
