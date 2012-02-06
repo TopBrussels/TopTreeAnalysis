@@ -15,7 +15,7 @@
 using namespace std;
 void syst(){
 
-  TString processName[4] =  { "twdr", "tt","zjets", "others"};
+  TString processName[4] =  { "twdr", "tt","others", "zjets"};
   char myRootFile[300]; 
   TH1F*  hnominal [3][4];
   for (int mode = 0; mode < 3; mode++){
@@ -64,7 +64,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       if (j == 0){
 	sprintf(myRootFile,"outputs/noPU_%d_tbar_sup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
@@ -86,7 +86,7 @@ void syst(){
   cout << "* Factorization/Normalization Scale " << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 4; j++){ 
+    for (int j = 0; j < 3; j++){ 
       if(j < 2){
 	cout << processName[j] << ":" ;
 	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
@@ -100,7 +100,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       if (j == 1) {
 	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
@@ -115,7 +115,7 @@ void syst(){
   cout << "* ME/PS matching thresholds" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 4; j++){ 
+    for (int j = 0; j < 3; j++){ 
       if(j == 1){
 	cout << processName[j] << ":" ;
 	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
@@ -129,7 +129,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       if (j == 1) {
 	sprintf(myRootFile,"outputs/noPU_%d_tt_largeISR.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
@@ -144,7 +144,7 @@ void syst(){
   cout << "* ISR/FSR " << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 4; j++){ 
+    for (int j = 0; j < 3; j++){ 
       if(j == 1){
 	cout << processName[j] << ":" ;
 	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
@@ -158,7 +158,7 @@ void syst(){
   
   TH1F*  h [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       if (j == 0) {
 	sprintf(myRootFile,"outputs/out_%d_twds.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
@@ -185,7 +185,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -218,7 +218,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -244,7 +244,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -270,7 +270,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -296,7 +296,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 4; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -330,7 +330,7 @@ void syst(){
  for (int i = 0; i < 3; i++){
    cout << "mode:" << i << "      " ;
    for (int j = 0; j <4; j++){ 
-     if(j == 0){
+     if(j == 0 || j == 2){
        cout << processName[j] << ":" ;
        if (hnominal[i][j]->GetBinContent(2) !=0) cout << (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
        else cout << "-          ";

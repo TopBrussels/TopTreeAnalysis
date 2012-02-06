@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <datasets>
-
+<!---
   <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/data_4593.root"/>  
-
+--->
 
   <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/T_tW_DR.root"/> 
  
@@ -28,7 +28,7 @@
   <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2e/QCD_mu.root"/> 
 
 
-  
+  <!---
   <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/ZJets.root"/>
  
   
@@ -41,7 +41,7 @@
   <d name="dyee" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/DYToEE_M20.root"/> 
   <d name="dytautau" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/DYToTauTau_M20.root"/>
 --->
-
+<!---
  <d name="tt2l" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2e/TT2L.root"/> 
  
   <d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2e/TT_scaleup.root"/> 
@@ -56,7 +56,7 @@
   <d name="t_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2e/T_scaleup_tW.root"/> 
   <d name="tbar_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2e/Tbar_scaleup_tW.root"/> 
   <d name="tbar_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2e/Tbar_scaledown_tW.root"/> 
-
+--->
 
 </datasets>
 
