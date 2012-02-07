@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <datasets> 
-<!---
+
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/data_4626.root"/> 
---->
- <!---
+
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/T_tW_DR.root"/> 
 
 
@@ -27,9 +26,9 @@
  <d name="wjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/WJets.root"/>
  <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/QCD_mu.root"/> 
 
-<!---
+
  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/ZJets.root"/>
---->
+
  <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/data_4626.root"/> 
  <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu/data_4626.root"/> 
 

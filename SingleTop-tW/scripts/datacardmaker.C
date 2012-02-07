@@ -118,34 +118,48 @@ void datacardmaker(int kindofdata = 0){
     }
   } 
   
+  double scale1[3]; 
+  double scale2[3];
+  double scale3[3];
+  scale1[0] = 1.07377;
+  scale1[1] = 1.09354;
+  scale1[2] = 1.12114;
+  scale2[0] = 1.05014;
+  scale2[1] = 1.02729;
+  scale2[2] = 1.0958;
+  scale3[0] = 1.10415;
+  scale3[1] = 1.17215;
+  scale3[2] = 1.04999;
+ 
+
   datacard << "ttscale   lnN  ";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j < 2){
+      if(j == 1){
 	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - average)/average) << "         ";
 	else datacard << "-         ";
-      }
+      } else if (j == 2) datacard << scale1[i] < <"         ";
       else datacard << "-         ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j < 2){
+      if(j == 1){
 	double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - average)/average) << "         ";
 	else datacard << "-         ";
-      }
+      }else if (j == 2) datacard << scale2[i] < <"         ";
       else datacard << "-         ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j < 2){
+      if(j ==1){
 	double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - average)/average) << "         ";
 	else datacard << "-         ";
-      }
+      }else if (j == 2) datacard << scale3[i] < <"         ";
       else datacard << "-         ";
     }
   }
@@ -168,13 +182,25 @@ void datacardmaker(int kindofdata = 0){
     }
   } 
   
+  double matching1[3];
+  double matching2[3];
+  double matching3[3];
+  matching1[0] = 1.05805;
+  matching1[1] = 1.00403;
+  matching1[2] = 1.00146;
+  matching2[0] = 1.03177;
+  matching2[1] = 1.00943;
+  matching2[2] = 1.06217;
+  matching3[0] = 1.07399;
+  matching3[1] = 1.00235;
+  matching3[2] = 1.046;
+  
+
   datacard << "ttmatch   lnN  ";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - average)/average) << "         ";
-	else datacard << "-            ";
+	datacard << matching1[i] << "         ";
       }
       else datacard << "-            ";
     }
@@ -182,9 +208,7 @@ void datacardmaker(int kindofdata = 0){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
-	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - average)/average) << "         ";
-	else datacard << "-            ";
+	datacard << matching2[i] << "         ";
       }
       else datacard << "-            ";
     }
@@ -192,9 +216,7 @@ void datacardmaker(int kindofdata = 0){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
-	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - average)/average) << "         ";
-	else datacard << "-            ";
+	datacard << matching3[i] << "         ";
       }
       else datacard << "-            ";
     }
