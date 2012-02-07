@@ -176,7 +176,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfixOld = "_TEST"; // to relabel the names of the output file  
+  string postfixOld = ""; // to relabel the names of the output file  
 	string postfix= postfixOld+"_"+systematic;
 
   string Treespath = "InclFourthGenTrees";
@@ -200,8 +200,8 @@ int main (int argc, char *argv[])
   //bool TrainwithTprime = false; //temporarily not supported
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
-  bool semiElectron = false; // use semiElectron channel?
-  bool semiMuon = true; // use semiMuon channel?
+  bool semiElectron = true; // use semiElectron channel?
+  bool semiMuon = false; // use semiMuon channel?
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -328,29 +328,9 @@ int main (int argc, char *argv[])
 	
 	cout << " - Declared histograms ..." <<  endl;
 
-  float NbSSevents = 0;  
-  float NbSSevents_1B_2W = 0; 
-  float NbSSevents_1B_3W = 0; 
-  float NbSSevents_1B_4W = 0; 
-  float NbSSevents_2B_2W = 0; 
-  float NbSSevents_2B_3W = 0; 
-  float NbSSevents_2B_4W = 0; 
-  float NP_NbSSevents_1B_2W = 0; 
-  float NP_NbSSevents_1B_3W = 0; 
-  float NP_NbSSevents_1B_4W = 0; 
-  float NP_NbSSevents_2B_2W = 0; 
-  float NP_NbSSevents_2B_3W = 0; 
-  float NP_NbSSevents_2B_4W = 0; 
-  float NbTrievents = 0; 
-  float NbTrievents_1B_3W = 0; 
-  float NbTrievents_1B_4W = 0; 
-  float NbTrievents_2B_3W = 0; 
-  float NbTrievents_2B_4W = 0; 
-  float NP_NbTrievents_1B_3W = 0; 
-  float NP_NbTrievents_1B_4W = 0; 
-  float NP_NbTrievents_2B_3W = 0; 
-  float NP_NbTrievents_2B_4W = 0; 
-  
+  float NbSSevents = 0;   
+  float NbTrievents = 0;  
+
   /////////////////////////////////////////////////////////
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
   /////////////////////////////////////////////////////////
@@ -379,35 +359,28 @@ int main (int argc, char *argv[])
   /// Selection table
   ////////////////////////////////////
 
-  vector<string> CutsSelecTableSemiMu;
-  CutsSelecTableSemiMu.push_back(string("selected")); //0
-  CutsSelecTableSemiMu.push_back(string("box 1B 1W"));
-  CutsSelecTableSemiMu.push_back(string("box 1B 2W"));
-  CutsSelecTableSemiMu.push_back(string("box 1B 3W"));
-  CutsSelecTableSemiMu.push_back(string("box 1B $\\geq$ 4W")); //4
-  CutsSelecTableSemiMu.push_back(string("box 2B 1W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B 2W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B 3W"));
-  CutsSelecTableSemiMu.push_back(string("box 2B $\\geq$ 4W")); //8
-  CutsSelecTableSemiMu.push_back(string("SS leptons in all boxes combined")); //9
-  CutsSelecTableSemiMu.push_back(string("trileptons in all boxes combined")); //10
+  vector<string> CutsSelecTableSemiLep;
+  CutsSelecTableSemiLep.push_back(string("selected")); //0
+  CutsSelecTableSemiLep.push_back(string("box 1B 1W"));
+  CutsSelecTableSemiLep.push_back(string("box 1B 2W"));
+  CutsSelecTableSemiLep.push_back(string("box 1B 3W"));
+  CutsSelecTableSemiLep.push_back(string("box 1B $\\geq$ 4W")); //4
+  CutsSelecTableSemiLep.push_back(string("box 2B 1W"));
+  CutsSelecTableSemiLep.push_back(string("box 2B 2W"));
+  CutsSelecTableSemiLep.push_back(string("box 2B 3W"));
+  CutsSelecTableSemiLep.push_back(string("box 2B $\\geq$ 4W")); //8
+
+  vector<string> CutsSelecTableMultiLep;
+  CutsSelecTableMultiLep.push_back(string("SS leptons in all boxes combined")); //0
+  CutsSelecTableMultiLep.push_back(string("trileptons in all boxes combined")); //1
   
-	vector<string> CutsSelecTableSemiEl;
-  CutsSelecTableSemiEl.push_back(string("selected")); //0
-	CutsSelecTableSemiEl.push_back(string("box 1B 1W"));
-  CutsSelecTableSemiEl.push_back(string("box 1B 2W"));
-  CutsSelecTableSemiEl.push_back(string("box 1B 3W"));
-  CutsSelecTableSemiEl.push_back(string("box 1B $\\geq$ 4W")); //4
-  CutsSelecTableSemiEl.push_back(string("box 2B 1W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B 2W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B 3W"));
-  CutsSelecTableSemiEl.push_back(string("box 2B $\\geq$ 4W")); //8
-  CutsSelecTableSemiEl.push_back(string("SS leptons in all boxes combined")); //9
-  CutsSelecTableSemiEl.push_back(string("trileptons in all boxes combined")); //10
-  SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
-  selecTableSemiMu.SetLuminosity(Luminosity);
-  SelectionTable selecTableSemiEl(CutsSelecTableSemiEl, datasets);
-  selecTableSemiEl.SetLuminosity(Luminosity);
+	SelectionTable selecTableSemiLep(CutsSelecTableSemiLep, datasets);
+  selecTableSemiLep.SetLuminosity(Luminosity);
+  selecTableSemiLep.SetPrecision(1);
+
+	SelectionTable selecTableMultiLep(CutsSelecTableMultiLep, datasets);
+  selecTableMultiLep.SetLuminosity(Luminosity);
+  selecTableMultiLep.SetPrecision(2);
   
   cout << " - SelectionTable instantiated ..." << endl;
 
@@ -469,6 +442,7 @@ int main (int argc, char *argv[])
 		
 		TTree* inInclFourthGenTree = (TTree*) inFile->Get("myInclFourthGenTree");
     TBranch* m_br = (TBranch*) inInclFourthGenTree->GetBranch("InclFourthGenBranch_selectedEvents");
+    //TBranch* m_br = (TBranch*) inInclFourthGenTree->GetBranch("TheInclFourthGenTree");
     InclFourthGenTree* myBranch_selectedEvents = 0;
     m_br->SetAddress(&myBranch_selectedEvents);
     int nEvents = inInclFourthGenTree->GetEntries();
@@ -476,6 +450,8 @@ int main (int argc, char *argv[])
 		cout << " Processing DataSet: " << dataSetName << "  containing " << nEvents << " events" << endl;
     cout << " Cross section = " << datasets[d]->Xsection() << "  intLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
 
+	 	if(!useMassesAndResolutions && dataSetName != "TTbarJets_SemiMuon") 
+			continue;
 		
     ///////////////////////////////////////////////////
     // calculate W reconstructed mass and resolution: load the mass values and resolutions for chi2 jetcombination.
@@ -654,15 +630,11 @@ int main (int argc, char *argv[])
 			{
 				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
 				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-				//if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-				//if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
 			}
 			if(isTriLepton)
 			{
 				//cout << "IS TRI-LEPTON EVENT" << endl;
 				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-				//if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
-				//if(semiMuon) selecTableSemiMu.Fill(d,8,scaleFactor);				
 			}
 
 			bool TprimeEvaluation = false; //temporarily not supported
@@ -930,8 +902,7 @@ int main (int argc, char *argv[])
 			////////////////////////////////////
 			if(nbOfWs>=4) nbOfWs = 4; // to make sure that events with more than 4 W bosons end up in the 4W bin
 
-			if(semiElectron) selecTableSemiEl.Fill(d,0,scaleFactor);
-			if(semiMuon) selecTableSemiMu.Fill(d,0,scaleFactor);
+			selecTableSemiLep.Fill(d,0,scaleFactor);
 	
 			string histo1_dataset = "NbEvents_SSLeptons";
 			histo1_dataset = histo1_dataset+(datasets[d]->Name()).c_str();
@@ -959,8 +930,7 @@ int main (int argc, char *argv[])
 						HT = HT + selectedForwardJets[0].Pt();
 
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-						if(isSingleElectron) selecTableSemiEl.Fill(d,1,scaleFactor);
-						if(isSingleMuon) selecTableSemiMu.Fill(d,1,scaleFactor);
+						selecTableSemiLep.Fill(d,1,scaleFactor);
 					}
 					//cout << "done in 1B 1W box" << endl;
 				}
@@ -972,8 +942,7 @@ int main (int argc, char *argv[])
 						HT = HT + selectedJetsFromW_DropUsedJets[0].Pt();
 
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-						if(isSingleElectron) selecTableSemiEl.Fill(d,2,scaleFactor);
-						if(isSingleMuon) selecTableSemiMu.Fill(d,2,scaleFactor);
+						selecTableSemiLep.Fill(d,2,scaleFactor);
 			
 						//////////////
 						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
@@ -1025,12 +994,9 @@ int main (int argc, char *argv[])
 				    {
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_1B_2W = NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_2W = NP_NbSSevents_1B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor ;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-							if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,9,scaleFactor);	
+							selecTableMultiLep.Fill(d,0,scaleFactor);	
 				    }
  	
 					//cout << "done in 1B 2W box" << endl;
@@ -1040,30 +1006,23 @@ int main (int argc, char *argv[])
 				    if(isSingleLepton && selectedJets.size() >=6) 
 				    {
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);				
-							if(isSingleElectron) selecTableSemiEl.Fill(d,3,scaleFactor);
-							if(isSingleMuon) selecTableSemiMu.Fill(d,3,scaleFactor);
+							selecTableSemiLep.Fill(d,3,scaleFactor);
 				    }
 				    else if(isSSLepton && selectedJets.size() >=4) 
 			      {
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_1B_3W = NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-							if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,9,scaleFactor);
+							selecTableSemiLep.Fill(d,0,scaleFactor);
 						}
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
 							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_1B_3W = NbTrievents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_3W = NP_NbSSevents_1B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				    	if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,10,scaleFactor);
+				    	selecTableMultiLep.Fill(d,1,scaleFactor);
 						}
 				    //cout << "done in 1B 3W box" << endl;
 				}
@@ -1073,31 +1032,24 @@ int main (int argc, char *argv[])
 				   {
 							//cout << "in 1B 4W box" << endl;
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							if(isSingleElectron) selecTableSemiEl.Fill(d,4,scaleFactor);
-							if(isSingleMuon) selecTableSemiMu.Fill(d,4,scaleFactor);
+							selecTableSemiLep.Fill(d,4,scaleFactor);
 					
 				   }
 				   else if(isSSLepton && selectedJets.size() >=6) 
 				   {
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_1B_4W = NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_1B_4W = NP_NbSSevents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-			     		if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,9,scaleFactor);
+			     		selecTableMultiLep.Fill(d,0,scaleFactor);
 					 }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
 							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_1B_4W = NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_1B_4W = NP_NbTrievents_1B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				      if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,10,scaleFactor);
+				      selecTableMultiLep.Fill(d,1,scaleFactor);
 					  }
 				   //cout << "done in 1B 4W box" << endl;
 				}
@@ -1123,8 +1075,7 @@ int main (int argc, char *argv[])
 				   if(isSingleLepton) 
 				   {
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							if(isSingleElectron) selecTableSemiEl.Fill(d,5,scaleFactor);
-							if(isSingleMuon) selecTableSemiMu.Fill(d,5,scaleFactor);
+							selecTableSemiLep.Fill(d,5,scaleFactor);
 				   }
 					//cout << "done in 2B 1W box" << endl;
 				}
@@ -1135,8 +1086,7 @@ int main (int argc, char *argv[])
 					//cout << "in 2B 2W box" << endl;
 					
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							if(isSingleElectron) selecTableSemiEl.Fill(d,6,scaleFactor);
-							if(isSingleMuon) selecTableSemiMu.Fill(d,6,scaleFactor);
+							selecTableSemiLep.Fill(d,6,scaleFactor);
 					
 						//////////////
 						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
@@ -1186,12 +1136,9 @@ int main (int argc, char *argv[])
 				     {
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_2B_2W = NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_2W = NP_NbSSevents_2B_2W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				      if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,9,scaleFactor);
+						  selecTableMultiLep.Fill(d,0,scaleFactor);
 					  } 
 				}
 				else if(nbOfWs==3)
@@ -1200,30 +1147,23 @@ int main (int argc, char *argv[])
 				     if(isSingleLepton && selectedJets.size() >=6) 
 				     {
 					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							if(isSingleElectron) selecTableSemiEl.Fill(d,7,scaleFactor);
-							if(isSingleMuon) selecTableSemiMu.Fill(d,7,scaleFactor);
+							selecTableSemiLep.Fill(d,7,scaleFactor);
 				     }
 				     else if(isSSLepton && selectedJets.size() >=4) 
 				     {
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_2B_3W = NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_3W = NP_NbSSevents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				      if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,9,scaleFactor);
+						  selecTableMultiLep.Fill(d,0,scaleFactor);
 						 }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
 							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_2B_3W = NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_2B_3W = NP_NbTrievents_2B_3W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				      if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,10,scaleFactor);
+						  selecTableMultiLep.Fill(d,1,scaleFactor);
 						 }
 					//cout << "done in 2B 3W box" << endl;
 				}
@@ -1233,30 +1173,23 @@ int main (int argc, char *argv[])
 				     if(isSingleLepton && selectedJets.size() >=8 )
 				     {
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							if(isSingleElectron) selecTableSemiEl.Fill(d,8,scaleFactor);
-							if(isSingleMuon) selecTableSemiMu.Fill(d,8,scaleFactor);
+							selecTableSemiLep.Fill(d,8,scaleFactor);
 				     }
 				     else if(isSSLepton && selectedJets.size() >=6) 
 				     {
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
-							if(dataSetName.find("NP") != 0) NbSSevents_2B_4W = NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbSSevents_2B_4W = NP_NbSSevents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				      if(semiElectron) selecTableSemiEl.Fill(d,9,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,9,scaleFactor);
+						  selecTableMultiLep.Fill(d,0,scaleFactor);
 						 }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
 						//cout << "IS TRI-LEPTON" << endl;
 								//count number of events with three leptons
-							if(dataSetName.find("NP") != 0) NbTrievents_2B_4W = NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-							if(dataSetName.find("NP_Tprime500")==0 || dataSetName.find("NP_STprime500")==0 || dataSetName.find("NP_Bprime500")==0 || dataSetName.find("NP_SBprime500")==0) NP_NbTrievents_2B_4W = NP_NbTrievents_2B_4W + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
 							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-				      if(semiElectron) selecTableSemiEl.Fill(d,10,scaleFactor);
-						  if(semiMuon) selecTableSemiMu.Fill(d,10,scaleFactor);
+						  selecTableMultiLep.Fill(d,1,scaleFactor);
 						}
 				     //cout << "done in 2B 4W box" << endl;
 				}
@@ -1309,28 +1242,7 @@ int main (int argc, char *argv[])
 		delete inFile;
 		
   } //loop on 'datasets'
-  
-  cout << "NbSSevents_1B_2W " << NbSSevents_1B_2W << endl;
-  cout << "NbSSevents_1B_3W " << NbSSevents_1B_3W << endl;
-  cout << "NbSSevents_1B_4W " << NbSSevents_1B_4W << endl;
-  cout << "NbSSevents_2B_2W " << NbSSevents_2B_2W << endl;
-  cout << "NbSSevents_2B_3W " << NbSSevents_2B_3W << endl;
-  cout << "NbSSevents_2B_4W " << NbSSevents_2B_4W << endl;
-  cout << "signal (500) NbSSevents_1B_2W " << NP_NbSSevents_1B_2W << endl;
-  cout << "signal (500) NbSSevents_1B_3W " << NP_NbSSevents_1B_3W << endl;
-  cout << "signal (500) NbSSevents_1B_4W " << NP_NbSSevents_1B_4W << endl;
-  cout << "signal (500) NbSSevents_2B_2W " << NP_NbSSevents_2B_2W << endl;
-  cout << "signal (500) NbSSevents_2B_3W " << NP_NbSSevents_2B_3W << endl;
-  cout << "signal (500) NbSSevents_2B_4W " << NP_NbSSevents_2B_4W << endl;
-  cout << "NbTrievents_1B_3W " << NbTrievents_1B_3W << endl;
-  cout << "NbTrievents_1B_4W " << NbTrievents_1B_4W << endl;
-  cout << "NbTrievents_2B_3W " << NbTrievents_2B_3W << endl;
-  cout << "NbTrievents_2B_4W " << NbTrievents_2B_4W << endl;
-  cout << "signal (500) NbTrievents_1B_3W " << NP_NbTrievents_1B_3W << endl;
-  cout << "signal (500) NbTrievents_1B_4W " << NP_NbTrievents_1B_4W << endl;
-  cout << "signal (500) NbTrievents_2B_3W " << NP_NbTrievents_2B_3W << endl;
-  cout << "signal (500) NbTrievents_2B_4W " << NP_NbTrievents_2B_4W << endl;
-  
+
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
   
@@ -1361,7 +1273,7 @@ int main (int argc, char *argv[])
     {
         MultiSamplePlot *temp = it->second;
         string name = it->first;
-        temp->Draw(false, name, true, true, true, true, true,5);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal)
+        temp->Draw(false, name, true, true, true, true, true,5,false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
         temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     cout << "MultiSamplePlots written" << endl;
@@ -1401,18 +1313,16 @@ int main (int argc, char *argv[])
     fout->cd();
     
     //Selection tables
-    selecTableSemiMu.TableCalculator(false, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-    string selectiontableSemiMu = "InclFourthGenSearch_SelectionTable_SemiMu"+postfix;
-
-    selectiontableSemiMu = selectiontableSemiMu +".tex"; 	
-    if(semiMuon) selecTableSemiMu.Write(selectiontableSemiMu.c_str());
-	
-    selecTableSemiEl.TableCalculator(false, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-    string selectiontableSemiEl = "InclFourthGenSearch_SelectionTable_SemiEl"+postfix;
+    selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+postfix+channelpostfix;
+    selectiontableSemiLep = selectiontableSemiLep +".tex"; 	
+    selecTableSemiLep.Write(selectiontableSemiLep.c_str(),true, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
+    
+		selecTableMultiLep.TableCalculator(true, true, true, true, true, true, true, true);
+    string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+postfix+channelpostfix;
+    selectiontableMultiLep = selectiontableMultiLep +".tex"; 	
+    selecTableMultiLep.Write(selectiontableMultiLep.c_str(),true, true, false, false, false, false, false);
 		
-    selectiontableSemiEl = selectiontableSemiEl +".tex"; 	
-    if(semiElectron) selecTableSemiEl.Write(selectiontableSemiEl.c_str());
-	
      //regarding binning, which is only relevant when you do the MVA jet combination to reconstruct the top mass   
      if (doMVAjetcombination && anaEnv.MCRound==0)
      {	
