@@ -512,15 +512,15 @@ int main(int argc, char* argv[]) {
 	  if (itrigger || isecondtrigger) trigged = true;
 	 */
 	 
-	 
-	  // JES CORRECTION
-	  // Apply Jet Corrections on-the-fly
-	  jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho());
-
+	  if(isData)
+	    jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
+	  else
+	    jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+	  
 	  // Correct MET Type I
 	  if (metTypeI && !Special) jetTools->correctMETTypeOne(init_jets,mets[0]);  //Size of mets is never larger than 1 !!
 	  
-
+	 
 	  // Systematics
 	  //JES and JER
 	  //Special = true;
