@@ -101,6 +101,7 @@ int main(int argc, char* argv[]) {
       cout << "--PUup: PU reweghting scaled up " << endl;
       cout << "--PUdown: PU reweghting scaled down " << endl;
       cout << "--uncMETup: Unclustered MET syst. Up " << endl;
+      cout << "--xml <file.xml>: custom xml file. " << endl;
       cout << "--uncMETdown: Unclustered MET syst. Down " << endl;
       cout << "--NoPU: Do not apply pileup re-weighting" << endl;
       cout << "--NoSF: Do not apply b-tag scale factor" << endl;
@@ -110,7 +111,7 @@ int main(int argc, char* argv[]) {
     if (argval=="--ee") mode = 2;
     if (argval=="--emu") mode = 0;
     if (argval=="--mumu") mode = 1;
-    if (argval=="--xml") {std::cout << "using test.xml!" << std::endl;useTestXML=true;}
+    if (argval=="--xml") {useTestXML=true;xmlfile=argv[iarg+1];continue;}
     if (argval=="--uncMETup") unclusteredUp = true;
     if (argval=="--uncMETdown") unclusteredDown = true;
     if (argval=="--PUup" ){PUsysUp = true;}
@@ -128,12 +129,11 @@ int main(int argc, char* argv[]) {
   
   // Luminosity and xml files
   double lumi = 0;
-  if      (mode == 0){ 	 lumi = 4626.297;	 xmlfile ="twemu.xml";}
-  else if (mode == 1){	 lumi = 4534.871;	 xmlfile = "twmumu.xml";}
-  else if (mode == 2){	 lumi = 4593.348;	 xmlfile = "twee.xml";}
+  if      (mode == 0){ 	 lumi = 4626.297;	if(!useTestXML) xmlfile ="twemu.xml";}
+  else if (mode == 1){	 lumi = 4534.871;	 if(!useTestXML) xmlfile = "twmumu.xml";}
+  else if (mode == 2){	 lumi = 4593.348;	 if(!useTestXML) xmlfile = "twee.xml";}
   if(useTestXML)
-    xmlfile="test.xml";
-  std::cout << "using file: " << xmlfile << std::endl;
+    std::cout << "using file: " << xmlfile << std::endl;
   
   // Analysis environment
   TTree *configTree = new TTree("configTree","configuration Tree");
@@ -843,40 +843,45 @@ int main(int argc, char* argv[]) {
       allForTopoCalc.resize(0);
       
       if(jetTools) delete jetTools;   
-      
+      double scaler1 = cutflow->GetBinContent(2) ;
+      if(scaler1<=0.0)
+	scaler1=1.;
       cout << "--------------------------------------------------" << endl;
       cout << "[Results Normalized:] " <<  endl;
-      cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << endl;
-      cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) << endl;
-      cout << "PV:        " <<  cutflow->GetBinContent(4) << " +/- "  << cutflow->GetBinError(4) << endl;
-      cout << "Lep. Sel:  " <<  cutflow->GetBinContent(5) << " +/- "  << cutflow->GetBinError(5) << endl;
-      cout << "Lep. Veto: " <<  cutflow->GetBinContent(6) << " +/- "  << cutflow->GetBinError(6) << endl;
-      cout << "mll:       " <<  cutflow->GetBinContent(7) << " +/- "  << cutflow->GetBinError(7) << endl;
-      cout << "MET:       " <<  cutflow->GetBinContent(8) << " +/- "  << cutflow->GetBinError(8) << endl;
-      cout << "1 jet:     " <<  cutflow->GetBinContent(9) << " +/- "  << cutflow->GetBinError(9) << endl;
-      cout << "1 jet BT:  " <<  cutflow->GetBinContent(10) << " +/- " << cutflow->GetBinError(10) << endl;
-      cout << "Pt tW:     " <<  cutflow->GetBinContent(11) << " +/- " << cutflow->GetBinError(11) << endl;
-      cout << "Ht:        " <<  cutflow->GetBinContent(12) << " +/- " << cutflow->GetBinError(12) << endl;
+      cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << "\t = " << 100.*cutflow->GetBinContent(2)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(2)/scaler1 << "%" << endl;
+      cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) <<  "\t = " << 100.*cutflow->GetBinContent(3)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(3)/scaler1 << "%" <<endl;
+      cout << "PV:        " <<  cutflow->GetBinContent(4) << " +/- "  << cutflow->GetBinError(4) <<  "\t = " << 100.*cutflow->GetBinContent(4)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(4)/scaler1 << "%" <<endl;
+      cout << "Lep. Sel:  " <<  cutflow->GetBinContent(5) << " +/- "  << cutflow->GetBinError(5) <<  "\t = " << 100.*cutflow->GetBinContent(5)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(5)/scaler1 << "%" <<endl;
+      cout << "Lep. Veto: " <<  cutflow->GetBinContent(6) << " +/- "  << cutflow->GetBinError(6) <<  "\t = " << 100.*cutflow->GetBinContent(6)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(6)/scaler1 << "%" <<endl;
+      cout << "mll:       " <<  cutflow->GetBinContent(7) << " +/- "  << cutflow->GetBinError(7) <<  "\t = " << 100.*cutflow->GetBinContent(7)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(7)/scaler1 << "%" << endl;
+      cout << "MET:       " <<  cutflow->GetBinContent(8) << " +/- "  << cutflow->GetBinError(8) <<  "\t = " << 100.*cutflow->GetBinContent(8)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(8)/scaler1 << "%" << endl;
+      cout << "1 jet:     " <<  cutflow->GetBinContent(9) << " +/- "  << cutflow->GetBinError(9) <<  "\t = " << 100.*cutflow->GetBinContent(9)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(9)/scaler1 << "%" <<endl;
+      cout << "1 jet BT:  " <<  cutflow->GetBinContent(10) << " +/- " << cutflow->GetBinError(10) <<  "\t = " << 100.*cutflow->GetBinContent(10)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(10)/scaler1 << "%" <<endl;
+      cout << "Pt tW:     " <<  cutflow->GetBinContent(11) << " +/- " << cutflow->GetBinError(11) <<  "\t = " << 100.*cutflow->GetBinContent(11)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(11)/scaler1 << "%" <<endl;
+      cout << "Ht:        " <<  cutflow->GetBinContent(12) << " +/- " << cutflow->GetBinError(12) <<  "\t = " << 100.*cutflow->GetBinContent(12)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(12)/scaler1 << "%" <<endl;
       
       cout << "--------------------------------------------------" << endl;
       cout << "[Results Raw:] " <<  endl;
-      cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) << endl;
-      cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) << endl;
-      cout << "PV:        " <<  cutflow_raw->GetBinContent(4) << " +/- "  << cutflow_raw->GetBinError(4) << endl;
-      cout << "Lep. Sel:  " <<  cutflow_raw->GetBinContent(5) << " +/- "  << cutflow_raw->GetBinError(5) << endl;
-      cout << "Lep. Veto: " <<  cutflow_raw->GetBinContent(6) << " +/- "  << cutflow_raw->GetBinError(6) << endl;
-      cout << "mll:       " <<  cutflow_raw->GetBinContent(7) << " +/- "  << cutflow_raw->GetBinError(7) << endl;
-      cout << "MET:       " <<  cutflow_raw->GetBinContent(8) << " +/- "  << cutflow_raw->GetBinError(8) << endl;
-      cout << "1 jet:     " <<  cutflow_raw->GetBinContent(9) << " +/- "  << cutflow_raw->GetBinError(9) << endl;
-      cout << "1 jet BT:  " <<  cutflow_raw->GetBinContent(10) << " +/- " << cutflow_raw->GetBinError(10) << endl;
-      cout << "Pt tW:     " <<  cutflow_raw->GetBinContent(11) << " +/- " << cutflow_raw->GetBinError(11) << endl;
-      cout << "Ht:        " <<  cutflow_raw->GetBinContent(12) << " +/- " << cutflow_raw->GetBinError(12) << endl;
+      double scaler2 =  cutflow_raw->GetBinContent(2);
+      if(scaler2 <=0.0)
+	scaler2=1.;
+      cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) <<  "\t = " << 100.*cutflow_raw->GetBinContent(2)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(2)/scaler2 << "%" << endl;
+      cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) <<  "\t = " << 100.*cutflow_raw->GetBinContent(3)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(3)/scaler2 << "%" << endl;
+      cout << "PV:        " <<  cutflow_raw->GetBinContent(4) << " +/- "  << cutflow_raw->GetBinError(4) <<  "\t = " << 100.*cutflow_raw->GetBinContent(4)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(4)/scaler2 << "%" <<endl;
+      cout << "Lep. Sel:  " <<  cutflow_raw->GetBinContent(5) << " +/- "  << cutflow_raw->GetBinError(5) <<  "\t = " << 100.*cutflow_raw->GetBinContent(5)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(5)/scaler2 << "%" <<endl;
+      cout << "Lep. Veto: " <<  cutflow_raw->GetBinContent(6) << " +/- "  << cutflow_raw->GetBinError(6) <<  "\t = " << 100.*cutflow_raw->GetBinContent(6)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(6)/scaler2 << "%" <<endl;
+      cout << "mll:       " <<  cutflow_raw->GetBinContent(7) << " +/- "  << cutflow_raw->GetBinError(7) <<  "\t = " << 100.*cutflow_raw->GetBinContent(7)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(7)/scaler2 << "%" <<endl;
+      cout << "MET:       " <<  cutflow_raw->GetBinContent(8) << " +/- "  << cutflow_raw->GetBinError(8) <<  "\t = " << 100.*cutflow_raw->GetBinContent(8)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(8)/scaler2 << "%" <<endl;
+      cout << "1 jet:     " <<  cutflow_raw->GetBinContent(9) << " +/- "  << cutflow_raw->GetBinError(9) <<  "\t = " << 100.*cutflow_raw->GetBinContent(9)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(9)/scaler2 << "%" <<endl;
+      cout << "1 jet BT:  " <<  cutflow_raw->GetBinContent(10) << " +/- " << cutflow_raw->GetBinError(10) <<  "\t = " << 100.*cutflow_raw->GetBinContent(10)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(10)/scaler2 << "%" <<endl;
+      cout << "Pt tW:     " <<  cutflow_raw->GetBinContent(11) << " +/- " << cutflow_raw->GetBinError(11) <<  "\t = " << 100.*cutflow_raw->GetBinContent(11)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(11)/scaler2 << "%" <<endl;
+      cout << "Ht:        " <<  cutflow_raw->GetBinContent(12) << " +/- " << cutflow_raw->GetBinError(12) <<  "\t = " << 100.*cutflow_raw->GetBinContent(12)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(12)/scaler2 << "%" <<endl;
       
       cout << "--------------------------------------------------" << endl;
       cout << "[Jet Multiplicity Check:]" << endl;
-      cout << "1 jet 1 tag: " << R->GetBinContent(2) << " +/- " << R->GetBinError(2) << endl;
-      cout << "2 jet 1 tag: " << R->GetBinContent(7) << " +/- " << R->GetBinError(2) << endl;
-      cout << "2 jet 2 tag: " << R->GetBinContent(8) << " +/- " << R->GetBinError(2) << endl;
+      cout << "1 jet 1 tag: " << R->GetBinContent(2) << " +/- " << R->GetBinError(2) << "\t = " << 100.*R->GetBinContent(2)/scaler1 << " +/- "  << 100.*R->GetBinError(2)/scaler1 << "%" << endl;
+      cout << "2 jet 1 tag: " << R->GetBinContent(7) << " +/- " << R->GetBinError(2) << "\t = " << 100.*R->GetBinContent(7)/scaler1 << " +/- "  << 100.*R->GetBinError(7)/scaler1 << "%" << endl;
+      cout << "2 jet 2 tag: " << R->GetBinContent(8) << " +/- " << R->GetBinError(2) << "\t = " << 100.*R->GetBinContent(8)/scaler1 << " +/- "  << 100.*R->GetBinError(8)/scaler1 << "%" <<endl;
       cout << "--------------------------------------------------" << endl;
     
       fout->Write();
