@@ -40,6 +40,11 @@ class InclFourthGenTree : public TObject
 		,SelectedMuMuEl_(false)
 		,SelectedMuElEl_(false)
 		,SelectedElElEl_(false)
+		,EE_(false)
+		,EB_(false)
+		,EEEE_(false)
+		,EBEE_(false)
+		,EBEB_(false)
     ,semiMuDecay_(false)
     ,semiElDecay_(false)
 		,Wbosonpartonsmatched_(false)
@@ -56,6 +61,8 @@ class InclFourthGenTree : public TObject
     ,InitJetsbTagTCHP_()
     ,selectedMuons_()
 		,selectedElectrons_()
+		,chargeMisIdRateBarrel_(0)
+		,chargeMisIdRateEndcap_(0)
 //    ,all4JetsMCMatched_(false)
 //    ,allHadronicJetsMCMatched_(false)
 //    ,hadrLJet1_(9999)
@@ -94,6 +101,11 @@ class InclFourthGenTree : public TObject
 	bool SelectedMuMuEl() const { return SelectedMuMuEl_; }
 	bool SelectedMuElEl() const { return SelectedMuElEl_; }
 	bool SelectedElElEl() const { return SelectedElElEl_; }	
+	bool isEE() const { return EE_; }	
+	bool isEB() const { return EB_; }	
+	bool isEEEE() const { return EEEE_; }	
+	bool isEBEE() const { return EBEE_; }	
+	bool isEBEB() const { return EBEB_; }	
   bool semiMuDecay() const { return semiMuDecay_; }
   bool semiElDecay() const { return semiElDecay_; }
 	bool Wbosonpartonsmatched() const { return Wbosonpartonsmatched_; }
@@ -123,6 +135,8 @@ class InclFourthGenTree : public TObject
 //	TLorentzVector leptBQuark() const { return leptBQuark_; }
 //  TLorentzVector hadrLQuark1() const { return hadrLQuark1_; }
 //  TLorentzVector hadrLQuark2() const { return hadrLQuark2_; }	
+  float chargeMisIdRateBarrel() { return chargeMisIdRateBarrel_; }
+  float chargeMisIdRateEndcap() { return chargeMisIdRateEndcap_; }
 
 	void setEventID(unsigned int eventID) { eventID_ = eventID; }
   void setRunID(unsigned int runID) { runID_ = runID; }
@@ -143,6 +157,11 @@ class InclFourthGenTree : public TObject
 	void setSelectedMuMuEl(bool SelectedMuMuEl) { SelectedMuMuEl_ = SelectedMuMuEl; }
 	void setSelectedMuElEl(bool SelectedMuElEl) { SelectedMuElEl_ = SelectedMuElEl; }
 	void setSelectedElElEl(bool SelectedElElEl) { SelectedElElEl_ = SelectedElElEl; }	
+	void setSelectedEE(bool isEE) { EE_ = isEE; }	
+	void setSelectedEB(bool isEB) { EB_ = isEB; }	
+	void setSelectedEEEE(bool isEEEE) { EEEE_ = isEEEE; }	
+	void setSelectedEBEE(bool isEBEE) { EBEE_ = isEBEE; }	
+	void setSelectedEBEB(bool isEBEB) { EBEB_ = isEBEB; }	
   void setSemiMuDecay(bool semiMuDecay) { semiMuDecay_ = semiMuDecay; }
   void setSemiElDecay(bool semiElDecay) { semiElDecay_ = semiElDecay; }
 	void setWbosonpartonsmatched(bool Wbosonpartonsmatched) { Wbosonpartonsmatched_ = Wbosonpartonsmatched; }
@@ -171,6 +190,8 @@ class InclFourthGenTree : public TObject
 //	void setLeptBQuark(TLorentzVector leptBQuark) { leptBQuark_ = leptBQuark; }
 //  void setHadrLQuark1(TLorentzVector hadrLQuark1) { hadrLQuark1_ = hadrLQuark1; }
 //  void setHadrLQuark2(TLorentzVector hadrLQuark2) { hadrLQuark2_ = hadrLQuark2; }
+	void setChargeMisIdRateBarrel(float chargeMisIdRateBarrel) { chargeMisIdRateBarrel_ = chargeMisIdRateBarrel; }	
+	void setChargeMisIdRateEndcap(float chargeMisIdRateEndcap) { chargeMisIdRateEndcap_ = chargeMisIdRateEndcap; }	
 	
 	//bool topDecayedLept() const { return topDecayedLept_; }
   //float* mvaVals() { return mvaVals_; }
@@ -213,6 +234,11 @@ class InclFourthGenTree : public TObject
 	bool SelectedMuMuEl_;
 	bool SelectedMuElEl_;
 	bool SelectedElElEl_;	
+	bool EE_;	
+	bool EB_;	
+	bool EEEE_;	
+	bool EBEE_;	
+	bool EBEB_;	
   bool semiMuDecay_;
   bool semiElDecay_;
 	bool Wbosonpartonsmatched_;
@@ -236,6 +262,8 @@ class InclFourthGenTree : public TObject
 //	int hadrBJet_; //index according to MC
 //  int leptBJet_;
 //	vector<unsigned int> MatchedJetsIndices_;
+  float chargeMisIdRateBarrel_;
+  float chargeMisIdRateEndcap_;
 	  vector<TLorentzVector> mcQuarksForMatching_;
 //  TLorentzVector hadrBQuark_;
 //	TLorentzVector leptBQuark_;
@@ -246,7 +274,8 @@ class InclFourthGenTree : public TObject
   //float mvaVals_[12];
   //unsigned int mvaResults_[12][4]; // jet indices
   
-  ClassDef (InclFourthGenTree,1);
+	
+	ClassDef (InclFourthGenTree,1);
 };
 
 #endif
