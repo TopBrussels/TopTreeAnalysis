@@ -163,7 +163,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_TEST"; // to relabel the names of the output file  
+  string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
   string Treespath = "InclFourthGenTrees";
@@ -308,46 +308,64 @@ int main (int argc, char *argv[])
 
   float NbSSevents = 0;   
   float NbTrievents = 0;  
-  
+	float Nb_Zpeak_EB_SS_MC = 0; float Nb_Zpeak_EE_SS_MC = 0; float Nb_Zpeak_EB_OS_MC = 0; float Nb_Zpeak_EE_OS_MC = 0;
+	float Nb_Zpeak_EB_SS_data = 0; float Nb_Zpeak_EE_SS_data = 0; float Nb_Zpeak_EB_OS_data = 0; float Nb_Zpeak_EE_OS_data = 0;
 	
   ////////////////////////////////////
   /// Selection table
   ////////////////////////////////////
 
-  vector<string> CutsSelecTableSemiMu;
-  CutsSelecTableSemiMu.push_back(string("initial")); //0
-  CutsSelecTableSemiMu.push_back(string("preselected"));
-  CutsSelecTableSemiMu.push_back(string("trigged"));
-  CutsSelecTableSemiMu.push_back(string("Good PV"));
-  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 muon"));
-  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 b-tagged jet"));
-  CutsSelecTableSemiMu.push_back(string("MET $>$ 40 GeV"));  
-  CutsSelecTableSemiMu.push_back(string("single muon"));
-
-  vector<string> CutsSelecTableSemiEl;
-  CutsSelecTableSemiEl.push_back(string("initial")); //0
-  CutsSelecTableSemiEl.push_back(string("preselected"));
-  CutsSelecTableSemiEl.push_back(string("trigged"));
-  CutsSelecTableSemiEl.push_back(string("Good PV"));
-  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 selected electron"));
-  CutsSelecTableSemiEl.push_back(string("Conversion veto"));
-  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 b-tagged jet"));
-  CutsSelecTableSemiEl.push_back(string("MET $>$ 40 GeV"));
-  CutsSelecTableSemiEl.push_back(string("single electron"));
+  vector<string> CutsSelecTableSemiLep;
+  CutsSelecTableSemiLep.push_back(string("initial")); //0
+  CutsSelecTableSemiLep.push_back(string("preselected"));
+  CutsSelecTableSemiLep.push_back(string("trigged"));
+  CutsSelecTableSemiLep.push_back(string("Good PV"));
+  CutsSelecTableSemiLep.push_back(string("$\\geq$ 1 muon/electron"));
+  CutsSelecTableSemiLep.push_back(string("$\\geq$ 1 b-tagged jet"));
+  CutsSelecTableSemiLep.push_back(string("MET $>$ 40 GeV"));  
+  CutsSelecTableSemiLep.push_back(string("single muon/electron"));
 
   vector<string> CutsSelecTableMultiLepton;
   CutsSelecTableMultiLepton.push_back(string("SS leptons"));
   CutsSelecTableMultiLepton.push_back(string("trileptons"));
 
-  SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
-  selecTableSemiMu.SetLuminosity(Luminosity);
-  selecTableSemiMu.SetPrecision(1);
-  SelectionTable selecTableSemiEl(CutsSelecTableSemiEl, datasets);
-  selecTableSemiEl.SetLuminosity(Luminosity);
-  selecTableSemiEl.SetPrecision(1);
+  vector<string> CutsSelecTableChargeMisId_2El;
+  CutsSelecTableChargeMisId_2El.push_back(string("2 electrons"));
+  CutsSelecTableChargeMisId_2El.push_back(string("2 electrons EB"));
+  CutsSelecTableChargeMisId_2El.push_back(string("2 electrons EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("2 electrons EB+EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("SS el EB"));
+  CutsSelecTableChargeMisId_2El.push_back(string("SS el EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("SS el EB+EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("OS el EB"));
+  CutsSelecTableChargeMisId_2El.push_back(string("OS el EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("OS el EB+EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: SS el EB"));//10
+  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: SS el EE"));
+  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: OS el EB"));
+  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: OS el EE"));
+	
+  vector<string> CutsSelecTableChargeMisId_ElMu;
+  CutsSelecTableChargeMisId_ElMu.push_back(string("electron+muon"));
+  CutsSelecTableChargeMisId_ElMu.push_back(string("electron+muon EB"));
+  CutsSelecTableChargeMisId_ElMu.push_back(string("electron+muon EE"));
+  CutsSelecTableChargeMisId_ElMu.push_back(string("SS el EB"));
+  CutsSelecTableChargeMisId_ElMu.push_back(string("SS el EE"));
+  CutsSelecTableChargeMisId_ElMu.push_back(string("OS el EB"));
+  CutsSelecTableChargeMisId_ElMu.push_back(string("OS el EE"));
+	
+  SelectionTable selecTableSemiLep(CutsSelecTableSemiLep, datasets);
+ 	selecTableSemiLep.SetLuminosity(Luminosity);
+  selecTableSemiLep.SetPrecision(1);
   SelectionTable selecTableMultiLepton(CutsSelecTableMultiLepton, datasets);
   selecTableMultiLepton.SetLuminosity(Luminosity);
   selecTableMultiLepton.SetPrecision(1);
+  SelectionTable selecTableChargeMisId_2El(CutsSelecTableChargeMisId_2El, datasets);
+  selecTableChargeMisId_2El.SetLuminosity(Luminosity);
+  selecTableChargeMisId_2El.SetPrecision(2);
+  SelectionTable selecTableChargeMisId_ElMu(CutsSelecTableChargeMisId_ElMu, datasets);
+  selecTableChargeMisId_ElMu.SetLuminosity(Luminosity);
+  selecTableChargeMisId_ElMu.SetPrecision(2);
   
   cout << " - SelectionTable instantiated ..." << endl;
 
@@ -402,8 +420,7 @@ int main (int argc, char *argv[])
     int iFile = -1;
     
     string dataSetName = datasets[d]->Name();	
-    selecTableSemiMu.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
-    selecTableSemiEl.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
+    selecTableSemiLep.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
     
 		
 		
@@ -758,6 +775,11 @@ int main (int argc, char *argv[])
       bool isTriElectron = false;
       bool isTriMu2El1 = false;
       bool isTriMu1El2 = false;
+			bool isEB = false;
+			bool isEE = false;
+			bool isEBEB = false;
+			bool isEBEE = false;
+			bool isEEEE = false;
       
       vector<TRootJet*> selectedJets;//selectedJetsFromW,selectedJetsFromW_DropUsedJets,selectedJetsFromW_DropUsedJets_tmp;
       vector<TRootJet*> selectedForwardJets, selectedJetsLargeEtaRange;
@@ -803,21 +825,19 @@ int main (int argc, char *argv[])
 	      	selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
       }
      
-      selecTableSemiMu.Fill(d,1,scaleFactor);
-      selecTableSemiEl.Fill(d,1,scaleFactor);
-		
+      selecTableSemiLep.Fill(d,1,scaleFactor);		
 			
 			
 			//// EVENTS TRIGGERED BY MUON TRIGGER			
       if(trigged && semiMuon)
       { 
-				selecTableSemiMu.Fill(d,2,scaleFactor);
+				selecTableSemiLep.Fill(d,2,scaleFactor);
         if(isGoodPV)
 				{
-					selecTableSemiMu.Fill(d,3,scaleFactor);
+					selecTableSemiLep.Fill(d,3,scaleFactor);
 					if(selectedMuons.size()>=1 && selectedMuons[0]->Pt()>40)
 					{
-						selecTableSemiMu.Fill(d,4,scaleFactor);
+						selecTableSemiLep.Fill(d,4,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
 						
 						if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
@@ -849,10 +869,10 @@ int main (int argc, char *argv[])
 								//now require at least a b-tagged jet larger than a certain pre-defined cut
 								if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
 								{
-									selecTableSemiMu.Fill(d,5,scaleFactor); 
+									selecTableSemiLep.Fill(d,5,scaleFactor); 
 									if(mets[0]->Et()> METCut)
 									{
-										selecTableSemiMu.Fill(d,6,scaleFactor);
+										selecTableSemiLep.Fill(d,6,scaleFactor);
 										eventSelected = true; 
 
 										//cout << "event is selected according to the baseline selection!" << endl;
@@ -899,6 +919,12 @@ int main (int argc, char *argv[])
 													//it should not be an electron from a conversion!
 													if( selection.passConversionRejection(selectedElectrons[0]) )
 													{
+														selecTableChargeMisId_ElMu.Fill(d,0,scaleFactor);
+														if(fabs(selectedElectrons[0]->Eta())<1.4442){
+															selecTableChargeMisId_ElMu.Fill(d,1,scaleFactor);
+														}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
+														}																														
 														//require the same charge for muon and electron
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
@@ -908,6 +934,19 @@ int main (int argc, char *argv[])
 															//cout << "is same-sign muon+electron!" << endl;
 															//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
 															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
+															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+																selecTableChargeMisId_ElMu.Fill(d,3,scaleFactor);
+																isEB = true;
+															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+																selecTableChargeMisId_ElMu.Fill(d,4,scaleFactor);
+																isEE = true;
+															}																
+														}else{ //opposite charge!!!
+															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+																selecTableChargeMisId_ElMu.Fill(d,5,scaleFactor);
+															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+																selecTableChargeMisId_ElMu.Fill(d,6,scaleFactor);
+															}
 														}
 													}
 												}
@@ -990,19 +1029,53 @@ int main (int argc, char *argv[])
 			///// EVENTS TRIGGERED BY ELECTRON TRIGGER
 			else if(trigged && semiElectron)
       {
-        selecTableSemiEl.Fill(d,2,scaleFactor);
+        selecTableSemiLep.Fill(d,2,scaleFactor);
     	 	
         if( isGoodPV )
         {
-          selecTableSemiEl.Fill(d,3,scaleFactor);
+          selecTableSemiLep.Fill(d,3,scaleFactor);
           if( selectedElectrons.size() >= 1 && selectedElectrons[0]->Pt()>40)
           {
-            selecTableSemiEl.Fill(d,4,scaleFactor);
               if( selection.passConversionRejection(selectedElectrons[0]) )
               {
-								selecTableSemiEl.Fill(d,5,scaleFactor);
+            		selecTableSemiLep.Fill(d,4,scaleFactor);
 								sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
 
+									////////////////////// CHARGE MIS-ID RATE (NO B-TAG CUT & MET CUT!!!) ///////////////////////
+ 									if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+									{
+										if(selection.passConversionRejection(selectedElectrons[1]))
+										{
+											if(selection.foundZCandidate(selectedElectrons, selectedElectrons, 10.))
+											{								
+												if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
+												{ 
+													if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+														selecTableChargeMisId_2El.Fill(d,10,scaleFactor);
+														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_SS_data+=scaleFactor;
+														else Nb_Zpeak_EB_SS_MC+=scaleFactor;
+													}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+														selecTableChargeMisId_2El.Fill(d,11,scaleFactor);
+														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_SS_data+=scaleFactor;
+														else Nb_Zpeak_EE_SS_MC+=scaleFactor;
+													}
+												}else{
+													if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+														selecTableChargeMisId_2El.Fill(d,12,scaleFactor);
+														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_OS_data+=scaleFactor;
+														else Nb_Zpeak_EB_OS_MC+=scaleFactor;
+													}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+														selecTableChargeMisId_2El.Fill(d,13,scaleFactor);
+														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_OS_data+=scaleFactor;
+														else Nb_Zpeak_EE_OS_MC+=scaleFactor;
+													}															
+												}
+											}	
+										}
+									}
+									////////////////////// CHARGE MIS-ID RATE ----- END //////////////////
+								
+								
 								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
 								{
 									//block for the jet multiplicity plot
@@ -1030,10 +1103,10 @@ int main (int argc, char *argv[])
 										//now require at least a b-tagged jet larger than a certain pre-defined cut
 										if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
 										{
-		             			selecTableSemiEl.Fill(d,6,scaleFactor);
+		             			selecTableSemiLep.Fill(d,5,scaleFactor);
 											if(mets[0]->Et()> METCut)
 											{
-			        					selecTableSemiEl.Fill(d,7,scaleFactor);
+			        					selecTableSemiLep.Fill(d,6,scaleFactor);
                         eventSelected = true;
 		
 												//cout << "event is selected according to the baseline selection!" << endl;
@@ -1049,18 +1122,49 @@ int main (int argc, char *argv[])
 												}
 												
 												//// two same-sign electrons
-												else if(selectedElectrons.size() == 2 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												else if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 												{
 													if(selection.passConversionRejection(selectedElectrons[1]))
 													{
-														if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
-														{
-															isSSLepton = true;
-															isSSElectron = true;
-															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
-															//cout << "is same-sign electron!" << endl;
-															//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
-															//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
+														if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
+														{ 
+															selecTableChargeMisId_2El.Fill(d,0,scaleFactor);
+															
+															if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+																selecTableChargeMisId_2El.Fill(d,1,scaleFactor);
+															}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+																selecTableChargeMisId_2El.Fill(d,2,scaleFactor);
+															}else if((fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
+																selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
+															}																
+															
+															if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
+															{ 
+																isSSLepton = true;
+																isSSElectron = true;
+																//std::cout<<"Processing the "<<ievt<<"th event" << endl;
+																//cout << "is same-sign electron!" << endl;
+																//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
+																//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
+																if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+																	selecTableChargeMisId_2El.Fill(d,4,scaleFactor);
+																	isEBEB = true;
+																}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+																	selecTableChargeMisId_2El.Fill(d,5,scaleFactor);
+																	isEEEE = true;
+																}else if((fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
+																	selecTableChargeMisId_2El.Fill(d,6,scaleFactor);
+																	isEBEE = true;
+																}																
+															}else{ //opposite charge!!!
+																if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+																	selecTableChargeMisId_2El.Fill(d,7,scaleFactor);
+																}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+																	selecTableChargeMisId_2El.Fill(d,8,scaleFactor);
+																}else if((fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
+																	selecTableChargeMisId_2El.Fill(d,9,scaleFactor);
+																}																
+															}															
 														}
 													}
 												}
@@ -1070,6 +1174,12 @@ int main (int argc, char *argv[])
 												{
 													if(selectedMuons.size() == 1 && selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
 													{
+														selecTableChargeMisId_ElMu.Fill(d,0,scaleFactor);
+														if(fabs(selectedElectrons[0]->Eta())<1.4442){
+															selecTableChargeMisId_ElMu.Fill(d,1,scaleFactor);
+														}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
+														}																														
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
 															isSSLepton = true;
@@ -1078,6 +1188,19 @@ int main (int argc, char *argv[])
 															//cout << "is same-sign electron + muon!" << endl;
 															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
 															//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
+															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+																selecTableChargeMisId_ElMu.Fill(d,3,scaleFactor);
+																isEB = true;
+															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+																selecTableChargeMisId_ElMu.Fill(d,4,scaleFactor);
+																isEE = true;
+															}																
+														}else{ //opposite charge!!!
+															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+																selecTableChargeMisId_ElMu.Fill(d,5,scaleFactor);
+															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+																selecTableChargeMisId_ElMu.Fill(d,6,scaleFactor);
+															}
 														}
 													}
 												}
@@ -1137,7 +1260,6 @@ int main (int argc, char *argv[])
           } // end if selectedElectrons.size()>=1
         } // end good PV
       } // end trigged & semiElectron
-
 						
       if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
 
@@ -1156,8 +1278,7 @@ int main (int argc, char *argv[])
 					else
 					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j]->Pt(),datasets[d], true, Luminosity*scaleFactor);
 				}			
-				if(semiElectron) selecTableSemiEl.Fill(d,8,scaleFactor);
-				if(semiMuon) selecTableSemiMu.Fill(d,7,scaleFactor);				
+				selecTableSemiLep.Fill(d,7,scaleFactor);
 			}
 
 			if(isSSLepton)
@@ -1485,6 +1606,11 @@ int main (int argc, char *argv[])
 			myBranch_selectedEvents->setSelectedMuMuEl( isTriMu2El1 );
 			myBranch_selectedEvents->setSelectedMuElEl( isTriMu1El2 );
 			myBranch_selectedEvents->setSelectedElElEl( isTriElectron );
+			myBranch_selectedEvents->setSelectedEE( isEE );
+			myBranch_selectedEvents->setSelectedEB( isEB );
+			myBranch_selectedEvents->setSelectedEBEB( isEBEB );
+			myBranch_selectedEvents->setSelectedEBEE( isEBEE );
+			myBranch_selectedEvents->setSelectedEEEE( isEEEE );
 			
       if(dataSetName.find("TTbarJets_Semi") == 0)
       {
@@ -1531,14 +1657,21 @@ int main (int argc, char *argv[])
       //myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
       //myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
 			
-			
-            
+      if(dataSetName.find("Data") == 0)
+      {
+				float	chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
+				myBranch_selectedEvents->setChargeMisIdRateBarrel( chargeMisId_Barrel_data );
+				float	chargeMisId_Endcap_data = (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data);
+				myBranch_selectedEvents->setChargeMisIdRateEndcap( chargeMisId_Endcap_data );				
+      }
       myInclFourthGenTree->Fill();
 	    delete myBranch_selectedEvents;
 
 	
     }//loop on events
 
+		cout << " chargeMisId_Barrel_data " << (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data) << endl;
+		cout << " chargeMisId_Endcap_data " << (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data) << endl;
     
     cout<<endl;
 		
@@ -1568,8 +1701,19 @@ int main (int argc, char *argv[])
     
   } //loop on datasets
   
+	if(semiElectron){
+		float chargeMisId_Barrel_MC = (float)Nb_Zpeak_EB_SS_MC/(2*(float)Nb_Zpeak_EB_OS_MC);
+		float chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
+		float chargeMisId_Endcap_MC = (float)Nb_Zpeak_EE_SS_MC/(2*(float)Nb_Zpeak_EE_OS_MC);
+		float chargeMisId_Endcap_data = (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data);
+  
+		cout << "chargeMisId_Barrel_MC " << chargeMisId_Barrel_MC << endl;
+		cout << "chargeMisId_Barrel_data " << chargeMisId_Barrel_data << endl;
+		cout << "chargeMisId_Endcap_MC " << chargeMisId_Endcap_MC << endl;
+		cout << "chargeMisId_Endcap_data " << chargeMisId_Endcap_data << endl;
+	}
 	
-  //Once everything is filled ...
+	//Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
   
   ///////////////////
@@ -1637,20 +1781,25 @@ int main (int argc, char *argv[])
     fout->cd();
     
     //Selection tables
-    selecTableSemiMu.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableSemiMu = "InclFourthGenSearch_SelectionTable_SemiMu"+postfix;
-    selectiontableSemiMu = selectiontableSemiMu +".tex"; 	
-    if(semiMuon) selecTableSemiMu.Write(selectiontableSemiMu.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
-	
-    selecTableSemiEl.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableSemiEl = "InclFourthGenSearch_SelectionTable_SemiEl"+postfix;		
-    selectiontableSemiEl = selectiontableSemiEl +".tex"; 	
-    if(semiElectron) selecTableSemiEl.Write(selectiontableSemiEl.c_str(),false, true, false, false, false, false, false);
-    
+    selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_"+postfix+channelpostfix;
+    selectiontableSemiLep = selectiontableSemiLep +".tex"; 	
+    selecTableSemiLep.Write(selectiontableSemiLep.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
+	    
     selecTableMultiLepton.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableMultiLepton = "InclFourthGenSearch_SelectionTable_MultiLepton"+postfix+channelpostfix;
     selectiontableMultiLepton = selectiontableMultiLepton +".tex"; 	
     selecTableMultiLepton.Write(selectiontableMultiLepton.c_str(),false, true, false, false, false, false, false);
+
+    selecTableChargeMisId_ElMu.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    string selectiontableChargeMisId_ElMu = "InclFourthGenSearch_SelectionTable_ChargeMisIdElMu"+postfix+channelpostfix;
+    selectiontableChargeMisId_ElMu = selectiontableChargeMisId_ElMu +".tex"; 	
+    selecTableChargeMisId_ElMu.Write(selectiontableChargeMisId_ElMu.c_str(),false, true, false, false, false, false, false);
+
+    selecTableChargeMisId_2El.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    string selectiontableChargeMisId_2El = "InclFourthGenSearch_SelectionTable_ChargeMisId2El"+postfix;
+    selectiontableChargeMisId_2El = selectiontableChargeMisId_2El +".tex"; 	
+    if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),true, true, false, false, false, false, false);
 
     cout << " - Closing the output file now..." << endl;
     fout->Close();
