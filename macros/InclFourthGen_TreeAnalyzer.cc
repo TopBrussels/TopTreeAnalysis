@@ -179,7 +179,7 @@ int main (int argc, char *argv[])
   string postfixOld = ""; // to relabel the names of the output file  
 	string postfix= postfixOld+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees";
+  string Treespath = "InclFourthGenTrees_old";
   Treespath = Treespath +"/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
@@ -200,8 +200,8 @@ int main (int argc, char *argv[])
   //bool TrainwithTprime = false; //temporarily not supported
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
-  bool semiElectron = true; // use semiElectron channel?
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel?
+  bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -302,9 +302,9 @@ int main (int argc, char *argv[])
   histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
   histo1D["LeptonPt_SBprime500"] = new TH1F("leptonspt sbprime500","leptonspt sbprime500;pt leptons;#events",250,0,500);
   
-  string multileptons[2] = {"SSLeptons","TriLeptons"};
+  string multileptons[7] = {"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"};
   string histoName,histo_dataset;
-  for(int i = 0; i<2; i++)
+  for(int i = 0; i<7; i++)
   {
 		histoName = "NbEvents_"+multileptons[i];
 		for(unsigned int d = 0; d < datasets.size (); d++){
@@ -314,6 +314,9 @@ int main (int argc, char *argv[])
   }
 	
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0.5, 1.5, "");
+  MSPlot["MS_NbSSElElevents"] = new MultiSamplePlot(datasets,"# events with SS electrons", 1, 0.5, 1.5, "");
+  MSPlot["MS_NbSSElMuevents"] = new MultiSamplePlot(datasets,"# events with SS electron+muon", 1, 0.5, 1.5, "");
+  MSPlot["MS_NbSSMuMuevents"] = new MultiSamplePlot(datasets,"# events with SS muons", 1, 0.5, 1.5, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0.5, 1.5, "");
   MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 150, "");
   MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
@@ -577,7 +580,7 @@ int main (int argc, char *argv[])
 	 			scaleFactor = scaleFactor*lumiWeight3D;
       	histo1D["lumiWeights"]->Fill(scaleFactor);	
 			}
-      
+			
 			//reading variables from the tree
       bool isSingleLepton = myBranch_selectedEvents->SelectedSingleLepton();
       bool isSSLepton = myBranch_selectedEvents->SelectedSSLepton();
@@ -589,8 +592,8 @@ int main (int argc, char *argv[])
       bool isSSMuEl = myBranch_selectedEvents->SelectedSSMuEl();
       bool isTriMuon = myBranch_selectedEvents->SelectedMuMuMu();
       bool isTriElectron = myBranch_selectedEvents->SelectedElElEl();
-      bool isTriMu2El1 = myBranch_selectedEvents->SelectedMuMuEl();
-      bool isTriMu1El2 = myBranch_selectedEvents->SelectedMuElEl();
+      bool isTriElMuMu = myBranch_selectedEvents->SelectedMuMuEl();
+      bool isTriElElMu = myBranch_selectedEvents->SelectedMuElEl();
 		  
 			bool isSemiLep_MC = false;
 			if(myBranch_selectedEvents->semiMuDecay() || myBranch_selectedEvents->semiElDecay())
@@ -654,7 +657,6 @@ int main (int argc, char *argv[])
 
        
       if(TrainMVA) continue; //for the training, only the jetcombiner is relevant, so the following can be skipped (to the next event in the event loop)			
-
 			//////////////////////////////////////////////////////////////////////////
       // the Wmassplot for the W counting
       //////////////////////////////////////////////////////////////////////////
@@ -724,7 +726,6 @@ int main (int argc, char *argv[])
 				// rescale events according to b-tag/mistag eff scalefactors
 				//////////////////
       	double HT = 0.;
-      	//cout << "begin processing new selected event with current HT: " << HT << endl;
 				HT = HT + met;
 
 				int nbOfBtags = 0;
@@ -800,6 +801,7 @@ int main (int argc, char *argv[])
 					bTagValuesForMVA_FromW.push_back(bTagValuesForMVA[i]);
 				}
 			}
+
 	
 			///////////////////////////////
 			// start the W counting procedure here
@@ -894,6 +896,7 @@ int main (int argc, char *argv[])
 
 			}
 			while(selectedJetsFromW_DropUsedJets.size()>=2 && selectedJetsFromW_DropUsedJets.size()!= (unsigned int)previoussize);
+
 				
 			if(nbOfBtags>=2) nbOfBtags = 2; //to make sure that events with more than 2 b-jets end up in the 2 b-jet bin			
 			
@@ -904,16 +907,13 @@ int main (int argc, char *argv[])
 
 			selecTableSemiLep.Fill(d,0,scaleFactor);
 	
-			string histo1_dataset = "NbEvents_SSLeptons";
-			histo1_dataset = histo1_dataset+(datasets[d]->Name()).c_str();
-			string histo2_dataset = "NbEvents_TriLeptons";
-			histo2_dataset = histo2_dataset+(datasets[d]->Name()).c_str();
 			
 			//cout<<"nbOfBtags = "<<nbOfBtags<<endl;						
 			if(nbOfBtags==1)
 			{				
 				if(nbOfWs==1)
 				{
+					//cout << "in 1B 1W box" << endl;
 					//Requirements: a leptonically decaying W, and a forward jet and a 'central' one
 					if(selectedForwardJets.size() != 1) continue;
 					if(selectedJets.size() != 1) continue;
@@ -923,7 +923,6 @@ int main (int argc, char *argv[])
 				
 					double const Pi=4*atan(1);
 					if(DeltaPhi > ((Pi/2)+RelPt*Pi)) continue;
-					//cout << "in 1B 1W box" << endl;
 					
 					if(isSingleLepton) 
 					{						
@@ -936,9 +935,9 @@ int main (int argc, char *argv[])
 				}
 				else if(nbOfWs==2)
 				{
+					//cout << "in 1B 2W box" << endl;
 					if(isSingleLepton && selectedJets.size()>=4)
 					{
-						//cout << "in 1B 2W box" << endl;
 						HT = HT + selectedJetsFromW_DropUsedJets[0].Pt();
 
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -995,14 +994,31 @@ int main (int argc, char *argv[])
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-							selecTableMultiLep.Fill(d,0,scaleFactor);	
+							selecTableMultiLep.Fill(d,0,scaleFactor);
+							
+							if(isSSMuon){
+								histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSElectron){
+								histoName = "NbEvents_"+multileptons[0];
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSMuEl){
+								histoName = "NbEvents_"+multileptons[1];
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+							}	
 				    }
  	
 					//cout << "done in 1B 2W box" << endl;
 				}
 				else if(nbOfWs==3)
 				{
+				    //cout << "in 1B 3W box" << endl;
 				    if(isSingleLepton && selectedJets.size() >=6) 
 				    {
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);				
@@ -1013,24 +1029,44 @@ int main (int argc, char *argv[])
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 							selecTableSemiLep.Fill(d,0,scaleFactor);
+							if(isSSMuon){
+								histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSElectron){
+								histoName = "NbEvents_"+multileptons[0];
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSMuEl){
+								histoName = "NbEvents_"+multileptons[1];
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+							}	
 						}
 				    else if(isTriLepton && selectedJets.size() >=2) 
 				    {
 							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				    	selecTableMultiLep.Fill(d,1,scaleFactor);
+							if(isTriElectron) histoName = "NbEvents_"+multileptons[3];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriMuon) histoName = "NbEvents_"+multileptons[6];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElElMu) histoName = "NbEvents_"+multileptons[4];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElMuMu) histoName = "NbEvents_"+multileptons[5];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							histo_dataset = histoName+dataSetName.c_str(); 
+							histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						}
 				    //cout << "done in 1B 3W box" << endl;
 				}
 				else
 				{
+					//cout << "in 1B 4W box" << endl;
 				   if(isSingleLepton && selectedJets.size() >=8) 
 				   {
-							//cout << "in 1B 4W box" << endl;
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,4,scaleFactor);
 					
@@ -1040,16 +1076,36 @@ int main (int argc, char *argv[])
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 			     		selecTableMultiLep.Fill(d,0,scaleFactor);
+							if(isSSMuon){
+								histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSElectron){
+								histoName = "NbEvents_"+multileptons[0];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSMuEl){
+								histoName = "NbEvents_"+multileptons[1];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+							}	
 					 }
 				   else if(isTriLepton && selectedJets.size() >=4) 
 				   {
 							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 				      selecTableMultiLep.Fill(d,1,scaleFactor);
+							if(isTriElectron) histoName = "NbEvents_"+multileptons[3];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriMuon) histoName = "NbEvents_"+multileptons[6];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElElMu) histoName = "NbEvents_"+multileptons[4];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElMuMu) histoName = "NbEvents_"+multileptons[5];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							histo_dataset = histoName+dataSetName.c_str(); 
+							histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 					  }
 				   //cout << "done in 1B 4W box" << endl;
 				}
@@ -1061,6 +1117,7 @@ int main (int argc, char *argv[])
 				
 				if(nbOfWs==1)
 				{
+				   //cout << "in 2B 1W box" << endl;
 				   if(selectedForwardJets.size() != 0) continue;
 				   if(selectedJets.size() != 2) continue;
 
@@ -1081,9 +1138,9 @@ int main (int argc, char *argv[])
 				}
 				else if(nbOfWs==2)
 				{
+					//cout << "in 2B 2W box" << endl;
 				   if(isSingleLepton && selectedJets.size() >=4) 
 				   {
-					//cout << "in 2B 2W box" << endl;
 					
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,6,scaleFactor);
@@ -1137,13 +1194,29 @@ int main (int argc, char *argv[])
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						  selecTableMultiLep.Fill(d,0,scaleFactor);
+							if(isSSMuon){
+								histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSElectron){
+								histoName = "NbEvents_"+multileptons[0];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSMuEl){
+								histoName = "NbEvents_"+multileptons[1];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+							}	
 					  } 
+				    // cout << "done in 2B 2W box" << endl;
 				}
 				else if(nbOfWs==3)
 				{    
-				     //cout << "in 2B 3W box" << endl;
+				    // cout << "in 2B 3W box" << endl;
 				     if(isSingleLepton && selectedJets.size() >=6) 
 				     {
 					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1154,22 +1227,42 @@ int main (int argc, char *argv[])
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						  selecTableMultiLep.Fill(d,0,scaleFactor);
+							if(isSSMuon){
+								histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSElectron){
+								histoName = "NbEvents_"+multileptons[0];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSMuEl){
+								histoName = "NbEvents_"+multileptons[1];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+							}	
 						 }
 				     else if(isTriLepton && selectedJets.size() >=2) 
 				     {
 							//cout << "IS TRI-LEPTON" << endl;
 							//count number of events with three leptons
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						  selecTableMultiLep.Fill(d,1,scaleFactor);
+							if(isTriElectron) histoName = "NbEvents_"+multileptons[3];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriMuon) histoName = "NbEvents_"+multileptons[6];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElElMu) histoName = "NbEvents_"+multileptons[4];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElMuMu) histoName = "NbEvents_"+multileptons[5];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							histo_dataset = histoName+dataSetName.c_str(); 
+							histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						 }
 					//cout << "done in 2B 3W box" << endl;
 				}
 				else
 				{
-				     //cout << "in 2B 4W box" << endl;
+				   //  cout << "in 2B 4W box" << endl;
 				     if(isSingleLepton && selectedJets.size() >=8 )
 				     {
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1180,24 +1273,45 @@ int main (int argc, char *argv[])
 							//cout << "IS SAME-SIGN LEPTON" << endl;
 							//count number of events with SS leptons
 							MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo1_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						  selecTableMultiLep.Fill(d,0,scaleFactor);
+							if(isSSMuon){
+								histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSElectron){
+								histoName = "NbEvents_"+multileptons[0];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+							}else if(isSSMuEl){
+								histoName = "NbEvents_"+multileptons[1];//({"SSElEl","SSElMu","SSMuMu","TriLeptons"})
+								histo_dataset = histoName+dataSetName.c_str(); 
+								histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+								MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+							}	
 						 }
 				     else if(isTriLepton && selectedJets.size() >=4) 
 				     {
 						//cout << "IS TRI-LEPTON" << endl;
 								//count number of events with three leptons
 							MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-							histo1D[histo2_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						  selecTableMultiLep.Fill(d,1,scaleFactor);
+							if(isTriElectron) histoName = "NbEvents_"+multileptons[3];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriMuon) histoName = "NbEvents_"+multileptons[6];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElElMu) histoName = "NbEvents_"+multileptons[4];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							if(isTriElMuMu) histoName = "NbEvents_"+multileptons[5];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+							histo_dataset = histoName+dataSetName.c_str(); 
+							histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
 						}
-				     //cout << "done in 2B 4W box" << endl;
+				  //   cout << "done in 2B 4W box" << endl;
 				}
 			} //end number of btags == 2
 		
 		 }//useMassesAndResolutions = true
 	//delete selection;
-    }//loop on events
+   // cout << "done processing event" << endl;
+		}//loop on events
 
     ////to test 'purity' of good jet combinations with a 'simple' method (not MVA). For the moment not supported
     //myInclFourthGenSearchTools.PrintPurityGoodCombinations();
