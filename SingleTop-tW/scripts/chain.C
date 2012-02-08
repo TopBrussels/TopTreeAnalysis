@@ -38,12 +38,12 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
   }
   
 
-  bool RunA = true;
-  bool RunB = false;
+  bool RunA = false;
+  bool RunB = true;
   char myRootFile[300];
   sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
   if (RunA) sprintf(myRootFile,"outputs/out_runA_%d_%s.root", mode, plotName);
-  if (RunB) sprintf(myRootFile,"outputs/out_runA_%d_%s.root", mode, plotName);
+  if (RunB) sprintf(myRootFile,"outputs/out_runB_%d_%s.root", mode, plotName);
   
   TChain *myCh = new TChain("myTree","myTree");
   myCh->Add(myRootFile);

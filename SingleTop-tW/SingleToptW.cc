@@ -330,7 +330,7 @@ int main(int argc, char* argv[]) {
       
       if (RunA) Lumi3DWeights = Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunA.root", "pileup", "pileup");
       else if (RunB) Lumi3DWeights = Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunB.root", "pileup", "pileup");
-      else Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunA.root", "pileup", "pileup");
+      else Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunAB.root", "pileup", "pileup");
      
       if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
       else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);
