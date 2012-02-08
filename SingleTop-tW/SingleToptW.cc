@@ -106,6 +106,8 @@ int main(int argc, char* argv[]) {
       cout << "--NoPU: Do not apply pileup re-weighting" << endl;
       cout << "--NoSF: Do not apply b-tag scale factor" << endl;
       cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
+      cout << "--RunA: Run over RunA only" << endl;
+      cout << "--RunB: Run over RunB only" << endl;
       return 0;
     }
     if (argval=="--ee") mode = 2;
@@ -125,6 +127,8 @@ int main(int argc, char* argv[]) {
     if (argval=="--NoPU") reweightPU = false;
     if (argval=="--NoSF") scaleFactor = false;
     if (argval=="--RAW") {reweightPU = false; scaleFactor = false; isRAW = true;}
+    if (argval=="--RunA") RunA = true;
+    if (argval=="--RunB") RunB = true;
   }   
   
   // Luminosity and xml files
@@ -134,6 +138,18 @@ int main(int argc, char* argv[]) {
   else if (mode == 2){	 lumi = 4593.348;	 if(!useTestXML) xmlfile = "twee.xml";}
   if(useTestXML)
     std::cout << "using file: " << xmlfile << std::endl;
+  
+  double lumia = 2120.297;
+  if (mode == 1) lumia = 2045.871 ;
+  if (mode == 2) lumia = 2126.348 ;
+  
+  double lumib = 2506;
+  if (mode == 1) lumib = 2489 ;
+  if (mode == 2) lumib = 2467 ;
+  
+
+  if (RunA) lumi = lumia;
+  else if (RunB) lumi = lumib;
   
   // Analysis environment
   TTree *configTree = new TTree("configTree","configuration Tree");
@@ -216,6 +232,8 @@ int main(int argc, char* argv[]) {
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
       else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/noPU_%d_%s.root", mode, name);
+      else if (name != "data1" && RunA)  sprintf(rootFileName,"outputs/out_runA_%d_%s.root", mode, name);
+      else if (name != "data2" && RunB)  sprintf(rootFileName,"outputs/out_runB_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
       // Objects
@@ -308,7 +326,11 @@ int main(int argc, char* argv[]) {
       
       
       //Pile-Up reweighting  
-      Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../macros/PileUpReweighting/pileup_MC_Fall11.root","../macros/PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+      Lumi3DReWeighting Lumi3DWeights;
+      
+      if (RunA) Lumi3DWeights = Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunA.root", "pileup", "pileup");
+      else if (RunB) Lumi3DWeights = Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunB.root", "pileup", "pileup");
+      else Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunA.root", "pileup", "pileup");
      
       if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
       else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);
@@ -340,6 +362,8 @@ int main(int argc, char* argv[]) {
       /// Start message
       
       cout << endl;
+      if (RunA)   cout << "[Info:] Running over 2011 RunA " << endl; 
+      if (RunB)   cout << "[Info:] Running over 2011 RunA " << endl; 
       cout << "[Info:] output rootfile named " << rootFileName << endl; 
       cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
       
