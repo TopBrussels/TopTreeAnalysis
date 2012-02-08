@@ -363,7 +363,7 @@ int main(int argc, char* argv[]) {
       
       cout << endl;
       if (RunA)   cout << "[Info:] Running over 2011 RunA " << endl; 
-      if (RunB)   cout << "[Info:] Running over 2011 RunA " << endl; 
+      if (RunB)   cout << "[Info:] Running over 2011 RunB " << endl; 
       cout << "[Info:] output rootfile named " << rootFileName << endl; 
       cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
       
@@ -401,7 +401,7 @@ int main(int argc, char* argv[]) {
 
 
 
-	  if ((RunA && event->runId() < 175860) || (RunB && event->runId() >= 175860) || (!RunA && !RunB)){
+	  if ((RunA && isData && event->runId() < 175860) || (RunB && isData && event->runId() >= 175860) || (isData && !RunA && !RunB) || !isData){
 	    // Weight given by the theoretical cross-section and lumi
 	    double weight = xlweight;
 	    
