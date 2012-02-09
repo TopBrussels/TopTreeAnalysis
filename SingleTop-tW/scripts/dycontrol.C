@@ -18,7 +18,7 @@ void dycontrol(int nsel, int mode = 0, bool silent = false){
   else if (nsel == -1)   		{sprintf(plotName,"twds");}
   else if (nsel == 2)			{sprintf(plotName, "st");}
   else if (nsel == 3)   		{sprintf(plotName,"wjets");}
-  else if (nsel == 4)   		{sprintf(plotName,"zjets");}
+  else if (nsel == 4)   		{sprintf(plotName,"zjetsall");}
   else if (nsel == 5)   		{sprintf(plotName,"dy");}
   else if (nsel == 6)   		{sprintf(plotName,"qcd_mu");}
   else if (nsel == 7)   		{sprintf(plotName,"di");}

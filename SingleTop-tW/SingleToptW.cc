@@ -179,8 +179,6 @@ int main(int argc, char* argv[]) {
       
       // cross sections and weights
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; isData = true;}
-      else if (dataSetName == "data1"){		sprintf(name, "data1");  	xlweight = 1; isData = true; RunA = true;}
-      else if (dataSetName == "data2"){		sprintf(name, "data2");  	xlweight = 1; isData = true; RunB = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3160707; isTop = true;} //
       else if (dataSetName == "tt2l"){		sprintf(name, "tt2l");  	xlweight = lumi*17.10/8576584; isTop = true;} //
       else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/813743;} //
@@ -193,26 +191,30 @@ int main(int argc, char* argv[]) {
       else if (dataSetName == "ats"){    	sprintf(name, "ats");        	xlweight = lumi*1.44/137889;} //
       else if (dataSetName == "wjets"){     	sprintf(name, "wjets");	        xlweight = lumi*31314/49708092;} //
       else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3048/26523984;} //
- 
+      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*11908.83/31429105;}//
       else if (dataSetName == "dymumu"){	sprintf(name, "dymumu");	xlweight = lumi*1666/1;}
       else if (dataSetName == "dyee"){		sprintf(name, "dyee");		xlweight = lumi*1666/1;}
       else if (dataSetName == "dytautau"){	sprintf(name, "dytautau");	xlweight = lumi*1666/1;}
       else if (dataSetName == "ww"){		sprintf(name, "ww");		xlweight = lumi*42.9/4223785;} //
       else if (dataSetName == "wz"){		sprintf(name, "wz");		xlweight = lumi*18.3/3863081;} //
       else if (dataSetName == "zz"){		sprintf(name, "zz");		xlweight = lumi*7.67/4188624;} //
-      else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/25079892; Special = true;} //OLD 
+      else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/12198343;} // 
       
       //special files
       else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/437736;}
       else if (dataSetName == "tbar_sup"){      	sprintf(name, "tbar_sup");		xlweight = lumi*7.87/437794;}
       else if (dataSetName == "tbar_sdo"){      	sprintf(name, "tbar_sdo");		xlweight = lumi*7.87/437863;}
       
-      else if (dataSetName == "tt_largeISR"){   	sprintf(name, "tt_largeISR");   	xlweight = lumi*163/1164194; reweightPU = false;}
-      else if (dataSetName == "tt_smallISR"){   	sprintf(name, "tt_smallISR");   	xlweight = lumi*163/1221491; reweightPU = false;}
-      else if (dataSetName == "tt_matchingup"){   	sprintf(name, "tt_matchingup");   	xlweight = lumi*163/1036347; reweightPU = false;}
-      else if (dataSetName == "tt_matchingdown"){   	sprintf(name, "tt_matchingdown");   	xlweight = lumi*163/937882;  reweightPU = false;}
-      else if (dataSetName == "tt_scaleup"){   		sprintf(name, "tt_scaleup");   		xlweight = lumi*163/1010958; reweightPU = false;}
-      else if (dataSetName == "tt_scaledown"){   	sprintf(name, "tt_scaledown");   	xlweight = lumi*163/1038835; reweightPU = false;}
+      else if (dataSetName == "tt_largeISR"){   	sprintf(name, "tt_largeISR");   	xlweight = lumi*163/1164194; reweightPU = false; isTop = true;}
+      else if (dataSetName == "tt_smallISR"){   	sprintf(name, "tt_smallISR");   	xlweight = lumi*163/1221491; reweightPU = false; isTop = true;}
+      else if (dataSetName == "tt_matchingup"){   	sprintf(name, "tt_matchingup");   	xlweight = lumi*163/1062788; isTop = true;}
+      else if (dataSetName == "tt_matchingdown"){   	sprintf(name, "tt_matchingdown");   	xlweight = lumi*163/1065321; isTop = true;}
+      else if (dataSetName == "tt_scaleup"){   		sprintf(name, "tt_scaleup");   		xlweight = lumi*163/930480; isTop = true;}
+      else if (dataSetName == "tt_scaledown"){   	sprintf(name, "tt_scaledown");   	xlweight = lumi*163/967053; isTop = true;}
+      
+      
+      else if (dataSetName == "data1"){		sprintf(name, "data1");  	xlweight = 1; isData = true; RunA = true;}
+      else if (dataSetName == "data2"){		sprintf(name, "data2");  	xlweight = 1; isData = true; RunB = true;}
       
       //Test file
       else{    	                                sprintf(name, "test");	        xlweight = 1;} 

@@ -1,3 +1,7 @@
+hadd -f outputs/out_0_zjetsall.root outputs/out_0_zjets*;
+hadd -f outputs/out_1_zjetsall.root outputs/out_1_zjets*;
+hadd -f outputs/out_2_zjetsall.root outputs/out_2_zjets*;
+
 hadd -f outputs/out_0_twdr.root outputs/out_0_tw_dr.root outputs/out_0_atw_dr.root;
 hadd -f outputs/out_1_twdr.root outputs/out_1_tw_dr.root outputs/out_1_atw_dr.root;
 hadd -f outputs/out_2_twdr.root outputs/out_2_tw_dr.root outputs/out_2_atw_dr.root;
@@ -18,7 +22,7 @@ hadd -f outputs/out_0_others.root outputs/out_0_di.root outputs/out_0_st.root ou
 hadd -f outputs/out_1_others.root outputs/out_1_di.root outputs/out_1_st.root outputs/out_1_wjets.root outputs/out_1_qcd_mu.root ;
 hadd -f outputs/out_2_others.root outputs/out_2_di.root outputs/out_2_st.root outputs/out_2_wjets.root outputs/out_2_qcd_mu.root ;
 
-hadd -f outputs/out_0_mc.root outputs/out_0_twdr.root outputs/out_0_tt.root outputs/out_0_others.root outputs/out_0_zjets.root ;
-hadd -f outputs/out_1_mc.root outputs/out_1_twdr.root outputs/out_1_tt.root outputs/out_1_others.root outputs/out_1_zjets.root ; 
-hadd -f outputs/out_2_mc.root outputs/out_2_twdr.root outputs/out_2_tt.root outputs/out_2_others.root outputs/out_2_zjets.root ;
+hadd -f outputs/out_0_mc.root outputs/out_0_twdr.root outputs/out_0_tt.root outputs/out_0_others.root outputs/out_0_zjetsall.root ;
+hadd -f outputs/out_1_mc.root outputs/out_1_twdr.root outputs/out_1_tt.root outputs/out_1_others.root outputs/out_1_zjetsall.root ; 
+hadd -f outputs/out_2_mc.root outputs/out_2_twdr.root outputs/out_2_tt.root outputs/out_2_others.root outputs/out_2_zjetsall.root ;
 

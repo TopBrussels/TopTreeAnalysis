@@ -26,9 +26,10 @@
  
  <d name="wjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/WJets.root"/>
   
- <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/QCD_mu.root"/>  
+ <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/QCD_mu/*"/>  
 
   <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/ZJets.root"/>
+ <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/dy/*"/>
 
 <!--
  <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/data_4535.root"/> 
@@ -42,21 +43,21 @@
 --->
 <!---
  <d name="tt2l" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/TT2L.root"/>
+--->
 
-
- <d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2mu/TT_scaleup.root"/> 
- <d name="tt_scaledown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2mu/TT_scaledown.root"/> 
+<d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttscaleup/*"/> 
+ <d name="tt_scaledown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttscaledown/*"/> 
  
- <d name="tt_matchingup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2mu/TT_matchingup.root"/> 
- <d name="tt_matchingdown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2mu/TT_matchingdown.root"/> 
+ <d name="tt_matchingup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttmatchingup/*"/> 
+ <d name="tt_matchingdown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttmatchingdown/*"/> 
  
  <d name="tt_largeISR" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2mu/TT_LargeISRFSR.root"/> 
  <d name="tt_smallISR" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_2mu/TT_SmallISRFSR.root"/> 
  
- <d name="t_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/T_scaleup_tW.root"/> 
- <d name="tbar_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/Tbar_scaleup_tW.root"/> 
- <d name="tbar_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/Tbar_scaledown_tW.root"/> 
---->
+ <d name="t_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/T_scaleup_tW.root"/> 
+ <d name="tbar_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/Tbar_scaleup_tW.root"/> 
+ <d name="tbar_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/Tbar_scaledown_tW.root"/> 
+
 </datasets>
 
 <analysis>

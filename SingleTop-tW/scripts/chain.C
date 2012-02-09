@@ -16,7 +16,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
   if (nsel == 0)                	{sprintf(plotName,"tt");}
   else if (nsel == 1)   		{sprintf(plotName,"twdr");}
   else if (nsel == -1)   		{sprintf(plotName,"twds");}
-  else if (nsel == 2)   		{sprintf(plotName,"zjets");}
+  else if (nsel == 2)   		{sprintf(plotName,"zjetsall");}
   else if (nsel == 3)   		{sprintf(plotName,"di");}
   else if (nsel == 4)			{sprintf(plotName, "st");}
   else if (nsel == 5)   		{sprintf(plotName,"wjets");}
@@ -39,7 +39,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
   
 
   bool RunA = false;
-  bool RunB = true;
+  bool RunB = false;
   char myRootFile[300];
   sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
   if (RunA) sprintf(myRootFile,"outputs/out_runA_%d_%s.root", mode, plotName);
