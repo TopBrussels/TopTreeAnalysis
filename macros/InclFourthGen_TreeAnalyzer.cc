@@ -179,7 +179,7 @@ int main (int argc, char *argv[])
   string postfixOld = ""; // to relabel the names of the output file  
 	string postfix= postfixOld+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_old";
+  string Treespath = "InclFourthGenTrees";
   Treespath = Treespath +"/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
@@ -196,7 +196,14 @@ int main (int argc, char *argv[])
 		doMVAjetcombination = true;
 		TrainMVA = false;
   }
-  
+  bool doPUreweighting = true;
+	bool doMCtriggerEffreweighting = false;
+	bool doBtagSFreweighting = true;
+	bool doRun2011AOnly = false;
+	bool doRun2011BOnly = false;
+	if(doRun2011AOnly) cout<<" RUNNING ON RUN2011A ONLY: MAKE SURE TO PUT IN CORRECT LUMINOSITY IN XML CONFIG!!"<<endl;
+	else if(doRun2011BOnly) cout<<" RUNNING ON RUN2011B ONLY: MAKE SURE TO PUT IN CORRECT LUMINOSITY IN XML CONFIG!!"<<endl;
+	
   //bool TrainwithTprime = false; //temporarily not supported
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
@@ -221,8 +228,10 @@ int main (int argc, char *argv[])
   
   //xml file
   string xmlFileName = "";
-  if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
-  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
+  //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
+  //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall1.xml";
+  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";	
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
   
@@ -338,7 +347,7 @@ int main (int argc, char *argv[])
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
   /////////////////////////////////////////////////////////
   string xvariable = "HT", yvariable = "MTop"; //these are the two variables for which the 2D plane is made
-  int nbinsxvariable = 10, nbinsyvariable = 12; //if the binning is already created, make sure these are the same as before!
+  int nbinsxvariable = 6, nbinsyvariable = 12; //if the binning is already created, make sure these are the same as before!
   string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W_TTbarJetsFlat"+channelpostfix+".root";
   string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat"+channelpostfix+".root";
   TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable);
@@ -389,9 +398,20 @@ int main (int argc, char *argv[])
 
   ////////////////////////////////////////////////////
   // PileUp Reweighting - 3D//
-  ////////////////////////////////////////////////////
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-  Lumi3DWeights.weight3D_init(1.0);
+  ////////////////////////////////////////////////////  
+	Lumi3DReWeighting Lumi3DWeights;
+	//if(!(doRun2011AOnly || doRun2011BOnly)) Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  //else if(doRun2011AOnly) Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+	if(!(doRun2011AOnly || doRun2011BOnly)) Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  else if(doRun2011AOnly) Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");	
+	else if(doRun2011BOnly)
+	{
+	  cout<<"WARNING: currently no histogram for 2011B only available: using Run2011A+B pilup reweighting!!"<<endl;
+		//Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root","pileup","pileup");
+		Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root","pileup","pileup");
+	}
+	
+	Lumi3DWeights.weight3D_init(1.0);
 	if(systematic == "PUMinus")
   	Lumi3DWeights.weight3D_init(0.92);
 	else if(systematic == "PUPlus")
@@ -542,7 +562,7 @@ int main (int argc, char *argv[])
 				float mceventtriggerweight = 1;
 				float NEWmceventtriggerweight = 1;
 				float prob=0;
-      	if(semiElectron){
+      	if(semiElectron && doMCtriggerEffreweighting){
 					std::vector<float> probabilities;
 					for(size_t i=0; i<InitJets.size(); ++i){
     				if(fabs(InitJets[i].Eta())>2.6) continue;
@@ -749,7 +769,7 @@ int main (int argc, char *argv[])
 							bTagValuesForMVA_2B_2W.push_back(bTagValuesForMVA[bJet1]);
 							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{
-								if(bJet1 == jetindex_isb[j].first)
+								if(doBtagSFreweighting && bJet1 == jetindex_isb[j].first)
 								{
 									if(!jetindex_isb[j].second)
 									{ // jet is b-tagged but NOT a true b
@@ -768,7 +788,7 @@ int main (int argc, char *argv[])
 							bTagValuesForMVA_2B_2W.push_back(bTagValuesForMVA[bJet2]);
 							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{								
-								if(bJet2 == jetindex_isb[j].first)
+								if(doBtagSFreweighting &&bJet2 == jetindex_isb[j].first)
 								{       
 							  	//cout<<"    jetindex_isb["<<j<<"].second = "<<jetindex_isb[j].second<<endl;
 									if(!jetindex_isb[j].second)
