@@ -21,7 +21,7 @@ TTJets Analysis: ...*2/3 = .../pb -->
 <!-- cross sections of single top processes corresponding to A=1 -->
 <!-- Summer11 https://twiki.cern.ch/twiki/bin/view/CMS/SingleTopMC2011 // DR scheme for tW channel -->
 
-<d name="ST_tChannel_t" title="SingleTop_t_Channel_t" add="1" color="7"  ls="1" lw="2" normf="1" xsection="41.92" EqLumi="" PreselEff="0.0" xsectionError="0.2" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_42Xv3_2012Jan19_T_TuneZ2_t-channel_7TeV-powheg-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131401_TOPTREE_31012012_152329/*.root"/>
+<d name="ST_tChannel_t" title="SingleTop_t_Channel_t" add="1" color="7"  ls="1" lw="2" normf="1" xsection="41.92" EqLumi="92769.42" PreselEff="0.0" xsectionError="0.2" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_42Xv3_2012Jan19_T_TuneZ2_t-channel_7TeV-powheg-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131401_TOPTREE_31012012_152329/*.root"/>
 <d name="ST_tChannel_tbar" title="SingleTop_t_Channel_tbar" add="1" color="7"  ls="1" lw="2" normf="1" xsection="22.65" EqLumi="85574.53" PreselEff="0.0" xsectionError="0.2" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_42Xv3_2012Jan19_Tbar_TuneZ2_t-channel_7TeV-powheg-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131407_TOPTREE_31012012_162249/*.root"/>
 <d name="ST_sChannel_t" title="SingleTop_s_Channel_t" add="1" color="7"  ls="1" lw="2" normf="1" xsection="3.19" EqLumi="81309.72" PreselEff="0.0" xsectionError="0.2" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_42Xv3_2012Jan19_T_TuneZ2_s-channel_7TeV-powheg-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131422_TOPTREE_31012012_010006/*.root"/>
 <d name="ST_sChannel_tbar" title="SingleTop_s_Channel_tbar" add="1" color="7"  ls="1" lw="2" normf="1" xsection="1.44" EqLumi="95525" PreselEff="0.0" xsectionError="0.2" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_42Xv3_2012Jan19_Tbar_TuneZ2_s-channel_7TeV-powheg-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131427_TOPTREE_31012012_170329/*.root"/>
@@ -42,7 +42,7 @@ cross sections for single heavy quark production from Campbell, Frederix, Malton
 but scaled with the factor LO XS (7 TeV)/ LO XS (14 TeV) as obtained from MG5
 for A=0!!!
 -->
-<!--
+
 <d name="NP_Tprime350" title="t'#bar{t'} 350 GeV" add="0" color="40"  ls="1" lw="2" normf="1" xsection="3.200" EqLumi="" PreselEff="1" xsectionError="0" mass="350" filenames=""/>
 <d name="NP_Tprime375" title="t'#bar{t'} 375 GeV" add="0" color="40"  ls="1" lw="2" normf="1" xsection="2.100" EqLumi="" PreselEff="1" xsectionError="0" mass="375" filenames=""/>
 <d name="NP_Tprime400" title="t'#bar{t'} 400 GeV" add="1" color="40"  ls="1" lw="2" normf="1" xsection="1.406" EqLumi="76679.23" PreselEff="1" xsectionError="0" mass="400" filenames="/home/dhondt/Fall11_42X_Samples/MuonSkim_Fall11_42X_TprimeTprimeToBWBWinc_M-400_7TeV-madgraph_Fall11-PU_S6_START42_V14B-v1_02022012_102916_TOPTREE_05022012_185006/*.root"/>
@@ -147,7 +147,7 @@ for A=0!!!
 <d name="NP_BprimeTprime750" title="b't' 750 GeV" add="1" color="30"  ls="1" lw="2" normf="1" xsection="0.0115" EqLumi="52057391" PreselEff="1" xsectionError="0" mass="750" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_Fall11_42X_BprimeTprimeToTWBWinc_M-750_TuneZ2_7TeV-madgraph_Fall11-PU_S6_START42_V14B-v2_05022012_052410_TOPTREE_05022012_121504/*.root"/>
 <d name="NP_BprimeTprime775" title="b't' 775 GeV" add="1" color="30"  ls="1" lw="2" normf="1" xsection="0.0090" EqLumi="66289333" PreselEff="1" xsectionError="0" mass="775" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_Fall11_42X_BprimeTprimeToTWBWinc_M-775_TuneZ2_7TeV-madgraph_Fall11-PU_S6_START42_V14B-v2_05022012_173238_TOPTREE_06022012_095839/*.root"/>
 <d name="NP_BprimeTprime800" title="b't' 800 GeV" add="0" color="30"  ls="1" lw="2" normf="1" xsection="0.0070" EqLumi="" PreselEff="1" xsectionError="0" mass="800" filenames=""/>
--->
+
 
 
 </datasets>
