@@ -176,10 +176,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfixOld = ""; // to relabel the names of the output file  
+  string postfixOld = "_Fall11_Round4"; // should be same as postifix in TreeCreator of the trees
 	string postfix= postfixOld+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees";
+  string Treespath = "InclFourthGenTrees_Fall11_Round4";
   Treespath = Treespath +"/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
@@ -230,7 +230,7 @@ int main (int argc, char *argv[])
   string xmlFileName = "";
   //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
   //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall1.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
   else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";	
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
@@ -327,7 +327,8 @@ int main (int argc, char *argv[])
   MSPlot["MS_NbSSElMuevents"] = new MultiSamplePlot(datasets,"# events with SS electron+muon", 1, 0.5, 1.5, "");
   MSPlot["MS_NbSSMuMuevents"] = new MultiSamplePlot(datasets,"# events with SS muons", 1, 0.5, 1.5, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0.5, 1.5, "");
-  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 150, "");
+  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "");
+	MSPlot["MS_METafterbtagSF"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "");
   MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
   MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
   MSPlot["MS_JetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicity", 10, -0.5, 9.5, "Jet Multiplicity");
@@ -337,6 +338,7 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
+	
 	
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -473,7 +475,7 @@ int main (int argc, char *argv[])
 		cout << " Processing DataSet: " << dataSetName << "  containing " << nEvents << " events" << endl;
     cout << " Cross section = " << datasets[d]->Xsection() << "  intLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
 
-	 	if(!useMassesAndResolutions && dataSetName != "TTbarJets_SemiMuon") 
+	 	if(!useMassesAndResolutions && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron") 
 			continue;
 		
     ///////////////////////////////////////////////////
@@ -530,9 +532,9 @@ int main (int argc, char *argv[])
         end = nEvents;
     }
      
-    if (verbose > 1)
-      cout << " - Loop over events " << endl;      
-    
+    cout << " - Loop over events " << endl;      
+    //cout<<"start = "<<start<<"end = "<<end<<endl;
+		
     for (int ievt = start; ievt < end; ievt++)
     {        
 
@@ -597,8 +599,11 @@ int main (int argc, char *argv[])
       	// apply PU Reweighting
       	////////////////////////////
 				lumiWeight3D = Lumi3DWeights.weight3D(myBranch_selectedEvents->nPUBXm1(),myBranch_selectedEvents->nPU(),myBranch_selectedEvents->nPUBXp1());
-	 			scaleFactor = scaleFactor*lumiWeight3D;
-      	histo1D["lumiWeights"]->Fill(scaleFactor);	
+	 			if(doPUreweighting)
+				{
+					scaleFactor = scaleFactor*lumiWeight3D;
+      		histo1D["lumiWeights"]->Fill(scaleFactor);
+				}	
 			}
 			
 			//reading variables from the tree
@@ -806,7 +811,12 @@ int main (int argc, char *argv[])
 						}
 					}
 				} //end loop over jets (~ b-tagging)
-  
+  		
+			if(isSingleLepton)
+			{
+				MSPlot["MS_METafterbtagSF"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+			}					
+				
 		
 		  vector<TLorentzVector> selectedJetsFromW,selectedJetsFromW_DropUsedJets,selectedJetsFromW_DropUsedJets_tmp;
 			///////////////////////
@@ -1341,7 +1351,7 @@ int main (int argc, char *argv[])
     //important: free memory
     treeLoader.UnLoadDataset();
     
-    if (!useMassesAndResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) ||  (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
+		if (!useMassesAndResolutions && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) ||  (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
     {
 	
       string resfilename = "MassPlot.root";
@@ -1450,12 +1460,12 @@ int main (int argc, char *argv[])
     selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+postfix+channelpostfix;
     selectiontableSemiLep = selectiontableSemiLep +".tex"; 	
-    selecTableSemiLep.Write(selectiontableSemiLep.c_str(),true, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
+    selecTableSemiLep.Write(selectiontableSemiLep.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
     
 		selecTableMultiLep.TableCalculator(true, true, true, true, true, true, true, true);
     string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+postfix+channelpostfix;
     selectiontableMultiLep = selectiontableMultiLep +".tex"; 	
-    selecTableMultiLep.Write(selectiontableMultiLep.c_str(),true, true, false, false, false, false, false);
+    selecTableMultiLep.Write(selectiontableMultiLep.c_str(),false, true, false, false, false, false, false);
 		
      //regarding binning, which is only relevant when you do the MVA jet combination to reconstruct the top mass   
      if (doMVAjetcombination && anaEnv.MCRound==0)
