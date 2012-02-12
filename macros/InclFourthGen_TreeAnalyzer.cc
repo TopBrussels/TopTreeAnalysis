@@ -1331,14 +1331,16 @@ int main (int argc, char *argv[])
      
     fout->cd();
     
-    cout << " - Closing the output file now..." << endl;
-    fout->Close();
+    //cout << " - Closing the output file now..." << endl;
+    //fout->Close();
   } //end !trainMVA
   
   //delete
+	cout<<" - Deleting jetCombiner..."<<endl;
   if(jetCombiner) delete jetCombiner; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
+  cout<<" - JetCombiner deleted..."<<endl;
   
-  delete fout;
+	delete fout;
 
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
 
