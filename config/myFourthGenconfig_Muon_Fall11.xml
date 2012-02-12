@@ -149,6 +149,12 @@ for A=0!!!
 <d name="NP_BprimeTprime800" title="b't' 800 GeV" add="0" color="30"  ls="1" lw="2" normf="1" xsection="0.0070" EqLumi="" PreselEff="1" xsectionError="0" mass="800" filenames=""/>
 
 
+<!-- Summer11 TTJets systematics (not available in Fall11-->
+<d name="TTbarJets_scaleup" title="t#bar{t}+jets scale up" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5505.1" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_scaleup/*.root"/>
+<d name="TTbarJets_scaledown" title="t#bar{t}+jets scale down" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5368.2" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_scaledown/*.root"/>
+<d name="TTbarJets_matchingup" title="t#bar{t}+jets matching up" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="6291.4" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_matchingup/*.root"/>
+<d name="TTbarJets_matchingdown" title="t#bar{t}+jets matching down" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5559.8" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_matchingdown/*.root"/>
+
 
 </datasets>
 
@@ -162,26 +168,6 @@ for A=0!!!
 <a type="CRForTtbarEstimation"  BtagAlgo_ttjEst="0" BtagDiscriCut_ttjEst="4.38" MuonPtCutCR="30." MuonEtaCutCR="2.1" MuonRelIsoCutCR="0.1" JetsPtCutCR="30." JetsEtaCutCR="2.4" MblCut="160." DRBBCut="2.3" HTBBCut="500." NREvtFraction="0.75"/>
 <a type="CRForABCDEstimation"   NXbinsABCD="200" NYbinsABCD="200" XbinMinABCD="0" XbinMaxABCD="20" YbinMinABCD="0" YbinMaxABCD="20" cutXmin="0" cutX0="0.1" cutX1="0.2" cutXmax="20." cutYmin="0." cutY0="3." cutY1="4." cutYmax="20." region="1"/>
 
-<!-- VJet-estimation
-Method: "Minuit" / "Minuit2", options : "Migrad", "Simplex", "Combined", "Scan", ("Fumili" option needs more inputs, therefore not available for the moment)
-Method: "GSLMultiMin", option : "ConjugateFR", "ConjugatePR", "BFGS", "BFGS2" and "SteepestDescent" (convergence prob. not optimal)
-Method: "GSLMultiFit" / "GSLSimAn", options : ""
--->
-<!-- btagging algorithms and working points: -->
-  <!-- 0 == TrackCountingHighEff    : loose/medium/tight = 2.030/4.380/14.200-->
-  <!-- 1 == TrackCountingHighPur    : loose/medium/tight = 1.470/2.360/ 5.360-->
-  <!-- 2 == JetProbability          : loose/medium/tight = 0.241/0.490/ 0.795-->
-  <!-- 3 == JetBProbability         : loose/medium/tight = 1.100/2.370/ 3.390-->
-  <!-- 4 == simpleSecondaryVertex   : loose/medium/tight = 1.250/2.050/ 4.070-->
-  <!-- 5 == combinedSecondaryVertex : loose/medium/tight = 0.387/0.838/ 0.940-->
-<!--
-TaggEffInit:	/ separate jet multiplicity (true also for NVlikeInit and NTTlikeInit)
-		- separate btag working point
-		, separate: eb,eudsc(TTlike),euds(Vlike)
-EffEbsel        : efficiency to select 0,1,2 b-quark-jet
-	        / separate jet multiplicity
-VJEstFixParam   : 0: eb, 1: eudsc(TTlike), 2: euds(Vlike)
--->
 
 <a type="ParamForVJetEstimation" BtagAlgo_vjEst="0" NofBtagWorkingPoint_vjEst="1" BtagWorkingPoint_vjEst="2.03,3.20" MinMethod="Minuit2" MinOption="Combined" useMJLE="0" useUnBinMLE="1" NVJetPE="500" TagEffInit="0.794,0.128,0.097-0.70,0.043,0.02-0.63,0.05,0.010/0.807,0.134,0.124-0.70,0.043,0.02-0.63,0.05,0.010" NVlikeInit="14./4." NTTlikeInit="6./8." EffEbsel="0.0515,0.4170,0.5281/0.0187,0.2604,0.7049" VJEstFixParam="0,1,2" NofIterationsVJestShapeEstim="40"/>
 <a type="Observables" runOnObsByString="0" listOfObsInts="2" listOfObsStrings="ET1oET2,ET1oET3" binning="../config/Binning.root" bins="20" eventsperbin="10" EpsilonValue="1.30" Correl_cut="0.80"/>
