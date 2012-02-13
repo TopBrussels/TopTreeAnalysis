@@ -91,7 +91,13 @@ map<string,TH2F*> histo2D;
 map<string,MultiSamplePlot*> MSPlot;
 
 int main (int argc, char *argv[])
-{
+{	
+	cout<<"The arguments passed to the executable are: "<<endl;
+  for(unsigned int i=1;i<argc;i++)
+	{
+		cout<<argv[i]<<endl;
+	}
+	
   //which systematic to run?
   string systematic = "Nominal";
   if (argc >= 2)
@@ -102,7 +108,7 @@ int main (int argc, char *argv[])
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: " << endl;
     exit(-1);
-  }	
+  }	  
 
   string btagger = "TCHPM";
 //from BTV-11-001; WARNING: btag SFs are for jets of 20-240 GeV, averaged over eta; and mistag SFs are for jets of 50-80 GeV
@@ -188,9 +194,15 @@ int main (int argc, char *argv[])
   // Configuration
   /////////////////////
   bool useMassesAndResolutions = true;
+	if (argc >= 4)
+		useMassesAndResolutions = atoi(argv[3]);
   bool doMVAjetcombination = true; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
-  bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
-  if (systematic != "Nominal")
+  if(!useMassesAndResolutions)
+	  doMVAjetcombination = false;
+	bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
+  if (argc >= 5)
+		TrainMVA = atoi(argv[4]);
+	if (systematic != "Nominal")
   {
 		useMassesAndResolutions = true;
 		doMVAjetcombination = true;
@@ -207,8 +219,14 @@ int main (int argc, char *argv[])
   //bool TrainwithTprime = false; //temporarily not supported
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   string channelpostfix = "";
-  bool semiElectron = true; // use semiElectron channel?
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel?
+  bool semiMuon = true; // use semiMuon channel?
+	if (argc >= 3)
+	{	
+	  semiMuon = atoi(argv[2]);
+		semiElectron = !semiMuon;
+	}	
+	
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -225,6 +243,9 @@ int main (int argc, char *argv[])
        channelpostfix = "_semiEl";
     }
   }
+	bool make2Dbinning = false;
+	if (argc >= 6)
+  	make2Dbinning = atoi(argv[5]);
   
   //xml file
   string xmlFileName = "";
@@ -358,7 +379,7 @@ int main (int argc, char *argv[])
   { 
     HTvsMTop_1B_2W.SetDatasets(datasets);
     HTvsMTop_2B_2W.SetDatasets(datasets);
-    if(anaEnv.MCRound!=0)
+    if(make2Dbinning == false)
     {
        HTvsMTop_1B_2W.LoadTwoDimBinning(binningFileName_HTvsMTop_1B_2W);
        HTvsMTop_2B_2W.LoadTwoDimBinning(binningFileName_HTvsMTop_2B_2W);
@@ -455,6 +476,17 @@ int main (int argc, char *argv[])
 
   for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
   {
+		string dataSetName = datasets[d]->Name();
+		
+		if(!useMassesAndResolutions && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron")
+			continue;
+			
+		if(TrainMVA && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron")
+			continue;
+			
+		if(make2Dbinning && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron" dataSetName != "TTbarJets_Other")
+			continue;
+			
     if (verbose > 1)
       cout << "file: " << inputTrees[d] << endl;
 	 
@@ -466,20 +498,17 @@ int main (int argc, char *argv[])
     inConfigTree->GetEvent(0);
     Dataset* dataSet = (Dataset*) tc_dataset->At(0);	//will not be used (problem with MVA 1/3 and 2/3 splitting of sample)	
 		
-		string dataSetName = datasets[d]->Name();
-		
 		TTree* inInclFourthGenTree = (TTree*) inFile->Get("myInclFourthGenTree");
     TBranch* m_br = (TBranch*) inInclFourthGenTree->GetBranch("InclFourthGenBranch_selectedEvents");
     //TBranch* m_br = (TBranch*) inInclFourthGenTree->GetBranch("TheInclFourthGenTree");
     InclFourthGenTree* myBranch_selectedEvents = 0;
     m_br->SetAddress(&myBranch_selectedEvents);
-    int nEvents = inInclFourthGenTree->GetEntries();
-
+    int nEvents = inInclFourthGenTree->GetEntries();			
+		
 		cout << " Processing DataSet: " << dataSetName << "  containing " << nEvents << " events" << endl;
     cout << " Cross section = " << datasets[d]->Xsection() << "  intLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
+	  if(dataSetName == "TTbarJets_SemiMuon" || dataSetName == "TTbarJets_SemiElectron") cout << " WARNING: eqLumi of TTJets semi-mu/el will be altered in the code depending on TrainMVA!" << endl;
 
-	 	if(!useMassesAndResolutions && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron") 
-			continue;
 		
     ///////////////////////////////////////////////////
     // calculate W reconstructed mass and resolution: load the mass values and resolutions for chi2 jetcombination.
@@ -520,16 +549,23 @@ int main (int argc, char *argv[])
     //Don't forget to change the eqLumi in the config depending on training or evaluation (not safe, to be changed? Not so trivial...)
     int start = 0;
     int end = nEvents;
-    if(TrainMVA && (dataSetName == "TTbarJets_SemiMuon" || dataSetName == "TTbarJets_SemiElectron"))
-    { 
-        start = 0;
-        end = int(nEvents/3);
-    }
-    else if (!TrainMVA && (dataSetName == "TTbarJets_SemiMuon" || dataSetName == "TTbarJets_SemiElectron"))
-    {    
-        start = int(nEvents/3);
+		float fracLumi = 1.; //will be multiplied with the scalefactor per event!
+		float fracTTJetsTraining = 1./3.;
+		if(dataSetName == "TTbarJets_SemiMuon" || dataSetName == "TTbarJets_SemiElectron")
+		{
+			if(TrainMVA)
+			{			 
+				start = 0;
+        end = int(nEvents*fracTTJetsTraining);
+				fracLumi = fracTTJetsTraining;
+			}
+			else
+			{
+				start = int(nEvents*fracTTJetsTraining);
         end = nEvents;
-    }
+				fracLumi = 1 - fracTTJetsTraining;
+			}
+		}
     else{
         start = 0;
         end = nEvents;
@@ -558,6 +594,7 @@ int main (int argc, char *argv[])
 	 
       // scale factor for the event
       float scaleFactor = 1.;
+			scaleFactor = scaleFactor/fracLumi; //for ttbar jets semi-mu or semi-el the effect will be that eqLumi = 1/3 of the total ttjets eqLumi in the config, and for ttbar jets other that eqLumi = 2/3 of the total ttjets eqLumi in the config
 
 			double lumiWeight3D = 1.0;
 			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
@@ -1047,11 +1084,11 @@ int main (int argc, char *argv[])
 					   	
 					   //for the 2D binning (HT vs Mtop)
 					   float fillweight = datasets[d]->NormFactor () * Luminosity * scaleFactor;
-					   if(anaEnv.MCRound==0)
+					   if(make2Dbinning == true)
 					   {
-					        HTvsMTop_1B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+									HTvsMTop_1B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
 					   }
-					   else if(anaEnv.MCRound!=0)
+					   else if(make2Dbinning == false)
 					   {
 					        HTvsMTop_1B_2W.Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight,d);
 					   }
@@ -1149,11 +1186,11 @@ int main (int argc, char *argv[])
 					   	
 						//for the 2D binning (HT vs Mtop)
 					   	float fillweight = datasets[d]->NormFactor () * Luminosity * scaleFactor;
-					   	if(anaEnv.MCRound==0)
+					   	if(make2Dbinning == true)
 					   	{
 					   	  HTvsMTop_2B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
 					   	}
-					   	else if(anaEnv.MCRound!=0)
+					   	else if(make2Dbinning == false)
 					   	{
 					   	  HTvsMTop_2B_2W.Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight,d);
 					   	}
@@ -1169,7 +1206,7 @@ int main (int argc, char *argv[])
 				    // cout << "in 2B 3W box" << endl;
 				     if(isSingleLepton && selectedJets.size() >=6) 
 				     {
-					myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
+							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,7,scaleFactor);
 				     }
 					//cout << "done in 2B 3W box" << endl;
@@ -1316,12 +1353,12 @@ int main (int argc, char *argv[])
     selecTableMultiLep.Write(selectiontableMultiLep.c_str(),false, true, false, false, false, false, false);
 		
      //regarding binning, which is only relevant when you do the MVA jet combination to reconstruct the top mass   
-     if (doMVAjetcombination && anaEnv.MCRound==0)
+     if (doMVAjetcombination && make2Dbinning==true)
      {	
         HTvsMTop_1B_2W.Write_for2DBinning(binningFileName_HTvsMTop_1B_2W);
 				HTvsMTop_2B_2W.Write_for2DBinning(binningFileName_HTvsMTop_2B_2W);
      }    
-     else if(doMVAjetcombination && anaEnv.MCRound==1)
+     else if(doMVAjetcombination && make2Dbinning==false)
      {  
 				HTvsMTop_1B_2W.Convert2Dto1D(postfix);
         HTvsMTop_2B_2W.Convert2Dto1D(postfix);
