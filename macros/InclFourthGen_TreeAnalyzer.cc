@@ -83,6 +83,9 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
 
 float jetprob(float jetpt, float btagvalue);
 
+float SFb(float jetpt, string tagger, string syst);
+float SFl(float jetpt, float jeteta, string tagger, string syst);
+
 /// Normal Plots (TH1F* and TH2F*)
 map<string,TH1F*> histo1D;
 map<string,TH2F*> histo2D;
@@ -694,52 +697,6 @@ int main (int argc, char *argv[])
 				}			
 			}
 
-			if(isSSLepton)
-			{
-				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
-				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-				
-				//cout << "IS SAME-SIGN LEPTON" << endl;
-				//count number of events with SS leptons
-				MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-				selecTableMultiLep.Fill(d,0,scaleFactor);
-				
-				if(isSSMuon){
-					histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
-					histo_dataset = histoName+dataSetName.c_str(); 
-					histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-					MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
-					selecTableMultiLep.Fill(d,1,scaleFactor);
-				}else if(isSSElectron){
-					histoName = "NbEvents_"+multileptons[0];
-					histo_dataset = histoName+dataSetName.c_str(); 
-					histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-					MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
-					selecTableMultiLep.Fill(d,2,scaleFactor);
-				}else if(isSSMuEl){
-					histoName = "NbEvents_"+multileptons[1];
-					histo_dataset = histoName+dataSetName.c_str(); 
-					histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-					MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
-					selecTableMultiLep.Fill(d,3,scaleFactor);
-				}	
-			}
-			if(isTriLepton)
-			{
-				//cout << "IS TRI-LEPTON EVENT" << endl;
-				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
-				//cout << "IS TRI-LEPTON" << endl;
-				//count number of events with three leptons
-				MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
-				selecTableMultiLep.Fill(d,4,scaleFactor);
-				
-				if(isTriElectron) histoName = "NbEvents_"+multileptons[3];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
-				if(isTriMuon) histoName = "NbEvents_"+multileptons[6];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
-				if(isTriElElMu) histoName = "NbEvents_"+multileptons[4];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
-				if(isTriElMuMu) histoName = "NbEvents_"+multileptons[5];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
-				histo_dataset = histoName+dataSetName.c_str(); 
-				histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
-			}
 
 			bool TprimeEvaluation = false; //temporarily not supported
 			//////////////////////////////////////////////////////////////////////////
@@ -854,11 +811,13 @@ int main (int argc, char *argv[])
 								{
 									if(!jetindex_isb[j].second)
 									{ // jet is b-tagged but NOT a true b
-										scaleFactor = scaleFactor * mistagfactor;
+										//scaleFactor = scaleFactor * mistagfactor;
+										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[bJet1].Pt(),selectedJetsForBtagging[bJet1].Eta(),btagger,systematic);
 									}
 									else
 									{ // jet is b-tagged and a true b
-										scaleFactor = scaleFactor * scalefactorbtageff;
+										//scaleFactor = scaleFactor * scalefactorbtageff;
+										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic);
 									}										
 								}
 							}
@@ -875,12 +834,14 @@ int main (int argc, char *argv[])
 									if(!jetindex_isb[j].second)
 									{ // jet is b-tagged but NOT a true b
 										//cout<<"jet is b-tagged but NOT a true b"<<endl;
-										scaleFactor = scaleFactor * mistagfactor;
+										//scaleFactor = scaleFactor * mistagfactor;
+										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[jetindex_btagvalue[i].first].Pt(),selectedJetsForBtagging[bJet2].Eta(),btagger,systematic);
 									} 
 									else
 									{ // jet is b-tagged and a true b
 								  	//cout<<"jet is b-tagged and a true b"<<endl;
-										scaleFactor = scaleFactor * scalefactorbtageff;
+										//scaleFactor = scaleFactor * scalefactorbtageff;
+										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet2].Pt(),btagger,systematic);
 									}									
 								}
 							}
@@ -892,6 +853,53 @@ int main (int argc, char *argv[])
 			{
 				MSPlot["MS_METafterbtagSF"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 			}					
+			
+			if(isSSLepton)
+			{
+				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
+				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+				
+				//cout << "IS SAME-SIGN LEPTON" << endl;
+				//count number of events with SS leptons
+				MSPlot["MS_NbSSevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+				selecTableMultiLep.Fill(d,0,scaleFactor);
+				
+				if(isSSMuon){
+					histoName = "NbEvents_"+multileptons[2];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+					histo_dataset = histoName+dataSetName.c_str(); 
+					histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+					MSPlot["MS_NbSSMuMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+					selecTableMultiLep.Fill(d,1,scaleFactor);
+				}else if(isSSElectron){
+					histoName = "NbEvents_"+multileptons[0];
+					histo_dataset = histoName+dataSetName.c_str(); 
+					histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+					MSPlot["MS_NbSSElElevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);	
+					selecTableMultiLep.Fill(d,2,scaleFactor);
+				}else if(isSSMuEl){
+					histoName = "NbEvents_"+multileptons[1];
+					histo_dataset = histoName+dataSetName.c_str(); 
+					histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+					MSPlot["MS_NbSSElMuevents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);							
+					selecTableMultiLep.Fill(d,3,scaleFactor);
+				}	
+			}
+			if(isTriLepton)
+			{
+				//cout << "IS TRI-LEPTON EVENT" << endl;
+				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
+				//cout << "IS TRI-LEPTON" << endl;
+				//count number of events with three leptons
+				MSPlot["MS_NbTrievents"]->Fill(1.0,datasets[d], true, Luminosity*scaleFactor);
+				selecTableMultiLep.Fill(d,4,scaleFactor);
+				
+				if(isTriElectron) histoName = "NbEvents_"+multileptons[3];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+				if(isTriMuon) histoName = "NbEvents_"+multileptons[6];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+				if(isTriElElMu) histoName = "NbEvents_"+multileptons[4];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+				if(isTriElMuMu) histoName = "NbEvents_"+multileptons[5];//({"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"})
+				histo_dataset = histoName+dataSetName.c_str(); 
+				histo1D[histo_dataset.c_str()]-> Fill(1.0,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+			}
 				
 		
 		  vector<TLorentzVector> selectedJetsFromW,selectedJetsFromW_DropUsedJets,selectedJetsFromW_DropUsedJets_tmp;
@@ -1435,3 +1443,169 @@ float jetprob(float jetpt, float btagvalue){
 	//prob*=0.736*exp((-8.01*exp(-0.540*btagvalue))); //"for the offline TCHE tagger"
 	return prob;
 };
+
+//https://twiki.cern.ch/twiki/pub/CMS/BtagPOG/SFb-mujet_payload.txt
+float SFb(float jetpt, string tagger, string syst){
+	float ptmin[14] = {30, 40, 50, 60, 70, 80, 100, 120, 160, 210, 260, 320, 400, 500};
+	float ptmax[14] = {40, 50, 60, 70, 80,100, 120, 160, 210, 260, 320, 400, 500, 670};
+	float SFb_error_TCHPM[14] = { 0.0365776, 0.036307, 0.0261062, 0.0270308, 0.0276016, 0.0175067, 0.0179022, 0.0198104, 0.0197836, 0.024912, 0.0273767, 0.0398119, 0.0418751, 0.0605975};
+	float SFb_error_TCHEM[14] = { 0.0311456, 0.0303825, 0.0209488, 0.0216987, 0.0227149, 0.0260294, 0.0205766, 0.0227065, 0.0260481, 0.0278001, 0.0295361, 0.0306555, 0.0367805, 0.0527368};
+	
+	float scalefactor = 0;
+	int bin = -1;
+	if(tagger=="TCHPM"){ 
+		scalefactor = 0.616456*((1.+(0.145816*jetpt))/(1.+(0.0904067*jetpt)));
+		if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))); 
+		if( syst != "Nominal"){
+			for(int bin_i = 0; bin_i< 14; bin_i++) 
+				if( jetpt > ptmin[bin_i] && jetpt < ptmax[bin_i]) bin = bin_i;
+			if(jetpt < ptmin[0]){
+				cout << "jet pt < 30, can not apply btag scalefactor -----> o-ow, problem in selection!" << endl;
+				exit(-1);
+			}
+			if( syst == "misTagMinus" ){
+				scalefactor = scalefactor - SFb_error_TCHPM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) - 2*SFb_error_TCHPM[13];
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = scalefactor + SFb_error_TCHPM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) + 2*SFb_error_TCHPM[13];
+			}
+		} 
+	}
+	if(tagger=="TCHEM"){
+		scalefactor = 0.932251*((1.+(0.00335634*jetpt))/(1.+(0.00305994*jetpt)));
+		if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13])));
+		if( syst != "Nominal"){
+			for(int bin_i = 0; bin_i< 14; bin_i++) 
+				if( jetpt > ptmin[bin_i] && jetpt < ptmax[bin_i]) bin = bin_i;
+			if(jetpt < ptmin[0]){
+				cout << "jet pt < 30, can not apply btag scalefactor -----> o-ow, problem in selection!" << endl;
+				exit(-1);
+			}
+			if( syst == "misTagMinus" ){
+				scalefactor = scalefactor - SFb_error_TCHEM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) - 2*SFb_error_TCHEM[13];
+			}			
+			if( syst == "misTagPlus" ){
+				scalefactor = scalefactor + SFb_error_TCHEM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) + 2*SFb_error_TCHEM[13];
+			}
+		} 
+	}
+	return scalefactor;
+}
+
+//https://twiki.cern.ch/twiki/pub/CMS/BtagPOG/SFlightFuncs.C
+float SFl(float jetpt, float jeteta, string tagger, string syst){
+	float scalefactor = 0;
+	if(tagger=="TCHPM"){
+		if(jetpt>670) jetpt = 670;
+		if(fabs(jeteta)> 0.0 && fabs(jeteta)< 0.8){
+			if( syst == "Nominal" ) scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)));
+			if( syst == "misTagMinus" ){
+				scalefactor = ((1.12949+(-0.000678492*jetpt))+(2.02219e-06*(jetpt*jetpt)))+(-2.21675e-09*(jetpt*(jetpt*jetpt)));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)))-((1.12949+(-0.000678492*jetpt))+(2.02219e-06*(jetpt*jetpt)))+(-2.21675e-09*(jetpt*(jetpt*jetpt)));
+					scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt))) - 2*uncertainty;
+				}
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = ((1.41077+(-0.00105992*jetpt))+(2.97373e-06*(jetpt*jetpt)))+(-3.0425e-09*(jetpt*(jetpt*jetpt)));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = ((1.41077+(-0.00105992*jetpt))+(2.97373e-06*(jetpt*jetpt)))+(-3.0425e-09*(jetpt*(jetpt*jetpt)))-((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)));
+					scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt))) + 2*uncertainty;
+				}
+			}
+		}
+		if(fabs(jeteta)> 0.8 && fabs(jeteta)< 1.6){
+			if( syst == "Nominal" )scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt)));
+			if( syst == "misTagMinus" ){
+				scalefactor = ((1.21289+(-0.00126411*jetpt))+(3.81676e-06*(jetpt*jetpt)))+(-3.75847e-09*(jetpt*(jetpt*jetpt)));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt)))-((1.21289+(-0.00126411*jetpt))+(3.81676e-06*(jetpt*jetpt)))+(-3.75847e-09*(jetpt*(jetpt*jetpt)));
+					scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt))) - 2*uncertainty;
+				}
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = ((1.51053+(-0.00180085*jetpt))+(5.27457e-06*(jetpt*jetpt)))+(-5.01901e-09*(jetpt*(jetpt*jetpt)));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = ((1.51053+(-0.00180085*jetpt))+(5.27457e-06*(jetpt*jetpt)))+(-5.01901e-09*(jetpt*(jetpt*jetpt)))-((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt)));
+					scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt))) + 2*uncertainty;
+				}
+			}
+		}
+		if(fabs(jeteta)> 1.6 && fabs(jeteta)< 2.4){
+			if( syst == "Nominal" )scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt)));
+			if( syst == "misTagMinus" ){
+				scalefactor = ((1.07572+(0.00055366*jetpt))+(-9.55796e-07*(jetpt*jetpt)))+(-3.73943e-11*(jetpt*(jetpt*jetpt)));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt)))-((1.07572+(0.00055366*jetpt))+(-9.55796e-07*(jetpt*jetpt)))+(-3.73943e-11*(jetpt*(jetpt*jetpt)));
+					scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt))) - 2*uncertainty;
+				}
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = ((1.3782+(-5.52498e-05*jetpt))+(1.14685e-06*(jetpt*jetpt)))+(-2.04329e-09*(jetpt*(jetpt*jetpt)));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = ((1.3782+(-5.52498e-05*jetpt))+(1.14685e-06*(jetpt*jetpt)))+(-2.04329e-09*(jetpt*(jetpt*jetpt)))-((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt)));
+					scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt))) + 2*uncertainty;
+				}
+			}
+		}	
+	}
+	if(tagger=="TCHEM"){
+		if(jetpt>670) jetpt = 670;
+		if(fabs(jeteta)> 0.0 && fabs(jeteta)< 0.8){
+			if( syst == "Nominal" ) scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))));
+			if( syst == "misTagMinus" ){
+				scalefactor = (1.11418*((1+(-0.000442274*jetpt))+(1.53463e-06*(jetpt*jetpt))))+(-4.93683e-09*(jetpt*(jetpt*(jetpt/(1+(0.00152436*jetpt))))));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))))-(1.11418*((1+(-0.000442274*jetpt))+(1.53463e-06*(jetpt*jetpt))))+(-4.93683e-09*(jetpt*(jetpt*(jetpt/(1+(0.00152436*jetpt))))));
+					scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt)))))) - 2*uncertainty;
+				}
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = (1.47515*((1+(-0.000484868*jetpt))+(2.36817e-07*(jetpt*jetpt))))+(-2.05073e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00142819*jetpt))))));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty =(1.47515*((1+(-0.000484868*jetpt))+(2.36817e-07*(jetpt*jetpt))))+(-2.05073e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00142819*jetpt)))))) -(1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))));
+					scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt)))))) + 2*uncertainty;
+				}
+			}
+		}
+		if(fabs(jeteta)> 0.8 && fabs(jeteta)< 1.6){
+			if( syst == "Nominal" )scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt))))));
+			if( syst == "misTagMinus" ){
+				scalefactor = (1.08828*((1+(-0.000208737*jetpt))+(1.50487e-07*(jetpt*jetpt))))+(-2.54249e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00141477*jetpt))))));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt))))))-(1.08828*((1+(-0.000208737*jetpt))+(1.50487e-07*(jetpt*jetpt))))+(-2.54249e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00141477*jetpt))))));
+					scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt)))))) - 2*uncertainty;
+				}
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = (1.41211*((1+(-0.000559603*jetpt))+(9.50754e-07*(jetpt*jetpt))))+(-5.81148e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000787359*jetpt))))));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = (1.41211*((1+(-0.000559603*jetpt))+(9.50754e-07*(jetpt*jetpt))))+(-5.81148e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000787359*jetpt))))))-(1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt))))));
+					scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt)))))) + 2*uncertainty;
+				}
+			}
+		}
+		if(fabs(jeteta)> 1.6 && fabs(jeteta)< 2.4){
+			if( syst == "Nominal" )scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt))))));
+			if( syst == "misTagMinus" ){
+				scalefactor = (0.958079*((1+(0.000327804*jetpt))+(-4.09511e-07*(jetpt*jetpt))))+(-1.95933e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00143323*jetpt))))));
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt))))))-(0.958079*((1+(0.000327804*jetpt))+(-4.09511e-07*(jetpt*jetpt))))+(-1.95933e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00143323*jetpt))))));
+					scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt)))))) - 2*uncertainty;
+				}
+			}
+			if( syst == "misTagPlus" ){
+				scalefactor = (1.26236*((1+(-0.000524055*jetpt))+(2.08863e-06*(jetpt*jetpt))))+(-2.29473e-09*(jetpt*(jetpt*(jetpt/(1+(-0.000276268*jetpt))))));	
+				if(fabs(jetpt - 670)<0.00001){
+					float uncertainty = (1.26236*((1+(-0.000524055*jetpt))+(2.08863e-06*(jetpt*jetpt))))+(-2.29473e-09*(jetpt*(jetpt*(jetpt/(1+(-0.000276268*jetpt))))))-(1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt))))));
+					scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt)))))) + 2*uncertainty;
+				}
+			}
+		}
+	}
+	return scalefactor;
+}
