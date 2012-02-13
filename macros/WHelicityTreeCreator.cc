@@ -305,7 +305,6 @@ int main (int argc, char *argv[])
     resFitBJets->LoadResolutions("resolutions/bJetReso.root");
     if(semiMuon == true){
       resFitMuon->LoadResolutions("resolutions/muonReso.root");
-      //resFitNeutrino->LoadResolutions("resolutions/neutrinoReso.root");
       resFitNeutrino->LoadResolutions("resolutions/neutrinoSemiMuReso.root");  //Once resolutions are newly created they will be split up for SemiMu and SemiEl for Neutrino !!
     }
     else if(semiElectron == true){
