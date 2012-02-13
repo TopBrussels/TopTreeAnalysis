@@ -2,13 +2,10 @@
 
 <datasets>
 
-<!-- TTJets Training: ...*1/3 = .../pb, 
-TTJets Analysis: ...*2/3 = .../pb -->
-
 
 <!--TopTree id ... = Run2011A + Run2011B -->
 
-<d name="Data" title="Data" add="1" color="0" ls="1" lw="2" normf="1" xsection="1" EqLumi="4668.42" filenames="/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_May10ReReco_08022012_191212/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_PromptReco-v4_09022012_054452/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_05Aug2011_08022012_151152/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_PromptReco-v6_09022012_055308/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011B_PromptReco-v1_08022012_153514/*.root"/>
+<d name="Data" title="Data" add="1" color="0" ls="1" lw="2" normf="1" xsection="1" EqLumi="4668.42" filenames="/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_May10ReReco_12022012_160853/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_PromptReco-v4_12022012_194650/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_05Aug2011Reco_12022012_163334/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011A_PromptReco-v6_12022012_182943/*.root,/home/dhondt/Fall11_42X_Samples/Data_MuonSkim/MuonSkim_Fall11_42X_SingleMu_Run2011B_PromptReco-v1_13022012_090704/*.root"/>
 
 <d name="TTbarJets_SemiMuon" title="t#bar{t}+jets semi-#mu" add="1" color="8" ls="1" lw="2" normf="1" xsection="24.56296" EqLumi="21883.5069" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeProducer/skimmer/TopTree_MuonSkimmed_SemiMuon.root"/>
 <d name="TTbarJets_Other" title="t#bar{t}+jets other" add="1" color="8" ls="1" lw="2" normf="1" xsection="141.23704" EqLumi="21883.5069" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeProducer/skimmer/TopTree_MuonSkimmed_Other.root"/>
@@ -106,7 +103,6 @@ for A=0!!!
 <d name="NP_Bprime800" title="b'#bar{b'} 800 GeV" add="0" color="40"  ls="1" lw="2" normf="1" xsection="0.00988" EqLumi="" PreselEff="1" xsectionError="0" mass="800" filenames=""/>
 
 
-
 <d name="NP_SBprime350" title="b' 350 GeV" add="0" color="30"  ls="1" lw="2" normf="1" xsection="1.859" EqLumi="" PreselEff="1" xsectionError="0" mass="350" filenames=""/>
 <d name="NP_SBprime375" title="b' 375 GeV" add="0" color="30"  ls="1" lw="2" normf="1" xsection="1.638" EqLumi="" PreselEff="1" xsectionError="0" mass="375" filenames=""/>
 <d name="NP_SBprime400" title="b' 400 GeV" add="1" color="30"  ls="1" lw="2" normf="1" xsection="1.444" EqLumi="414463.30" PreselEff="1" xsectionError="0" mass="400" filenames="/user/pvmulder/Fall11_42X_Samples/MuonSkim_Fall11_42X_BprimeToTWinc_M-400_TuneZ2_7TeV-madgraph_Fall11-PU_S6_START42_V14B-v1_24012012_225738_TOPTREE_07022012_220638/*.root"/>
@@ -149,12 +145,12 @@ for A=0!!!
 <d name="NP_BprimeTprime800" title="b't' 800 GeV" add="0" color="30"  ls="1" lw="2" normf="1" xsection="0.0070" EqLumi="" PreselEff="1" xsectionError="0" mass="800" filenames=""/>
 
 
-<!-- Summer11 TTJets systematics (not available in Fall11-->
-<d name="TTbarJets_scaleup" title="t#bar{t}+jets scale up" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5505.1" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_scaleup/*.root"/>
-<d name="TTbarJets_scaledown" title="t#bar{t}+jets scale down" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5368.2" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_scaledown/*.root"/>
-<d name="TTbarJets_matchingup" title="t#bar{t}+jets matching up" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="6291.4" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_matchingup/*.root"/>
-<d name="TTbarJets_matchingdown" title="t#bar{t}+jets matching down" add="0" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5559.8" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_matchingdown/*.root"/>
-
+<!-- Summer11 TTJets systematics (not available in Fall11) -->
+<!--<d name="TTbarJets_scaleup" title="t#bar{t}+jets scale up" add="1" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5505.1" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_scaleup/*.root"/>
+<d name="TTbarJets_scaledown" title="t#bar{t}+jets scale down" add="1" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5368.2" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_scaledown/*.root"/>
+<d name="TTbarJets_matchingup" title="t#bar{t}+jets matching up" add="1" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="6291.4" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_matchingup/*.root"/>
+<d name="TTbarJets_matchingdown" title="t#bar{t}+jets matching down" add="1" color="8" ls="1" lw="2" normf="1" xsection="165.8" EqLumi="5559.8" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_TTjets_TuneZ2_matchingdown/*.root"/>
+-->
 
 </datasets>
 
