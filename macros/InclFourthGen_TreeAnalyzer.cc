@@ -484,7 +484,7 @@ int main (int argc, char *argv[])
 		if(TrainMVA && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron")
 			continue;
 			
-		if(make2Dbinning && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron" dataSetName != "TTbarJets_Other")
+		if(make2Dbinning && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron" && dataSetName != "TTbarJets_Other")
 			continue;
 			
     if (verbose > 1)
