@@ -163,10 +163,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = ""; // to relabel the names of the output file  
+  string postfix = "_Fall11_Round4"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees";
+  string Treespath = "InclFourthGenTrees_Fall11_Round4";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -208,8 +208,10 @@ int main (int argc, char *argv[])
   
   //xml file
   string xmlFileName = "";
-  if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
-  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
+  //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
+  //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
+  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
   
@@ -372,7 +374,8 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////
   // PileUp Reweighting - 3D//
   ////////////////////////////////////////////////////
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+//  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
 
 //  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
@@ -530,6 +533,7 @@ int main (int argc, char *argv[])
                 
       // check which file in the dataset it is to have the HLTInfo right
       string currentFilename = datasets[d]->eventTree()->GetFile()->GetName();
+			//cout<<" currentFilename = "<<currentFilename<<", previousFilename = "<<previousFilename<<endl;
       if(previousFilename != currentFilename)
       {
       	previousFilename = currentFilename;
@@ -541,6 +545,7 @@ int main (int argc, char *argv[])
       // trigger
       ///////////////////////////////
 			int currentRun = event->runId();
+			//cout<<" currentRun = "<<currentRun<<", previousRun = "<<previousRun<<endl;
 			if(previousRun != currentRun)
 			{
 			previousRun = currentRun;
@@ -587,7 +592,11 @@ int main (int argc, char *argv[])
 	   			}
 	   			else 
 	   			{  
-   					itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);//Summer11 MC has other triggers!	
+   					if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
+						  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);//Summer11 MC! also the TTJets systematic samples...!
+						else
+						  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);//Fall11 MC!
+						
     
   					if(itrigger == 9999)
 						{
@@ -624,8 +633,10 @@ int main (int argc, char *argv[])
     					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   				   	
 						// RUN2011B (promptv1)
 						else if (event->runId() >= 175832 && event->runId() < 178411)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   					else if (event->runId() >= 178411 && event->runId() < 179942)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v8"), currentRun, iFile);  				   					else if (event->runId() >= 179942 && event->runId() <= 180296)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   					
+						else if (event->runId() >= 178411 && event->runId() < 179942)
+    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v8"), currentRun, iFile);  				   					
+						else if (event->runId() >= 179942 && event->runId() <= 180296)
     					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v9"), currentRun, iFile);  				   											   
   					if(itrigger == 9999)
 						{
@@ -635,7 +646,12 @@ int main (int argc, char *argv[])
  	   			}
 	   			else 
 	   			{
-   					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
+					  //Problem: a trigger reweighting procedure for MC should be done when using the summer11 electron trigger...
+					  if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
+   						itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
+						else
+						  itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);//Fall11 MC!
+						
 						if(itrigger == 9999)
 						{
 							cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;	
@@ -645,13 +661,13 @@ int main (int argc, char *argv[])
 				} //end if semiElectron	
 			} //end previousRun != currentRun
 
-			// JES CORRECTION      
-      // Apply Jet Corrections on-the-fly
+			// JES CORRECTION   
+      // Apply Jet Corrections on-the-fly: not if already in toptrees! (our first Fall11 round)
 			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
-			if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
-			else
-				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+//			if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+//				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
+//			else
+//				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
 		  //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
 
       //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
@@ -659,12 +675,12 @@ int main (int argc, char *argv[])
       // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
       //---------------------------------------------------------
       
-			
+			//not if already in toptrees! (our first Fall11 round)
 			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
-      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-        jetTools->correctMETTypeOne(init_jets,mets[0],true);
-      else
-        jetTools->correctMETTypeOne(init_jets,mets[0],false);
+//      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+//        jetTools->correctMETTypeOne(init_jets,mets[0],true);
+//      else
+//        jetTools->correctMETTypeOne(init_jets,mets[0],false);
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
      	 
 		  
@@ -692,7 +708,7 @@ int main (int argc, char *argv[])
 
 			double lumiWeight3D = 1.0;
 			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
-				////////////////////////////
+				/*////////////////////////////
       	// apply trigger Reweighting
       	////////////////////////////
 				float mceventtriggerweight = 1;
@@ -728,7 +744,7 @@ int main (int argc, char *argv[])
  					//cout << "mcevent triggerweight " << mceventtriggerweight << endl;
  					//cout << "scalefactor (only triggerweight) " << scaleFactor << endl;
       	}
-        
+        */
       	////////////////////////////
       	// apply PU Reweighting
       	////////////////////////////
@@ -920,9 +936,9 @@ int main (int argc, char *argv[])
 													if( selection.passConversionRejection(selectedElectrons[0]) )
 													{
 														selecTableChargeMisId_ElMu.Fill(d,0,scaleFactor);
-														if(fabs(selectedElectrons[0]->Eta())<1.4442){
+														if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 															selecTableChargeMisId_ElMu.Fill(d,1,scaleFactor);
-														}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+														}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
 														}																														
 														//require the same charge for muon and electron
@@ -934,17 +950,17 @@ int main (int argc, char *argv[])
 															//cout << "is same-sign muon+electron!" << endl;
 															//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
 															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
-															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 																selecTableChargeMisId_ElMu.Fill(d,3,scaleFactor);
 																isEB = true;
-															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+															}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 																selecTableChargeMisId_ElMu.Fill(d,4,scaleFactor);
 																isEE = true;
 															}																
 														}else{ //opposite charge!!!
-															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 																selecTableChargeMisId_ElMu.Fill(d,5,scaleFactor);
-															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+															}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 																selecTableChargeMisId_ElMu.Fill(d,6,scaleFactor);
 															}
 														}
@@ -1050,21 +1066,21 @@ int main (int argc, char *argv[])
 											{								
 												if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
 												{ 
-													if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+													if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
 														selecTableChargeMisId_2El.Fill(d,10,scaleFactor);
 														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_SS_data+=scaleFactor;
 														else Nb_Zpeak_EB_SS_MC+=scaleFactor;
-													}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+													}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
 														selecTableChargeMisId_2El.Fill(d,11,scaleFactor);
 														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_SS_data+=scaleFactor;
 														else Nb_Zpeak_EE_SS_MC+=scaleFactor;
 													}
 												}else{
-													if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+													if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
 														selecTableChargeMisId_2El.Fill(d,12,scaleFactor);
 														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_OS_data+=scaleFactor;
 														else Nb_Zpeak_EB_OS_MC+=scaleFactor;
-													}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+													}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
 														selecTableChargeMisId_2El.Fill(d,13,scaleFactor);
 														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_OS_data+=scaleFactor;
 														else Nb_Zpeak_EE_OS_MC+=scaleFactor;
@@ -1130,11 +1146,11 @@ int main (int argc, char *argv[])
 														{ 
 															selecTableChargeMisId_2El.Fill(d,0,scaleFactor);
 															
-															if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
 																selecTableChargeMisId_2El.Fill(d,1,scaleFactor);
-															}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+															}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
 																selecTableChargeMisId_2El.Fill(d,2,scaleFactor);
-															}else if((fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
+															}else if((fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) || (fabs(selectedElectrons[1]->superClusterEta())>1.5660 && fabs(selectedElectrons[0]->superClusterEta())<1.4442)){
 																selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
 															}																
 															
@@ -1146,22 +1162,22 @@ int main (int argc, char *argv[])
 																//cout << "is same-sign electron!" << endl;
 																//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
 																//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
-																if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+																if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
 																	selecTableChargeMisId_2El.Fill(d,4,scaleFactor);
 																	isEBEB = true;
-																}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+																}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
 																	selecTableChargeMisId_2El.Fill(d,5,scaleFactor);
 																	isEEEE = true;
-																}else if((fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
+																}else if((fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) || (fabs(selectedElectrons[1]->superClusterEta())>1.5660 && fabs(selectedElectrons[0]->superClusterEta())<1.4442)){
 																	selecTableChargeMisId_2El.Fill(d,6,scaleFactor);
 																	isEBEE = true;
 																}																
 															}else{ //opposite charge!!!
-																if(fabs(selectedElectrons[0]->Eta())<1.4442 && fabs(selectedElectrons[1]->Eta())<1.4442){
+																if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
 																	selecTableChargeMisId_2El.Fill(d,7,scaleFactor);
-																}else if(fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())>1.5660){
+																}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
 																	selecTableChargeMisId_2El.Fill(d,8,scaleFactor);
-																}else if((fabs(selectedElectrons[0]->Eta())>1.5660 && fabs(selectedElectrons[1]->Eta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
+																}else if((fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) || (fabs(selectedElectrons[1]->Eta())>1.5660 && fabs(selectedElectrons[0]->Eta())<1.4442)){
 																	selecTableChargeMisId_2El.Fill(d,9,scaleFactor);
 																}																
 															}															
@@ -1175,9 +1191,9 @@ int main (int argc, char *argv[])
 													if(selectedMuons.size() == 1 && selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
 													{
 														selecTableChargeMisId_ElMu.Fill(d,0,scaleFactor);
-														if(fabs(selectedElectrons[0]->Eta())<1.4442){
+														if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 															selecTableChargeMisId_ElMu.Fill(d,1,scaleFactor);
-														}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+														}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
 														}																														
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
@@ -1188,17 +1204,17 @@ int main (int argc, char *argv[])
 															//cout << "is same-sign electron + muon!" << endl;
 															//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
 															//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
-															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 																selecTableChargeMisId_ElMu.Fill(d,3,scaleFactor);
 																isEB = true;
-															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+															}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 																selecTableChargeMisId_ElMu.Fill(d,4,scaleFactor);
 																isEE = true;
 															}																
 														}else{ //opposite charge!!!
-															if(fabs(selectedElectrons[0]->Eta())<1.4442){
+															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 																selecTableChargeMisId_ElMu.Fill(d,5,scaleFactor);
-															}else if(fabs(selectedElectrons[0]->Eta())>1.5660){
+															}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 																selecTableChargeMisId_ElMu.Fill(d,6,scaleFactor);
 															}
 														}
@@ -1799,7 +1815,8 @@ int main (int argc, char *argv[])
     selecTableChargeMisId_2El.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableChargeMisId_2El = "InclFourthGenSearch_SelectionTable_ChargeMisId2El"+postfix;
     selectiontableChargeMisId_2El = selectiontableChargeMisId_2El +".tex"; 	
-    if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),true, true, false, false, false, false, false);
+		if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),false, true, false, false, false, false, false);
+
 
     cout << " - Closing the output file now..." << endl;
     fout->Close();
