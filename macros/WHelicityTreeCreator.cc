@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
   // Which decay channel //
   /////////////////////////
   
-  bool semiElectron = true; // use semiElectron channel,
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel,
+  bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
   {
@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   //  Which systematics //
   ////////////////////////
 
-  int doJESShift = 0; // 0: off 1: minus 2: plus
+  int doJESShift = 1; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
@@ -288,7 +288,7 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
 
-  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
+  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
 
   std::cout << " CalculateResolutions = " << CalculateResolutions << endl;
 
