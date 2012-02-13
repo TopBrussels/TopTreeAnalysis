@@ -266,7 +266,7 @@ void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, bool 
     {
         MultiSamplePlot *temp = it->second;
         string name = it->first;
-        temp->Draw(false, name, true, true, true, true, true,5);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal)
+        temp->Draw(false, name, true, true, true, true, true,5,false,true,true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal,bool addRatio, bool mergeVV, bool mergeTTV)
         temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     
