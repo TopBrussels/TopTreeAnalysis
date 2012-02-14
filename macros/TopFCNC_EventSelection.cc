@@ -260,7 +260,9 @@ int main (int argc, char *argv[])
 
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
   for (unsigned int d = 0; d < datasets.size(); d++){
-	histo2D[("MET_vs_Mzq_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
+	histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
+	histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
+	histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
   }
   cout << " - Declared histograms ..." <<  endl;
 	

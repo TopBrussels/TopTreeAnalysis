@@ -3,31 +3,24 @@
 <!--
  <d name="data"     title="data"             add="1"   color="1"  ls="1"  lw="2" normf="1" xsection="1"       EqLumi="4534.871"    PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/data_4535.root"/>
 -->
+<!-- Madgraph samples -->
+ <d name="zz"       title="ZZ+jets"          add="1"   color="13" ls="1"  lw="2" normf="1" xsection="0.03906" PreselEff="0.416543004" NofPSEvts="493466" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/ZZJetsTo4L_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_30012012_182407_TOPTREE_Skimmed.root"/>
+ <d name="wz"       title="WZ+jets"          add="1"   color="11" ls="1"  lw="2" normf="1" xsection="0.7192"  PreselEff="0.230320731" NofPSEvts="212367" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_30012012_182412_TOPTREE_Skimmed_1.root"/>
+ <d name="ww"       title="WW+jets"          add="1"   color="9"  ls="1"  lw="2" normf="1" xsection="3.783"   PreselEff="0.092255738" NofPSEvts="110422"  filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_0012012_182417_TOPTREE_Skimmed.root"/>
+<!-- Pythia samples
  <d name="zz"       title="ZZ+jets"          add="1"   color="13" ls="1"  lw="2" normf="1" xsection="7.67"    PreselEff="0.051566577" NofPSEvts="215993" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/ZZ_TuneZ2_7TeV_pythia6_tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_182129_*.root"/>
  <d name="wz"       title="WZ+jets"          add="1"   color="11" ls="1"  lw="2" normf="1" xsection="18.3"    PreselEff="0.026481454" NofPSEvts="102300" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WZ_TuneZ2_7TeV_pythia6_tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_181129_*.root"/>
  <d name="ww"       title="WW+jets"          add="1"   color="9"  ls="1"  lw="2" normf="1" xsection="42.9"    PreselEff="0.011730474" NofPSEvts="49547"  filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WW_TuneZ2_7TeV_pythia6_tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_180128_*.root"/>
- <d name="wjets"    title="W+jets"           add="1"   color="17" ls="1"  lw="2" normf="1" xsection="31314"   PreselEff="0.000666982" NofPSEvts="26469"  filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_174128_all.root"/>
+-->
+ <d name="multijets"title="Multi-jets"       add="1"   color="5"  ls="1"  lw="2" normf="1" xsection="84679"   PreselEff="0.021292953" NofPSEvts="347699" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/QCD_Pt-20_MuEnrichedPt-15_TuneZ2_7TeV-pythia6_Fall11-PU_S6_START42_V14B-v1_22012012_191815_TOPTREE_Skimmed_HLT_DoubleMu7_v8.root"/>
  <d name="ttjets"   title="t\bar{t}+jets"    add="1"   color="4"  ls="1"  lw="2" normf="1" xsection="157.5"   PreselEff="0.062827399" NofPSEvts="198579" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/TTJets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_175128_*.root"/>
  <d name="zjets"    title="Z+jets"           add="1"   color="3"  ls="1"  lw="2" normf="1" xsection="3048"    PreselEff="0.161708437" NofPSEvts="4289152"filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_173128_*.root"/>
  <d name="ttbar_fcnc" title="FCNC"           add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"     NofEvts="31444" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Summer11/TTJetsTobWcZ_MadGraph_7TeV_Summer11_DigiReco_PU_TOPTREE_*.root"/>
 
 <!--
- <d name="ttjets"   title="t\bar{t}+jets"    add="1"   color="4"  ls="1"  lw="2" normf="1" xsection="157.5"   EqLumi="20067.9810"  PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/TTJets.root"/> 
- <d name="wjets"    title="W+jets"           add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="31314"   EqLumi="1587.4079"   PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/WJets.root"/>
- <d name="zjets"    title="Z+jets"           add="1"   color="3"  ls="1"  lw="2" normf="1" xsection="3048"    EqLumi="8702.0945"   PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/ZJets.root"/>
-  
- <d name="qcd_mu"   title="Multi-jets"       add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="84679.3" EqLumi="296.1750"    PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/QCD_mu.root"/>  
-
- <d name="ST_twdr"  title="st+jets (tW-ch.)" add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="7.87"    EqLumi="103398.0940" PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/T_tW_DR.root"/> 
- <d name="ST_atwdr" title="st+jets (tW-ch.)" add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="7.87"    EqLumi="87606.3532"  PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/Tbar_tW_DR.root"/> 
- <d name="ST_t"     title="st+jets (t-ch.)"  add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="41.92"   EqLumi="79624.8807"  PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/T_t.root"/> 
- <d name="ST_at"    title="st+jets (t-ch.)"  add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="22.65"   EqLumi="85811,3466"  PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/Tbar_t.root"/>
- <d name="ST_ts"    title="st+jets (s-ch.)"  add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="3.19"    EqLumi="81434.7962"  PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/T_s.root"/>
- <d name="ST_ats"   title="st+jets (s-ch.)"  add="1"   color="7"  ls="1"  lw="2" normf="1" xsection="1.44"    EqLumi="95756.25"    PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/Tbar_s.root"/>
- <d name="ww"       title="WW+jets"          add="1"   color="9"  ls="1"  lw="2" normf="1" xsection="42.9"    EqLumi="98456.5268"  PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/WW.root"/> 
- <d name="wz"       title="WZ+jets"          add="1"   color="11" ls="1"  lw="2" normf="1" xsection="18.3"    EqLumi="211097.3224" PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/WZ.root"/> 
- <d name="zz"       title="ZZ+jets"          add="1"   color="13" ls="1"  lw="2" normf="1" xsection="7.67"    EqLumi="546104.8240" PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/ZZ.root"/>
+ <d name="wjets"    title="W+jets"           add="1"   color="17" ls="1"  lw="2" normf="1" xsection="31314"   PreselEff="0.000666982" NofPSEvts="26469"  filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_174128_all.root"/>
 -->
+
 </datasets>
 
 <analysis>
