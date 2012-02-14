@@ -325,7 +325,7 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
 
   for (unsigned int b = 0; b < xarraysize; b++)
   {        
-	cout<<" xbins["<<b<<"] = "<<xbins[b]<<endl;
+			cout<<" xbins["<<b<<"] = "<<xbins[b]<<endl;
   }
   
   int xnbins = 0;
@@ -376,15 +376,15 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
        sum_eventweights_bin = sum_eventweights_bin + yvariables_CurrentxvariableBin_withweights[j].second;
        if (((sum_eventweights_bin / (totalsum_eventweights/nbinsMap[yvariable])) >= 1) || j==0)
        { 	    
-	   ybins[index] = yvariables_CurrentxvariableBin_withweights[j].first;
-	   index++;
-	   cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[yvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
-           sum_eventweights_bin = 0;
+	   			ybins[index] = yvariables_CurrentxvariableBin_withweights[j].first;
+	   			index++;
+	   			cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[yvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
+          sum_eventweights_bin = 0;
        }
     }
     ybins[yarraysize-1] = yvariables_CurrentxvariableBin_withweights[yvariables_CurrentxvariableBin_withweights.size ()-1].first; //by definition this is the last element of the array xbins, and the last element of the vector VariableValuesMap[xvariable]
 
-    if(yvariable == "MassHadTop")
+    if(yvariable == "MassHadTop" || yvariable == "MTop")
     {
         ybins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
         ybins[1] = 0; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
@@ -394,7 +394,7 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
 
     for (unsigned int b = 0; b < yarraysize; b++)
     {        
-	cout<<" ybins["<<b<<"] = "<<ybins[b]<<endl;
+				cout<<" ybins["<<b<<"] = "<<ybins[b]<<endl;
     }
   
     int ynbins = 0;
