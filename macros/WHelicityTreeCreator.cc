@@ -411,14 +411,27 @@ int main (int argc, char *argv[])
      	
     vector<JetCorrectorParameters> vCorrParam;    
       
-    //if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
-    //{
-    //JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
-    //vCorrParam.push_back(*ResJetCorPar);
-    //}
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");       
-      
-    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
+    // Create the JetCorrectorParameter objects, the order does not matter.
+    // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
+
+    //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vCorrParam.push_back(*L1JetPar);
+    vCorrParam.push_back(*L2JetPar);
+    vCorrParam.push_back(*L3JetPar);
+
+    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
+      {
+	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
+	vCorrParam.push_back(*ResJetCorPar);
+      }
+
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    
+    // true means redo also the L1      
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
       
     ////////////////////////////////////////////////////////////
     // CREATE OUTPUT FILE AND TTREE FOR STORAGE OF THE NTUPLE //
@@ -659,11 +672,14 @@ int main (int argc, char *argv[])
 	// if(!passedJSON) continue;
       }
             
+      //JES CORRECTION
       // Apply Jet Corrections on-the-fly
-      //if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ){
-      //jetTools->correctJets(init_jets_corrected, vertex);
-      //}
-
+      if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
+      else 
+	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+      
+      //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
       //----------------------------------------------------------
       // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
       //---------------------------------------------------------
@@ -675,11 +691,11 @@ int main (int argc, char *argv[])
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {	
 	if(doJERShift == 1)
-	  jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
+	  jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false);   //false means don't use old numbers but newer ones...
 	else if(doJERShift == 2)
-	  jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
+	  jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
 	else
-	  jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
+	  jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 	
 	// JES systematic! 
 	if (doJESShift == 1)
