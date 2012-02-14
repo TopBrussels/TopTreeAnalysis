@@ -167,7 +167,6 @@ void TwoDimTemplateTools::Write_for2DBinning(const string binningFileName)
 
 void TwoDimTemplateTools::Convert2Dto1D(string postfix)
 { 
-  //to be done!
   cout<<" - Producing 2D to 1D converted templates"<<endl;
   vector<TH1F* > h2D_1Dconverted;//vector of dataset histograms, for each entry in the vector there is the histogram of a dataset which should be 1D converted from 2D
   //h2D_1Dconverted.clear();
@@ -192,22 +191,28 @@ void TwoDimTemplateTools::Convert2Dto1D(string postfix)
      for(unsigned int d=0;d<datasets_.size();d++)
      {
         //cout<<"d = "<<d<<", "<<datasets_[d]->Name()<<endl;
-	TH1F* htemp =0;
-	htemp = (TH1F*) Histos_xvariableBins[k][d].first;
-	b=b_remember;
-	//cout<<"b before loop over htemp bins = "<<b<<endl;
+				TH1F* htemp =0;
+				htemp = (TH1F*) Histos_xvariableBins[k][d].first;
+				b=b_remember;
+				//cout<<"b before loop over htemp bins = "<<b<<endl;
         nbins_htemp = htemp->GetNbinsX(); //should be nbinsyvariable_ + 1? (not sure... to be checked)
-	//cout<<"nbins_htemp = "<<nbins_htemp<<endl;	
-	
-	for(int j=2;j<nbins_htemp+1;j++)
-	{
-	    float bincontentj = 0;
-	    bincontentj = htemp->GetBinContent(j);
-	    //cout<<" b = "<<b<<endl;
-	    //cout<<"      bincontent "<<j<<" = "<<bincontentj<<endl;
-	    h2D_1Dconverted[d]->SetBinContent(b,bincontentj);
-	    b++;
-	}	
+				//cout<<"nbins_htemp = "<<nbins_htemp<<endl;
+				
+				//cout<<"Integral (data) of top mass for HT bin "<<k<<": "<<htemp->Integral(0,htemp->GetNbinsX()+1)<<endl;		
+				//for(int bini=0;bini<htemp->GetNbinsX()+2;bini++)
+				//	cout<<" bini = "<<bini<<", content "<<htemp->GetBinContent(bini)<<endl;
+
+			
+				for(int j=2;j<nbins_htemp+1;j++)
+				{
+	    			float bincontentj = 0;
+	    			bincontentj = htemp->GetBinContent(j);
+	    			//cout<<" b = "<<b<<endl;
+	    			//cout<<"      bincontent "<<j<<" = "<<bincontentj<<endl;
+	    			h2D_1Dconverted[d]->SetBinContent(b,bincontentj);
+	    			b++;
+				}
+				//cout<<"Updated integral of h2D_1Dconverted: "<<h2D_1Dconverted[d]->Integral(0,h2D_1Dconverted[d]->GetNbinsX()+1)<<endl;
      }
      
      //cout<<" b_remember before update = "<<b_remember<<endl;
@@ -220,7 +225,7 @@ void TwoDimTemplateTools::Convert2Dto1D(string postfix)
   for(unsigned int d=0;d<datasets_.size();d++)
   {
     string histoname;
-    cout<<" d = "<<d<<endl;
+    //cout<<" d = "<<d<<endl;
     h2D_1Dconverted[d]->GetYaxis()->SetTitle("#Events");
     templates1D.push_back(make_pair(h2D_1Dconverted[d],datasets_[d]));
     if(!(datasets_[d]->Name().find("NP") <= datasets_[d]->Name().size()) || (datasets_[d]->Name().find("NP_overlay") <= datasets_[d]->Name().size()))
@@ -241,7 +246,8 @@ void TwoDimTemplateTools::Write(TFile* fout,TDirectory* th1dir)
    //MTop_in_HTbins->cd();
    for(int k = 1;k < nbinsxvariable_+1; k++)
    {  
-        MSPlot_xvariableBins[k] = new MultiSamplePlot(Histos_xvariableBins[k]); 
+	 			//cout<<"Integral (data) of top mass for HT bin "<<k<<": "<<((Histos_xvariableBins[k][0]).first)->Integral(0,((Histos_xvariableBins[k][0]).first)->GetNbinsX()+1)<<endl;
+				MSPlot_xvariableBins[k] = new MultiSamplePlot(Histos_xvariableBins[k]);
         //for (unsigned int d = 0; d < datasets.size (); d++)
         //{
 	//     (Histos_xvariableBins[k][d].first)->Write(); 
@@ -251,9 +257,9 @@ void TwoDimTemplateTools::Write(TFile* fout,TDirectory* th1dir)
    {
         MultiSamplePlot *temp = it->second;
         int name_int = it->first;
-	char HTbin[150];
-	sprintf (HTbin, "%s_%s_%sbin%i",yvariable_.c_str (),identifier_.c_str (),xvariable_.c_str (),name_int);
-        temp->Draw(false, HTbin, true, true, true, true, true, 5);
+				char HTbin[150];
+				sprintf (HTbin, "%s_%s_%sbin%i",yvariable_.c_str (),identifier_.c_str (),xvariable_.c_str (),name_int);
+        temp->Draw(false, HTbin, true, true, true, true, true, 5,false,true,true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal,bool addRatio, bool mergeVV, bool mergeTTV)
         temp->Write(fout, HTbin, false, "");
    }
    
@@ -271,8 +277,8 @@ void TwoDimTemplateTools::Write(TFile* fout,TDirectory* th1dir)
    MultiSamplePlot* templates1D_MS = new MultiSamplePlot(templates1D_forMS);
    char TemplateName[150];
    sprintf (TemplateName, "Template_%s_%s_%s",identifier_.c_str (),xvariable_.c_str (),yvariable_.c_str ());
-   templates1D_MS->Draw(false, TemplateName, true, true, true, true, true, 5);// templates1D_MS->Draw(false, "Templates", true, true, true, true, true, 1);
-   templates1D_MS->Write(fout, TemplateName, false, "");
+   templates1D_MS->Draw(false, TemplateName, true, true, true, true, true,5,false,true,true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal,bool addRatio, bool mergeVV, bool mergeTTV)
+	 templates1D_MS->Write(fout, TemplateName, false, "");
 }
 
 
