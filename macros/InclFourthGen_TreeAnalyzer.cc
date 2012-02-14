@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfixOld = "_Fall11_Round4"; // should be same as postifix in TreeCreator of the trees
+  string postfixOld = "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
 	string postfix= postfixOld+"_"+systematic;
 
   string Treespath = "InclFourthGenTrees_Fall11_Round4";
@@ -297,11 +297,21 @@ int main (int argc, char *argv[])
 	vector<string> inputTrees; //fill with the tree files you want to read!!!
   //inputTrees.push_back();
 	for (unsigned int d = 0; d < datasets.size(); d++) //d < datasets.size()
-  {
+  {				
     cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;    
-    string dataSetName = datasets[d]->Name();
+    string dataSetName = datasets[d]->Name();	
+		
 		string inputTreeFileName; //should follow convention of TreeFileName in InclFourthGen_TreeCreator.cc
-		if(systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus") inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
+		if(systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus")
+		{
+				if(dataSetName.find("Data")<=0 || dataSetName.find("data")<=0 || dataSetName.find("DATA")<=0)
+				{
+					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfixOld+"_Nominal"+channelpostfix+".root"; //is actually dummy
+					cout<<"  Running systematics: data will be skipped later on"<<endl;
+				}
+				else
+					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";		
+		}
 		else inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfixOld+"_Nominal"+channelpostfix+".root";
 		inputTrees.push_back(inputTreeFileName);
 	}
@@ -490,6 +500,12 @@ int main (int argc, char *argv[])
 		if(make2Dbinning && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron" && dataSetName != "TTbarJets_Other")
 			continue;
 			
+		if(systematic != "Nominal" && (dataSetName.find("Data")<=0 || dataSetName.find("data")<=0 || dataSetName.find("DATA")<=0))
+		{
+		  cout<<"  Running systematics: skipping data"<<endl;
+		  continue;
+		}	
+			
     if (verbose > 1)
       cout << "file: " << inputTrees[d] << endl;
 	 
@@ -582,11 +598,9 @@ int main (int argc, char *argv[])
 
       if(ievt%1000 == 0)
         std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
-        
       //load event
 			inInclFourthGenTree->GetEvent(ievt);
    
-	 
 	    vector<TLorentzVector> InitJets;
 			vector<float> InitJetsbTagValues;
 			if(btagger.find("TCHE")<=0)
@@ -648,7 +662,6 @@ int main (int argc, char *argv[])
       		histo1D["lumiWeights"]->Fill(scaleFactor);
 				}	
 			}
-			
 			//reading variables from the tree
       bool isSingleLepton = myBranch_selectedEvents->SelectedSingleLepton();
       bool isSSLepton = myBranch_selectedEvents->SelectedSSLepton();
@@ -697,7 +710,6 @@ int main (int argc, char *argv[])
 				}			
 			}
 
-
 			bool TprimeEvaluation = false; //temporarily not supported
 			//////////////////////////////////////////////////////////////////////////
       // MVA training
@@ -712,7 +724,6 @@ int main (int argc, char *argv[])
 				else if(semiElectron)
 					jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets, bTagValuesForMVA, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);	        
       }
-
        
       if(TrainMVA) continue; //for the training, only the jetcombiner is relevant, so the following can be skipped (to the next event in the event loop)			
 			//////////////////////////////////////////////////////////////////////////
@@ -779,7 +790,6 @@ int main (int argc, char *argv[])
 					}
 				}
 							
-
 				//////////////////
 				// rescale events according to b-tag/mistag eff scalefactors
 				//////////////////
@@ -848,7 +858,6 @@ int main (int argc, char *argv[])
 						}
 					}
 				} //end loop over jets (~ b-tagging)
-  		
 			if(isSingleLepton)
 			{
 				MSPlot["MS_METafterbtagSF"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
@@ -916,7 +925,6 @@ int main (int argc, char *argv[])
 				}
 			}
 
-	
 			///////////////////////////////
 			// start the W counting procedure here
 			///////////////////////////////
@@ -1021,7 +1029,6 @@ int main (int argc, char *argv[])
 
 			selecTableSemiLep.Fill(d,0,scaleFactor);
 	
-			
 			//cout<<"nbOfBtags = "<<nbOfBtags<<endl;						
 			if(nbOfBtags==1)
 			{				
@@ -1076,10 +1083,8 @@ int main (int argc, char *argv[])
 					   {	
 					
 					     //sort(selectedJets_MVAinput.begin(),selectedJets_MVAinput.end(),HighestPt()); // HighestPt() is included from the Selection class
- 	                          
 			   			 if(semiMuon) jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_1B_2W, selectedMuons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation); //datasets[d],mcParticles,selectedJets_MVAinput,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor);	//OLD WAY (class has changed since then): jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], vertex[0], eventSelected, init_electrons, init_muons, scaleFactor);
                else if(semiElectron) jetCombiner->ProcessEvent(datasets[d], myBranch_selectedEvents->mcQuarksForMatching(), selectedJets_MVAinput, bTagValuesForMVA_1B_2W, selectedElectrons[0], isSemiLep_MC, scaleFactor, TprimeEvaluation);
-	  
 			   			 //vector<unsigned int> goodCombi = jetCombiner_1B_2W->GetGoodJetCombination(); //get the MC matched jet combination, not the MVA best matched		   	
 			   			 MVAvals = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
 					   }
@@ -1122,12 +1127,10 @@ int main (int argc, char *argv[])
 				   if(isSingleLepton && selectedJets.size() >=8) 
 				   {
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							selecTableSemiLep.Fill(d,4,scaleFactor);
-					
+						selecTableSemiLep.Fill(d,4,scaleFactor);
 				   }
 				   //cout << "done in 1B 4W box" << endl;
 				}
-				
 			} //end number of btags == 1
 			else if(nbOfBtags == 2)
 			{
@@ -1463,11 +1466,11 @@ float SFb(float jetpt, string tagger, string syst){
 				cout << "jet pt < 30, can not apply btag scalefactor -----> o-ow, problem in selection!" << endl;
 				exit(-1);
 			}
-			if( syst == "misTagMinus" ){
+			if( syst == "bTagMinus" ){
 				scalefactor = scalefactor - SFb_error_TCHPM[bin];
 				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) - 2*SFb_error_TCHPM[13];
 			}
-			if( syst == "misTagPlus" ){
+			if( syst == "bTagPlus" ){
 				scalefactor = scalefactor + SFb_error_TCHPM[bin];
 				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) + 2*SFb_error_TCHPM[13];
 			}
@@ -1483,11 +1486,11 @@ float SFb(float jetpt, string tagger, string syst){
 				cout << "jet pt < 30, can not apply btag scalefactor -----> o-ow, problem in selection!" << endl;
 				exit(-1);
 			}
-			if( syst == "misTagMinus" ){
+			if( syst == "bTagMinus" ){
 				scalefactor = scalefactor - SFb_error_TCHEM[bin];
 				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) - 2*SFb_error_TCHEM[13];
 			}			
-			if( syst == "misTagPlus" ){
+			if( syst == "bTagPlus" ){
 				scalefactor = scalefactor + SFb_error_TCHEM[bin];
 				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) + 2*SFb_error_TCHEM[13];
 			}
