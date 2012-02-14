@@ -287,14 +287,14 @@ int main (int argc, char *argv[])
   CutsSelecTableDiMu.push_back(string("PU reweighting"));
   CutsSelecTableDiMu.push_back(string("Trigger"));
   CutsSelecTableDiMu.push_back(string("Good PV"));
-  CutsSelecTableDiMu.push_back(string("$\\geq$ 2 isolated muon"));
+  CutsSelecTableDiMu.push_back(string("$\\geq$ 2 isolated muons"));
   CutsSelecTableDiMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
   CutsSelecTableDiMu.push_back(string("Veto on 3rd iso. lept."));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableDiMu.push_back(string("$b-disc_{CSV} \\geq 0.1$"));
+  CutsSelecTableDiMu.push_back(string("$b-disc_{CSV} \\geq 0.65$"));
 //  CutsSelecTableDiMu.push_back(string("$MET \\leq 30$ GeV"));  
 
   SelectionTable selecTableDiMu(CutsSelecTableDiMu, datasets);
@@ -310,7 +310,7 @@ int main (int argc, char *argv[])
   CutsSelecTableTriMu.push_back(string("PU reweighting"));
   CutsSelecTableTriMu.push_back(string("Trigger"));
   CutsSelecTableTriMu.push_back(string("Good PV"));
-  CutsSelecTableTriMu.push_back(string("$\\geq$ 2 isolated muon"));
+  CutsSelecTableTriMu.push_back(string("$\\geq$ 2 isolated muons"));
   CutsSelecTableTriMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
   CutsSelecTableTriMu.push_back(string("3rd iso. mu."));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 1 jet"));
@@ -331,7 +331,7 @@ int main (int argc, char *argv[])
   CutsSelecTableDiMuElec.push_back(string("PU reweighting"));
   CutsSelecTableDiMuElec.push_back(string("Trigger"));
   CutsSelecTableDiMuElec.push_back(string("Good PV"));
-  CutsSelecTableDiMuElec.push_back(string("$\\geq$ 2 isolated muon"));
+  CutsSelecTableDiMuElec.push_back(string("$\\geq$ 2 isolated muons"));
   CutsSelecTableDiMuElec.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
   CutsSelecTableDiMuElec.push_back(string("3rd iso. elec."));
   CutsSelecTableDiMuElec.push_back(string("$\\geq$ 1 jet"));
@@ -346,64 +346,71 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : ee /////////////////////////////////
   ////////////////////////////////////////////////////////////////////
-/*
+
   vector<string> CutsSelecTableDiEl;
   CutsSelecTableDiEl.push_back(string("initial"));
   CutsSelecTableDiEl.push_back(string("PU reweighting"));
   CutsSelecTableDiEl.push_back(string("Trigger"));
   CutsSelecTableDiEl.push_back(string("Good PV"));
-  CutsSelecTableDiEl.push_back(string("$\\geq$ 1 selected electron"));
-  CutsSelecTableDiEl.push_back(string("Veto muon"));
-  CutsSelecTableDiEl.push_back(string("Conversion veto"));
-  CutsSelecTableDiEl.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
-  CutsSelecTableDiEl.push_back(string("MET > 40 GeV"));
+  CutsSelecTableDiEl.push_back(string("$\\geq$ 2 isolated electrons"));
+  CutsSelecTableDiEl.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableDiEl.push_back(string("Veto on 3rd iso. lept."));
+  //CutsSelecTableDiEl.push_back(string("Conversion veto"));
+  CutsSelecTableDiEl.push_back(string("$\\geq$ 1 jet"));
+  CutsSelecTableDiEl.push_back(string("$\\geq$ 2 jet"));
+  CutsSelecTableDiEl.push_back(string("$\\geq$ 3 jet"));
+  CutsSelecTableDiEl.push_back(string("$\\geq$ 4 jet"));
+  CutsSelecTableDiEl.push_back(string("$b-disc_{CSV} \\geq 0.65$"));
+  //CutsSelecTableDiEl.push_back(string("MET > 40 GeV"));
 
 
   SelectionTable selecTableDiEl(CutsSelecTableDiEl, datasets);
   selecTableDiEl.SetLuminosity(Luminosity);
   selecTableDiEl.SetPrecision(1);
-*/  
+  
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : eee ////////////////////////////////
   ////////////////////////////////////////////////////////////////////
-/*
+
   vector<string> CutsSelecTableTriEl;
   CutsSelecTableTriEl.push_back(string("initial"));
   CutsSelecTableTriEl.push_back(string("PU reweighting"));
   CutsSelecTableTriEl.push_back(string("Trigger"));
   CutsSelecTableTriEl.push_back(string("Good PV"));
-  CutsSelecTableTriEl.push_back(string("$\\geq$ 1 selected electron"));
-  CutsSelecTableTriEl.push_back(string("Veto muon"));
-  CutsSelecTableTriEl.push_back(string("Conversion veto"));
-  CutsSelecTableTriEl.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
-  CutsSelecTableTriEl.push_back(string("MET > 40 GeV"));
-
+  CutsSelecTableTriEl.push_back(string("$\\geq$ 2 isolated electrons"));
+  CutsSelecTableTriEl.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableTriEl.push_back(string("3rd iso. elec."));
+  CutsSelecTableTriEl.push_back(string("$\\geq$ 1 jet"));
+  CutsSelecTableTriEl.push_back(string("$\\geq$ 2 jet"));
+  CutsSelecTableTriEl.push_back(string("$\\geq$ 3 jet"));
+//  CutsSelecTableTriEl.push_back(string("$MET \\leq 30$ GeV"));  
 
   SelectionTable selecTableTriEl(CutsSelecTableTriEl, datasets);
   selecTableTriEl.SetLuminosity(Luminosity);
   selecTableTriEl.SetPrecision(1);
-*/  
+  
 
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : eeµ ////////////////////////////////
   ////////////////////////////////////////////////////////////////////
-/*
+
   vector<string> CutsSelecTableDiElMu;
   CutsSelecTableDiElMu.push_back(string("initial"));
   CutsSelecTableDiElMu.push_back(string("PU reweighting"));
   CutsSelecTableDiElMu.push_back(string("Trigger"));
   CutsSelecTableDiElMu.push_back(string("Good PV"));
-  CutsSelecTableDiElMu.push_back(string("$\\geq$ 1 selected electron"));
-  CutsSelecTableDiElMu.push_back(string("Veto muon"));
-  CutsSelecTableDiElMu.push_back(string("Conversion veto"));
-  CutsSelecTableDiElMu.push_back(string("$\\geq$ 1 b-tagged jet with pt > 50"));
-  CutsSelecTableDiElMu.push_back(string("MET > 40 GeV"));
+  CutsSelecTableDiElMu.push_back(string("$\\geq$ 2 isolated electrons"));
+  CutsSelecTableDiElMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableDiElMu.push_back(string("3rd iso. muon"));
+  CutsSelecTableDiElMu.push_back(string("$\\geq$ 1 jet"));
+  CutsSelecTableDiElMu.push_back(string("$\\geq$ 2 jet"));
+  CutsSelecTableDiElMu.push_back(string("$\\geq$ 3 jet"));
+  //CutsSelecTableDiElMu.push_back(string("Conversion veto"));
 
 
   SelectionTable selecTableDiElMu(CutsSelecTableDiElMu, datasets);
   selecTableDiElMu.SetLuminosity(Luminosity);
   selecTableDiElMu.SetPrecision(1);
-*/  
 
   cout << " - SelectionTable instantiated ..." << endl;
 
@@ -435,11 +442,12 @@ int main (int argc, char *argv[])
 
   for (unsigned int d = 0; d < datasets.size(); d++) //d < datasets.size()
   {
-    if (verbose > 1)
+    if (verbose > 1){
       cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;
-    if (verbose > 1)
-      std::cout<<"      -> This sample contains, " << datasets[d]->NofEvtsToRunOver() << " events." << endl;
-		
+      cout << " - Cross section = " << datasets[d]->Xsection() << endl;
+      cout << " - IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
+      cout << " - Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
+    }		
     //open files and load
     cout<<"Load Dataset"<<endl;
     treeLoader.LoadDataset (datasets[d], anaEnv);
@@ -491,7 +499,7 @@ int main (int argc, char *argv[])
     {        
 
 	if(ievt%1000 == 0)
-		std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
+		std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
 
 	//load event
 	event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
@@ -608,7 +616,19 @@ int main (int argc, char *argv[])
 	} //end previousRun != currentRun
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////// Apply type I MET corrections: (Only for |eta| <=4.7 ) ///////////////////////////////////////////
+	//////////////////////////////////////////// Jet energy scale corrections     /////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Apply Jet Corrections on-the-fly
+	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
+	if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+		jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
+	else
+		jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////// Type I MET corrections: (Only for |eta| <=4.7 ) //////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
@@ -640,7 +660,7 @@ int main (int argc, char *argv[])
 		else if (doJESShift == 2)
 			jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
 	
-		//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
+		//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction:");
 	
 	}
 
@@ -676,19 +696,26 @@ int main (int argc, char *argv[])
 	selecTableDiMu.Fill(d,0, 1.);//datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
 	selecTableTriMu.Fill(d,0, 1.);
 	selecTableDiMuElec.Fill(d,0, 1.);
-	//selecTableDiEl.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
+	selecTableDiEl.Fill(d,0, 1.);
+	selecTableTriEl.Fill(d,0, 1.);
+	selecTableDiElMu.Fill(d,0, 1.);
 
 	selecTableDiMu.Fill(d,1,scaleFactor);
-	selecTableTriMu.Fill(d,1, scaleFactor);
-	selecTableDiMuElec.Fill(d,1, scaleFactor);
-	//selecTableSemiEl.Fill(d,1,scaleFactor);
+	selecTableTriMu.Fill(d,1,scaleFactor);
+	selecTableDiMuElec.Fill(d,1,scaleFactor);
+	selecTableDiEl.Fill(d,1,scaleFactor);
+	selecTableTriEl.Fill(d,1,scaleFactor);
+	selecTableDiElMu.Fill(d,1,scaleFactor);
 		
 	// Apply trigger selection
 	trigged = treeLoader.EventTrigged (itrigger);
 	if(!trigged)		   continue;
 	selecTableDiMu.Fill(d,2,scaleFactor);
-	selecTableTriMu.Fill(d,2, scaleFactor);
-	selecTableDiMuElec.Fill(d,2, scaleFactor);
+	selecTableTriMu.Fill(d,2,scaleFactor);
+	selecTableDiMuElec.Fill(d,2,scaleFactor);
+	selecTableDiEl.Fill(d,2,scaleFactor);
+	selecTableTriEl.Fill(d,2,scaleFactor);
+	selecTableDiElMu.Fill(d,2,scaleFactor);
 
 	// Declare selection instance    
 	Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
@@ -710,9 +737,14 @@ int main (int argc, char *argv[])
 	//selection.setLooseMuonCuts(15,2.4,0.2);
 	  
 	//Select objects 
-	vector<TRootElectron*> selectedElectrons   = selection.GetSelectedDiElectrons(vertex[0]);
+	vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedDiElectrons(20,2.4,999.,vertex[0]);
+	vector<TRootElectron*> selectedElectrons       = selection.GetSelectedDiElectrons(vertex[0]);
+	vector<TRootElectron*> selectedExtraElectrons;
+
 	vector<TRootMuon*>     selectedMuons_NoIso = selection.GetSelectedDiMuons(20,2.4,999.);
 	vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
+	vector<TRootMuon*>     selectedExtraMuons;
+
 	vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
 
 	//vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
@@ -725,121 +757,173 @@ int main (int argc, char *argv[])
 	bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
         if(!isGoodPV)   	   continue;
 	selecTableDiMu.Fill(d,3,scaleFactor);
-	selecTableTriMu.Fill(d,3, scaleFactor);
-	selecTableDiMuElec.Fill(d,3, scaleFactor);
+	selecTableTriMu.Fill(d,3,scaleFactor);
+	selecTableDiMuElec.Fill(d,3,scaleFactor);
+	selecTableDiEl.Fill(d,3,scaleFactor);
+	selecTableTriEl.Fill(d,3,scaleFactor);
+	selecTableDiElMu.Fill(d,3,scaleFactor);
 
-	// Select events with at least two muons
-	if(selectedMuons_NoIso.size()<2) continue;
+	// Select events with at least two leptons
+	if(diMuon){
+		if(selectedMuons_NoIso.size()<2) continue;
+	}
+	else if(diElectron){
+		if(selectedElectrons_NoIso.size()<2) continue;
+	}
 
-	MSPlot["1stLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["2ndLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
-	if(selectedMuons_NoIso.size()>2)
-		MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[2]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+	if(diMuon){
+		MSPlot["1stLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedMuons_NoIso.size()>2)
+			MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[2]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+	}
+	else if(diElectron){
+		MSPlot["1stLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[1]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedElectrons_NoIso.size()>2)
+			MSPlot["3rdLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[2]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+	}
 
 	MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
 	MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	// Select events with at least two isolated muons
-	if(selectedMuons.size()<2) continue;
+	if(diMuon){
+		if(selectedMuons.size()<2) continue;
+	}
+	else if(diElectron){
+		if(selectedElectrons.size()<2) continue;
+	}
+
 	selecTableDiMu.Fill(d,4,scaleFactor);
 	selecTableTriMu.Fill(d,4, scaleFactor);
 	selecTableDiMuElec.Fill(d,4, scaleFactor);
+	selecTableDiEl.Fill(d,4,scaleFactor);
+	selecTableTriEl.Fill(d,4,scaleFactor);
+	selecTableDiElMu.Fill(d,4,scaleFactor);
 
   	bool foundZ = false;
 	int idx_Z_1 = -1, idx_Z_2 = -1;
 	float Zmass = 91.;
 	float Zwindowsize = 20.;
-	// Calculate the invariant mass for each isolated muon pairs
+	// Calculate the invariant mass for each isolated lepton pairs
 	// - return true if the mass is the Z boson mass window 
-	// - return the indices of the muon candidates
-  	for(unsigned int i=0;i<selectedMuons.size()-1;i++)
-  	{
-  		for(unsigned int j=i+1;j<selectedMuons.size();j++)
-  		{
-   			TRootMuon* mu1 = (TRootMuon*) selectedMuons[i];
-   			TRootMuon* mu2 = (TRootMuon*) selectedMuons[j];
-			//if( fabs(mu2->Pt() - mu1->Pt()) < 0.001 || fabs(mu2->Eta() - mu1->Eta()) < 0.001 ) continue;
-			if(mu1->charge() == mu2->charge()) continue;
-			double invMass = (*mu1 + *mu2).M();
-			MSPlot["DiMuonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-			if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
-			{
-				idx_Z_1 = i;
-				idx_Z_2 = j;
-				foundZ = true;
-			}
-    		}
-  	}
+	// - return the indices of the lepton candidates
+	if(diMuon){
+	  	for(unsigned int i=0;i<selectedMuons.size()-1;i++)
+	  	{
+	  		for(unsigned int j=i+1;j<selectedMuons.size();j++)
+	  		{
+	   			TRootMuon* mu1 = (TRootMuon*) selectedMuons[i];
+	   			TRootMuon* mu2 = (TRootMuon*) selectedMuons[j];
+				if(mu1->charge() == mu2->charge()) continue;
+				double invMass = (*mu1 + *mu2).M();
+				MSPlot["DiMuonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+				if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
+				{
+					idx_Z_1 = i;
+					idx_Z_2 = j;
+					foundZ = true;
+				}
+	    		}
+	  	}
+	}
+	else if(diElectron){
+	  	for(unsigned int i=0;i<selectedElectrons.size()-1;i++)
+	  	{
+	  		for(unsigned int j=i+1;j<selectedElectrons.size();j++)
+	  		{
+	   			TRootElectron* el1 = (TRootElectron*) selectedElectrons[i];
+	   			TRootElectron* el2 = (TRootElectron*) selectedElectrons[j];
+				if(el1->charge() == el2->charge()) continue;
+				double invMass = (*el1 + *el2).M();
+				MSPlot["DiMuonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+				if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
+				{
+					idx_Z_1 = i;
+					idx_Z_2 = j;
+					foundZ = true;
+				}
+	    		}
+	  	}
+	}
 	// Select events with at least one pair of opposite charge leptons with |mll-mz|<windowsize
 	if(!foundZ) continue; 
 	selecTableDiMu.Fill(d,5,scaleFactor);
 	selecTableTriMu.Fill(d,5, scaleFactor);
 	selecTableDiMuElec.Fill(d,5, scaleFactor);
+	selecTableDiEl.Fill(d,5,scaleFactor);
+	selecTableTriEl.Fill(d,5,scaleFactor);
+	selecTableDiElMu.Fill(d,5,scaleFactor);
 
 	// Erase Z boson lepton candidates
-	vector<TRootMuon*> selectedExtraMuons = selectedMuons;
-	selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
-	selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
+	if(diMuon){
+		selectedExtraMuons = selectedMuons;
+		selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
+		selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
+	}
+	else if(diElectron){
+		selectedExtraElectrons = selectedElectrons;
+		selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_2);
+		selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_1);
+
+	}
 
 	MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedExtraMuons.size(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedExtraElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	MSPlot["NbOfSelectedJets_Before3rdLeptCut"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	MyTopFCNC_EvtCand = 0;
 	// Select events based on the presence of *exactly one* extra isolated lepton
-	if(selectedExtraMuons.size()==0)
-	{ 
-		if(selectedElectrons.size()==0){
-			selecTableDiMu.Fill(d,6,scaleFactor);
-			MSPlot["NbOfSelectedJets_mm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
-			if(selectedJets.size()>0){ //at least 1 jet
-				selecTableDiMu.Fill(d,7,scaleFactor); 
-				if(selectedJets.size()>1){ //at least 2 jets
-					selecTableDiMu.Fill(d,8,scaleFactor);
-					if(selectedJets.size()>2){ //at least 3 jets
-						selecTableDiMu.Fill(d,9,scaleFactor);
-						if(selectedJets.size()>3){ //at least 4 jets
-							selecTableDiMu.Fill(d,10,scaleFactor);
-
-							MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
-							MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets);
-							MSPlot["BdiscBJetCand_mm_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
-							MSPlot["BdiscBJetCand_mm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-							if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags()<0.65) continue;
-							selecTableDiMu.Fill(d,11,scaleFactor);
-							MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-							MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
-							MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-							histo2D[("MET_vs_Mzq_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-						}
-					}
-				}
-			}
-		}
-		else if(selectedElectrons.size()==1){
-			selecTableDiMuElec.Fill(d,6,scaleFactor);
-			MSPlot["NbOfSelectedJets_mme_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
-			if(selectedJets.size()>0){ //at least 1 jet
-				selecTableDiMuElec.Fill(d,7,scaleFactor); 
-				if(selectedJets.size()>1){ //at least 2 jets
-					selecTableDiMuElec.Fill(d,8,scaleFactor);
-					if(selectedJets.size()>2){ //at least 3 jets
-						selecTableDiMuElec.Fill(d,9,scaleFactor);
-						MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
-						MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0]);
-						MSPlot["BdiscBJetCand_mme_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(), datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["BdiscBJetCand_mme_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(), datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["Mtt_mme_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["Mzq_mme_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-
+	if(diMuon && selectedExtraMuons.size()==0 && selectedElectrons.size()==0){
+		selecTableDiMu.Fill(d,6,scaleFactor);
+		MSPlot["NbOfSelectedJets_mm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedJets.size()>0){ //at least 1 jet
+			selecTableDiMu.Fill(d,7,scaleFactor); 
+			if(selectedJets.size()>1){ //at least 2 jets
+				selecTableDiMu.Fill(d,8,scaleFactor);
+				if(selectedJets.size()>2){ //at least 3 jets
+					selecTableDiMu.Fill(d,9,scaleFactor);
+					if(selectedJets.size()>3){ //at least 4 jets
+						selecTableDiMu.Fill(d,10,scaleFactor);
+						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
+						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets);
+						MSPlot["BdiscBJetCand_mm_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["BdiscBJetCand_mm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags()<0.65) continue;
+						selecTableDiMu.Fill(d,11,scaleFactor);
+						MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+						histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 					}
 				}
 			}
 		}
 	}
-	else if(selectedExtraMuons.size()==1 && selectedElectrons.size()==0){
+	else if(diMuon && selectedExtraMuons.size()==0 && selectedElectrons.size()==1){
+		selecTableDiMuElec.Fill(d,6,scaleFactor);
+		MSPlot["NbOfSelectedJets_mme_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedJets.size()>0){ //at least 1 jet
+			selecTableDiMuElec.Fill(d,7,scaleFactor); 
+			if(selectedJets.size()>1){ //at least 2 jets
+				selecTableDiMuElec.Fill(d,8,scaleFactor);
+				if(selectedJets.size()>2){ //at least 3 jets
+					selecTableDiMuElec.Fill(d,9,scaleFactor);
+					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
+					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0]);
+					MSPlot["BdiscBJetCand_mme_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_mme_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mtt_mme_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mzq_mme_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+					histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+				}
+			}
+		}
+	}
+	else if(diMuon && selectedExtraMuons.size()==1 && selectedElectrons.size()==0){
 		selecTableTriMu.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_mmm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
@@ -858,6 +942,12 @@ int main (int argc, char *argv[])
 				}
 			}
 		}
+	}
+	else if(diElectron && selectedExtraElectrons.size()==0 && selectedMuons.size()==0){
+	}
+	else if(diElectron && selectedExtraElectrons.size()==1 && selectedMuons.size()==0){
+	}
+	else if(diElectron && selectedExtraElectrons.size()==0 && selectedMuons.size()==1){
 	}
 	else fourIsoLeptCounter++;
 
@@ -892,15 +982,26 @@ int main (int argc, char *argv[])
   cout << " - Writing outputs to the files ..." << endl;
 
   //Selection tables
-  selecTableDiMu.TableCalculator(false, true, true, true, true); //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-  selecTableDiMuElec.TableCalculator(false, true, true, true, true); //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-  selecTableTriMu.TableCalculator(false, true, true, true, true); //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+  if(diMuon){ 
+	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+	selecTableDiMu.TableCalculator(false, true, true, true, true);
+	selecTableDiMuElec.TableCalculator(false, true, true, true, true);
+	selecTableTriMu.TableCalculator(false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-  selecTableDiMu.Write("TopFCNC_EventSelectionTable_DiMu.tex",true, true,true,true,false,false,true);
-  selecTableDiMuElec.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true, true,true,true,false,false,true);
-  selecTableTriMu.Write("TopFCNC_EventSelectionTable_TriMu.tex",true, true,true,true,false,false,true);
-  //selecTableDiEl.TableCalculator(false, true, true, true, true);
-
+	selecTableDiMu.Write(    "TopFCNC_EventSelectionTable_DiMu.tex",true, true,true,true,false,false,true);
+	selecTableDiMuElec.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true, true,true,true,false,false,true);
+	selecTableTriMu.Write(   "TopFCNC_EventSelectionTable_TriMu.tex",true, true,true,true,false,false,true);
+  }
+  else if(diElectron){
+	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+	selecTableDiEl.TableCalculator(false, true, true, true, true);
+	selecTableDiElMu.TableCalculator(false, true, true, true, true);
+	selecTableTriEl.TableCalculator(false, true, true, true, true);
+  //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+	selecTableDiEl.Write(  "TopFCNC_EventSelectionTable_DiEl.tex",true, true,true,true,false,false,true);
+	selecTableDiElMu.Write("TopFCNC_EventSelectionTable_DiElMu.tex",true, true,true,true,false,false,true);
+	selecTableTriEl.Write( "TopFCNC_EventSelectionTable_TriEl.tex",true, true,true,true,false,false,true);
+  }
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
   {
