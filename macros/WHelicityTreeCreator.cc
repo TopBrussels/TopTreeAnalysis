@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   //  Which systematics //
   ////////////////////////
 
-  int doJESShift = 1; // 0: off 1: minus 2: plus
+  int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
@@ -452,9 +452,9 @@ int main (int argc, char *argv[])
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
-    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
-    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
-    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_Test_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
+    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_Test_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_Test_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
     cout << "INFO: creating WTree file "+wTreeFileTitle << endl;
         
@@ -506,6 +506,17 @@ int main (int argc, char *argv[])
 	  else if( genEvt->isFullLeptonic() )
 	    scaleFactor *= (0.108*9.)*(0.108*9.);
         }
+
+      cout << " Processing event : " << ievt << endl;
+      //Information of jets before any applied correction!!     
+      cout << " Information of jets before any applied correction!! " << endl;
+      cout << " Size of init_jets : " << init_jets.size() << endl;
+      for(int i =0; i< init_jets.size(); i++)
+	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " before correction " << endl;      
+      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
+      for(int j =0; j < init_jets_corrected.size(); j++)
+	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " before correction " << endl;      
+      cout << "                    ** " << endl;
         
       // Clone the init_jets vector, otherwise the corrections will be removed
       for(unsigned int i=0; i<init_jets_corrected.size(); i++)
@@ -516,6 +527,16 @@ int main (int argc, char *argv[])
 	if(init_jets[i]->Pt() > 20)
 	  init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );      
       }
+
+      //Information of jets after cloning of init_jets vector
+      cout << " Information of jets after cloning of init_jets vector!! " << endl;
+      cout << " Size of init_jets : " << init_jets.size() << endl;
+      for(int i =0; i< init_jets.size(); i++)
+	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after cloning " << endl;      
+      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
+      for(int j =0; j < init_jets_corrected.size(); j++)
+	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after cloning " << endl;     
+      cout << "                    ** " << endl;
 
       // check which file in the dataset it is to have the HLTInfo right
       string currentFilename = datasets[d]->eventTree()->GetFile()->GetName();
@@ -678,6 +699,16 @@ int main (int argc, char *argv[])
 	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
       else 
 	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+
+      //Information of jets after JES CORRECTION
+      cout << " Information of jets after JES CORRECTION!! " << endl;
+      cout << " Size of init_jets : " << init_jets.size() << endl;
+      for(int i =0; i< init_jets.size(); i++)
+	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after JES correction " << endl;      
+      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
+      for(int j =0; j < init_jets_corrected.size(); j++)
+	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after JES correction " << endl;     
+      cout << "                    ** " << endl;
       
       //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
       //----------------------------------------------------------
@@ -687,6 +718,16 @@ int main (int argc, char *argv[])
         jetTools->correctMETTypeOne(init_jets,mets[0],true);
       else
         jetTools->correctMETTypeOne(init_jets,mets[0],false);
+
+      //Information of jets after MET Type I corrections
+      cout << " Information of jets after MET Type I corrections!! " << endl;
+      cout << " Size of init_jets : " << init_jets.size() << endl;
+      for(int i =0; i< init_jets.size(); i++)
+	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after MET Type I correction " << endl;      
+      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
+      for(int j =0; j < init_jets_corrected.size(); j++)
+	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after MET Type I correction " << endl;     
+      cout << "                    ** " << endl;
       
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {	
@@ -696,6 +737,16 @@ int main (int argc, char *argv[])
 	  jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
 	else
 	  jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
+
+	//Information of jets after JER correction for simulation
+	cout << " Information of jets after JER correction for simulation!! " << endl;
+	cout << " Size of init_jets : " << init_jets.size() << endl;
+	for(int i =0; i< init_jets.size(); i++)
+	  cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after JER correction for simulation " << endl;      
+	cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
+	for(int j =0; j < init_jets_corrected.size(); j++)
+	  cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after JER correction for simulation " << endl;     
+	cout << "                    ** " << endl;
 	
 	// JES systematic! 
 	if (doJESShift == 1)
@@ -704,6 +755,18 @@ int main (int argc, char *argv[])
 	  jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
       }      
         
+      //Final information of jets
+      cout << " Final information of jets!! " << endl;
+      cout << " Size of init_jets : " << init_jets.size() << endl;
+      for(int i =0; i< init_jets.size(); i++)
+	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " . Final information.  " << endl;      
+      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
+      for(int j =0; j < init_jets_corrected.size(); j++)
+	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " . Final information. " << endl;     
+      cout << "                    ** " << endl;
+      cout << " " << endl;
+      cout << " " << endl;
+      
       ///////////////////////////////////////////////////////
       ///     Start of program: Defining variables        ///
       ///////////////////////////////////////////////////////  
@@ -852,12 +915,7 @@ int main (int argc, char *argv[])
 
       /////////////////////////////
       //   Selection
-      /////////////////////////////
-      //if(event->runId() != 173692 && event->eventId() != -2061789364) continue;
-      //std::cout << " runId : " << event->runId() << " | eventid : " << event->eventId() << endl;
-
-      //if(event->eventId() != 2233177932) continue;
-        
+      /////////////////////////////        
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);   //CIEMAT values, not refSel values !!!!
@@ -951,17 +1009,6 @@ int main (int argc, char *argv[])
 					eventSelectedSemiMu = true;
 					float reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
 					MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);               
-
-// 					if(event->runId() == 173692){// && event->eventId() == 2233177932){
-// 					  int NumberbTags=0;
-// 					  for(int ii=0; ii< selectedJets.size(); ii++){
-// 					    if(selectedJets[ii]->btag_simpleSecondaryVertexHighEffBJetTags() >= 1.74) NumberbTags++;
-// 					  }
-// 					  TLorentzVector muons=*selectedMuons[0];
-// 					  TLorentzVector METS =*mets[0];
-// 					  float TransverseMass = sqrt(2*(abs(selectedMuons[0]->Pt()))*abs(mets[0]->Pt())*(1-cos(muons.DeltaPhi(METS))));	
-// 					  if(NumberbTags >= 1 && TransverseMass > 30.) std::cout << " | run id : " << event->runId() << " | event id : " << event->eventId() << " | lumiblockId : " << event->lumiBlockId() << " | transverse mass : " << TransverseMass << " | # btags : " << NumberbTags <<  endl;
-// 					}
 				      }
 				  }
 			      }
@@ -1017,9 +1064,6 @@ int main (int argc, char *argv[])
 					      eventSelectedSemiEl = true;
 					      float reliso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
 					      MSPlot["SelectedEventsElectronsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
-// 					      if(event->runId() == 173692){// && event->eventId() == 2233177932){						
-// 						std::cout << " run id : " << event->runId() << " event id : " << event->eventId() << " semiEl selected " << endl;					  
-// 					      }
 					      
 					    }
 					}
