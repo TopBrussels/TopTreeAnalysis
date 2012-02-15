@@ -369,7 +369,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 	name = "Stack_"+label;
 	if(hStack_){
 		hStack_->SetName(name.c_str());
-		hStack_->SetTitle(name.c_str());
+		//hStack_->SetTitle(name.c_str());
 	}
 
 	if( histosForHStackAreaNorm.size() > 0 )
@@ -441,7 +441,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		   } 
 		   else{
 		      histosForOverlay[i]->SetLineStyle(3);
-		      histosForOverlay[i]->SetLineColor(i+40);
+		      histosForOverlay[i]->SetLineColor(i); //before: 4+40 (light pink), but e.g. 4 (blue) should be more visible
 		   }
 		   histosForOverlay[i]->SetFillColor(0);
 		   histosForOverlay[i]->SetLineWidth(3);
