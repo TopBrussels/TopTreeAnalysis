@@ -648,10 +648,7 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mc
   hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
  
   string dataSetName = dataSet->Name();
-  int pdgID_top = 6; //top quark
-  if(TprimeEvaluation)
-    pdgID_top = 8; //4th generation t' quark; currently not supported for matching
-  if( isSemiLep  || TprimeEvaluation )
+  if( isSemiLep  || (TprimeEvaluation && mcParticlesForMatching.size()==4) ) //requiring that there are 4 quarks stored means that it is semilep! (see treecreator)
   {
     TLorentzVector topQuark, antiTopQuark;     
     
@@ -764,7 +761,7 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mc
               
             float ThPtOverSumPt = Th.Pt()/sumPt;
       
-            if(isSemiLep  || TprimeEvaluation)
+            if(isSemiLep  || (TprimeEvaluation && mcParticlesForMatching.size()==4))
             {             
               if( trainMVA_ && all4JetsMatched_MCdef_ ) // Only train for events where you are sure what is S and B
               {
@@ -899,7 +896,7 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mc
       if( hadronictopJetsMatched_MVAdef_ == false && dataSetName.find("TTbarJets_SemiMu") == 0 )
         histo1D_[titleSemiMuBG]->Fill(MVAResult.first);
 
-      if(isSemiLep || TprimeEvaluation)
+      if(isSemiLep || (TprimeEvaluation && mcParticlesForMatching.size()==4))
       {
         std::string titleGood = "MaxMVA_"+MVAnames[i]+"_goodcomb";
    	    std::string titleBad = "MaxMVA_"+MVAnames[i]+"_badcomb";
