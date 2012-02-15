@@ -272,6 +272,10 @@ int main (int argc, char *argv[])
     cout << "PU Reweighing, taking 1/fb histogram for PU Syst!!!" << endl;
     LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_1fb.root", "pileup2", "pileup"); // summer 11 1.1/fb
   }
+  else if (systematic == 8 || systematic == 9) {
+    cout << "PU Reweighing, taking 4,6/fb histogram for WJETS//TTJETS theory!!!" << endl;
+    LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_4fb.root", "pileup2", "pileup"); // summer 11 4.6/fb
+  }
   else {
     if (Luminosity > 4500) {
       cout << "PU Reweighing, taking 4.6/fb histogram!!!" << endl;
@@ -302,6 +306,20 @@ int main (int argc, char *argv[])
     cout << "3DPU Reweighing, taking 2.1/fb histogram!!!" << endl;
     Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup"); // 2.1/fb Run2011A
   } 
+
+  // special histos
+  else if (int(Luminosity) == 1139) {
+    cout << "3DPU Reweighing, taking the SPECIAL first 1/fb histogram for 2011A!!!" << endl;
+    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/tmp/first.root", "pileup", "pileup"); // 2.1/fb Run2011A
+  }
+  else if (int(Luminosity) == 1001) {
+    cout << "3DPU Reweighing, taking the SPECIAL second 1/fb histogram for 2011A!!!" << endl;
+    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/tmp/second.root", "pileup", "pileup"); // 2.1/fb Run2011A
+  }
+  else if (systematic == 8 || systematic == 9) {
+    cout << "3DPU Reweighing, taking 4.6/fb histogram for WJETS/TTJETS theory!!!" << endl;
+    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
+  }
   else {
     cout << "3DPU Reweighing, NO HISTOGRAM DEFINED!!!" << endl;
   }
@@ -317,7 +335,7 @@ int main (int argc, char *argv[])
 
   cout << " Initialized LumiReWeighting stuff" << endl;
   
-  exit(1);
+  //exit(1);
 
   ////////////////////////////////////
   //	Loop on datasets
@@ -545,9 +563,9 @@ int main (int argc, char *argv[])
 
       if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) {
 	//jetTools->correctJets(init_jets, vertex);
-	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho());
+      	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
       } else {
-	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho());
+	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
       }
 
       // after correction
@@ -722,7 +740,7 @@ int main (int argc, char *argv[])
 
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) ) {
 	
-	// Match RecoJets with GenJets
+	/*// Match RecoJets with GenJets
 	vector< pair<size_t, size_t> > indexVector; //first index = RecoJet, second index = GenJet
 	vector<bool> mLock(genjets.size(),false);   // when locked, genJet is already matched to a recoJet
 	for(size_t i=0; i<init_jets_corrected.size(); i++) {
@@ -770,7 +788,14 @@ int main (int argc, char *argv[])
 	  if(ptscale > 0.0)
 	    init_jets_corrected[indexVector[i].first]->SetPxPyPzE(init_jets_corrected[indexVector[i].first]->Px()*ptscale, init_jets_corrected[indexVector[i].first]->Py()*ptscale,init_jets_corrected[indexVector[i].first]->Pz()*ptscale, init_jets_corrected[indexVector[i].first]->E()*ptscale);
 	  
-	}
+	}*/
+
+	if(systematic == 6)
+	  jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
+	else if(systematic == 7)
+	  jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "plus",false);
+	else
+	  jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "nominal",false);
 
 	// Correct jets for JES uncertainy systematics
 	
