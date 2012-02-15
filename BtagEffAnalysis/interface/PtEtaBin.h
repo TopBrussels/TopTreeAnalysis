@@ -18,12 +18,14 @@
 #include <sstream>
 #include <vector>
 #include "TKey.h"
+#include "TObjArray.h"
 #include "TLatex.h"
 #include "TLegend.h"
 #include "TPaveText.h"
 #include "TRandom3.h"
+#include "TFractionFitter.h"
 
-#include "TopTreeProducer/interface/TRootJet.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootJet.h"
 
 //from Greg's http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/NewPhysicsBrussels/TopTreeAnalysis/BkgEstimationMethods/interface/VJetEstimation.h?revision=1.1.2.10&view=markup&pathrev=CMSSW_36X
 // RooFit librairies

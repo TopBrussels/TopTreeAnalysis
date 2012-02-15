@@ -7,15 +7,15 @@
 #include <time.h>
 #include <ctime>
 #include <iomanip>
-#include "TopTreeProducer/interface/TRootMuon.h"
-#include "TopTreeProducer/interface/TRootElectron.h"
-#include "TopTreeProducer/interface/TRootJet.h"
-#include "TopTreeProducer/interface/TRootMET.h"
-#include "TopTreeProducer/interface/TRootGenEvent.h"
-#include "TopTreeProducer/interface/TRootEvent.h"
-#include "TopTreeProducer/interface/TRootRun.h"
-#include "TopTreeProducer/interface/TRootParticle.h"
-#include "TopTreeProducer/interface/TRootMCParticle.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootMuon.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootElectron.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootJet.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootMET.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootGenEvent.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootEvent.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootRun.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootParticle.h"
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootMCParticle.h"
 
 #include "../interface/TRootNTuple.h"
 #include "../interface/PtEtaBinContainer.h"
@@ -23,8 +23,8 @@
 #include "../interface/WorkingPointBin.h"
 #include "../interface/MakerJetOrigin.h"
 
-#include "TopTreeAnalysis/Content/interface/Dataset.h"
-#include "TopTreeAnalysis/Tools/interface/MultiSamplePlot.h"
+#include "../../Content/interface/Dataset.h"
+#include "../../Tools/interface/MultiSamplePlot.h"
 
 #include <TFile.h>
 #include <TObject.h>
@@ -46,7 +46,7 @@
 #include "TColor.h"
 #include "TPaveStats.h"
 
-#include "TopTreeAnalysis/macros/Style.C"
+#include "../../macros/Style.C"
 
 //from Greg's http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/NewPhysicsBrussels/TopTreeAnalysis/BkgEstimationMethods/interface/VJetEstimation.h?revision=1.1.2.10&view=markup&pathrev=CMSSW_36X
 // RooFit librairies
@@ -259,6 +259,7 @@ private:
 	
 	double nTTbarBeforeRefSel;
 	double nTTbarAfterRefSel;
+    int nTTbarAfterRefSel_nPV[100];
 	double nTTbarAfterRefSel2;
 	
 	std::map<std::string, std::vector<float> > nSelected_;

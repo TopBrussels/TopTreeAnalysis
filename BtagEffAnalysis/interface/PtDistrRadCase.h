@@ -19,7 +19,7 @@
 #include "TKey.h"
 #include "TLegend.h"
 #include "TRandom3.h"
-#include "TopTreeProducer/interface/TRootJet.h" //not really needed
+#include "../../../TopBrussels/TopTreeProducer/interface/TRootJet.h" //not really needed
 
 using namespace std;
 

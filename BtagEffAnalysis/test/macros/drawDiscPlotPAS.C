@@ -48,6 +48,8 @@
         gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(0.048,2)+pow(uSF,2));
         gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(0.048,2)+pow(uSF,2));
         
+        //cout << sqrt(pow(0.048,2)+pow(uSF,2)) << endl;
+        
         if (gr_ratio_y_err_up[i] > maxup) maxup=gr_ratio_y_err_up[i];
         if (gr_ratio_y_err_down[i] < maxdown) maxdown=gr_ratio_y_err_down[i];
         
@@ -174,5 +176,30 @@
     line_L_2->Draw("SAME <|");
     line_L_3->Draw("SAME <|");
     
-    canvas->SaveAs("Plot.pdf");    
+    canvas->SaveAs("eff-data-mc-CSV.pdf");
+    canvas->SaveAs("eff-data-mc-CSV.C");
+    canvas->SaveAs("eff-data-mc-CSV.root");
+    // make a text file with the results for BTV
+    
+    ofstream nums("eff-data-mc-CSV.txt", ios::trunc);
+    
+    nums << "# output format" << endl << "# [plot name]" << endl << "# x y err_x err_y" << endl;
+    
+    nums << "[mc]" << endl;
+    for (unsigned int i=0; i<nBin; i++) 
+        nums << gr_x[i] << " " << gr_MC[i] << " " << gr_ex[i] << " " << effMC->GetBinError(i+1) << endl;
+    nums << endl;
+    
+    nums << "[data]" << endl;
+    for (unsigned int i=0; i<nBin; i++) 
+        nums << gr_x[i] << " " << gr_y[i] << " " << gr_ex[i] << " " << gr_ey[i] << endl;
+    nums << endl;
+ 
+    nums << "[sf]" << endl;
+    for (unsigned int i=0; i<nBin; i++) 
+        nums << gr_ratio_x[i] << " " << gr_ratio_y[i] << " " << gr_ex[i] << " " << gr_ratio_y[i]-gr_ratio_y_err_down[i] << endl;
+    nums << endl;
+    
+    nums.close();
+
 }

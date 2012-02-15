@@ -974,9 +974,13 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 			}
 			
 			TH1Data_Var0->Fill(var0,weight); 
-			TH1Data_Var0_XS->Fill(var0,weight_nonrew); 
+            
 			TH1Data_BtagAll->Fill(bTag,weight);
 			
+            //if (var0>=60 && var0<=200) {
+
+            TH1Data_Var0_XS->Fill(var0,weight_nonrew); 
+
 			if (bTag > bTagCuts[0]) {
 				histo1D["TH1Data_Var0_bTagL"]->Fill(var0,weight_nonrew);
 				if(fabs(partonFlavour)==5) {
@@ -1003,6 +1007,7 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 				}
 				
 			}
+            //}
 		}
 	}
 	//}  
@@ -1136,7 +1141,7 @@ void PtEtaBin::FillXStemplates(double weight, string dataSetName, int partonFlav
 	
 	//exit(1);
 		
-	if(dataSetName != "Data" && dataSetName != "data" && dataSetName != "DATA") {
+	if(dataSetName != "Data" && dataSetName != "data" && dataSetName != "DATA") {// && controlVar0 >= 60 && controlVar0 <= 200) {
 
 		if(dataSetName.find("TTbarJets") != 0) {
 			histo1D["TH1Data_Var0_VVMC"]->Fill(controlVar0,weight);
@@ -2726,149 +2731,156 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut) {
 	tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC";
 	TH1D* vv = (TH1D*) ftmp->Get(tmpname);
 	
-	if (!ttbar || !vv) {
-		
-		mkdir("FitTemplates",0777);
-		
-		cout << "doMLJTemplateFit:: Mlj Templates not found or corrupt, recreating " << filename << "!  Please restart the code!" << endl;
-		
-		ftmp->Close();
-		
-		TFile* ftmp = new TFile(filename,"RECREATE");
-		
-		histo1D["TH1Data_Var0_TTbar"]->Write();
-		histo1D["TH1Sng_Var0_TTbar"]->Write();
-		histo1D["TH1Bkg_Var0_TTbar"]->Write();
-
-		histo1D["TH1Sng_Var0_VVMC"]->Write();
-		histo1D["TH1Bkg_Var0_VVMC"]->Write();
-		histo1D["TH1Data_Var0_VVMC"]->Write();
-		
-		histo1D["TH1Data_Var0_TTbar_bTagL"]->Write();
-		histo1D["TH1Sng_Var0_TTbar_bTagL"]->Write();
-		histo1D["TH1Bkg_Var0_TTbar_bTagL"]->Write();
-		
-		histo1D["TH1Data_Var0_TTbar_bTagM"]->Write();	
-		histo1D["TH1Sng_Var0_TTbar_bTagM"]->Write();
-		histo1D["TH1Bkg_Var0_TTbar_bTagM"]->Write();
-		
-		histo1D["TH1Data_Var0_TTbar_bTagT"]->Write();
-		histo1D["TH1Sng_Var0_TTbar_bTagT"]->Write();
-		histo1D["TH1Bkg_Var0_TTbar_bTagT"]->Write();
-		
-		histo1D["TH1Data_Var0_VVMC_bTagL"]->Write();
-		histo1D["TH1Sng_Var0_VVMC_bTagL"]->Write();
-		histo1D["TH1Bkg_Var0_VVMC_bTagL"]->Write();
-
-		histo1D["TH1Data_Var0_VVMC_bTagM"]->Write();
-		histo1D["TH1Sng_Var0_VVMC_bTagM"]->Write();
-		histo1D["TH1Bkg_Var0_VVMC_bTagM"]->Write();
-
-		histo1D["TH1Data_Var0_VVMC_bTagT"]->Write();
-		histo1D["TH1Sng_Var0_VVMC_bTagT"]->Write();
-		histo1D["TH1Bkg_Var0_VVMC_bTagT"]->Write();
-				
-		ftmp->Close();
-        
-        fstream lum(filename2, ios::out | ios::trunc);
-        
-        lum << lumi_;
-        
-        lum.close();
-        
-        doMLJTemplateFit(chi2cut);
-		
-	} else if (ttbar && vv) {
-		
-		if (debug_ > 0)cout << "doMLJTemplateFit:: Mlj Templates loaded from " << filename << "!" << endl;
-		
-		
-		histo1D["TH1Data_Var0_TTbar"]->Delete();
-		histo1D["TH1Sng_Var0_TTbar"]->Delete();
-		histo1D["TH1Bkg_Var0_TTbar"]->Delete();
-		
-		histo1D["TH1Sng_Var0_VVMC"]->Delete();
-		histo1D["TH1Bkg_Var0_VVMC"]->Delete();
-		histo1D["TH1Data_Var0_VVMC"]->Delete();
-		
-		histo1D["TH1Data_Var0_TTbar_bTagL"]->Delete();
-		histo1D["TH1Sng_Var0_TTbar_bTagL"]->Delete();
-		histo1D["TH1Bkg_Var0_TTbar_bTagL"]->Delete();
-		
-		histo1D["TH1Data_Var0_TTbar_bTagM"]->Delete();
-		histo1D["TH1Sng_Var0_TTbar_bTagM"]->Delete();
-		histo1D["TH1Bkg_Var0_TTbar_bTagM"]->Delete();
-		
-		histo1D["TH1Data_Var0_TTbar_bTagT"]->Delete();
-		histo1D["TH1Sng_Var0_TTbar_bTagT"]->Delete();
-		histo1D["TH1Bkg_Var0_TTbar_bTagT"]->Delete();
-
-		histo1D["TH1Data_Var0_VVMC_bTagL"]->Delete();
-		histo1D["TH1Data_Var0_VVMC_bTagM"]->Delete();
-		histo1D["TH1Data_Var0_VVMC_bTagT"]->Delete();
-
-		histo1D["TH1Data_Var0_TTbar"] = (TH1D*) ttbar->Clone();
-		
-		TString tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar";
-		histo1D["TH1Sng_Var0_TTbar"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar";
-		histo1D["TH1Bkg_Var0_TTbar"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC";
-		histo1D["TH1Data_Var0_VVMC"] = (TH1D*) vv->Clone();
-
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_VVMC";
-		histo1D["TH1Sng_Var0_VVMC"] = (TH1D*) vv->Clone();
-
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_VVMC";
-		histo1D["TH1Bkg_Var0_VVMC"] = (TH1D*) vv->Clone();
-
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_TTbar_bTagL";
-		histo1D["TH1Data_Var0_TTbar_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar_bTagL";
-		histo1D["TH1Sng_Var0_TTbar_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar_bTagL";
-		histo1D["TH1Bkg_Var0_TTbar_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_TTbar_bTagM";
-		histo1D["TH1Data_Var0_TTbar_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar_bTagM";
-		histo1D["TH1Sng_Var0_TTbar_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar_bTagM";
-		histo1D["TH1Bkg_Var0_TTbar_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_TTbar_bTagT";
-		histo1D["TH1Data_Var0_TTbar_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar_bTagT";
-		histo1D["TH1Sng_Var0_TTbar_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar_bTagT";
-		histo1D["TH1Bkg_Var0_TTbar_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC_bTagL";
-		histo1D["TH1Data_Var0_VVMC_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC_bTagM";
-		histo1D["TH1Data_Var0_VVMC_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
-		tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC_bTagT";
-		histo1D["TH1Data_Var0_VVMC_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();
-		//delete ttbar;
-		
-		//delete vv;
-		//ftmp->Close();
-        
-        
-        fstream lum(filename2, ios::in );
-        
-        string line;
-        
-        while (! lum.eof())
-            lum >> line;
-        
-        templateLumi_ = (double)atof(line.c_str());
-        
-        lum.close();
-
-	}
+	if (debug_ > 0) {
+        if (!ttbar || !vv) {
+            
+            mkdir("FitTemplates",0777);
+            
+            cout << "doMLJTemplateFit:: Mlj Templates not found or corrupt, recreating " << filename << "!  Please restart the code!" << endl;
+            
+            ftmp->Close();
+            
+            TFile* ftmp = new TFile(filename,"RECREATE");
+            
+            histo1D["TH1Data_Var0_TTbar"]->Write();
+            histo1D["TH1Sng_Var0_TTbar"]->Write();
+            histo1D["TH1Bkg_Var0_TTbar"]->Write();
+            
+            histo1D["TH1Sng_Var0_VVMC"]->Write();
+            histo1D["TH1Bkg_Var0_VVMC"]->Write();
+            histo1D["TH1Data_Var0_VVMC"]->Write();
+            
+            histo1D["TH1Data_Var0_TTbar_bTagL"]->Write();
+            histo1D["TH1Sng_Var0_TTbar_bTagL"]->Write();
+            histo1D["TH1Bkg_Var0_TTbar_bTagL"]->Write();
+            
+            histo1D["TH1Data_Var0_TTbar_bTagM"]->Write();	
+            histo1D["TH1Sng_Var0_TTbar_bTagM"]->Write();
+            histo1D["TH1Bkg_Var0_TTbar_bTagM"]->Write();
+            
+            histo1D["TH1Data_Var0_TTbar_bTagT"]->Write();
+            histo1D["TH1Sng_Var0_TTbar_bTagT"]->Write();
+            histo1D["TH1Bkg_Var0_TTbar_bTagT"]->Write();
+            
+            histo1D["TH1Data_Var0_VVMC_bTagL"]->Write();
+            histo1D["TH1Sng_Var0_VVMC_bTagL"]->Write();
+            histo1D["TH1Bkg_Var0_VVMC_bTagL"]->Write();
+            
+            histo1D["TH1Data_Var0_VVMC_bTagM"]->Write();
+            histo1D["TH1Sng_Var0_VVMC_bTagM"]->Write();
+            histo1D["TH1Bkg_Var0_VVMC_bTagM"]->Write();
+            
+            histo1D["TH1Data_Var0_VVMC_bTagT"]->Write();
+            histo1D["TH1Sng_Var0_VVMC_bTagT"]->Write();
+            histo1D["TH1Bkg_Var0_VVMC_bTagT"]->Write();
+            
+            TH1Data_Var0_XS->Write();
+            histo1D["TH1Data_Var0_bTagL"]->Write();
+            histo1D["TH1Data_Var0_bTagM"]->Write();
+            histo1D["TH1Data_Var0_bTagT"]->Write();
+            
+            ftmp->Close();
+            
+            fstream lum(filename2, ios::out | ios::trunc);
+            
+            lum << lumi_;
+            
+            lum.close();
+            
+            doMLJTemplateFit(chi2cut);
+            
+        } else if (ttbar && vv) {
+            
+            if (debug_ > 0)cout << "doMLJTemplateFit:: Mlj Templates loaded from " << filename << "!" << endl;
+            
+            histo1D["TH1Data_Var0_TTbar"]->Delete();
+            histo1D["TH1Sng_Var0_TTbar"]->Delete();
+            histo1D["TH1Bkg_Var0_TTbar"]->Delete();
+            
+            histo1D["TH1Sng_Var0_VVMC"]->Delete();
+            histo1D["TH1Bkg_Var0_VVMC"]->Delete();
+            histo1D["TH1Data_Var0_VVMC"]->Delete();
+            
+            histo1D["TH1Data_Var0_TTbar_bTagL"]->Delete();
+            histo1D["TH1Sng_Var0_TTbar_bTagL"]->Delete();
+            histo1D["TH1Bkg_Var0_TTbar_bTagL"]->Delete();
+            
+            histo1D["TH1Data_Var0_TTbar_bTagM"]->Delete();
+            histo1D["TH1Sng_Var0_TTbar_bTagM"]->Delete();
+            histo1D["TH1Bkg_Var0_TTbar_bTagM"]->Delete();
+            
+            histo1D["TH1Data_Var0_TTbar_bTagT"]->Delete();
+            histo1D["TH1Sng_Var0_TTbar_bTagT"]->Delete();
+            histo1D["TH1Bkg_Var0_TTbar_bTagT"]->Delete();
+            
+            histo1D["TH1Data_Var0_VVMC_bTagL"]->Delete();
+            histo1D["TH1Data_Var0_VVMC_bTagM"]->Delete();
+            histo1D["TH1Data_Var0_VVMC_bTagT"]->Delete();
+            
+            histo1D["TH1Data_Var0_TTbar"] = (TH1D*) ttbar->Clone();
+            
+            TString tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar";
+            histo1D["TH1Sng_Var0_TTbar"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar";
+            histo1D["TH1Bkg_Var0_TTbar"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC";
+            histo1D["TH1Data_Var0_VVMC"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_VVMC";
+            histo1D["TH1Sng_Var0_VVMC"] = (TH1D*) ftmp->Get(tmpname)->Clone();;
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_VVMC";
+            histo1D["TH1Bkg_Var0_VVMC"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_TTbar_bTagL";
+            histo1D["TH1Data_Var0_TTbar_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar_bTagL";
+            histo1D["TH1Sng_Var0_TTbar_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar_bTagL";
+            histo1D["TH1Bkg_Var0_TTbar_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_TTbar_bTagM";
+            histo1D["TH1Data_Var0_TTbar_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar_bTagM";
+            histo1D["TH1Sng_Var0_TTbar_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar_bTagM";
+            histo1D["TH1Bkg_Var0_TTbar_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_TTbar_bTagT";
+            histo1D["TH1Data_Var0_TTbar_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Sng_Var0_TTbar_bTagT";
+            histo1D["TH1Sng_Var0_TTbar_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Bkg_Var0_TTbar_bTagT";
+            histo1D["TH1Bkg_Var0_TTbar_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC_bTagL";
+            histo1D["TH1Data_Var0_VVMC_bTagL"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC_bTagM";
+            histo1D["TH1Data_Var0_VVMC_bTagM"] = (TH1D*) ftmp->Get(tmpname)->Clone();		
+            tmpname = ""; GiveName(&tmpname); tmpname+="TH1Data_Var0_VVMC_bTagT";
+            histo1D["TH1Data_Var0_VVMC_bTagT"] = (TH1D*) ftmp->Get(tmpname)->Clone();
+            //delete ttbar;
+            
+            //delete vv;
+            //ftmp->Close();
+            
+            
+            fstream lum(filename2, ios::in );
+            
+            string line;
+            
+            while (! lum.eof())
+                lum >> line;
+            
+            templateLumi_ = (double)atof(line.c_str());
+            
+            lum.close();
+            
+        }
+    } else
+        templateLumi_ = lumi_;
 	
 	int b=histo1D["TH1Sng_Var0_TTbar"]->Integral(0,histo1D["TH1Sng_Var0_TTbar"]->GetNbinsX()+1);
 	int nb=histo1D["TH1Bkg_Var0_TTbar"]->Integral(0,histo1D["TH1Bkg_Var0_TTbar"]->GetNbinsX()+1);
@@ -2918,9 +2930,9 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut) {
 	
 	if (debug_ > 0) cout << "bTagM Mistag rate: " << misTagRateM << " b/(nb+b): " << fractionBtotal << endl;
 
-	tmp.clear(); tmp = doTemplateFit(histo1D["TH1Data_Var0_TTbar_bTagM"],histo1D["TH1Data_Var0_VVMC_bTagM"],histo1D["TH1Data_Var0_VVData"],histo1D["TH1Data_Var0_bTagM"],(TString)"Fit_BtagMCut");
+	tmp.clear(); tmp = doTemplateFit(histo1D["TH1Data_Var0_TTbar_bTagM"],histo1D["TH1Data_Var0_VVMC_bTagM"],new TH1D(),histo1D["TH1Data_Var0_bTagM"],(TString)"Fit_BtagMCut");
 	for (unsigned int t=0;t<tmp.size();t++) fitResults.push_back(tmp[t]);
-	
+	//exit(1);
 	fitResults.push_back(misTagRateM);
 
 	if (debug_ > 0) cout << "doMLJTemplateFit: * Performing BTAGCUT fits with BTAG cut TIGHT" << endl;
@@ -5110,7 +5122,165 @@ double PtEtaBin::getmlj_R_SigmanoRWVal(){return TH1Bkg_R_ControlVar->GetRMS();}
 double PtEtaBin::getmlj_R_SigmaMCVal(){return TH1Bkg_R_Var0->GetRMS();}
 
 vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1D* data,TString PrefixPlot) {
-	
+    
+    double fttb=0; double efttb=0;
+    double fbkg=0; double efbkg=0;
+    
+    Int_t status = -1;
+    
+    // TFRACTIONFITTER
+    
+    TObjArray *mc = new TObjArray(2);        // MC histograms are put in this array
+    mc->Add(ttbar);
+    mc->Add(vvmc);
+
+    TFractionFitter* fit = new TFractionFitter(data, mc); // initialise
+    fit->Constrain(1,0.0,2.0);               // constrain fraction 1 to be between 0 and 1
+    fit->Constrain(2,0.0,2.0);               // constrain fraction 2 to be between 0 and 1
+    fit->SetRangeX(3,49);                    // use only the first 15 bins in the fit
+
+    //cout << "performing fit "<< PrefixPlot << endl;
+    status = fit->Fit();               // perform the fit
+    //cout << "fit performed" << endl;
+
+    if (status != 0) {
+        cout << "performing fit again "<< PrefixPlot << endl;
+        fit->Constrain(1,0.0,1.0);               // constrain fraction 1 to be between 0 and 1
+        fit->Constrain(2,0.0,1.0);               // constrain fraction 2 to be between 0 and 1
+        status = fit->Fit();               // perform the fit
+        //cout << "fit performed" << endl;  
+        //exit(1);
+    }
+    
+    if (debug_>1) cout << "fit status: " << status << endl;
+    
+    fit->GetResult(0,fttb,efttb);
+    fit->GetResult(1,fbkg,efbkg);
+    
+   // cout << fttb << " " << efttb << endl;
+    //efttb=efttb*0.7;
+    
+    double ep1=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(0,0));
+    double ep2=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(1,1));
+    double cov=fit->GetFitter()->GetCovarianceMatrixElement(0,1);
+    
+    double d1=(1/(fttb+fbkg))-(fttb/pow(fttb+fbkg,2));
+    double d2=fttb/pow(fttb+fbkg,2);
+    
+    double t1 = pow(d1,2) * pow(ep1,2);
+    double t2 = pow(d2,2) * pow(ep2,2);
+    
+    double t3 = -2*cov*d1*d2;
+    
+    double efttb_fixed = sqrt(t1+t2+t3);
+    
+    efttb = efttb_fixed;
+    
+    if (debug_>1) cout << "nTTbar = " << nTTbar_ << " WAS FILLED" << endl;
+    if (debug_>1) cout << "Doing template fit for L=" << lumi_ << ", the templates where created with L=" << templateLumi_ << " (ttbar: " << ttbar->Integral() << ", VV: " << vvmc->Integral() << ")" << endl;
+    if (debug_>1) cout << "nTTbar fitted: " << fttb*data->Integral() << " +- " << efttb*data->Integral() << endl;
+    if (debug_>1) cout << "nBKG fitted: " << fbkg*data->Integral() << " +- " << efbkg*data->Integral() << endl;
+
+    vector<float> results;
+	results.push_back(fttb*data->Integral());
+	results.push_back(efttb*data->Integral());	
+	results.push_back(fbkg*data->Integral());
+	results.push_back(efbkg*data->Integral());
+    
+    delete fit;
+    delete mc;
+    
+    if (debug_ > 0 && status == 0) {
+        
+		TString dir = ""; GiveName(&dir);
+		
+		mkdir("FitOutput",0777);
+		mkdir(("FitOutput/"+(string)dir).c_str(),0777);
+		
+		string savePath = ("FitOutput/"+(string)dir+"/");
+		
+		// give the plot a name
+		
+		GiveName(&PrefixPlot);	
+		cout << PrefixPlot << endl;
+		
+		// save the MC plot
+		
+		string MCPlot = "MCTemplate_"+(string)PrefixPlot;
+        
+        TH1* result = fit->GetPlot();
+        
+        TCanvas* pom = new TCanvas(MCPlot.c_str(),MCPlot.c_str());
+        
+        pom->cd();    
+        
+        data->SetLineColor(kBlack);
+        data->SetMarkerColor(kBlack);    
+        data->Draw("E");
+        result->SetLineColor(kBlue);
+        result->Draw("same");
+        
+        ttbar->Scale((data->Integral()*fttb)/ttbar->Integral());
+        vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
+        
+                     
+        ttbar->SetLineColor(kGreen);
+        ttbar->SetLineStyle(kDashed);
+        ttbar->Draw("same hist");
+        vvmc->SetLineColor(kRed);
+        vvmc->SetLineStyle(kDashed);
+        vvmc->Draw("same hist");
+        
+        TLegend *leg1 = new TLegend(0.65,0.73,0.998,0.99);
+        
+        leg1->AddEntry(data,"Data", "P"); 
+        leg1->AddEntry(result,"t#bar{t} + Background","L"); 
+        leg1->AddEntry(ttbar,"t#bar{t}", "L"); 
+        leg1->AddEntry(vvmc,"Background", "L"); 
+        
+        stringstream f; f<<fit->GetChisquare()/fit->GetNDF();
+        string fitProb = "Fit Chi2/ndf = "+f.str();
+        TH1F* dummy = new TH1F("dummy","dummy",1,0,1); 
+		dummy->SetLineColor(kWhite); dummy->SetMarkerColor(kWhite); 
+        leg1->AddEntry(dummy,fitProb.c_str(), "P"); 
+
+        leg1->Draw();
+        
+        TLatex* text = new TLatex(0.13,0.955,"CMS Simulation");
+		
+		text->SetTextSize(0.05);
+		
+		text->SetNDC();
+		
+		text->Draw();        
+        
+        pom->SaveAs((savePath+MCPlot+".png").c_str());
+        pom->SaveAs((savePath+MCPlot+".C").c_str());
+        FitPlotPaths.push_back(savePath+MCPlot+".png");
+        
+        delete dummy;
+
+    }
+
+    return results;
+    
+    // OLD ROOFIT METHOD
+    
+    
+    //for (unsigned int i=0; i<data->GetNbinsX(); i++) {
+        
+        //data->SetBinError(i,1110000);
+        // cout << data->GetBinError(i) << " ";
+        //vvmc->SetBinContent(i,vvmc->GetBinContent(i)-vvmc->GetBinError(i));
+        //ttbar->SetBinContent(i,ttbar->GetBinContent(i)-ttbar->GetBinError(i));
+
+        //vvmc->SetBinContent(i,vvmc->GetBinContent(i)+vvmc->GetBinError(i));
+        //ttbar->SetBinContent(i,ttbar->GetBinContent(i)+ttbar->GetBinError(i));
+
+    //}cout << endl;
+    
+    //exit(1);
+    
 	if (debug_>1) cout << "nTTbar = " << nTTbar_ << " WAS FILLED" << endl;
     
     if (debug_>1) cout << "Doing template fit for L=" << lumi_ << ", the templates where created with L=" << templateLumi_ << " (ttbar: " << ttbar->Integral() << ", VV: " << vvmc->Integral() << ")" << endl;
@@ -5122,8 +5292,8 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 	//cout << ScaleTTbar << " " << ScaleVV << endl;
 	
     // start values for the fit
-    double min = 0.5;
-    double max = 1.5;
+    double min = 0.0;
+    double max = 2.0;
     double start_ttb = ScaleTTbar*(lumi_/templateLumi_);
     double start_VV = ScaleVV*(lumi_/templateLumi_);
     
@@ -5167,11 +5337,18 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 
 	//model_control.fitTo(dataHist, RooFit::SumW2Error(false), RooFit::PrintLevel(-3), RooFit::Verbose(false),RooFit::Extended(true));
 	
-	if (debug_ > 0) cout << "Estimation of Ntt  :  " << Ntt.getVal() << " +- " << Ntt.getError() << "      " << Ntt.getErrorHi() << "      " << Ntt.getErrorLo() << endl;
+  	if (debug_ > 0) cout << "Estimation of Ntt  :  " << Ntt.getVal() << " +- " << Ntt.getError() << "      " << Ntt.getErrorHi() << "      " << Ntt.getErrorLo() << endl;
 	if (debug_ > 0) cout << "Estimation of NV   :  " << NV.getVal() << " +- " << NV.getError() << "      " << NV.getErrorHi() << "      " << NV.getErrorLo() << endl;
 	//cout << "Estimation of Ntt_control  :  " << Ntt_control.getVal() << " +- " << Ntt_control.getError() << "      " << Ntt_control.getErrorHi() << "      " << Ntt_control.getErrorLo() << endl;
 	//cout << "Estimation of NV_control   :  " << NV_control.getVal() << " +- " << NV_control.getError() << "      " << NV_control.getErrorHi() << "      " << NV_control.getErrorLo() << endl;
 	
+    //for (unsigned int i=0; i<data->GetNbinsX(); i++) {
+        
+    //    cout << data->GetBinError(i) << " ";
+        
+    //}cout << endl;
+    //exit(1);
+
 	vector<float> fitResults;
 	fitResults.push_back(Ntt.getVal());
 	fitResults.push_back(Ntt.getError());
@@ -5198,14 +5375,21 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 	vvdata->Scale(ScaleVVD);
 	
     if (debug_ > 0) cout << "Data integral " << data->Integral() << endl;
-	if (debug_ > 0) cout << "Ratio Fit (VMC template)/TTbar MC template Integral" << Ntt.getVal() << "/" << ttbar->Integral() << "=" << Ntt.getVal()/ttbar->Integral() << endl;
-	if (debug_ > 0) cout << "Ratio Fit (VMC template)/V MC template Integral " << NV.getVal() << "/" << vvmc->Integral() << "=" << NV.getVal()/vvmc->Integral() << endl;
+	if (debug_ > 0) cout << "Ratio Fit (VMC template)/TTbar MC template Integral" << Ntt.getVal() << "/" << start_ttb << "=" << Ntt.getVal()/start_ttb << endl;
+	if (debug_ > 0) cout << "Ratio Fit (VMC template)/V MC template Integral " << NV.getVal() << "/" << start_VV << "=" << NV.getVal()/start_VV << endl;
 	
 	//cout << "Ratio Fit (Control sample)/TTbar MC template Integral" << Ntt_control.getVal() << "/" << ttbar->Integral() << "=" << Ntt_control.getVal()/ttbar->Integral() << endl;
 	//cout << "Ratio Fit (Control sample)/V MC template Integral " << NV_control.getVal() << "/" << vvmc->Integral() << "=" << NV_control.getVal()/vvmc->Integral() << endl;
 	
 	//create dirs to store plots
-	
+    
+    cout << "Doing template fit for L=" << lumi_ << ", the templates where created with L=" << templateLumi_ << " (ttbar: " << ttbar->Integral() << ", VV: " << vvmc->Integral() << ")" << endl;
+
+    cout << "*****"<<PrefixPlot<<"***** ";
+    cout << "TTbar fitted --> RooFit " << fitResults[0] << " +- " << fitResults[1] << endl; 
+    cout << "*****"<<PrefixPlot<<"***** ";
+    cout << "TTbar fitted --> TFractionFitter " << results[0] << " +- " << results[1] << endl; 
+	cout << endl;
 	if (debug_ > 0) {
 				
 		TString dir = ""; GiveName(&dir);
@@ -5225,12 +5409,17 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 		string MCPlot = "MCTemplate_"+(string)PrefixPlot;
 		
 		RooPlot* plot = mlb.frame();
-		dataHist.plotOn(plot);
-		model.plotOn(plot);
+		dataHist.plotOn(plot,RooFit::Name("data"));
+		model.plotOn(plot,RooFit::Name("model"));
 		model.plotOn(plot, RooFit::Components(VPDF), RooFit::LineStyle(kDashed),RooFit::LineColor(2));
 		model.plotOn(plot, RooFit::Components(ttPDF), RooFit::LineStyle(kDashed),RooFit::LineColor(3));
 		
 		TCanvas* cFit = new TCanvas(MCPlot.c_str(),MCPlot.c_str());
+        
+        cout << "****************************************************************************************" << endl;
+        cout << "Chi2/ndf for this template fit: " << plot->chiSquare("model", "data", 2) << endl;
+        cout << "****************************************************************************************" << endl;
+        
 		cFit->cd();
 		
 		plot->SetTitle("");

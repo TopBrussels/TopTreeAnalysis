@@ -5,11 +5,11 @@
   int colors[8];
   
   files[0]="pseudoexp/allMC_500_pb.root";
-//  files[1]="pseudoexp/allMC_200_pb.root";
+  files[1]="pseudoexp/allMC_1000_pb.root";
 //  files[2]="pseudoexp/allMC_300_pb.root";
   
   lables[0]="PseudoExp MC L=500 /pb";
-//  lables[1]="PseudoExp MC L=200 /pb";
+  lables[1]="PseudoExp MC L=1000 /pb";
 //  lables[2]="PseudoExp MC L=300 /pb";
   
   colors[0] = 1;

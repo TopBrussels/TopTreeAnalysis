@@ -115,7 +115,7 @@ public:
 	  Int_t runId() const { return runId_; }
 	  Int_t lumiBlockId() const { return lumiBlockId_; }
 	  
-	  Int_t setnPV ( ) const { return nPV_; }
+	  Int_t nPV ( ) const { return nPV_; }
 
 	Double_t mlj() const { return mlj_;}
 	

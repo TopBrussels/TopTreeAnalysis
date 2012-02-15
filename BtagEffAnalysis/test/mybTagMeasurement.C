@@ -21,7 +21,7 @@ double chisqCut[24]={30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130,140,150,160,
 
 int verbosity=0; //default
 
-int nSystematic=0; //default (nominal samples)
+int nSystematic=0; //default (nominal samples) 
 
 int leftlimit = 80;
 int centerleftlimit = 150;
@@ -115,6 +115,9 @@ int doJESsample=6;
 */
 
 float desiredIntLum=2500; 
+
+//float desiredIntLum=4568.68; 
+
 int nPseudoExp=1;//= is there to run on all data
 bool doPseudoExp=false; //to do the pseudo-exps
 

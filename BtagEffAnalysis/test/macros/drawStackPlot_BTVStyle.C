@@ -1,14 +1,25 @@
 {
     string lumiPlot="2.18";
+    
+    //lumiPlot = "4.6";
+    
+    double lumi_error = 0.04;
+    double ttbar_error = 0.15;
+    double other_error = 0.30;
+    
+    //ttbar_error = 0;
+    //other_error = 0;    
 
     TString fileName="../StackPlots.root";
     string plotName = "MLB_BTV";
     
+    //plotName="nPV";
     //fileName = "BtaggingOutput.root";
     //plotName = "Selected_Events_pT_alljets";
     //plotName = "Selected_Events_pT_jet1";
     //lotName = "Selected_Events_pT_4leadingjets";
     //plotName = "BestJetCombMLB";
+    plotName="bTagger_TCHE";
     
     //lumiPlot="2.14";
 
@@ -249,10 +260,6 @@
     
     // BUILD THE LUMIERROR PLOT
     
-    double lumi_error = 0.04;
-    double ttbar_error = 0.15;
-    double other_error = 0.30;
-    
     TH1D* lumiband = (TH1D*) hmc->Clone();
     for (int ilum=0; ilum < lumiband.GetNbinsX()+1; ilum++) {
         
@@ -322,5 +329,19 @@
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.png").c_str());
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.pdf").c_str());
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.root").c_str());
+    
+    // SAVE RATIO
+    
+    /*TFile* ratiofile = new TFile("STACK_RATIO.root","RECREATE");
+    
+    ratiofile->cd();
+    
+    ratio->SetName("ratio");
+    
+    ratio->Write();
+    
+    ratiofile->Close();
+    
+    delete ratiofile;*/
     
 }
