@@ -184,7 +184,6 @@ int main (int argc, char *argv[])
   vector < TRootMuon* > init_muons;
   vector < TRootElectron* > init_electrons;
   vector < TRootJet* > init_jets;
-  vector < TRootJet* > init_jets_corrected;
   vector < TRootMET* > mets;
     
   TFile *fout = new TFile (rootfile, "RECREATE");    //Making of a TFile where all information is stored
@@ -488,6 +487,14 @@ int main (int argc, char *argv[])
           genjets = treeLoader.LoadGenJet(ievt);
           sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
         } 
+
+      //load mcParticles --> Put here to avoid overwriting of init_jets and mets after second treeLoader.Load !!
+      vector<TRootMCParticle*> mcParticles;
+      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiEl") == 0){
+	mcParticles = treeLoader.LoadMCPart(ievt);
+	sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
+      }         
+
         
       // scale factor for the event
       float scaleFactor = 1.;
@@ -506,37 +513,6 @@ int main (int argc, char *argv[])
 	  else if( genEvt->isFullLeptonic() )
 	    scaleFactor *= (0.108*9.)*(0.108*9.);
         }
-
-      cout << " Processing event : " << ievt << endl;
-      //Information of jets before any applied correction!!     
-      cout << " Information of jets before any applied correction!! " << endl;
-      cout << " Size of init_jets : " << init_jets.size() << endl;
-      for(int i =0; i< init_jets.size(); i++)
-	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " before correction " << endl;      
-      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
-      for(int j =0; j < init_jets_corrected.size(); j++)
-	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " before correction " << endl;      
-      cout << "                    ** " << endl;
-        
-      // Clone the init_jets vector, otherwise the corrections will be removed
-      for(unsigned int i=0; i<init_jets_corrected.size(); i++)
-	if(init_jets_corrected[i]) delete init_jets_corrected[i];
-      init_jets_corrected.clear();
-
-      for(unsigned int i=0; i<init_jets.size(); i++) {
-	if(init_jets[i]->Pt() > 20)
-	  init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );      
-      }
-
-      //Information of jets after cloning of init_jets vector
-      cout << " Information of jets after cloning of init_jets vector!! " << endl;
-      cout << " Size of init_jets : " << init_jets.size() << endl;
-      for(int i =0; i< init_jets.size(); i++)
-	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after cloning " << endl;      
-      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
-      for(int j =0; j < init_jets_corrected.size(); j++)
-	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after cloning " << endl;     
-      cout << "                    ** " << endl;
 
       // check which file in the dataset it is to have the HLTInfo right
       string currentFilename = datasets[d]->eventTree()->GetFile()->GetName();
@@ -699,16 +675,6 @@ int main (int argc, char *argv[])
 	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
       else 
 	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-
-      //Information of jets after JES CORRECTION
-      cout << " Information of jets after JES CORRECTION!! " << endl;
-      cout << " Size of init_jets : " << init_jets.size() << endl;
-      for(int i =0; i< init_jets.size(); i++)
-	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after JES correction " << endl;      
-      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
-      for(int j =0; j < init_jets_corrected.size(); j++)
-	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after JES correction " << endl;     
-      cout << "                    ** " << endl;
       
       //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
       //----------------------------------------------------------
@@ -718,16 +684,6 @@ int main (int argc, char *argv[])
         jetTools->correctMETTypeOne(init_jets,mets[0],true);
       else
         jetTools->correctMETTypeOne(init_jets,mets[0],false);
-
-      //Information of jets after MET Type I corrections
-      cout << " Information of jets after MET Type I corrections!! " << endl;
-      cout << " Size of init_jets : " << init_jets.size() << endl;
-      for(int i =0; i< init_jets.size(); i++)
-	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after MET Type I correction " << endl;      
-      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
-      for(int j =0; j < init_jets_corrected.size(); j++)
-	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after MET Type I correction " << endl;     
-      cout << "                    ** " << endl;
       
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {	
@@ -737,16 +693,6 @@ int main (int argc, char *argv[])
 	  jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
 	else
 	  jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
-
-	//Information of jets after JER correction for simulation
-	cout << " Information of jets after JER correction for simulation!! " << endl;
-	cout << " Size of init_jets : " << init_jets.size() << endl;
-	for(int i =0; i< init_jets.size(); i++)
-	  cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " after JER correction for simulation " << endl;      
-	cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
-	for(int j =0; j < init_jets_corrected.size(); j++)
-	  cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " after JER correction for simulation " << endl;     
-	cout << "                    ** " << endl;
 	
 	// JES systematic! 
 	if (doJESShift == 1)
@@ -754,28 +700,10 @@ int main (int argc, char *argv[])
 	else if (doJESShift == 2)
 	  jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
       }      
-        
-      //Final information of jets
-      cout << " Final information of jets!! " << endl;
-      cout << " Size of init_jets : " << init_jets.size() << endl;
-      for(int i =0; i< init_jets.size(); i++)
-	cout << " Pt of init_jet " << i << " is equal to : " << init_jets[i]->Pt() << " . Final information.  " << endl;      
-      cout << " Size of corrected jets : " << init_jets_corrected.size() << endl;
-      for(int j =0; j < init_jets_corrected.size(); j++)
-	cout << " Pt of init_jet_corrected " << j << " is equal to : " << init_jets_corrected[j]->Pt() << " . Final information. " << endl;     
-      cout << "                    ** " << endl;
-      cout << " " << endl;
-      cout << " " << endl;
-      
+              
       ///////////////////////////////////////////////////////
       ///     Start of program: Defining variables        ///
       ///////////////////////////////////////////////////////  
-
-      vector<TRootMCParticle*> mcParticles;
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiEl") == 0){
-	mcParticles = treeLoader.LoadMCPart(ievt);
-	sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
-      }         
     	           
       vector<float> ChiSquared[2];  //Needed for chi squared caclulation      
       vector<float> ChiSquaredFull[2];
@@ -917,7 +845,7 @@ int main (int argc, char *argv[])
       //   Selection
       /////////////////////////////        
       //Declare selection instance    
-      Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
+      Selection selection(init_jets, init_muons, init_electrons, mets);
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);   //CIEMAT values, not refSel values !!!!
       if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,0.3,1,1,1); //Values for TriCentralJet trigger
       if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
@@ -942,6 +870,17 @@ int main (int argc, char *argv[])
       //      vector<TRootMuon*> looseMuonCIEMAT = selection.GetSelectedDiMuons();
       //      vector<TRootMuon*> tightMuonCIEMAT = selection.GetSelectedDiMuonsTight();
       //      vector<TRootElectron*> goodElectronCIEMAT = selection.GetSelectedLooseElectrons();
+
+       //Information of selected jets
+      cout << " Information of selected jets!! " << endl;
+      cout << " Size of init_jets : " << init_jets.size() << endl;
+      for(int i =0; i< init_jets.size(); i++)
+	cout << " Pt of selectedJets " << i << " is equal to : " << init_jets[i]->Pt() << " for selected jets  " << endl;      
+      cout << " Size of mets : " << mets.size() << endl;
+      for(int k =0;k<mets.size();k++)
+	cout << " Pt of mets : " << k << " is equal to : " << mets[k]->Pt() << " for selected jets " << endl;
+      cout << "                 -------------- " << endl;
+     
         
       /////////////////////////
       //   Event selection   //
@@ -960,13 +899,6 @@ int main (int argc, char *argv[])
       MSPlot["nLooseElectronsSemiMu"]->Fill(vetoElectronsSemiMu.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["nLooseElectronsSemiEl"]->Fill(vetoElectronsSemiEl.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["nSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
-
-//       std::cout << " event id : " << event->eventId() << " run id : " << event->runId() << endl;
-//       if(selectedJets.size() > 0 && selectedMuons.size() > 0){
-//       for(int ii=0; ii < selectedJets.size(); ii++){
-// 	std::cout << "       " << ii << " Jet pt : " << selectedJets[ii]->Pt() << " Jet Eta : " << selectedJets[ii]->Eta() << " relIso of muon : " << (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt() << endl;  
-//       }
-//       }
       
       MSPlot["nEventsAfterCutsSemiMu"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
       selecTableSemiMu.Fill(d,0,scaleFactor*lumiWeight);
