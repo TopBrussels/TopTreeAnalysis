@@ -163,10 +163,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_Fall11_Round4"; // to relabel the names of the output file  
+  string postfix = "_15Feb2012_MCQuarksTest"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_Round4";
+  string Treespath = "InclFourthGenTrees_Fall11_15Feb2012_MCQuarksTest";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -1450,9 +1450,12 @@ int main (int argc, char *argv[])
   		//bool hadronictopJetsMatched_MCdef = false;
 			vector<TLorentzVector> mcQuarksForMatching; //ordering: hadronicWQuark1,hadronicWQuark2,hadronicbQuark,leptonicbQuark
 			int pdgID_top = 6; //top quark
-  		//if(TprimeEvaluation)
-    	//	pdgID_top = 8; //4th generation t' quark
-			if(selectedJets.size()>=4 && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron)))
+			bool TprimePairSample = false;
+			if(dataSetName.find("NP_Tprime") <= 0 || dataSetName.find("NP_overlay_Tprime") <= 0)
+			  TprimePairSample = true; //tprime pair
+  		if(TprimePairSample)
+    		pdgID_top = 8; //4th generation t' quark
+			if(selectedJets.size()>=4 && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron) || TprimePairSample))
 			{
     		TLorentzVector hadronicWQuark1,hadronicWQuark2,hadronicbQuark,leptonicbQuark;
     		bool muPlusFromTop = false, muMinusFromTop = false, elPlusFromTop = false, elMinusFromTop = false;
@@ -1473,12 +1476,12 @@ int main (int argc, char *argv[])
       		  elPlusFromTop = true;
 				}
 				
-				bool WQuark1Found = false;
+				bool WQuark1Found = false,WQuark2Found = false,hadbQuarkFound=false,lepbQuarkFound=false;
         for(unsigned int i=0; i<mcParticles.size(); i++)
     		{
 			  	if( mcParticles[i]->status() != 3) continue;
 					
-      		if( abs(mcParticles[i]->type()) < 6) //light/b quarks, 6 should stay hardcoded
+      		if( abs(mcParticles[i]->type()) < 6) //light/b quarks, 6 should stay hardcoded (not to be changed when considering t' pair)
       		{
 					  if( ((( muPlusFromTop || elPlusFromTop ) && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -pdgID_top) 
 						  || (( muMinusFromTop || elMinusFromTop ) && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top)) 
@@ -1487,48 +1490,50 @@ int main (int argc, char *argv[])
 							hadronicWQuark1 = (TLorentzVector) *mcParticles[i];
 							//cout<<"hadronicWQuark1.Pt() = "<<hadronicWQuark1.Pt()<<endl;
 							WQuark1Found = true;
+							//cout<<"  WQuark1Found"<<endl;
 						}
 						else if ( (( muPlusFromTop || elPlusFromTop ) && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -pdgID_top) 
 						  || (( muMinusFromTop || elMinusFromTop ) && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top ))
 					  {
 							hadronicWQuark2 = (TLorentzVector) *mcParticles[i];
 							//cout<<"hadronicWQuark2.Pt() = "<<hadronicWQuark2.Pt()<<endl;
+							WQuark2Found = true;
+							//cout<<"  WQuark2Found"<<endl;
 						}
 						else if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticles[i]->motherType() == -pdgID_top )
           		|| ( ( muMinusFromTop || elMinusFromTop ) && mcParticles[i]->motherType() == pdgID_top ) )
 						{
-						  hadronicbQuark = (TLorentzVector) *mcParticles[i];
-							//cout<<"hadronicbQuark.Pt() = "<<hadronicbQuark.Pt()<<endl;
+						  if( abs(mcParticles[i]->type()) == 5)
+							{
+							  hadronicbQuark = (TLorentzVector) *mcParticles[i];
+								//cout<<"hadronicbQuark.Pt() = "<<hadronicbQuark.Pt()<<endl;
+								hadbQuarkFound = true;
+								//cout<<"  hadbQuarkFound"<<endl;
+							}
 						}
 						else if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticles[i]->motherType() == pdgID_top )
           		|| ( ( muMinusFromTop || elMinusFromTop ) && mcParticles[i]->motherType() == -pdgID_top ) )
 						{
-							leptonicbQuark = (TLorentzVector) *mcParticles[i];
-							//cout<<"leptonicbQuark.Pt() = "<<leptonicbQuark.Pt()<<endl;
-						}						
+							if( abs(mcParticles[i]->type()) == 5)
+							{
+								leptonicbQuark = (TLorentzVector) *mcParticles[i];
+								//cout<<"leptonicbQuark.Pt() = "<<leptonicbQuark.Pt()<<endl;
+								lepbQuarkFound = true;
+								//cout<<"  lepbQuarkFound"<<endl;
+							}
+						}			
 					}
-					if( abs(mcParticles[i]->type()) == 5) //light/b quarks, 6 should stay hardcoded
-      		{
-					  if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticles[i]->motherType() == -pdgID_top )
-          		|| ( ( muMinusFromTop || elMinusFromTop ) && mcParticles[i]->motherType() == pdgID_top ) )
-						{
-						  hadronicbQuark = (TLorentzVector) *mcParticles[i];
-							//cout<<"hadronicbQuark.Pt() = "<<hadronicbQuark.Pt()<<endl;
-						}
-						else if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticles[i]->motherType() == pdgID_top )
-          		|| ( ( muMinusFromTop || elMinusFromTop ) && mcParticles[i]->motherType() == -pdgID_top ) )
-						{
-							leptonicbQuark = (TLorentzVector) *mcParticles[i];
-							//cout<<"leptonicbQuark.Pt() = "<<leptonicbQuark.Pt()<<endl;
-						}
-				  }
 				}
-				//respect this ordering
-				mcQuarksForMatching.push_back(hadronicWQuark1);
-				mcQuarksForMatching.push_back(hadronicWQuark2);
-				mcQuarksForMatching.push_back(hadronicbQuark);
-				mcQuarksForMatching.push_back(leptonicbQuark);
-			} //end selectedJets.size()>=4 && dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0
+				
+				if(WQuark1Found && WQuark2Found && hadbQuarkFound && lepbQuarkFound) //For ttjets semi-lep this will always be found (right?), and for t' pair by this you make sure that only the quarks for the semilep case is stored
+				{
+					//respect this ordering
+					mcQuarksForMatching.push_back(hadronicWQuark1);
+					mcQuarksForMatching.push_back(hadronicWQuark2);
+					mcQuarksForMatching.push_back(hadronicbQuark);
+					mcQuarksForMatching.push_back(leptonicbQuark);
+				}
+			} //end selectedJets.size()>=4 && (dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || TprimePairSample)
 
 /*
 	    //////////////////////////////////////////////////////////////////////////
@@ -1628,14 +1633,13 @@ int main (int argc, char *argv[])
 			myBranch_selectedEvents->setSelectedEBEE( isEBEE );
 			myBranch_selectedEvents->setSelectedEEEE( isEEEE );
 			
-      if(dataSetName.find("TTbarJets_Semi") == 0)
+      if(selectedJets.size()>=4 && (dataSetName.find("TTbarJets_Semi") == 0 || TprimePairSample))
       {
-      	myBranch_selectedEvents->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
-      	myBranch_selectedEvents->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
-				myBranch_selectedEvents->setWbosonpartonsmatched(Wbosonpartonsmatched);
-				if(Wbosonpartonsmatched)
-				  myBranch_selectedEvents->setWMassmatched(WMassmatched_);
-				myBranch_selectedEvents->setmcQuarksForMatching( mcQuarksForMatching );
+			  if(mcQuarksForMatching.size()==4) //is always the case in ttbarjets semi-lep, but for inclusive t' pair samples this is only the case when indeed all mc quarks for matching are found (ie in the semi-lep case, actually)
+				{	
+				  //actually the if statement is not needed, this will be put in the branch for any event anyway (empty or not...)  
+					myBranch_selectedEvents->setmcQuarksForMatching( mcQuarksForMatching );
+				}
 				//myBranch_selectedEvents->setAll4JetsMCMatched( all4JetsMatched_MCdef );
         //myBranch_selectedEvents->setAllHadronicJetsMCMatched( hadronictopJetsMatched_MCdef );
 				//vector<unsigned int> MatchedJetsIndices;
@@ -1644,6 +1648,15 @@ int main (int argc, char *argv[])
 				//MatchedJetsIndices.push_back(hadronicBJet_.first);
 				//MatchedJetsIndices.push_back(leptonicBJet_.first);
 				//myBranch_selectedEvents->setMatchedJetsIndices( MatchedJetsIndices );
+			}
+			
+			if(dataSetName.find("TTbarJets_Semi") == 0)
+      {
+      	myBranch_selectedEvents->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
+      	myBranch_selectedEvents->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
+				myBranch_selectedEvents->setWbosonpartonsmatched(Wbosonpartonsmatched);
+				if(Wbosonpartonsmatched)
+				  myBranch_selectedEvents->setWMassmatched(WMassmatched_);
       }
 			myBranch_selectedEvents->setEventWeight( scaleFactor );
 			myBranch_selectedEvents->setMET( *mets[0] );
@@ -1807,12 +1820,12 @@ int main (int argc, char *argv[])
     selectiontableMultiLepton = selectiontableMultiLepton +".tex"; 	
     selecTableMultiLepton.Write(selectiontableMultiLepton.c_str(),false, true, false, false, false, false, false);
 
-    selecTableChargeMisId_ElMu.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    selecTableChargeMisId_ElMu.TableCalculator(true, true, true, true, true, false, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableChargeMisId_ElMu = "InclFourthGenSearch_SelectionTable_ChargeMisIdElMu"+postfix+channelpostfix;
     selectiontableChargeMisId_ElMu = selectiontableChargeMisId_ElMu +".tex"; 	
     selecTableChargeMisId_ElMu.Write(selectiontableChargeMisId_ElMu.c_str(),false, true, false, false, false, false, false);
 
-    selecTableChargeMisId_2El.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+    selecTableChargeMisId_2El.TableCalculator(true, true, true, true, true, false, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableChargeMisId_2El = "InclFourthGenSearch_SelectionTable_ChargeMisId2El"+postfix;
     selectiontableChargeMisId_2El = selectiontableChargeMisId_2El +".tex"; 	
 		if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),false, true, false, false, false, false, false);
