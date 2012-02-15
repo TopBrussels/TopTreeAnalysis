@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   //  Which systematics //
   ////////////////////////
 
-  int doJESShift = 0; // 0: off 1: minus 2: plus
+  int doJESShift = 2; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
@@ -451,9 +451,9 @@ int main (int argc, char *argv[])
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
-    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_Test_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
-    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_Test_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
-    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_Test_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
+    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
     cout << "INFO: creating WTree file "+wTreeFileTitle << endl;
         
