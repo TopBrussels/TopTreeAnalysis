@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   //  Which systematics //
   ////////////////////////
 
-  int doJESShift = 2; // 0: off 1: minus 2: plus
+  int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
@@ -869,18 +869,7 @@ int main (int argc, char *argv[])
         
       //      vector<TRootMuon*> looseMuonCIEMAT = selection.GetSelectedDiMuons();
       //      vector<TRootMuon*> tightMuonCIEMAT = selection.GetSelectedDiMuonsTight();
-      //      vector<TRootElectron*> goodElectronCIEMAT = selection.GetSelectedLooseElectrons();
-
-       //Information of selected jets
-      cout << " Information of selected jets!! " << endl;
-      cout << " Size of init_jets : " << init_jets.size() << endl;
-      for(int i =0; i< init_jets.size(); i++)
-	cout << " Pt of selectedJets " << i << " is equal to : " << init_jets[i]->Pt() << " for selected jets  " << endl;      
-      cout << " Size of mets : " << mets.size() << endl;
-      for(int k =0;k<mets.size();k++)
-	cout << " Pt of mets : " << k << " is equal to : " << mets[k]->Pt() << " for selected jets " << endl;
-      cout << "                 -------------- " << endl;
-     
+      //      vector<TRootElectron*> goodElectronCIEMAT = selection.GetSelectedLooseElectrons();   
         
       /////////////////////////
       //   Event selection   //
