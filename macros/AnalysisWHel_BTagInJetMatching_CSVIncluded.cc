@@ -188,8 +188,8 @@ int main (int argc, char *argv[])
   //--------------------------------------------------------------
   
   string UsedTrigger;
-  bool IsoMu172024Trigger = true;
-  bool TriCentralJet30Trigger = false;
+  bool IsoMu172024Trigger = false;
+  bool TriCentralJet30Trigger = true;
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
     Luminosity = 2141.96; 
@@ -210,8 +210,8 @@ int main (int argc, char *argv[])
   else if(semiElectron == true){decayChannel = "SemiEl";}
   
   //1) Nominal samples:
-   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_Data_"+decayChannel+".root").c_str());
-   nameDataSet.push_back("Data");
+  //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_Data_"+decayChannel+".root").c_str());
+  //nameDataSet.push_back("Data");
   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
   nameDataSet.push_back("ST_SingleTop_tChannel_tbar");
   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
@@ -246,24 +246,24 @@ int main (int argc, char *argv[])
 //   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ZJets_"+decayChannel+".root").c_str());
 //   nameDataSet.push_back("JES_ZJets");
 //   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-  //nameDataSet.push_back("JES_TTbarJets_SemiMuon");
+//   nameDataSet.push_back("JES_TTbarJets_SemiMuon");
   
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_TTbarJets_Other");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_WJets_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_WJets");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ZJets_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_ZJets");
-//     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-//     nameDataSet.push_back("JES_TTbarJets_SemiMuon");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_TTbarJets_Other");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_WJets_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_WJets");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ZJets_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_ZJets");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("JES_TTbarJets_SemiMuon");
   
   //3) WJets systematics:  
   //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
@@ -293,9 +293,9 @@ int main (int argc, char *argv[])
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFitted.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedMonteCarlo.tex").c_str());
-  ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESMin.tex").c_str());
+  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESMin.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESMinProbCut.tex").c_str());
-  //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESPlus.tex").c_str());
+  ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESPlus.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedJESPlusProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWMin.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy_CSV/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedWMin100.tex").c_str());
@@ -436,6 +436,7 @@ int main (int argc, char *argv[])
   MSPlot["CosThetaSSVHEMLept"]= new MultiSamplePlot(datasets, "CosThetaSSVHEMLept", CosThetaBinNumber,-1,1,"CosThetaSSVHEMLept");  
   MSPlot["KinFitProbSSVHEMLept"]= new MultiSamplePlot(datasets, "KinFitProbSSVHEMLept", CosThetaBinNumber,0,1,"KinFitProbSSVHEMLept");  
   MSPlot["CosThetaTCHEMLept"]= new MultiSamplePlot(datasets, "CosThetaTCHEMLept", CosThetaBinNumber,-1,1,"CosThetaTCHEMLept");  
+  MSPlot["KinFitProbTCHEMLept"]= new MultiSamplePlot(datasets, "KinFitProbTCHEMLept", CosThetaBinNumber,0,1,"KinFitProbTCHEMLept");  
   MSPlot["CosThetaTCHPMLept"]= new MultiSamplePlot(datasets, "CosThetaTCHPMLept", CosThetaBinNumber,-1,1,"CosThetaTCHPMLept");  
   MSPlot["CosThetaSSVHPMLept"]= new MultiSamplePlot(datasets, "CosThetaSSVHPMLept", CosThetaBinNumber,-1,1,"CosThetaSSVHPMLept");  
   MSPlot["KinFitProbSSVHPMLept"]= new MultiSamplePlot(datasets, "KinFitProbSSVHPMLept", CosThetaBinNumber,0,1,"KinFitProbSSVHPMLept");  
@@ -1180,7 +1181,7 @@ int main (int argc, char *argv[])
 		      
 		      if(TCHEbTagLoop == 7){ //optimal bTag case
 			MSPlot["CosThetaTCHEMLept"]->Fill(CosThetaCalculation,datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);
-			MSPlot["KinFitProbOpt"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
+			MSPlot["KinFitProbTCHEMLept"]->Fill(ProbabilityOfKinFit[JetCombination],datasets[iDataSet],true,Luminosity*scaleFactor*lumiWeight3D);	
 		      }		
 		      
 		      if(TCHEbTagLoop == 1){ //No bTag case
