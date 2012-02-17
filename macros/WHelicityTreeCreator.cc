@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
   // Which decay channel //
   /////////////////////////
   
-  bool semiElectron = false; // use semiElectron channel,
-  bool semiMuon = true; // use semiMuon channel?
+  bool semiElectron = true; // use semiElectron channel,
+  bool semiMuon = false; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
   {
@@ -451,7 +451,7 @@ int main (int argc, char *argv[])
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
-    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
+    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_"+dataSetName+"_"+decayChannel+".root";
     if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
     if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
@@ -1390,7 +1390,8 @@ int main (int argc, char *argv[])
 	  wTree->setBTagSSVHE(SSVHEbTagValues);
 	  wTree->setBTagSSVHP(SSVHPbTagValues);
 	  wTree->setBTagCSV(CSVbTagValues);
-	  wTree->setMuon( *selectedMuons[0] );
+	  if(semiMuon == true) wTree->setMuon( *selectedMuons[0] );
+	  else if(semiElectron == true) wTree->setMuon(*selectedElectrons[0]);
 	  wTree->setHadrBQuark( hadrBQuark );  
 	  wTree->setHadrLQuark1( hadrLQuark1 );
 	  wTree->setHadrLQuark2( hadrLQuark2 );
