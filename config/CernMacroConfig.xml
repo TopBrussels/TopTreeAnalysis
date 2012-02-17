@@ -59,36 +59,20 @@ beta_QCD = 2.09
 
 <!-- Data samples : -->
 
-<!-- Data samples with IsoMu17/20/24 trigger -->
+<!-- Data samples with IsoMu17/20/24 trigger (Run2011A only: 2141.961 EqLumi)-->
 <!--
-<d name="Data" title="Data (2.14 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="2141.961" filenames="
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_Aug05_id705_NEWDOUBLECHECK/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_May10ReReco_id779_NEWDOUBLECKECK/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_PromptV4_id723_NEWDOUBLECKECK/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_Promptv6_id710_NEWDOUBLECHECK/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011B_PromptV1_id722_NEWDOUBLECHECK/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011B_PromptV1_id804_NEWDOUBLECHECK/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011B_PromptV1_id816_NEWDOUBLECHECK/TopTree_Skimmed_*.root"/>
+<d name="Data" title="Data (4.6 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="4568.6810" filenames="
+/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_Aug05_id705_NEWDOUBLECHECK/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_May10ReReco_id779_NEWDOUBLECKECK/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_PromptV4_id723_NEWDOUBLECKECK/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011A_Promptv6_id710_NEWDOUBLECHECK/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011B_PromptV1_id722_NEWDOUBLECHECK/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011B_PromptV1_id804_NEWDOUBLECHECK/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuonSingleMuTrigger/DATASKIM_2011B_PromptV1_id816_NEWDOUBLECHECK/TopTree_Skimmed_*.root"/>
 -->
 
-<!-- Data sample with TriCentralJet30 trigger: (METCollection="PFMET_patMETsPF2PAT) -->
+<!-- Data sample with TriCentralJet30 trigger: (Run2011A only: 2145.959 EqLumi) (METCollection="PFMET_patMETsPF2PAT) -->
 <!--
-<d name="Data" title="Data (2.14 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="2145.959" filenames="
-/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_MuHad_Aug05ReReco_Id749_15022012_160630/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_MuHad_PromptRecoV4_Id732_15022012_155913//TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_NormalPF2PAT_MuHad_May10ReReco_Id826_15022012_153642/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_NormalPF2PAT_MuHad_PromptRecoV6_Id828_15022012_161736/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_NormalPF2PAT_MuHad_2011BPromptRecoV1_Id863_15022012_162931/TopTree_Skimmed_*.root"/>
+<d name="Data" title="Data (4.6 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="4656.959" filenames="/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_MuHad_Aug05ReReco_Id749_15022012_160630/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_MuHad_PromptRecoV4_Id732_15022012_155913//TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_NormalPF2PAT_MuHad_May10ReReco_Id826_15022012_153642/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_NormalPF2PAT_MuHad_PromptRecoV6_Id828_15022012_161736/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_MuHadTrigger/Mu3JetsSkim_NormalPF2PAT_MuHad_2011BPromptRecoV1_Id863_15022012_162931/TopTree_Skimmed_*.root"/>
 
 
-<!--  Electron data sample with TriCentralJet30 trigger: -->
+<!--  Electron data sample with TriCentralJet30 trigger: (Run2011A only: 2161.744 EqLumi)-->
 <!--
-<d name="Data" title="Data (2.14 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="2145.959" filenames="
-/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_Aug5ReReco_Id819_15022012_144129/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_May10ReReco_Id821_15022012_142142/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV4_Id827_15022012_143418/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV6_Id815_15022012_145233/TopTree_Skimmed_*.root,
-/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_2011BPromptRecoV1_Id871_15022012_142142/TopTree_Skimmed_*.root"/>
+<d name="Data" title="Data (4.6 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="4665.744" filenames="/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_Aug5ReReco_Id819_15022012_144129/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_May10ReReco_Id821_15022012_142142/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV4_Id827_15022012_143418/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV6_Id815_15022012_145233/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_2011BPromptRecoV1_Id871_15022012_142142/TopTree_Skimmed_*.root"/>
 -->
 
 </datasets>
