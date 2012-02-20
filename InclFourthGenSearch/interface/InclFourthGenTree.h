@@ -28,6 +28,7 @@ class InclFourthGenTree : public TObject
     ,nPUBXm1_(0)
     ,nPU_(0)
     ,nPUBXp1_(0)
+		,flavorHistoryPath_(0)
     ,SelectedSingleLepton_(false)
 		,SelectedSingleMu_(false)
 		,SelectedSingleEl_(false)
@@ -61,6 +62,8 @@ class InclFourthGenTree : public TObject
     ,InitJetsbTagTCHP_()
     ,selectedMuons_()
 		,selectedElectrons_()
+		,selectedMuonsRelIso_()
+		,selectedElectronsRelIso_()
 		,chargeMisIdRateBarrel_(0)
 		,chargeMisIdRateEndcap_(0)
 //    ,all4JetsMCMatched_(false)
@@ -89,6 +92,7 @@ class InclFourthGenTree : public TObject
   unsigned int nPUBXm1() const { return nPUBXm1_; }
   unsigned int nPU() const { return nPU_; }
   unsigned int nPUBXp1() const { return nPUBXp1_; }
+	int flavorHistoryPath() const { return flavorHistoryPath_; }
   bool SelectedSingleLepton() const { return SelectedSingleLepton_; }
 	bool SelectedSingleMu() const { return SelectedSingleMu_; }
 	bool SelectedSingleEl() const { return SelectedSingleEl_; }
@@ -123,6 +127,8 @@ class InclFourthGenTree : public TObject
   vector<float> InitJetsbTagTCHP() const { return InitJetsbTagTCHP_; }
 	vector<TLorentzVector> selectedMuons() const { return selectedMuons_; }
   vector<TLorentzVector> selectedElectrons() const { return selectedElectrons_; }
+	vector<float> selectedMuonsRelIso() const { return selectedMuonsRelIso_; }
+  vector<float> selectedElectronsRelIso() const { return selectedElectronsRelIso_; }
 //	bool all4JetsMCMatched() const { return all4JetsMCMatched_; }
 //  bool allHadronicJetsMCMatched() const { return allHadronicJetsMCMatched_; }
 //  unsigned int hadrLJet1() const { return hadrLJet1_; } // index, according to MC
@@ -145,6 +151,7 @@ class InclFourthGenTree : public TObject
   void setNPUBXm1(unsigned int nPUBXm1) { nPUBXm1_ = nPUBXm1; }
   void setNPU(unsigned int nPU) { nPU_ = nPU; }
   void setNPUBXp1(unsigned int nPUBXp1) { nPUBXp1_ = nPUBXp1; }
+	void setFlavorHistoryPath(int flavorHistoryPath) { flavorHistoryPath_ = flavorHistoryPath; }
 	void setSelectedSingleLepton(bool SelectedSingleLepton) { SelectedSingleLepton_ = SelectedSingleLepton; }
 	void setSelectedSingleMu(bool SelectedSingleMu) { SelectedSingleMu_ = SelectedSingleMu; }
 	void setSelectedSingleEl(bool SelectedSingleEl) { SelectedSingleEl_ = SelectedSingleEl;}
@@ -178,6 +185,8 @@ class InclFourthGenTree : public TObject
   void setInitJetsBTagTCHP(vector<float> InitJetsbTagTCHP) { InitJetsbTagTCHP_ = InitJetsbTagTCHP; }
 	void setMuons(vector<TLorentzVector> selectedMuons) { selectedMuons_ = selectedMuons; }
 	void setElectrons(vector<TLorentzVector> selectedElectrons) { selectedElectrons_ = selectedElectrons; }
+	void setMuonsRelIso(vector<float> selectedMuonsRelIso) { selectedMuonsRelIso_ = selectedMuonsRelIso; }
+	void setElectronsRelIso(vector<float> selectedElectronsRelIso) { selectedElectronsRelIso_ = selectedElectronsRelIso; }
 //	void setAll4JetsMCMatched(bool all4JetsMCMatched) { all4JetsMCMatched_ = all4JetsMCMatched; }
 //  void setAllHadronicJetsMCMatched(bool allHadronicJetsMCMatched) { allHadronicJetsMCMatched_ = allHadronicJetsMCMatched; }
 //  void setHadrLJet1(int hadrLJet1) { hadrLJet1_ = hadrLJet1; }
@@ -222,6 +231,7 @@ class InclFourthGenTree : public TObject
   unsigned int nPUBXm1_;
   unsigned int nPU_;
   unsigned int nPUBXp1_;
+	int flavorHistoryPath_;
   bool SelectedSingleLepton_;
 	bool SelectedSingleMu_;
 	bool SelectedSingleEl_;
@@ -255,6 +265,8 @@ class InclFourthGenTree : public TObject
   vector<float> InitJetsbTagTCHP_;
 	vector<TLorentzVector> selectedMuons_;
 	vector<TLorentzVector> selectedElectrons_;
+	vector<float> selectedMuonsRelIso_;
+	vector<float> selectedElectronsRelIso_;	
 //	bool all4JetsMCMatched_;
 //  bool allHadronicJetsMCMatched_;
 //  int hadrLJet1_;
