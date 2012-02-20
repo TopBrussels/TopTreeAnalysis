@@ -185,13 +185,17 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfixOld = "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
-	string postfix= postfixOld+"_"+systematic;
+  string inputpostfixOld = "_Fall11_Round4"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_Round4";
-  Treespath = Treespath +"/"; 		
+  string Treespath = "InclFourthGenTrees_Fall11_Round4";// "InclFourthGenTrees_Fall11_Round4";
+  Treespath = Treespath + "/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
+	string outputpostfix = "";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer";
+	Outputpath = Outputpath + "/";
+	mkdir(Outputpath.c_str(),0777);
 
   /////////////////////
   // Configuration
@@ -292,7 +296,6 @@ int main (int argc, char *argv[])
 	 }
   }
   if(Luminosity != anaEnvLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
-  
 	
 	vector<string> inputTrees; //fill with the tree files you want to read!!!
   //inputTrees.push_back();
@@ -306,18 +309,18 @@ int main (int argc, char *argv[])
 		{
 				if(dataSetName.find("Data")<=0 || dataSetName.find("data")<=0 || dataSetName.find("DATA")<=0)
 				{
-					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfixOld+"_Nominal"+channelpostfix+".root"; //is actually dummy
+					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+inputpostfixOld+"_Nominal"+channelpostfix+".root"; //is actually dummy
 					cout<<"  Running systematics: data will be skipped later on"<<endl;
 				}
 				else
-					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";		
+					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+inputpostfix+channelpostfix+".root";		
 		}
-		else inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfixOld+"_Nominal"+channelpostfix+".root";
+		else inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+inputpostfixOld+"_Nominal"+channelpostfix+".root";
 		inputTrees.push_back(inputTreeFileName);
 	}
 	
   //Output ROOT file
-  string rootFileName ("InclFourthGenSearch_TreeAnalyzer"+postfix+channelpostfix+".root");
+  string rootFileName (Outputpath+"InclFourthGenSearch_TreeAnalyzer"+inputpostfix+channelpostfix+outputpostfix+".root");
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
 
  
@@ -326,7 +329,7 @@ int main (int argc, char *argv[])
 
   //Global variable
 
-  string pathPNG = "InclFourthGenSearchPlots_TreeAnalyzer"+postfix+channelpostfix;
+  string pathPNG = "InclFourthGenSearchPlots_TreeAnalyzer"+inputpostfix+channelpostfix;
   pathPNG = pathPNG +"/"; 	
   pathPNG = pathPNG +"/"; 	
   if(savePNG) mkdir(pathPNG.c_str(),0777);
@@ -361,10 +364,10 @@ int main (int argc, char *argv[])
   MSPlot["MS_NbSSElMuevents"] = new MultiSamplePlot(datasets,"# events with SS electron+muon", 1, 0.5, 1.5, "");
   MSPlot["MS_NbSSMuMuevents"] = new MultiSamplePlot(datasets,"# events with SS muons", 1, 0.5, 1.5, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0.5, 1.5, "");
-  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "");
-	MSPlot["MS_METafterbtagSF"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "");
-  MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
-  MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
+  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
+  MSPlot["MS_nPV_beforePUreweighting"] = new MultiSamplePlot(datasets, "nPrimaryVertices_beforePUreweighting", 21, -0.5, 20.5, "Nr. of primary vertices");
+	MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
   MSPlot["MS_JetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicity", 10, -0.5, 9.5, "Jet Multiplicity");
   MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "BtaggedJetMultiplicity", 7, -0.5, 6.5, "b-tagged jet multiplicity");
 	MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicityAtleast1Btag", 10, -0.5, 9.5, "Jet multiplicity (>=1 b-tag)");
@@ -692,25 +695,8 @@ int main (int argc, char *argv[])
 			else if(btagger.find("TCHP")<=0)
 			  bTagValues = myBranch_selectedEvents->bTagTCHP();
 
-						
-			MSPlot["MS_nPV"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);				
 
-			if(isSingleLepton){
-				MSPlot["MS_MET"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);				
-				if(semiElectron) MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-			
-				for(unsigned int j=0;j<selectedJets.size();j++)
-				{
-				  MSPlot["MS_JetPt_all_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
-					if(bTagValues[j] > workingpointvalue)
-					  MSPlot["MS_JetPt_btagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
-					else
-					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
-				}			
-			}
-
-			bool TprimeEvaluation = false; //temporarily not supported
+			bool TprimeEvaluation = true;
 			//////////////////////////////////////////////////////////////////////////
       // MVA training
       //////////////////////////////////////////////////////////////////////////
@@ -858,10 +844,25 @@ int main (int argc, char *argv[])
 						}
 					}
 				} //end loop over jets (~ b-tagging)
+			
+			if(doPUreweighting) MSPlot["MS_nPV_beforePUreweighting"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor/lumiWeight3D);	
+			MSPlot["MS_nPV"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+			
 			if(isSingleLepton)
-			{
-				MSPlot["MS_METafterbtagSF"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
-			}					
+			{			  
+				MSPlot["MS_MET"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+				if(semiElectron) MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+			
+				for(unsigned int j=0;j<selectedJets.size();j++)
+				{
+				  MSPlot["MS_JetPt_all_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+					if(bTagValues[j] > workingpointvalue)
+					  MSPlot["MS_JetPt_btagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+					else
+					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+				}			
+			}			
 			
 			if(isSSLepton)
 			{
@@ -1354,13 +1355,13 @@ int main (int argc, char *argv[])
     
     //Selection tables
     selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+postfix+channelpostfix;
-    selectiontableSemiLep = selectiontableSemiLep +".tex"; 	
+    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+inputpostfix+channelpostfix;
+    selectiontableSemiLep = Outputpath+selectiontableSemiLep+outputpostfix+".tex"; 	
     selecTableSemiLep.Write(selectiontableSemiLep.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
     
 		selecTableMultiLep.TableCalculator(true, true, true, true, true, false, true, true);
-    string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+postfix+channelpostfix;
-    selectiontableMultiLep = selectiontableMultiLep +".tex"; 	
+    string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+inputpostfix+channelpostfix;
+    selectiontableMultiLep = Outputpath+selectiontableMultiLep+outputpostfix+".tex"; 	
     selecTableMultiLep.Write(selectiontableMultiLep.c_str(),false, true, false, false, false, false, false);
 		
      //regarding binning, which is only relevant when you do the MVA jet combination to reconstruct the top mass   
@@ -1371,8 +1372,8 @@ int main (int argc, char *argv[])
      }    
      else if(doMVAjetcombination && make2Dbinning==false)
      {  
-				HTvsMTop_1B_2W.Convert2Dto1D(postfix);
-        HTvsMTop_2B_2W.Convert2Dto1D(postfix);
+				HTvsMTop_1B_2W.Convert2Dto1D(inputpostfix);
+        HTvsMTop_2B_2W.Convert2Dto1D(inputpostfix);
         HTvsMTop_1B_2W.Write(fout,th1dir);
 				HTvsMTop_2B_2W.Write(fout,th1dir);
      }
