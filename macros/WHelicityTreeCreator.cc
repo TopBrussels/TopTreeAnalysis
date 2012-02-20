@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
   // Which decay channel //
   /////////////////////////
   
-  bool semiElectron = true; // use semiElectron channel,
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel,
+  bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
   {
@@ -494,7 +494,14 @@ int main (int argc, char *argv[])
 	mcParticles = treeLoader.LoadMCPart(ievt);
 	sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }         
-
+      
+      //Only keep init_jets with pt larger than 20 GeV (MC preselected at 20 and Data at 10 GeV --> Need to be consistent)
+      for(int ii=0;ii<init_jets.size();ii++){
+	if(init_jets[ii]->Pt()<20){
+	  init_jets.erase(init_jets.begin()+ii);
+	  ii=ii-1;
+	}
+      }
         
       // scale factor for the event
       float scaleFactor = 1.;
