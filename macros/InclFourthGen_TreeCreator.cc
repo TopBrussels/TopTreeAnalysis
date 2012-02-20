@@ -163,10 +163,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_15Feb2012_MCQuarksTest"; // to relabel the names of the output file  
+  string postfix = "_21Feb2012"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_15Feb2012_MCQuarksTest";
+  string Treespath = "InclFourthGenTrees_Fall11_21Feb2012";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -174,21 +174,15 @@ int main (int argc, char *argv[])
   /////////////////////
   // Configuration
   /////////////////////
-  bool useMassesAndResolutions = true;
-  bool doMVAjetcombination = true; //when false, the jet combination and the top mass will not be reconstructed, and nothing will be trained
-  bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff. Note: there is an MVA output file with the training, but also some files in the ./weights directory!!
-  if (systematic != "Nominal")
-  {
-		useMassesAndResolutions = true;
-		doMVAjetcombination = true;
-		TrainMVA = false;
-  }
-  
-  //bool TrainwithTprime = false;
-  string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
-  string channelpostfix = "";
+	string channelpostfix = "";
   bool semiElectron = false; // use semiElectron channel?
   bool semiMuon = true; // use semiMuon channel?
+	if (argc >= 3)
+	{	
+	  semiMuon = atoi(argv[2]);
+		semiElectron = !semiMuon;
+	}
+	
   if(semiElectron && semiMuon)
   {
      cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
@@ -281,7 +275,9 @@ int main (int argc, char *argv[])
   histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
   histo1D["LeptonPt_Bprime500"] = new TH1F("leptonspt bprime500","leptonspt bprime500;pt leptons;#events",250,0,500);
   histo1D["LeptonPt_SBprime500"] = new TH1F("leptonspt sbprime500","leptonspt sbprime500;pt leptons;#events",250,0,500);
-  
+	
+	MSPlot["Reliso_Lepton"] = new MultiSamplePlot(datasets, "Lepton reliso", 50, 0, 10, "Lepton reliso");
+	
   string multileptons[2] = {"SSLeptons","TriLeptons"};
   string histoName,histo_dataset;
   for(int i = 0; i<2; i++)
@@ -295,8 +291,8 @@ int main (int argc, char *argv[])
 	
   MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0.5, 1.5, "");
   MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0.5, 1.5, "");
-  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 150, "");
-  MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "");
+  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 150, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 150, 0, 300, "Lepton Pt (GeV)");
   MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
   MSPlot["MS_JetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicity", 10, -0.5, 9.5, "Jet Multiplicity");
   MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "BtaggedJetMultiplicity", 7, -0.5, 6.5, "b-tagged jet multiplicity");
@@ -305,6 +301,12 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
+	
+	//plots before b-tag (only useful in muon channel) //update: will remove offline b-tag requirement form creator
+	//MSPlot["MS_MET_noBtag"] = new MultiSamplePlot(datasets,"MET_noBtag", 75, 0, 150, "Missing transverse energy (GeV)");
+	//MSPlot["MS_LeptonPt_noBtag"] = new MultiSamplePlot(datasets,"lepton pt_noBtag", 150, 0, 300, "Lepton Pt (GeV)");
+	//MSPlot["MS_JetPt_all_SingleLepton_noBtag"] = new MultiSamplePlot(datasets,"JetPt_all_noBtag", 50, 0, 300, "Pt of all jets (GeV)");
+	//MSPlot["MS_nPV_noBtag"] = new MultiSamplePlot(datasets, "nPrimaryVertices_noBtag", 21, -0.5, 20.5, "Nr. of primary vertices");
 	
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -378,26 +380,7 @@ int main (int argc, char *argv[])
   Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
 
-//  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
-//  PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
-//  PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
-  cout << " - Initialized LumiReWeighting stuff" << endl;
-  
-  
-
-/*	
-  ///////////////
-  // JetCombiner, to test
-  ///////////////
-  JetCombiner* jetCombiner;
-  if(!doMVAjetcombination) TrainMVA = false;
-  else if(doMVAjetcombination)
-  {
-    jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //last bool is basically to use also the W mass as constraint    
-  }
-    
-  cout << " - JetCombiner instantiated ..." << endl;
-*/  
+  cout << " - Initialized LumiReWeighting stuff" << endl;  
     
 	
 		
@@ -481,39 +464,15 @@ int main (int argc, char *argv[])
     ////////////////////////////////////
     ////////////////////////////////////
     int itrigger = -1, previousRun = -1;
-      
-    //block of code to arrange that only on 1/3th of the ttbar semimu or semiel sample is run for the training, and on 2/3th of the sample for the evaluation. 
-    //Don't forget to change the eqLumi in the config depending on training or evaluation (not safe, to be changed? Not so trivial...)
-    int start = 0;
-    int end = datasets[d]->NofEvtsToRunOver();
-    
-		/*	
-		//to test
-		if(TrainMVA && (datasets[d]->Name () == "TTbarJets_SemiMuon" || datasets[d]->Name () == "TTbarJets_SemiElectron"))
-    { 
-        start = 0;
-        end = int(datasets[d]->NofEvtsToRunOver()/3);
-    }
-    else if (!TrainMVA && (datasets[d]->Name () == "TTbarJets_SemiMuon" || datasets[d]->Name () == "TTbarJets_SemiElectron"))
-    {    
-        start = int(datasets[d]->NofEvtsToRunOver()/3);
-        end = datasets[d]->NofEvtsToRunOver();
-    }
-    else{
-        start = 0;
-        end = datasets[d]->NofEvtsToRunOver();
-    }
-*/			
-		
      
     if (verbose > 1)
       cout << " - Loop over events " << endl;      
     
-    for (int ievt = start; ievt < end; ievt++)
+    for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
     {        
 
       if(ievt%1000 == 0)
-        std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
+        std::cout<<"Processing the "<<ievt<<"th event ("<<100*ievt/datasets[d]->NofEvtsToRunOver()<<"%)"<<flush<<"\r";
       
 			//load event
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
@@ -707,44 +666,8 @@ int main (int argc, char *argv[])
 
 
 			double lumiWeight3D = 1.0;
-			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
-				/*////////////////////////////
-      	// apply trigger Reweighting
-      	////////////////////////////
-				float mceventtriggerweight = 1;
-				float NEWmceventtriggerweight = 1;
-				float prob=0;
-      	if(semiElectron){
-					std::vector<float> probabilities;
-					for(size_t i=0; i<init_jets.size(); ++i){
-    				if(fabs(init_jets[i]->Eta())>2.6) continue;
-    				probabilities.push_back(jetprob(init_jets[i]->Pt(),init_jets[i]->btag_trackCountingHighPurBJetTags())); //highEff when this is used offline
-					}
-				
-					//use binary code for objects to be triggered or not triggered
-					for(int i=0; i<pow(2.,(double)probabilities.size());++i){
-    				int ntrigobj=0;
-    				for(unsigned int j=0; j<probabilities.size();++j){
-							if((int)(i/pow(2.,(double)j))%2) ntrigobj++;
-						}
-						if(ntrigobj<1) continue;  
-						float newprob=1;
-						for(unsigned int j=0; j<probabilities.size();++j){
-							if((int)(i/pow(2.,(double)j))%2) newprob*=probabilities[j];
-							else newprob*=1-probabilities[j];
-						}
-						prob+=newprob;
-					}
-					mceventtriggerweight*=prob;
-
-					//stupid workaround, because part (single electron path corresponding to 200/pb) of the MC needs SF of 1 for trigger and part (btag trigger) needs the procedure above
-					NEWmceventtriggerweight = (218./Luminosity +(mceventtriggerweight*(1-(218./Luminosity))));
-
-					scaleFactor = scaleFactor*NEWmceventtriggerweight;
- 					//cout << "mcevent triggerweight " << mceventtriggerweight << endl;
- 					//cout << "scalefactor (only triggerweight) " << scaleFactor << endl;
-      	}
-        */
+			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"))
+			{				
       	////////////////////////////
       	// apply PU Reweighting
       	////////////////////////////
@@ -880,11 +803,11 @@ int main (int argc, char *argv[])
 							}
 								
 							//continuing for the selection 	
-							for(unsigned int j=0;j<selectedJets.size();j++)
-							{
-								//now require at least a b-tagged jet larger than a certain pre-defined cut
-								if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
-								{
+							//for(unsigned int j=0;j<selectedJets.size();j++)
+							//{
+								//now require at least a b-tagged jet larger than a certain pre-defined cut //update: not requiring offline b-tag in treecreator
+								//if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
+								//{
 									selecTableSemiLep.Fill(d,5,scaleFactor); 
 									if(mets[0]->Et()> METCut)
 									{
@@ -1035,8 +958,8 @@ int main (int argc, char *argv[])
 											}
 										}
 									} // end MET cut
-								} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut																		
-							} // end 'loop' on jets
+								//} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut																		
+							//} // end 'loop' on jets
 						} //end 'at least one jet'  
           } // end if selectedMuons.size()>=1
         } // end good PV
@@ -1114,11 +1037,11 @@ int main (int argc, char *argv[])
 										}
 									}
 									
-									for(unsigned int j=0;j<selectedJets.size();j++)
-									{
-										//now require at least a b-tagged jet larger than a certain pre-defined cut
-										if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
-										{
+									//for(unsigned int j=0;j<selectedJets.size();j++)
+									//{
+										//now require at least a b-tagged jet larger than a certain pre-defined cut//update: not required offline in treecreator
+										//if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue && !eventSelected)
+										//{
 		             			selecTableSemiLep.Fill(d,5,scaleFactor);
 											if(mets[0]->Et()> METCut)
 											{
@@ -1269,15 +1192,16 @@ int main (int argc, char *argv[])
 													}
 												}
 											} // end MET cut
-										} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut
-									} // end 'loop' on jets
+										//} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut
+									//} // end 'loop' on jets
 								} // end 'at least one jet'
 							} // end conversion rejection for leading electron
           } // end if selectedElectrons.size()>=1
         } // end good PV
       } // end trigged & semiElectron
 						
-      if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
+      //if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
+			if(!isSingleLepton && !isTriLepton) continue; //all dilepton events (SS and OS) will be stored in the trees
 
 			MSPlot["MS_nPV"]->Fill(vertex.size(),datasets[d], true, Luminosity*scaleFactor);				
 
@@ -1535,28 +1459,11 @@ int main (int argc, char *argv[])
 				}
 			} //end selectedJets.size()>=4 && (dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || TprimePairSample)
 
-/*
-	    //////////////////////////////////////////////////////////////////////////
-      // MVA training, to test, OLD way
-      //////////////////////////////////////////////////////////////////////////
-      if(doMVAjetcombination && selectedJets.size()>=4 && TrainMVA && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))) //otherwise, if the jets vector only has 2 jets selected the jetcombiner crashes... 
-      {
-				if(!isSingleLepton) continue;
-	
-        			TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-        			//sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 
-				if(semiMuon) 
-					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedMuons[0],init_electrons,init_muons,genEvt,scaleFactor,false);	        
-				else if(semiElectron)
-					jetCombiner->ProcessEvent(datasets[d],mcParticles,selectedJets,selectedElectrons[0],init_electrons,init_muons,genEvt,scaleFactor,false);
-      }
-
-      if(TrainMVA) continue; //for the training, only the jetcombiner is relevant, so the following can be skipped (to the next event in the event loop)
-*/
 
       vector<float> bTagTCHE, bTagTCHP, InitJetsbTagTCHE, InitJetsbTagTCHP;
 			vector<int> partonFlavourJet;
       vector<TLorentzVector> SelectedJetsTLV, SelectedForwardJetsTLV, SelectedMuonsTLV, SelectedElectronsTLV, InitJets;
+			vector<float> SelectedMuonsRelIso, SelectedElectronsRelIso;
       for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
       {
             SelectedJetsTLV.push_back( *selectedJets[iJet] );
@@ -1577,33 +1484,17 @@ int main (int argc, char *argv[])
 			for(unsigned int iMuon=0; iMuon<selectedMuons.size(); iMuon++)
       {
             SelectedMuonsTLV.push_back( *selectedMuons[iMuon] );
-      }
+						float relIso;
+						relIso = (selectedMuons[iMuon]->chargedHadronIso()+selectedMuons[iMuon]->neutralHadronIso()+selectedMuons[iMuon]->photonIso())/selectedMuons[iMuon]->Pt();      		  
+						SelectedMuonsRelIso.push_back(relIso);
+			}
 			for(unsigned int iElectron=0; iElectron<selectedElectrons.size(); iElectron++)
       {
             SelectedElectronsTLV.push_back( *selectedElectrons[iElectron] );
+						float relIso;
+						relIso = (selectedElectrons[iElectron]->chargedHadronIso()+selectedElectrons[iElectron]->neutralHadronIso()+selectedElectrons[iElectron]->photonIso())/selectedElectrons[iElectron]->Pt();      		  
+						SelectedElectronsRelIso.push_back(relIso);			
       }
-						
-				
-/*					
-			//////////////////////////////////////////////////////////////////////////
-      // MVA training , to test, NEW way
-      //////////////////////////////////////////////////////////////////////////
-      if(doMVAjetcombination && selectedJets.size()>=4 && TrainMVA && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon) || (dataSetName.find("TTbarJets_SemiElectron") == 0 && semiElectron))) //otherwise, if the jets vector only has 2 jets selected the jetcombiner crashes... 
-      {
-				if(!isSingleLepton) continue;
-				
-				TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);	//well, needed now but not for the new way eventually		
-        //the jets are sorted according to Pt in the TreeCreator, with everything conistently sorted along (should be), because the sorting was done before matching and pushing back b-tag values in vectors... Check and be careful!!
-				//sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class 				
-				if(semiMuon) 
-					jetCombiner->ProcessEvent(datasets[d], mcQuarksForMatching, SelectedJetsTLV, bTagTCHE, SelectedMuonsTLV[0], genEvt->isSemiLeptonic( TRootGenEvent::kMuon ), scaleFactor, false);	        
-				else if(semiElectron)
-					jetCombiner->ProcessEvent(datasets[d], mcQuarksForMatching, SelectedJetsTLV, bTagTCHE, SelectedElectronsTLV[0], genEvt->isSemiLeptonic( TRootGenEvent::kElec ), scaleFactor, false);	        
-      }
-
-       
-      if(TrainMVA) continue; //for the training, only the jetcombiner is relevant, so the following can be skipped (to the next event in the event loop)			
-*/
 
 
 			myBranch_selectedEvents = new InclFourthGenTree();
@@ -1614,6 +1505,7 @@ int main (int argc, char *argv[])
       myBranch_selectedEvents->setNPUBXm1( event->nPu(-1) );
       myBranch_selectedEvents->setNPU( event->nPu(0) );
       myBranch_selectedEvents->setNPUBXp1( event->nPu(1) );
+			myBranch_selectedEvents->setFlavorHistoryPath( event->flavorHistoryPath() );
 			
       myBranch_selectedEvents->setSelectedSingleLepton( isSingleLepton );
 			myBranch_selectedEvents->setSelectedSingleMu( isSingleMuon );
@@ -1670,7 +1562,8 @@ int main (int argc, char *argv[])
       myBranch_selectedEvents->setInitJetsBTagTCHP( InitJetsbTagTCHP );				     						
       myBranch_selectedEvents->setMuons( SelectedMuonsTLV );
       myBranch_selectedEvents->setElectrons( SelectedElectronsTLV );
-			
+			myBranch_selectedEvents->setMuonsRelIso( SelectedMuonsRelIso );
+      myBranch_selectedEvents->setElectronsRelIso( SelectedElectronsRelIso );
 			
 			//myBranch_selectedEvents->setTopDecayedLept( topDecayedLept );
       //myBranch_selectedEvents->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
@@ -1748,21 +1641,9 @@ int main (int argc, char *argv[])
   ///////////////////
   // Writing
   //////////////////
-  cout << " - Writing outputs to the files ..." << endl;
- 
-/* 
-  //to test
-  if(doMVAjetcombination)
-  {
-    string pathPNGJetCombi = pathPNG+"JetCombination/";
-    if(savePNG) mkdir(pathPNGJetCombi.c_str(),0777);
-    jetCombiner->Write(fout, savePNG, pathPNGJetCombi);
-  }
-*/	
+  cout << " - Writing outputs to the files ..." << endl;	
 	
 	
-  if(!TrainMVA)
-  {
     fout->cd();
     //Write histograms: MSPlots
     if(savePNG) mkdir((pathPNG+"MSPlot/").c_str(),0777);
@@ -1833,12 +1714,6 @@ int main (int argc, char *argv[])
 
     cout << " - Closing the output file now..." << endl;
     fout->Close();
-  } //end !trainMVA
- 
-/*  
-  //delete, to test
-  if(jetCombiner) delete jetCombiner; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
-*/ 
  
  
   delete fout;
