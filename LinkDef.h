@@ -14,6 +14,7 @@
 #include "TopTreeProducer/interface/TRootMET.h"
 #include "TopTreeProducer/interface/TRootCaloMET.h"
 #include "TopTreeProducer/interface/TRootPFMET.h"
+#include "TopTreeProducer/interface/TRootTrackMET.h"
 #include "TopTreeProducer/interface/TRootGenEvent.h"
 #include "TopTreeProducer/interface/TRootNPGenEvent.h"
 #include "TopTreeProducer/interface/TRootGenTop.h"
@@ -45,6 +46,7 @@
 #include "TopTreeProducer/interface/TRootMET.h"
 #include "TopTreeProducer/interface/TRootCaloMET.h"
 #include "TopTreeProducer/interface/TRootPFMET.h"
+#include "TopTreeProducer/interface/TRootTrackMET.h"
 #include "TopTreeProducer/interface/TRootGenEvent.h"
 #include "TopTreeProducer/interface/TRootNPGenEvent.h"
 #include "TopTreeProducer/interface/TRootGenTop.h"
@@ -84,6 +86,7 @@
 #pragma link C++ class TRootMET;
 #pragma link C++ class TRootCaloMET;
 #pragma link C++ class TRootPFMET;
+#pragma link C++ class TRootTrackMET;
 #pragma link C++ class TRootGenEvent;
 #pragma link C++ class TRootNPGenEvent;
 #pragma link C++ class TRootGenTop;
