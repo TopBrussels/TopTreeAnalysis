@@ -26,6 +26,25 @@ beta_QCD = 2.09
 
 <d name="TTbarJets_Other" title="t#bar{t}+jets other" add="1" color="5" ls="1" lw="2" normf="1" xsection="110.833334" EqLumi="23504.3556" filenames="/user/aolbrech/Samples/Summer11_v2/TTJets-madgraph-Summer11_42X_v2_NoPreSel/TopTree_Skimmed_AllOther.root"/> 
 
+<!-- QCD Samples were created without HLT trigger HENCE can be used for both applied triggers !! -->
+<!-- QCD for muon channel HENCE MuEnriched DataDriven -->
+
+<d name="QCD_Mu15" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="84679.3" EqLumi="296.1567" filenames="/user/aolbrech/Samples/Summer11_v2/Mu3JetsSkim_QCD_MuEnriched_Id802/TopTree_Skimmed_*.root"/>
+
+<!-- QCD for electron channel -->
+
+<d name="QCD_Pt-20to30_BCtoE" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="139299" EqLumi="14.9048" filenames="/user/aolbrech/Samples/Summer11_v2/Elec3JetsSkim_QCD/Elec3JetsSkim_QCD_Pt-20to30_BCtoE_TuneZ2_7TeV-pythia6_Summer11-PU_S3_START42_V11-v2/TopTree_Skimmed_*.root"/>
+
+<d name="QCD_Pt-30to80_BCtoE" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="143844.8" EqLumi="14.1125" filenames="/user/aolbrech/Samples/Summer11_v2/Elec3JetsSkim_QCD/Elec3JetsSkim_QCD_Pt-30to80_BCtoE_TuneZ2_7TeV-pythia6_Summer11-PU_S4_START42_V11-v1/TopTree_Skimmed_*.root"/>
+
+<d name="QCD_Pt-80to170_BCtoE" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="9431.1" EqLumi="114.7998" filenames="/user/aolbrech/Samples/Summer11_v2/Elec3JetsSkim_QCD/Elec3JetsSkim_QCD_Pt-80to170_BCtoE_TuneZ2_7TeV-pythia_Summer11-PU_S4_START42_V11-v1/TopTree_Skimmed_1.root"/>
+
+<d name="QCD_Pt-20to30_EMEnriched" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="2502660" EqLumi="14.2200" filenames="/user/aolbrech/Samples/Summer11_v2/Elec3JetsSkim_QCD/Elec3JetsSkim_QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6_Summer11-PU_S4_START42_V11-v1/TopTree_Skimmed_*.root"/>
+
+<d name="QCD_Pt-30to80_EMEnriched" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="3625840" EqLumi="19.2050" filenames="/user/aolbrech/Samples/Summer11_v2/Elec3JetsSkim_QCD/Elec3JetsSkim_QCD_Pt-30to80_EMEnriched_TuneZ2_7TeV-pythia_Summer11-PU_S4_START42_V11-v1/TopTree_Skimmed_*.root"/>
+
+<d name="QCD_Pt-80to170_EMEnriched" title="QCD" add="1" color="15" ls="1" lw="2" normf="1" xsection="142813.8" EqLumi="57.0139" filenames="/user/aolbrech/Samples/Summer11_v2/Elec3JetsSkim_QCD/Elec3JetsSkim_QCD_Pt-80to170_EMEnriched_TuneZ2_7TeV-pythia6_Summer11-PU_S4_START42_V11-v1/TopTree_Skimmed_*.root"/>
+
 
 <!-- Monte Carlo Samples for IsoMu17/20/24 trigger -->
 <!--
