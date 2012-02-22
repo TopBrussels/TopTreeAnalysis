@@ -37,11 +37,13 @@ public:
   bool loadGenEventCollection;
   bool loadNPGenEventCollection;
   bool loadMCParticles;
+  bool loadTrackMETCollection;
   int JetType; //0: TRootJet - 1: CaloJet - 2: PFJet - 3: JPTJet
   int METType; //0: TRootMET - 1: CaloMET - 2: PFMET - 3: TCMET
   string PrimaryVertexCollection;
   string JetCollection;
   string METCollection;
+  string TrackMETCollection;
   string MuonCollection;
   string ElectronCollection;
   string GenJetCollection;

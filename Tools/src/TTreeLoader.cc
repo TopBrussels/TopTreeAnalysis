@@ -8,6 +8,7 @@ TTreeLoader::TTreeLoader ()
   tcmuons = 0;
   tcelectrons = 0;
   tcmets = 0;
+  tctrackmets = 0;
   tcgenjets = 0;
   tcgenEvt = 0;
   tcnpgenEvt = 0;
@@ -29,6 +30,8 @@ TTreeLoader::~TTreeLoader ()
     tcelectrons->Delete();
   if (tcmets)
     tcmets->Delete();
+  if (tctrackmets)
+    tctrackmets->Delete();
   if (tcgenjets)
     tcgenjets->Delete();
   if (tcgenEvt)
@@ -253,6 +256,16 @@ TTreeLoader::LoadDataset (Dataset* d, AnalysisEnvironment anaEnv)
       d_->eventTree()->SetBranchStatus(branchStatus,1);
       d_->eventTree()->SetBranchAddress(anaEnv.NPGenEventCollection.c_str(),&tcnpgenEvt);
     }
+    
+  if (anaEnv.loadTrackMETCollection)
+   { 
+      tctrackmets = new TClonesArray ("TopTree::TRootMET", 0);
+      sprintf(branchStatus,"%s*",anaEnv.TrackMETCollection.c_str());
+      d_->eventTree()->SetBranchStatus(branchStatus,1);
+      d_->eventTree()->SetBranchAddress(anaEnv.TrackMETCollection.c_str(),&tctrackmets);
+    }
+    
+    
 /*  
   if (anaEnv.loadGenJetCollection)
     {
@@ -287,6 +300,7 @@ TTreeLoader::UnLoadDataset (){
   if(tcelectrons)   tcelectrons  ->Delete();
   if(tcjets)        tcjets       ->Delete();
   if(tcmets)        tcmets       ->Delete();
+  if(tctrackmets)   tctrackmets  ->Delete();
   if(tcmcparticles) tcmcparticles->Delete();
   if(tcgenEvt)      tcgenEvt     ->Delete();
   if(tcgenjets)     tcgenjets    ->Delete();
@@ -316,6 +330,7 @@ TTreeLoader::LoadEvent(int ievt, vector<TRootVertex*>& vertex, vector < TRootMuo
     init_electrons.push_back ((TRootElectron *) tcelectrons->At (i));
   for (int i = 0; i < tcmets->GetEntriesFast (); i++)
     mets.push_back ((TRootMET *) tcmets->At (i));
+ 
   if (verbose)
     {
       cout << "In event: " << ievt << endl;
@@ -358,6 +373,19 @@ TTreeLoader::LoadGenEvent (int ievt, bool reloadEvent)
   return 0;
 }
 
+vector<TRootTrackMET*>
+TTreeLoader::LoadTrackMET(int ievt)
+{
+  vector<TRootTrackMET*> vtrackmets;
+  if (tctrackmets) {
+    for(int i = 0; i < tctrackmets->GetEntriesFast (); i++)
+      vtrackmets.push_back( (TRootTrackMET *) tctrackmets->At (i));
+  }
+  return vtrackmets;
+}
+
+ 
+    
 vector<TRootGenJet*>
 TTreeLoader::LoadGenJet(int ievt, bool reloadEvent)
 {

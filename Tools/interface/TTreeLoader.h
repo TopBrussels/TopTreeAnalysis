@@ -21,6 +21,7 @@
 #include "TopTreeProducer/interface/TRootPFJet.h"
 #include "TopTreeProducer/interface/TRootElectron.h"
 #include "TopTreeProducer/interface/TRootMET.h"
+#include "TopTreeProducer/interface/TRootTrackMET.h"
 #include "TopTreeProducer/interface/TRootRun.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
 #include "TopTreeProducer/interface/TRootGenEvent.h"
@@ -46,7 +47,8 @@ TRootEvent* LoadEvent(int ievent,vector<TRootVertex*>&vertex,vector<TRootMuon*>&
  TRootGenEvent*          LoadGenEvent (int ievt, bool reloadEvent = true);
  vector<TRootGenJet*>     LoadGenJet   (int ievt, bool reloadEvent = true);
  vector<TRootMCParticle*> LoadMCPart   (int ievt, bool reloadEvent = true);
-
+ vector<TRootTrackMET*> LoadTrackMET   (int ievt);
+ 
  void LoadMCEvent(int ievent, TRootGenEvent *genEvt, TRootNPGenEvent* npgenEvent, bool reloadEvent = true);
  void LoadMCEvent(int ievent, TRootGenEvent *genEvt, TRootNPGenEvent* npgenEvent, vector<TRootMCParticle*>& vmcparticles, bool reloadEvent = true);
 
@@ -62,6 +64,7 @@ private:
   TClonesArray *tcmuons;
   TClonesArray *tcelectrons;
   TClonesArray *tcmets;
+  TClonesArray *tctrackmets;
   TClonesArray *tcgenjets;
   TClonesArray *tcgenEvt;
   TClonesArray *tcnpgenEvt;

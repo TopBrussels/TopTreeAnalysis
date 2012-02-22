@@ -52,6 +52,7 @@ AnalysisEnvironmentLoader::AnalysisEnvironmentLoader (AnalysisEnvironment& AnaEn
 	      AnaEnv.MuonCollection = elem->Attribute("MuonCollection");
 	      AnaEnv.ElectronCollection = elem->Attribute("ElectronCollection");
 	      AnaEnv.GenJetCollection   = elem->Attribute("GenJetCollection");
+	      AnaEnv.TrackMETCollection = elem->Attribute("TrackMETCollection");
 	      AnaEnv.GenEventCollection = elem->Attribute("GenEventCollection");
 	      AnaEnv.NPGenEventCollection = elem->Attribute("NPGenEventCollection");
 	      AnaEnv.MCParticlesCollection = elem->Attribute("MCParticlesCollection");
@@ -64,6 +65,9 @@ AnalysisEnvironmentLoader::AnalysisEnvironmentLoader (AnalysisEnvironment& AnaEn
 	      int loadNPGenEventCollection_ = 0;
 	      elem->QueryIntAttribute ("loadNPGenEventCollection", &loadNPGenEventCollection_);
 	      (loadNPGenEventCollection_==0)? AnaEnv.loadNPGenEventCollection = false: AnaEnv.loadNPGenEventCollection = true;
+	      int loadTrackMETCollection_ = 0;
+	      elem->QueryIntAttribute ("loadTrackMET", &loadTrackMETCollection_);
+	      (loadTrackMETCollection_==0)? AnaEnv.loadTrackMETCollection = false: AnaEnv.loadTrackMETCollection = true;
 	      int loadMCParticles_ = 0;
 	      elem->QueryIntAttribute ("loadMCParticles", &loadMCParticles_);
 	      (loadMCParticles_==0)? AnaEnv.loadMCParticles = false: AnaEnv.loadMCParticles = true;
