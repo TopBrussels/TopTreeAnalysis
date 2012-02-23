@@ -723,20 +723,19 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float
   //cout << ElectronRelIso << endl;
   for(unsigned int i=0;i<electrons.size();i++){
     TRootElectron* el = (TRootElectron*) electrons[i];
-    //Compute isolation
-//    float RelIso = (el->caloIso(3)+el->trackerIso(3)) / el->Et();
     float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
     
-    //try the cuts manually
-    bool passvbtf = passVBTFID(el,cutsVBTFWP70);
+    int eidBit = el->CiCTightId();
+    int eidBitMask = 5; // id + conv rejection, 
+    bool passEId = ((eidBit & eidBitMask) == eidBitMask);
+    // bool passvbtf = passVBTFID(el,cutsVBTFWP70);
     
-    // supercluster eta cut -> EB-EE transition region
     if(el->Et() > EtThr && fabs(el->Eta())< EtaThr)
       if ( fabs(el->superClusterEta()) > 1.5660 ||  fabs(el->superClusterEta()) < 1.4442 )
 	if ( fabs(el->d0()) < Electrond0Cut_ )
 	  if ( RelIso < ElectronRelIso )
-	    if (passvbtf)
-	      if((fabs(el->Dist()) >= 0.02 || fabs(el->DCot()) >= 0.02) && el->missingHits() == 0) 
+	    if (passEId)
+	      if(fabs(el->Dist()) >= 0.02 && fabs(el->DCot()) >= 0.02 && el->missingHits() == 0) 
 	      selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
