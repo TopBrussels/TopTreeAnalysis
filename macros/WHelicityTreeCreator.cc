@@ -111,8 +111,8 @@ int main (int argc, char *argv[])
   /////////////////////
   //  Which trigger  //
   /////////////////////
-  bool TriCentralJet30Trigger = true;
-  bool IsoMu172024Trigger = false;
+  bool TriCentralJet30Trigger = false;
+  bool IsoMu172024Trigger = true;
   if(TriCentralJet30Trigger == true){
     rootFileName = "MacroOutputTriCentralJet30Trigger.root";         //Root output file
   }
@@ -147,8 +147,11 @@ int main (int argc, char *argv[])
   AnalysisEnvironment anaEnv;
   cout<<"Loading environment ..."<<endl;
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile);
+  cout << " 1 " << endl;
   new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv);
+  cout << " 2 " << endl;
   int verbose = anaEnv.Verbose;
+  cout << " 3 " << endl;
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
     
   cout << "analysis environment luminosity for rescaling "<< oldLuminosity << endl;
@@ -452,8 +455,8 @@ int main (int argc, char *argv[])
     //------------------------------------
     string wTreeFileTitle;
     if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_"+dataSetName+"_"+decayChannel+".root";
-    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
-    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
     cout << "INFO: creating WTree file "+wTreeFileTitle << endl;
         
@@ -597,8 +600,40 @@ int main (int argc, char *argv[])
 	      else if( event->runId() >= 172620 && event->runId() <= 173198 )
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
 	      else if (event->runId() >= 173236 && event->runId() <= 173692)
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);	  
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);	
+
+	      // RUN2011B (promptv1)
 	      
+	      else if( event->runId() ==  176928 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() == 176982 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+	      
+	      else if( event->runId() >= 175860 && event->runId() <= 176469 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() >=  176548 && event->runId() <=  176702 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() >=  176797 && event->runId() <=  176889 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() >=  176929 && event->runId() <=  176959 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() >=  177053 && event->runId() <=  177452 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
+	      
+	      else if( event->runId() >=  176545 && event->runId() <=  176547 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() >=  176765 && event->runId() <=  176796 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+	      
+	      else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
+	      else if( event->runId() >=  178420 && event->runId() <=  178479 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);                                
+	      else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);
+	      else if( event->runId() >=  179959 && event->runId() <=  180252 )
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile);
+	      	      
 	      else
 		cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
 	      
@@ -614,6 +649,11 @@ int main (int argc, char *argv[])
 	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun);
 	      if (itriggerSemiMu == 9999)
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); // Spring11: HLT_Mu15_v1
+	      if (itriggerSemiMu == 9999)
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); // Fall10: HLT_Mu9
+	      if (itriggerSemiMu == 9999)
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v14"), currentRun); // Fall11
+
 	      //  Summer11 MC:        HLT_IsoMu17_v5        HLT_Mu15_v2
 	      //  Spring11 MC:        HLT_IsoMu17_v4        HLT_Mu15_v1 or HLT_Mu17_v1
 	      //  Fall10 MC:          HLT_IsoMu9            HLT_Mu9 or HLT_Mu11
@@ -855,7 +895,7 @@ int main (int argc, char *argv[])
       Selection selection(init_jets, init_muons, init_electrons, mets);
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);   //CIEMAT values, not refSel values !!!!
       if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,0.3,1,1,1); //Values for TriCentralJet trigger
-      if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
+      if(IsoMu172024Trigger == true) selection.setMuonCuts(35,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
       selection.setLooseMuonCuts(10,2.1,0.15);
       selection.setElectronCuts(30,2.5,0.15,0.02,1,0.3);
       selection.setLooseElectronCuts(15,2.5,0.2); // semiMu looseMuon cuts
