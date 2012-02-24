@@ -163,10 +163,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_21Feb2012"; // to relabel the names of the output file  
+  string postfix = "_23Feb2012"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_21Feb2012";
+  string Treespath = "InclFourthGenTrees_Fall11_23Feb2012_NoBtag";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -302,11 +302,7 @@ int main (int argc, char *argv[])
 	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
 	
-	//plots before b-tag (only useful in muon channel) //update: will remove offline b-tag requirement form creator
-	//MSPlot["MS_MET_noBtag"] = new MultiSamplePlot(datasets,"MET_noBtag", 75, 0, 150, "Missing transverse energy (GeV)");
-	//MSPlot["MS_LeptonPt_noBtag"] = new MultiSamplePlot(datasets,"lepton pt_noBtag", 150, 0, 300, "Lepton Pt (GeV)");
-	//MSPlot["MS_JetPt_all_SingleLepton_noBtag"] = new MultiSamplePlot(datasets,"JetPt_all_noBtag", 50, 0, 300, "Pt of all jets (GeV)");
-	//MSPlot["MS_nPV_noBtag"] = new MultiSamplePlot(datasets, "nPrimaryVertices_noBtag", 21, -0.5, 20.5, "Nr. of primary vertices");
+	MSPlot["MS_LeptonRelIso"] = new MultiSamplePlot(datasets, "LeptonRelIso", 50, 0, 1, "Lepton RelIso");
 	
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -551,7 +547,7 @@ int main (int argc, char *argv[])
 	   			}
 	   			else 
 	   			{  
-   					if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
+   					if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown" || dataSetName.find("QCD")<=0 )
 						  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);//Summer11 MC! also the TTJets systematic samples...!
 						else
 						  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);//Fall11 MC!
@@ -703,6 +699,7 @@ int main (int argc, char *argv[])
 			
       bool eventSelected = false;
       bool isSingleLepton = false;
+			bool isDiLepton = false;
       bool isSSLepton = false;
       bool isTriLepton = false;
       bool isSingleMuon = false;
@@ -742,7 +739,7 @@ int main (int argc, char *argv[])
       float METCut = 40;
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
-      selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
+      selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1); //selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
       selection.setLooseElectronCuts(15,2.5,0.2);	 				 
@@ -833,6 +830,7 @@ int main (int argc, char *argv[])
 											//require that there are the two muons do not form the Z mass
 											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
 											{
+											  isDiLepton = true;
 												//require the same charge
 												if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
 												{
@@ -863,7 +861,8 @@ int main (int argc, char *argv[])
 															selecTableChargeMisId_ElMu.Fill(d,1,scaleFactor);
 														}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
-														}																														
+														}
+														isDiLepton = true;																											
 														//require the same charge for muon and electron
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
@@ -1076,7 +1075,7 @@ int main (int argc, char *argv[])
 															}else if((fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) || (fabs(selectedElectrons[1]->superClusterEta())>1.5660 && fabs(selectedElectrons[0]->superClusterEta())<1.4442)){
 																selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
 															}																
-															
+															isDiLepton = true;
 															if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
 															{ 
 																isSSLepton = true;
@@ -1118,7 +1117,8 @@ int main (int argc, char *argv[])
 															selecTableChargeMisId_ElMu.Fill(d,1,scaleFactor);
 														}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
-														}																														
+														}
+														isDiLepton = true;																										
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
 															isSSLepton = true;
@@ -1201,7 +1201,7 @@ int main (int argc, char *argv[])
       } // end trigged & semiElectron
 						
       //if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
-			if(!isSingleLepton && !isTriLepton) continue; //all dilepton events (SS and OS) will be stored in the trees
+			if(!isSingleLepton && !isDiLepton && !isTriLepton) continue; //all dilepton events (SS and OS) will be stored in the trees
 
 			MSPlot["MS_nPV"]->Fill(vertex.size(),datasets[d], true, Luminosity*scaleFactor);				
 
@@ -1209,7 +1209,11 @@ int main (int argc, char *argv[])
 				MSPlot["MS_MET"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);				
 				if(semiElectron) MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);				
 				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);				
-			
+				
+				float relIso;
+				relIso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();      		  
+				MSPlot["MS_LeptonRelIso"]->Fill(relIso,datasets[d], true, Luminosity*scaleFactor);
+				
 				for(unsigned int j=0;j<selectedJets.size();j++)
 				{
 				  MSPlot["MS_JetPt_all_SingleLepton"]->Fill(selectedJets[j]->Pt(),datasets[d], true, Luminosity*scaleFactor);
