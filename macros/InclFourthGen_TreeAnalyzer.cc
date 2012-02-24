@@ -185,10 +185,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string inputpostfixOld = "_Fall11_Round4"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+  string inputpostfixOld = "_21Feb2012"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_Round4";// "InclFourthGenTrees_Fall11_Round4";
+  string Treespath = "InclFourthGenTrees_Fall11_21Feb2012";// "InclFourthGenTrees_Fall11_Round4";
   Treespath = Treespath + "/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
@@ -375,12 +375,20 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
+  
+	MSPlot["MS_MET_nobtag"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeptonPt_nobtag"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
+	MSPlot["MS_nPV_nobtag"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
+  MSPlot["MS_JetPt_all_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
+	MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
+	MSPlot["MS_JetPt_nonbtagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
 	
 	
 	cout << " - Declared histograms ..." <<  endl;
 
   float NbSSevents = 0;   
   float NbTrievents = 0;  
+	int NbLightFlavour[9]={0,0,0,0,0,0,0,0,0}; int NbHeavyFlavour_b[9]={0,0,0,0,0,0,0,0,0}; int NbHeavyFlavour_c[9]={0,0,0,0,0,0,0,0,0}; int NbBadEvents[9]={0,0,0,0,0,0,0,0,0}; int NbWithoutFlavorHP[9]={0,0,0,0,0,0,0,0,0}; 
 
   /////////////////////////////////////////////////////////
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
@@ -678,7 +686,17 @@ int main (int argc, char *argv[])
       bool isTriElectron = myBranch_selectedEvents->SelectedElElEl();
       bool isTriElMuMu = myBranch_selectedEvents->SelectedMuMuEl();
       bool isTriElElMu = myBranch_selectedEvents->SelectedMuElEl();
-		  
+      
+			
+			//https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFlavorHistory
+			if(dataSetName=="WJets"){
+				int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  	if(flavorHP==11) NbLightFlavour[0]++;
+		  	else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[0]++;
+		  	else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[0]++;
+				else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[0]++; 
+				else NbWithoutFlavorHP[0]++;
+			}
 			bool isSemiLep_MC = false;
 			if(myBranch_selectedEvents->semiMuDecay() || myBranch_selectedEvents->semiElDecay())
 			  isSemiLep_MC = true;
@@ -696,6 +714,34 @@ int main (int argc, char *argv[])
 			  bTagValues = myBranch_selectedEvents->bTagTCHP();
 
 
+			MSPlot["MS_nPV_nobtag"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+			if(isSingleLepton)
+			{			  
+				MSPlot["MS_MET_nobtag"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+				if(semiElectron) MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+				if(semiMuon) MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+			
+				for(unsigned int j=0;j<selectedJets.size();j++)
+				{
+				  MSPlot["MS_JetPt_all_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+					if(bTagValues[j] > workingpointvalue)
+					  MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+					else
+					  MSPlot["MS_JetPt_nonbtagged_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+				}			
+			}			
+
+
+
+			bool eventSelected = false;
+			for(unsigned int j=0;j<selectedJets.size();j++)
+			{	//now require at least a b-tagged jet larger than a certain pre-defined cut
+				if(bTagValues[j] > workingpointvalue && !eventSelected)
+					eventSelected = true;
+			}
+			if(!eventSelected) continue;
+			
+					
 			bool TprimeEvaluation = true;
 			//////////////////////////////////////////////////////////////////////////
       // MVA training
@@ -1054,6 +1100,14 @@ int main (int argc, char *argv[])
 						selecTableSemiLep.Fill(d,1,scaleFactor);
 					}
 					//cout << "done in 1B 1W box" << endl;
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[1]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[1]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[1]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[1]++; 
+						else NbWithoutFlavorHP[1]++;
+					}
 				}
 				else if(nbOfWs==2)
 				{
@@ -1109,6 +1163,14 @@ int main (int argc, char *argv[])
 					 }
 					
 				    } 
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[2]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[2]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[2]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[2]++; 
+						else NbWithoutFlavorHP[2]++;
+					}
  	
 					//cout << "done in 1B 2W box" << endl;
 				}
@@ -1120,6 +1182,14 @@ int main (int argc, char *argv[])
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);				
 							selecTableSemiLep.Fill(d,3,scaleFactor);
 				    }
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[3]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[3]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[3]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[3]++; 
+						else NbWithoutFlavorHP[3]++;
+					}
 				    //cout << "done in 1B 3W box" << endl;
 				}
 				else
@@ -1130,6 +1200,14 @@ int main (int argc, char *argv[])
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 						selecTableSemiLep.Fill(d,4,scaleFactor);
 				   }
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[4]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[4]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[4]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[4]++; 
+						else NbWithoutFlavorHP[4]++;
+					}
 				   //cout << "done in 1B 4W box" << endl;
 				}
 			} //end number of btags == 1
@@ -1156,6 +1234,14 @@ int main (int argc, char *argv[])
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,5,scaleFactor);
 				   }
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[5]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[5]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[5]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[5]++; 
+						else NbWithoutFlavorHP[5]++;
+					}
 					//cout << "done in 2B 1W box" << endl;
 				}
 				else if(nbOfWs==2)
@@ -1211,6 +1297,14 @@ int main (int argc, char *argv[])
 					     cout<<"WARNING: vector of selected jets for MVA input is not equal to 4; fix this!!"<<endl;	
 					}
 			             }  
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[6]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[6]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[6]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[6]++; 
+						else NbWithoutFlavorHP[6]++;
+					}
 				    // cout << "done in 2B 2W box" << endl;
 				}
 				else if(nbOfWs==3)
@@ -1221,6 +1315,14 @@ int main (int argc, char *argv[])
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,7,scaleFactor);
 				     }
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[7]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[7]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[7]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[7]++; 
+						else NbWithoutFlavorHP[7]++;
+					}
 					//cout << "done in 2B 3W box" << endl;
 				}
 				else
@@ -1231,6 +1333,14 @@ int main (int argc, char *argv[])
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,8,scaleFactor);
 				     }
+					if(dataSetName=="WJets"){
+						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
+		  			if(flavorHP==11) NbLightFlavour[8]++;
+		  			else if(flavorHP==1 || flavorHP==2 || flavorHP==5) NbHeavyFlavour_b[8]++;
+		  			else if(flavorHP==3 || flavorHP==4 || flavorHP==6) NbHeavyFlavour_c[8]++;
+						else if(flavorHP==7 || flavorHP==8 || flavorHP==9 || flavorHP==10) NbBadEvents[8]++; 
+						else NbWithoutFlavorHP[8]++;
+					}
 				  //   cout << "done in 2B 4W box" << endl;
 				}
 			} //end number of btags == 2
@@ -1384,7 +1494,63 @@ int main (int argc, char *argv[])
     //fout->Close();
   } //end !trainMVA
   
-  //delete
+	cout << "after baseline selection: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[0] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[0] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[0] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[0] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[0] << endl;
+	cout << "1B_1W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[1] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[1] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[1] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[1] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[1] << endl;
+	cout << "1B_2W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[2] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[2] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[2] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[2] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[2] << endl;
+	cout << "1B_3W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[3] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[3] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[3] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[3] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[3] << endl;
+	cout << "1B_4W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[4] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[4] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[4] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[4] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[4] << endl;
+	cout << "2B_1W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[5] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[5] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[5] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[5] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[5] << endl;
+	cout << "2B_2W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[6] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[6] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[6] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[6] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[6] << endl;
+	cout << "2B_3W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[7] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[7] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[7] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[7] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[7] << endl;
+	cout << "2B_4W box: " << endl;
+	cout << "	number of events with light flavored jets " << NbLightFlavour[8] << endl;
+	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[8] << endl;
+	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[8] << endl;
+	cout << "	number of events that should not be used " << NbBadEvents[8] << endl;
+	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[8] << endl;
+	
+	
+	//delete
 	cout<<" - Deleting jetCombiner..."<<endl;
   if(jetCombiner) delete jetCombiner; //IMPORTANT!! file for training otherwise not filled... (?) //crashes when calculating resolutions for kinfit
   cout<<" - JetCombiner deleted..."<<endl;
