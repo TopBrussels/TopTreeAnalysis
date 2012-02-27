@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
   // Which decay channel //
   /////////////////////////
   
-  bool semiElectron = false; // use semiElectron channel,
-  bool semiMuon = true; // use semiMuon channel?
+  bool semiElectron = true; // use semiElectron channel,
+  bool semiMuon = false; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
   {
@@ -454,9 +454,9 @@ int main (int argc, char *argv[])
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
-    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_"+dataSetName+"_"+decayChannel+".root";
-    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
-    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_Full2011_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
+    if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
+    if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
     cout << "INFO: creating WTree file "+wTreeFileTitle << endl;
         
@@ -476,7 +476,7 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
     
     for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined
-    //for(unsigned int ievt = 0; ievt < 5000; ievt++){  
+    //for(unsigned int ievt = 0; ievt < 10000; ievt++){  
 
       nEvents[d]++;
       if(ievt%2000 == 0)
@@ -777,7 +777,7 @@ int main (int argc, char *argv[])
       float standardCosTheta=0; 
       TRootMCParticle standardNeutrino, standardTop,standardLepton,standardWLeptonic;      
 
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiEl") == 0){     
+      if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){     
 
 	//------------------------------------------//
 	//    Identifying Monte Carlo particles     //
@@ -850,13 +850,13 @@ int main (int argc, char *argv[])
 	    if(fabs(mcParticles[i]->type()) == 11 && fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == 6 && mcParticles[i]->status()==3){ //status: 1:stable; 2:shower; 3:hard scattering(coming from the studied hard proces)
 	      EventParticleNumber[4]++;
 	      standardLepton=*mcParticles[i];
-	      if(mcParticles[i]->type()==13){EventChargeLepNeg=-1;}
-	      else if(mcParticles[i]->type()==-13){EventChargeLepPos=1;}
+	      if(mcParticles[i]->type()==11){EventChargeLepNeg=-1;}
+	      else if(mcParticles[i]->type()==-11){EventChargeLepPos=1;}
 	    }	  	  
 	  }
 	  
 	}//  if 0 < i < mcParticles.size()
-			
+	
 	//////////////////////////////////////////////////
 	//   Selecting correct event (b b q q mu nu )   //
 	//////////////////////////////////////////////////
@@ -881,7 +881,7 @@ int main (int argc, char *argv[])
 
 	  //-----   Calculating cos theta:   -----
 	  standardCosTheta = ((standardWLeptonicTZMF.Vect()).Dot(standardLeptonWZMF.Vect()))/(((standardWLeptonicTZMF.Vect()).Mag())*((standardLeptonWZMF.Vect()).Mag()));
-    	  
+
 	  histo1D["StandardCosTheta"]->Fill(standardCosTheta);  // Histogram without fit
 	  histo1D["StandardCosThetaFit"]->Fill(standardCosTheta);  // Histogram with fit   	  
 
@@ -1457,7 +1457,7 @@ int main (int argc, char *argv[])
     //  Executing fits          //
     //////////////////////////////
 
-    if(dataSetName.find("TTbarJets_SemiMu") == 0 && !CalculateResolutions){
+    if(!CalculateResolutions && ((semiMuon == true && dataSetName.find("TTbarJets_SemiMu") == 0 ) || (semiElectron == true && dataSetName.find("TTbarJets_SemiEl") == 0)) ){
       histo1D["WMass"]->Fit("gaus","Q");     
       histo1D["TopMass"]->Fit("gaus","Q");
       histo1D["WMass"]->Fit("gaus","Q","",histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMass"]->GetFunction("gaus")->GetParameter(2),histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMass"]->GetFunction("gaus")->GetParameter(2));
