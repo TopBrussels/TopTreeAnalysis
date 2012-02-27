@@ -498,7 +498,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
   cout << " - Loop over datasets ... " << inputTrees.size() << " datasets !" << endl;
   ofstream myfile;
-	string myRockingFile = "InterestingEvents"+postfix+channelpostfix+".txt";
+	string myRockingFile = "InterestingEvents"+channelpostfix+".txt";
 	myfile.open(myRockingFile.c_str());
 
   for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
@@ -693,11 +693,11 @@ int main (int argc, char *argv[])
 
 			if(isSSLepton && dataSetName=="Data"){
 				myfile << "SAME-SIGN EVENT\n";
-				myfile << " Event id: " << event->eventID() << " Run: " << event->runID() << " LumiBlock: " << event->lumiBlockID() << "\n"; 
+				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			
 			}else if(isTriLepton && dataSetName=="Data"){
 				myfile << "TRILEPTON EVENT\n";
-				myfile << " Event id: " << event->eventID() << " Run: " << event->runID() << " LumiBlock: " << event->lumiBlockID() << "\n"; 
+				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			}
       
 			
