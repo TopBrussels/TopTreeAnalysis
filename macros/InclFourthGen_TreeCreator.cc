@@ -308,8 +308,6 @@ int main (int argc, char *argv[])
 
   float NbSSevents = 0;   
   float NbTrievents = 0;  
-	float Nb_Zpeak_EB_SS_MC = 0; float Nb_Zpeak_EE_SS_MC = 0; float Nb_Zpeak_EB_OS_MC = 0; float Nb_Zpeak_EE_OS_MC = 0;
-	float Nb_Zpeak_EB_SS_data = 0; float Nb_Zpeak_EE_SS_data = 0; float Nb_Zpeak_EB_OS_data = 0; float Nb_Zpeak_EE_OS_data = 0;
 	
   ////////////////////////////////////
   /// Selection table
@@ -340,10 +338,6 @@ int main (int argc, char *argv[])
   CutsSelecTableChargeMisId_2El.push_back(string("OS el EB"));
   CutsSelecTableChargeMisId_2El.push_back(string("OS el EE"));
   CutsSelecTableChargeMisId_2El.push_back(string("OS el EB+EE"));
-  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: SS el EB"));//10
-  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: SS el EE"));
-  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: OS el EB"));
-  CutsSelecTableChargeMisId_2El.push_back(string("Zpeak: OS el EE"));
 	
   vector<string> CutsSelecTableChargeMisId_ElMu;
   CutsSelecTableChargeMisId_ElMu.push_back(string("electron+muon"));
@@ -978,42 +972,7 @@ int main (int argc, char *argv[])
               {
             		selecTableSemiLep.Fill(d,4,scaleFactor);
 								sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
-
-									////////////////////// CHARGE MIS-ID RATE (NO B-TAG CUT & MET CUT!!!) ///////////////////////
- 									if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
-									{
-										if(selection.passConversionRejection(selectedElectrons[1]))
-										{
-											if(selection.foundZCandidate(selectedElectrons, selectedElectrons, 10.))
-											{								
-												if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
-												{ 
-													if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
-														selecTableChargeMisId_2El.Fill(d,10,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_SS_data+=scaleFactor;
-														else Nb_Zpeak_EB_SS_MC+=scaleFactor;
-													}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
-														selecTableChargeMisId_2El.Fill(d,11,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_SS_data+=scaleFactor;
-														else Nb_Zpeak_EE_SS_MC+=scaleFactor;
-													}
-												}else{
-													if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
-														selecTableChargeMisId_2El.Fill(d,12,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_OS_data+=scaleFactor;
-														else Nb_Zpeak_EB_OS_MC+=scaleFactor;
-													}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
-														selecTableChargeMisId_2El.Fill(d,13,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_OS_data+=scaleFactor;
-														else Nb_Zpeak_EE_OS_MC+=scaleFactor;
-													}															
-												}
-											}	
-										}
-									}
-									////////////////////// CHARGE MIS-ID RATE ----- END //////////////////
-								
-								
+							
 								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
 								{
 									//block for the jet multiplicity plot
@@ -1583,21 +1542,12 @@ int main (int argc, char *argv[])
       //myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
       //myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
 			
-      if(dataSetName.find("Data") == 0)
-      {
-				float	chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
-				myBranch_selectedEvents->setChargeMisIdRateBarrel( chargeMisId_Barrel_data );
-				float	chargeMisId_Endcap_data = (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data);
-				myBranch_selectedEvents->setChargeMisIdRateEndcap( chargeMisId_Endcap_data );				
-      }
       myInclFourthGenTree->Fill();
 	    delete myBranch_selectedEvents;
 
 	
     }//loop on events
 
-		cout << " chargeMisId_Barrel_data " << (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data) << endl;
-		cout << " chargeMisId_Endcap_data " << (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data) << endl;
     
     cout<<endl;
 		
@@ -1626,19 +1576,7 @@ int main (int argc, char *argv[])
 	
     
   } //loop on datasets
-  
-	if(semiElectron){
-		float chargeMisId_Barrel_MC = (float)Nb_Zpeak_EB_SS_MC/(2*(float)Nb_Zpeak_EB_OS_MC);
-		float chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
-		float chargeMisId_Endcap_MC = (float)Nb_Zpeak_EE_SS_MC/(2*(float)Nb_Zpeak_EE_OS_MC);
-		float chargeMisId_Endcap_data = (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data);
-  
-		cout << "chargeMisId_Barrel_MC " << chargeMisId_Barrel_MC << endl;
-		cout << "chargeMisId_Barrel_data " << chargeMisId_Barrel_data << endl;
-		cout << "chargeMisId_Endcap_MC " << chargeMisId_Endcap_MC << endl;
-		cout << "chargeMisId_Endcap_data " << chargeMisId_Endcap_data << endl;
-	}
-	
+  	
 	//Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
   

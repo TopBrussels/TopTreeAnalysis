@@ -320,7 +320,7 @@ int main (int argc, char *argv[])
 	}
 	
   //Output ROOT file
-  string rootFileName (Outputpath+"InclFourthGenSearch_TreeAnalyzer"+inputpostfix+channelpostfix+outputpostfix+".root");
+  string rootFileName (Outputpath+"InclFourthGenSearch_TreeAnalyzer"+channelpostfix+outputpostfix+".root");
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
 
  
@@ -497,6 +497,9 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
   ////////////////////////////////////
   cout << " - Loop over datasets ... " << inputTrees.size() << " datasets !" << endl;
+  ofstream myfile;
+	string myRockingFile = "InterestingEvents"+postfix+channelpostfix+".txt";
+	myfile.open(myRockingFile.c_str());
 
   for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
   {
@@ -686,6 +689,16 @@ int main (int argc, char *argv[])
       bool isTriElectron = myBranch_selectedEvents->SelectedElElEl();
       bool isTriElMuMu = myBranch_selectedEvents->SelectedMuMuEl();
       bool isTriElElMu = myBranch_selectedEvents->SelectedMuElEl();
+
+
+			if(isSSLepton && dataSetName=="Data"){
+				myfile << "SAME-SIGN EVENT\n";
+				myfile << " Event id: " << event->eventID() << " Run: " << event->runID() << " LumiBlock: " << event->lumiBlockID() << "\n"; 
+			
+			}else if(isTriLepton && dataSetName=="Data"){
+				myfile << "TRILEPTON EVENT\n";
+				myfile << " Event id: " << event->eventID() << " Run: " << event->runID() << " LumiBlock: " << event->lumiBlockID() << "\n"; 
+			}
       
 			
 			//https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFlavorHistory
@@ -1393,6 +1406,7 @@ int main (int argc, char *argv[])
 		delete inFile;
 		
   } //loop on 'datasets'
+	myfile.close();
 
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
