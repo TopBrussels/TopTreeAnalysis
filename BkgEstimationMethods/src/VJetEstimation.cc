@@ -3307,7 +3307,7 @@ Double_t VJetEstimation::Ntt_err_3bjets(Double_t Ntt, Double_t Ntt_err, Double_t
 	return (Ntt_err_3bjets < 0 ? 0 : sqrt(Ntt_err_3bjets));
 }
 Double_t VJetEstimation::Nvb_3bjets(Double_t Nvb, Double_t eb, Double_t euds, Int_t n) const{
-	Double_t  Nvb_3bjets = (eb*((n-1)*(n-2)/2)*euds*euds*pow(1-euds,n-3) + (1-eb)*((n-1)*(n-2)*(n-3)/6)*pow(euds,3)*pow(1-euds,n-Njets_[0]))*Nvb;
+	Double_t  Nvb_3bjets = (eb*((n-1)*(n-2)/2)*euds*euds*pow(1-euds,n-3) + (1-eb)*((n-1)*(n-2)*(n-3)/6)*pow(euds,3)*pow(1-euds,n-4))*Nvb;
 	return (Nvb_3bjets<0 ? 0 : Nvb_3bjets);
 }
 Double_t VJetEstimation::Nv_3bjets (Double_t Nv, Double_t euds, Int_t n) const{
