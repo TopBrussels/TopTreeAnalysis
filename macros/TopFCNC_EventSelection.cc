@@ -540,13 +540,13 @@ int main (int argc, char *argv[])
 				Trigger HLT_DoubleMu7_v1 available for runs 160431-163261
 				Trigger HLT_DoubleMu7_v2 available for runs 163270-163869
 				------------------------------------------------------------------*/
-				if      (event->runId() >= 160431 && event->runId() <= 163261) // IntLumi = 
+				if      (event->runId() >= 160431 && event->runId() <= 163261) // IntLumi = 33.601(/pb)
 					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
-  				else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 
+  				else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 167.434(/pb)
     					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v2"), currentRun, iFile);
 				/*--------------------------------------------------------------------
-				Sub-Total integrated luminosity = 201,12(/pb)
-				    Total integrated luminosity = 201,12(/pb)
+				Sub-Total integrated luminosity = 201,035(/pb)
+				    Total integrated luminosity = 201,035(/pb)
 				------------------------------------------------------------------*/
 
 				/*------------------------------------------------------------------
@@ -556,7 +556,7 @@ int main (int argc, char *argv[])
 				Trigger HLT_Mu13_Mu8_v3 available for runs 166346-166346
 				Trigger HLT_Mu13_Mu8_v4 available for runs 167078-167913
 				------------------------------------------------------------------*/
-  				else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 
+  				else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 623.433(/pb)
     					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v2"), currentRun, iFile);
   				else if (event->runId() == 166346) // IntLumi = 
     					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v3"), currentRun, iFile);
@@ -604,7 +604,7 @@ int main (int argc, char *argv[])
 	   		else 
 	   		{
 				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
-				else itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v1"), currentRun, iFile);
+				else itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
     
   				if(itrigger == 9999)
 				{
