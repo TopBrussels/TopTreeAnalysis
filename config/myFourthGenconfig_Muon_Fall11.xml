@@ -1,3 +1,4 @@
+
 <?xml version="1.0"?>
 
 <datasets>
@@ -10,14 +11,17 @@
 <d name="TTbarJets_SemiMuon" title="t#bar{t}+jets semi-#mu" add="1" color="8" ls="1" lw="2" normf="1" xsection="23.4074" EqLumi="22963.8319" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeProducer/skimmer/TopTree_MuonSkimmed_SemiMuon.root"/>
 <d name="TTbarJets_Other" title="t#bar{t}+jets other" add="1" color="8" ls="1" lw="2" normf="1" xsection="134.5926" EqLumi="22963.8319" PreselEff="0.0" xsectionError="0.1" filenames="/user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeProducer/skimmer/TopTree_MuonSkimmed_Other.root"/>
 <d name="WJets" title="W+jets #rightarrow l#nu" add="1" color="4" ls="1" lw="2" normf="1" xsection="31146.5" EqLumi="2541.35"  PreselEff="0.0" xsectionError="0.25" filenames="/home/dhondt/Fall11_42X_Samples/MuonSkim_Fall11_42X_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131351_TOPTREE_07022012_201637/*.root"/>
+<!-- Warning 1: cross sections temporary and approximate... still to be calculated. Warning 2: if HF and LF are used, switch off the WJets above-->
+<d name="WJets_HF" title="W+jets #rightarrow l#nu (HF)" add="0" color="4" ls="1" lw="2" normf="1" xsection="7059.2066" EqLumi="2541.35"  PreselEff="0.0" xsectionError="0.25" filenames="/user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeProducer/skimmer/TopTree_MuonSkim_WJets_HFSkim.root"/>
+<d name="WJets_LF" title="W+jets #rightarrow l#nu (LF)" add="0" color="4" ls="1" lw="2" normf="1" xsection="24087.293378" EqLumi="2541.35"  PreselEff="0.0" xsectionError="0.25" filenames="/user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeProducer/skimmer/TopTree_MuonSkim_WJets_LFSkim.root"/>
 <d name="ZJets" title="Z/#gamma^{*}+jets #rightarrow ll" add="1" color="90" ls="1" lw="2" normf="1" xsection="3078" EqLumi="11674.63"  PreselEff="0.0" xsectionError="0.25" filenames="/home/dhondt/Fall11_42X_Samples/MuonSkim_Fall11_42X_DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_28012012_182722_TOPTREE_07022012_223638/*.root"/>
 
 <!--
 <d name="QCD" title="MuEnriched QCD" add="1" color="1" ls="1" lw="2" normf="1" xsection="84679.3" EqLumi="296.175" filenames=""/>
 -->
 <!-- cross sections from prep page http://cms.cern.ch/iCMS/prep/requestmanagement?dsn=*QCD_Pt-30to50_bEnriched*&campid=Summer11... not right... for bEnriched QCD Pt-30to50 this is 53100000 on the prep page... impossible. The other one also not possible...-->
-<d name="QCD_bEnriched_Pt-30to50" title="bEnriched QCD Pt-30to50" add="1" color="1" ls="1" lw="2" normf="1" xsection="53100000" EqLumi="0.0985" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_Fall11_42X_QCD_Pt-30to50_bEnriched_TuneZ2_7TeV-pythia6-evtgen_Summer11-PU_S3_START42_V11-v2_20022012_171100_TOPTREE_23022012_194430/*.root"/>
-<d name="QCD_bEnriched_Pt-50to150" title="bEnriched QCD Pt-50to150" add="1" color="1" ls="1" lw="2" normf="1" xsection="7236000" EqLumi="0.3767" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_Fall11_42X_QCD_Pt-50to150_bEnriched_TuneZ2_7TeV-pythia6-evtgen_Summer11-PU_S3_START42_V11-v1_20022012_174106_TOPTREE_23022012_195430/*.root"/>
+<d name="QCD_bEnriched_Pt-30to50" title="bEnriched QCD Pt-30to50" add="0" color="1" ls="1" lw="2" normf="1" xsection="53100000" EqLumi="0.0985" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_Fall11_42X_QCD_Pt-30to50_bEnriched_TuneZ2_7TeV-pythia6-evtgen_Summer11-PU_S3_START42_V11-v2_20022012_171100_TOPTREE_23022012_194430/*.root"/>
+<d name="QCD_bEnriched_Pt-50to150" title="bEnriched QCD Pt-50to150" add="0" color="1" ls="1" lw="2" normf="1" xsection="7236000" EqLumi="0.3767" filenames="/user/gvonsem/42X_Fall11_Samples/MuonSkim_Fall11_42X_QCD_Pt-50to150_bEnriched_TuneZ2_7TeV-pythia6-evtgen_Summer11-PU_S3_START42_V11-v1_20022012_174106_TOPTREE_23022012_195430/*.root"/>
 
 
 <!-- cross sections of single top processes corresponding to A=1 -->
