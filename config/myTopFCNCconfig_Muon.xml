@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <datasets>
-<!--
+
  <d name="data"     title="data"             add="1"   color="1"  ls="1"  lw="2" normf="1" xsection="1"       EqLumi="4534.871"    PreselEff="0.0" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/data_4535.root"/>
--->
+
 <!-- Madgraph samples -->
  <d name="zz"       title="ZZ+jets"          add="1"   color="13" ls="1"  lw="2" normf="1" xsection="0.03906" PreselEff="0.416543004" NofPSEvts="493466" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/ZZJetsTo4L_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_30012012_182407_TOPTREE_Skimmed.root"/>
- <d name="wz"       title="WZ+jets"          add="1"   color="11" ls="1"  lw="2" normf="1" xsection="0.7192"  PreselEff="0.230320731" NofPSEvts="212367" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_30012012_182412_TOPTREE_Skimmed_1.root"/>
- <d name="ww"       title="WW+jets"          add="1"   color="9"  ls="1"  lw="2" normf="1" xsection="3.783"   PreselEff="0.092255738" NofPSEvts="110422"  filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_0012012_182417_TOPTREE_Skimmed.root"/>
+ <d name="wz"       title="WZ+jets"          add="1"   color="11" ls="1"  lw="2" normf="1" xsection="0.879"   PreselEff="0.230320731" NofPSEvts="212367" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_30012012_182412_TOPTREE_Skimmed_1.root"/>
+ <d name="ww"       title="WW+jets"          add="1"   color="9"  ls="1"  lw="2" normf="1" xsection="5.909"   PreselEff="0.092255738" NofPSEvts="110422" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_0012012_182417_TOPTREE_Skimmed.root"/>
 <!-- Pythia samples
  <d name="zz"       title="ZZ+jets"          add="1"   color="13" ls="1"  lw="2" normf="1" xsection="7.67"    PreselEff="0.051566577" NofPSEvts="215993" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/ZZ_TuneZ2_7TeV_pythia6_tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_182129_*.root"/>
  <d name="wz"       title="WZ+jets"          add="1"   color="11" ls="1"  lw="2" normf="1" xsection="18.3"    PreselEff="0.026481454" NofPSEvts="102300" filenames="/user/ghammad/CMSSW_4_2_8/src/TopBrussels/Fall11/WZ_TuneZ2_7TeV_pythia6_tauola_Fall11-PU_S6_START42_V14B-v1_TopTree_Skimmed_21012012_181129_*.root"/>
@@ -24,6 +24,6 @@
 </datasets>
 
 <analysis>
-<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="0" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles"/>
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="0" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
 </analysis>
 
