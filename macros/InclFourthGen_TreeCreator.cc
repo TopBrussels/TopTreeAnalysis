@@ -163,10 +163,10 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_23Feb2012"; // to relabel the names of the output file  
+  string postfix = "_28Feb2012"; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_23Feb2012_NoBtag";
+  string Treespath = "InclFourthGenTrees_Fall11_28Feb2012";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -1170,7 +1170,8 @@ int main (int argc, char *argv[])
 				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);				
 				
 				float relIso;
-				relIso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();      		  
+				if(semiElectron) relIso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
+				if(semiMuon) relIso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();      		  				
 				MSPlot["MS_LeptonRelIso"]->Fill(relIso,datasets[d], true, Luminosity*scaleFactor);
 				
 				for(unsigned int j=0;j<selectedJets.size();j++)
