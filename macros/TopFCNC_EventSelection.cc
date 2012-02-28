@@ -214,6 +214,7 @@ int main (int argc, char *argv[])
   ////////////////// MultiSample plots  //////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
+  MSPlot["RhoCorrection"]              = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
   MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 20, 0, 20, "Nb. of vertices");
 
   MSPlot["1stLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
@@ -449,7 +450,7 @@ int main (int argc, char *argv[])
       cout << " - Cross section = " << datasets[d]->Xsection() << endl;
       cout << " - IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
       cout << " - Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
-    }		
+    }
     //open files and load
     cout<<"Load Dataset"<<endl;
     treeLoader.LoadDataset (datasets[d], anaEnv);
@@ -539,53 +540,58 @@ int main (int argc, char *argv[])
 				Trigger HLT_DoubleMu7_v1 available for runs 160431-163261
 				Trigger HLT_DoubleMu7_v2 available for runs 163270-163869
 				------------------------------------------------------------------*/
-				if      (event->runId() >= 160431 && event->runId() <= 163261)
+				if      (event->runId() >= 160431 && event->runId() <= 163261) // IntLumi = 
 					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
-  				else if (event->runId() >= 163270 && event->runId() <= 163869)
+  				else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 
     					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v2"), currentRun, iFile);
+				/*--------------------------------------------------------------------
+				Sub-Total integrated luminosity = 201,12(/pb)
+				    Total integrated luminosity = 201,12(/pb)
+				------------------------------------------------------------------*/
+
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011A-PromptReco-v4
 				--------------------------------------------------------------------
-				Trigger HLT_DoubleMu7_v3 available for runs 165088-167043
-				Trigger HLT_DoubleMu7_v4 available for runs 166346-166346
-				Trigger HLT_DoubleMu7_v5 available for runs 167078-167913
+				Trigger HLT_Mu13_Mu8_v2 available for runs 165088-167043
+				Trigger HLT_Mu13_Mu8_v3 available for runs 166346-166346
+				Trigger HLT_Mu13_Mu8_v4 available for runs 167078-167913
 				------------------------------------------------------------------*/
-  				else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346)
-    					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v3"), currentRun, iFile);
-  				else if (event->runId() == 166346)
-    					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v4"), currentRun, iFile);
-  				else if (event->runId() >= 167078 && event->runId() <= 167913)
-    					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v5"), currentRun, iFile);
+  				else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 
+    					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v2"), currentRun, iFile);
+  				else if (event->runId() == 166346) // IntLumi = 
+    					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v3"), currentRun, iFile);
+  				else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 
+    					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v4"), currentRun, iFile);
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011A-05Aug2011-v1
 				--------------------------------------------------------------------
-				Trigger HLT_DoubleMu7_v7 available for runs 170826-172619
+				Trigger HLT_Mu13_Mu8_v6 available for runs 170826-172619
 				------------------------------------------------------------------*/
-				else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco equivalent to PromptReco_v5 (about 5/pb lost)
-				  	itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v7"), currentRun, iFile);
+				else if (event->runId() >= 170249 && event->runId() <= 172619)  // IntLumi = //Aug05ReReco equivalent to PromptReco_v5
+				  	itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v6"), currentRun, iFile);
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011A-PromptReco-v6
 				--------------------------------------------------------------------
-				Trigger HLT_DoubleMu7_v7 available for runs 172620-173198
-				Trigger HLT_DoubleMu7_v8 available for runs 173236-173692
+				Trigger HLT_Mu13_Mu8_v6 available for runs 172620-173198
+				Trigger HLT_Mu13_Mu8_v7 available for runs 173236-173692
 				------------------------------------------------------------------*/
-				else if (event->runId() >= 172620 && event->runId() <= 173198)
-            				itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v7"), currentRun, iFile);
-				else if (event->runId() >= 173236 && event->runId() <= 173692)
-				  	itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v8"), currentRun, iFile);
+				else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = 
+            				itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v6"), currentRun, iFile);
+				else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = 
+				  	itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011B-PromptReco-v1
 				--------------------------------------------------------------------
-				Trigger HLT_DoubleMu7_v8  available for runs 175860-178380
-				Trigger HLT_DoubleMu7_v11 available for runs 178420-179889
-				Trigger HLT_DoubleMu7_v12 available for runs 179959-180252
+				Trigger HLT_Mu13_Mu8_v7  available for runs 175860-178380
+				Trigger HLT_Mu13_Mu8_v10 available for runs 178420-179889
+				Trigger HLT_Mu13_Mu8_v11 available for runs 179959-180252
 				------------------------------------------------------------------*/
-   				else if( event->runId() >=  175860 && event->runId() <= 178380 )
-   				  	itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v8"), currentRun, iFile);
-   				else if( event->runId() >=  178420 && event->runId() <= 179889 )
-					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v11"),currentRun, iFile);
-				else if( event->runId() >=  179959 && event->runId() <=  180252 )
-					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v12"),currentRun, iFile); 
+   				else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = 
+   				  	itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
+   				else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi = 
+					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v10"),currentRun, iFile);
+				else if( event->runId() >=  179959 && event->runId() <=  180252 ) // IntLumi = 
+					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v11"),currentRun, iFile); 
 									   
   				if(itrigger == 9999)
 				{
@@ -597,8 +603,8 @@ int main (int argc, char *argv[])
 	   		}
 	   		else 
 	   		{
-				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v8"), currentRun, iFile);
-				else itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
+				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
+				else itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v1"), currentRun, iFile);
     
   				if(itrigger == 9999)
 				{
@@ -606,14 +612,123 @@ int main (int argc, char *argv[])
     			  		exit(1);
 				}
 				cout<<"Trigger bit nr : "<<itrigger<<endl;
-				//trigged = treeLoader.EventTrigged (itrigger);
-				//cout<<"Triggered ? : "<<trigged<<endl;
 			}
 		} //end if diMuon
 		else if(diElectron)
 		{
-			cerr << "To BE IMPLEMENTED" << endl;
-    			exit(1);
+			if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+			{
+				/*------------------------------------------------------------------
+				Dataset : DoubleElectron/Run2011A-May10ReReco-v1
+				--------------------------------------------------------------------
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1 available for runs 160431-161016
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2 available for runs 162762-163261
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3 available for runs 163270-163869
+				Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v2
+				->	available for runs 162762-163261
+				Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v3
+				->	available for runs 163270-163869
+				------------------------------------------------------------------*/
+				if(currentRun >= 150000 && currentRun <= 161176)      // IntLumi = 5.281(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
+				else if(currentRun >= 161179 && currentRun <= 163261) // IntLumi = 28.321(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2", currentRun);
+				else if(currentRun >= 163262 && currentRun <= 164237) // IntLumi = 167.518(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3", currentRun);
+				/*--------------------------------------------------------------------
+				Sub-Total integrated luminosity = 201,12(/pb)
+				    Total integrated luminosity = 201,12(/pb)
+				------------------------------------------------------------------*/
+
+				/*--------------------------------------------------------------------
+				Dataset : DoubleElectron/Run2011A-PromptReco-v4
+				--------------------------------------------------------------------
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4 available for runs 165088-165633
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5 available for runs 165970-166967
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6 available for runs 167039-167913
+				Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v4
+				->	available for runs 165088-165633
+				Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v5
+				->	available for runs 165970-166967
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5
+				->	available for runs 167039-167913
+				--------------------------------------------------------------------*/
+				else if(currentRun >= 165085 && currentRun <= 165888) // IntLumi = 139.027(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v4", currentRun);
+				else if(currentRun >= 165900 && currentRun <= 167043) // IntLumi = 524.904(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v5", currentRun);
+				else if(currentRun >= 167044 && currentRun <= 170053) // IntLumi = 243.081(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5", currentRun);
+				/*--------------------------------------------------------------------
+				Sub-Total integrated luminosity = 907,012(/pb)
+				    Total integrated luminosity = 1108,132(/pb)
+				------------------------------------------------------------------*/
+
+				/*--------------------------------------------------------------------
+				Dataset : DoubleElectron/Run2011A-05Aug2011-v1
+				--------------------------------------------------------------------
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v8 available for runs 170826-172619
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7 
+				->	available for runs 170826-172619
+				------------------------------------------------------------------*/
+				else if(currentRun >= 170054 && currentRun <= 170759) // IntLumi = 
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+				else if(currentRun >= 170760 && currentRun <= 172619) // IntLumi = 
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
+				/*--------------------------------------------------------------------
+				Sub-Total integrated luminosity = 907,012(/pb)
+				    Total integrated luminosity = 1108,132(/pb)
+				------------------------------------------------------------------*/
+
+				/*--------------------------------------------------------------------
+				Dataset : DoubleElectron/Run2011A-PromptReco-v6
+				--------------------------------------------------------------------
+				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v8 available for runs 172620-173198
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7
+				->	available for runs 172620-173198
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8
+				->	available for runs 173236-173692
+				------------------------------------------------------------------*/
+				else if(currentRun >= 172620 && currentRun <= 173198) // IntLumi = 410.523(/pb)
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
+				else if(currentRun >= 173199 && currentRun <= 173692) // IntLumi = 
+				itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
+				/*--------------------------------------------------------------------
+				Sub-Total integrated luminosity = 907,012(/pb)
+				    Total integrated luminosity = 1108,132(/pb)
+				------------------------------------------------------------------*/
+
+				/*--------------------------------------------------------------------
+				Dataset : DoubleElectron/Run2011B-PromptReco-v1
+				--------------------------------------------------------------------
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8
+				->	available for runs 175860-178380
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9
+				->	available for runs 178420-179889
+				Trigger HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v10
+				->	available for runs 179959-180252
+				------------------------------------------------------------------*/
+
+				else if(currentRun >= 175860 && currentRun <= 178380) // IntLumi = 
+				itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
+				else if(currentRun >= 178420 && currentRun <= 179899) // IntLumi = 
+				itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9", currentRun);
+				else if(currentRun >= 179900 && currentRun <= 999999) // IntLumi = 
+				itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v10", currentRun);
+
+			}
+	   		else 
+	   		{
+				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_"), currentRun, iFile);
+				else itrigger = treeLoader.iTrigger (string ("HLT_"), currentRun, iFile);
+    
+  				if(itrigger == 9999)
+				{
+    			  		cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
+    			  		exit(1);
+				}
+				cout<<"Trigger bit nr : "<<itrigger<<endl;
+			}
 		} //end if diElectron
 	} //end previousRun != currentRun
 
@@ -690,6 +805,7 @@ int main (int argc, char *argv[])
 	 	scaleFactor *= lumiWeight3D;
 	}
 	histo1D["lumiWeights"]->Fill(scaleFactor);	
+	MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
 			
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////// Event selection ////////////////////////////////////////////////////////////////
@@ -711,6 +827,7 @@ int main (int argc, char *argv[])
 		
 	// Apply trigger selection
 	trigged = treeLoader.EventTrigged (itrigger);
+
 	if(!trigged)		   continue;
 	selecTableDiMu.Fill(d,2,scaleFactor);
 	selecTableTriMu.Fill(d,2,scaleFactor);
@@ -774,16 +891,16 @@ int main (int argc, char *argv[])
 	}
 
 	if(diMuon){
-		MSPlot["1stLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
-		MSPlot["2ndLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["1stLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedMuons_NoIso.size()>2)
-			MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[2]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[2]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 	}
 	else if(diElectron){
-		MSPlot["1stLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
-		MSPlot["2ndLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[1]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["1stLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedElectrons_NoIso.size()>2)
-			MSPlot["3rdLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[2]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["3rdLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[2]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 	}
 
 	MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
