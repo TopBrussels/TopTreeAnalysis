@@ -17,9 +17,12 @@ ROOTLIBS      = $(shell root-config --libs) -lMinuit -lMathMore -lMinuit2 -lRooF
 ROOTGLIBS     = $(shell root-config --glibs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
 
 # Linux with egcs
-DEFINES       = -DNO_ORCA_CLASSES -I.. -I./TMVA/include
+DEFINES       = -DNO_ORCA_CLASSES -I..
 CXX           = g++
-CXXFLAGS	= -O -Wall -fPIC $(DEFINES)
+CXXFLAGS	= -O -Wall -fPIC $(DEFINES)  -I./TMVA/include
+ifeq ($(UNAME), Darwin)
+CXXFLAGS        += -I/opt/local/include
+endif
 LD		= g++
 LDFLAGS		= -g -O -Wall -fPIC
 ifeq ($(UNAME), Darwin)
@@ -31,6 +34,9 @@ endif
 
 CXXFLAGS	+= $(ROOTCFLAGS)
 LIBS		= -I./TMVA/include -L./TMVA/lib $(ROOTLIBS) -lEG -I.. -L. -L../TopTreeProducer/src 
+ifeq ($(UNAME), Darwin)
+LIBS            += -I/opt/local/include
+endif
 GLIBS		= $(ROOTGLIBS)
 #------------------------------------------------------------------------------
 SOURCES         = $(wildcard Tools/src/*.cc StatProcedure/src/*.cc BkgEstimationMethods/src/*.cc  Selection/src/*.cc Reconstruction/src/*.cc MCInformation/src/*.cc tinyxml/*.cc KinFitter/src/*.cc JESMeasurement/src/*.cc WHelicities/src/*.cc TopFCNC/src/*.cc InclFourthGenSearch/src/*.cc StopSearchesBG/src/*.cc)
@@ -91,11 +97,8 @@ libBtagAnalysis42.$(DllSuf): $(OBJECTSBTAG) BtagDict.o
 
 ADDLIBS_MACROS = -lMLP -lTreePlayer -lXMLIO
 
-macros/Demo.exe: macros/Demo_binning.cc config/Datasets.cc $(HEADERS) libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
-	$(LD) -lTopTreeAna -lTopTreeAnaContent $(LIBS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
-
 macros/%.exe: macros/%.cc $(HEADERS) libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
-	$(LD) -lTopTreeAna42 -lBtagAnalysis42 -lTopTreeAnaContent42 $(LIBS) $(ADDLIBS_MACROS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
+	$(LD) -lTopTreeAna42 -lTopTreeAnaContent42 $(LIBS) $(ADDLIBS_MACROS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
 
 SOURCES_MACROS = $(wildcard macros/*.cc)
 
