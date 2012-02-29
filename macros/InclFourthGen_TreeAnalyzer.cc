@@ -185,15 +185,16 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string inputpostfixOld = "_23Feb2012"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+  string inputpostfixOld = "_28Feb2012"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_23Feb2012_NoBtag";// "InclFourthGenTrees_Fall11_Round4";
+  string Treespath = "InclFourthGenTrees_Fall11_28Feb2012";// "InclFourthGenTrees_Fall11_Round4";
   Treespath = Treespath + "/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
 	string outputpostfix = "";
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_DUMMY";
+	outputpostfix = outputpostfix+"_"+systematic;
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_28Feb2012";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -382,6 +383,17 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
+
+
+  //4 jets, no b-tag requirement yet
+  MSPlot["MS_MET_nobtag_4jets"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeptonPt_nobtag_4jets"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
+  MSPlot["MS_JetPt_all_SingleLepton_nobtag_4jets"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
+	//4 jets, with b-tag requirement
+  MSPlot["MS_MET_4jets"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeptonPt_4jets"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
+  MSPlot["MS_JetPt_all_SingleLepton_4jets"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
+
 	
 	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1200);
 	histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetXaxis()->SetTitle("HT (GeV)");
@@ -407,8 +419,8 @@ int main (int argc, char *argv[])
   /////////////////////////////////////////////////////////
   string xvariable = "HT", yvariable = "MTop"; //these are the two variables for which the 2D plane is made
   int nbinsxvariable = 6, nbinsyvariable = 12; //if the binning is already created, make sure these are the same as before!
-  string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W_TTbarJetsFlat"+channelpostfix+"_COUTTEST.root";
-  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat"+channelpostfix+"_COUTTEST.root";
+  string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W_TTbarJetsFlat"+channelpostfix+".root";
+  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat"+channelpostfix+".root";
   TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable);
   TwoDimTemplateTools HTvsMTop_2B_2W("2B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable); 
   if(doMVAjetcombination && !TrainMVA && useMassesAndResolutions) //Note: the boolean 'useMassesAndResolutions'is not needed when a Wmass file exists
@@ -702,15 +714,6 @@ int main (int argc, char *argv[])
       bool isTriElMuMu = myBranch_selectedEvents->SelectedMuMuEl();
       bool isTriElElMu = myBranch_selectedEvents->SelectedMuElEl();
 
-
-			if(isSSLepton && dataSetName=="Data"){
-				myfile << "SAME-SIGN EVENT\n";
-				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
-			
-			}else if(isTriLepton && dataSetName=="Data"){
-				myfile << "TRILEPTON EVENT\n";
-				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
-			}
       
 			
 			//https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFlavorHistory
@@ -739,16 +742,40 @@ int main (int argc, char *argv[])
 			  bTagValues = myBranch_selectedEvents->bTagTCHP();
 
 
+////something very strange going on...
+			//cout<<"isSingleLepton = "<<isSingleLepton<<", isSSLepton = "<<isSSLepton<<", isTriLepton = "<<isTriLepton<<endl;
+			if(!(isSingleLepton || isSSLepton || isTriLepton)){
+			 //cout<<"OSLepton? "<<endl;
+			 //cout<<"event: "<<myBranch_selectedEvents->eventID()<<endl;
+			 continue;
+			}
+			//cout<<"HERE1"<<endl;
+			
+      //if(isSSLepton) cout<<"event: "<<myBranch_selectedEvents->eventID()<<endl;
+			
+			
+
 			MSPlot["MS_nPV_nobtag"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 			if(isSingleLepton)
 			{			  
 				MSPlot["MS_MET_nobtag"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
-				if(semiElectron) MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-				if(semiMuon) MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-			
+				if(selectedJets.size()>=4) MSPlot["MS_MET_nobtag_4jets"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+				
+				if(semiElectron)
+				{
+					MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+				  if(selectedJets.size()>=4) MSPlot["MS_LeptonPt_nobtag_4jets"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);
+				}
+				if(semiMuon)
+				{
+					MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+			  	if(selectedJets.size()>=4) MSPlot["MS_LeptonPt_nobtag_4jets"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);
+				}
+				
 				for(unsigned int j=0;j<selectedJets.size();j++)
 				{
 				  MSPlot["MS_JetPt_all_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+					if(selectedJets.size()>=4) MSPlot["MS_JetPt_all_SingleLepton_nobtag_4jets"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 					if(bTagValues[j] > workingpointvalue)
 					  MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 					else
@@ -915,6 +942,15 @@ int main (int argc, char *argv[])
 						}
 					}
 				} //end loop over jets (~ b-tagging)
+				
+			if(isSSLepton && dataSetName=="Data"){
+				myfile << "SAME-SIGN EVENT\n";
+				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
+			
+			}else if(isTriLepton && dataSetName=="Data"){
+				myfile << "TRILEPTON EVENT\n";
+				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
+			}
 			
 			if(doPUreweighting) MSPlot["MS_nPV_beforePUreweighting"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor/lumiWeight3D);	
 			MSPlot["MS_nPV"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
@@ -922,12 +958,21 @@ int main (int argc, char *argv[])
 			if(isSingleLepton)
 			{			  
 				MSPlot["MS_MET"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+				if(selectedJets.size()>=4) MSPlot["MS_MET_4jets"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+				
 				if(semiElectron) MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+				
+				if(selectedJets.size()>=4)
+				{
+					if(semiElectron) MSPlot["MS_LeptonPt_4jets"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+					if(semiMuon) MSPlot["MS_LeptonPt_4jets"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);			
+				}			
 			
 				for(unsigned int j=0;j<selectedJets.size();j++)
 				{
 				  MSPlot["MS_JetPt_all_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+					if(selectedJets.size()>=4) MSPlot["MS_JetPt_all_SingleLepton_4jets"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 					if(bTagValues[j] > workingpointvalue)
 					  MSPlot["MS_JetPt_btagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 					else
@@ -1503,12 +1548,12 @@ int main (int argc, char *argv[])
     
     //Selection tables
     selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+inputpostfix+channelpostfix;
+    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+channelpostfix;
     selectiontableSemiLep = Outputpath+selectiontableSemiLep+outputpostfix+".tex"; 	
     selecTableSemiLep.Write(selectiontableSemiLep.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
     
 		selecTableMultiLep.TableCalculator(true, true, true, true, true, false, true, true);
-    string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+inputpostfix+channelpostfix;
+    string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+channelpostfix;
     selectiontableMultiLep = Outputpath+selectiontableMultiLep+outputpostfix+".tex"; 	
     selecTableMultiLep.Write(selectiontableMultiLep.c_str(),false, true, false, false, false, false, false);
 		
@@ -1710,7 +1755,6 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 	if(tagger=="TCHPM"){
 		if(jetpt>670) jetpt = 670;
 		if(fabs(jeteta)> 0.0 && fabs(jeteta)< 0.8){
-			if( syst == "Nominal" ) scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)));
 			if( syst == "misTagMinus" ){
 				scalefactor = ((1.12949+(-0.000678492*jetpt))+(2.02219e-06*(jetpt*jetpt)))+(-2.21675e-09*(jetpt*(jetpt*jetpt)));
 				if(fabs(jetpt - 670)<0.00001){
@@ -1725,9 +1769,10 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt))) + 2*uncertainty;
 				}
 			}
+			else scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)));
+
 		}
 		if(fabs(jeteta)> 0.8 && fabs(jeteta)< 1.6){
-			if( syst == "Nominal" )scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt)));
 			if( syst == "misTagMinus" ){
 				scalefactor = ((1.21289+(-0.00126411*jetpt))+(3.81676e-06*(jetpt*jetpt)))+(-3.75847e-09*(jetpt*(jetpt*jetpt)));
 				if(fabs(jetpt - 670)<0.00001){
@@ -1742,9 +1787,9 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt))) + 2*uncertainty;
 				}
 			}
+			else scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt)));
 		}
 		if(fabs(jeteta)> 1.6 && fabs(jeteta)< 2.4){
-			if( syst == "Nominal" )scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt)));
 			if( syst == "misTagMinus" ){
 				scalefactor = ((1.07572+(0.00055366*jetpt))+(-9.55796e-07*(jetpt*jetpt)))+(-3.73943e-11*(jetpt*(jetpt*jetpt)));
 				if(fabs(jetpt - 670)<0.00001){
@@ -1759,12 +1804,12 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt))) + 2*uncertainty;
 				}
 			}
+			else scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt)));
 		}	
 	}
 	if(tagger=="TCHEM"){
 		if(jetpt>670) jetpt = 670;
 		if(fabs(jeteta)> 0.0 && fabs(jeteta)< 0.8){
-			if( syst == "Nominal" ) scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))));
 			if( syst == "misTagMinus" ){
 				scalefactor = (1.11418*((1+(-0.000442274*jetpt))+(1.53463e-06*(jetpt*jetpt))))+(-4.93683e-09*(jetpt*(jetpt*(jetpt/(1+(0.00152436*jetpt))))));
 				if(fabs(jetpt - 670)<0.00001){
@@ -1779,9 +1824,10 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt)))))) + 2*uncertainty;
 				}
 			}
+			else scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))));
+
 		}
 		if(fabs(jeteta)> 0.8 && fabs(jeteta)< 1.6){
-			if( syst == "Nominal" )scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt))))));
 			if( syst == "misTagMinus" ){
 				scalefactor = (1.08828*((1+(-0.000208737*jetpt))+(1.50487e-07*(jetpt*jetpt))))+(-2.54249e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00141477*jetpt))))));
 				if(fabs(jetpt - 670)<0.00001){
@@ -1796,9 +1842,9 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt)))))) + 2*uncertainty;
 				}
 			}
+			else scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt))))));
 		}
 		if(fabs(jeteta)> 1.6 && fabs(jeteta)< 2.4){
-			if( syst == "Nominal" )scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt))))));
 			if( syst == "misTagMinus" ){
 				scalefactor = (0.958079*((1+(0.000327804*jetpt))+(-4.09511e-07*(jetpt*jetpt))))+(-1.95933e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00143323*jetpt))))));
 				if(fabs(jetpt - 670)<0.00001){
@@ -1813,6 +1859,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt)))))) + 2*uncertainty;
 				}
 			}
+			else scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt))))));
 		}
 	}
 	return scalefactor;
