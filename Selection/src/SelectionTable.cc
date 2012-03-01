@@ -357,7 +357,7 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_, bool writeMe
 	if(precision_ >= 0) fout << fixed << setprecision(precision_);
 	if(writeLandscape)fout<<"\\begin{landscape}"<<endl;
 	fout<<"\\begin{table}"<<endl;
-  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.})"<<endl;
+  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.)}"<<endl;
   	fout<<"\\label{tab:}"<<endl;
   	fout<<"\\centering"<<endl;
   	fout<<"\\begin{tabular}{|c|";
@@ -394,7 +394,7 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listT
 	if(precision_ >= 0) fout << fixed << setprecision(precision_);
 	if(writeLandscape)fout<<"\\begin{landscape}"<<endl;
 	fout<<"\\begin{table}"<<endl;
-  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.})"<<endl;
+  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.)}"<<endl;
   	fout<<"\\label{tab:}"<<endl;
   	fout<<"\\centering"<<endl;
   	fout<<"\\begin{tabular}{|c|";
@@ -432,7 +432,7 @@ void SelectionTable::WriteTable(ofstream& fout, float** listTable_,float** listT
 	if(precision_ >= 0) fout << fixed << setprecision(precision_);
 	if(writeLandscape)fout<<"\\begin{landscape}"<<endl;
 	fout<<"\\begin{table}"<<endl;
-  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.})"<<endl;
+  	fout<<"\\caption{Your caption must be on top for tables. ($"<<lumi_<<"~pb^{-1}$ of int. lumi.)}"<<endl;
   	fout<<"\\label{tab:}"<<endl;
   	fout<<"\\centering"<<endl;
   	fout<<"\\begin{tabular}{|c|";
