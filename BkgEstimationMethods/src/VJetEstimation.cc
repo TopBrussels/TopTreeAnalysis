@@ -1943,7 +1943,7 @@ void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t nje
 
 if(doToyMC){
 	mcstudy = new RooMCStudy(model,nbjets,Binned(kTRUE),Silence(),Extended(kTRUE),FitOptions(Save(0),Minos(1),Extended(1),Strategy(2),PrintEvalErrors(-1)));
-	mcstudy->generateAndFit(NbOfPE_,GetPredNtotal(btag_wp_idx,njets)) ;
+	mcstudy->generateAndFit(NbOfPE_,(int)GetPredNtotal(btag_wp_idx,njets)) ;
 	*data_mcstudy = mcstudy->fitParDataSet();
 
   // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
@@ -2154,7 +2154,7 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
 if(doToyMC){
 	mcstudy = new RooMCStudy(simPdf,RooArgList(nbjets,WPCat),Binned(kTRUE),Silence(),Extended(kTRUE),FitOptions(Save(0),Minos(1),Extended(1),Strategy(2),PrintEvalErrors(-1)));
 
-	mcstudy->generateAndFit(NbOfPE_,(Int_t)NbOfBtagWorkingPoint_*GetPredNtotal(0)) ;
+	mcstudy->generateAndFit(NbOfPE_,(int)NbOfBtagWorkingPoint_*GetPredNtotal(0)) ;
 	*data_mcstudy = mcstudy->fitParDataSet();
 
   // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
