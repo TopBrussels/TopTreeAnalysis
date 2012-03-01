@@ -58,12 +58,24 @@ SOURCESBTAG         = $(wildcard BtagEffAnalysis/src/*.cc Tools/src/MultiSampleP
 HEADERSBTAG         = $(wildcard BtagEffAnalysis/interface/*.h Tools/interface/MultiSamplePlot.h Content/interface/Dataset.h Tools/interface/PlottingTools.h)
 OBJECTSBTAG		= $(SOURCESBTAG:.$(SrcSuf)=.$(ObjSuf))
 
+# headers and sources for mtop analysis lib
+SOURCESMTOPDIC	= $(wildcard JESMeasurement/src/LightMonster.cc Content/src/Dataset.cc Content/src/AnalysisEnvironment.cc)
+HEADERSMTOPDIC	= $(wildcard JESMeasurement/interface/LightMonster.h Content/interface/Dataset.h Content/interface/AnalysisEnvironment.h)
+OBJECTSMTOPDIC	= $(SOURCESMTOPDIC:.$(SrcSuf)=.$(ObjSuf))
+
+SOURCESMTOP   = $(wildcard JESMeasurement/src/LightMonster.cc Tools/src/MultiSamplePlot.cc Content/src/Dataset.cc Tools/src/PlottingTools.cc Content/src/AnalysisEnvironment.cc MCInformation/src/*ReWeighting.cc MCInformation/src/ResolutionFit.cc)
+HEADERSMTOP   = $(wildcard JESMeasurement/interface/LightMonster.h Tools/interface/MultiSamplePlot.h Content/interface/Dataset.h Tools/interface/PlottingTools.h Content/interface/AnalysisEnvironment.h MCInformation/interface/*ReWeighting.h MCInformation/interface/ResolutionFit.h)
+OBJECTSMTOP		= $(SOURCESMTOP:.$(SrcSuf)=.$(ObjSuf))
+
 
 all:  libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
 	cp libTopTreeAna42.$(DllSuf) ~/lib/ ; cp libTopTreeAnaContent42.$(DllSuf) ~/lib/
 
 btag: libBtagAnalysis42.$(DllSuf)
 	cp libBtagAnalysis42.$(DllSuf) ~/lib/
+
+mtop: libMtopAnalysis42.$(DllSuf)
+	cp libMtopAnalysis42.$(DllSuf) ~/lib/
 
 clean:
 	@echo "Cleaning..."
@@ -94,6 +106,17 @@ BtagDict.$(SrcSuf): $(HEADERSBTAGDIC) ./BtagLinkDef.h
 libBtagAnalysis42.$(DllSuf): $(OBJECTSBTAG) BtagDict.o
 	@echo "Building libBtagAnalysis..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
+# specific stuff for mtop analysis ONLY
+
+MtopDict.$(SrcSuf): $(HEADERSMTOPDIC) ./MtopLinkDef.h
+	@echo "Generating dictionary MtopDict..."
+	@rootcint -f MtopDict.$(SrcSuf) -c $(DEFINES) $(HEADERSMTOPDIC) ./MtopLinkDef.h
+
+libMtopAnalysis42.$(DllSuf): $(OBJECTSMTOP) MtopDict.o
+	@echo "Building libMtopAnalysis..."
+	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+
 
 ADDLIBS_MACROS = -lMLP -lTreePlayer -lXMLIO
 
