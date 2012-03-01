@@ -320,6 +320,11 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
         xbins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
         xbins[1] = 170; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
   }
+	if(xvariable == "MassHadTop" || xvariable == "MTop")
+  {
+        xbins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
+        xbins[1] = 0; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
+  }
   
   xbins[xarraysize-1] = 2*xbins[xarraysize-2] - xbins[xarraysize-3]; //a choice: in this way the last bin will have equal width as the last but one bin 
 
@@ -389,6 +394,11 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
         ybins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
         ybins[1] = 0; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
     }
+		if(yvariable == "HT4jetsMuonMET" || yvariable == "HT")
+  	{
+        ybins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
+        ybins[1] = 170; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
+  	}
   
     ybins[yarraysize-1] = 2*ybins[yarraysize-2] - ybins[yarraysize-3]; //a choice: in this way the last bin will have equal width as the last but one bin 
 
