@@ -12,16 +12,7 @@ ResolutionFit::ResolutionFit(string label)
   nPtBins_ = 11;
   label_ = label;
   
-  vector<JetCorrectorParameters> vCorrParam;
-  JetCorrectorParameters *JetCorPar = 0, *JetCorPar2 = 0;
-
   if( label_.find("LightJet") == 0 ){
-    JetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L5Flavor_qT.txt");
-    JetCorPar2 = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L7Parton_qT.txt");
-    //  vCorrParam.push_back(*JetCorPar);
-    vCorrParam.push_back(*JetCorPar2);
-    jetCorr_ = new FactorizedJetCorrector(vCorrParam);
-    
     Float_t towerBinning[] = {0.0, 0.174, 0.348, 0.522, 0.696, 0.87, 1.044, 1.218, 1.392, 1.566, 1.74, 2.5};
     for(unsigned int i=0; i < nEtaBins_+1; i++)
       towerBinning_[i] = towerBinning[i];
@@ -30,12 +21,6 @@ ResolutionFit::ResolutionFit(string label)
       jetPtBinning_[i] = jetPtBinning[i];
   }
   else if( label_.find("BJet") == 0 ){
-    JetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L5Flavor_bT.txt");
-    JetCorPar2 = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L7Parton_bT.txt");
-    //  vCorrParam.push_back(*JetCorPar);
-    vCorrParam.push_back(*JetCorPar2);
-    jetCorr_ = new FactorizedJetCorrector(vCorrParam);
-    
     Float_t towerBinning[] = {0.0, 0.174, 0.348, 0.522, 0.696, 0.87, 1.044, 1.218, 1.392, 1.566, 1.74, 2.5};
     for(unsigned int i=0; i < nEtaBins_+1; i++)
       towerBinning_[i] = towerBinning[i];
@@ -154,8 +139,6 @@ ResolutionFit::ResolutionFit(const ResolutionFit &r)
   loadedResolutions_ = r.loadedResolutions_;
   calculatedResolutions_ = r.calculatedResolutions_;
   label_ = r.label_;
-  if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){jetCorr_ = r.jetCorr_;}
-  
   bPtEtRelMeanIncl_ = r.bPtEtRelMeanIncl_;
   
   for(unsigned int iEta=0; iEta<nEtaBins_; iEta++){
@@ -210,12 +193,8 @@ ResolutionFit::ResolutionFit(const ResolutionFit &r)
 
 ResolutionFit::~ResolutionFit()
 {
-  if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){ if(jetCorr_) delete jetCorr_; }
-  cout << 0 << endl;
   if(bPtEtRelMeanIncl_) delete bPtEtRelMeanIncl_;
-  cout << 1 << endl;
   if(bGraphRelMeanIncl_) delete bGraphRelMeanIncl_;
-  cout << 2 << endl;
   
   for(unsigned int iEta=0; iEta<nEtaBins_; iEta++){
     if(bPtEtSigma_[iEta]) delete bPtEtSigma_[iEta];
@@ -259,12 +238,10 @@ ResolutionFit::~ResolutionFit()
   }
 }
 
-void ResolutionFit::Fill(TLorentzVector *lorentzVector, TRootMCParticle *mcParticle)
+void ResolutionFit::Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle)
 {
   TLorentzVector tmpJet = *lorentzVector;
-  if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){ jetCorr_->setJetEta(tmpJet.Eta()); }
-  if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){ jetCorr_->setJetPt(tmpJet.Pt()); }
-  float correction = 1; //if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){ jetCorr_->getCorrection(); }
+  float correction = 1;
   if(loadedResolutions_)
     correction *= ( 1 - EtCorrection(&tmpJet) );
   tmpJet = correction * tmpJet;

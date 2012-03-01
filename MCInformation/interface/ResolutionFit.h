@@ -14,14 +14,8 @@
 #include "TLatex.h"
 
 #include "TopTreeAnalysis/Tools/interface/PlottingTools.h"
-#include "TopTreeAnalysis/Reconstruction/interface/FactorizedJetCorrector.h"
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
-
-#include "TopTreeProducer/interface/TRootJet.h"
-#include "TopTreeProducer/interface/TRootMCParticle.h"
 
 using namespace std;
-using namespace TopTree;
 
 // Calculation of the resolutions as done by Holger Enderle (slightly modified)
 // see: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/Bromo/TopAnalysis/TopUtils/bin/?pathrev=MAIN
@@ -33,7 +27,7 @@ class ResolutionFit {
     ResolutionFit(string label);
     ResolutionFit(const ResolutionFit &r);
     ~ResolutionFit();
-    void Fill(TLorentzVector *lorentzVector, TRootMCParticle *mcParticle);
+    void Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle);
     void CalculateResolutions();
     void WritePlots(TFile *fout, bool savePNG = false, string pathPNG = string(""));
     void WriteResolutions(string file);
@@ -48,8 +42,6 @@ class ResolutionFit {
   private:
     vector<double> ExtractSigmaMean(TH1* theHisto);
 
-    FactorizedJetCorrector *jetCorr_;
-    
     string label_;
     
     bool calculatedResolutions_;
