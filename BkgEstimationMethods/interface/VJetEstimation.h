@@ -77,7 +77,7 @@ class VJetEstimation : public TObject
  	/** Method used to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for all datasets. Needs also the estimated number of multijet events */
 //	void FillInputs(Double_t**** n);
  	/** Method used to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for all datasets.*/
-	void FillInputs(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t btagAlgo);
+	void Fill(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t btagAlgo, Double_t weight=1.);
  	/** Method to be used for each event to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for the dataset idx. */
 	void FillInputs(vector <vector< vector< vector <Double_t> > > > Inputs);
 	/** Method to be used to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for all datasets. */

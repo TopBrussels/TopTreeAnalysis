@@ -82,8 +82,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		// for different jet multiplicity
 
 			// estimation
-			hsNbjets_MC[i][j]          = 0;
-			hsNbjets_Est[i][j]         = 0;
+			hsNbjets_MC[i][j]          = NULL;
+			hsNbjets_Est[i][j]         = NULL;
 
 			//hNbjets_mc_[i][j]          = new TH1F*[3];
 			sprintf(name,"hNbjets_mc_VLike_%d_wp_%d_jets",i,Njets_[j]);
@@ -139,8 +139,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		}
 
 		// Estimation summary (inclusive)
-		hsNbjets_MC[i][NbOfBJetsBins_]         = 0;
-		hsNbjets_Est[i][NbOfBJetsBins_]        = 0;
+		hsNbjets_MC[i][NbOfJetsBins_]         = NULL;
+		hsNbjets_Est[i][NbOfJetsBins_]        = NULL;
 		//hNbjetsEstSummary[i][NbOfJetsBins_]    = new TH1F*[3];
 		sprintf(name ,"hNbjetsEstSummary_VLike_Inclusive_wp_%d",i);
 		sprintf(title,"V-like events estimation summary (inclusive, WP nr%d)",i);
@@ -174,8 +174,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		// for different b-jet multiplicity
 
 			// estimation
-			hsNjets_MC[i][j]          = 0;
-			hsNjets_Est[i][j]         = 0;
+			hsNjets_MC[i][j]          = NULL;
+			hsNjets_Est[i][j]         = NULL;
 			//hNjetsEstSummary[i][j]    = new TH1F*[3];
 			sprintf(name,"hNjetsEstSummary_VLike_%d_bjets_wp_%d",j,i);
 			sprintf(title,"V-like events estimation summary for %d b-jets (WP nr%d)",j,i);
@@ -206,8 +206,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		}
 
 		// Estimation summary (b-inclusive)
-		hsNjets_MC[i][NbOfBJetsBins_]          = 0;
-		hsNjets_Est[i][NbOfBJetsBins_]         = 0;
+		hsNjets_MC[i][NbOfBJetsBins_]          = NULL;
+		hsNjets_Est[i][NbOfBJetsBins_]         = NULL;
 		//hNjetsEstSummary[i][NbOfBJetsBins_]    = new TH1F*[3];
 		sprintf(name ,"hNjetsEstSummary_VLike_bInclusive_wp_%d",i);
 		sprintf(title,"V-like events estimation summary (b-inclusive, WP nr%d)",i);
@@ -552,8 +552,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		// for different jet multiplicity
 
 			// estimation
-			hsNbjets_MC[i][j]          = 0;
-			hsNbjets_Est[i][j]         = 0;
+			hsNbjets_MC[i][j]          = NULL;
+			hsNbjets_Est[i][j]         = NULL;
 
 			//hNbjets_mc_[i][j]          = new TH1F*[3];
 			sprintf(name,"hNbjets_mc_VLike_%d_wp_%d_jets",i,Njets_[j]);
@@ -608,8 +608,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 			tCanva_Nbjets_Summary[i][j] = new TCanvas(name,title,600,600);
 		}
 
-		hsNbjets_MC[i][NbOfJetsBins_]          = 0;
-		hsNbjets_Est[i][NbOfJetsBins_]         = 0;
+		hsNbjets_MC[i][NbOfJetsBins_]          = NULL;
+		hsNbjets_Est[i][NbOfJetsBins_]         = NULL;
 		// Estimation summary (inclusive)
 		//hNbjetsEstSummary[i][NbOfJetsBins_]    = new TH1F*[3];
 		sprintf(name ,"hNbjetsEstSummary_VLike_Inclusive_wp_%d",i);
@@ -644,8 +644,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		// for different b-jet multiplicity
 
 			// estimation
-			hsNjets_MC[i][j]          = 0;
-			hsNjets_Est[i][j]         = 0;
+			hsNjets_MC[i][j]          = NULL;
+			hsNjets_Est[i][j]         = NULL;
 			//hNjetsEstSummary[i][j]    = new TH1F*[3];
 			sprintf(name,"hNjetsEstSummary_VLike_%d_bjets_wp_%d",j,i);
 			sprintf(title,"V-like events estimation summary for %d b-jets (WP nr%d)",j,i);
@@ -676,8 +676,8 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		}
 
 		// Estimation summary (b-inclusive)
-		hsNjets_MC[i][NbOfBJetsBins_]          = 0;
-		hsNjets_Est[i][NbOfBJetsBins_]         = 0;
+		hsNjets_MC[i][NbOfBJetsBins_]          = NULL;
+		hsNjets_Est[i][NbOfBJetsBins_]         = NULL;
 		//hNjetsEstSummary[i][NbOfBJetsBins_]    = new TH1F*[3];
 		sprintf(name ,"hNjetsEstSummary_VLike_bInclusive_wp_%d",i);
 		sprintf(title,"V-like events estimation summary (b-inclusive, WP nr%d)",i);
@@ -977,27 +977,46 @@ VJetEstimation::~VJetEstimation(){
 
 		for(UInt_t j=0;j<NbOfJetsBins_;j++){
 			for(UInt_t k=0;k<3;k++){
+ printf("6.4[%d].1[%d].5[%d]\n", i,j,k);
 				delete hNbjetsEstSummary[i][j][k];
 				delete hNbjetsMCSummary[i][j][k];
 				delete hNbjets_mc_[i][j][k];
 				delete hNbjets_pdf_mc_[i][j][k];
 				delete hNbjets_pdf_est_[i][j][k];
 			}
+      printf("6.4[%d].1[%d]\n", i,j);
 			delete [] hNbjetsEstSummary[i][j];
 			delete [] hNbjetsMCSummary[i][j];
 			delete [] hNbjets_mc_[i][j];
 			delete [] hNbjets_pdf_mc_[i][j];
 			delete [] hNbjets_pdf_est_[i][j];
-			delete hsNbjets_MC[i][j];
-			delete hsNbjets_Est[i][j];
+      if (hsNbjets_MC[i][j] != NULL)
+			 delete hsNbjets_MC[i][j];
+      if (hsNbjets_Est[i][j] != NULL)
+			 delete hsNbjets_Est[i][j];
 			delete tCanva_Nbjets_Summary[i][j];
+
+      printf("6.4[%d].2[%d]\n", i,j);
+ //			delete hScanMin_Eb[i][j];
+ //			delete hScanMin_Eudsc[i][j];
+ //			delete hScanMin_Euds[i][j];
 		}
+    printf("6.5[%d]\n", i);
 		delete [] hNbjetsEstSummary[i][NbOfJetsBins_];
+    printf("6.5_1[%d]\n", i);
 		delete [] hNbjetsMCSummary[i][NbOfJetsBins_];
-		delete hsNbjets_MC[i][NbOfJetsBins_];
-		delete hsNbjets_Est[i][NbOfJetsBins_];
+    printf("6.5_2[%d]\n", i);
+    printf(" -> %lu\n", (unsigned long) hsNbjets_MC[i][NbOfJetsBins_]);
+    printf("6.5_22[%d]\n", i);
+    if (hsNbjets_MC[i][NbOfJetsBins_] != NULL)
+      delete hsNbjets_MC[i][NbOfJetsBins_];
+    printf("6.5_3[%d]\n", i);
+    if (hsNbjets_Est[i][NbOfJetsBins_] != NULL)
+		  delete hsNbjets_Est[i][NbOfJetsBins_];
+    printf("6.5_4[%d]\n", i);
 		delete tCanva_Nbjets_Summary[i][NbOfJetsBins_];
 
+ printf("6.6[%d]\n", i);
 		for(UInt_t j=0;j<NbOfBJetsBins_;j++){
 			for(UInt_t k=0;k<3;k++){
 				delete hNjetsEstSummary[i][j][k];
@@ -1005,14 +1024,18 @@ VJetEstimation::~VJetEstimation(){
 			}
 			delete [] hNjetsEstSummary[i][j];
 			delete [] hNjetsMCSummary[i][j];
-			delete hsNjets_MC[i][j];
-			delete hsNjets_Est[i][j];
+			if (hsNjets_MC[i][j] != NULL)
+				delete hsNjets_MC[i][j];
+      if (hsNjets_Est[i][j] != NULL)
+				delete hsNjets_Est[i][j];
 			delete tCanva_Njets_Summary[i][j];
 		}
 		delete [] hNjetsEstSummary[i][NbOfBJetsBins_];
 		delete [] hNjetsMCSummary[i][NbOfBJetsBins_];
-		delete hsNjets_MC[i][NbOfBJetsBins_];
-		delete hsNjets_Est[i][NbOfBJetsBins_];
+    if (hsNjets_MC[i][NbOfBJetsBins_] != NULL)
+			delete hsNjets_MC[i][NbOfBJetsBins_];
+    if (hsNjets_Est[i][NbOfBJetsBins_] != NULL)
+			delete hsNjets_Est[i][NbOfBJetsBins_];
 		delete tCanva_Njets_Summary[i][NbOfBJetsBins_];
 
 		delete [] hNbjetsEstSummary[i];
@@ -1029,7 +1052,14 @@ VJetEstimation::~VJetEstimation(){
 		delete [] tCanva_Nbjets_Summary[i];
 		delete [] tCanva_Njets_Summary[i];
 	}
+  printf("7\n");
 
+ //	for(int i=0;i<NbOfJetsBins_;i++){
+ //		delete hScanMin_Ntt[i];
+ //		delete hScanMin_Nv[i];
+ //		delete hScanMin_Nvb[i];
+ //	}
+  printf("8\n");
 	delete [] hNbjetsEstSummary;
 	delete [] hNbjetsMCSummary;
 	delete [] hNbjets_mc_;
@@ -1043,6 +1073,10 @@ VJetEstimation::~VJetEstimation(){
 	delete [] hsNjets_Est;
 	delete [] tCanva_Nbjets_Summary;
 	delete [] tCanva_Njets_Summary;
+ //	delete [] hScanMin_Eb;
+ //	delete [] hScanMin_Eudsc;
+ //	delete [] hScanMin_Euds;
+  printf("9\n");
 
 	delete [] eudsc_;
 	delete [] euds_;
@@ -1053,7 +1087,29 @@ VJetEstimation::~VJetEstimation(){
 	delete [] Nvb_;
 	delete [] Njets_;
 	delete [] MultiJet_Est_;
+  printf("10\n");
 
+ //	for(int i=0;i<NbOfBtagWorkingPoint_-1;i++){
+ //		for(int j=0;j<NbOfJetsBins_;j++){
+ //			for(int k=0;k<NbOfDatasets_;k++){
+ //				for(int l=0;l<NbOfBJetsBins_;l++){
+ //					for(int n=0;n<NbOfBJetsBins_;n++) cout<<condProb_[i][j][k][l][n]<<endl;
+ //					delete [] condProb_[i][j][k][l];
+ //					cout<<"Here I am : "<<i<<"/"<<j<<"/"<<k<<"/"<<l<<endl;
+ //				}
+ //				delete [] condProb_[i][j][k];
+ //				cout<<"Here I loop"<<endl;
+ //			}
+ //			delete [] condProb_[i][j];
+ //			cout<<"Here I loop again"<<endl;
+ //		}
+ //		delete [] condProb_[i];
+ //		cout<<"Here I loop again and again"<<endl;
+ //	}
+ //	delete [] condProb_;
+ //	cout<<"Here I should be"<<endl;
+
+  printf("11\n");
 	for(UInt_t i=0;i<NbOfDatasets_;i++){
 		for(UInt_t j=0;j<NbOfJetsBins_;j++){
 			delete hNbOfBGenJets_[i][j];
@@ -1082,6 +1138,7 @@ VJetEstimation::~VJetEstimation(){
 		delete hNbOfUDSGenJets_vs_JetPt_vs_JetEta_vs_Njets_[i];
 		delete hNbOfNonBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[i];
 	}
+  printf("12\n");
 	delete [] hNbOfBGenJets_;
 	delete [] hNbOfBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_;
 	delete [] hNbOfCGenBJets_vs_JetPt_vs_JetEta_vs_Njets_;
@@ -1095,6 +1152,32 @@ VJetEstimation::~VJetEstimation(){
 	delete [] hNbOfCGenJets_vs_JetPt_vs_JetEta_vs_Njets_;
 	delete [] hNbOfUDSGenJets_vs_JetPt_vs_JetEta_vs_Njets_;
 	delete [] hNbOfNonBGenJets_vs_JetPt_vs_JetEta_vs_Njets_;
+  printf("13\n");
+
+ //	for(int i=0;i<NbOfBtagWorkingPoint_;i++){
+ //		for(int j=0;j<NbOfJetsBins_+1;j++){
+ //			delete [] NvVar_[i][j];
+ //			delete [] NvBias_[i][j];
+ //			delete [] NvbVar_[i][j];
+ //			delete [] NvbBias_[i][j];
+ //			delete [] NttVar_[i][j];
+ //			delete [] NttBias_[i][j];
+ //		}
+ //		delete [] NvVar_[i];
+ //		delete [] NvBias_[i];
+ //		delete [] NvbVar_[i];
+ //		delete [] NvbBias_[i];
+ //		delete [] NttVar_[i];
+ //		delete [] NttBias_[i];
+ //	}
+  printf("14\n");
+ //	delete [] NvVar_;
+ //	delete [] NvBias_;
+ //	delete [] NvbVar_;
+ //	delete [] NvbBias_;
+ //	delete [] NttVar_;
+ //	delete [] NttBias_;
+  printf("15\n");
 
 	if(RescaledTTLikeEstimation) delete RescaledTTLikeEstimation;
 	if(RescaledVLikeEstimation)  delete RescaledVLikeEstimation;
@@ -1102,6 +1185,7 @@ VJetEstimation::~VJetEstimation(){
 	if(tCanva_RescaledTTLikeEstimation) delete tCanva_RescaledTTLikeEstimation;
 	if(tCanva_RescaledVLikeEstimation)  delete tCanva_RescaledVLikeEstimation;
 	if(tCanva_RescaledVbLikeEstimation) delete tCanva_RescaledVbLikeEstimation;
+  printf("16\n");
 */
 }
 
@@ -1139,10 +1223,17 @@ void VJetEstimation::FillInputs(Double_t**** n){
 }
 */
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::FillInputs(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t btagAlgo){
+void VJetEstimation::Fill(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t btagAlgo, Double_t weight){
 	Double_t btagDisc = 0;
 	
-	UInt_t nbofjetsIdx  = ((SelectedJets.size()-Njets_[0])<(NbOfJetsBins_-1) ? (SelectedJets.size()-Njets_[0]) : (NbOfJetsBins_-1));
+    //<<<<<<< VJetEstimation.cc
+    //	unsigned int nbofjetsIdx  = ((SelectedJets.size()-Njets_[0])<(unsigned int)(NbOfJetsBins_-1) ? (SelectedJets.size()-Njets_[0]) : (NbOfJetsBins_-1));
+  if (SelectedJets.size()<Njets_[0])
+    return;
+  UInt_t nbofjetsIdx  = (UInt_t) (NbOfJetsBins_-1);
+  if ((((UInt_t) SelectedJets.size())-(Njets_[0]))<((UInt_t)(NbOfJetsBins_-1)))
+    nbofjetsIdx = (UInt_t) (((Int_t)SelectedJets.size())-Njets_[0]) ;
+    //=======
 	
 	UInt_t nbofbjetsIdx[NbOfBtagWorkingPoint_];
 	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) nbofbjetsIdx[i]=0;
@@ -1165,25 +1256,32 @@ void VJetEstimation::FillInputs(vector<TRootJet*> &SelectedJets, UInt_t idx, Int
 
 		if(fabs(SelectedJets[i]->partonFlavour()) > 6) continue;
 
-		if(fabs(SelectedJets[i]->partonFlavour()) == 5)	     hNbOfBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
-		else if(fabs(SelectedJets[i]->partonFlavour()) == 4) hNbOfCGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
-		else                                                 hNbOfUDSGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
+		if(fabs(SelectedJets[i]->partonFlavour()) == 5)	     hNbOfBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
+		else if(fabs(SelectedJets[i]->partonFlavour()) == 4) hNbOfCGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
+		else                                                 hNbOfUDSGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
 
-		if(fabs(SelectedJets[i]->partonFlavour()) != 5)	     hNbOfNonBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
+		if(fabs(SelectedJets[i]->partonFlavour()) != 5)	     hNbOfNonBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
 		else SelectedBGenJets.push_back(SelectedJets[i]);
 
 		for(UInt_t j=0;j<NbOfBtagWorkingPoint_;j++){
 			if(btagDisc>BtagWorkingPoint_[j]){
-				if(fabs(SelectedJets[i]->partonFlavour()) == 5)      hNbOfBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
-				else if(fabs(SelectedJets[i]->partonFlavour()) == 4) hNbOfCGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
-				else                                                 hNbOfUDSGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
+				if(fabs(SelectedJets[i]->partonFlavour()) == 5)      hNbOfBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
+				else if(fabs(SelectedJets[i]->partonFlavour()) == 4) hNbOfCGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
+				else                                                 hNbOfUDSGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
 
-				if(fabs(SelectedJets[i]->partonFlavour()) != 5)      hNbOfNonBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx]);
+				if(fabs(SelectedJets[i]->partonFlavour()) != 5)      hNbOfNonBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][j]->Fill(SelectedJets[i]->Pt(),fabs(SelectedJets[i]->Eta()),Njets_[nbofjetsIdx], weight);
 			}
 	        }
 	}
-	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) N_[i][nbofjetsIdx][(nbofbjetsIdx[i]<NbOfBJetsBins_ ? nbofbjetsIdx[i] : NbOfBJetsBins_-1)][idx]++;
-	hNbOfBGenJets_[idx][nbofjetsIdx]->Fill(SelectedBGenJets.size());
+ /* if (idx == 1)
+  printf("idx : %d ; njets : %lu/%d (%lu b's) ; weight : %lf --> N_tot = %lf\n", idx, SelectedJets.size(), nbofjetsIdx+NbOfJetsBins_, SelectedBGenJets.size(), weight, N_[0][nbofjetsIdx][(nbofbjetsIdx[0]<NbOfBJetsBins_ ? nbofbjetsIdx[0] : NbOfBJetsBins_-1)][idx]); */
+  for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {
+    N_[i][nbofjetsIdx][(nbofbjetsIdx[i]<NbOfBJetsBins_ ? nbofbjetsIdx[i] : NbOfBJetsBins_-1)][idx] += weight;
+      //    Nbjets_[i][nbofjetsIdx][(nbofbjetsIdx[i]<NbOfBJetsBins_ ? nbofbjetsIdx[i] : NbOfBJetsBins_-1)] += weight ;
+  }
+    //	for(UInt_t i=0;i<NbOfBtagWorkingPoint_-1;i++) condProb_[i][nbofjetsIdx][idx][(nbofbjetsIdx[i+1]<NbOfBJetsBins_ ? nbofbjetsIdx[i+1] : NbOfBJetsBins_-1)][(nbofbjetsIdx[i]<NbOfBJetsBins_ ? nbofbjetsIdx[i] : NbOfBJetsBins_-1)] += weight;
+
+	hNbOfBGenJets_[idx][nbofjetsIdx]->Fill(SelectedBGenJets.size(), weight);
 
 }
 
@@ -1458,7 +1556,14 @@ void VJetEstimation::ComputeEffFromMC(){
 			misTagEff_vs_Njets_Vlike_[j]->GetPoint(k,x,euds_mc_[j][k]);
 			euds_err_mc_[j][k] = misTagEff_vs_Njets_Vlike_[j]->GetErrorY(k);
 		}
+    pColl_bTagEff->Clear();
+    pColl_misTagEff_TTlike->Clear();
+    pColl_misTagEff_Vlike->Clear();
 	}
+  pColl_bTagEff->Delete();
+  pColl_misTagEff_TTlike->Delete();
+  pColl_misTagEff_Vlike->Delete();
+  
 }
 
 /**________________________________________________________________________________________________________________*/
@@ -2207,7 +2312,7 @@ void VJetEstimation::PrintResults(){
 	cout<<"Estimated/Predicted eb	 : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEb(i)   <<" +/- "<<GetEstEbErr(i)	<<" / "<<GetPredEb(i)   <<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted eudsc : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEudsc(i)<<" +/- "<<GetEstEudscErr(i)	<<" / "<<GetPredEudsc(i)<<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted euds  : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEuds(i) <<" +/- "<<GetEstEudsErr(i)	<<" / "<<GetPredEuds(i) <<" || ";} cout<<endl;
-	cout<<setprecision(1);
+	cout<<setprecision(5);
 	cout<<"Estimated Ntt-like : "<<GetEstNtt(0)<<" / Predicted value from MC : "<< GetPredNtt(0)<<endl;
 	cout<<"- 0 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i,-1,0)<<" +/- "<<GetEstNttErr(i,-1,0)<<" / "<< GetPredNtt(i,-1,0)<<" +/- "<<GetPredNttErr(i,-1,0) <<" || ";} cout<<endl;
 	cout<<"- 1 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i,-1,1)<<" +/- "<<GetEstNttErr(i,-1,1)<<" / "<< GetPredNtt(i,-1,1)<<" +/- "<<GetPredNttErr(i,-1,1) <<" || ";} cout<<endl;
@@ -2232,37 +2337,37 @@ for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {
 	ofile<<"Btag working point : "<<BtagWorkingPoint_[i]<<endl;
         ofile<<"\\begin{table}"<<endl;
         ofile<<"	\\centering"<<endl;
-        ofile<<"		\\begin{tabular}{l|";for(UInt_t j=0;j<NbOfJetsBins_+1;j++){ofile<<"c";};ofile<<"}"<<endl;
+        ofile<<"		\\begin{supertabular}{l|";for(UInt_t j=0;j<NbOfJetsBins_+1;j++){ofile<<"c";};ofile<<"}"<<endl;
         ofile<<"			\\hline"<<endl;
         ofile<<" \\multicolumn{"<<NbOfJetsBins_+1<<"}{l}{Estimation / Monte Carlo prediction : }\\\\"<<endl;
         ofile<<"			      &";for(UInt_t j=0;j<NbOfJetsBins_;j++){ofile<<"$"<<Njets_[j]<<"$ jets & ";}ofile<<"Inclusive \\\\"<<endl;
         ofile<<"\\hline"<<endl;
-        ofile<<" $\\epsilon_b$                &$"<<setprecision(3);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEb(   i,j)<<"\\pm"<<GetEstEbErr(   i,j)<<" $/$ "<<GetPredEb(   i,j)<<"\\pm"<<GetPredEbErr(   i,j)<<"$&$";}ofile<<GetEstEb(    i)<<"\\pm"<<GetEstEbErr(   i)<<"$/$"<<GetPredEb(   i)<<"\\pm"<<GetPredEbErr(   i)<<"$ \\\\"<<endl;
-        ofile<<" $\\epsilon_{eudsc}$          &$"<<setprecision(4);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEudsc(i,j)<<"\\pm"<<GetEstEudscErr(i,j)<<" $/$ "<<GetPredEudsc(i,j)<<"\\pm"<<GetPredEudscErr(i,j)<<"$&$";}ofile<<GetEstEudsc( i)<<"\\pm"<<GetEstEudscErr(i)<<"$/$"<<GetPredEudsc(i)<<"\\pm"<<GetPredEudscErr(i)<<"$ \\\\"<<endl;
-        ofile<<" $\\epsilon_{euds} $          &$"<<setprecision(4);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEuds( i,j)<<"\\pm"<<GetEstEudsErr( i,j)<<" $/$ "<<GetPredEuds( i,j)<<"\\pm"<<GetPredEudsErr( i,j)<<"$&$";}ofile<<GetEstEuds(  i)<<"\\pm"<<GetEstEudsErr( i)<<"$/$"<<GetPredEuds( i)<<"\\pm"<<GetPredEudsErr( i)<<"$ \\\\"<<endl;
-	cout.precision(1);        
+        ofile<<" $\\epsilon_b$                &$"<<setprecision(4);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEb(   i,j)<<" \\pm "<<GetEstEbErr(   i,j)<<" $/$ "<<GetPredEb(   i,j)<<" \\pm "<<GetPredEbErr(   i,j)<<"$&$";}ofile<<GetEstEb(    i)<<" \\pm "<<GetEstEbErr(   i)<<"$/$"<<GetPredEb(   i)<<" \\pm "<<GetPredEbErr(   i)<<"$ \\\\"<<endl;
+        ofile<<" $\\epsilon_{eudsc}$          &$"<<setprecision(4);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEudsc(i,j)<<"\\pm "<<GetEstEudscErr(i,j)<<" $/$ "<<GetPredEudsc(i,j)<<" \\pm "<<GetPredEudscErr(i,j)<<"$&$";}ofile<<GetEstEudsc( i)<<" \\pm "<<GetEstEudscErr(i)<<"$/$"<<GetPredEudsc(i)<<" \\pm "<<GetPredEudscErr(i)<<"$ \\\\"<<endl;
+        ofile<<" $\\epsilon_{euds} $          &$"<<setprecision(4);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEuds( i,j)<<"\\pm "<<GetEstEudsErr( i,j)<<" $/$ "<<GetPredEuds( i,j)<<" \\pm "<<GetPredEudsErr( i,j)<<"$&$";}ofile<<GetEstEuds(  i)<<" \\pm "<<GetEstEudsErr( i)<<"$/$"<<GetPredEuds( i)<<" \\pm "<<GetPredEudsErr( i)<<"$ \\\\"<<endl;
+	cout.precision(5);        
 	ofile<<"\\hline"<<endl;
         ofile<<" \\multicolumn{"<<NbOfJetsBins_+1<<"}{l}{$t\\bar{t}+jets$ and single top : }\\\\"<<endl;
         ofile<<"\\hline"<<endl;
-        ofile<<" $0$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,0)<<"\\pm"<<GetEstNttErr(i,j,0)<<" $/$ "<<GetPredNtt(i,j,0)<<"\\pm"<<GetPredNttErr(i,j,0) <<"$&$";}ofile<<GetEstNtt(i,-1,0)<<"\\pm"<<GetEstNttErr(i,-1,0)<<" $/$ "<<GetPredNtt(i,-1,0)<<"\\pm"<<GetPredNttErr(i,-1,0)<<"$ \\\\"<<endl;
-        ofile<<" $1$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,1)<<"\\pm"<<GetEstNttErr(i,j,1)<<" $/$ "<<GetPredNtt(i,j,1)<<"\\pm"<<GetPredNttErr(i,j,1) <<"$&$";}ofile<<GetEstNtt(i,-1,1)<<"\\pm"<<GetEstNttErr(i,-1,1)<<" $/$ "<<GetPredNtt(i,-1,1)<<"\\pm"<<GetPredNttErr(i,-1,1)<<"$ \\\\"<<endl;
-        ofile<<" $2$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,2)<<"\\pm"<<GetEstNttErr(i,j,2)<<" $/$ "<<GetPredNtt(i,j,2)<<"\\pm"<<GetPredNttErr(i,j,2) <<"$&$";}ofile<<GetEstNtt(i,-1,2)<<"\\pm"<<GetEstNttErr(i,-1,2)<<" $/$ "<<GetPredNtt(i,-1,2)<<"\\pm"<<GetPredNttErr(i,-1,2)<<"$ \\\\"<<endl;
-        ofile<<" $3$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,3)<<"\\pm"<<GetEstNttErr(i,j,3)<<" $/$ "<<GetPredNtt(i,j,3)<<"\\pm"<<GetPredNttErr(i,j,3) <<"$&$";}ofile<<GetEstNtt(i,-1,3)<<"\\pm"<<GetEstNttErr(i,-1,3)<<" $/$ "<<GetPredNtt(i,-1,3)<<"\\pm"<<GetPredNttErr(i,-1,3)<<"$ \\\\"<<endl;
+        ofile<<" $0$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,0)<<" \\pm "<<GetEstNttErr(i,j,0)<<" $/$ "<<GetPredNtt(i,j,0)<<" \\pm "<<GetPredNttErr(i,j,0) <<"$&$";}ofile<<GetEstNtt(i,-1,0)<<" \\pm "<<GetEstNttErr(i,-1,0)<<" $/$ "<<GetPredNtt(i,-1,0)<<" \\pm "<<GetPredNttErr(i,-1,0)<<"$ \\\\"<<endl;
+        ofile<<" $1$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,1)<<" \\pm "<<GetEstNttErr(i,j,1)<<" $/$ "<<GetPredNtt(i,j,1)<<" \\pm "<<GetPredNttErr(i,j,1) <<"$&$";}ofile<<GetEstNtt(i,-1,1)<<" \\pm "<<GetEstNttErr(i,-1,1)<<" $/$ "<<GetPredNtt(i,-1,1)<<" \\pm "<<GetPredNttErr(i,-1,1)<<"$ \\\\"<<endl;
+        ofile<<" $2$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,2)<<" \\pm "<<GetEstNttErr(i,j,2)<<" $/$ "<<GetPredNtt(i,j,2)<<" \\pm "<<GetPredNttErr(i,j,2) <<"$&$";}ofile<<GetEstNtt(i,-1,2)<<" \\pm "<<GetEstNttErr(i,-1,2)<<" $/$ "<<GetPredNtt(i,-1,2)<<" \\pm "<<GetPredNttErr(i,-1,2)<<"$ \\\\"<<endl;
+        ofile<<" $3$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j,3)<<" \\pm "<<GetEstNttErr(i,j,3)<<" $/$ "<<GetPredNtt(i,j,3)<<" \\pm "<<GetPredNttErr(i,j,3) <<"$&$";}ofile<<GetEstNtt(i,-1,3)<<" \\pm "<<GetEstNttErr(i,-1,3)<<" $/$ "<<GetPredNtt(i,-1,3)<<" \\pm "<<GetPredNttErr(i,-1,3)<<"$ \\\\"<<endl;
         ofile<<"\\hline"<<endl;
-        ofile<<" Inclusive                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j)  <<"\\pm"<<GetEstNttErr(i,j)  <<" $/$ "<<GetPredNtt(i,j)  <<"\\pm"<<GetPredNttErr(i,j)   <<"$&$";}ofile<<GetEstNtt(i)     <<"\\pm"<<GetEstNttErr(i)     <<" $/$ "<<GetPredNtt(i)     <<"\\pm"<<GetPredNttErr(i)<<"$ \\\\"<<endl;
+        ofile<<" Inclusive                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNtt(i,j)  <<" \\pm "<<GetEstNttErr(i,j)  <<" $/$ "<<GetPredNtt(i,j)  <<" \\pm "<<GetPredNttErr(i,j)   <<"$&$";}ofile<<GetEstNtt(i)     <<" \\pm "<<GetEstNttErr(i)     <<" $/$ "<<GetPredNtt(i)     <<" \\pm "<<GetPredNttErr(i)<<"$ \\\\"<<endl;
         ofile<<"\\hline"<<endl;
         ofile<<"\\hline"<<endl;
         ofile<<" \\multicolumn{"<<NbOfJetsBins_+1<<"}{l}{Multijet and $W/Z+jets$ : }\\\\"<<endl;
         ofile<<"\\hline"<<endl;
-        ofile<<" $0$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,0)<<"\\pm"<<GetEstNvErr(i,j,0)<<" $/$ "<<GetPredNv(i,j,0)<<"\\pm"<<GetPredNvErr(i,j,0) <<"$&$";}ofile<<GetEstNv(i,-1,0)<<"\\pm"<<GetEstNvErr(i,-1,0)<<" $/$ "<<GetPredNv(i,-1,0)<<"\\pm"<<GetPredNvErr(i,-1,0)<<"$ \\\\"<<endl;
-        ofile<<" $1$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,1)<<"\\pm"<<GetEstNvErr(i,j,1)<<" $/$ "<<GetPredNv(i,j,1)<<"\\pm"<<GetPredNvErr(i,j,1) <<"$&$";}ofile<<GetEstNv(i,-1,1)<<"\\pm"<<GetEstNvErr(i,-1,1)<<" $/$ "<<GetPredNv(i,-1,1)<<"\\pm"<<GetPredNvErr(i,-1,1)<<"$ \\\\"<<endl;
-        ofile<<" $2$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,2)<<"\\pm"<<GetEstNvErr(i,j,2)<<" $/$ "<<GetPredNv(i,j,2)<<"\\pm"<<GetPredNvErr(i,j,2) <<"$&$";}ofile<<GetEstNv(i,-1,2)<<"\\pm"<<GetEstNvErr(i,-1,2)<<" $/$ "<<GetPredNv(i,-1,2)<<"\\pm"<<GetPredNvErr(i,-1,2)<<"$ \\\\"<<endl;
-        ofile<<" $3$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,3)<<"\\pm"<<GetEstNvErr(i,j,3)<<" $/$ "<<GetPredNv(i,j,3)<<"\\pm"<<GetPredNvErr(i,j,3) <<"$&$";}ofile<<GetEstNv(i,-1,3)<<"\\pm"<<GetEstNvErr(i,-1,3)<<" $/$ "<<GetPredNv(i,-1,3)<<"\\pm"<<GetPredNvErr(i,-1,3)<<"$ \\\\"<<endl;
+        ofile<<" $0$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,0)<<" \\pm "<<GetEstNvErr(i,j,0)<<" $/$ "<<GetPredNv(i,j,0)<<" \\pm "<<GetPredNvErr(i,j,0) <<"$&$";}ofile<<GetEstNv(i,-1,0)<<" \\pm "<<GetEstNvErr(i,-1,0)<<" $/$ "<<GetPredNv(i,-1,0)<<" \\pm "<<GetPredNvErr(i,-1,0)<<"$ \\\\"<<endl;
+        ofile<<" $1$ b-jet                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,1)<<" \\pm "<<GetEstNvErr(i,j,1)<<" $/$ "<<GetPredNv(i,j,1)<<" \\pm "<<GetPredNvErr(i,j,1) <<"$&$";}ofile<<GetEstNv(i,-1,1)<<" \\pm "<<GetEstNvErr(i,-1,1)<<" $/$ "<<GetPredNv(i,-1,1)<<" \\pm "<<GetPredNvErr(i,-1,1)<<"$ \\\\"<<endl;
+        ofile<<" $2$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,2)<<" \\pm "<<GetEstNvErr(i,j,2)<<" $/$ "<<GetPredNv(i,j,2)<<" \\pm "<<GetPredNvErr(i,j,2) <<"$&$";}ofile<<GetEstNv(i,-1,2)<<" \\pm "<<GetEstNvErr(i,-1,2)<<" $/$ "<<GetPredNv(i,-1,2)<<" \\pm "<<GetPredNvErr(i,-1,2)<<"$ \\\\"<<endl;
+        ofile<<" $3$ b-jets                   &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j,3)<<" \\pm "<<GetEstNvErr(i,j,3)<<" $/$ "<<GetPredNv(i,j,3)<<" \\pm "<<GetPredNvErr(i,j,3) <<"$&$";}ofile<<GetEstNv(i,-1,3)<<" \\pm "<<GetEstNvErr(i,-1,3)<<" $/$ "<<GetPredNv(i,-1,3)<<" \\pm "<<GetPredNvErr(i,-1,3)<<"$ \\\\"<<endl;
         ofile<<"\\hline"<<endl;
-        ofile<<" Inclusive                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j)  <<"\\pm"<<GetEstNvErr(i,j)  <<" $/$ "<<GetPredNv(i,j)  <<"\\pm"<<GetPredNvErr(i,j)   <<"$&$";}ofile<<GetEstNv(i)     <<"\\pm"<<GetEstNvErr(i)     <<" $/$ "<<GetPredNv(i)     <<"\\pm"<<GetPredNvErr(i)<<"$ \\\\"<<endl;
+        ofile<<" Inclusive                    &$";for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstNv(i,j)  <<" \\pm "<<GetEstNvErr(i,j)  <<" $/$ "<<GetPredNv(i,j)  <<" \\pm "<<GetPredNvErr(i,j)   <<"$&$";}ofile<<GetEstNv(i)     <<" \\pm "<<GetEstNvErr(i)     <<" $/$ "<<GetPredNv(i)     <<" \\pm "<<GetPredNvErr(i)<<"$ \\\\"<<endl;
         ofile<<"\\hline"<<endl;
         ofile<<"\\hline"<<endl;
-        ofile<<"		\\end{tabular}"<<endl;
+        ofile<<"		\\end{supertabular}"<<endl;
         ofile<<"	\\caption{}"<<endl;
         ofile<<"	\\label{tab:}"<<endl;
         ofile<<"\\end{table}"<<endl;
@@ -3089,13 +3194,14 @@ void VJetEstimation::PrintInputs(UInt_t njets){
 		cout<<"For tt-like datasets : "<<endl;
 		for(UInt_t k=0;k<iDatasetsTTLike_.size();k++){
 			if(N_[i][njets][0][iDatasetsTTLike_[k]]==0 && N_[i][njets][0][iDatasetsTTLike_[k]]==N_[i][njets][1][iDatasetsTTLike_[k]] && N_[i][njets][0][iDatasetsTTLike_[k]]==N_[i][njets][2][iDatasetsTTLike_[k]] && N_[i][njets][0][iDatasetsTTLike_[k]]==N_[i][njets][3][iDatasetsTTLike_[k]]) continue;
-			cout<<"Dataset "<<k+1<<" : N (0/1/2/3 jets) = "<<GetPredN(iDatasetsTTLike_[k],njets)<<" ("<<N_[i][njets][0][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][1][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][2][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][3][iDatasetsTTLike_[k]]<<endl;
+/*			cout<<"Dataset "<<k+1<<" : N (0/1/2/3 jets) = "<<GetPredN(iDatasetsTTLike_[k],njets)<<" ("<<N_[i][njets][0][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][1][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][2][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][3][iDatasetsTTLike_[k]]<<")"<<endl; */
+      printf("Dataset %d : N (0/1/2/3 jets) = %5lg (%5lg/%5lg/%5lg/%5lg)\n", k+1, GetPredN(iDatasetsTTLike_[k],njets), N_[i][njets][0][iDatasetsTTLike_[k]], N_[i][njets][1][iDatasetsTTLike_[k]], N_[i][njets][2][iDatasetsTTLike_[k]], N_[i][njets][3][iDatasetsTTLike_[k]]);
 		}
 		cout<<"Total number : N (0/1/2/3 jets) = "<<GetPredNtt(i,njets)<<" ("<<GetPredNtt(i,njets,0)<<"/"<<GetPredNtt(i,njets,1)<<"/"<<GetPredNtt(i,njets,2)<<"/"<<GetPredNtt(i,njets,3)<<")"<<endl;
 		cout<<"For V-like datasets : "<<endl;
 		for(UInt_t k=0;k<iDatasetsVLike_.size();k++){
 			if(N_[i][njets][0][iDatasetsVLike_[k]]==0 && N_[i][njets][0][iDatasetsVLike_[k]]==N_[i][njets][1][iDatasetsVLike_[k]] && N_[i][njets][0][iDatasetsVLike_[k]]==N_[i][njets][2][iDatasetsVLike_[k]] && N_[i][njets][0][iDatasetsVLike_[k]]==N_[i][njets][3][iDatasetsVLike_[k]]) continue;
-			cout<<"Dataset "<<k+1<<" : N (0/1/2/3 jets) = "<<GetPredN(iDatasetsVLike_[k],njets)<<" ("<<N_[i][njets][0][iDatasetsVLike_[k]]<<"/"<<N_[i][njets][1][iDatasetsVLike_[k]]<<"/"<<N_[i][njets][2][iDatasetsVLike_[k]]<<"/"<<N_[i][njets][3][iDatasetsVLike_[k]]<<endl;
+			printf("Dataset %d : N (0/1/2/3 jets) = %lg (%lg/%lg/%lg/%lg)\n", k+1, GetPredN(iDatasetsVLike_[k],njets), N_[i][njets][0][iDatasetsVLike_[k]], N_[i][njets][1][iDatasetsVLike_[k]], N_[i][njets][2][iDatasetsVLike_[k]], N_[i][njets][3][iDatasetsVLike_[k]]);
 		}
 		cout<<"Total number : N (0/1/2/3 jets) = "<<GetPredNv(i,njets)<<" ("<<GetPredNv(i,njets,0)<<"/"<<GetPredNv(i,njets,1)<<"/"<<GetPredNv(i,njets,2)<<"/"<<GetPredNv(i,njets,3)<<")"<<endl;
 	}
@@ -3109,7 +3215,7 @@ void VJetEstimation::PrintResults(UInt_t njets){
 	cout<<"Estimated/Predicted eb	 : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEb(i,njets)	<<" +/- "<<GetEstEbErr(i,njets)		<<" // "<<GetPredEb(i,njets)   <<" +/- "<<GetPredEbErr(i,njets)<<" || ";}    cout<<endl;
 	cout<<"Estimated/Predicted eudsc : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEudsc(i,njets)<<" +/- "<<GetEstEudscErr(i,njets)	<<" // "<<GetPredEudsc(i,njets)<<" +/- "<<GetPredEudscErr(i,njets)<<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted euds  : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEuds(i,njets) <<" +/- "<<GetEstEudsErr(i,njets)	<<" // "<<GetPredEuds(i,njets) <<" +/- "<<GetPredEudsErr(i,njets)<<" || ";}  cout<<endl;
-	cout<<setprecision(1);
+	cout<<setprecision(5);
 	cout<<"Estimated Ntt-like : ";cout<<GetEstNtt(0,njets)<<" +/- "<<GetEstNttErr(0,njets)<<" / Predicted value from MC : "<<GetPredNtt(0,njets)<<"	+/- "<<GetPredNttErr(0,njets)<<endl;
 	cout<<"- 0 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i, njets, 0)<<" +/- "<<GetEstNttErr(i,njets,0)<<" // "<< GetPredNtt(i, njets, 0)<<" +/- "<<GetPredNttErr(i,njets,0)<<" || ";} cout<<endl;
 	cout<<"- 1 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i, njets, 1)<<" +/- "<<GetEstNttErr(i,njets,1)<<" // "<< GetPredNtt(i, njets, 1)<<" +/- "<<GetPredNttErr(i,njets,1)<<" || ";} cout<<endl;
