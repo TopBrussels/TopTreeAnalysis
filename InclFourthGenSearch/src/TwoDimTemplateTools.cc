@@ -126,7 +126,7 @@ void TwoDimTemplateTools::LoadTwoDimBinning(const string binningFileName)
 }
 
 void TwoDimTemplateTools::Fill_for2DBinning(double xvariable_value,float yvariable_value,float fillweight)
-{
+{  
    VariableValuesMap[xvariable_].push_back(xvariable_value); //"HT"
    VariableValuesMap[yvariable_].push_back(yvariable_value); //"Mtop"	
    eventweightvector.push_back(fillweight);
@@ -162,7 +162,7 @@ void TwoDimTemplateTools::Write_for2DBinning(const string binningFileName)
 {
    cout<<endl<<" ... Creating the binning"<<endl;	
    MakeBinning NewBins;
-   NewBins.Binning_forTprimeAnalysis(VariableValuesMap,nbinsMap,eventweightvector,binningFileName);
+   NewBins.Binning_forTprimeAnalysis(xvariable_,yvariable_,VariableValuesMap,nbinsMap,eventweightvector,binningFileName);
 }
 
 void TwoDimTemplateTools::Convert2Dto1D(string postfix)

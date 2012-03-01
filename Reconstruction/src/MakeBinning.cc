@@ -253,7 +253,7 @@ if (decision=="Events"){
 }
 
 
-void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > VariableValuesMap, map<string,int> nbinsMap, vector<float> eventweightvector, string outputfilename){
+void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariable, map<string,vector<float > > VariableValuesMap, map<string,int> nbinsMap, vector<float> eventweightvector, string outputfilename){
   cout<<"---- Binning for t' analysis (2D) ----"<<endl;
   TFile *taxisFile;
   vector < TAxis* > myAxes;
@@ -263,20 +263,17 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
   
   //string xvariable = "HT4jetsMuonMET", yvariable = "MassHadTop"; //dimensions of the 2D plane hardcoded, not good
   string xvariable, yvariable;
-  
-  //obtain which variables are in the map, these are the dimensions of the 2D plane
+  xvariable = myxvariable;
+  yvariable = myyvariable;
+	
+  //obtain which variables are in the map, these are the dimensions of the 2D plane. WARNING: old way, not robust (not used anymore)
   vector<string> lstVar;
   for(map<string,vector<float > >::const_iterator it = VariableValuesMap.begin(); it != VariableValuesMap.end(); it++)
-  {
+  {  
+		//warning!! The ordering of the variables in VariableValuesMap is not necessarily the ordering you call to be filled...
      lstVar.push_back(it->first);
-  }
-  
-  if(lstVar.size() == 2)
-  {
-    xvariable = lstVar[0];
-    yvariable = lstVar[1];
-  }
-  else
+  }	
+  if(lstVar.size() != 2)  
     cout<<" The map of variables doesn't contain 2 variables, TO BE SOLVED!"<<endl;
   
   cout << " Will try to make the binning for variable " << xvariable <<endl;
@@ -345,7 +342,7 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
   //now making the binnings in the other dimension of the 2D plane, following closely the procedure of before; maybe to be put in a common function of the class
   for(int CurrentxvariableBin = 1;CurrentxvariableBin < nbinsMap[xvariable]+1; CurrentxvariableBin++)
   {
-    cout<<"---> HT bin "<<CurrentxvariableBin<<endl;
+    cout<<"---> "+xvariable+" bin "<<CurrentxvariableBin<<endl;
     vector<pair<float,float> > yvariables_CurrentxvariableBin_withweights;
     for(unsigned int j = 0; j < VariableValuesMap[xvariable].size(); j++)
     {
@@ -412,7 +409,7 @@ void MakeBinning::Binning_forTprimeAnalysis(map<string,vector<float > > Variable
     TAxis * myNewAxis= new TAxis(ynbins, ybins);
     ostringstream CurrentxvariableBin_sstream;
     CurrentxvariableBin_sstream << CurrentxvariableBin;	
-    myNewAxis->SetName (("Binning_" + yvariable + "_SM_HTbin" + CurrentxvariableBin_sstream.str()).c_str ());
+    myNewAxis->SetName (("Binning_" + yvariable + "_SM_" + xvariable + "bin" + CurrentxvariableBin_sstream.str()).c_str ());
   //	  cout<<"  Just created the TAxis name as  "<<myNewAxis->GetName()<<" with a total of "<<ynbins<<", range  "<<myNewAxis->GetXmin()<<"  to "<<myNewAxis->GetXmax()<<", nbins  "<<myNewAxis->GetNbins()<<endl;
     myAxes.push_back (myNewAxis);    
     yvariables_CurrentxvariableBin_withweights.clear(); 
