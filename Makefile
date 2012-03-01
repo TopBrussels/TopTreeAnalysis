@@ -59,12 +59,12 @@ HEADERSBTAG         = $(wildcard BtagEffAnalysis/interface/*.h Tools/interface/M
 OBJECTSBTAG		= $(SOURCESBTAG:.$(SrcSuf)=.$(ObjSuf))
 
 # headers and sources for mtop analysis lib
-SOURCESMTOPDIC	= $(wildcard JESMeasurement/src/LightMonster.cc Content/src/Dataset.cc Content/src/AnalysisEnvironment.cc)
-HEADERSMTOPDIC	= $(wildcard JESMeasurement/interface/LightMonster.h Content/interface/Dataset.h Content/interface/AnalysisEnvironment.h)
+SOURCESMTOPDIC	= $(wildcard JESMeasurement/src/LightMonster.cc Content/src/Dataset.cc)
+HEADERSMTOPDIC	= $(wildcard JESMeasurement/interface/LightMonster.h Content/interface/Dataset.h)
 OBJECTSMTOPDIC	= $(SOURCESMTOPDIC:.$(SrcSuf)=.$(ObjSuf))
 
-SOURCESMTOP   = $(wildcard JESMeasurement/src/LightMonster.cc Tools/src/MultiSamplePlot.cc Content/src/Dataset.cc Tools/src/PlottingTools.cc Content/src/AnalysisEnvironment.cc MCInformation/src/*ReWeighting.cc MCInformation/src/ResolutionFit.cc)
-HEADERSMTOP   = $(wildcard JESMeasurement/interface/LightMonster.h Tools/interface/MultiSamplePlot.h Content/interface/Dataset.h Tools/interface/PlottingTools.h Content/interface/AnalysisEnvironment.h MCInformation/interface/*ReWeighting.h MCInformation/interface/ResolutionFit.h)
+SOURCESMTOP   = $(wildcard JESMeasurement/src/MonsterTools.cc JESMeasurement/src/LightMonster.cc Tools/src/MultiSamplePlot.cc Content/src/Dataset.cc Tools/src/PlottingTools.cc MCInformation/src/*ReWeighting.cc MCInformation/src/ResolutionFit.cc)
+HEADERSMTOP   = $(wildcard JESMeasurement/interface/MonsterTools.h JESMeasurement/interface/LightMonster.h Tools/interface/MultiSamplePlot.h Content/interface/Dataset.h Tools/interface/PlottingTools.h MCInformation/interface/*ReWeighting.h MCInformation/interface/ResolutionFit.h)
 OBJECTSMTOP		= $(SOURCESMTOP:.$(SrcSuf)=.$(ObjSuf))
 
 
