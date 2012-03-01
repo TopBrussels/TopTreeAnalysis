@@ -29,6 +29,7 @@
 #include "TopTreeProducer/interface/TRootMuon.h"
 
 using namespace std;
+using namespace TopTree;
 
 class FullKinFit {
 

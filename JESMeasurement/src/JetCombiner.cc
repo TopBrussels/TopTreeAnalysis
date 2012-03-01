@@ -30,7 +30,6 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
   string MVAOut = "MVAOutput";
 	
 	if(!Tprime_){
-  	expCorrIncl_ = new ExpCorrCalculator("Inclusive");
   	MVAOut = MVAOut+"_TTbarJES.root";
 	}else{
 		MVAOut = MVAOut+"_Tprime"+postfix_+".root";
@@ -150,7 +149,6 @@ JetCombiner::~JetCombiner()
 {
   if(trainer_) delete trainer_;
   if(computer_) delete computer_;
-  if(expCorrIncl_) delete expCorrIncl_;
 }
 
 void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> mcParticles, const vector<TRootJet*> selectedJets, const TLorentzVector* selectedLepton, vector<TRootElectron*> vectEl, vector<TRootMuon*> vectMu, const TRootGenEvent* genEvt, float scaleFactor, bool TprimeEvaluation)
@@ -628,7 +626,6 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
       	}
 			}
     }
-    if(!Tprime_) FillExpCorr(expCorrIncl_, vectMu, vectEl, 0);
   }
 }
 
@@ -948,105 +945,6 @@ void JetCombiner::FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit*
   }
 }
 
-void JetCombiner::FillExpCorr(ExpCorrCalculator* expCorr, const vector<TRootMuon*> muons, const vector<TRootElectron*> electrons, float maxMVA)
-{
-  if(hadronicWJet1_.first < 9999 && hadronicWJet2_.first < 9999 && hadronicBJet_.first < 9999 && selectedJets_[hadronicWJet1_.first]->Pt() > 30
-    && selectedJets_[hadronicWJet2_.first]->Pt() > 30 && selectedJets_[hadronicBJet_.first]->Pt() > 30 && selectedJets_[hadronicBJet_.first]->Pt() < 9999)
-  {
-    float minDRmuBJet = 9999.;   
-    vector<TLorentzVector> vTLVmu;
-    for(unsigned int i=0; i<muons.size(); i++)
-    {
-      if(muons[i]->Pt() > 5 && fabs(muons[i]->Eta()) < 2.4)
-      {
-        vTLVmu.push_back( (*muons[i]) );
-        if(muons[i]->DeltaR( *selectedJets_[hadronicBJet_.first] ) < minDRmuBJet)
-          minDRmuBJet = muons[i]->DeltaR( *selectedJets_[hadronicBJet_.first] );
-      }
-    }
-    
-    float minDRelBJet = 9999.;
-    vector<TLorentzVector> vTLVel;
-    for(unsigned int i=0; i<electrons.size(); i++)
-    {
-      if(electrons[i]->Pt() > 5 && fabs(electrons[i]->Eta()) < 2.4)
-        vTLVel.push_back( (*electrons[i]) );
-        if(electrons[i]->DeltaR( *selectedJets_[hadronicBJet_.first] ) < minDRelBJet)
-          minDRelBJet = electrons[i]->DeltaR( *selectedJets_[hadronicBJet_.first] );
-    }
-    
-    float minDRlepBJet = minDRmuBJet;
-    if( minDRlepBJet > minDRelBJet )
-      minDRlepBJet = minDRelBJet;
-    
-    float WJet1CorrFactor = 1;
-    float WJet2CorrFactor = 1;
-    float BJetCorrFactor = 1;
-
-    vector<TLorentzVector> TMPvTLV;
-    TMPvTLV.push_back( (*selectedJets_[hadronicWJet1_.first]) * WJet1CorrFactor );
-    TMPvTLV.push_back( (*selectedJets_[hadronicWJet2_.first]) * WJet2CorrFactor );
-    TMPvTLV.push_back( (*selectedJets_[hadronicBJet_.first]) * BJetCorrFactor );
-    
-//    cout << "jet0 pt: " << TMPvTLV[0].Pt() << "  jet1 pt: " << TMPvTLV[1].Pt() << "  jet2 pt: " << TMPvTLV[2].Pt() << endl;
-
-//    WJet1CorrFactor = selectedJets_[hadronicWJet1_.first]->getJetCorrFactor("L1L2L3L4L5_uds") / selectedJets_[hadronicWJet1_.first]->getJetCorrFactor("L1L2L3");
-//    WJet2CorrFactor = selectedJets_[hadronicWJet2_.first]->getJetCorrFactor("L1L2L3L4L5_uds") / selectedJets_[hadronicWJet2_.first]->getJetCorrFactor("L1L2L3");
-//    BJetCorrFactor = selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5_b") / selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3");
-
-    vector<TLorentzVector> vTLV;
-    vTLV.push_back( (*selectedJets_[hadronicWJet1_.first]) * WJet1CorrFactor );
-    vTLV.push_back( (*selectedJets_[hadronicWJet2_.first]) * WJet2CorrFactor );
-    vTLV.push_back( (*selectedJets_[hadronicBJet_.first]) * BJetCorrFactor );
-    
-//    cout << "corrJet0 pt: " << vTLV[0].Pt() << "  corrJet1 pt: " << vTLV[1].Pt() << "  corrJet2 pt: " << vTLV[2].Pt() << endl;
-
-/*    cout << "jetCorrFactors:" << endl;
-    cout << "L1: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1") << endl;
-    cout << "L1L2: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2") << endl;
-    cout << "L1L2L3: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3") << endl;
-    cout << "L1L2L3L4: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4") << endl;
-    cout << "L1L2L3L4L5_glu: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5_glu") << endl;
-    cout << "L1L2L3L4L5_uds: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5_uds") << endl;
-    cout << "L1L2L3L4L5_c: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5_c") << endl;
-    cout << "L1L2L3L4L5_b: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5_b") << endl;
-    cout << "L1L2L3L4L5L6_glu: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6_glu") << endl;
-    cout << "L1L2L3L4L5L6_uds: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6_uds") << endl;
-    cout << "L1L2L3L4L5L6_c: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6_c") << endl;
-    cout << "L1L2L3L4L5L6_b: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6_b") << endl;
-    cout << "L1L2L3L4L5L6L7_glu: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6L7_glu") << endl;
-    cout << "L1L2L3L4L5L6L7_uds: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6L7_uds") << endl;
-    cout << "L1L2L3L4L5L6L7_c: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6L7_c") << endl;
-    cout << "L1L2L3L4L5L6L7_b: " << selectedJets_[hadronicBJet_.first]->getJetCorrFactor("L1L2L3L4L5L6L7_b") << endl; */
-    
-    vector<TLorentzVector> vTLVmc;
-    vTLVmc.push_back(*mcParticlesMatching_[hadronicWJet1_.second]);
-    vTLVmc.push_back(*mcParticlesMatching_[hadronicWJet2_.second]);
-    vTLVmc.push_back(*mcParticlesMatching_[hadronicBJet_.second]);
-
-//    float spaceAngleDiffQQ = selectedJets_[hadronicWJet1_.first]->Angle( (*selectedJets_[hadronicWJet2_.first]).Vect() ) 
-//      - mcParticlesMatching_[hadronicWJet1_.second]->Angle( (*mcParticlesMatching_[hadronicWJet2_.second]).Vect() );
-//	  float spaceAngleDiffWB = selectedJets_[hadronicBJet_.first]->Angle( (*selectedJets_[hadronicWJet2_.first] + *selectedJets_[hadronicWJet1_.first]).Vect() )
-//	    - mcParticlesMatching_[hadronicBJet_.second]->Angle( (*mcParticlesMatching_[hadronicWJet2_.second] + *mcParticlesMatching_[hadronicWJet1_.second]).Vect() );
-    
-//    if( fabs(spaceAngleDiffQQ) < 0.02 && fabs(spaceAngleDiffWB) < 0.02 )
-//    if(selectedJets_[hadronicBJet_.first]->Pt() > 60)
-//    if(fabs( (vTLVmc[2].Energy() - vTLV[2].Energy()) / vTLV[2].Energy() ) < 0.1)
-//    if(minDRlepBJet > 0.4)
-    {
-      expCorr->FillMuons(vTLVmu);
-      expCorr->FillElectrons(vTLVel);
-      expCorr->Fill3Jets(vTLV);
-      expCorr->Fill3MCParticles(vTLVmc);
-      expCorr->FillMaxMVA(maxMVA);
-    }
-    float PtLight = (vTLV[0].Pt() + vTLV[1].Pt()) / 2;
-    expCorr->FillLightJet( (vTLVmc[0].Et() - vTLV[0].Et()) / vTLV[0].Et(), PtLight, vTLV[2].Pt() );
-    expCorr->FillLightJet( (vTLVmc[1].Et() - vTLV[1].Et()) / vTLV[1].Et(), PtLight, vTLV[2].Pt() );
-    expCorr->FillBJet( (vTLVmc[2].Et() - vTLV[2].Et()) / vTLV[2].Et(), PtLight, vTLV[2].Pt() );
-  }
-}
-
 pair<float, vector<unsigned int> > JetCombiner::getMVAValue(string MVAMethod, int rank)
 {
   if(vectorMVA_.size() == 0)
@@ -1163,7 +1061,6 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
   cout << " - Writing out the JetCombiner stuff ..." << endl;
   
 //  string pathPNGExpCorr = pathPNG + "../ExpCorr/";
-//	if( ! trainMVA_ ) expCorrIncl_->Write(fout, true, pathPNGExpCorr);
 
   fout->cd();
   string dirname = "1D_histograms_JetCombiner" + MVAfilePostfix_;

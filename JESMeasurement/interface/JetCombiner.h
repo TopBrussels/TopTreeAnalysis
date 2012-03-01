@@ -20,15 +20,16 @@
 #include "TopTreeAnalysis/MCInformation/interface/ResolutionFit.h"
 #include "TopTreeAnalysis/Tools/interface/MultiSamplePlot.h"
 #include "TopTreeAnalysis/MCInformation/interface/JetPartonMatching.h"
-#include "TopTreeAnalysis/JESMeasurement/interface/ExpCorrCalculator.h"
 
 #include "TopTreeProducer/interface/TRootJet.h"
 #include "TopTreeProducer/interface/TRootMuon.h"
 #include "TopTreeProducer/interface/TRootElectron.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
 #include "TopTreeProducer/interface/TRootGenEvent.h"
+#include "TopTreeProducer/interface/TRootMCParticle.h"
 
 using namespace std;
+using namespace TopTree;
 
 struct MVAValues {
   string MVAAlgo;
@@ -47,7 +48,6 @@ class JetCombiner {
     void ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> mcParticles, const vector<TRootJet*> selectedJets, const TLorentzVector* selectedMuon, vector<TRootElectron*> vectEl, vector<TRootMuon*> vectMu, const TRootGenEvent* genEvt, float scaleFactor=1, bool TprimeEvaluation=false);
     void ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mcParticlesForMatching, const vector<TLorentzVector> selectedJets, const vector<float> bTagValues, const TLorentzVector selectedLepton, bool isSemiLep, float scaleFactor, bool TprimeEvaluation);
 		void FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B=0, ResolutionFit* resFitBJets_Bbar=0);
-    void FillExpCorr(ExpCorrCalculator* expCorr, const vector<TRootMuon*> muons, const vector<TRootElectron*> electrons, float maxMVA);
     pair<float, vector<unsigned int> > getMVAValue(string MVAMethod, int rank); // rank 1 means the highest MVA value for this method, rank 2 the second highest, ...
     vector<unsigned int> GetGoodJetCombination(); // Good according to MC!
     bool isGoodJetCombination(string MVAMethod, int rank, bool fullcombination); // check if a certain MVA jet combination is	correct (correct for the 3 hadronic top jets OR correct for the full jet combination)
@@ -79,8 +79,6 @@ class JetCombiner {
     string MVAfilePostfix_;
     string postfix_;
 		
-    ExpCorrCalculator* expCorrIncl_;
-    
     float relDiffEJetParton_b_;
     float relDiffEJetParton_l1_;
     float relDiffEJetParton_l2_;
