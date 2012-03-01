@@ -8,6 +8,7 @@
 #include "TLegend.h"
 #include "TCanvas.h"
 #include "TString.h"
+#include "TGraph.h"
 
 #include "Math/Random.h"
 #include "Math/GSLRndmEngines.h"
@@ -47,6 +48,8 @@ class MultiSamplePlot{
 		THStack* hStackAreaNorm_;
 		TH1F*    hRandomPseudoData_;
 		TH1F*    hData_;
+		TGraph*  hErrorPlus_; // for error band in Data/MC ratio
+		TGraph*  hErrorMinus_;
 		TCanvas* hCanvas_;
 		TCanvas* hCanvasStack_;	
 		TCanvas* hCanvasStackAreaNorm_;
@@ -59,6 +62,7 @@ class MultiSamplePlot{
 		bool showNumberEntries_;
 		float maxY_;
 		TString text_;
+		string plotName_;
 };
 
 #endif

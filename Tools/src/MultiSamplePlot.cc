@@ -5,6 +5,7 @@ vector<Dataset*> datasets, string PlotName, int Nbins, float Min, float Max, str
 	Nbins_ = Nbins;
 	string histoName = "";
 	string histoTitle = "";
+	plotName_ = PlotName;
 	for(unsigned int i=0;i<datasets.size();i++){
 		histoName  = PlotName+"_"+datasets[i]->Name();
 		histoTitle = datasets[i]->Title();
@@ -37,6 +38,7 @@ MultiSamplePlot::MultiSamplePlot(vector<Dataset*> datasets, string PlotName, int
 	Nbins_ = Nbins;
 	string histoName = "";
 	string histoTitle = "";
+	plotName_ = PlotName;
 	for(unsigned int i=0;i<datasets.size();i++){
 		histoName = PlotName+"_"+datasets[i]->Name();
 		histoTitle = datasets[i]->Title();
@@ -127,7 +129,33 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 	
 	double* SummedBins = new double[Nbins_];
 	for(int i=0;i<Nbins_;i++) SummedBins[i]=0;
-
+  
+  if(addRatio)
+  {
+    string filename = "ErrorBands/Error_"+plotName_+".root";
+    TFile* tmpInfile = new TFile(filename.c_str(),"READ");
+    if( ! tmpInfile->IsZombie() )
+    {
+		  TH1F* hErrorPlus = (TH1F*) tmpInfile->Get("Plus")->Clone();
+		  TH1F* hErrorMinus = (TH1F*) tmpInfile->Get("Minus")->Clone();
+	  	hErrorPlus_ = new TGraph(hErrorPlus->GetNbinsX());
+	  	hErrorPlus_->SetNameTitle("hErrorPlus","hErrorPlus");
+	  	hErrorPlus_->SetLineWidth(2);
+	  	hErrorPlus_->SetLineColor(30);
+	    hErrorMinus_ = new TGraph(hErrorMinus->GetNbinsX());
+	  	hErrorMinus_->SetNameTitle("hErrorMinus","hErrorMinus");
+	  	hErrorMinus_->SetLineWidth(2);
+	  	hErrorMinus_->SetLineColor(30);
+		  for (int iBin=1; iBin < hErrorPlus->GetNbinsX()+1; iBin++)
+		  {
+        hErrorPlus_->SetPoint(iBin-1, hErrorPlus->GetBinCenter(iBin), hErrorPlus->GetBinContent(iBin));
+        hErrorMinus_->SetPoint(iBin-1, hErrorMinus->GetBinCenter(iBin), hErrorMinus->GetBinContent(iBin));
+      }
+		  tmpInfile->Close();
+    }
+	  delete tmpInfile;
+  }
+  
 	int dataPlotID=-1;
 	float integralData = 0;
 	float integralMC = 0;
@@ -519,8 +547,9 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
     ratio->GetXaxis()->SetLabelSize(0.04);
     ratio->GetYaxis()->SetLabelSize(0.04);
 //    ratio->GetXaxis()->SetTitle(stack->GetXaxis()->GetTitle());
-    ratio->GetYaxis()->SetTitle("");
-    ratio->GetYaxis()->SetTitleSize(0.03);
+    ratio->GetYaxis()->SetTitle("Data/MC");
+    ratio->GetYaxis()->SetTitleSize(0.045);
+    ratio->GetYaxis()->SetTitleOffset(1.15);
     ratio->SetMarkerSize(1.);
     ratio->GetYaxis()->SetNdivisions(5);
     
@@ -540,6 +569,11 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
         pad->Draw();
         pad->cd(0);
         ratio->Draw("e");
+        if(hErrorPlus_)
+        {
+          hErrorPlus_->Draw("C");
+          hErrorMinus_->Draw("C");
+        }
       }
     }
 		else hData_->Draw("E");
@@ -553,6 +587,11 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
         padLogY->Draw();
         padLogY->cd(0);
         ratio->Draw("e");
+        if(hErrorPlus_)
+        {
+          hErrorPlus_->Draw("C");
+          hErrorMinus_->Draw("C");
+        }
       }
     }
 		else hData_->Draw("E");
@@ -565,8 +604,9 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
     ratioAreaNorm->GetXaxis()->SetLabelSize(0.04);
     ratioAreaNorm->GetYaxis()->SetLabelSize(0.04);
 //    ratioAreaNorm->GetXaxis()->SetTitle(stack->GetXaxis()->GetTitle());
-    ratioAreaNorm->GetYaxis()->SetTitle("");
-    ratioAreaNorm->GetYaxis()->SetTitleSize(0.03);
+    ratioAreaNorm->GetYaxis()->SetTitle("Data/MC");
+    ratioAreaNorm->GetYaxis()->SetTitleSize(0.045);
+    ratioAreaNorm->GetYaxis()->SetTitleOffset(1.15);
     ratioAreaNorm->SetMarkerSize(1.);
     ratioAreaNorm->GetYaxis()->SetNdivisions(5);
     
@@ -586,6 +626,11 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
         padAreaNorm->Draw();
         padAreaNorm->cd(0);
         ratioAreaNorm->Draw("e");
+        if(hErrorPlus_)
+        {
+          hErrorPlus_->Draw("C");
+          hErrorMinus_->Draw("C");
+        }
       }
 		}
 		else hData_->Draw("E");
@@ -599,6 +644,11 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
   		  padAreaNormLogY->Draw();
         padAreaNormLogY->cd(0);
         ratioAreaNorm->Draw("e");
+        if(hErrorPlus_)
+        {
+          hErrorPlus_->Draw("C");
+          hErrorMinus_->Draw("C");
+        }
       }
 		}
 		else hData_->Draw("E");
