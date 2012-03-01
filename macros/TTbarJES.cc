@@ -90,8 +90,6 @@ int main (int argc, char *argv[])
   TTree *configTree = new TTree("configTree","configuration Tree");
   TClonesArray* tcdatasets = new TClonesArray("Dataset",1000);
   configTree->Branch("Datasets","TClonesArray",&tcdatasets);
-  TClonesArray* tcAnaEnv = new TClonesArray("AnalysisEnvironment",1000);
-  configTree->Branch("AnaEnv","TClonesArray",&tcAnaEnv);
   
   /////////////////////////
   // Which decay channel //
@@ -113,7 +111,6 @@ int main (int argc, char *argv[])
   AnalysisEnvironment anaEnv;
   cout<<"Loading environment ..."<<endl;
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile);
-  new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv);
   int verbose = anaEnv.Verbose;
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
  
@@ -186,6 +183,9 @@ int main (int argc, char *argv[])
   MSPlot["nLooseElectronsSemiMu"] = new MultiSamplePlot(datasets, "nLooseElectronsSemiMu", 5, -0.5, 4.5, "Nr. of Loose Electrons, SemiMu");
   MSPlot["nLooseElectronsSemiEl"] = new MultiSamplePlot(datasets, "nLooseElectronsSemiEl", 5, -0.5, 4.5, "Nr. of Loose Electrons, SemiEl");
   MSPlot["nSelectedJets"] = new MultiSamplePlot(datasets, "nSelectedJets", 10, -0.5, 9.5, "Nr. of Selected Jets");
+  
+  histo1D["nTightLooseMu"] = new TH1F("nTightLooseMu","nTightLooseMu",5,-0.5,4.5);
+  histo1D["nTightLooseEl"] = new TH1F("nTightLooseEl","nTightLooseEl",5,-0.5,4.5);
   
   ////////////////////////////////////
   /// Selection table
@@ -388,7 +388,7 @@ int main (int argc, char *argv[])
         genjets = treeLoader.LoadGenJet(ievt);
         sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
-      cout << "run: " << event->runId() << "  lumi: " << event->lumiBlockId() << "  event: " << event->eventId() << endl;
+//      cout << "run: " << event->runId() << "  lumi: " << event->lumiBlockId() << "  event: " << event->eventId() << endl;
       
       // scale factors for the event
       float scaleFactor = 1.;
@@ -522,18 +522,18 @@ int main (int argc, char *argv[])
         // Correct for the difference in muon efficiency (HLT and Id) between Data and MC
 //        scaleFactor *= 0.965; // Fall10 value...
         
-        // Correct jets for JES uncertainy systematics
-        if(systematic == "JESPlus")
-          jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus");
-        else if(systematic == "JESMinus")
-          jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus");
-        
         if(systematic == "JERPlus")
           jetTools->correctJetJER(init_jets_corrected, genjets, "plus");
         else if(systematic == "JERMinus")
           jetTools->correctJetJER(init_jets_corrected, genjets, "minus");
         else
           jetTools->correctJetJER(init_jets_corrected, genjets, "nominal");
+        
+        // Correct jets for JES uncertainy systematics
+        if(systematic == "JESPlus")
+          jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus");
+        else if(systematic == "JESMinus")
+          jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus");
         
         //Scale jets with a certain factor
 //        jetTools->scaleJets(init_jets_corrected, 1.);
@@ -608,10 +608,36 @@ int main (int argc, char *argv[])
         {
           MSPlot["nEventsAfterCutsSemiMu"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
           selecTableSemiMu.Fill(d,2,scaleFactor*lumiWeight);
-          if( selectedMuons.size() == 1 )
+//          if( selectedMuons.size() == 1 )
+          if( selectedMuons.size() >= 1 )
           {
             MSPlot["nEventsAfterCutsSemiMu"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
   		      selecTableSemiMu.Fill(d,3,scaleFactor*lumiWeight);
+  		      
+  		      histo1D["nTightLooseMu"]->Fill(0.);
+            for(unsigned int iMu=0; iMu < init_muons.size(); iMu++)
+            {
+              float pT = init_muons[iMu]->Pt();
+              float eta = init_muons[iMu]->Eta();
+              bool isLoose = false;
+              bool isTight = false;
+              if( fabs(pT - selectedMuons[0]->Pt()) > 0.01 )
+              {
+                for(unsigned int iSelMu = 0; iSelMu < selectedMuons.size(); iSelMu++)
+                {
+                  if( fabs(pT - selectedMuons[iSelMu]->Pt()) < 0.01 && fabs(eta - selectedMuons[iSelMu]->Eta()) < 0.01 )
+                    isTight = true;
+                }
+                for(unsigned int iSelMu = 0; iSelMu < vetoMuons.size(); iSelMu++)
+                {
+                  if( fabs(pT - vetoMuons[iSelMu]->Pt()) < 0.01 && fabs(eta - vetoMuons[iSelMu]->Eta()) < 0.01 )
+                    isLoose = true;
+                }
+                if(isLoose) histo1D["nTightLooseMu"]->Fill(1.);
+                if(isTight) histo1D["nTightLooseMu"]->Fill(2.);
+              }
+            }
+
         		if( vetoMuons.size() == 1 || ( systematic == "InvertedIso" && vetoMuons.size() == 0 ) ) // if InvertedIso, selected muon not part of vetoMuons vector!
         		{
         		  MSPlot["nEventsAfterCutsSemiMu"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
@@ -660,10 +686,36 @@ int main (int argc, char *argv[])
         {
           MSPlot["nEventsAfterCutsSemiEl"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
           selecTableSemiEl.Fill(d,2,scaleFactor*lumiWeight);
-          if( selectedElectrons.size() == 1 )
+//          if( selectedElectrons.size() == 1 )
+          if( selectedElectrons.size() >= 1 )
           {
             MSPlot["nEventsAfterCutsSemiEl"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
             selecTableSemiEl.Fill(d,3,scaleFactor*lumiWeight);
+            
+            histo1D["nTightLooseEl"]->Fill(0.);
+            for(unsigned int iEl=0; iEl < init_electrons.size(); iEl++)
+            {
+              float pT = init_electrons[iEl]->Pt();
+              float eta = init_electrons[iEl]->Eta();
+              bool isLoose = false;
+              bool isTight = false;
+              if( fabs(pT - selectedElectrons[0]->Pt()) > 0.01 )
+              {
+                for(unsigned int iSelEl = 1; iSelEl < selectedElectrons.size(); iSelEl++)
+                {
+                  if( fabs(pT - selectedElectrons[iSelEl]->Pt()) < 0.01 && fabs(eta - selectedElectrons[iSelEl]->Eta()) < 0.01 )
+                    isTight = true;
+                }
+                for(unsigned int iSelEl = 1; iSelEl < vetoElectronsSemiEl.size(); iSelEl++)
+                {
+                  if( fabs(pT - vetoElectronsSemiEl[iSelEl]->Pt()) < 0.01 && fabs(eta - vetoElectronsSemiEl[iSelEl]->Eta()) < 0.01 )
+                    isLoose = true;
+                }
+                if(isLoose) histo1D["nTightLooseEl"]->Fill(1.);
+                if(isTight) histo1D["nTightLooseEl"]->Fill(2.);
+              }
+            }
+            
             if( vetoMuons.size() == 0 )
             {
               MSPlot["nEventsAfterCutsSemiEl"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
@@ -711,6 +763,8 @@ int main (int argc, char *argv[])
       
       if( eventSelectedSemiEl && eventSelectedSemiMu )
         cout << "Event selected in semiEl and semiMu channel???" << endl;
+      
+      continue;
       
       vector<TRootMCParticle*> mcParticles;
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
@@ -932,9 +986,6 @@ int main (int argc, char *argv[])
     TTree *configTreeMonsterFile = new TTree("configTreeMonsterFile","configuration Tree in Monster File");
     TClonesArray* tcdatasetmonsterfile = new TClonesArray("Dataset",1);
     configTreeMonsterFile->Branch("Dataset","TClonesArray",&tcdatasetmonsterfile);
-    TClonesArray* tcAnaEnvMonsterFile = new TClonesArray("AnalysisEnvironment",1);
-    configTreeMonsterFile->Branch("AnaEnv","TClonesArray",&tcAnaEnvMonsterFile);
-    new ((*tcAnaEnvMonsterFile)[0]) AnalysisEnvironment(anaEnv);
     new ((*tcdatasetmonsterfile)[0]) Dataset(*datasets[d]);
     
     configTreeMonsterFile->Fill();
@@ -1072,7 +1123,6 @@ int main (int argc, char *argv[])
   
   delete fout;
   delete tcdatasets;
-  delete tcAnaEnv;
   delete configTree;
 
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
