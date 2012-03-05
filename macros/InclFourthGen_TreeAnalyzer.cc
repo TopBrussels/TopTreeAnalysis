@@ -424,12 +424,14 @@ int main (int argc, char *argv[])
   /////////////////////////////////////////////////////////
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
   /////////////////////////////////////////////////////////
-  string xvariable = "HT", yvariable = "MTop"; //these are the two variables for which the 2D plane is made
-  int nbinsxvariable = 6, nbinsyvariable = 12; //if the binning is already created, make sure these are the same as before!
-  string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W_TTbarJetsFlat"+channelpostfix+".root";
-  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W_TTbarJetsFlat"+channelpostfix+".root";
-  TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable);
-  TwoDimTemplateTools HTvsMTop_2B_2W("2B_2W",xvariable,nbinsxvariable,yvariable,nbinsyvariable); 
+  string xvariable = "Mtop", yvariable = "HT"; //these are the two variables for which the 2D plane is made
+  int nbinsxvariable_1B_2W = 20, nbinsyvariable_1B_2W = 10; //if the binning is already created, make sure these are the same as before!
+  int nbinsxvariable_2B_2W = 12, nbinsyvariable_2B_2W = 6;
+	string Binningpostfix = "_TTbarJetsFlat";
+	string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W"+Binningpostfix+channelpostfix+".root";
+  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W"+Binningpostfix+channelpostfix+".root";
+  TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable_1B_2W,yvariable,nbinsyvariable_1B_2W);
+  TwoDimTemplateTools HTvsMTop_2B_2W("2B_2W",xvariable,nbinsxvariable_2B_2W,yvariable,nbinsyvariable_2B_2W); 
   if(doMVAjetcombination && !TrainMVA && useMassesAndResolutions) //Note: the boolean 'useMassesAndResolutions'is not needed when a Wmass file exists
   { 
     HTvsMTop_1B_2W.SetDatasets(datasets);
