@@ -195,7 +195,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_01March2012";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_06March2012";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -395,6 +395,11 @@ int main (int argc, char *argv[])
   MSPlot["MS_LeptonPt_4jets"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
   MSPlot["MS_JetPt_all_SingleLepton_4jets"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
 
+  //for the events that are actually used
+	MSPlot["MS_MET_used"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeptonPt_used"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
+  MSPlot["MS_JetPt_all_used"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
+	MSPlot["MS_nPV_used"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
 	
 	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1200);
 	histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetXaxis()->SetTitle("HT (GeV)");
@@ -443,16 +448,17 @@ int main (int argc, char *argv[])
   /// Selection table
   ////////////////////////////////////
 
-  vector<string> CutsSelecTableSemiLep;
-  CutsSelecTableSemiLep.push_back(string("selected")); //0
+  vector<string> CutsSelecTableSemiLep; 
+  CutsSelecTableSemiLep.push_back(string("$\\geq$ 1 b-tag")); //0
+  CutsSelecTableSemiLep.push_back(string("selected")); // semi-leptonic events in all the boxes together
   CutsSelecTableSemiLep.push_back(string("box 1B 1W"));
   CutsSelecTableSemiLep.push_back(string("box 1B 2W"));
   CutsSelecTableSemiLep.push_back(string("box 1B 3W"));
-  CutsSelecTableSemiLep.push_back(string("box 1B $\\geq$ 4W")); //4
+  CutsSelecTableSemiLep.push_back(string("box 1B $\\geq$ 4W")); //5
   CutsSelecTableSemiLep.push_back(string("box 2B 1W"));
   CutsSelecTableSemiLep.push_back(string("box 2B 2W"));
   CutsSelecTableSemiLep.push_back(string("box 2B 3W"));
-  CutsSelecTableSemiLep.push_back(string("box 2B $\\geq$ 4W")); //8
+  CutsSelecTableSemiLep.push_back(string("box 2B $\\geq$ 4W")); //9
 
   vector<string> CutsSelecTableMultiLep;
   CutsSelecTableMultiLep.push_back(string("SS leptons: all")); //0
@@ -523,10 +529,10 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
   cout << " - Loop over datasets ... " << inputTrees.size() << " datasets !" << endl;
   ofstream myfile1, myfile2;
-	string myRockingFile1 = "InterestingEvents_SS"+channelpostfix+".txt";
-	myfile1.open(myRockingFile1.c_str());
-	string myRockingFile2 = "InterestingEvents_lll"+channelpostfix+".txt";
-	myfile2.open(myRockingFile2.c_str());
+	string myRockingFile1 = Outputpath+"InterestingEvents_SS"+channelpostfix+".txt";
+	if(systematic=="Nominal") myfile1.open(myRockingFile1.c_str());
+	string myRockingFile2 = Outputpath+"InterestingEvents_lll"+channelpostfix+".txt";
+	if(systematic=="Nominal") myfile2.open(myRockingFile2.c_str());
 
   for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
   {
@@ -969,11 +975,11 @@ int main (int argc, char *argv[])
 				} //end loop over jets (~ b-tagging)
 				
 			if(isSSLepton && dataSetName=="Data"){
-				if(isSSMuon) myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
-				if(isSSElectron) myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
-				if(isSSMuEl) myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
+				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
+				if(isSSElectron && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
+				if(isSSMuEl && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
 			
-			}else if(isTriLepton && dataSetName=="Data"){
+			}else if(isTriLepton && dataSetName=="Data" && systematic=="Nominal"){
 				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			}
 			
@@ -1007,6 +1013,7 @@ int main (int argc, char *argv[])
 			
 			if(isSSLepton)
 			{
+				
 				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
 				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				
@@ -1189,10 +1196,18 @@ int main (int argc, char *argv[])
 					
 					if(isSingleLepton) 
 					{						
+						
 						HT = HT + selectedForwardJets[0].Pt();
 
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 						selecTableSemiLep.Fill(d,1,scaleFactor);
+						selecTableSemiLep.Fill(d,2,scaleFactor);
+						
+						MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+						if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+						if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+						for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 					}
 					//cout << "done in 1B 1W box" << endl;
 					if(dataSetName=="WJets"){
@@ -1209,10 +1224,17 @@ int main (int argc, char *argv[])
 					//cout << "in 1B 2W box" << endl;
 					if(isSingleLepton && selectedJets.size()>=4)
 					{
+						MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+						if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+						if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+						for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
 						HT = HT + selectedJetsFromW_DropUsedJets[0].Pt();
 
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-						selecTableSemiLep.Fill(d,2,scaleFactor);
+						selecTableSemiLep.Fill(d,1,scaleFactor);
+						selecTableSemiLep.Fill(d,3,scaleFactor);
 			
 						//////////////
 						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
@@ -1280,8 +1302,15 @@ int main (int argc, char *argv[])
 				    //cout << "in 1B 3W box" << endl;
 				    if(isSingleLepton && selectedJets.size() >=6) 
 				    {
+							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);				
-							selecTableSemiLep.Fill(d,3,scaleFactor);
+							selecTableSemiLep.Fill(d,1,scaleFactor);
+							selecTableSemiLep.Fill(d,4,scaleFactor);
 				    }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1298,8 +1327,15 @@ int main (int argc, char *argv[])
 					//cout << "in 1B 4W box" << endl;
 				   if(isSingleLepton && selectedJets.size() >=8) 
 				   {
+							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-						selecTableSemiLep.Fill(d,4,scaleFactor);
+							selecTableSemiLep.Fill(d,1,scaleFactor);
+							selecTableSemiLep.Fill(d,5,scaleFactor);
 				   }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1332,8 +1368,15 @@ int main (int argc, char *argv[])
 
 				   if(isSingleLepton) 
 				   {
+							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							selecTableSemiLep.Fill(d,5,scaleFactor);
+							selecTableSemiLep.Fill(d,1,scaleFactor);
+							selecTableSemiLep.Fill(d,6,scaleFactor);
 				   }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1351,8 +1394,15 @@ int main (int argc, char *argv[])
 				   if(isSingleLepton && selectedJets.size() >=4) 
 				   {
 					
+							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							selecTableSemiLep.Fill(d,6,scaleFactor);
+							selecTableSemiLep.Fill(d,1,scaleFactor);
+							selecTableSemiLep.Fill(d,7,scaleFactor);
 					
 						//////////////
 						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
@@ -1419,8 +1469,15 @@ int main (int argc, char *argv[])
 				    // cout << "in 2B 3W box" << endl;
 				     if(isSingleLepton && selectedJets.size() >=6) 
 				     {
-							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							selecTableSemiLep.Fill(d,7,scaleFactor);
+								MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+								if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+								if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+								for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+								MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
+								myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
+								selecTableSemiLep.Fill(d,1,scaleFactor);
+								selecTableSemiLep.Fill(d,8,scaleFactor);
 				     }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1437,8 +1494,15 @@ int main (int argc, char *argv[])
 				   //  cout << "in 2B 4W box" << endl;
 				     if(isSingleLepton && selectedJets.size() >=8 )
 				     {
-							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
-							selecTableSemiLep.Fill(d,8,scaleFactor);
+								MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
+								if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+								if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+								for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+								MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
+
+								myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
+								selecTableSemiLep.Fill(d,1,scaleFactor);
+								selecTableSemiLep.Fill(d,9,scaleFactor);
 				     }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1500,8 +1564,8 @@ int main (int argc, char *argv[])
 		delete inFile;
 		
   } //loop on 'datasets'
-	myfile1.close();
-	myfile2.close();
+	if(systematic=="Nominal") myfile1.close();
+	if(systematic=="Nominal") myfile2.close();
 
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
@@ -1603,7 +1667,7 @@ int main (int argc, char *argv[])
     //fout->Close();
   } //end !trainMVA
   
-	cout << "after baseline selection: " << endl;
+	/*cout << "after baseline selection: " << endl;
 	cout << "	number of events with light flavored jets " << NbLightFlavour[0] << endl;
 	cout << "	number of events with b flavored jets " << NbHeavyFlavour_b[0] << endl;
 	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[0] << endl;
@@ -1657,7 +1721,7 @@ int main (int argc, char *argv[])
 	cout << "	number of events with c flavored jets " << NbHeavyFlavour_c[8] << endl;
 	cout << "	number of events that should not be used " << NbBadEvents[8] << endl;
 	cout << "	number of events without flavour history path " << NbWithoutFlavorHP[8] << endl;
-	
+	*/
 	
 	//delete
 	cout<<" - Deleting jetCombiner..."<<endl;
