@@ -103,6 +103,7 @@ int main (int argc, char *argv[])
 	
   //which systematic to run?
   string systematic = "Nominal";
+	string systematicnew = "";
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used: " << systematic << endl;
@@ -194,7 +195,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_28Feb2012";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_01March2012";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -521,9 +522,11 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
   ////////////////////////////////////
   cout << " - Loop over datasets ... " << inputTrees.size() << " datasets !" << endl;
-  ofstream myfile;
-	string myRockingFile = "InterestingEvents"+channelpostfix+".txt";
-	myfile.open(myRockingFile.c_str());
+  ofstream myfile1, myfile2;
+	string myRockingFile1 = "InterestingEvents_SS"+channelpostfix+".txt";
+	myfile1.open(myRockingFile1.c_str());
+	string myRockingFile2 = "InterestingEvents_lll"+channelpostfix+".txt";
+	myfile2.open(myRockingFile2.c_str());
 
   for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
   {
@@ -636,7 +639,8 @@ int main (int argc, char *argv[])
 
       if(ievt%1000 == 0)
         std::cout<<"Processing the "<<ievt<<"th event ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
-      //load event
+      systematicnew = "";
+			//load event
 			inInclFourthGenTree->GetEvent(ievt);
    
 	    vector<TLorentzVector> InitJets;
@@ -837,7 +841,7 @@ int main (int argc, char *argv[])
 				vector<TLorentzVector> selectedJetsForBtagging; //need the jets within the tracker acceptance
 				for(unsigned int i = 0; i<selectedJets.size(); i++)
 				{
-					selectedJetsForBtagging.push_back(selectedJets[i]);//this is the same collection as the selected jets, right?
+					selectedJetsForBtagging.push_back(selectedJets[i]);//this is the same collection as the selected jets
 				}
 			
 				vector< pair< int, float > > jetindex_btagvalue;
@@ -863,12 +867,12 @@ int main (int argc, char *argv[])
 					{
 						if(fabs((myBranch_selectedEvents->partonFlavourJet())[jetindex_btagvalue[i].first]) == 5 )
 						{// is a true b-jet
-							pair<int,float> dummy (jetindex_btagvalue[i].first,true); //not: pair<int,float> dummy (i,true)
+							pair<int,float> dummy (jetindex_btagvalue[i].first,true);
 							jetindex_isb.push_back(dummy);
 						}
 						else
 						{// is not a b-jet
-							pair<int,float> dummy (jetindex_btagvalue[i].first,false); //not: pair<int,float> dummy (i,false)
+							pair<int,float> dummy (jetindex_btagvalue[i].first,false);
 							jetindex_isb.push_back(dummy);							
 						}
 					}
@@ -899,19 +903,32 @@ int main (int argc, char *argv[])
 							bJet1 = jetindex_btagvalue[i].first;
 							bTagValuesForMVA_1B_2W.push_back(bTagValuesForMVA[bJet1]);
 							bTagValuesForMVA_2B_2W.push_back(bTagValuesForMVA[bJet1]);
+							//cout << "flavour of first b-tagged jet is: " << fabs((myBranch_selectedEvents->partonFlavourJet())[bJet1]) << endl;
 							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{
 								if(doBtagSFreweighting && bJet1 == jetindex_isb[j].first)
 								{
-									if(!jetindex_isb[j].second)
-									{ // jet is b-tagged but NOT a true b
-										//scaleFactor = scaleFactor * mistagfactor;
-										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[bJet1].Pt(),selectedJetsForBtagging[bJet1].Eta(),btagger,systematic);
-									}
-									else
+									if(jetindex_isb[j].second)
 									{ // jet is b-tagged and a true b
+								  	//cout<<" jet is b-tagged and a true b"<<endl;
 										//scaleFactor = scaleFactor * scalefactorbtageff;
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic);
+								  	//cout<<" scaleFactor (pt, btagger, systematic): (" << selectedJetsForBtagging[bJet1].Pt() << "," << btagger << "," << systematic << ") = " << SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic) << endl;
+									}
+									else if(fabs((myBranch_selectedEvents->partonFlavourJet())[bJet1]) == 4)
+									{ //jet is b-tagged but is a c quark
+										//cout<<" jet is b-tagged but it is a c quark"<<endl;
+										if(systematic == "bTagMinus") systematicnew = "bTagMinus_c";
+										if(systematic == "bTagPlus") systematicnew = "bTagPlus_c";
+										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematicnew);										
+								  	//cout<<" scaleFactor (pt, btagger, systematic): (" << selectedJetsForBtagging[bJet1].Pt() << "," << btagger << "," << systematic << ") = " << SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematicnew) << endl;
+									}
+									else
+									{ // jet is b-tagged but NOT a true b and also not a c
+										//cout<<" jet is b-tagged but NOT a true b"<<endl;
+										//scaleFactor = scaleFactor * mistagfactor;
+										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[bJet1].Pt(),selectedJetsForBtagging[bJet1].Eta(),btagger,systematic);
+								  	//cout<<" scaleFactor (pt, eta, btagger, systematic): (" << selectedJetsForBtagging[bJet1].Pt() << "," << selectedJetsForBtagging[bJet1].Eta() << "," << btagger << "," << systematic << ") = " << SFl(selectedJetsForBtagging[bJet1].Pt(), selectedJetsForBtagging[bJet1].Eta(),btagger,systematic) << endl;
 									}										
 								}
 							}
@@ -920,23 +937,31 @@ int main (int argc, char *argv[])
 						{
 							bJet2 = jetindex_btagvalue[i].first;
 							bTagValuesForMVA_2B_2W.push_back(bTagValuesForMVA[bJet2]);
+							//cout << "flavour of second b-tagged jet is: " << fabs((myBranch_selectedEvents->partonFlavourJet())[bJet2]) << endl;
 							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{								
 								if(doBtagSFreweighting &&bJet2 == jetindex_isb[j].first)
 								{       
 							  	//cout<<"    jetindex_isb["<<j<<"].second = "<<jetindex_isb[j].second<<endl;
-									if(!jetindex_isb[j].second)
-									{ // jet is b-tagged but NOT a true b
-										//cout<<"jet is b-tagged but NOT a true b"<<endl;
-										//scaleFactor = scaleFactor * mistagfactor;
-										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[jetindex_btagvalue[i].first].Pt(),selectedJetsForBtagging[bJet2].Eta(),btagger,systematic);
-									} 
-									else
+									if(jetindex_isb[j].second)
 									{ // jet is b-tagged and a true b
-								  	//cout<<"jet is b-tagged and a true b"<<endl;
+								  	//cout<<" jet is b-tagged and a true b"<<endl;
 										//scaleFactor = scaleFactor * scalefactorbtageff;
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet2].Pt(),btagger,systematic);
 									}									
+									else if(fabs((myBranch_selectedEvents->partonFlavourJet())[bJet2]) == 4)
+									{ //jet is b-tagged but is a c quark
+										//cout<<" jet is b-tagged but it is a c quark"<<endl;
+										if(systematic == "bTagMinus") systematicnew = "bTagMinus_c";
+										if(systematic == "bTagPlus") systematicnew = "bTagPlus_c";
+										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet2].Pt(),btagger,systematicnew);										
+									}									
+									else
+									{ // jet is b-tagged but NOT a true b and not a c
+										//cout<<" jet is b-tagged but NOT a true b"<<endl;
+										//scaleFactor = scaleFactor * mistagfactor;
+										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[jetindex_btagvalue[i].first].Pt(),selectedJetsForBtagging[bJet2].Eta(),btagger,systematic);
+									} 
 								}
 							}
 						}
@@ -944,12 +969,12 @@ int main (int argc, char *argv[])
 				} //end loop over jets (~ b-tagging)
 				
 			if(isSSLepton && dataSetName=="Data"){
-				myfile << "SAME-SIGN EVENT\n";
-				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
+				if(isSSMuon) myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
+				if(isSSElectron) myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
+				if(isSSMuEl) myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
 			
 			}else if(isTriLepton && dataSetName=="Data"){
-				myfile << "TRILEPTON EVENT\n";
-				myfile << " Event id: " << myBranch_selectedEvents->eventID() << " Run: " << myBranch_selectedEvents->runID() << " LumiBlock: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
+				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			}
 			
 			if(doPUreweighting) MSPlot["MS_nPV_beforePUreweighting"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor/lumiWeight3D);	
@@ -1475,7 +1500,8 @@ int main (int argc, char *argv[])
 		delete inFile;
 		
   } //loop on 'datasets'
-	myfile.close();
+	myfile1.close();
+	myfile2.close();
 
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
@@ -1704,6 +1730,8 @@ float SFb(float jetpt, string tagger, string syst){
 	float SFb_error_TCHPM[14] = { 0.0365776, 0.036307, 0.0261062, 0.0270308, 0.0276016, 0.0175067, 0.0179022, 0.0198104, 0.0197836, 0.024912, 0.0273767, 0.0398119, 0.0418751, 0.0605975};
 	float SFb_error_TCHEM[14] = { 0.0311456, 0.0303825, 0.0209488, 0.0216987, 0.0227149, 0.0260294, 0.0205766, 0.0227065, 0.0260481, 0.0278001, 0.0295361, 0.0306555, 0.0367805, 0.0527368};
 	
+	//cout << " IN SFb, SYSTEMATIC: " << syst << endl;
+	
 	float scalefactor = 0;
 	int bin = -1;
 	if(tagger=="TCHPM"){ 
@@ -1724,6 +1752,14 @@ float SFb(float jetpt, string tagger, string syst){
 				scalefactor = scalefactor + SFb_error_TCHPM[bin];
 				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) + 2*SFb_error_TCHPM[13];
 			}
+			if( syst == "bTagMinus_c" ){
+				scalefactor = scalefactor - 2*SFb_error_TCHPM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) - 2*SFb_error_TCHPM[13];
+			}
+			if( syst == "bTagPlus_c" ){
+				scalefactor = scalefactor + 2*SFb_error_TCHPM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.616456*((1.+(0.145816*ptmax[13]))/(1.+(0.0904067*ptmax[13]))) + 2*SFb_error_TCHPM[13];
+			}
 		} 
 	}
 	if(tagger=="TCHEM"){
@@ -1742,6 +1778,14 @@ float SFb(float jetpt, string tagger, string syst){
 			}			
 			if( syst == "bTagPlus" ){
 				scalefactor = scalefactor + SFb_error_TCHEM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) + 2*SFb_error_TCHEM[13];
+			}
+			if( syst == "bTagMinus_c" ){
+				scalefactor = scalefactor - 2*SFb_error_TCHEM[bin];
+				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) - 2*SFb_error_TCHEM[13];
+			}
+			if( syst == "bTagPlus_c" ){
+				scalefactor = scalefactor + 2*SFb_error_TCHEM[bin];
 				if(jetpt > ptmax[13]) scalefactor = 0.932251*((1.+(0.00335634*ptmax[13]))/(1.+(0.00305994*ptmax[13]))) + 2*SFb_error_TCHEM[13];
 			}
 		} 
