@@ -402,18 +402,11 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_used"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
 	MSPlot["MS_nPV_used"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
 	
-	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1200);
-	histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetXaxis()->SetTitle("HT (GeV)");
-	histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
-	histo2D["HTvsMTop_2B_2W_TTbarJets"] = new TH2F("HTvsMTop_2B_2W_TTbarJets","HTvsMTop_2B_2W_TTbarJets",400,0,1500,400,0,1200);
-	histo2D["HTvsMTop_2B_2W_TTbarJets"]->GetXaxis()->SetTitle("HT (GeV)");
-	histo2D["HTvsMTop_2B_2W_TTbarJets"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
-	histo2D["HTvsMTop_1B_2W_TprimeTprime"] = new TH2F("HTvsMTop_1B_2W_TprimeTprime","HTvsMTop_1B_2W_TprimeTprime",400,0,1500,400,0,1200);
-	histo2D["HTvsMTop_1B_2W_TprimeTprime"]->GetXaxis()->SetTitle("HT (GeV)");
-	histo2D["HTvsMTop_1B_2W_TprimeTprime"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
-	histo2D["HTvsMTop_2B_2W_TprimeTprime"] = new TH2F("HTvsMTop_2B_2W_TprimeTprime","HTvsMTop_2B_2W_TprimeTprime",400,0,1500,400,0,1200);
-	histo2D["HTvsMTop_2B_2W_TprimeTprime"]->GetXaxis()->SetTitle("HT (GeV)");
-	histo2D["HTvsMTop_2B_2W_TprimeTprime"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
+	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1500);
+	histo2D["HTvsMTop_2B_2W_TTbarJets"] = new TH2F("HTvsMTop_2B_2W_TTbarJets","HTvsMTop_2B_2W_TTbarJets",400,0,1500,400,0,1500);
+	histo2D["HTvsMTop_1B_2W_TprimeTprime"] = new TH2F("HTvsMTop_1B_2W_TprimeTprime","HTvsMTop_1B_2W_TprimeTprime",400,0,1500,400,0,1500);
+	histo2D["HTvsMTop_2B_2W_TprimeTprime"] = new TH2F("HTvsMTop_2B_2W_TprimeTprime","HTvsMTop_2B_2W_TprimeTprime",400,0,1500,400,0,1500);
+
 	
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -427,7 +420,7 @@ int main (int argc, char *argv[])
   string xvariable = "Mtop", yvariable = "HT"; //these are the two variables for which the 2D plane is made
   int nbinsxvariable_1B_2W = 20, nbinsyvariable_1B_2W = 10; //if the binning is already created, make sure these are the same as before!
   int nbinsxvariable_2B_2W = 12, nbinsyvariable_2B_2W = 6;
-	string Binningpostfix = "_TTbarJetsFlat";
+	string Binningpostfix = "_TTbarJetsFlat_MtopvsHT";
 	string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W"+Binningpostfix+channelpostfix+".root";
   string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W"+Binningpostfix+channelpostfix+".root";
   TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable_1B_2W,yvariable,nbinsyvariable_1B_2W);
@@ -445,7 +438,29 @@ int main (int argc, char *argv[])
     {
        cout<<" ... The 2D binnings will be created!"<<endl;
     }
-  }	
+  }
+	if(xvariable=="HT" && yvariable=="Mtop")
+	{
+		histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetXaxis()->SetTitle("HT (GeV)");
+		histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
+		histo2D["HTvsMTop_2B_2W_TTbarJets"]->GetXaxis()->SetTitle("HT (GeV)");
+		histo2D["HTvsMTop_2B_2W_TTbarJets"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
+		histo2D["HTvsMTop_1B_2W_TprimeTprime"]->GetXaxis()->SetTitle("HT (GeV)");
+	  histo2D["HTvsMTop_1B_2W_TprimeTprime"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
+		histo2D["HTvsMTop_2B_2W_TprimeTprime"]->GetXaxis()->SetTitle("HT (GeV)");
+		histo2D["HTvsMTop_2B_2W_TprimeTprime"]->GetYaxis()->SetTitle("Reconstructed top mass (GeV)");
+	}
+	if(xvariable=="Mtop" && yvariable=="HT")
+	{
+		histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetYaxis()->SetTitle("HT (GeV)");
+		histo2D["HTvsMTop_1B_2W_TTbarJets"]->GetXaxis()->SetTitle("Reconstructed top mass (GeV)");
+		histo2D["HTvsMTop_2B_2W_TTbarJets"]->GetYaxis()->SetTitle("HT (GeV)");
+		histo2D["HTvsMTop_2B_2W_TTbarJets"]->GetXaxis()->SetTitle("Reconstructed top mass (GeV)");
+		histo2D["HTvsMTop_1B_2W_TprimeTprime"]->GetYaxis()->SetTitle("HT (GeV)");
+	  histo2D["HTvsMTop_1B_2W_TprimeTprime"]->GetXaxis()->SetTitle("Reconstructed top mass (GeV)");
+		histo2D["HTvsMTop_2B_2W_TprimeTprime"]->GetYaxis()->SetTitle("HT (GeV)");
+		histo2D["HTvsMTop_2B_2W_TprimeTprime"]->GetXaxis()->SetTitle("Reconstructed top mass (GeV)");
+	}
 	
   ////////////////////////////////////
   /// Selection table
@@ -1284,9 +1299,15 @@ int main (int argc, char *argv[])
 					   float fillweight = datasets[d]->NormFactor () * Luminosity * scaleFactor;
 						 
 						 if(dataSetName.find("TTbarJets") <= 0)
-						   histo2D["HTvsMTop_1B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+						 {
+						   if(xvariable=="HT" && yvariable=="Mtop") histo2D["HTvsMTop_1B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+						 	 if(xvariable=="Mtop" && yvariable=="HT") histo2D["HTvsMTop_1B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight);
+						 }
 						 if(dataSetName.find("NP_overlay_Tprime") <= 0)
-						   histo2D["HTvsMTop_1B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);				 
+						 {
+							 if(xvariable=="HT" && yvariable=="Mtop") histo2D["HTvsMTop_1B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+						 	 if(xvariable=="Mtop" && yvariable=="HT") histo2D["HTvsMTop_1B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight);						 
+						 }
 						 
 						 if(make2Dbinning == true)
 					   {
@@ -1450,11 +1471,17 @@ int main (int argc, char *argv[])
 					   	
 						//for the 2D binning (HT vs Mtop)
 					   	float fillweight = datasets[d]->NormFactor () * Luminosity * scaleFactor;
-							
+
 							if(dataSetName.find("TTbarJets") <= 0)
-						   histo2D["HTvsMTop_2B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
-						 	if(dataSetName.find("NP_overlay_Tprime") <= 0)
-						   histo2D["HTvsMTop_2B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);				 
+						  {
+						   if(xvariable=="HT" && yvariable=="Mtop") histo2D["HTvsMTop_2B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+						 	 if(xvariable=="Mtop" && yvariable=="HT") histo2D["HTvsMTop_2B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight);
+						  }
+						  if(dataSetName.find("NP_overlay_Tprime") <= 0)
+						  {
+							 if(xvariable=="HT" && yvariable=="Mtop") histo2D["HTvsMTop_2B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+						 	 if(xvariable=="Mtop" && yvariable=="HT") histo2D["HTvsMTop_2B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight);						 
+						  }
 							
 							if(make2Dbinning == true)
 					   	{
