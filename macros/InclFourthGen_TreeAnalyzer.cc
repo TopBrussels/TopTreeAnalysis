@@ -373,6 +373,7 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicity", 10, -0.5, 9.5, "Jet Multiplicity");
   MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "BtaggedJetMultiplicity", 7, -0.5, 6.5, "b-tagged jet multiplicity");
 	MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicityAtleast1Btag", 10, -0.5, 9.5, "Jet multiplicity (>=1 b-tag)");
+  MSPlot["MS_Reliso_Lepton"] = new MultiSamplePlot(datasets, "Lepton reliso", 40, 0, 0.25, "Lepton reliso");
 
   MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
@@ -384,7 +385,7 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
-
+  MSPlot["MS_Reliso_Lepton_nobtag"] = new MultiSamplePlot(datasets, "Lepton reliso", 40, 0, 0.25, "Lepton reliso");
 
   //4 jets, no b-tag requirement yet
   MSPlot["MS_MET_nobtag_4jets"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
@@ -774,12 +775,14 @@ int main (int argc, char *argv[])
 				if(semiElectron)
 				{
 					MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-				  if(selectedJets.size()>=4) MSPlot["MS_LeptonPt_nobtag_4jets"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);
+				  MSPlot["MS_Reliso_Lepton_nobtag"]->Fill(myBranch_selectedEvents->selectedElectronsRelIso()[0],datasets[d], true, Luminosity*scaleFactor);
+					if(selectedJets.size()>=4) MSPlot["MS_LeptonPt_nobtag_4jets"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);
 				}
 				if(semiMuon)
 				{
 					MSPlot["MS_LeptonPt_nobtag"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-			  	if(selectedJets.size()>=4) MSPlot["MS_LeptonPt_nobtag_4jets"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);
+			  	MSPlot["MS_Reliso_Lepton_nobtag"]->Fill(myBranch_selectedEvents->selectedMuonsRelIso()[0],datasets[d], true, Luminosity*scaleFactor);
+					if(selectedJets.size()>=4) MSPlot["MS_LeptonPt_nobtag_4jets"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);
 				}
 				
 				for(unsigned int j=0;j<selectedJets.size();j++)
@@ -991,8 +994,16 @@ int main (int argc, char *argv[])
 				MSPlot["MS_MET"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 				if(selectedJets.size()>=4) MSPlot["MS_MET_4jets"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 				
-				if(semiElectron) MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
-				if(semiMuon) MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+				if(semiElectron)
+				{
+					MSPlot["MS_LeptonPt"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
+					MSPlot["MS_Reliso_Lepton"]->Fill(myBranch_selectedEvents->selectedElectronsRelIso()[0],datasets[d], true, Luminosity*scaleFactor);			
+				}
+				if(semiMuon)
+				{
+					MSPlot["MS_LeptonPt"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
+					MSPlot["MS_Reliso_Lepton"]->Fill(myBranch_selectedEvents->selectedMuonsRelIso()[0],datasets[d], true, Luminosity*scaleFactor);
+				}
 				
 				if(selectedJets.size()>=4)
 				{
@@ -1275,14 +1286,16 @@ int main (int argc, char *argv[])
 						 if(dataSetName.find("NP_overlay_Tprime") <= 0)
 						   histo2D["HTvsMTop_1B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);				 
 						 
-					   if(make2Dbinning == true)
+						 if(make2Dbinning == true)
 					   {
-									HTvsMTop_1B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
-					   }
+									if(xvariable=="HT" && yvariable=="Mtop") HTvsMTop_1B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+					   			if(xvariable=="Mtop" && yvariable=="HT") HTvsMTop_1B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight);
+						 }
 					   else if(make2Dbinning == false)
 					   {
-					        HTvsMTop_1B_2W.Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight,d);
-					   }
+					        if(xvariable=="HT" && yvariable=="Mtop") HTvsMTop_1B_2W.Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight,d);
+					   			if(xvariable=="Mtop" && yvariable=="HT") HTvsMTop_1B_2W.Fill(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight,d);
+						 }						 						 
 					 }
 					
 				    } 
@@ -1440,15 +1453,17 @@ int main (int argc, char *argv[])
 						   histo2D["HTvsMTop_2B_2W_TTbarJets"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
 						 	if(dataSetName.find("NP_overlay_Tprime") <= 0)
 						   histo2D["HTvsMTop_2B_2W_TprimeTprime"]->Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);				 
-						 
-					   	if(make2Dbinning == true)
+							
+							if(make2Dbinning == true)
 					   	{
-					   	  HTvsMTop_2B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
-					   	}
+					   	  if(xvariable=="HT" && yvariable=="Mtop") HTvsMTop_2B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight);
+					   		if(xvariable=="Mtop" && yvariable=="HT") HTvsMTop_2B_2W.Fill_for2DBinning(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight);
+							}
 					   	else if(make2Dbinning == false)
 					   	{
-					   	  HTvsMTop_2B_2W.Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight,d);
-					   	}
+					   	  if(xvariable=="HT" && yvariable=="Mtop") HTvsMTop_2B_2W.Fill(myInclFourthGenSearchTools.GetHT(),myInclFourthGenSearchTools.GetMtop(),fillweight,d);
+					   		if(xvariable=="Mtop" && yvariable=="HT") HTvsMTop_2B_2W.Fill(myInclFourthGenSearchTools.GetMtop(),myInclFourthGenSearchTools.GetHT(),fillweight,d);
+							}
 					   }
 					   else
 					     cout<<"WARNING: vector of selected jets for MVA input is not equal to 4; fix this!!"<<endl;	
