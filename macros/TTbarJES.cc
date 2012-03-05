@@ -551,7 +551,7 @@ int main (int argc, char *argv[])
             float chargedFraction = jet->chargedHadronEnergyFraction() + jet->chargedEmEnergyFraction() + jet->chargedMuEnergyFraction();
             float chargedAveragePt = jet->Pt() * chargedFraction / jet->chargedMultiplicity();
             float charge = jet->charge();
-            float deltaPtFraction = ( chargedAveragePt * charge * 0.1 ) / jet->Pt();
+            float deltaPtFraction = ( chargedAveragePt * chargedAveragePt * charge * 0.0001 ) / jet->Pt();
             if( systematic == "AlignMinus" ) deltaPtFraction *= -1.;
             init_jets_corrected[iJet]->SetPxPyPzE(jet->Px()*(1+deltaPtFraction), jet->Py()*(1+deltaPtFraction), jet->Pz()*(1+deltaPtFraction), jet->E()*(1+deltaPtFraction));
           }
