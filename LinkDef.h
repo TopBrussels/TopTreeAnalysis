@@ -20,7 +20,6 @@
 #include "TopTreeProducer/interface/TRootGenTop.h"
 #include "TopTreeProducer/interface/TRootSpinCorrGen.h"
 #include "TopTreeProducer/interface/TRootVertex.h"
-#include "JESMeasurement/interface/Monster.h"
 #include "JESMeasurement/interface/LightMonster.h"
 #include "BkgEstimationMethods/interface/VJetEstimation.h"
 #include "TopTreeAnalysis/TopFCNC/interface/TopFCNC_Evt.h"
@@ -59,7 +58,6 @@
 #include "TopTreeAnalysis/StopSearchesBG/interface/StopPair_Evt.h"
 #include "TopTreeAnalysis/WHelicities/interface/WTree.h"
 #include "TopTreeAnalysis/InclFourthGenSearch/interface/InclFourthGenTree.h"
-#include "JESMeasurement/interface/Monster.h"
 #include "Content/interface/MCExpectation.h"
 #include "Content/interface/MCObsExpectation.h"
 #include "Content/interface/AnalysisEnvironment.h"
@@ -95,7 +93,6 @@
 #pragma link C++ class TRootSpinCorrGen;
 #pragma link C++ class TRootVertex;
 #pragma link C++ class LightMonster;
-#pragma link C++ class Monster;
 #pragma link C++ class WTree;
 #pragma link C++ class InclFourthGenTree;
 #pragma link C++ class MCExpectation;
