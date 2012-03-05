@@ -27,7 +27,6 @@
 #include "../JESMeasurement/interface/JetCombiner.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "../JESMeasurement/interface/Monster.h"
 #include "../JESMeasurement/interface/LightMonster.h"
 #include "Style.C"
 
@@ -68,7 +67,7 @@ int main (int argc, char *argv[])
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used:  " << systematic << endl;
-  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus") )
+  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus") )
   {
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: Nominal, InvertedIso, JESPlus, JESMinus, JERPlus, JERMinus" << endl;
@@ -184,8 +183,8 @@ int main (int argc, char *argv[])
   MSPlot["nLooseElectronsSemiEl"] = new MultiSamplePlot(datasets, "nLooseElectronsSemiEl", 5, -0.5, 4.5, "Nr. of Loose Electrons, SemiEl");
   MSPlot["nSelectedJets"] = new MultiSamplePlot(datasets, "nSelectedJets", 10, -0.5, 9.5, "Nr. of Selected Jets");
   
-  histo1D["nTightLooseMu"] = new TH1F("nTightLooseMu","nTightLooseMu",5,-0.5,4.5);
-  histo1D["nTightLooseEl"] = new TH1F("nTightLooseEl","nTightLooseEl",5,-0.5,4.5);
+  histo1D["FourthJetPt"] = new TH1F("FourthJetPt","FourthJetPt",100,0,100);
+  histo1D["FourthJetPtTriggered"] = new TH1F("FourthJetPtTriggered","FourthJetPtTriggered",100,0,100);
   
   ////////////////////////////////////
   /// Selection table
@@ -354,15 +353,12 @@ int main (int argc, char *argv[])
     
     TFile* MonsterFile = new TFile(monsterFileTitle.c_str(),"RECREATE");
     
-    Monster* monster = 0;
     LightMonster* lightMonster = 0;
     
     TTree* MonsterTree = new TTree("MonsterTree","Tree containing the monsters");
     
     if(measureTopMassDifference)
       MonsterTree->Branch("TheLightMonster","LightMonster",&lightMonster);
-    else
-      MonsterTree->Branch("TheMonster","Monster",&monster);
 
     ////////////////////////////////////
     //	Loop on events
@@ -544,13 +540,31 @@ int main (int argc, char *argv[])
       for(unsigned i=0; i<init_electrons.size(); i++)
         MSPlot["AllElectronsRelPFIso"]->Fill((init_electrons[i]->chargedHadronIso()+init_electrons[i]->neutralHadronIso()+init_electrons[i]->photonIso())/init_electrons[i]->Pt(), datasets[d], true, Luminosity*scaleFactor);
       
+      if(systematic == "AlignPlus" || systematic == "AlignMinus")
+      {
+        // Scale PFJets up/down according to their charge (for tracker misalignment studies)
+        for(unsigned int iJet=0; iJet<init_jets_corrected.size(); iJet++)
+        {
+          TRootPFJet* jet = jetTools->convertToPFJets(init_jets_corrected[iJet]);
+          if(jet->chargedMultiplicity() > 0)
+          {
+            float chargedFraction = jet->chargedHadronEnergyFraction() + jet->chargedEmEnergyFraction() + jet->chargedMuEnergyFraction();
+            float chargedAveragePt = jet->Pt() * chargedFraction / jet->chargedMultiplicity();
+            float charge = jet->charge();
+            float deltaPtFraction = ( chargedAveragePt * charge * 0.1 ) / jet->Pt();
+            if( systematic == "AlignMinus" ) deltaPtFraction *= -1.;
+            init_jets_corrected[iJet]->SetPxPyPzE(jet->Px()*(1+deltaPtFraction), jet->Py()*(1+deltaPtFraction), jet->Pz()*(1+deltaPtFraction), jet->E()*(1+deltaPtFraction));
+          }
+        }
+      }
+      
       /////////////////////////////
       //   Selection
       /////////////////////////////
       
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
-      selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
+      selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
       selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setElectronCuts(30,2.5,0.1,0.02,1,0.3); // FIXME: RelIso to 0.1
@@ -600,7 +614,7 @@ int main (int argc, char *argv[])
       
       MSPlot["nEventsAfterCutsSemiMu"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
       selecTableSemiMu.Fill(d,0,scaleFactor*lumiWeight);
-      if( triggedSemiMu && semiMuon )
+//      if( triggedSemiMu && semiMuon )
       {
         MSPlot["nEventsAfterCutsSemiMu"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
         selecTableSemiMu.Fill(d,1,scaleFactor*lumiWeight);
@@ -613,31 +627,6 @@ int main (int argc, char *argv[])
           {
             MSPlot["nEventsAfterCutsSemiMu"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
   		      selecTableSemiMu.Fill(d,3,scaleFactor*lumiWeight);
-  		      
-  		      histo1D["nTightLooseMu"]->Fill(0.);
-            for(unsigned int iMu=0; iMu < init_muons.size(); iMu++)
-            {
-              float pT = init_muons[iMu]->Pt();
-              float eta = init_muons[iMu]->Eta();
-              bool isLoose = false;
-              bool isTight = false;
-              if( fabs(pT - selectedMuons[0]->Pt()) > 0.01 )
-              {
-                for(unsigned int iSelMu = 0; iSelMu < selectedMuons.size(); iSelMu++)
-                {
-                  if( fabs(pT - selectedMuons[iSelMu]->Pt()) < 0.01 && fabs(eta - selectedMuons[iSelMu]->Eta()) < 0.01 )
-                    isTight = true;
-                }
-                for(unsigned int iSelMu = 0; iSelMu < vetoMuons.size(); iSelMu++)
-                {
-                  if( fabs(pT - vetoMuons[iSelMu]->Pt()) < 0.01 && fabs(eta - vetoMuons[iSelMu]->Eta()) < 0.01 )
-                    isLoose = true;
-                }
-                if(isLoose) histo1D["nTightLooseMu"]->Fill(1.);
-                if(isTight) histo1D["nTightLooseMu"]->Fill(2.);
-              }
-            }
-
         		if( vetoMuons.size() == 1 || ( systematic == "InvertedIso" && vetoMuons.size() == 0 ) ) // if InvertedIso, selected muon not part of vetoMuons vector!
         		{
         		  MSPlot["nEventsAfterCutsSemiMu"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
@@ -661,6 +650,11 @@ int main (int argc, char *argv[])
                       selecTableSemiMu.Fill(d,8,scaleFactor*lumiWeight);
                       if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
                       {
+                        if(selectedJets[2]->Pt() > 30)
+                        {
+                          histo1D["FourthJetPt"]->Fill(selectedJets[3]->Pt());
+                          if(triggedSemiMu) histo1D["FourthJetPtTriggered"]->Fill(selectedJets[3]->Pt());
+                        }
                         MSPlot["nEventsAfterCutsSemiMu"]->Fill(9, datasets[d], true, Luminosity*scaleFactor);
                         selecTableSemiMu.Fill(d,9,scaleFactor*lumiWeight);
                         eventSelectedSemiMu = true;
@@ -678,7 +672,7 @@ int main (int argc, char *argv[])
       
       MSPlot["nEventsAfterCutsSemiEl"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
       selecTableSemiEl.Fill(d,0,scaleFactor*lumiWeight);
-      if( semiElectron && triggedSemiEl )
+//      if( semiElectron && triggedSemiEl )
       {
         MSPlot["nEventsAfterCutsSemiEl"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
         selecTableSemiEl.Fill(d,1,scaleFactor*lumiWeight);
@@ -691,31 +685,6 @@ int main (int argc, char *argv[])
           {
             MSPlot["nEventsAfterCutsSemiEl"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
             selecTableSemiEl.Fill(d,3,scaleFactor*lumiWeight);
-            
-            histo1D["nTightLooseEl"]->Fill(0.);
-            for(unsigned int iEl=0; iEl < init_electrons.size(); iEl++)
-            {
-              float pT = init_electrons[iEl]->Pt();
-              float eta = init_electrons[iEl]->Eta();
-              bool isLoose = false;
-              bool isTight = false;
-              if( fabs(pT - selectedElectrons[0]->Pt()) > 0.01 )
-              {
-                for(unsigned int iSelEl = 1; iSelEl < selectedElectrons.size(); iSelEl++)
-                {
-                  if( fabs(pT - selectedElectrons[iSelEl]->Pt()) < 0.01 && fabs(eta - selectedElectrons[iSelEl]->Eta()) < 0.01 )
-                    isTight = true;
-                }
-                for(unsigned int iSelEl = 1; iSelEl < vetoElectronsSemiEl.size(); iSelEl++)
-                {
-                  if( fabs(pT - vetoElectronsSemiEl[iSelEl]->Pt()) < 0.01 && fabs(eta - vetoElectronsSemiEl[iSelEl]->Eta()) < 0.01 )
-                    isLoose = true;
-                }
-                if(isLoose) histo1D["nTightLooseEl"]->Fill(1.);
-                if(isTight) histo1D["nTightLooseEl"]->Fill(2.);
-              }
-            }
-            
             if( vetoMuons.size() == 0 )
             {
               MSPlot["nEventsAfterCutsSemiEl"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
@@ -743,6 +712,11 @@ int main (int argc, char *argv[])
                         selecTableSemiEl.Fill(d,9,scaleFactor*lumiWeight);
                         if( selectedJets.size()>=(unsigned int)anaEnv.NofJets )
                         {
+                          if(selectedJets[2]->Pt() > 30)
+                          {
+                            histo1D["FourthJetPt"]->Fill(selectedJets[3]->Pt());
+                            if(triggedSemiEl) histo1D["FourthJetPtTriggered"]->Fill(selectedJets[3]->Pt());
+                          }
                           MSPlot["nEventsAfterCutsSemiEl"]->Fill(10, datasets[d], true, Luminosity*scaleFactor);
                           selecTableSemiEl.Fill(d,10,scaleFactor*lumiWeight);
                           eventSelectedSemiEl = true;
@@ -763,8 +737,6 @@ int main (int argc, char *argv[])
       
       if( eventSelectedSemiEl && eventSelectedSemiMu )
         cout << "Event selected in semiEl and semiMu channel???" << endl;
-      
-      continue;
       
       vector<TRootMCParticle*> mcParticles;
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
@@ -931,47 +903,6 @@ int main (int argc, char *argv[])
             
             MonsterTree->Fill();
             delete lightMonster;
-          }
-          else
-          {
-            monster = new Monster();
-            monster->setEventID( event->eventId() );
-            monster->setRunID( event->runId() );
-            monster->setLumiBlockID( event->lumiBlockId() );
-            monster->setSelectedSemiMu(eventSelectedSemiMu);
-            monster->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
-            monster->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
-            monster->setMvaVals(mvaValsVector);
-            monster->setMvaResults(mvaResultsVector);
-            monster->setEventWeight(scaleFactor);
-            monster->setFitResults( monsterVector, measureTopMass);
-            monster->setHadrBJet( hadrBJetIndex );
-            monster->setHadrLJet1( lightJet1Index );
-            monster->setHadrLJet2( lightJet2Index );
-            monster->setLeptBJet( leptBJetIndex );
-            monster->setMET( *mets[0] );
-            monster->setSelectedJets( otherSelectedJets );
-            monster->setBTagTCHE(bTagTCHE);
-            monster->setBTagTCHP(bTagTCHP);
-            monster->setBTagSSVHE(bTagSSVHE);
-            monster->setBTagSSVHP(bTagSSVHP);
-            if( eventSelectedSemiMu )
-            {
-              monster->setLepton( *selectedMuons[0] );
-              monster->setLeptonCharge( selectedMuons[0]->charge() );
-            }
-            else
-            {
-              monster->setLepton( *selectedElectrons[0] );
-              monster->setLeptonCharge( selectedElectrons[0]->charge() );
-            }
-            monster->setHadrBQuark( jetCombiner->GetHadrBQuark() );
-            monster->setHadrLQuark1( jetCombiner->GetLightQuark1() );
-            monster->setHadrLQuark2( jetCombiner->GetLightQuark2() );
-            monster->setLeptBQuark( jetCombiner->GetLeptBQuark() );
-            
-            MonsterTree->Fill();
-            delete monster;
           }
 	      }
       }// end !TrainMVA && eventSelected

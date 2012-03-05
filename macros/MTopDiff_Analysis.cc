@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
+#include <algorithm>
 
 // Root stuff
 #include "TROOT.h"
@@ -75,21 +76,21 @@ int main (int argc, char *argv[])
   
   vector<string> inputMonsters;
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
   
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
   
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
   
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
   
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -186,6 +187,7 @@ int main (int argc, char *argv[])
 	
 	histo1D["nUsedCombis_TTJets"] = new TH1F("nUsedCombis_TTJets","nUsedCombis_TTJets",13,-0.5,12.5);
 	histo1D["nUsedCombis_WJets"] = new TH1F("nUsedCombis_WJets","nUsedCombis_WJets",13,-0.5,12.5);
+	histo1D["maxIndexHadrJets"] = new TH1F("maxIndexHadrJets","maxIndexHadrJets",10,-0.5,9.5);
   
   histo1D["bjets_SSVHE"] = new TH1F("bjets_SSVHE","bjets_SSVHE;bjets_SSVHE;#b-jets",60,0,6);
   
@@ -300,14 +302,20 @@ int main (int argc, char *argv[])
   MSPlot["AllJets_pt_leptonPlus"]->setMaxY(70000.);
   MSPlot["AllJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonMinus",50,30,530,"All jets p_{T} (GeV)","Nr. of jets / 10 GeV");
   MSPlot["AllJets_pt_leptonMinus"]->setMaxY(70000.);
+  MSPlot["4LeadJets_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4LeadJets_pt_leptonPlus",50,30,530,"4 Leading jets p_{T} (GeV)","Nr. of jets / 10 GeV");
+  MSPlot["4LeadJets_pt_leptonPlus"]->setMaxY(70000.);
+  MSPlot["4LeadJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4LeadJets_pt_leptonMinus",50,30,530,"4 Leading jets p_{T} (GeV)","Nr. of jets / 10 GeV");
+  MSPlot["4LeadJets_pt_leptonMinus"]->setMaxY(70000.);
   MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
   MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonMinus"]->setMaxY(50000.);
   MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMaxY(18000.);
+  MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMinY(20.);
   MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(18000.);
+  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(28000.);
+  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMinY(20.);
   MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 20 GeV");
   MSPlot["mTop_Fit_leptonPlus"]->setMaxY(6000.);
   MSPlot["mTop_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonMinus",50,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 20 GeV");
@@ -634,6 +642,12 @@ int main (int argc, char *argv[])
           if( fabs(selectedJets[i].Eta()) > fabs(etaMostForwardJet) )
             etaMostForwardJet = selectedJets[i].Eta();
         histo1D["EtaMostForwardJet"]->Fill(etaMostForwardJet);
+        if( monster->hadrBJet() < 9999 && monster->hadrLJet1() < 9999 && monster->hadrLJet2() < 9999 )
+        {
+          int maxIndex = max(monster->hadrLJet1(), monster->hadrLJet2());
+          maxIndex = max(maxIndex, monster->hadrBJet());
+          histo1D["maxIndexHadrJets"]->Fill(maxIndex);
+        }
       }
 //      cout << "Luminosity: " << Luminosity << "  monster->eventWeight(): " << monster->eventWeight() << "  lumiWeight: " << lumiWeight << endl;
       MSPlot["nPV_beforechi2"+leptonDecay]->Fill(monster->nPV(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
@@ -778,6 +792,7 @@ int main (int argc, char *argv[])
         float M3 = -1, maxPt = -1;
         for(int i=0;i<selectedJets.size();i++)
         {
+          if(i<4) MSPlot["4LeadJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
           MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
           MSPlot["AllJets_pt"+leptonCharge]->Fill(selectedJets[i].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
           MSPlot["AllJets_eta"+leptonCharge]->Fill(selectedJets[i].Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
@@ -932,9 +947,9 @@ int main (int argc, char *argv[])
 	cout << "nSemiElQCD in Data: " << nSemiElQCD1 << " " << nSemiElQCD2 << " " << nSemiElQCD3 << endl;
   cout << "Fractions:       " << nSemiElQCD1/(nSemiElQCD1+nSemiElQCD2+nSemiElQCD3) << " " << nSemiElQCD2/(nSemiElQCD1+nSemiElQCD2+nSemiElQCD3) << " " << nSemiElQCD3/(nSemiElQCD1+nSemiElQCD2+nSemiElQCD3) << endl;
   
-//  histo1D["mTop_NoFit_goodcombi"]->Fit("gaus","QR","",155,190);
-//  histo1D["mTopL7_NoFit_goodcombi"]->Fit("gaus","QR","",155,190);
-//  histo1D["mTop_Fit_goodcombi"]->Fit("gaus","QR","",160,185);
+  histo1D["mTop_NoFit_goodcombi"]->Fit("gaus","QR","",155,190);
+  histo1D["mTopL7_NoFit_goodcombi"]->Fit("gaus","QR","",155,190);
+  histo1D["mTop_Fit_goodcombi"]->Fit("gaus","QR","",160,185);
   
   // Fit some histo's
   if( histo1D["wJets_mTopFitted"]->GetEntries() > 2 )
@@ -1100,7 +1115,7 @@ int main (int argc, char *argv[])
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first;
-    temp->showNumberEntries(true);
+    temp->showNumberEntries(false);
     if(name.find("muPlus") < name.size()) temp->addText("#mu^{+}+jets");
     else if(name.find("muMinus") < name.size()) temp->addText("#mu^{-}+jets");
     else if(name.find("elPlus") < name.size()) temp->addText("e^{+}+jets");
@@ -1109,7 +1124,8 @@ int main (int argc, char *argv[])
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
     temp->Draw(false, name, true, true, true, true, true, 1, true);
 //    temp->Draw(false, name, false, false, false, false, false);
-    temp->Write(fout, name, true, pathPNG+"MSPlot/");
+    temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
+    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
 	
 	// 2D
