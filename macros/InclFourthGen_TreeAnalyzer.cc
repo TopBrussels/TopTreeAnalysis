@@ -1914,7 +1914,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt))) - 2*uncertainty;
 				}
 			}
-			if( syst == "misTagPlus" ){
+			else if( syst == "misTagPlus" ){
 				scalefactor = ((1.41077+(-0.00105992*jetpt))+(2.97373e-06*(jetpt*jetpt)))+(-3.0425e-09*(jetpt*(jetpt*jetpt)));
 				if(fabs(jetpt - 670)<0.00001){
 					float uncertainty = ((1.41077+(-0.00105992*jetpt))+(2.97373e-06*(jetpt*jetpt)))+(-3.0425e-09*(jetpt*(jetpt*jetpt)))-((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)));
@@ -1922,7 +1922,6 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 				}
 			}
 			else scalefactor = ((1.27011+(-0.000869141*jetpt))+(2.49796e-06*(jetpt*jetpt)))+(-2.62962e-09*(jetpt*(jetpt*jetpt)));
-
 		}
 		if(fabs(jeteta)> 0.8 && fabs(jeteta)< 1.6){
 			if( syst == "misTagMinus" ){
@@ -1932,7 +1931,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = ((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt))) - 2*uncertainty;
 				}
 			}
-			if( syst == "misTagPlus" ){
+			else if( syst == "misTagPlus" ){
 				scalefactor = ((1.51053+(-0.00180085*jetpt))+(5.27457e-06*(jetpt*jetpt)))+(-5.01901e-09*(jetpt*(jetpt*jetpt)));
 				if(fabs(jetpt - 670)<0.00001){
 					float uncertainty = ((1.51053+(-0.00180085*jetpt))+(5.27457e-06*(jetpt*jetpt)))+(-5.01901e-09*(jetpt*(jetpt*jetpt)))-((1.36167+(-0.00153237*jetpt))+(4.54567e-06*(jetpt*jetpt)))+(-4.38874e-09*(jetpt*(jetpt*jetpt)));
@@ -1949,7 +1948,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = ((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt))) - 2*uncertainty;
 				}
 			}
-			if( syst == "misTagPlus" ){
+			else if( syst == "misTagPlus" ){
 				scalefactor = ((1.3782+(-5.52498e-05*jetpt))+(1.14685e-06*(jetpt*jetpt)))+(-2.04329e-09*(jetpt*(jetpt*jetpt)));
 				if(fabs(jetpt - 670)<0.00001){
 					float uncertainty = ((1.3782+(-5.52498e-05*jetpt))+(1.14685e-06*(jetpt*jetpt)))+(-2.04329e-09*(jetpt*(jetpt*jetpt)))-((1.22696+(0.000249231*jetpt))+(9.55279e-08*(jetpt*jetpt)))+(-1.04034e-09*(jetpt*(jetpt*jetpt)));
@@ -1969,7 +1968,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt)))))) - 2*uncertainty;
 				}
 			}
-			if( syst == "misTagPlus" ){
+			else if( syst == "misTagPlus" ){
 				scalefactor = (1.47515*((1+(-0.000484868*jetpt))+(2.36817e-07*(jetpt*jetpt))))+(-2.05073e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00142819*jetpt))))));
 				if(fabs(jetpt - 670)<0.00001){
 					float uncertainty =(1.47515*((1+(-0.000484868*jetpt))+(2.36817e-07*(jetpt*jetpt))))+(-2.05073e-11*(jetpt*(jetpt*(jetpt/(1+(-0.00142819*jetpt)))))) -(1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))));
@@ -1977,7 +1976,6 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 				}
 			}
 			else scalefactor = (1.2875*((1+(-0.000356371*jetpt))+(1.08081e-07*(jetpt*jetpt))))+(-6.89998e-11*(jetpt*(jetpt*(jetpt/(1+(-0.0012139*jetpt))))));
-
 		}
 		if(fabs(jeteta)> 0.8 && fabs(jeteta)< 1.6){
 			if( syst == "misTagMinus" ){
@@ -1987,7 +1985,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = (1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt)))))) - 2*uncertainty;
 				}
 			}
-			if( syst == "misTagPlus" ){
+			else if( syst == "misTagPlus" ){
 				scalefactor = (1.41211*((1+(-0.000559603*jetpt))+(9.50754e-07*(jetpt*jetpt))))+(-5.81148e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000787359*jetpt))))));
 				if(fabs(jetpt - 670)<0.00001){
 					float uncertainty = (1.41211*((1+(-0.000559603*jetpt))+(9.50754e-07*(jetpt*jetpt))))+(-5.81148e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000787359*jetpt))))))-(1.24986*((1+(-0.00039734*jetpt))+(5.37486e-07*(jetpt*jetpt))))+(-1.74023e-10*(jetpt*(jetpt*(jetpt/(1+(-0.00112954*jetpt))))));
@@ -2004,7 +2002,7 @@ float SFl(float jetpt, float jeteta, string tagger, string syst){
 					scalefactor = (1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt)))))) - 2*uncertainty;
 				}
 			}
-			if( syst == "misTagPlus" ){
+			else if( syst == "misTagPlus" ){
 				scalefactor = (1.26236*((1+(-0.000524055*jetpt))+(2.08863e-06*(jetpt*jetpt))))+(-2.29473e-09*(jetpt*(jetpt*(jetpt/(1+(-0.000276268*jetpt))))));	
 				if(fabs(jetpt - 670)<0.00001){
 					float uncertainty = (1.26236*((1+(-0.000524055*jetpt))+(2.08863e-06*(jetpt*jetpt))))+(-2.29473e-09*(jetpt*(jetpt*(jetpt/(1+(-0.000276268*jetpt))))))-(1.10763*((1+(-0.000105805*jetpt))+(7.11718e-07*(jetpt*jetpt))))+(-5.3001e-10*(jetpt*(jetpt*(jetpt/(1+(-0.000821215*jetpt))))));
