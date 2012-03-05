@@ -328,7 +328,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
 
   for (unsigned int b = 0; b < xarraysize; b++)
   {        
-			cout<<" xbins["<<b<<"] = "<<xbins[b]<<endl;
+			cout<<" xbins["<<b<<"] = "<<xbins[b]<<";"<<endl;
   }
   
   int xnbins = 0;
@@ -402,8 +402,9 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
 
     for (unsigned int b = 0; b < yarraysize; b++)
     {        
-				cout<<" ybins_xbin[\"xbin"<<CurrentxvariableBin<<"\"]"<<"["<<b<<"] = "<<ybins[b]<<";"<<endl;
-    }
+				//cout<<" ybins_xbin[\"xbin"<<CurrentxvariableBin<<"\"]"<<"["<<b<<"] = "<<ybins[b]<<";"<<endl;
+    		cout<<" ybins_map[\"xbin"<<CurrentxvariableBin<<"\"].push_back("<<ybins[b]<<");"<<endl;
+		}
   
     int ynbins = 0;
     ynbins = yarraysize - 1; //the last element of xbins should be the upperbound of the 'last bin' actually
