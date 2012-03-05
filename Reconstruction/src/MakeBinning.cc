@@ -271,7 +271,8 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
   for(map<string,vector<float > >::const_iterator it = VariableValuesMap.begin(); it != VariableValuesMap.end(); it++)
   {  
 		//warning!! The ordering of the variables in VariableValuesMap is not necessarily the ordering you call to be filled...
-     lstVar.push_back(it->first);
+     //cout<<"it->first = "<<it->first<<endl;
+		 lstVar.push_back(it->first);
   }	
   if(lstVar.size() != 2)  
     cout<<" The map of variables doesn't contain 2 variables, TO BE SOLVED!"<<endl;
@@ -282,7 +283,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
      xvariables_withweights.push_back(make_pair(VariableValuesMap[xvariable][j],eventweightvector[j]));
   }
   //vector<float> dummyvector
-  cout<<"size = "<<xvariables_withweights.size ()<<", eventweightvector = "<<eventweightvector.size ()<<endl;
+////  cout<<"size = "<<xvariables_withweights.size ()<<", eventweightvector = "<<eventweightvector.size ()<<endl;
   sort (xvariables_withweights.begin (), xvariables_withweights.end ()); //sort the vector according to the variable value (first of pair, and low to high (<) is the default operator in this C++ function)	
   unsigned int xarraysize = nbinsMap[xvariable] + 2; //2 'extra' comes from: 1 'artificial' underflowbin (for the plots, should be smaller than or equal to the physical boundary), and 1 more than the numbers of bins because you have to specify the edges...
   double xbins[xarraysize];
@@ -294,7 +295,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
   {
      totalsum_eventweights = totalsum_eventweights + xvariables_withweights[w].second;
   }
-  cout<<" totalsum_eventweights = "<<totalsum_eventweights<<", xvariables_withweights.size () = "<<xvariables_withweights.size ()<<endl;
+////  cout<<" totalsum_eventweights = "<<totalsum_eventweights<<", xvariables_withweights.size () = "<<xvariables_withweights.size ()<<endl;
 
   for (unsigned int j = 0; j < xvariables_withweights.size (); j++)
   {  
@@ -304,7 +305,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
      { 	    
 	 xbins[index] = xvariables_withweights[j].first;
 	 index++;
-	 cout<<" for variable "<<xvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<xvariables_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[xvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[xvariable]<<endl;	   
+////	 cout<<" for variable "<<xvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<xvariables_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[xvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[xvariable]<<endl;	   
          sum_eventweights_bin = 0;
      }
   }
@@ -342,7 +343,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
   //now making the binnings in the other dimension of the 2D plane, following closely the procedure of before; maybe to be put in a common function of the class
   for(int CurrentxvariableBin = 1;CurrentxvariableBin < nbinsMap[xvariable]+1; CurrentxvariableBin++)
   {
-    cout<<"---> "+xvariable+" bin "<<CurrentxvariableBin<<endl;
+    cout<<"//---> "+xvariable+" bin "<<CurrentxvariableBin<<endl;
     vector<pair<float,float> > yvariables_CurrentxvariableBin_withweights;
     for(unsigned int j = 0; j < VariableValuesMap[xvariable].size(); j++)
     {
@@ -358,7 +359,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
        }
   
     }
-    cout<<"  size = "<<yvariables_CurrentxvariableBin_withweights.size()<<endl;
+//    cout<<"  size = "<<yvariables_CurrentxvariableBin_withweights.size()<<endl;
     sort (yvariables_CurrentxvariableBin_withweights.begin (), yvariables_CurrentxvariableBin_withweights.end ());
     unsigned int yarraysize = nbinsMap[yvariable] + 2; //2 'extra' comes from: 1 'artificial' underflowbin (for the plots, should be smaller than or equal to the physical boundary), and 1 more than the numbers of bins because you have to specify the edges...
     double ybins[yarraysize];
@@ -371,7 +372,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
     {
        totalsum_eventweights = totalsum_eventweights + yvariables_CurrentxvariableBin_withweights[w].second;
     }
-    cout<<" totalsum_eventweights = "<<totalsum_eventweights<<", xvariables_withweights.size () = "<<xvariables_withweights.size ()<<endl;
+////    cout<<" totalsum_eventweights = "<<totalsum_eventweights<<", xvariables_withweights.size () = "<<xvariables_withweights.size ()<<endl;
     
     for (unsigned int j = 0; j < yvariables_CurrentxvariableBin_withweights.size (); j++)
     {
@@ -380,7 +381,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
        { 	    
 	   			ybins[index] = yvariables_CurrentxvariableBin_withweights[j].first;
 	   			index++;
-	   			cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[yvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
+////	   			cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[yvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
           sum_eventweights_bin = 0;
        }
     }
@@ -401,7 +402,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
 
     for (unsigned int b = 0; b < yarraysize; b++)
     {        
-				cout<<" ybins_[\"xbin"<<CurrentxvariableBin<<"\"]"<<"["<<b<<"] = "<<ybins[b]<<";"<<endl;
+				cout<<" ybins_xbin[\"xbin"<<CurrentxvariableBin<<"\"]"<<"["<<b<<"] = "<<ybins[b]<<";"<<endl;
     }
   
     int ynbins = 0;
