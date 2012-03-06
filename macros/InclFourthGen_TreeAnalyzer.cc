@@ -421,8 +421,8 @@ int main (int argc, char *argv[])
   int nbinsxvariable_1B_2W = 20, nbinsyvariable_1B_2W = 10; //if the binning is already created, make sure these are the same as before!
   int nbinsxvariable_2B_2W = 12, nbinsyvariable_2B_2W = 6;
 	string Binningpostfix = "_TTbarJetsFlat_MtopvsHT";
-	string binningFileName_HTvsMTop_1B_2W = "Binning_InclFourthGenSearch_1B_2W"+Binningpostfix+channelpostfix+".root";
-  string binningFileName_HTvsMTop_2B_2W = "Binning_InclFourthGenSearch_2B_2W"+Binningpostfix+channelpostfix+".root";
+	string binningFileName_HTvsMTop_1B_2W = Outputpath+"Binning_InclFourthGenSearch_1B_2W"+Binningpostfix+channelpostfix+".root";
+  string binningFileName_HTvsMTop_2B_2W = Outputpath+"Binning_InclFourthGenSearch_2B_2W"+Binningpostfix+channelpostfix+".root";
   TwoDimTemplateTools HTvsMTop_1B_2W("1B_2W",xvariable,nbinsxvariable_1B_2W,yvariable,nbinsyvariable_1B_2W);
   TwoDimTemplateTools HTvsMTop_2B_2W("2B_2W",xvariable,nbinsxvariable_2B_2W,yvariable,nbinsyvariable_2B_2W); 
   if(doMVAjetcombination && !TrainMVA && useMassesAndResolutions) //Note: the boolean 'useMassesAndResolutions'is not needed when a Wmass file exists
@@ -824,7 +824,7 @@ int main (int argc, char *argv[])
 			if(!eventSelected) continue;
 			
 					
-			bool TprimeEvaluation = true;
+			bool TprimeEvaluation = false;
 			//////////////////////////////////////////////////////////////////////////
       // MVA training
       //////////////////////////////////////////////////////////////////////////
