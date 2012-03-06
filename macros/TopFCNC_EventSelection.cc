@@ -224,7 +224,7 @@ int main (int argc, char *argv[])
   MSPlot["NbOfIsolatedMuons"]          = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]      = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
 
-  MSPlot["DiMuonInvMass"]              = new MultiSamplePlot(datasets, "DiMuonInvMass", 500, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonInvMass"]            = new MultiSamplePlot(datasets, "DiLeptonInvMass", 500, 50, 130, "m_{ll}");
 
   MSPlot["NbOfExtraIsolatedMuons"]     = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfExtraIsolatedElectrons"] = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -233,25 +233,66 @@ int main (int argc, char *argv[])
   MSPlot["NbOfSelectedJets_mm_ch"]                  = new MultiSamplePlot(datasets, "NbOfSelectedJets_mm_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mme_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mme_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mmm_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_mmm_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_ee_ch"]                  = new MultiSamplePlot(datasets, "NbOfSelectedJets_ee_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_eee_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_eee_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_eem_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_eem_ch", 15, 0, 15, "Nb. of jets");
 
-  MSPlot["BdiscBJetCand_mm_ch_CVSMVA"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVSMVA", 100, 0, 1, "CSV(MVA) b-disc.");
-  MSPlot["BdiscBJetCand_mm_ch_TCHE"]            = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscBJetCand_mme_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_CVSMVA", 100, 0, 1, "CSV(MVA) b-disc.");
-  MSPlot["BdiscBJetCand_mme_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscBJetCand_mmm_ch_CVSMVA"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_CVSMVA", 100, 0, 1, "CSV(MVA) b-disc.");
-  MSPlot["BdiscBJetCand_mmm_ch_TCHE"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_mm_ch_TCHE"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_ee_ch_TCHE"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+
+  MSPlot["BdiscBJetCand_mme_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_eee_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_mme_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_eee_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+
+  MSPlot["BdiscBJetCand_mmm_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_eem_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_mmm_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_eem_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
 
   MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "MET");
   MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "MET");
   MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 100, 0, 200, "MET");
+  MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  100, 0, 200, "MET");
+  MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 100, 0, 200, "MET");
+  MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 100, 0, 200, "MET");
 
   MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  100, 0, 1000, "m_{t#bar{t}}");
   MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 100, 0, 1000, "m_{t#bar{t}}");
   MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 100, 0, 1000, "m_{t#bar{t}}");
+  MSPlot["Mtt_ee_ch"]                         = new MultiSamplePlot(datasets, "Mtt_ee_ch",  100, 0, 1000, "m_{t#bar{t}}");
+  MSPlot["Mtt_eee_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eee_ch", 100, 0, 1000, "m_{t#bar{t}}");
+  MSPlot["Mtt_eem_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eem_ch", 100, 0, 1000, "m_{t#bar{t}}");
 
   MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 80, 300, "m_{Zq}");
   MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 80, 300, "m_{Zq}");
   MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 80, 300, "m_{Zq}");
+  MSPlot["Mzq_ee_ch"]                         = new MultiSamplePlot(datasets, "Mzq_ee_ch",  100, 80, 300, "m_{Zq}");
+  MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 100, 80, 300, "m_{Zq}");
+  MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 100, 80, 300, "m_{Zq}");
+
+  MSPlot["MassChi2_mm_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_mm_ch",  200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_mmm_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mmm_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_mme_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mme_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_ee_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_ee_ch",  200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_eem_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eem_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_eee_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eee_ch", 200, 0, 20, "\\chi^{2}");
+
+  MSPlot["MassChi2_SM_mm_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_mm_ch",  200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_mmm_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mmm_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_mme_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mme_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_ee_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_ee_ch",  200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_eem_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eem_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_eee_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eee_ch", 200, 0, 20, "\\chi^{2}");
+
+  MSPlot["MassChi2_FCNC_mm_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_mm_ch",  200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_mmm_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mmm_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_mme_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mme_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_ee_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_ee_ch",  200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_eem_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eem_ch", 200, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_eee_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eee_ch", 200, 0, 20, "\\chi^{2}");
 //  MSPlot["NbOfLooseMuon"]     = new MultiSamplePlot(datasets, "NbOfLooseMuon", 10, 0, 10, "Nb. of loose muons");
 //  MSPlot["NbOfLooseElectron"] = new MultiSamplePlot(datasets, "NbOfLooseElectron", 10, 0, 10, "Nb. of loose electrons");
 
@@ -843,13 +884,14 @@ int main (int argc, char *argv[])
 
 	// Declare selection instance    
 	Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-            
+/*            
 	vector<TRootMCParticle*> mcParticles;
-	if(dataSetName.find("ttbar_fcnc") == 0 || dataSetName.find("TTbarJets_SemiMu") == 0)
+	if(dataSetName.find("ttbar_fcnc") == 0)
 	{
 		treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
 		sort(mcParticles.begin(),mcParticles.end(),HighestPt());
 	}
+*/
 	// Define object selection cuts
 	selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
 
@@ -872,7 +914,6 @@ int main (int argc, char *argv[])
 
 	//vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
 	//vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
-	//vector<TRootMCParticle*> mcParticles;
 
 	MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 
@@ -941,7 +982,7 @@ int main (int argc, char *argv[])
 	   			TRootMuon* mu2 = (TRootMuon*) selectedMuons[j];
 				if(mu1->charge() == mu2->charge()) continue;
 				double invMass = (*mu1 + *mu2).M();
-				MSPlot["DiMuonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["DiLeptonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
 				if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
 				{
 					idx_Z_1 = i;
@@ -960,7 +1001,7 @@ int main (int argc, char *argv[])
 	   			TRootElectron* el2 = (TRootElectron*) selectedElectrons[j];
 				if(el1->charge() == el2->charge()) continue;
 				double invMass = (*el1 + *el2).M();
-				MSPlot["DiMuonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["DiLeptonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
 				if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
 				{
 					idx_Z_1 = i;
@@ -1011,14 +1052,17 @@ int main (int argc, char *argv[])
 					if(selectedJets.size()>3){ //at least 4 jets
 						selecTableDiMu.Fill(d,10,scaleFactor);
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
-						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets);
-						MSPlot["BdiscBJetCand_mm_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets, true);
+						MSPlot["BdiscBJetCand_mm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["BdiscBJetCand_mm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags()<0.65) continue;
+						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags()<0.6) continue;
 						selecTableDiMu.Fill(d,11,scaleFactor);
 						MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MassChi2_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MassChi2_SM_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MassChi2_FCNC_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d], true, Luminosity*scaleFactor);
 						histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 					}
 				}
@@ -1035,12 +1079,15 @@ int main (int argc, char *argv[])
 				if(selectedJets.size()>2){ //at least 3 jets
 					selecTableDiMuEl.Fill(d,9,scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
-					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0]);
-					MSPlot["BdiscBJetCand_mme_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0], true);
+					MSPlot["BdiscBJetCand_mme_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(), datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["BdiscBJetCand_mme_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(), datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mtt_mme_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mzq_mme_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_SM_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+					MSPlot["MassChi2_FCNC_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
 					histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 				}
 			}
@@ -1057,11 +1104,15 @@ int main (int argc, char *argv[])
 					selecTableTriMu.Fill(d,9,scaleFactor);
 					MSPlot["MET_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
-					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedExtraMuons[0], selectedJets, mets[0]);
-					MSPlot["BdiscBJetCand_mmm_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedExtraMuons[0], selectedJets, mets[0], true);
+					MSPlot["BdiscBJetCand_mmm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["BdiscBJetCand_mmm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mtt_mmm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mzq_mmm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_SM_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+					MSPlot["MassChi2_FCNC_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
+					histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 				}
 			}
 		}
@@ -1079,13 +1130,16 @@ int main (int argc, char *argv[])
 						selecTableDiEl.Fill(d,10,scaleFactor);
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedJets);
-						MSPlot["BdiscBJetCand_ee_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["BdiscBJetCand_ee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["BdiscBJetCand_ee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags()<0.65) continue;
+						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags()<0.6) continue;
 						selecTableDiEl.Fill(d,11,scaleFactor);
 						MSPlot["MET_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["Mtt_ee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["Mzq_ee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MassChi2_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MassChi2_SM_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MassChi2_FCNC_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d], true, Luminosity*scaleFactor);
 						histo2D[("MET_vs_Mzq_ee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 					}
 				}
@@ -1103,12 +1157,14 @@ int main (int argc, char *argv[])
 					selecTableDiElMu.Fill(d,9,scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedMuons[0], selectedJets, mets[0]);
-					MSPlot["BdiscBJetCand_eem_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eem_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(), datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["BdiscBJetCand_eem_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(), datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["MET_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mtt_eem_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mzq_eem_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-					histo2D[("MET_vs_Mzq_eem_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+					MSPlot["MassChi2_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_SM_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+					MSPlot["MassChi2_FCNC_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 						histo2D[("MET_vs_Mzq_eem_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 				}
 			}
 		}
@@ -1117,7 +1173,7 @@ int main (int argc, char *argv[])
 		selecTableTriEl.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_eee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
-			selecTableTriEL.Fill(d,7,scaleFactor); 
+			selecTableTriEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 				selecTableTriEl.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2){ //at least 3 jets
@@ -1125,10 +1181,13 @@ int main (int argc, char *argv[])
 					MSPlot["MET_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedExtraElectrons[0], selectedJets, mets[0]);
-					MSPlot["BdiscBJetCand_eee_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["BdiscBJetCand_eee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mtt_eee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mzq_eee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MassChi2_SM_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+					MSPlot["MassChi2_FCNC_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 						histo2D[("MET_vs_Mzq_eee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
 				}
 			}
 		}
@@ -1168,23 +1227,23 @@ int main (int argc, char *argv[])
   //Selection tables
   if(diMuon){ 
 	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-	selecTableDiMu.TableCalculator(false, true, true, true, true);
+	selecTableDiMu.TableCalculator(  false, true, true, true, true);
 	selecTableDiMuEl.TableCalculator(false, true, true, true, true);
-	selecTableTriMu.TableCalculator(false, true, true, true, true);
+	selecTableTriMu.TableCalculator( false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-	selecTableDiMu.Write(    "TopFCNC_EventSelectionTable_DiMu.tex",true, true,true,true,false,false,true);
-	selecTableDiMuEl.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true, true,true,true,false,false,true);
-	selecTableTriMu.Write(   "TopFCNC_EventSelectionTable_TriMu.tex",true, true,true,true,false,false,true);
+	selecTableDiMu.Write(  "TopFCNC_EventSelectionTable_DiMu.tex",    true,true,true,true,false,false,true);
+	selecTableDiMuEl.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true,true,true,true,false,false,true);
+	selecTableTriMu.Write( "TopFCNC_EventSelectionTable_TriMu.tex",   true,true,true,true,false,false,true);
   }
   else if(diElectron){
 	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-	selecTableDiEl.TableCalculator(false, true, true, true, true);
+	selecTableDiEl.TableCalculator(  false, true, true, true, true);
 	selecTableDiElMu.TableCalculator(false, true, true, true, true);
-	selecTableTriEl.TableCalculator(false, true, true, true, true);
+	selecTableTriEl.TableCalculator( false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-	selecTableDiEl.Write(  "TopFCNC_EventSelectionTable_DiEl.tex",true, true,true,true,false,false,true);
-	selecTableDiElMu.Write("TopFCNC_EventSelectionTable_DiElMu.tex",true, true,true,true,false,false,true);
-	selecTableTriEl.Write( "TopFCNC_EventSelectionTable_TriEl.tex",true, true,true,true,false,false,true);
+	selecTableDiEl.Write(  "TopFCNC_EventSelectionTable_DiEl.tex",  true,true,true,true,false,false,true);
+	selecTableDiElMu.Write("TopFCNC_EventSelectionTable_DiElMu.tex",true,true,true,true,false,false,true);
+	selecTableTriEl.Write( "TopFCNC_EventSelectionTable_TriEl.tex", true,true,true,true,false,false,true);
   }
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
