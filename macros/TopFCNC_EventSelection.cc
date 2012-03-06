@@ -329,22 +329,22 @@ int main (int argc, char *argv[])
   ///////////////////// Channel : µµe ////////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
-  vector<string> CutsSelecTableDiMuElec;
-  CutsSelecTableDiMuElec.push_back(string("initial"));
-  CutsSelecTableDiMuElec.push_back(string("PU reweighting"));
-  CutsSelecTableDiMuElec.push_back(string("Trigger"));
-  CutsSelecTableDiMuElec.push_back(string("Good PV"));
-  CutsSelecTableDiMuElec.push_back(string("$\\geq$ 2 isolated muons"));
-  CutsSelecTableDiMuElec.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
-  CutsSelecTableDiMuElec.push_back(string("3rd iso. elec."));
-  CutsSelecTableDiMuElec.push_back(string("$\\geq$ 1 jet"));
-  CutsSelecTableDiMuElec.push_back(string("$\\geq$ 2 jet"));
-  CutsSelecTableDiMuElec.push_back(string("$\\geq$ 3 jet"));
-//  CutsSelecTableDiMuElec.push_back(string("$MET \\leq 30$ GeV"));  
+  vector<string> CutsselecTableDiMuEl;
+  CutsselecTableDiMuEl.push_back(string("initial"));
+  CutsselecTableDiMuEl.push_back(string("PU reweighting"));
+  CutsselecTableDiMuEl.push_back(string("Trigger"));
+  CutsselecTableDiMuEl.push_back(string("Good PV"));
+  CutsselecTableDiMuEl.push_back(string("$\\geq$ 2 isolated muons"));
+  CutsselecTableDiMuEl.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsselecTableDiMuEl.push_back(string("3rd iso. elec."));
+  CutsselecTableDiMuEl.push_back(string("$\\geq$ 1 jet"));
+  CutsselecTableDiMuEl.push_back(string("$\\geq$ 2 jet"));
+  CutsselecTableDiMuEl.push_back(string("$\\geq$ 3 jet"));
+//  CutsselecTableDiMuEl.push_back(string("$MET \\leq 30$ GeV"));  
 
-  SelectionTable selecTableDiMuElec(CutsSelecTableDiMuElec, datasets);
-  selecTableDiMuElec.SetLuminosity(Luminosity);
-  selecTableDiMuElec.SetPrecision(1);
+  SelectionTable selecTableDiMuEl(CutsselecTableDiMuEl, datasets);
+  selecTableDiMuEl.SetLuminosity(Luminosity);
+  selecTableDiMuEl.SetPrecision(1);
 
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : ee /////////////////////////////////
@@ -423,7 +423,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
 
   if(doPUShift == 1)
@@ -556,12 +556,17 @@ int main (int argc, char *argv[])
 				Trigger HLT_Mu13_Mu8_v3 available for runs 166346-166346
 				Trigger HLT_Mu13_Mu8_v4 available for runs 167078-167913
 				------------------------------------------------------------------*/
-  				else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 623.433(/pb)
+  				else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 619,142(/pb)
     					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v2"), currentRun, iFile);
-  				else if (event->runId() == 166346) // IntLumi = 
+  				else if (event->runId() == 166346) // IntLumi = 4.291(/pb)
     					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v3"), currentRun, iFile);
-  				else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 
+  				else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 226.454(/pb)
     					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v4"), currentRun, iFile);
+				/*--------------------------------------------------------------------
+				Sub-Total integrated luminosity =  849,887(/pb)
+				    Total integrated luminosity = 1050,922(/pb)
+				------------------------------------------------------------------*/
+
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011A-05Aug2011-v1
 				--------------------------------------------------------------------
@@ -660,7 +665,7 @@ int main (int argc, char *argv[])
 				else if(currentRun >= 167044 && currentRun <= 170053) // IntLumi = 243.081(/pb)
 					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5", currentRun);
 				/*--------------------------------------------------------------------
-				Sub-Total integrated luminosity = 907,012(/pb)
+				Sub-Total integrated luminosity =  907,012(/pb)
 				    Total integrated luminosity = 1108,132(/pb)
 				------------------------------------------------------------------*/
 
@@ -813,14 +818,14 @@ int main (int argc, char *argv[])
 
 	selecTableDiMu.Fill(d,0, 1.);//datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
 	selecTableTriMu.Fill(d,0, 1.);
-	selecTableDiMuElec.Fill(d,0, 1.);
+	selecTableDiMuEl.Fill(d,0, 1.);
 	selecTableDiEl.Fill(d,0, 1.);
 	selecTableTriEl.Fill(d,0, 1.);
 	selecTableDiElMu.Fill(d,0, 1.);
 
 	selecTableDiMu.Fill(d,1,scaleFactor);
 	selecTableTriMu.Fill(d,1,scaleFactor);
-	selecTableDiMuElec.Fill(d,1,scaleFactor);
+	selecTableDiMuEl.Fill(d,1,scaleFactor);
 	selecTableDiEl.Fill(d,1,scaleFactor);
 	selecTableTriEl.Fill(d,1,scaleFactor);
 	selecTableDiElMu.Fill(d,1,scaleFactor);
@@ -831,7 +836,7 @@ int main (int argc, char *argv[])
 	if(!trigged)		   continue;
 	selecTableDiMu.Fill(d,2,scaleFactor);
 	selecTableTriMu.Fill(d,2,scaleFactor);
-	selecTableDiMuElec.Fill(d,2,scaleFactor);
+	selecTableDiMuEl.Fill(d,2,scaleFactor);
 	selecTableDiEl.Fill(d,2,scaleFactor);
 	selecTableTriEl.Fill(d,2,scaleFactor);
 	selecTableDiElMu.Fill(d,2,scaleFactor);
@@ -839,17 +844,16 @@ int main (int argc, char *argv[])
 	// Declare selection instance    
 	Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
             
-/*      
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("XXX") == 0)
-      {
-        treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
-        sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
-      }
-*/
+	vector<TRootMCParticle*> mcParticles;
+	if(dataSetName.find("ttbar_fcnc") == 0 || dataSetName.find("TTbarJets_SemiMu") == 0)
+	{
+		treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
+		sort(mcParticles.begin(),mcParticles.end(),HighestPt());
+	}
 	// Define object selection cuts
 	selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
 
-	selection.setDiElectronCuts(20,2.5,0.125,0.02,1); //Et,Eta,RelIso,d0,DistVzPVz
+	selection.setDiElectronCuts(20,2.5,0.17,0.02,1); //Et,Eta,RelIso,d0,DistVzPVz
 	//selection.setLooseElectronCuts(15,2.5,0.2);
 
 	selection.setDiMuonCuts(20,2.4,0.125,10,0.02); //Et,Eta,RelIso,NValidHits,d0
@@ -877,7 +881,7 @@ int main (int argc, char *argv[])
         if(!isGoodPV)   	   continue;
 	selecTableDiMu.Fill(d,3,scaleFactor);
 	selecTableTriMu.Fill(d,3,scaleFactor);
-	selecTableDiMuElec.Fill(d,3,scaleFactor);
+	selecTableDiMuEl.Fill(d,3,scaleFactor);
 	selecTableDiEl.Fill(d,3,scaleFactor);
 	selecTableTriEl.Fill(d,3,scaleFactor);
 	selecTableDiElMu.Fill(d,3,scaleFactor);
@@ -916,7 +920,7 @@ int main (int argc, char *argv[])
 
 	selecTableDiMu.Fill(d,4,scaleFactor);
 	selecTableTriMu.Fill(d,4, scaleFactor);
-	selecTableDiMuElec.Fill(d,4, scaleFactor);
+	selecTableDiMuEl.Fill(d,4, scaleFactor);
 	selecTableDiEl.Fill(d,4,scaleFactor);
 	selecTableTriEl.Fill(d,4,scaleFactor);
 	selecTableDiElMu.Fill(d,4,scaleFactor);
@@ -924,7 +928,7 @@ int main (int argc, char *argv[])
   	bool foundZ = false;
 	int idx_Z_1 = -1, idx_Z_2 = -1;
 	float Zmass = 91.;
-	float Zwindowsize = 20.;
+	float Zwindowsize = 30.;
 	// Calculate the invariant mass for each isolated lepton pairs
 	// - return true if the mass is the Z boson mass window 
 	// - return the indices of the lepton candidates
@@ -970,19 +974,19 @@ int main (int argc, char *argv[])
 	if(!foundZ) continue; 
 	selecTableDiMu.Fill(d,5,scaleFactor);
 	selecTableTriMu.Fill(d,5, scaleFactor);
-	selecTableDiMuElec.Fill(d,5, scaleFactor);
+	selecTableDiMuEl.Fill(d,5, scaleFactor);
 	selecTableDiEl.Fill(d,5,scaleFactor);
 	selecTableTriEl.Fill(d,5,scaleFactor);
 	selecTableDiElMu.Fill(d,5,scaleFactor);
 
+	selectedExtraMuons = selectedMuons;
+	selectedExtraElectrons = selectedElectrons;
 	// Erase Z boson lepton candidates
 	if(diMuon){
-		selectedExtraMuons = selectedMuons;
 		selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
 		selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
 	}
 	else if(diElectron){
-		selectedExtraElectrons = selectedElectrons;
 		selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_2);
 		selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_1);
 
@@ -1022,14 +1026,14 @@ int main (int argc, char *argv[])
 		}
 	}
 	else if(diMuon && selectedExtraMuons.size()==0 && selectedElectrons.size()==1){
-		selecTableDiMuElec.Fill(d,6,scaleFactor);
+		selecTableDiMuEl.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_mme_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
-			selecTableDiMuElec.Fill(d,7,scaleFactor); 
+			selecTableDiMuEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
-				selecTableDiMuElec.Fill(d,8,scaleFactor);
+				selecTableDiMuEl.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2){ //at least 3 jets
-					selecTableDiMuElec.Fill(d,9,scaleFactor);
+					selecTableDiMuEl.Fill(d,9,scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0]);
 					MSPlot["BdiscBJetCand_mme_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(), datasets[d], true, Luminosity*scaleFactor);
@@ -1063,10 +1067,71 @@ int main (int argc, char *argv[])
 		}
 	}
 	else if(diElectron && selectedExtraElectrons.size()==0 && selectedMuons.size()==0){
-	}
-	else if(diElectron && selectedExtraElectrons.size()==1 && selectedMuons.size()==0){
+		selecTableDiEl.Fill(d,6,scaleFactor);
+		MSPlot["NbOfSelectedJets_ee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedJets.size()>0){ //at least 1 jet
+			selecTableDiEl.Fill(d,7,scaleFactor); 
+			if(selectedJets.size()>1){ //at least 2 jets
+				selecTableDiEl.Fill(d,8,scaleFactor);
+				if(selectedJets.size()>2){ //at least 3 jets
+					selecTableDiEl.Fill(d,9,scaleFactor);
+					if(selectedJets.size()>3){ //at least 4 jets
+						selecTableDiEl.Fill(d,10,scaleFactor);
+						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
+						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedJets);
+						MSPlot["BdiscBJetCand_ee_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["BdiscBJetCand_ee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags()<0.65) continue;
+						selecTableDiEl.Fill(d,11,scaleFactor);
+						MSPlot["MET_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mtt_ee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mzq_ee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+						histo2D[("MET_vs_Mzq_ee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+					}
+				}
+			}
+		}
 	}
 	else if(diElectron && selectedExtraElectrons.size()==0 && selectedMuons.size()==1){
+		selecTableDiElMu.Fill(d,6,scaleFactor);
+		MSPlot["NbOfSelectedJets_eem_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedJets.size()>0){ //at least 1 jet
+			selecTableDiElMu.Fill(d,7,scaleFactor); 
+			if(selectedJets.size()>1){ //at least 2 jets
+				selecTableDiElMu.Fill(d,8,scaleFactor);
+				if(selectedJets.size()>2){ //at least 3 jets
+					selecTableDiElMu.Fill(d,9,scaleFactor);
+					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
+					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedMuons[0], selectedJets, mets[0]);
+					MSPlot["BdiscBJetCand_eem_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eem_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["MET_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mtt_eem_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mzq_eem_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+					histo2D[("MET_vs_Mzq_eem_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+				}
+			}
+		}
+	}
+	else if(diElectron && selectedExtraElectrons.size()==1 && selectedMuons.size()==0){
+		selecTableTriEl.Fill(d,6,scaleFactor);
+		MSPlot["NbOfSelectedJets_eee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+		if(selectedJets.size()>0){ //at least 1 jet
+			selecTableTriEL.Fill(d,7,scaleFactor); 
+			if(selectedJets.size()>1){ //at least 2 jets
+				selecTableTriEl.Fill(d,8,scaleFactor);
+				if(selectedJets.size()>2){ //at least 3 jets
+					selecTableTriEl.Fill(d,9,scaleFactor);
+					MSPlot["MET_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
+					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedExtraElectrons[0], selectedJets, mets[0]);
+					MSPlot["BdiscBJetCand_eee_ch_CVSMVA"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexMVABJetTags(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mtt_eee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["Mzq_eee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+				}
+			}
+		}
 	}
 	else fourIsoLeptCounter++;
 
@@ -1104,11 +1169,11 @@ int main (int argc, char *argv[])
   if(diMuon){ 
 	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
 	selecTableDiMu.TableCalculator(false, true, true, true, true);
-	selecTableDiMuElec.TableCalculator(false, true, true, true, true);
+	selecTableDiMuEl.TableCalculator(false, true, true, true, true);
 	selecTableTriMu.TableCalculator(false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
 	selecTableDiMu.Write(    "TopFCNC_EventSelectionTable_DiMu.tex",true, true,true,true,false,false,true);
-	selecTableDiMuElec.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true, true,true,true,false,false,true);
+	selecTableDiMuEl.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true, true,true,true,false,false,true);
 	selecTableTriMu.Write(   "TopFCNC_EventSelectionTable_TriMu.tex",true, true,true,true,false,false,true);
   }
   else if(diElectron){
@@ -1126,7 +1191,7 @@ int main (int argc, char *argv[])
   {
 	MultiSamplePlot *temp = it->second;
 	string name = it->first;
-	temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
+	temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
 	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false);
 	temp->Write(fout, name, true, pathPNG, "pdf");
   }
