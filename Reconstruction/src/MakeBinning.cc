@@ -318,7 +318,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
         xbins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
         xbins[1] = 0; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
   }
-	if(xvariable == "MassHadTop" || xvariable == "MTop")
+	if(xvariable == "MassHadTop" || xvariable == "MTop" ||  xvariable == "Mtop")
   {
         xbins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
         xbins[1] = 0; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
@@ -387,7 +387,7 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
     }
     ybins[yarraysize-1] = yvariables_CurrentxvariableBin_withweights[yvariables_CurrentxvariableBin_withweights.size ()-1].first; //by definition this is the last element of the array xbins, and the last element of the vector VariableValuesMap[xvariable]
 
-    if(yvariable == "MassHadTop" || yvariable == "MTop")
+    if(yvariable == "MassHadTop" || yvariable == "MTop" ||  yvariable == "Mtop")
     {
         ybins[0] = 0;//hardcode left boundaries for some variables, for the plots (not necessarily physical, but should be smaller or equal to the physical boundary)
         ybins[1] = 0; //hardcode left 'physical' boundaries for some variables... how to do this for all variables... should be put in the range of the observable in the observables class??? --> 4 X 35 GeV ((at least) 4 jets of 35 GeV) + 1 X 30 GeV (muon)
