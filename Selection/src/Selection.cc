@@ -46,7 +46,7 @@ Selection::Selection(const Selection& s) {
   mets = s.mets;
   // copy the cutvalues
   setJetCuts(s.JetPtThreshold_,s.JetEtaThreshold_,s.JetEMFThreshold_,s.n90HitsThreshold_,s.fHPDThreshold_,s.DRJetElectron_,s.DRJetMuon_);
-  setMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_,s.MuonDRJetsCut_,s.MuonNMatches_,s.MuonDistVzPVz_,s.MuonNPixelLayersWithMeasurement_);
+  setMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_,s.MuonDRJetsCut_,s.MuonNMatchedStations_,s.MuonDistVzPVz_,s.MuonNPixelLayersWithMeasurement_);
   setDiMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_);
   setLooseMuonCuts(s.JetPtThreshold_,s.JetEtaThreshold_,s.MuonRelIso_);
   setElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronDistVzPVz_,s.ElectronDRJetsCut_);
@@ -152,14 +152,14 @@ void Selection::setLooseElectronCuts() {
   setLooseElectronCuts(15,2.5,0.2); // refSelV4 (mu) values
 }
 
-void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatches, float DistVzPVz, int NPixelLayersWithMeas) {
+void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NPixelLayersWithMeas) {
   MuonPtThreshold_ = Pt;
   MuonEtaThreshold_ = Eta;
   MuonRelIso_ = RelIso;
   MuonNofValidHits_ = NValidHits;
   Muond0Cut_ = d0;
   MuonDRJetsCut_ = DRJets;
-  MuonNMatches_ = NMatches;
+  MuonNMatchedStations_ = NMatchedStations;
   MuonDistVzPVz_ = DistVzPVz;
   MuonNPixelLayersWithMeasurement_ = NPixelLayersWithMeas;
 }
@@ -272,9 +272,9 @@ std::vector<TRootJet*> Selection::GetSelectedJets(float PtThr, float EtaThr, boo
 	      if ( applyJetID )
 	      {
 	        if (PFJet->nConstituents() > 1 )
-	          if (PFJet->chargedEmEnergyFraction() < 0.99 )
-	            if (PFJet->neutralHadronEnergyFraction() < 0.99 )
-		            if (PFJet->neutralEmEnergyFraction() < 0.99 )
+            if (PFJet->neutralHadronEnergyFraction() < 0.99 )
+              if (PFJet->neutralEmEnergyFraction() < 0.99 )
+                if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedEmEnergyFraction() < 0.99 )
 		              if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedHadronEnergyFraction() > 0) 
 		                if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedMultiplicity() > 0)
 		                {
@@ -402,7 +402,7 @@ std::vector<TRootMuon*> Selection::GetSelectedMuons(float PtThr, float EtaThr,fl
        && reliso < MuonRelIso 
        && fabs(muons[i]->d0()) <Muond0Cut_
        && muons[i]->nofValidHits()>MuonNofValidHits_ 
-       && muons[i]->nofMatches()>MuonNMatches_ 
+       && muons[i]->nofMatchedStations()>MuonNMatchedStations_ 
        && muons[i]->nofPixelLayersWithMeasurement() >= MuonNPixelLayersWithMeasurement_ 
        ) {
       selectedMuons.push_back(muons[i]);

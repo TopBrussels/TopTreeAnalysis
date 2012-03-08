@@ -92,7 +92,7 @@ class Selection{
       void setLooseElectronCuts();
       void setLooseElectronCuts(float Et, float Eta, float RelIso);
       void setMuonCuts();
-      void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatches, float DistVzPVz, int NPixelLayersWithMeas);
+      void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NPixelLayersWithMeas);
       void setDiMuonCuts();
       void setDiMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0);
       void setLooseMuonCuts();
@@ -180,7 +180,7 @@ class Selection{
       float Muond0Cut_;
       float MuonDRJetsCut_;
       float MuonNormChi2_;
-      float MuonNMatches_;
+      float MuonNMatchedStations_;
       float MuonDistVzPVz_;
       float MuonNPixelLayersWithMeasurement_;
 
