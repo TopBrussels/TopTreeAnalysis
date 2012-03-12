@@ -116,11 +116,15 @@ public:
 	/** Set initial values of Nttlike for the minizer. */
 	void SetInitialValues_Nttlike(UInt_t njets,Double_t init);
 	/** Set initial values of Nttlike for the minizer. */
+	Double_t GetInitialValues_Nttlike(UInt_t njets) const { return init_Nttlike_[njets];};
+	/** Get initial values of Nttlike for the minizer. */
   
 	void SetInitialValues_Nvlike(vector<Double_t> init);
 	/** Set initial values of Nvlike for the minizer. */
 	void SetInitialValues_Nvlike(UInt_t njets,Double_t init);
 	/** Set initial values of Nvlike for the minizer. */
+	Double_t GetInitialValues_Nvlike(UInt_t njets) const { return init_Nvlike_[njets];};
+	/** Get initial values of Nvlike for the minizer. */
   
 	void SetInitialValues_Eb(vector< vector<Double_t> > init);
 	/** Set initial values of Eb for the minizer. */
@@ -128,13 +132,17 @@ public:
 	/** Set initial values of Eb for the minizer. */
 	void SetInitialValues_Eb(UInt_t njets,UInt_t btagIdx, Double_t init);
 	/** Set initial values of Eb for the minizer. */
-  
+	Double_t GetInitialValues_Eb(UInt_t njets,UInt_t btagIdx) const { return init_Eb_[njets][btagIdx];};
+	/** Get initial values of Eb for the minizer. */
+   
 	void SetInitialValues_Eudsc(vector< vector<Double_t> > init);
 	/** Set initial values of Eudsc for the minizer. */
 	void SetInitialValues_Eudsc(UInt_t njets,vector<Double_t> init);
 	/** Set initial values of Eudsc for the minizer. */
 	void SetInitialValues_Eudsc(UInt_t njets,UInt_t btagIdx, Double_t init);
 	/** Set initial values of Eudsc for the minizer. */
+	Double_t GetInitialValues_Eudsc(UInt_t njets,UInt_t btagIdx) const { return init_Eudsc_[njets][btagIdx];};
+	/** Get initial values of Eudsc for the minizer. */
   
 	void SetInitialValues_Euds(vector< vector<Double_t> > init);
 	/** Set initial values of Euds for the minizer. */
@@ -142,6 +150,8 @@ public:
 	/** Set initial values of Euds for the minizer. */
 	void SetInitialValues_Euds(UInt_t njets,UInt_t btagIdx, Double_t init);
 	/** Set initial values of Euds for the minizer. */
+	Double_t GetInitialValues_Euds(UInt_t njets,UInt_t btagIdx) const { return init_Euds_[njets][btagIdx];};
+	/** Get initial values of Euds for the minizer. */
   
 	void UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose);
 	/** Maximum likelihood estimation with RooFit. */
@@ -171,18 +181,20 @@ public:
     // /** Maximum likelihood estimation with RooFit, combining both all the jet multiplicities and all b-tagging working points. */
 	
     /////////////////////
-    // PrInt_t  methods
+    // print  methods
     ////////////////////
 	void PrintInputs();
-	/** Method to prInt_t the number of events passed as imputs per dataset*/
+	/** Method to print the number of events passed as imputs per dataset*/
 	void PrintInputs(UInt_t njets);
-	/** Method to prInt_t the number of events passed as imputs per dataset, per jet multiplicity*/
+	/** Method to print the number of events passed as imputs per dataset, per jet multiplicity*/
 	void PrintResults();
-	/** Method to prInt_t the output of the estimation method*/
+	/** Method to print the output of the estimation method*/
 	void PrintResults(UInt_t njets);
-	/** Method to prInt_t the output of the estimation method, per jet multiplicity*/
-	void PrintResults_LatexFormat(ofstream &ofile);
-	/** Method to prInt_t a latex-formatted output of the estimation method*/
+	/** Method to print the output of the estimation method, per jet multiplicity*/
+	void PrintResults_LatexFormat(Int_t Eff_prec = 3, Int_t N_prec = 1);
+	/** Method to print a latex-formatted output of the estimation method*/
+	void PrintResults_LatexFormat(ofstream &ofile, Int_t Eff_prec = 3, Int_t N_prec = 1);
+	/** Method to print a latex-formatted output of the estimation method*/
 	
     /////////////////////
     // Cross-check methods
@@ -198,7 +210,7 @@ public:
     // Access to the class members
     //////////////////////////////////////
   
-	UInt_t GetNbOfBtagWorkingPoInt_t()    const {return NbOfBtagWorkingPoint_;};
+	UInt_t GetNbOfBtagWorkingPoint()    const {return NbOfBtagWorkingPoint_;};
 	/** returns the number of b-tagging working points used by the estimation method */
 	UInt_t GetNbOfDatasets()            const {return NbOfDatasets_;};
 	/** returns the number of datasets used by the estimation method */
@@ -212,10 +224,10 @@ public:
 	vector<Int_t> GetiDatasetsVLike()  const {return iDatasetsVLike_;};
 	vector<Int_t> GetiDatasetsVbLike() const {return iDatasetsVbLike_;};
   
-	vector< vector< vector< vector< Double_t > > > > GetN()                                              const{ return N_;};
-	vector< vector< vector< Double_t > > >           GetN(UInt_t wp)                                     const{ return N_[wp];};
-	vector< vector< Double_t > >                     GetN(UInt_t wp,UInt_t njets)                        const{ return N_[wp][njets];};
-	vector< Double_t >                               GetN(UInt_t wp,UInt_t njets,Int_t nbjets)             const{ return N_[wp][njets][nbjets];};
+	vector< vector< vector< vector< Double_t > > > > GetN()                                                  const{ return N_;};
+	vector< vector< vector< Double_t > > >           GetN(UInt_t wp)                                         const{ return N_[wp];};
+	vector< vector< Double_t > >                     GetN(UInt_t wp,UInt_t njets)                            const{ return N_[wp][njets];};
+	vector< Double_t >                               GetN(UInt_t wp,UInt_t njets,Int_t nbjets)               const{ return N_[wp][njets][nbjets];};
 	Double_t                                         GetN(UInt_t wp,UInt_t njets,Int_t nbjets,Int_t dataset) const{ return N_[wp][njets][nbjets][dataset];};
   
 	vector< vector< vector< Double_t > > > GetNbjets()                                       const{ return Nbjets_;};
@@ -399,7 +411,7 @@ private:
    Double_t    Nv_fromN0bjet( Double_t N0bjet,  Double_t Ntt, Double_t Nvb, Double_t eb,  Double_t eudsc, Double_t euds,  Int_t n) const;
    */	
 private:
-  Bool_t MCdata_;
+	Bool_t MCdata_;
 	/** Boolean indicating if running on real data or Monte Carlo simulations. */
 	UInt_t  NbOfDatasets_;
 	/** Number of datasets (in case of Monte Carlo simulations). */
@@ -431,11 +443,11 @@ private:
 	vector< vector< vector< Double_t > > > Nbjets_;
 	/** initial number of events (per btagging working point and per jet multiplicity). */
 	vector< vector< vector< Double_t > > > MultiJet_Est_;
-  /** Estimated number of multi-jet events (per btagging working point and per jet multiplicity) */
+	/** Estimated number of multi-jet events (per btagging working point and per jet multiplicity) */
 	
-  vector<vector<Double_t> >  eb_mc_;
+	vector<vector<Double_t> >  eb_mc_;
 	/** B-tagging efficiency for tt-like events, calculated from MC. Depends on the btagging working point (per jet multiplicity). */
-  vector<vector<Double_t> >  eb_err_mc_;
+	vector<vector<Double_t> >  eb_err_mc_;
 	/** associated error */
 	vector<vector<Double_t> >  eudsc_mc_;
 	/** Mis-tagging efficiency for tt-like events, calculated from MC. Depends on the btagging working point (per jet multiplicity). */
@@ -446,9 +458,9 @@ private:
 	vector<vector<Double_t> >  euds_err_mc_;
 	/** associated error */
   
-  vector<vector<Double_t> >  eb_;
+	vector<vector<Double_t> >  eb_;
 	/** B-tagging estimation parameter for tt-like events. Depends on the btagging working point (per jet multiplicity). */
-  vector<vector<Double_t> >  eb_err_;
+	vector<vector<Double_t> >  eb_err_;
 	/** Error on the B-tagging estimation parameter for tt-like events. Depends on the btagging working point (per jet multiplicity). */
 	vector<vector<Double_t> >  eb_err_up_;
 	vector<vector<Double_t> >  eb_err_down_;
@@ -465,29 +477,29 @@ private:
 	vector<vector<Double_t> >  euds_err_up_;
 	vector<vector<Double_t> >  euds_err_down_;
   
-  /*** Global estimation parameters depending on the jet multiplicity (per b-jet multiplicity) */
-  Double_t *Ntt_ ; //[NbOfJetsBins_]
+	/*** Global estimation parameters depending on the jet multiplicity (per b-jet multiplicity) */
+	Double_t *Ntt_ ; //[NbOfJetsBins_]
 	/** Estimation parameter for the number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
-  Double_t *Ntt_err_ ; //[NbOfJetsBins_]
-	/** Error on the estimation parameter for the number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
-  Double_t *Ntt_err_up_ ; //[NbOfJetsBins_]
-	/** Upper limit error on the estimation parameter for the number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
-  Double_t *Ntt_err_down_ ; //[NbOfJetsBins_]
-	/** Lower limit error on the estimation parameter for the number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	Double_t *Ntt_err_ ; //[NbOfJetsBins_]
+	/** Error on the estimated number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	Double_t *Ntt_err_up_ ; //[NbOfJetsBins_]
+	/** Upper error on the estimated number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	Double_t *Ntt_err_down_ ; //[NbOfJetsBins_]
+	/** Lower error on the estimated number of selected tt-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
 	Double_t *Nv_; //[NbOfJetsBins_]
 	/** Estimation parameter for the number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
 	Double_t *Nv_err_; //[NbOfJetsBins_]
-	/** Error on the estimation parameter for the number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
-  Double_t *Nv_err_up_ ; //[NbOfJetsBins_]
-	/** Upper limit error on the estimation parameter for the number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
-  Double_t *Nv_err_down_ ; //[NbOfJetsBins_]
-	/** Lower limit error on the estimation parameter for the number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	/** Error on the estimated number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	Double_t *Nv_err_up_ ; //[NbOfJetsBins_]
+	/** Upper error on the estimated number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	Double_t *Nv_err_down_ ; //[NbOfJetsBins_]
+	/** Lower error on the estimated number of selected V-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
 	Double_t *Nvb_; //[NbOfJetsBins_]
 	/** Estimation parameter for the number of selected Vb-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
 	Double_t *Nvb_err_; //[NbOfJetsBins_]
-	/** Estimation parameter for the number of selected Vb-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
+	/** Error on the estimated number of selected Vb-like events. Depends on the jet multiplicity (per b-jet multiplicity). */
   
-    // Parameter defining the probability for a b-quark from ttbar final state to lead to a selected b-jet
+	// Parameter defining the probability for a b-quark from ttbar final state to lead to a selected b-jet
 	Double_t *ebq_; //[NbOfJetsBins_]
 	Double_t *e0bq_; //[NbOfJetsBins_]
 	/** Parameter defining the probability to select 0 b-quark from ttbar decay in the final state */
@@ -513,24 +525,24 @@ private:
 	Double_t *minValue_; //[NbOfJetsBins_]
 	/** Threshold on the estimation function value */
   
-  /* Dans CheckEstimationLinearity(...) */
-  TGraphErrors* RescaledTTLikeEstimation; //
+	/* Dans CheckEstimationLinearity(...) */
+	TGraphErrors* RescaledTTLikeEstimation; //
 	/** Histograms for the stability check : */
-  TGraphErrors* RescaledVLikeEstimation; //
+	TGraphErrors* RescaledVLikeEstimation; //
 	/** Histograms for the stability check : */
-  TGraphErrors* RescaledVbLikeEstimation; //
+	TGraphErrors* RescaledVbLikeEstimation; //
 	/** Histograms for the stability check ; nulle part */
 	
-  /* Dans CheckEstimationLinearity(...) */
-  TCanvas* tCanva_RescaledTTLikeEstimation; //
+	/* Dans CheckEstimationLinearity(...) */
+	TCanvas* tCanva_RescaledTTLikeEstimation; //
 	/** Canva for the stability check histogram */
-  TCanvas* tCanva_RescaledVLikeEstimation; //
+	TCanvas* tCanva_RescaledVLikeEstimation; //
 	/** Canva for the stability check histogram */
-  TCanvas* tCanva_RescaledVbLikeEstimation; //
+	TCanvas* tCanva_RescaledVbLikeEstimation; //
 	/** Canva for the stability check histogram */
   
-    //TH2F***hFlavorHistory_;
-    ///** Flavor history */
+	//TH2F***hFlavorHistory_;
+	///** Flavor history */
 	/*  TH1F***hNbOfBGenJets_; //NbOfDatasets_]*/
 	vector< vector <TH1F> > hNbOfBGenJets_;
 	/** Histograms for b-genjets */
@@ -551,23 +563,23 @@ private:
 	vector< vector <TH3F> > hNbOfNonBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_;   /*NbOfDatasets_]NbOfBtagWorkingPoint_]*/
 	/** Histograms for non b-jets, tagged as b-jets (mis-tagging) */
   
-  /*
-   Dans ComputeEffFromMC()
-   */
-  vector< vector< TEfficiency* > > bTagEff_vs_Njets_; //
+	/*
+	Dans ComputeEffFromMC()
+	*/
+	vector< vector< TEfficiency* > > bTagEff_vs_Njets_; //
 	/** TEfficiency for the calculated b-tagging efficiency as a function of the jet multiplicity per dataset and per b-tagging working points */
-  vector< vector< TEfficiency* > > cTagEff_vs_Njets_; //
+	vector< vector< TEfficiency* > > cTagEff_vs_Njets_; //
 	/** TEfficiency for the calculated c-tagging efficiency as a function of the jet multiplicity per dataset and per b-tagging working points */
-  vector< vector< TEfficiency* > > udsTagEff_vs_Njets_; //
+	vector< vector< TEfficiency* > > udsTagEff_vs_Njets_; //
 	/** TEfficiency for the calculated uds-tagging efficiency as a function of the jet multiplicity per dataset and per b-tagging working points */
-  vector< vector< TEfficiency* > > misTagEff_vs_Njets_; //
+	vector< vector< TEfficiency* > > misTagEff_vs_Njets_; //
 	/** TEfficiency for the calculated mis-tagging efficiency as a function of the jet multiplicity per dataset and per b-tagging working points */
   
-  vector< TGraphAsymmErrors* > bTagEff_vs_Njets_TTlike_; //
+	vector< TGraphAsymmErrors* > bTagEff_vs_Njets_TTlike_; //
 	/** TGraphAsymmErrors for the calculated b-tagging efficiency as a function of the jet multiplicity per b-tagging working points */
-  vector< TGraphAsymmErrors* > misTagEff_vs_Njets_TTlike_; //
+	vector< TGraphAsymmErrors* > misTagEff_vs_Njets_TTlike_; //
 	/** TGraphAsymmErrors for the calculated mis-tagging efficiency as a function of the jet multiplicity per b-tagging working points */
-  vector< TGraphAsymmErrors* > misTagEff_vs_Njets_Vlike_; //
+	vector< TGraphAsymmErrors* > misTagEff_vs_Njets_Vlike_; //
 	/** TGraphAsymmErrors for the calculated mis-tagging efficiency as a function of the jet multiplicity per b-tagging working points */
 	
 	vector< vector < vector <TH1F> > > hNbjets_mc_; 
@@ -577,25 +589,26 @@ private:
 	vector< vector < vector <TH1F> > > hNbjets_pdf_est_; 
 	/**Estimated pdf for the b-jets distribution per b-tagging working points, per jet multiplicity (for ttlike, Vblike and Vlike events)*/
 	
-    // Estimation Summary histograms
+	// Estimation Summary histograms
 	vector< vector < vector <TH1F> > > hNjetsEstSummary;
 	vector< vector < vector <TH1F> > > hNbjetsEstSummary;
 	vector< vector < vector <TH1F> > > hNjetsMCSummary;
 	vector< vector < vector <TH1F> > > hNbjetsMCSummary;
-  /* Dans Constructeur */
-  TLegend* MyLeg; 
+
+	/* Dans Constructeur */
+	TLegend* MyLeg; 
   
-  /*
-   Dans Nulle part
-   */
-    //	vector< vector < THStack* > > hsNjets_MC; //
-    //	vector< vector < THStack* > > hsNjets_Est; //
-    //	vector< vector < THStack* > > hsNbjets_MC; //
-    //	vector< vector < THStack* > > hsNbjets_Est; //
+	/*
+	Dans Nulle part
+	*/
+	//vector< vector < THStack* > > hsNjets_MC; //
+	//vector< vector < THStack* > > hsNjets_Est; //
+	//vector< vector < THStack* > > hsNbjets_MC; //
+	//vector< vector < THStack* > > hsNbjets_Est; //
 	
-  /* Dans constructeur */
-  vector< vector < TCanvas* > > tCanva_Njets_Summary; //1
-  vector< vector < TCanvas* > > tCanva_Nbjets_Summary; //1
+	/* Dans constructeur */
+	vector< vector < TCanvas* > > tCanva_Njets_Summary; //1
+	vector< vector < TCanvas* > > tCanva_Nbjets_Summary; //1
   
 	ClassDef (VJetEstimation,1);
 };
