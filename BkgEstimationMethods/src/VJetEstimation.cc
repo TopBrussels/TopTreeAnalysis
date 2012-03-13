@@ -1924,9 +1924,10 @@ void VJetEstimation::SetInitialValues_Euds(UInt_t njets,UInt_t btagIdx, Double_t
   //Main Methods to be executed ...
   /////////////////////////////////
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
+void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose){
   
-    // Declare observables
+  // Declare observables
+	char name[100];
   
 	RooRealVar Ntt("Ntt","N_{t#bar{t}-like}",init_Nttlike_[njets],init_Nttlike_[njets]/5,init_Nttlike_[njets]*5);
 	RooRealVar Nv( "Nv", "N_{V-like}",       init_Nvlike_[njets],init_Nvlike_[njets]/5,init_Nvlike_[njets]*5);
@@ -1982,7 +1983,8 @@ void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t nje
 	RooGenericPdf pbjets_v("pbjets_v","pbjets_v","(nbjets==0)*p0bjets_v+(nbjets==1)*p1bjets_v+(nbjets==2)*p2bjets_v+(nbjets==3)*p3bjets_v",RooArgList(nbjets,p0bjets_v,p1bjets_v,p2bjets_v,p3bjets_v));
 	RooExtendPdf  pbjets_v_ext("pbjets_v_ext","pbjets_v_ext",pbjets_v,Nv);
   
-	RooAddPdf model("model","model",RooArgList(pbjets_tt,pbjets_v),RooArgList(Ntt,Nv));
+	sprintf(name,"model_%d_wp_%d_jets",btag_wp_idx,Njets_[njets]);
+	RooAddPdf model(name,"model",RooArgList(pbjets_tt,pbjets_v),RooArgList(Ntt,Nv));
 	
     // C r e a t e   d a t a s e t 
     // -------------------------------------------------------------------------------
@@ -2043,37 +2045,34 @@ void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t nje
 	delete fit_result;
 	delete nll;
   
-  // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
-  // -----------------------------------------------------------------------------
+  // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l,   a n d   s a v e   w s   i n   f i l e
+  // ----------------------------------------------------------------------------------------------------------------------
+  if(doWS){
+    // Create a new empty workspace
+	  sprintf(name,"w_%d_wp_%d_jets",btag_wp_idx,Njets_[njets]);
+	  RooWorkspace *w = new RooWorkspace(name,"workspace") ;
     
-  // Create a new empty workspace
-	RooWorkspace *w = new RooWorkspace("w","workspace") ;
+    // Import model and all its components into the workspace
+	  w->import(model) ;
     
-  // Import model and all its components into the workspace
-	w->import(model) ;
+    // Import data into the workspace
+	  w->import(data) ;
+    // Print workspace contents
+	  //w->Print() ;
     
-  // Import data into the workspace
-	w->import(data) ;
-  //w->import(*data_mcstudy) ;
-  // Print workspace contents
-	//w->Print() ;
-    
-  // S a v e   w o r k s p a c e   i n   f i l e
-  // -------------------------------------------
-    
-  // Save the workspace into a ROOT file
-	char name[100];
-	sprintf(name,"VJetEstimation_RooFit_WS_%d_wp_%d_jets.root",btag_wp_idx,Njets_[njets]);
-	w->writeToFile(name) ;
-	//if(mcstudy) delete mcstudy;
-	//delete data_mcstudy;
-	delete w;
+    // Save the workspace into a ROOT file
+	  sprintf(name,"VJetEstimation_RooFit_WS_%d_wp_%d_jets.root",btag_wp_idx,Njets_[njets]);
+	  w->writeToFile(name) ;
+
+  	delete w;
+  }
 }
 
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
+void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose){
   
-    // Declare observables
+  // Declare observables
+	char name[100];
 	TString wp[3] = {"loose","medium","tight"};
 	vector<Int_t>::iterator Idx;
   
@@ -2164,10 +2163,12 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
   
   RooAddPdf* model[NbOfBtagWorkingPoint_];
   for(UInt_t i=0; i<NbOfBtagWorkingPoint_; i++){
-    model[i] = new RooAddPdf("model_"+wp[i],"model_"+wp[i],RooArgList(*pbjets_tt_ext[i],*pbjets_v_ext[i]));//,RooArgList(Ntt,Nv));
+	  sprintf(name,"model_%d_wp_%d_jets",i,Njets_[njets]);
+    model[i] = new RooAddPdf(name,"model_"+wp[i],RooArgList(*pbjets_tt_ext[i],*pbjets_v_ext[i]));//,RooArgList(Ntt,Nv));
   }
   
-  RooSimultaneous simPdf("simPdf","simultaneous pdf",WPCat) ;
+	sprintf(name,"model_joint_wp_%d_jets",Njets_[njets]);
+  RooSimultaneous simPdf(name,"simultaneous pdf",WPCat) ;
   for(UInt_t i=0; i<NbOfBtagWorkingPoint_; i++) simPdf.addPdf(*model[i],wp[i]) ;
 	
     // C r e a t e   d a t a s e t 
@@ -2241,30 +2242,27 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
 	}
 	delete fit_result;
   
-  // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
-  // -----------------------------------------------------------------------------
+  // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l,   a n d   s a v e   w s   i n   f i l e
+  // ----------------------------------------------------------------------------------------------------------------------
+  if(doWS){
+  	// Create a new empty workspace
+  	sprintf(name,"w_joint_wp_%d_jets",Njets_[njets]);
+  	RooWorkspace *w = new RooWorkspace(name,"workspace") ;
     
-	// Create a new empty workspace
-	RooWorkspace *w = new RooWorkspace("w","workspace") ;
+  	// Import model and all its components into the workspace
+  	w->import(simPdf) ;
     
-	// Import model and all its components into the workspace
-	w->import(simPdf) ;
+  	// Import data into the workspace
+  	w->import(data) ;
+  	// Print workspace contents
+  	//w->Print() ;
     
-	// Import data into the workspace
-	w->import(data) ;
-	// Print workspace contents
-	//w->Print() ;
-    
-  // S a v e   w o r k s p a c e   i n   f i l e
-  // -------------------------------------------
-    
-	// Save the workspace into a ROOT file
-	char name[100];
-	sprintf(name,"VJetEstimation_RooFit_WS_JointWP_%d_jets.root",Njets_[njets]);
-	w->writeToFile(name) ;
-
-	delete w;
+  	// Save the workspace into a ROOT file
+  	sprintf(name,"VJetEstimation_RooFit_WS_JointWP_%d_jets.root",Njets_[njets]);
+  	w->writeToFile(name) ;
   
+  	delete w;
+  }
 }
 
 /**________________________________________________________________________________________________________________*/

@@ -153,24 +153,24 @@ public:
 	Double_t GetInitialValues_Euds(UInt_t njets,UInt_t btagIdx) const { return init_Euds_[njets][btagIdx];};
 	/** Get initial values of Euds for the minizer. */
   
-	void UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose);
+	void UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose);
 	/** Maximum likelihood estimation with RooFit. */
   
-	void UnBinnedMaximumLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
-		for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) UnBinnedMaximumLikelihoodEst(i, njets, FixedVarIdx, doMinos, Verbose);
+	void UnBinnedMaximumLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose){
+		for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) UnBinnedMaximumLikelihoodEst(i, njets, FixedVarIdx, doMinos, doWS, Verbose);
 	};
 	/** Maximum likelihood estimation with RooFit (solve for all b-tagging working points). */
   
-	void UnBinnedMaximumLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
-		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumLikelihoodEst(i, FixedVarIdx, doMinos, Verbose);
+	void UnBinnedMaximumLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose){
+		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumLikelihoodEst(i, FixedVarIdx, doMinos, doWS, Verbose);
 	};
 	/** Maximum likelihood estimation with RooFit (solve for all jet multiplicities). */
 	
-	void UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose);
+	void UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose);
 	/** Maximum likelihood estimation with RooFit, combining all the b-tagging working points. */
   
-	void UnBinnedMaximumJointWPLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
-		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumJointWPLikelihoodEst(i, FixedVarIdx, doMinos, Verbose);
+	void UnBinnedMaximumJointWPLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool doWS, bool Verbose){
+		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumJointWPLikelihoodEst(i, FixedVarIdx, doMinos, doWS, Verbose);
 	};
 	/** Maximum likelihood estimation with RooFit, combining all the b-tagging working points (solve for all jet multiplicities). */
   
