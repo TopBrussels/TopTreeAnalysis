@@ -153,24 +153,24 @@ public:
 	Double_t GetInitialValues_Euds(UInt_t njets,UInt_t btagIdx) const { return init_Euds_[njets][btagIdx];};
 	/** Get initial values of Euds for the minizer. */
   
-	void UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose);
+	void UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose);
 	/** Maximum likelihood estimation with RooFit. */
   
-	void UnBinnedMaximumLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose){
-		for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) UnBinnedMaximumLikelihoodEst(i, njets, FixedVarIdx, doMinos, doToyMC, Verbose);
+	void UnBinnedMaximumLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
+		for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) UnBinnedMaximumLikelihoodEst(i, njets, FixedVarIdx, doMinos, Verbose);
 	};
 	/** Maximum likelihood estimation with RooFit (solve for all b-tagging working points). */
   
-	void UnBinnedMaximumLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose){
-		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumLikelihoodEst(i, FixedVarIdx, doMinos, doToyMC, Verbose);
+	void UnBinnedMaximumLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
+		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumLikelihoodEst(i, FixedVarIdx, doMinos, Verbose);
 	};
 	/** Maximum likelihood estimation with RooFit (solve for all jet multiplicities). */
 	
-	void UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose);
+	void UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose);
 	/** Maximum likelihood estimation with RooFit, combining all the b-tagging working points. */
   
-	void UnBinnedMaximumJointWPLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose){
-		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumJointWPLikelihoodEst(i, FixedVarIdx, doMinos, doToyMC, Verbose);
+	void UnBinnedMaximumJointWPLikelihoodEst(vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
+		for(UInt_t i=0;i<NbOfJetsBins_;i++) UnBinnedMaximumJointWPLikelihoodEst(i, FixedVarIdx, doMinos, Verbose);
 	};
 	/** Maximum likelihood estimation with RooFit, combining all the b-tagging working points (solve for all jet multiplicities). */
   
@@ -283,9 +283,9 @@ public:
 	Double_t   GetPredNtotal(Int_t wp) const;
 	Double_t   GetPredNtotal(Int_t wp, Int_t njets) const;
 	Double_t   GetPredNtotal(Int_t wp, Int_t njets, Int_t nbjets) const;
-    //	Double_t   GetPredNtotalErr(Int_t wp) const;
-    //	Double_t   GetPredNtotalErr(Int_t wp, Int_t njets) const;
-    //	Double_t   GetPredNtotalErr(Int_t wp, Int_t njets, Int_t nbjets) const;
+//	Double_t   GetPredNtotalErr(Int_t wp) const;
+//	Double_t   GetPredNtotalErr(Int_t wp, Int_t njets) const;
+//	Double_t   GetPredNtotalErr(Int_t wp, Int_t njets, Int_t nbjets) const;
   
 	Double_t   GetPredN(Int_t idx) const;
 	Double_t   GetPredN(Int_t idx, Int_t njets) const;
@@ -356,8 +356,7 @@ public:
 	Double_t GetBtagWorkingPoint(Int_t idx)             const{return BtagWorkingPoint_[idx];};
 	void   SetBtagWorkingPoint(Int_t idx, Double_t wp)  const{BtagWorkingPoint_[idx] = wp;};
   
-	void   SetNbOfPE(Int_t NbOfPE) {NbOfPE_ = NbOfPE;};
-    // private functions
+// private functions
 private:
 	
     //Important:
@@ -507,10 +506,7 @@ private:
 	/** Parameter defining the probability to select 1 b-quark from ttbar decay in the final state */
 	Double_t *e2bq_; //[NbOfJetsBins_]
 	/** Parameter defining the probability to select 2 b-quarks from ttbar decay in the final state */
-	
-	Int_t NbOfPE_;
-	/** Number of Pseudo-experiments to be run by RooFit when switching doToyMC boolean to true) */
-  
+	  
 	vector<Double_t> init_Nttlike_;
 	/** Initial values of Nttlike for the MLE */
 	vector<Double_t> init_Nvlike_;

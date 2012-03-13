@@ -500,7 +500,6 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		Nvb_[i]          = 0;
 		Nvb_err_[i]      = 0;
 	}
-	NbOfPE_ = 100;
 	cout<<"Object from the class VJetEstimation correctly instantiated"<<endl;
 }
 
@@ -977,7 +976,6 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 		Nvb_[i]          = 0;
 		Nvb_err_[i]      = 0;
 	}
-	NbOfPE_ = 100;
 	cout<<"Object from the class VJetEstimation correctly instantiated"<<endl;
 }
 
@@ -1926,7 +1924,7 @@ void VJetEstimation::SetInitialValues_Euds(UInt_t njets,UInt_t btagIdx, Double_t
   //Main Methods to be executed ...
   /////////////////////////////////
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose){
+void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
   
     // Declare observables
   
@@ -1999,13 +1997,11 @@ void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t nje
     // F i t   t h e   d a t a   a n d   c o n s t r u c t   t h e   l i k e l i h o o d   f u n c t i o n
     // ----------------------------------------------------------------------------------------------
   
-	//RooFitResult* fit_result = model.fitTo(data,Save(),Extended(1),PrintLevel(-1));//,ConditionalObservables(nbjets),SplitRange(1),Optimize(0));
-	RooAbsReal* nll = model.createNLL(data,Optimize(0));
+	RooAbsReal* nll = model.createNLL(data);//,Optimize(0));
   
 	RooMinimizer minimizer(*nll);
-	//RooMinuit minimizer(*nll);
   
-	minimizer.optimizeConst(0) ;
+	//minimizer.optimizeConst(0) ; DO NOT SET IT TO TRUE, WILL NOT CONVERGE OTHERWISE
 	minimizer.setPrintLevel(-1);
 	//minimizer.setNoWarn();
   
@@ -2046,50 +2042,36 @@ void VJetEstimation::UnBinnedMaximumLikelihoodEst(UInt_t btag_wp_idx, UInt_t nje
 	
 	delete fit_result;
 	delete nll;
-	
-    // G e n e r a t e   a n d   f i t   e v e n t s
-    // ---------------------------------------------
   
-    // Generate and fit 1000 samples of Poisson(nExpected) events
-	RooMCStudy* mcstudy = 0;
-	RooDataSet* data_mcstudy = 0;
-	RooWorkspace *w = 0;
-  
-	if(doToyMC){
-		mcstudy = new RooMCStudy(model,nbjets,Binned(kTRUE),Silence(),Extended(kTRUE),FitOptions(Save(0),Minos(1),Extended(1),Strategy(2),PrintEvalErrors(-1)));
-		mcstudy->generateAndFit(NbOfPE_,(int)GetPredNtotal(btag_wp_idx,njets)) ;
-		*data_mcstudy = mcstudy->fitParDataSet();
+  // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
+  // -----------------------------------------------------------------------------
     
-      // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
-      // -----------------------------------------------------------------------------
+  // Create a new empty workspace
+	RooWorkspace *w = new RooWorkspace("w","workspace") ;
     
-      // Create a new empty workspace
-		w = new RooWorkspace("w","workspace") ;
+  // Import model and all its components into the workspace
+	w->import(model) ;
     
-      // Import model and all its components into the workspace
-		w->import(model) ;
+  // Import data into the workspace
+	w->import(data) ;
+  //w->import(*data_mcstudy) ;
+  // Print workspace contents
+	//w->Print() ;
     
-      // Import data into the workspace
-		w->import(data) ;
-		w->import(*data_mcstudy) ;
-      // Print workspace contents
-      //w->Print() ;
+  // S a v e   w o r k s p a c e   i n   f i l e
+  // -------------------------------------------
     
-      // S a v e   w o r k s p a c e   i n   f i l e
-      // -------------------------------------------
-    
-      // Save the workspace into a ROOT file
-		char name[100];
-		sprintf(name,"VJetEstimation_RooFit_ToyMC_%d_wp_%d_jets.root",btag_wp_idx,Njets_[njets]);
-		w->writeToFile(name) ;
-	}	
-	delete mcstudy;
-	delete data_mcstudy;
+  // Save the workspace into a ROOT file
+	char name[100];
+	sprintf(name,"VJetEstimation_RooFit_WS_%d_wp_%d_jets.root",btag_wp_idx,Njets_[njets]);
+	w->writeToFile(name) ;
+	//if(mcstudy) delete mcstudy;
+	//delete data_mcstudy;
 	delete w;
 }
 
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool doToyMC, bool Verbose){
+void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<Int_t> &FixedVarIdx, bool doMinos, bool Verbose){
   
     // Declare observables
 	TString wp[3] = {"loose","medium","tight"};
@@ -2123,7 +2105,7 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
 	RooConstVar e0bq("e0bq","e0bq",e0bq_[njets]);
 	RooConstVar e1bq("e1bq","e1bq",e1bq_[njets]);
 	RooConstVar e2bq("e2bq","e2bq",e2bq_[njets]);
-    //RooConstVar e3bq("e3bq","e3bq",e3bq_[njets]);
+	//RooConstVar e3bq("e3bq","e3bq",e3bq_[njets]);
   
     // C o n s t r u c t   a   c a t e g o r y   w i t h   l a b e l s    a n d   i n d e c e s
     // -----------------------------------------------------------------------------------------
@@ -2140,10 +2122,10 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
     // C o n s t r u c t   f o r m u l a s
     // -------------------------------------------------------------------------------
   
-  RooFormulaVar *p0bjets_tt[NbOfBtagWorkingPoint_];
-  RooFormulaVar *p1bjets_tt[NbOfBtagWorkingPoint_];
-  RooFormulaVar *p2bjets_tt[NbOfBtagWorkingPoint_];
-  RooFormulaVar *p3bjets_tt[NbOfBtagWorkingPoint_];
+	RooFormulaVar *p0bjets_tt[NbOfBtagWorkingPoint_];
+	RooFormulaVar *p1bjets_tt[NbOfBtagWorkingPoint_];
+	RooFormulaVar *p2bjets_tt[NbOfBtagWorkingPoint_];
+	RooFormulaVar *p3bjets_tt[NbOfBtagWorkingPoint_];
   
   for(UInt_t i=0; i<NbOfBtagWorkingPoint_; i++){
     p0bjets_tt[i] = new RooFormulaVar("p0bjets_tt_"+wp[i],"p0bjets_tt_"+wp[i],"(1-@0)*(1-@0)*pow((1-@1),@2-2)*e2bq+(1-@0)*pow((1-@1),@2-1)*e1bq+pow((1-@1),@2)*e0bq",RooArgList((*eb[i]),(*eudsc[i]),n,e0bq,e1bq,e2bq));
@@ -2203,24 +2185,20 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
     // F i t   t h e   d a t a   a n d   c o n s t r u c t   t h e   l i k e l i h o o d   f u n c t i o n
     // ----------------------------------------------------------------------------------------------
   
-	RooAbsReal* nll = simPdf.createNLL(data);
+	RooAbsReal* nll = simPdf.createNLL(data);//,Optimize(0));
   
 	RooMinimizer minimizer(*nll);
-    //RooMinuit minimizer(*nll);
+	//RooMinuit minimizer(*nll);
   
-	minimizer.optimizeConst(0) ;
+	//minimizer.optimizeConst(0) ; DO NOT SET IT TO TRUE, WILL NOT CONVERGE OTHERWISE
 	minimizer.setPrintLevel(-1);
-    //minimizer.setNoWarn();
+	//minimizer.setNoWarn();
   
-    // Set algorithm
+	// Set algorithm
 	minimizer.minimize("Minuit2", "Combined");
-    //minimizer.minimize("GSLMultiMin", "ConjugateFR");
-    //minimizer.minimize("GSLMultiMin", "BFGS2");
+	//minimizer.minimize("GSLMultiMin", "ConjugateFR");
+	//minimizer.minimize("GSLMultiMin", "BFGS2");
   
-  /*
-   minimizer.migrad();	
-   minimizer.hesse();
-   */	
 	if(doMinos) minimizer.minos();
 	
 	RooFitResult* fit_result = minimizer.save();
@@ -2263,45 +2241,28 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
 	}
 	delete fit_result;
   
-    // G e n e r a t e   a n d   f i t   e v e n t s
-    // ---------------------------------------------
-  
-    // Generate and fit 1000 samples of Poisson(nExpected) events
-	RooMCStudy* mcstudy = 0;
-	RooDataSet* data_mcstudy = 0;
-	RooWorkspace *w = 0;
-  
-  if(doToyMC){
-    mcstudy = new RooMCStudy(simPdf,RooArgList(nbjets,WPCat),Binned(kTRUE),Silence(),Extended(kTRUE),FitOptions(Save(0),Minos(1),Extended(1),Strategy(2),PrintEvalErrors(-1)));
+  // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
+  // -----------------------------------------------------------------------------
     
-    mcstudy->generateAndFit(NbOfPE_,(int)(NbOfBtagWorkingPoint_*GetPredNtotal(0))) ;
-    *data_mcstudy = mcstudy->fitParDataSet();
+	// Create a new empty workspace
+	RooWorkspace *w = new RooWorkspace("w","workspace") ;
     
-      // C r e a t e   w o r k s p a c e ,   i m p o r t   d a t a   a n d   m o d e l
-      // -----------------------------------------------------------------------------
+	// Import model and all its components into the workspace
+	w->import(simPdf) ;
     
-      // Create a new empty workspace
-    w = new RooWorkspace("w","workspace") ;
+	// Import data into the workspace
+	w->import(data) ;
+	// Print workspace contents
+	//w->Print() ;
     
-      // Import model and all its components into the workspace
-    w->import(simPdf) ;
+  // S a v e   w o r k s p a c e   i n   f i l e
+  // -------------------------------------------
     
-      // Import data into the workspace
-    w->import(data) ;
-    w->import(*data_mcstudy) ;
-      // Print workspace contents
-      //w->Print() ;
-    
-      // S a v e   w o r k s p a c e   i n   f i l e
-      // -------------------------------------------
-    
-      // Save the workspace into a ROOT file
-    char name[100];
-    sprintf(name,"VJetEstimation_RooFit_ToyMC_JointWP_%d_jets.root",Njets_[njets]);
-    w->writeToFile(name) ;
-  }	
-	delete mcstudy;
-	delete data_mcstudy;
+	// Save the workspace into a ROOT file
+	char name[100];
+	sprintf(name,"VJetEstimation_RooFit_WS_JointWP_%d_jets.root",Njets_[njets]);
+	w->writeToFile(name) ;
+
 	delete w;
   
 }
