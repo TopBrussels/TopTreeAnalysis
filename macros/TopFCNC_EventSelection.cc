@@ -34,6 +34,17 @@ map<string,TH2F*> histo2D;
 /// MultiSamplePlot
 map<string,MultiSamplePlot*> MSPlot;
 
+struct HighestTCHEBtag{
+    bool operator()( TRootJet* j1, TRootJet* j2 ) const{
+    	return j1->btag_trackCountingHighEffBJetTags() > j2->btag_trackCountingHighEffBJetTags();
+    }
+};
+struct HighestCVSBtag{
+    bool operator()( TRootJet* j1, TRootJet* j2 ) const{
+    	return j1->btag_combinedSecondaryVertexBJetTags() > j2->btag_combinedSecondaryVertexBJetTags();
+    }
+};
+
 int main (int argc, char *argv[])
 {
   int doJESShift = 0; // 0: off 1: minus 2: plus
@@ -252,6 +263,11 @@ int main (int argc, char *argv[])
   MSPlot["BdiscBJetCand_mmm_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
   MSPlot["BdiscBJetCand_eem_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
 
+  MSPlot["HighestBdisc_mm_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_ee_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_CVS", 100, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_mm_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_TCHE",100, 0, 50, "TCHE b-disc.");
+  MSPlot["HighestBdisc_ee_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_TCHE",100, 0, 50, "TCHE b-disc.");
+  
   MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "MET");
   MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "MET");
   MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 100, 0, 200, "MET");
@@ -1067,6 +1083,10 @@ int main (int argc, char *argv[])
 					selecTableDiMu.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
 						selecTableDiMu.Fill(d,10,scaleFactor);
+						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						sort(selectedJets.begin(),selectedJets.end(),HighestTCHEBtag());
+						MSPlot["HighestBdisc_mm_ch_TCHE"]->Fill(selectedJets[0]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets, true);
 						MSPlot["BdiscBJetCand_mm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
@@ -1148,6 +1168,10 @@ int main (int argc, char *argv[])
 					selecTableDiEl.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
 						selecTableDiEl.Fill(d,10,scaleFactor);
+						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						sort(selectedJets.begin(),selectedJets.end(),HighestTCHEBtag());
+						MSPlot["HighestBdisc_ee_ch_TCHE"]->Fill(selectedJets[0]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedJets);
 						MSPlot["BdiscBJetCand_ee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
