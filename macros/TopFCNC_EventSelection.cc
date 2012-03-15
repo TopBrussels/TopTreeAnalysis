@@ -105,7 +105,7 @@ int main (int argc, char *argv[])
   setGregStyle();
   //setMyStyle();
 
-  string postfix = "_EventSelection"; // to relabel the names of the output file
+  string postfix = "_EventSelectionTest"; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -142,12 +142,12 @@ int main (int argc, char *argv[])
 
   if(diMuon){
 	cout << " --> Using the diMuon channel..." << endl;
-	channelpostfix = "_diMu";
+	channelpostfix = "_DiMu";
 	xmlFileName = "../config/myTopFCNCconfig_Muon.xml";
   }
   else if(diElectron){
 	cout << " --> Using the diElectron channel..." << endl;
-	channelpostfix = "_diEl";
+	channelpostfix = "_DiEl";
 	xmlFileName = "../config/myTopFCNCconfig_Electron.xml";
   }
 
@@ -1257,9 +1257,9 @@ int main (int argc, char *argv[])
 	selecTableDiMuEl.TableCalculator(false, true, true, true, true);
 	selecTableTriMu.TableCalculator( false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-	selecTableDiMu.Write(  "TopFCNC_EventSelectionTable_DiMu.tex",    true,true,true,true,false,false,true);
-	selecTableDiMuEl.Write("TopFCNC_EventSelectionTable_DiMuElec.tex",true,true,true,true,false,false,true);
-	selecTableTriMu.Write( "TopFCNC_EventSelectionTable_TriMu.tex",   true,true,true,true,false,false,true);
+	selecTableDiMu.Write(  "TopFCNC"+postfix+"Table_DiMu.tex",    true,true,true,true,false,false,true);
+	selecTableDiMuEl.Write("TopFCNC"+postfix+"Table_DiMuElec.tex",true,true,true,true,false,false,true);
+	selecTableTriMu.Write( "TopFCNC"+postfix+"Table_TriMu.tex",   true,true,true,true,false,false,true);
   }
   else if(diElectron){
 	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
@@ -1267,9 +1267,9 @@ int main (int argc, char *argv[])
 	selecTableDiElMu.TableCalculator(false, true, true, true, true);
 	selecTableTriEl.TableCalculator( false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-	selecTableDiEl.Write(  "TopFCNC_EventSelectionTable_DiEl.tex",  true,true,true,true,false,false,true);
-	selecTableDiElMu.Write("TopFCNC_EventSelectionTable_DiElMu.tex",true,true,true,true,false,false,true);
-	selecTableTriEl.Write( "TopFCNC_EventSelectionTable_TriEl.tex", true,true,true,true,false,false,true);
+	selecTableDiEl.Write(  "TopFCNC"+postfix+"Table_DiEl.tex",  true,true,true,true,false,false,true);
+	selecTableDiElMu.Write("TopFCNC"+postfix+"Table_DiElMu.tex",true,true,true,true,false,false,true);
+	selecTableTriEl.Write( "TopFCNC"+postfix+"Table_TriEl.tex", true,true,true,true,false,false,true);
   }
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
@@ -1278,7 +1278,7 @@ int main (int argc, char *argv[])
 	temp->addText("CMS preliminary");
 	string name = it->first;
 	temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
-	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false);
+	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	temp->Write(fout, name, true, pathPNG, "pdf");
   }
   TDirectory* th1dir = fout->mkdir("Histos1D");
