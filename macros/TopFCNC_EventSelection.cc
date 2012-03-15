@@ -105,7 +105,7 @@ int main (int argc, char *argv[])
   setGregStyle();
   //setMyStyle();
 
-  string postfix = "_EventSelectionTest"; // to relabel the names of the output file
+  string postfix = "_EventSelection"; // to relabel the names of the output file
 
   if (doJESShift == 1)
     postfix= postfix+"_JESMinus";
@@ -273,26 +273,26 @@ int main (int argc, char *argv[])
   MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 100, 80, 300, "m_{Zq}");
   MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 100, 80, 300, "m_{Zq}");
 
-  MSPlot["MassChi2_mm_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_mm_ch",  50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_mmm_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mmm_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_mme_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mme_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_ee_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_ee_ch",  50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_eem_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eem_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_eee_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eee_ch", 50, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_mm_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_mm_ch",  20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_mmm_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mmm_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_mme_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mme_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_ee_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_ee_ch",  20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_eem_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eem_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_eee_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eee_ch", 20, 0, 20, "\\chi^{2}");
 
-  MSPlot["MassChi2_SM_mm_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_mm_ch",  50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_mmm_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mmm_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_mme_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mme_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_ee_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_ee_ch",  50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_eem_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eem_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_eee_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eee_ch", 50, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_mm_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_mm_ch",  20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_mmm_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mmm_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_mme_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mme_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_ee_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_ee_ch",  20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_eem_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eem_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_SM_eee_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eee_ch", 20, 0, 20, "\\chi^{2}");
 
-  MSPlot["MassChi2_FCNC_mm_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_mm_ch",  50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_mmm_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mmm_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_mme_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mme_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_ee_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_ee_ch",  50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_eem_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eem_ch", 50, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_eee_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eee_ch", 50, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_mm_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_mm_ch",  20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_mmm_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mmm_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_mme_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mme_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_ee_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_ee_ch",  20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_eem_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eem_ch", 20, 0, 20, "\\chi^{2}");
+  MSPlot["MassChi2_FCNC_eee_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eee_ch", 20, 0, 20, "\\chi^{2}");
 
   MSPlot["TriLeptonInvMass_mmm_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mmm_ch", 160, 50, 130, "m_{lll}");
   MSPlot["TriLeptonInvMass_mme_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mme_ch", 160, 50, 130, "m_{lll}");
@@ -343,7 +343,7 @@ int main (int argc, char *argv[])
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableDiMu.push_back(string("$b-disc_{CSV} \\geq 0.65$"));
+  CutsSelecTableDiMu.push_back(string("$b\\texttt{-}disc \\geq 0.6$ (CSV)"));
 //  CutsSelecTableDiMu.push_back(string("$MET \\leq 30$ GeV"));  
 
   SelectionTable selecTableDiMu(CutsSelecTableDiMu, datasets);
@@ -409,7 +409,7 @@ int main (int argc, char *argv[])
   CutsSelecTableDiEl.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableDiEl.push_back(string("$b-disc_{CSV} \\geq 0.65$"));
+  CutsSelecTableDiEl.push_back(string("$b\\texttt{-}disc \\geq 0.6$ (CSV)"));
   //CutsSelecTableDiEl.push_back(string("MET > 40 GeV"));
 
 
@@ -1275,7 +1275,7 @@ int main (int argc, char *argv[])
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
   {
 	MultiSamplePlot *temp = it->second;
-	temp->addText("CMS preliminary");
+	//temp->addText("CMS preliminary");
 	string name = it->first;
 	temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
 	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
