@@ -63,8 +63,8 @@ SOURCESMTOPDIC	= $(wildcard JESMeasurement/src/LightMonster.cc Content/src/Datas
 HEADERSMTOPDIC	= $(wildcard JESMeasurement/interface/LightMonster.h Content/interface/Dataset.h)
 OBJECTSMTOPDIC	= $(SOURCESMTOPDIC:.$(SrcSuf)=.$(ObjSuf))
 
-SOURCESMTOP   = $(wildcard JESMeasurement/src/MonsterTools.cc JESMeasurement/src/LightMonster.cc Tools/src/MultiSamplePlot.cc Content/src/Dataset.cc Tools/src/PlottingTools.cc MCInformation/src/*ReWeighting.cc MCInformation/src/ResolutionFit.cc)
-HEADERSMTOP   = $(wildcard JESMeasurement/interface/MonsterTools.h JESMeasurement/interface/LightMonster.h Tools/interface/MultiSamplePlot.h Content/interface/Dataset.h Tools/interface/PlottingTools.h MCInformation/interface/*ReWeighting.h MCInformation/interface/ResolutionFit.h)
+SOURCESMTOP   = $(wildcard JESMeasurement/src/MonsterTools.cc JESMeasurement/src/LightMonster.cc Tools/src/MultiSamplePlot.cc Content/src/Dataset.cc Tools/src/PlottingTools.cc MCInformation/src/*ReWeighting.cc MCInformation/src/ResolutionFit.cc ../TopQuarkAnalysis/TopMassIdeogram/src/*.cc JESMeasurement/IdeogramTools/src/*.cc)
+HEADERSMTOP   = $(wildcard JESMeasurement/interface/MonsterTools.h JESMeasurement/interface/LightMonster.h Tools/interface/MultiSamplePlot.h Content/interface/Dataset.h Tools/interface/PlottingTools.h MCInformation/interface/*ReWeighting.h MCInformation/interface/ResolutionFit.h ../TopQuarkAnalysis/TopMassIdeogram/interface/*.h JESMeasurement/IdeogramTools/interface/*.h)
 OBJECTSMTOP		= $(SOURCESMTOP:.$(SrcSuf)=.$(ObjSuf))
 
 
@@ -79,7 +79,7 @@ mtop: libMtopAnalysis42.$(DllSuf)
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(OBJECTSDIC) $(OBJECTSBTAG) $(OBJECTBTAGDIC) $(DEPENDS) macros/*.exe *Dict.* *.$(DllSuf) core 
+	@rm -f $(OBJECTS) $(OBJECTSDIC) $(OBJECTSBTAG) $(OBJECTBTAGDIC) $(OBJECTSMTOP) $(OBJECTSMTOPDIC) $(DEPENDS) macros/*.exe *Dict.* *.$(DllSuf) core 
 
 .SUFFIXES: .$(SrcSuf) .C .o .$(DllSuf)
 
