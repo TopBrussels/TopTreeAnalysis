@@ -3,7 +3,7 @@ To run the code living in SingleTop-tW:
 (Fall11 release)
 
 
-cvs co -r CMSSW_42X -d TopBrussels UserCode/TopBrusselscd TopBrussels/TopTreeProducer
+cvs co -r CMSSW_42X -d TopBrussels UserCode/TopBrussels
 
 cd TopBrussels/TopTreeProducer
 scramv1 b
