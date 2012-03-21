@@ -45,11 +45,11 @@ void looper::myLoop(int nsel, int mode, bool silent)
   
   
   char newRootFile[300];
-  double lumi = luminosity;
-  if (mode == 0 )        lumi = 4626.297;
-  else if ( mode == 1)   lumi = 4534.871;
-  else if ( mode == 2)   lumi = 4593.348;
-  else if ( mode == 3)   lumi = 4.5;
+  double lumi = luminosity; 
+  if (mode == 0 )        lumi = 4904.338;
+  else if ( mode == 1)   lumi = 4919.924;
+  else if ( mode == 2)   lumi = 4919.924;
+  else if ( mode == 3)   lumi = 4.9;
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   
   TFile f_var(newRootFile, "UPDATE");
@@ -68,6 +68,10 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"met_%s",plotName);
   TH1F* histo_met = new TH1F( title, " ", 100,  0, 200 );
   histo_met->Sumw2();
+  
+  sprintf(title, "tmet_%s", plotName);
+  TH1F* histo_tmet = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet->Sumw2();
   
   sprintf(title,"met_high_%s",plotName);
   TH1F* histo_met_high = new TH1F( title, " ", 100,  0, 200 );
@@ -298,6 +302,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	histo_njetsbt->Fill(nJetsBT,  xlWeight);
 	histo_mll->Fill(pair.M(),  xlWeight);
 	histo_met->Fill(metPt,  xlWeight);
+	histo_tmet->Fill(tmetPt, xlWeight);
 	histo_promet->Fill(promet, xlWeight);
 	
 	if (nvertex > 5){

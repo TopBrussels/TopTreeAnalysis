@@ -24,6 +24,10 @@ class looper {
   Double_t        metPx;
   Double_t        metPy;
   
+  Double_t 	  tmetPx;
+  Double_t        tmetPy;
+  Double_t        tmetPt;
+  
   
   std::vector<double>  *ptLepton;
   std::vector<double>  *pxLepton;
@@ -51,6 +55,9 @@ class looper {
   TBranch        *b_metPt;   //!
   TBranch        *b_metPx;   //!
   TBranch        *b_metPy;   //!
+  TBranch        *b_tmetPt;  //!
+  TBranch        *b_tmetPy;   //!
+  TBranch        *b_tmetPx;  //!
   
   
   TBranch        *b_ptLepton;   //!
@@ -155,7 +162,11 @@ void looper::Init(TTree *tree)
   fChain->SetBranchAddress("metPt", &metPt, &b_metPt);
   fChain->SetBranchAddress("metPx", &metPx, &b_metPx);
   fChain->SetBranchAddress("metPy", &metPy, &b_metPy);
-  
+ 
+  fChain->SetBranchAddress("tmetPt", &tmetPt, &b_tmetPt);
+  fChain->SetBranchAddress("tmetPx", &tmetPx, &b_tmetPx);
+  fChain->SetBranchAddress("tmetPy", &tmetPy, &b_tmetPy);
+ 
   fChain->SetBranchAddress("ptLepton", &ptLepton, &b_ptLepton);
   fChain->SetBranchAddress("pxLepton", &pxLepton, &b_pxLepton);
   fChain->SetBranchAddress("pyLepton", &pyLepton, &b_pyLepton);
