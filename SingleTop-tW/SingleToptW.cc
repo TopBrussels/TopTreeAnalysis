@@ -131,19 +131,19 @@ int main(int argc, char* argv[]) {
   
   // Luminosity and xml files
   double lumi = 0;
-  if      (mode == 0){ 	 lumi = 4626.297;	if(!useTestXML) xmlfile ="twemu.xml";}
-  else if (mode == 1){	 lumi = 4534.871;	 if(!useTestXML) xmlfile = "twmumu.xml";}
-  else if (mode == 2){	 lumi = 4593.348;	 if(!useTestXML) xmlfile = "twee.xml";}
+  if      (mode == 0){ 	 lumi = 4904.338;	if(!useTestXML) xmlfile ="twemu.xml";}
+  else if (mode == 1){	 lumi = 4919.924;	 if(!useTestXML) xmlfile = "twmumu.xml";}
+  else if (mode == 2){	 lumi = 4919.924;	 if(!useTestXML) xmlfile = "twee.xml";}
   if(useTestXML)
     std::cout << "using file: " << xmlfile << std::endl;
   
-  double lumia = 2120.297;
-  if (mode == 1) lumia = 2045.871 ;
-  if (mode == 2) lumia = 2126.348 ;
+  double lumia = 2193.338;
+  if (mode == 1) lumia = 2203.924 ;
+  if (mode == 2) lumia = 2202.249 ;
   
-  double lumib = 2506;
-  if (mode == 1) lumib = 2489 ;
-  if (mode == 2) lumib = 2467 ;
+  double lumib = 2711;
+  if (mode == 1) lumib = 2716 ;
+  if (mode == 2) lumib = 2693 ;
   
 
   if (RunA) lumi = lumia;
@@ -177,26 +177,22 @@ int main(int argc, char* argv[]) {
       
       // cross sections and weights
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; isData = true;}
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3160707; isTop = true;} //
-      else if (dataSetName == "tt2l"){		sprintf(name, "tt2l");  	xlweight = lumi*17.10/8576584; isTop = true;} //
-      else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/813743;} //
-      else if (dataSetName == "atwdr"){ 	sprintf(name, "atw_dr");        xlweight = lumi*7.87/689462;} //
-      else if (dataSetName == "twds"){ 	     	sprintf(name, "tw_ds");	        xlweight = lumi*7.87/794802;} //
-      else if (dataSetName == "atwds"){    	sprintf(name, "atw_ds");        xlweight = lumi*7.87/784764;} //
-      else if (dataSetName == "t"){    		sprintf(name, "t");        	xlweight = lumi*41.92/3337875;} //
-      else if (dataSetName == "at"){    	sprintf(name, "at");        	xlweight = lumi*22.65/1943627;} //
-      else if (dataSetName == "ts"){    	sprintf(name, "ts");        	xlweight = lumi*3.19/259777;} //
-      else if (dataSetName == "ats"){    	sprintf(name, "ats");        	xlweight = lumi*1.44/137889;} //
+      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3628285; isTop = true;} 
+      else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/811897;} 
+      else if (dataSetName == "atwdr"){ 	sprintf(name, "atw_dr");        xlweight = lumi*7.87/807505;} 
+      else if (dataSetName == "twds"){ 	     	sprintf(name, "tw_ds");	        xlweight = lumi*7.87/793031;} 
+      else if (dataSetName == "atwds"){    	sprintf(name, "atw_ds");        xlweight = lumi*7.87/807505;} 
+      else if (dataSetName == "t"){    		sprintf(name, "t");        	xlweight = lumi*41.92/3888894;} 
+      else if (dataSetName == "at"){    	sprintf(name, "at");        	xlweight = lumi*22.65/1938263;} 
+      else if (dataSetName == "ts"){    	sprintf(name, "ts");        	xlweight = lumi*3.19/259378;}
+      else if (dataSetName == "ats"){    	sprintf(name, "ats");        	xlweight = lumi*1.44/137556;} 
       else if (dataSetName == "wjets"){     	sprintf(name, "wjets");	        xlweight = lumi*31314/49708092;} //
-      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3048/26523984;} //
-      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*11908.83/31429105;}//
-      else if (dataSetName == "dymumu"){	sprintf(name, "dymumu");	xlweight = lumi*1666/1;}
-      else if (dataSetName == "dyee"){		sprintf(name, "dyee");		xlweight = lumi*1666/1;}
-      else if (dataSetName == "dytautau"){	sprintf(name, "dytautau");	xlweight = lumi*1666/1;}
-      else if (dataSetName == "ww"){		sprintf(name, "ww");		xlweight = lumi*42.9/4223785;} //
-      else if (dataSetName == "wz"){		sprintf(name, "wz");		xlweight = lumi*18.3/3863081;} //
-      else if (dataSetName == "zz"){		sprintf(name, "zz");		xlweight = lumi*7.67/4188624;} //
-      else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/12198343;} // 
+      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3048/35799272;} 
+      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*11908.83/31193930;}
+      else if (dataSetName == "ww"){		sprintf(name, "ww");		xlweight = lumi*42.9/4223584;} 
+      else if (dataSetName == "wz"){		sprintf(name, "wz");		xlweight = lumi*18.3/4242845;} 
+      else if (dataSetName == "zz"){		sprintf(name, "zz");		xlweight = lumi*7.67/4188621;} 
+      else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/24787499;} 
       
       //special files
       else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/437736;}
@@ -508,7 +504,7 @@ int main(int argc, char* argv[]) {
 	    Selection selection(init_jets, init_muons, init_electrons, mets);
 	    trackmet = treeLoader.LoadTrackMET(ievt);
 	    
-	    cout << trackmet[0]->Pt() << endl;
+	    //cout << trackmet[0]->Pt() << endl;
 	    
 	    // PV cut (useless)
 	    //bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
