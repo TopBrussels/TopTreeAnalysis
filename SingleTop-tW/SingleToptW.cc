@@ -274,6 +274,10 @@ int main(int argc, char* argv[]) {
       double metPx;
       double metPy;
       
+      double tmetPt;
+      double tmetPx;
+      double tmetPy;
+      
       std::vector<double> *ptLepton;
       std::vector<double> *pxLepton;
       std::vector<double> *pyLepton;
@@ -304,6 +308,10 @@ int main(int argc, char* argv[]) {
       myTree->Branch("metPt", &metPt, "metPt/D");
       myTree->Branch("metPx", &metPx, "metPx/D");
       myTree->Branch("metPy", &metPy, "metPy/D");
+      
+      myTree->Branch("tmetPt", &tmetPt, "tmetPt/D");
+      myTree->Branch("tmetPx", &tmetPx, "tmetPx/D");
+      myTree->Branch("tmetPy", &tmetPy, "tmetPy/D");
       
       myTree->Branch("ptLepton","std::vector<double>",&ptLepton);
       myTree->Branch("pxLepton","std::vector<double>",&pxLepton);
@@ -504,7 +512,7 @@ int main(int argc, char* argv[]) {
 	    Selection selection(init_jets, init_muons, init_electrons, mets);
 	    trackmet = treeLoader.LoadTrackMET(ievt);
 	    
-	    //cout << trackmet[0]->Pt() << endl;
+	   
 	    
 	    // PV cut (useless)
 	    //bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
@@ -636,6 +644,13 @@ int main(int argc, char* argv[]) {
 			metPt = met_pt;
 			metPx = met_px;
 			metPy = met_py;
+			
+			 //cout << trackmet[0]->Pt() << endl;
+			
+			tmetPt = trackmet[0]->Pt();
+			tmetPx = trackmet[0]->Px();
+			tmetPy = trackmet[0]->Py();
+			
 			
 			ptLepton = new std::vector<double>; 
 			pxLepton = new std::vector<double>; 
