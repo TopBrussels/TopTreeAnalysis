@@ -82,6 +82,7 @@ int main (int argc, char *argv[])
   //setTDRStyle();
   setGregStyle();
   //setMyStyle();
+  bool verbose = true;
   
   unsigned int btag_wp_idx = 0; // B-tagging working point index
   unsigned int njets = 4;       // Nb of selected jets
@@ -117,16 +118,21 @@ int main (int argc, char *argv[])
   // -----------------------------------------------------------------
 
   // Retrieve x,model and data from workspace
-	RooRealVar* Ntt   = w->var("Ntt") ; float Ntt_true = Ntt->getVal(); //Ntt->setVal(Ntt_true-1000);
-	RooRealVar* Nv    = w->var("Nv") ;  float Nv_true = Nv->getVal();   //Nv->setVal(Nv_true+1000);
-	RooRealVar* eb    = w->var("eb") ;    eb->setConstant(kFALSE);
-	//RooRealVar* eudsc = w->var("eudsc") ; eudsc->setConstant(kTRUE);
-	//RooRealVar* euds  = w->var("euds") ;  euds->setConstant(kTRUE);
+	RooRealVar* Ntt   = w->var("Ntt") ;   float Ntt_true = Ntt->getVal();     //Ntt->setVal(Ntt_true-1000);
+	RooRealVar* Nv    = w->var("Nv") ;    float Nv_true = Nv->getVal();       //Nv->setVal(Nv_true+1000);
+	RooRealVar* eb    = w->var("eb") ;    float eb_true = eb->getVal();       eb->setConstant(kTRUE);
+	RooRealVar* eudsc = w->var("eudsc") ; float eudsc_true = eudsc->getVal(); eudsc->setConstant(kTRUE);
+	RooRealVar* euds  = w->var("euds") ;  float euds_true = euds->getVal();   euds->setConstant(kTRUE);
 	RooCategory* nbjets = (RooCategory*)w->cat("nbjets") ;
   if(verbose){
+    cout<<"------------------------------------------------"<<endl;
   	cout<<" MC Values for : "<<endl;
 	  cout<<" Ntt = "<<Ntt_true<<endl;
 	  cout<<" Nv  = "<<Nv_true<<endl;
+	  cout<<" eb    = "<<eb_true<<endl;
+	  cout<<" eudsc = "<<eudsc_true<<endl;
+	  cout<<" euds  = "<<euds_true<<endl;
+    cout<<"------------------------------------------------"<<endl;
   }
 
 	sprintf(inputname,"model_%d_wp_%d_jets",btag_wp_idx,njets);
