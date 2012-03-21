@@ -229,7 +229,7 @@ TH2F* FullKinFit::FitEvent(TRootEvent* event, float WMass, float topMass, bool w
 //            histo->Fill(DE, shiftedTopMass, 9999);
         }
         else if (theFitter->getStatus() == 0) // if the fitter converged
-            histo->Fill(DE, shiftedTopMass, TMath::Prob(theFitter->getS(), theFitter->getNDF()) );
+          histo->Fill(DE, shiftedTopMass, TMath::Prob(theFitter->getS(), theFitter->getNDF()) );
         
         delete theFitter;
         delete fitLight1;
