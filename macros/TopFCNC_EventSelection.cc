@@ -353,13 +353,13 @@ int main (int argc, char *argv[])
   CutsSelecTableDiMu.push_back(string("Trigger"));
   CutsSelecTableDiMu.push_back(string("Good PV"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 isolated muons"));
-  CutsSelecTableDiMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableDiMu.push_back(string("$|m_{ll}-m_Z|<30$ GeV"));
   CutsSelecTableDiMu.push_back(string("Veto on 3rd iso. lept."));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiMu.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableDiMu.push_back(string("$b\\texttt{-}disc \\geq 0.6$ (CSV)"));
+  CutsSelecTableDiMu.push_back(string("$b\\texttt{-}disc \\geq 0.7$ (CSV)"));
 //  CutsSelecTableDiMu.push_back(string("$MET \\leq 30$ GeV"));  
 
   SelectionTable selecTableDiMu(CutsSelecTableDiMu, datasets);
@@ -376,7 +376,7 @@ int main (int argc, char *argv[])
   CutsSelecTableTriMu.push_back(string("Trigger"));
   CutsSelecTableTriMu.push_back(string("Good PV"));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 2 isolated muons"));
-  CutsSelecTableTriMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableTriMu.push_back(string("$|m_{ll}-m_Z|<30$ GeV"));
   CutsSelecTableTriMu.push_back(string("3rd iso. mu."));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableTriMu.push_back(string("$\\geq$ 2 jet"));
@@ -397,7 +397,7 @@ int main (int argc, char *argv[])
   CutsselecTableDiMuEl.push_back(string("Trigger"));
   CutsselecTableDiMuEl.push_back(string("Good PV"));
   CutsselecTableDiMuEl.push_back(string("$\\geq$ 2 isolated muons"));
-  CutsselecTableDiMuEl.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsselecTableDiMuEl.push_back(string("$|m_{ll}-m_Z|<30$ GeV"));
   CutsselecTableDiMuEl.push_back(string("3rd iso. elec."));
   CutsselecTableDiMuEl.push_back(string("$\\geq$ 1 jet"));
   CutsselecTableDiMuEl.push_back(string("$\\geq$ 2 jet"));
@@ -418,14 +418,14 @@ int main (int argc, char *argv[])
   CutsSelecTableDiEl.push_back(string("Trigger"));
   CutsSelecTableDiEl.push_back(string("Good PV"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 2 isolated electrons"));
-  CutsSelecTableDiEl.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableDiEl.push_back(string("$|m_{ll}-m_Z|<30$ GeV"));
   CutsSelecTableDiEl.push_back(string("Veto on 3rd iso. lept."));
   //CutsSelecTableDiEl.push_back(string("Conversion veto"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableDiEl.push_back(string("$b\\texttt{-}disc \\geq 0.6$ (CSV)"));
+  CutsSelecTableDiEl.push_back(string("$b\\texttt{-}disc \\geq 0.7$ (CSV)"));
   //CutsSelecTableDiEl.push_back(string("MET > 40 GeV"));
 
 
@@ -443,7 +443,7 @@ int main (int argc, char *argv[])
   CutsSelecTableTriEl.push_back(string("Trigger"));
   CutsSelecTableTriEl.push_back(string("Good PV"));
   CutsSelecTableTriEl.push_back(string("$\\geq$ 2 isolated electrons"));
-  CutsSelecTableTriEl.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableTriEl.push_back(string("$|m_{ll}-m_Z|<30$ GeV"));
   CutsSelecTableTriEl.push_back(string("3rd iso. elec."));
   CutsSelecTableTriEl.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableTriEl.push_back(string("$\\geq$ 2 jet"));
@@ -465,7 +465,7 @@ int main (int argc, char *argv[])
   CutsSelecTableDiElMu.push_back(string("Trigger"));
   CutsSelecTableDiElMu.push_back(string("Good PV"));
   CutsSelecTableDiElMu.push_back(string("$\\geq$ 2 isolated electrons"));
-  CutsSelecTableDiElMu.push_back(string("$|m_{ll}-m_Z|<20$ GeV"));
+  CutsSelecTableDiElMu.push_back(string("$|m_{ll}-m_Z|<30$ GeV"));
   CutsSelecTableDiElMu.push_back(string("3rd iso. muon"));
   CutsSelecTableDiElMu.push_back(string("$\\geq$ 1 jet"));
   CutsSelecTableDiElMu.push_back(string("$\\geq$ 2 jet"));
@@ -1071,6 +1071,7 @@ int main (int argc, char *argv[])
 
 	MyTopFCNC_EvtCand = 0;
 	double invMass = 0;
+	double highestbtagdisc = 0;
 	// Select events based on the presence of *exactly one* extra isolated lepton
 	if(diMuon && selectedExtraMuons.size()==0 && selectedElectrons.size()==0){
 		selecTableDiMu.Fill(d,6,scaleFactor);
@@ -1085,16 +1086,17 @@ int main (int argc, char *argv[])
 						selecTableDiMu.Fill(d,10,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestTCHEBtag());
 						MSPlot["HighestBdisc_mm_ch_TCHE"]->Fill(selectedJets[0]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets, true);
-						MSPlot["BdiscBJetCand_mm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["BdiscBJetCand_mm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags()<0.6) continue;
+						MSPlot["BdiscBJetCand_mm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true, Luminosity*scaleFactor);
+						MSPlot["BdiscBJetCand_mm_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d],true, Luminosity*scaleFactor);
+						if(highestbtagdisc<0.7) continue;
 						selecTableDiMu.Fill(d,11,scaleFactor);
 						MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d],true,Luminosity*scaleFactor);
 						MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_SM_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d], true, Luminosity*scaleFactor);
@@ -1170,16 +1172,17 @@ int main (int argc, char *argv[])
 						selecTableDiEl.Fill(d,10,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestTCHEBtag());
 						MSPlot["HighestBdisc_ee_ch_TCHE"]->Fill(selectedJets[0]->btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedJets);
 						MSPlot["BdiscBJetCand_ee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["BdiscBJetCand_ee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-						if(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags()<0.6) continue;
+						MSPlot["BdiscBJetCand_ee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d],true, Luminosity*scaleFactor);
+						if(highestbtagdisc<0.7) continue;
 						selecTableDiEl.Fill(d,11,scaleFactor);
 						MSPlot["MET_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-						MSPlot["Mtt_ee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["Mtt_ee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d],true,Luminosity*scaleFactor);
 						MSPlot["Mzq_ee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_SM_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d], true, Luminosity*scaleFactor);
@@ -1202,8 +1205,8 @@ int main (int argc, char *argv[])
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedMuons[0], selectedJets, mets[0]);
 					invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedMuons[0]).M();
-					MSPlot["BdiscBJetCand_eem_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(), datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["BdiscBJetCand_eem_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eem_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true,Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eem_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d],true,Luminosity*scaleFactor);
 					MSPlot["MET_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mtt_eem_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mzq_eem_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
@@ -1229,8 +1232,8 @@ int main (int argc, char *argv[])
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedExtraElectrons[0], selectedJets, mets[0]);
 					invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedExtraElectrons[0]).M();
-					MSPlot["BdiscBJetCand_eee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["BdiscBJetCand_eee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true, Luminosity*scaleFactor);
+					MSPlot["BdiscBJetCand_eee_ch_TCHE"]->Fill(MyTopFCNC_EvtCand->B().btag_trackCountingHighEffBJetTags(),datasets[d],true,Luminosity*scaleFactor);
 					MSPlot["Mtt_eee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["Mzq_eee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 					MSPlot["MassChi2_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
