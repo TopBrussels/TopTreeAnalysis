@@ -14,8 +14,6 @@ cd ../../TopTreeAnalysis
 make clean
 make -j8 all
 
-cp SingleTop-tW/maketW .
-
 
 mkdir SingleTop-tW/outputs
 cd SingleTop-tW/scripts
