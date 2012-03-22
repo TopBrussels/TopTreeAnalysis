@@ -186,16 +186,16 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string inputpostfixOld = "_28Feb2012"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+  string inputpostfixOld = "_22Mar2012_WJetsHTcutTESTS"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_28Feb2012";// "InclFourthGenTrees_Fall11_Round4";
+  string Treespath = "InclFourthGenTrees_Fall11_22Mar2012_WJetsHTcutTESTS";// "InclFourthGenTrees_Fall11_Round4";
   Treespath = Treespath + "/"; 		
   //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_06March2012";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_22Mar2012_WJetsHTcutTESTS";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -252,6 +252,7 @@ int main (int argc, char *argv[])
        channelpostfix = "_semiEl";
     }
   }
+	string MVAweightspostfix = channelpostfix;// channelpostfix + "_JetPt-30";
 	bool make2Dbinning = false;
 	if (argc >= 6)
   	make2Dbinning = atoi(argv[5]);
@@ -400,6 +401,7 @@ int main (int argc, char *argv[])
 	MSPlot["MS_MET_used"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
   MSPlot["MS_LeptonPt_used"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
   MSPlot["MS_JetPt_all_used"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
+	MSPlot["MS_JetHt_all_used"] = new MultiSamplePlot(datasets,"JetHt_all", 80, 0, 800, "Ht of all jets (GeV)");
 	MSPlot["MS_nPV_used"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
 	
 	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1500);
@@ -418,7 +420,7 @@ int main (int argc, char *argv[])
   //Configuration and variables for 2D HT-Mtop distribution. There is a 2D distribution for 2 boxes seperately: 1B_2W and 2B_2W
   /////////////////////////////////////////////////////////
   string xvariable = "Mtop", yvariable = "HT"; //these are the two variables for which the 2D plane is made
-  int nbinsxvariable_1B_2W = 20, nbinsyvariable_1B_2W = 10; //if the binning is already created, make sure these are the same as before!
+  int nbinsxvariable_1B_2W = 18, nbinsyvariable_1B_2W = 10; //if the binning is already created, make sure these are the same as before!
   int nbinsxvariable_2B_2W = 12, nbinsyvariable_2B_2W = 6;
 	string Binningpostfix = "_TTbarJetsFlat_MtopvsHT";
 	string binningFileName_HTvsMTop_1B_2W = Outputpath+"Binning_InclFourthGenSearch_1B_2W"+Binningpostfix+channelpostfix+".root";
@@ -531,7 +533,7 @@ int main (int argc, char *argv[])
   if(!doMVAjetcombination) TrainMVA = false;
   else if(doMVAjetcombination)
   {
-    jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",channelpostfix); //boolean is basically to use also the W mass as constraint    
+    jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, true, "",MVAweightspostfix); //boolean is basically to use also the W mass as constraint    
   }
   
 
@@ -768,6 +770,26 @@ int main (int argc, char *argv[])
 			  bTagValues = myBranch_selectedEvents->bTagTCHE();
 			else if(btagger.find("TCHP")<=0)
 			  bTagValues = myBranch_selectedEvents->bTagTCHP();
+
+
+			//jet Pt cut
+			vector<TLorentzVector> selectedJets_cuts, selectedForwardJets_cuts;
+			float JetPtCut = 30;
+			for(unsigned int i=0;i<selectedJets.size();i++)
+			{
+				if(selectedJets[i].Pt() > JetPtCut)
+					selectedJets_cuts.push_back(selectedJets[i]);													
+			}
+			selectedJets.clear();
+			selectedJets = selectedJets_cuts;
+			for(unsigned int i=0;i<selectedForwardJets.size();i++)
+			{
+				if(selectedForwardJets[i].Pt() > JetPtCut)
+					selectedForwardJets_cuts.push_back(selectedForwardJets[i]);													
+			}
+			selectedForwardJets.clear();
+			selectedForwardJets = selectedForwardJets_cuts;
+
 
 
 ////something very strange going on...
@@ -1234,7 +1256,13 @@ int main (int argc, char *argv[])
 						MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 						if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 						if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-						for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+						float JetsHT = 0;
+						for(unsigned int j=0;j<selectedJets.size();j++)
+						{
+						  JetsHT = JetsHT + selectedJets[j].Pt();
+						  MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+						}
+						MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 					}
 					//cout << "done in 1B 1W box" << endl;
@@ -1255,7 +1283,13 @@ int main (int argc, char *argv[])
 						MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 						if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 						if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-						for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+						float JetsHT = 0;
+						for(unsigned int j=0;j<selectedJets.size();j++)
+						{
+						  JetsHT = JetsHT + selectedJets[j].Pt();
+						  MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+						}
+						MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 						HT = HT + selectedJetsFromW_DropUsedJets[0].Pt();
@@ -1341,7 +1375,13 @@ int main (int argc, char *argv[])
 							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							float JetsHT = 0;
+						  for(unsigned int j=0;j<selectedJets.size();j++)
+						  {
+						  	JetsHT = JetsHT + selectedJets[j].Pt();
+						  	MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							}
+							MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);				
@@ -1366,7 +1406,13 @@ int main (int argc, char *argv[])
 							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							float JetsHT = 0;
+						  for(unsigned int j=0;j<selectedJets.size();j++)
+						  {
+						  	JetsHT = JetsHT + selectedJets[j].Pt();
+						  	MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							}
+							MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1407,7 +1453,13 @@ int main (int argc, char *argv[])
 							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							float JetsHT = 0;
+						  for(unsigned int j=0;j<selectedJets.size();j++)
+						  {
+						  	JetsHT = JetsHT + selectedJets[j].Pt();
+						  	MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							}
+							MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1433,7 +1485,13 @@ int main (int argc, char *argv[])
 							MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 							if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 							if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-							for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							float JetsHT = 0;
+						  for(unsigned int j=0;j<selectedJets.size();j++)
+						  {
+						  	JetsHT = JetsHT + selectedJets[j].Pt();
+						  	MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+							}
+							MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1516,7 +1574,13 @@ int main (int argc, char *argv[])
 								MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 								if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 								if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-								for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+								float JetsHT = 0;
+						  	for(unsigned int j=0;j<selectedJets.size();j++)
+						  	{
+						  		JetsHT = JetsHT + selectedJets[j].Pt();
+						  		MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+								}
+								MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 								MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 								myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1541,7 +1605,13 @@ int main (int argc, char *argv[])
 								MSPlot["MS_MET_used"]->Fill(met,datasets[d], true, Luminosity*scaleFactor);
 								if(semiElectron) MSPlot["MS_LeptonPt_used"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);				
 								if(semiMuon) MSPlot["MS_LeptonPt_used"]->Fill(selectedMuons[0].Pt(),datasets[d], true, Luminosity*scaleFactor);	
-								for(unsigned int j=0;j<selectedJets.size();j++) MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+								float JetsHT = 0;
+						  	for(unsigned int j=0;j<selectedJets.size();j++)
+						  	{
+						  		JetsHT = JetsHT + selectedJets[j].Pt();
+						  		MSPlot["MS_JetPt_all_used"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
+								}
+								MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 								MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
 								myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
