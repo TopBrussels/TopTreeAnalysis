@@ -12,17 +12,20 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
   doKinematicFit_ = doKinematicFit;
   resFitLightJets_ = 0; 
   
-  string histoName_HT,MShistoName_HT,MShistoName,histoHT_dataset;
-  string histoPreFixes_SemiMu[3] = {"JetsPt","MET","MuonsPt"};
-  string histoPreFixes_SemiEl[3] = {"JetsPt","MET","ElectronsPt"};
+  string histoName_HT,MShistoName_HT,MShistoName,histoHT_dataset,histoName_nEvents,MShistoName_nEvents,histonEvents_dataset,histoName_Mtop,histoMtop_dataset;
+  string histoPreFixes_SemiMu[4] = {"JetsPt","MET","MuonsPt","JetsHt"};
+  string histoPreFixes_SemiEl[4] = {"JetsPt","MET","ElectronsPt","JetsHt"};
   for(int B = 1; B<3; B++)
   {
 		for(int W = 1; W<=4; W++)
 		{
 			histoName_HT = "HT_"+IntToStr(B)+"B_"+IntToStr(W)+"W";
 			MShistoName_HT = "MS_"+histoName_HT;
+			histoName_nEvents = "nEvents_"+IntToStr(B)+"B_"+IntToStr(W)+"W";
+			MShistoName_nEvents = "MS_"+histoName_nEvents;
+			histoName_Mtop = "Mtop_MVA_"+IntToStr(B)+"B_"+IntToStr(W)+"W";
 			if(B==1 && W==1) {
-				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 10, 100, 600, "HT (GeV)");
+				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 9, 150, 600, "HT (GeV)");
 			}
 			else if(B==2 && W==1)
 			{
@@ -39,29 +42,42 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
 			else if((B==1 || B==2) && W==4)
 			{
 				MSPlot[MShistoName_HT.c_str()] = new MultiSamplePlot(datasets,MShistoName_HT.c_str(), 2, 400, 1200, "HT (GeV)");
+				MSPlot[MShistoName_nEvents.c_str()] = new MultiSamplePlot(datasets,MShistoName_nEvents.c_str(), 1, 0.5, 1.5, "");
 			}
 			
-			for(int prefix=0; prefix<3; prefix++)
+			for(int prefix=0; prefix<4; prefix++)
 			{
 				if(semiMuon)
 				{
 				  MShistoName = "MS_"+histoPreFixes_SemiMu[prefix]+IntToStr(B)+"B_"+IntToStr(W)+"W";
-				  MSPlot[MShistoName.c_str()] = new MultiSamplePlot(datasets,MShistoName.c_str(), 50, 0, 300, histoPreFixes_SemiMu[prefix]);
-			        }
+				  MSPlot[MShistoName.c_str()] = new MultiSamplePlot(datasets,MShistoName.c_str(), 50, 0, 300, histoPreFixes_SemiMu[prefix]);			  
+				  if(prefix==3) MSPlot[MShistoName.c_str()] = new MultiSamplePlot(datasets,MShistoName.c_str(), 80, 0, 800, histoPreFixes_SemiMu[prefix]);			  
+				}
 				else if(semiElectron)
 				{
 				  MShistoName = "MS_"+histoPreFixes_SemiEl[prefix]+IntToStr(B)+"B_"+IntToStr(W)+"W";
 				  MSPlot[MShistoName.c_str()] = new MultiSamplePlot(datasets,MShistoName.c_str(), 50, 0, 300, histoPreFixes_SemiEl[prefix]);			        
+					if(prefix==3) MSPlot[MShistoName.c_str()] = new MultiSamplePlot(datasets,MShistoName.c_str(), 80, 0, 800, histoPreFixes_SemiEl[prefix]);			  
 				}
 			}
 			
 			for(unsigned int d = 0; d < datasets.size (); d++){
-				histoHT_dataset = histoName_HT+(datasets[d]->Name()).c_str(); 
-				if(B==1 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 10, 100, 600);
+				histoHT_dataset = histoName_HT+(datasets[d]->Name()).c_str();
+				histonEvents_dataset = histoName_nEvents+(datasets[d]->Name()).c_str();
+				histoMtop_dataset = histoName_Mtop+(datasets[d]->Name()).c_str();
+				if(B==1 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 9, 150, 600);
 				else if(B==2 && W==1) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 15, 150, 900);
-				else if((B==1 || B==2) && W==2) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 17, 150, 1000);
- 				else if((B==1 || B==2) && W==3) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 8, 200, 1000);
-				else if((B==1 || B==2) && W==4) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 2, 400, 1200);
+				else if((B==1 || B==2) && W==2)
+				{
+					histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 17, 150, 1000);
+ 					histo1D[histoMtop_dataset.c_str()] = new TH1F(histoMtop_dataset.c_str(),histoMtop_dataset.c_str(), 80, 0, 700);
+				}
+				else if((B==1 || B==2) && W==3) histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 8, 200, 1000);
+				else if((B==1 || B==2) && W==4)
+				{ 
+					histo1D[histoHT_dataset.c_str()] = new TH1F(histoHT_dataset.c_str(),histoHT_dataset.c_str(), 2, 400, 1200);
+				  histo1D[histonEvents_dataset.c_str()] = new TH1F(histonEvents_dataset.c_str(),histonEvents_dataset.c_str(), 1, 0.5, 1.5);
+				}
 			}
 		}
   }
@@ -69,13 +85,14 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
   //Reconstructed top mass plots for the 1B_2W and 2B_2W boxes... Names should match these in the FillMassPlots function
   MSPlot["MS_MTop_MVA_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (MVA jet combination)", 80, 0, 700, "m_{top} (GeV)");
   MSPlot["MS_MTop_MVA_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (MVA jet combination)", 80, 0, 700, "m_{top} (GeV)");
-  MSPlot["MS_MTop_MVAkinfit_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (MVA jet combination + kinfit)", 80, 0, 700, "m_{top} (GeV)");
-  MSPlot["MS_MTop_MVAkinfit_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (MVA jet combination + kinfit)", 80, 0, 700, "m_{top} (GeV)");
+//  MSPlot["MS_MTop_MVAkinfit_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (MVA jet combination + kinfit)", 80, 0, 700, "m_{top} (GeV)");
+//  MSPlot["MS_MTop_MVAkinfit_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (MVA jet combination + kinfit)", 80, 0, 700, "m_{top} (GeV)");
   
-  MSPlot["MS_MTop_largestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
-  MSPlot["MS_MTop_smallestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
-  MSPlot["MS_MTop_largestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
-  MSPlot["MS_MTop_smallestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+//  MSPlot["MS_MTop_largestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+//  MSPlot["MS_MTop_smallestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+//  MSPlot["MS_MTop_largestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+//  MSPlot["MS_MTop_smallestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+		
 
   HT_ = -9999.;
   Mtop_ = -9999.;
@@ -91,6 +108,18 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
   counter_hadronictopJetsMatched_smallestMass_WJetsFixed = 0;
   counter_hadronictopJetsMatched_largestPt_WJetsFixed = 0;
   counter_hadronictopJetsMatched_smallestPt_WJetsFixed = 0;
+	
+	//Wjets plots in the different boxes, all with the same range
+	for(int B = 1; B<3; B++)
+  {
+		for(int W = 1; W<=4; W++)
+		{
+			string CatName_LF = "SameRange_HT_WJets_LF_"+IntToStr(B)+"B_"+IntToStr(W)+"W";			
+			string CatName_HF = "SameRange_HT_WJets_HF_"+IntToStr(B)+"B_"+IntToStr(W)+"W";			
+			histo1D[CatName_LF.c_str()] = new TH1F(CatName_LF.c_str(),"HT;HT;#events",150,0,1000);
+			histo1D[CatName_HF.c_str()] = new TH1F(CatName_HF.c_str(),"HT;HT;#events",150,0,1000);
+		}
+	}
 }
 
 InclFourthGenSearchTools::InclFourthGenSearchTools(const InclFourthGenSearchTools & i)
@@ -122,19 +151,32 @@ void InclFourthGenSearchTools::FillPlots(int d, int nbOfBtags, int nbOfWs, float
 
 void InclFourthGenSearchTools::FillPlots(int d, int nbOfBtags, int nbOfWs, float HT, vector<TLorentzVector> selectedMuons, vector<TLorentzVector> selectedElectrons, float met, vector<TLorentzVector> selectedJets, float scaleFactor) 
 {
-	string histoName_HT,MShistoName_HT,histoName_HT_dataset,MShistoName;
+	string histoName_HT,MShistoName_HT,histoName_HT_dataset,MShistoName,histoName_nEvents,MShistoName_nEvents,histoName_nEvents_dataset;
+	
 	histoName_HT = "HT_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
 	MShistoName_HT = "MS_"+histoName_HT; //MSPlot for HT
 	histoName_HT_dataset = histoName_HT+(datasets_[d]->Name()).c_str(); //1D plot HT for each dataset
-	string histoPreFixes_SemiMu[3] = {"JetsPt","MET","MuonsPt"};
-  string histoPreFixes_SemiEl[3] = {"JetsPt","MET","ElectronsPt"};
+	
+	histoName_nEvents = "nEvents_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
+	MShistoName_nEvents = "MS_"+histoName_nEvents; //MSPlot for nEvents for 4W boxes
+	histoName_nEvents_dataset = histoName_nEvents+(datasets_[d]->Name()).c_str(); //1D plot HT for each dataset
+	
+	
+	string histoPreFixes_SemiMu[4] = {"JetsPt","MET","MuonsPt","JetsHt"};
+  string histoPreFixes_SemiEl[4] = {"JetsPt","MET","ElectronsPt","JetsHt"};
   
 	if(semiMuon_) HT_ = HT + selectedMuons[0].Pt();
-	else if(semiElectron_) HT_ = HT + selectedElectrons[0].Pt();
-											
+	else if(semiElectron_) HT_ = HT + selectedElectrons[0].Pt();									
 	MSPlot[MShistoName_HT.c_str()] -> Fill(HT_, datasets_[d], true, Luminosity_*scaleFactor);
 	histo1D[histoName_HT_dataset.c_str()] -> Fill(HT_,datasets_[d]->NormFactor()*Luminosity_*scaleFactor);
-	for(int prefix=0; prefix<3; prefix++)
+  
+	if((nbOfBtags==1 || nbOfBtags==2) && nbOfWs==4)
+	{
+		MSPlot[MShistoName_nEvents.c_str()] -> Fill(1, datasets_[d], true, Luminosity_*scaleFactor);
+		histo1D[histoName_nEvents_dataset.c_str()] -> Fill(1,datasets_[d]->NormFactor()*Luminosity_*scaleFactor);  
+	}
+	
+	for(int prefix=0; prefix<4; prefix++)
 	{
 		if(semiMuon_) MShistoName = "MS_"+histoPreFixes_SemiMu[prefix]+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
 		else if(semiElectron_) MShistoName = "MS_"+histoPreFixes_SemiEl[prefix]+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
@@ -150,11 +192,33 @@ void InclFourthGenSearchTools::FillPlots(int d, int nbOfBtags, int nbOfWs, float
 		{
 			MSPlot[MShistoName.c_str()]->Fill(met, datasets_[d], true, Luminosity_*scaleFactor);
 		}
-		else
+		else if(prefix==2)
 		{
 			if(semiMuon_) MSPlot[MShistoName.c_str()]->Fill(selectedMuons[0].Pt(), datasets_[d], true, Luminosity_*scaleFactor);
 			else if(semiElectron_) MSPlot[MShistoName.c_str()]->Fill(selectedElectrons[0].Pt(), datasets_[d], true, Luminosity_*scaleFactor);
-		}							
+		}
+		else if(prefix==3)
+		{
+		  float JetsHT = 0;
+		  for(unsigned int j =0; j < selectedJets.size(); j++)
+			{
+			  JetsHT = JetsHT + selectedJets[j].Pt();
+			}
+			MSPlot[MShistoName.c_str()]->Fill(JetsHT, datasets_[d], true, Luminosity_*scaleFactor);
+		}
+							
+	}
+	
+	//Wjets plots in the different boxes, all with the same range
+	if(datasets_[d]->Name() == "WJets_LF")
+	{
+		string CatName_LF = "SameRange_HT_WJets_LF_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";	
+		histo1D[CatName_LF.c_str()]-> Fill(HT_,datasets_[d]->NormFactor()*Luminosity_*scaleFactor);	
+	}
+	if(datasets_[d]->Name() == "WJets_HF")
+	{
+		string CatName_HF = "SameRange_HT_WJets_HF_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";	
+		histo1D[CatName_HF.c_str()]-> Fill(HT_,datasets_[d]->NormFactor()*Luminosity_*scaleFactor);
 	}
 }
 
@@ -249,6 +313,11 @@ void InclFourthGenSearchTools::FillMassPlots(int d, int nbOfBtags, int nbOfWs, f
     histoName_MTop = "MTop_MVA_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
     MShistoName_MTop = "MS_"+histoName_MTop; //MSPlot for MTop
     MSPlot[MShistoName_MTop]->Fill(Mtop_, datasets_[d], true, Luminosity_*scaleFactor);
+		
+		string histoName_Mtop,histoMtop_dataset;
+		histoName_Mtop = "Mtop_MVA_"+IntToStr(nbOfBtags)+"B_"+IntToStr(nbOfWs)+"W";
+		histoMtop_dataset = histoName_Mtop+(datasets_[d]->Name()).c_str();
+		histo1D[histoMtop_dataset.c_str()]-> Fill(Mtop_,datasets_[d]->NormFactor()*Luminosity_*scaleFactor);
     
     if(doKinematicFit_)
     {
