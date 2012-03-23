@@ -26,7 +26,23 @@
 
 void initFromByHandValues(VJetEstimation *vje, UInt_t NofJetBins, UInt_t NofBtagWorkingPoint, Double_t **initForMinVJet);
 void initFromMCValues(VJetEstimation *vje, UInt_t NofJetBins, UInt_t NofBtagWorkingPoint);
-
+/**
+ Results from BTV-11-003, https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagPOG link to https://twiki.cern.ch/twiki/pub/CMS/BtagPOG/eff_b_c-ttbar_payload.txt 
+ In Range : 0<=|eta|<=2.4 , 30<=p_T<=200  (approximately)
+ */
+/** TCHE */
+Float_t eff_b_ttbar_FtCM(Float_t /*b-disc*/ x) {
+  return -3.67153247396e-07*x*x*x*x +  -2.81599797034e-05*x*x*x +  0.00293190163243*x*x +  -0.0849600849778*x +  0.928524440715 ;
+};
+Float_t eff_b_ttbar_FtCM_pluserr(Float_t /*b-disc*/ x) {
+  return 3.03337430722e-06*x*x*x*x + -0.000171604835897*x*x*x + 0.00474711667943*x*x + -0.0929933040514*x + 0.978347619293 ;
+};
+Float_t eff_b_ttbar_MC(Float_t /*b-disc*/ x) {
+  return 3.90732786802e-06*x*x*x*x +  -0.000239934437355*x*x*x +  0.00664986827287*x*x +  -0.112578996016*x +  1.00775721404 ;
+};
+Float_t eff_c_ttbar_MC(Float_t /*b-disc*/ x) {
+  return 0.343760640168*exp(-0.00315525164823*x*x*x + 0.0805427315196*x*x + -0.867625139194*x + 1.44815935164 ) ;
+};
 
 int main(int argc, const char* argv[]) {
   
@@ -54,10 +70,21 @@ int main(int argc, const char* argv[]) {
   if (argc >= 3) {
     outputDirectory = std::string(argv[2]);
   }
+  {
+    char timestamp[51];
+    struct tm *timeinfo;
+    time_t currTime;
+    time(&currTime);
+    timeinfo = localtime(&currTime);
+    strftime(timestamp, 50, "%Y%m%d_%H%M%S", timeinfo);
+      //    delete timeinfo;
+    outputDirectory = outputDirectory + "/" + timestamp;
+    system( (std::string("mkdir -p ")+outputDirectory+" && cp "+baseDirectory+"/macros/StopBckg_fixedVarStudies.cc "+outputDirectory+"/ ;").c_str());
+  }
   std::string xmlfile = baseDirectory + "/config/StopBckg.xml";
   
     //Input ROOT file
-  std::string inputRootFileName = outputDirectory + "/StopBckg_Output.root";
+  std::string inputRootFileName = baseDirectory + "/StopBckg_Output.root";
     //Output ROOT file
   std::string outputRootFileName = outputDirectory + "/StopBckg_Output2.root";
   
@@ -94,7 +121,7 @@ int main(int argc, const char* argv[]) {
   }
   
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
-  float Luminosity = 1000.;
+  float Luminosity = 5000.;
     //  Double_t eventsPrescaleFactor = 50. ;
   
   /**
@@ -140,7 +167,7 @@ int main(int argc, const char* argv[]) {
   float* BtagWorkingPoint;
   BtagWorkingPoint = new float[NofBtagWorkingPoint]; BtagWorkingPoint[0]=3.2;
   const UInt_t NofJets = 3;       // Min. mult. of jets
-  const UInt_t NofJetBins = 3;    // Nb of bins for mult. of jets
+  const UInt_t NofJetBins = 4;    // Nb of bins for mult. of jets
                                   //  double** EffXbq;   // fraction of b-tag jets, by multiplicity ([i][j] is b-mult "j" in "i+NofJets" jets) ?
   histo1D["JetMultiplicities_Vlike"]  = new TH1F("JetMultiplicities_Vlike", "JetMultiplicities_Vlike", 21, 0, 21) ;
   histo1D["JetMultiplicities_TTlike"] = new TH1F("JetMultiplicities_TTlike", "JetMultiplicities_TTlike" ,21, 0, 21) ;
@@ -191,7 +218,7 @@ int main(int argc, const char* argv[]) {
     char name[200];
     fin->ls();
     fin->Map();
-    sprintf(name, "VJetEstimation_TCHE_LM"/*, NofJets+NofJetBins-1*/);
+    sprintf(name, "VJetEstimation-TCHE_LM--tt_W"/*, NofJets+NofJetBins-1*/);
     printf("%s\n", name);
     printf("Loading\n");
     if (fin->Get(name)==NULL)
@@ -249,7 +276,7 @@ int main(int argc, const char* argv[]) {
     }
   }
   
-  vje->Dump();
+    //  vje->Dump();
     // fin->Close();
   
   
@@ -268,14 +295,14 @@ int main(int argc, const char* argv[]) {
     // V-jets estimation
   printf("Extracting MC values for the efficiency\n");
   vje->ComputeEffFromMC();
-  vje->ComputeEffbqFromMC(iDTTLike[0]); // From ttbar sample
+  vje->ComputeEffbqFromMC(); // From ttbar sample
   
     //BTV-11-001
     // System8 method // p_T,rel
     //Muon-jet p_T 50-80 GeV, SF(= e_data/e_mc) : 20-240 GeV
   std::vector<Double_t> eff_b(NofBtagWorkingPoint,0.), eff_b_err(NofBtagWorkingPoint,0.), eff_b_SF(NofBtagWorkingPoint,0.), eff_b_SF_err(NofBtagWorkingPoint,0.),
   eff_uds(NofBtagWorkingPoint,0.), eff_uds_err(NofBtagWorkingPoint,0.), eff_uds_SF(NofBtagWorkingPoint,0.), eff_uds_SF_err(NofBtagWorkingPoint,0.),
-    eff_udsc(NofBtagWorkingPoint,0.), eff_udsc_err(NofBtagWorkingPoint,0.), eff_udsc_SF(NofBtagWorkingPoint,0.), eff_udsc_SF_err(NofBtagWorkingPoint,0.);
+  eff_udsc(NofBtagWorkingPoint,0.), eff_udsc_err(NofBtagWorkingPoint,0.), eff_udsc_SF(NofBtagWorkingPoint,0.), eff_udsc_SF_err(NofBtagWorkingPoint,0.);
     //TCHE-loose
   eff_b[0] = 0.77;//0.76
   eff_b_err[0] = 0.01;
@@ -332,6 +359,12 @@ int main(int argc, const char* argv[]) {
     printf("\n");
   }
   printf("\n\n\n");
+  
+  /*
+   for (UInt_t d =0; d<vje->GetNbOfDatasets(); d++) {
+   vje->ReScaleInputs(d, Ntot, 5000./Luminosity);
+   }
+   */
   vje->SumOverAllInputs();
   vje->PrintInputs();
   
@@ -342,12 +375,74 @@ int main(int argc, const char* argv[]) {
   
   
   
+  VJetEstimation *vJetEst__tt__W = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt_W");
+  VJetEstimation *vJetEst__tt__W__Z__SingleT__QCD = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt_W_Z_SingleT_QCD");
+  VJetEstimation *vJetEst__tt__W_Z = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt_W-Z");
+  VJetEstimation *vJetEst__tt__W_Z__QCD = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt_W-Z_QCD");
+  VJetEstimation *vJetEst__tt__W_Z__SingleT__QCD = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt_W-Z_SingleT_QCD");
+  VJetEstimation *vJetEst__tt_SingleT__W_Z__QCD = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt-SingleT_W-Z_QCD");
+  VJetEstimation *vJetEst__tt_SingleT__W_Z = (VJetEstimation*) fin->Get("VJetEstimation-TCHE_LM--tt-SingleT_W-Z");
+  
+    // V-jets estimation
+  std::vector<VJetEstimation*> vJetEst_MC_methods;
+  if (vJetEst__tt__W != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt__W);
+  } else { printf("Missing object\n"); }
+  /**/
+  if (vJetEst__tt__W__Z__SingleT__QCD != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt__W__Z__SingleT__QCD);
+  } else { printf("Missing object\n"); }
+  if (vJetEst__tt__W_Z != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt__W_Z);
+  } else { printf("Missing object\n"); }
+  if (vJetEst__tt__W_Z__QCD != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt__W_Z__QCD);
+  } else { printf("Missing object\n"); }
+  if (vJetEst__tt__W_Z__SingleT__QCD != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt__W_Z__SingleT__QCD);
+  } else { printf("Missing object\n"); }
+  /**/
+  if (vJetEst__tt_SingleT__W_Z__QCD != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt_SingleT__W_Z__QCD);
+  } else { printf("Missing object\n"); }
+  if (vJetEst__tt_SingleT__W_Z != NULL) {
+    vJetEst_MC_methods.push_back(vJetEst__tt_SingleT__W_Z);
+  } else { printf("Missing object\n"); }
+  
   
   
     //fixedVar.push_back(0);
   Bool_t doMinos = false;
   TFile *fout = new TFile (outputRootFileName.c_str(), "RECREATE");
-  for (UInt_t index_wp=0; index_wp< NofBtagWorkingPoint ; index_wp++) {
+  printf("Before loop\n");
+  
+  Int_t index_method=0;
+  for (std::vector<VJetEstimation*>::iterator iterVje=vJetEst_MC_methods.begin(); iterVje!=vJetEst_MC_methods.end(); iterVje++) {
+    std::string objectName = "";
+    if (*iterVje == vJetEst__tt__W) {
+      objectName="vJetEst__tt__W";
+    } else if (*iterVje == vJetEst__tt__W__Z__SingleT__QCD) {
+      objectName="vJetEst__tt__W__Z__SingleT__QCD";
+    } else if (*iterVje == vJetEst__tt__W_Z) {
+      objectName="vJetEst__tt__W_Z";
+    } else if (*iterVje == vJetEst__tt__W_Z__QCD) {
+      objectName="vJetEst__tt__W_Z__QCD";
+    } else if (*iterVje == vJetEst__tt__W_Z__SingleT__QCD) {
+      objectName="vJetEst__tt__W_Z__SingleT__QCD";
+    } else if (*iterVje == vJetEst__tt_SingleT__W_Z__QCD) {
+      objectName="vJetEst__tt_SingleT__W_Z__QCD";
+    } else if (*iterVje == vJetEst__tt_SingleT__W_Z) {
+      objectName="vJetEst__tt_SingleT__W_Z";
+    } else {
+      printf("Houston, we have a problem !\n");
+      exit(1);
+    }    
+    vje = *iterVje; 
+    if (vje==NULL) {
+      continue;
+    }
+    printf("\n\nChanging to VJetEstimation object %s\n\n", objectName.c_str());
+    stopReport << std::endl << "\\section{\\verb|" << objectName.c_str() << "| object} " << std::endl << std::endl;
     /*    vJetEst.UnBinnedMaximumNjetsLikelihoodEst(index_wp, fixedVar, doMinos, verbose);
      vJetEst.FillSummaryHistos();
      vJetEst.PrintResults();
@@ -357,88 +452,133 @@ int main(int argc, const char* argv[]) {
      fout->cd();*/
     
       //  for (int njet=NofJets; njet<NofJets+NofJetBins; njet++) {
-    for (UInt_t i=0; i<8; i++) { // Creating the combinations of fixed variables
+    std::vector<std::string> fixedVarName(3, std::string());
+    fixedVarName[0] = std::string("eb");
+    fixedVarName[1] = std::string("eudsc");
+    fixedVarName[2] = std::string("euds");
+    for (UInt_t i=0; i<pow(2.,3); i++) { // Creating the combinations of fixed variables (3, at most)
+      char fixedVarCombination[100] = "__fixed" ;
       std::vector<Int_t> fixedVar;    /*  0 : b-tag eff    ;    1 : mistag eff (udsc tagged as b)    ;    2 : mistag eff light (uds tagged as b) */
       UInt_t j=i;
       Int_t n=0;
       while (j!=0) {
         if ((j&1)==1) {
+          sprintf(fixedVarCombination, "%s_%s", fixedVarCombination, fixedVarName[n].c_str()) ;
           fixedVar.push_back(n);
         }
         n++;
         j = j >> 1;
       }
-      for (ULong_t fVar = 0; fVar < fixedVar.size() || (fVar==0 && fixedVar.size()==0); fVar++) { // Listing the fixed variable to change their value within their errors
-                                                                                                  //  for (ULong_t systTrial = 0; systTrial<pow(2, fixedVar.size()); systTrial++) {
+      if (!(fixedVar.size()==3
+            || (fixedVar.size()==2 && fixedVar[0]==1 && fixedVar[1]==2)
+            || (fixedVar.size()==1 && fixedVar[0]==2)
+            || (fixedVar.size()==1 && fixedVar[0]==1)
+            || (fixedVar.size()==0)))
+        continue;
+      printf("\n\n HERE !!!!!!! INTERESTING\n\n\n");
+      printf("");
+      for (ULong_t configErr=0; configErr<pow(3.,(Int_t) fixedVar.size()); configErr++) {
         std::vector<Double_t> k_err(3,0.); // 3 variables can be fixed
-        for (Int_t errScan=0; errScan<3; errScan++) { // 3 points for each variation of the value : (-1;0;1)*error
-          if (! (fVar==0 && fixedVar.size()==0)) {
-            k_err[fixedVar[fVar]]= ((Double_t) errScan)-1. ;
-          }
-          for (UInt_t njet=NofJetBins-1; njet<NofJetBins; njet++) {
+                                           //for (ULong_t fVar = 0; fVar < fixedVar.size() || (fVar==0 && fixedVar.size()==0); fVar++) { // Listing the fixed variable to change their value within their errors
+                                           //  for (ULong_t systTrial = 0; systTrial<pow(2, fixedVar.size()); systTrial++) {
+        k_err = std::vector<Double_t>(3,0.); // 3 variables can be fixed (at most)
+        ULong_t toGetLastDigit = configErr;
+        for (UInt_t errScan=0; errScan<fixedVar.size(); errScan++) { // 3 points for each variation of the value : (-1;0;1)*error
+          
+          k_err[fixedVar[errScan]]= ((Double_t) (toGetLastDigit % 3))-1. ;
+          toGetLastDigit = toGetLastDigit / 3 ; // division of integers.
+        }
+        for (Int_t ii=0; ii<3; ii++) {
+          printf("k_err[%d]=% 2.0lf ", ii, k_err[ii]);
+        }
+        printf("\tfixedVar = {");
+        for (std::vector<Int_t>::const_iterator iterv=fixedVar.begin(); iterv!=fixedVar.end(); iterv++) {
+          printf(" %d", *iterv);
+        }
+        printf(" }");
+        printf("\n");
+        for (UInt_t index_wp=0; index_wp< NofBtagWorkingPoint ; index_wp++) {
+          for (UInt_t njet=0; njet<NofJetBins; njet++) {
+            fprintf(stderr, "\rProcessing : % 6.2f %%            ", 100.*(((Float_t)index_method)+((i+((configErr+(index_wp+((Float_t)(njet))/NofJetBins)/NofBtagWorkingPoint)/(pow(3.,(Int_t) fixedVar.size()))))/pow(2.,3))/(vJetEst_MC_methods.size())));
             cout << std::endl << std::endl;
             stopReport << std::endl << std::endl;
             errCompReport << std::endl << std::endl;
-            bool doPEwithRoofit = true;
-              //(Re)set the correct initial values (from "by hand" or "MC")
-              //initFromByHandValues(vje, NofJetBins, NofBtagWorkingPoint, initForMinVJet);
+            bool saveWS = (k_err[0]==0 && k_err[1]==0 && k_err[2]==0); //Only saves the nominal (or floating)
+                                                                       //(Re)set the correct initial values (from "by hand" or "MC")
+                                                                       //initFromByHandValues(vje, NofJetBins, NofBtagWorkingPoint, initForMinVJet);
             initFromMCValues(vje, NofJetBins, NofBtagWorkingPoint);
-            vje->PrintInputs();
-            for (std::vector<Int_t>::iterator iter=fixedVar.begin(); iter!=fixedVar.end(); iter++) {
+              //vje->PrintInputs();
+            for (std::vector<Int_t>::iterator iterf=fixedVar.begin(); iterf!=fixedVar.end(); iterf++) {
               for (UInt_t njets = 0; njets<NofJetBins; njets++) {
-                switch (*iter) { // Set fixed nominal values to ?????? 
+                switch (*iterf) { // Set fixed nominal values to ?????? 
                   case 0:
                     vje->SetInitialValues_Eb(njets, index_wp, eff_b[index_wp]*eff_b_SF[index_wp]+k_err[0]*(eff_b_err[index_wp]+eff_b_SF_err[index_wp]));
                     break;
                   case 1:
-                     vje->SetInitialValues_Eudsc(njets, index_wp, eff_udsc[index_wp]*eff_udsc_SF[index_wp]+k_err[1]*(eff_udsc_err[index_wp]+eff_udsc_SF_err[index_wp]));
-                     break;
+                    vje->SetInitialValues_Eudsc(njets, index_wp, eff_udsc[index_wp]*eff_udsc_SF[index_wp]+k_err[1]*(eff_udsc_err[index_wp]+eff_udsc_SF_err[index_wp]));
+                    break;
                   case 2:
                     vje->SetInitialValues_Euds(njets, index_wp, eff_uds[index_wp]*eff_uds_SF[index_wp]+k_err[2]*(eff_uds_err[index_wp]+eff_uds_SF_err[index_wp]));
                     break;
                 }
               }
             }
-            vje->UnBinnedMaximumLikelihoodEst(index_wp, njet, fixedVar, doMinos, doPEwithRoofit, verbose);
-              //vje->FillSummaryHistos();
-              //vje->PrintResults();
+            vje->UnBinnedMaximumLikelihoodEst(index_wp, njet, fixedVar, doMinos, saveWS, verbose);
+            if (saveWS) {
+              vje->FillSummaryHistos();
+            }
             errCompReport << "Indices of fixed variables :" ;
-            for (std::vector<Int_t>::iterator iter=fixedVar.begin(); iter!=fixedVar.end(); iter++) {
-              errCompReport << " " << (*iter) ;
+            for (std::vector<Int_t>::iterator iterf=fixedVar.begin(); iterf!=fixedVar.end(); iterf++) {
+              errCompReport << " " << (*iterf) ;
             }
             errCompReport << endl;
             errCompReport << "Values for error propagation (in number of errors) :" ;
-            for (std::vector<Double_t>::iterator iter=k_err.begin(); iter!=k_err.end(); iter++) {
-              errCompReport << " " << (*iter) ;
+            for (std::vector<Double_t>::iterator iterf=k_err.begin(); iterf!=k_err.end(); iterf++) {
+              errCompReport << " " << (*iterf) ;
             }
             errCompReport << endl;
+            cout << "Indices of fixed variables :" ;
+            for (std::vector<Int_t>::iterator iterf=fixedVar.begin(); iterf!=fixedVar.end(); iterf++) {
+              cout << " " << (*iterf) ;
+            }
+            cout << endl;
+            cout << "Values for error propagation (in number of errors) :" ;
+            for (std::vector<Double_t>::iterator iterf=k_err.begin(); iterf!=k_err.end(); iterf++) {
+              cout << " " << (*iterf) ;
+            }
+            cout << endl;
+            
             errCompReport << "Predicted Ntt : " << vje->GetEstNtt(index_wp) << " +/- " << vje->GetEstNttErr(index_wp) << endl;
             errCompReport << "Predicted Nv : " << vje->GetEstNv(index_wp) << " +/- " << vje->GetEstNvErr(index_wp) << endl;
-            /*
-             stopReport << "\\begin{landscape}" << std::endl;     
-             vje->PrintResults_LatexFormat(stopReport);
-             stopReport << "\\end{landscape}" << std::endl;     
-             stopReport << "\\pagebreak" << std::endl << std::endl;     
-             char saveName[100]; sprintf(saveName, "VJetEstimation_%djets", njet+NofJets);
-             //      vJetEst.Write(fout, directorySuffix, (verbose>0));
-             fout->cd();
-             vJetEst.Write(saveName);
-             */
-            if (fVar==0 && fixedVar.size()==0) {
-              errScan=3;
-            }
           }
         }
+        vje->PrintResults();
+        
+        stopReport << "\\begin{landscape}" << std::endl;     
+        vje->PrintResults_LatexFormat(stopReport);
+        stopReport << "\\end{landscape}" << std::endl;     
+        stopReport << "\\pagebreak" << std::endl << std::endl;
+        
+        /*
+         char saveName[100]; sprintf(saveName, "VJetEstimation_%djets", njet+NofJets);
+         //      vJetEst.Write(fout, directorySuffix, (verbose>0));
+         fout->cd();
+         vJetEst.Write(saveName);
+         */
       }
+      std::string dirName = objectName + fixedVarCombination;
+      system( (std::string("mkdir -p ")+outputDirectory+"/"+dirName+"--Reloaded && mv "+outputDirectory+"/hNbjetsSummary_*.pdf VJetEstimation_RooFit_WS_*.root "+outputDirectory+"/"+dirName+"--Reloaded/ ;").c_str());
+      
     }
   }
   
-  
+  printf("After loop\n");
   stopReport << "\\end{document}" << std::endl;
   stopReport.close();
   
   errCompReport.close();
   
+  printf("fout dir creationg\n");
     //  vJetEst.Write(fout, "", (verbose>0));
   fout->cd();
   
@@ -447,6 +587,7 @@ int main(int argc, const char* argv[]) {
   fout->cd();
   th1dir->cd();
   
+  printf("In the correct directory, preparing to write canvases for histo1D\n");
   if (runOnEvents_) {
     for(std::map<std::string,TH1*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++) {
       TH1 *temp = it->second;
@@ -459,8 +600,57 @@ int main(int argc, const char* argv[]) {
       
     }
   }
+  char name[100];
+  
+  
+  
+  vje->FillSummaryHistos();
+  printf("After filling summary histos\n");
+  /*
+   vector<vector<TCanvas*> > v = vje->GETtCanva_Nbjets_Summary();
+   for (std::vector<std::vector<TCanvas*> >::iterator iter_1=v.begin(); iter_1!=v.end(); iter_1++) {
+   for (std::vector<TCanvas*>::iterator iter_2=iter_1->begin(); iter_2!=iter_1->end(); iter_2++) {
+   if(true)cout<<"Writing summary histograms for X jets, wp nr Y"<<endl;
+   sprintf(name, "macros/TestReload__%s.pdf", (*iter_2)->GetName());
+   (*iter_2)->Print(name);
+   }
+   }
+   */
+  
+  
+  
+  for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
+    (*iter)->FillSummaryHistos();
+    std::string dirName = "";
+    if (*iter == vJetEst__tt__W) {
+      dirName="vJetEst__tt__W";
+    } else if (*iter == vJetEst__tt__W__Z__SingleT__QCD) {
+      dirName="vJetEst__tt__W__Z__SingleT__QCD";
+    } else if (*iter == vJetEst__tt__W_Z) {
+      dirName="vJetEst__tt__W_Z";
+    } else if (*iter == vJetEst__tt__W_Z__QCD) {
+      dirName="vJetEst__tt__W_Z__QCD";
+    } else if (*iter == vJetEst__tt__W_Z__SingleT__QCD) {
+      dirName="vJetEst__tt__W_Z__SingleT__QCD";
+    } else if (*iter == vJetEst__tt_SingleT__W_Z__QCD) {
+      dirName="vJetEst__tt_SingleT__W_Z__QCD";
+    } else if (*iter == vJetEst__tt_SingleT__W_Z) {
+      dirName="vJetEst__tt_SingleT__W_Z";
+    } else {
+      printf("Houston, we have a problem !\n");
+      exit(1);
+    }
+  }
+  
+  
+  
+  
+  
+  printf("Before deleting\n");
   delete vje;
+  printf("Before closing input file\n");
   fin->Close();
+  printf("Before closing output file\n");
   fout->Close();
   
   printf("It took us %7lgs to run the program\n", ((Double_t)clock() - start) / CLOCKS_PER_SEC);
@@ -533,9 +723,9 @@ void initFromMCValues(VJetEstimation *vje, UInt_t NofJetBins, UInt_t NofBtagWork
   printf("e_b init : \n");
   for (std::vector< std::vector<Double_t> >::iterator iter1=init2.begin(); iter1!=init2.end(); iter1++) {
     for (std::vector<Double_t>::iterator iter=iter1->begin(); iter!=iter1->end(); iter++) {
-    printf(" %lf", *iter);
-  }
-  printf("\n");
+      printf(" %lf", *iter);
+    }
+    printf("\n");
   }
   printf("\n");
   vje->SetInitialValues_Eb(init2); //[njets][btagIdx]

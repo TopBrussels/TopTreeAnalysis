@@ -29,6 +29,7 @@
 
 #include "TopTreeAnalysis/Content/interface/MCObsExpectation.h"
 #include "TopTreeProducer/interface/TRootJet.h"
+#include "TopTreeAnalysis/Content/interface/Dataset.h"
 
   // RooFit librairies
 #include "RooArgSet.h"
@@ -78,7 +79,7 @@ public:
   VJetEstimation();
 	/** Constructor
    \param NofBtagWorkingPoint */
-	VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingPoint, UInt_t NofJets, UInt_t NofJetBins, UInt_t NofDatasets, vector<Int_t> iDTTLike, vector<Int_t> iDVLike, vector<Int_t> iDVbLike);
+	VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingPoint, UInt_t NofJets, UInt_t NofJetBins, std::vector<Dataset> datasets, std::vector<std::string> ttLikeDatasetNames, std::vector<std::string> vLikeDatasetNames, std::vector<std::string> vblikeDatasetNames);
 	/** Constructor */
 	VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingPoint, UInt_t NofJets, UInt_t NofJetBins, Double_t** EffXbq, UInt_t NofDatasets, vector<Int_t> iDTTLike, vector<Int_t> iDVLike, vector<Int_t> iDVbLike);
  	/** Copy constructor (not yet implemented) */
@@ -91,7 +92,7 @@ public:
  	/** Method used to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for all datasets.*/
     //	void FillInputs(Double_t**** n);
  	/** Method to be used for each event to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for the dataset \param idx. */
-	void Fill(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t btagAlgo, Double_t weight=1.);
+	void Fill(vector<TopTree::TRootJet*> &SelectedJets, UInt_t idx, Double_t (*btag_algo)(TopTree::TRootJet*), Double_t weight=1.);
 	/** Method to be used to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for all datasets. */
 	void FillInputs(vector <vector< vector< vector <Double_t> > > > Inputs);
 	/** Method to be used to fill the histograms containing the number of events with 0,1,2 and 3 b-jets for all datasets. */
@@ -105,10 +106,15 @@ public:
 	Float_t WilsonScoreIntervalHigh(Float_t Non, Float_t Ntot);
 	/** Mean between the upper and lower limit of the Wilson score Int_terval for binomial parameter (being the selection efficiency here) (ArXiv:hep-ph/0905.3831v2)*/
 	Float_t WilsonScoreIntervalMean(Float_t Non, Float_t Ntot);
+  /**
+   processMask : process disabled if false ; can be used to switch between data and mc (complementary masks)
+   */
+  void SetProcesses(std::vector<Bool_t> processMask,std::vector<std::string> ttLikeDatasetNames, std::vector<std::string> vLikeDatasetNames, std::vector<std::string> vLikeDatasetNames);
 	/** Sum the weighted contribution of all the datasets. Method to be used after having looped over all events of all datasets.*/
 	void SumOverAllInputs();
-	/** Compute ebq efficiencies from MC. Method to be used after having looped over all events of all datasets.*/
-	void ComputeEffbqFromMC(UInt_t idx);
+	/** Compute ebq efficiencies from MC. Method to be used after having looped over all events of all datasets.
+   Compute on the samples referred as tt-like*/
+	void ComputeEffbqFromMC();
 	/** Compute the b/mis-tagging efficiencies from MC. Method to be used after having looped over all events of all datasets.*/
 	void ComputeEffFromMC();
   
@@ -234,6 +240,7 @@ public:
 	UInt_t GetNbOfJetsBins()            const {return NbOfJetsBins_;};
 	UInt_t GetNjets(UInt_t jetidx)const {return (jetidx<NbOfJetsBins_ ? Njets_[jetidx] : -999);}
   
+  vector<Dataset> GetDatasets() const { return vDatasets_; };
 	vector<Int_t> GetiDatasetsTTLike() const {return iDatasetsTTLike_;};
 	vector<Int_t> GetiDatasetsVLike()  const {return iDatasetsVLike_;};
 	vector<Int_t> GetiDatasetsVbLike() const {return iDatasetsVbLike_;};
@@ -428,6 +435,8 @@ private:
 private:
 	/** Boolean indicating if running on real data or Monte Carlo simulations. */
   Bool_t MCdata_;
+  std::vector<Dataset> vDatasets_;
+  std::vector<Bool_t> processMask_;
 	/** Number of datasets (in case of Monte Carlo simulations). */
 	UInt_t  NbOfDatasets_;
 	/** List of datasets indeces for what is considered as tt-like events (in case of Monte Carlo simulations). */

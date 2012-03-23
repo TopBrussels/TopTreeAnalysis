@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -25,6 +26,14 @@
 
 using namespace std;
 using namespace TopTree;
+
+Double_t TCHE (TopTree::TRootJet* jet) { return jet->btag_trackCountingHighEffBJetTags(); }
+Double_t TCHP (TopTree::TRootJet* jet) { return jet->btag_trackCountingHighPurBJetTags(); }
+Double_t JP   (TopTree::TRootJet* jet) { return jet->btag_jetProbabilityBJetTags(); }
+Double_t JBP  (TopTree::TRootJet* jet) { return jet->btag_jetBProbabilityBJetTags(); }
+Double_t SSVHE(TopTree::TRootJet* jet) { return jet->btag_simpleSecondaryVertexHighEffBJetTags(); }
+Double_t SSVHP(TopTree::TRootJet* jet) { return jet->btag_simpleSecondaryVertexHighPurBJetTags(); }
+Double_t CSV  (TopTree::TRootJet* jet) { return jet->btag_combinedSecondaryVertexBJetTags(); }
 
 int main(int argc, const char* argv[]) {
   
@@ -93,8 +102,10 @@ int main(int argc, const char* argv[]) {
   }
   
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
-  float Luminosity = 1000.;
-  Double_t eventsPrescaleFactor = 1. ;
+  float Luminosity = 5000.;
+  Double_t eventsPrescaleFactor = 500. ;
+  Bool_t channel_Single_Muon = kTRUE;
+  Bool_t channel_Single_Electron = !channel_Single_Muon;
   
   /**
    Uncertainty variables
@@ -221,35 +232,61 @@ int main(int argc, const char* argv[]) {
   BtagWorkingPoint[0] = 1.7;
   BtagWorkingPoint[1] = 3.3;
   const UInt_t NofJets = 3;       // Min. mult. of jets
-  const UInt_t NofJetBins = 3;    // Nb of bins for mult. of jets
+  const UInt_t NofJetBins = 4;    // Nb of bins for mult. of jets
                                   //  double** EffXbq;   // fraction of b-tag jets, by multiplicity ([i][j] is b-mult "j" in "i+NofJets" jets) ?
   histo1D["JetMultiplicities_Vlike"]  = new TH1F("JetMultiplicities_Vlike", "JetMultiplicities_Vlike", 21, 0, 21) ;
   histo1D["JetMultiplicities_TTlike"] = new TH1F("JetMultiplicities_TTlike", "JetMultiplicities_TTlike" ,21, 0, 21) ;
+  histo1D["b-JetMultiplicities_Vlike"]  = new TH1F("b-JetMultiplicities_Vlike", "b-JetMultiplicities_Vlike", 21, 0, 21) ;
+  histo1D["b-JetMultiplicities_TTlike"] = new TH1F("b-JetMultiplicities_TTlike", "b-JetMultiplicities_TTlike" ,21, 0, 21) ;
   
-  int NofDatasets = datasets.size();
+  std::vector < Dataset > vDatasets;
+  for (std::vector<Dataset*>::iterator it=datasets.begin(); it!=datasets.end(); it++) {
+    vDatasets.push_back(*(*it));
+  }
+  int NofDatasets = vDatasets.size();
   vector<Int_t> iDTTLike; // Indices of TT-Like datasets
   vector<Int_t> iDWLike;  // 
   vector<Int_t> iDVLike;  // 
-  vector<Int_t> iDVbLike; // 
+  vector<Int_t> iDVbLike; //
+  vector<Int_t> iDTTSTLike; //
+  
+  std::vector<std::string> ttLikeNames;
+  std::vector<std::string> ttStLikeNames;
+  std::vector<std::string> vLikeNames;
+  std::vector<std::string> wLikeNames;
+  std::vector<std::string> vbLikeNames;
+  
+  UInt_t num_data_datasets=0;
   for (Int_t i=0; i<NofDatasets; i++) {
+    if(datasets[i]->Name() == "Data" || datasets[i]->Name() == "data" || datasets[i]->Name() == "DATA") { // Data!
+      num_data_datasets++;
+      continue; //ie Data cannot be considered as any MC (define other iD*Like vectors !!!)
+    }
     if ((datasets[i]->Name().find("TT_")==0) || (datasets[i]->Name().find("Stop_")==0)) {
       iDTTLike.push_back(i);
+      ttLikeNames.push_back(datasets[i]->Name());
+      iDTTSTLike.push_back(i);
+      ttStLikeNames.push_back(datasets[i]->Name());
     } 
     if (datasets[i]->Name().find("W_")==0) {
       iDWLike.push_back(i);
+      wLikeNames.push_back(datasets[i]->Name());
       iDVLike.push_back(i);
+      vLikeNames.push_back(datasets[i]->Name());
     }
     if ((datasets[i]->Name().find("Z_")==0) || (datasets[i]->Name().find("DY_")==0)) {
       iDVLike.push_back(i);
+      vLikeNames.push_back(datasets[i]->Name());
     }
   }
   printf("W-like datasets : ");
-  for (vector<Int_t>::iterator iter=iDVLike.begin(); iter!=iDVLike.end(); iter++) {
-    if (iter != iDVLike.begin()) {
+  for (vector<Int_t>::iterator iter=iDWLike.begin(); iter!=iDWLike.end(); iter++) {
+    if (iter != iDWLike.begin()) {
       printf(", ");
     }
     printf("%s", datasets[(*iter)]->Name().c_str());
   }
+  printf("\n");
   printf("V-like datasets : ");
   for (vector<Int_t>::iterator iter=iDVLike.begin(); iter!=iDVLike.end(); iter++) {
     if (iter != iDVLike.begin()) {
@@ -275,22 +312,54 @@ int main(int argc, const char* argv[]) {
   }
   printf("\n");
   
-  UInt_t num_data_datasets=0;
-  for (vector<Dataset*>::iterator iter=datasets.begin(); iter!=datasets.end(); iter++) {
-    if((*iter)->Name() == "Data" || (*iter)->Name() == "data" || (*iter)->Name() == "DATA") // Data!
-      num_data_datasets++;
+  printf("\n\nBy dataset names :\n");
+  printf("W-like datasets : ");
+  for (std::vector<std::string>::iterator iter=wLikeNames.begin(); iter!=wLikeNames.end(); iter++) {
+    if (iter != wLikeNames.begin()) {
+      printf(", ");
+    }
+    printf("%s", iter->c_str());
   }
+  printf("\n");
+  printf("V-like datasets : ");
+  for (std::vector<std::string>::iterator iter=vLikeNames.begin(); iter!=vLikeNames.end(); iter++) {
+    if (iter != vLikeNames.begin()) {
+      printf(", ");
+    }
+    printf("%s", iter->c_str());
+  }
+  printf("\n");
+  printf("TT-like datasets : ");
+  for (std::vector<std::string>::iterator iter=ttLikeNames.begin(); iter!=ttLikeNames.end(); iter++) {
+    if (iter != ttLikeNames.begin()) {
+      printf(", ");
+    }
+    printf("%s", iter->c_str());
+  }
+  printf("\n");
+  printf("Vb-like datasets : ");
+  for (std::vector<std::string>::iterator iter=vbLikeNames.begin(); iter!=vbLikeNames.end(); iter++) {
+    if (iter != vbLikeNames.begin()) {
+      printf(", ");
+    }
+    printf("%s", iter->c_str());
+  }
+  printf("\n");
   
   
-  VJetEstimation *vJetEst__tt__W               = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets-num_data_datasets, iDTTLike, iDWLike, iDVbLike);
-  /*
-   VJetEstimation *vJetEst__tt__W__Z__SingleT__QCD = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets-num_data_datasets, iDTTLike, iDWLike, iDVbLike);
-   VJetEstimation *vJetEst__tt__W_Z             = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets-num_data_datasets, iDTTLike, iDVLike, iDVbLike);
-   VJetEstimation *vJetEst__tt__W_Z__QCD         = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets-num_data_datasets, iDTTLike, iDVLike, iDVbLike);
-   VJetEstimation *vJetEst__tt__W_Z__SingleT__QCD = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets-num_data_datasets, iDTTLike, iDVLike, iDVbLike);
-   
-   VJetEstimation *vJetEst__data = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, num_data_datasets, std::vector<Int_t>(), std::vector<Int_t>(), std::vector<Int_t>());
-   */
+  VJetEstimation *vJetEst__tt__W               = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttLikeNames, wLikeNames, vbLikeNames);
+  /**/
+
+  VJetEstimation *vJetEst__tt__W__Z__SingleT__QCD = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttLikeNames, wLikeNames, vbLikeNames);
+
+  VJetEstimation *vJetEst__tt__W_Z             = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttLikeNames, vLikeNames, vbLikeNames);
+  VJetEstimation *vJetEst__tt__W_Z__QCD         = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttLikeNames, vLikeNames, vbLikeNames);
+  VJetEstimation *vJetEst__tt__W_Z__SingleT__QCD = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttStLikeNames, vLikeNames, vbLikeNames);
+  VJetEstimation *vJetEst__tt_SingleT__W_Z__QCD = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttStLikeNames, vLikeNames, vbLikeNames);
+  VJetEstimation *vJetEst__tt_SingleT__W_Z = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, ttStLikeNames, vLikeNames, vbLikeNames);
+  
+  VJetEstimation *vJetEst__data = new VJetEstimation(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, vDatasets, std::vector<std::string>(), std::vector<std::string>(), std::vector<std::string>());
+  /**/
     //  VJetEstimation vJetEstSTasV(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets, iDTTLike, iDVLike, iDVbLike);
     //  VJetEstimation vJetEstSTasTT(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, NofDatasets, iDTTLike, iDVLike, iDVbLike);
     //  VJetEstimation vJetEst(NofBtagWorkingPoint, BtagWorkingPoint, NofJets, NofJetBins, EffXbq, NofDatasets, iDTTLike, iDVLike, iDVbLike);
@@ -302,16 +371,6 @@ int main(int argc, const char* argv[]) {
   }
   
   
-  unsigned int btagAlgo = 0;
-  /* btagAlgo
-   0) btag_trackCountingHighEffBJetTags()
-   1) btag_trackCountingHighPurBJetTags()
-   2) btag_jetProbabilityBJetTags()
-   3) btag_jetBProbabilityBJetTags()
-   4) btag_simpleSecondaryVertexHighEffBJetTags()
-   5) btag_simpleSecondaryVertexHighPurBJetTags()
-   6) btag_combinedSecondaryVertexBJetTags()
-   */
   
     //<a type="ParamForVJetEstimation" BtagAlgo_vjEst="0" NofBtagWorkingPoint_vjEst="1" BtagWorkingPoint_vjEst="2.03,3.20" MinMethod="Minuit2" MinOption="Combined" useMJLE="0" useUnBinMLE="1" NVJetPE="500" TagEffInit="0.794,0.128,0.097-0.70,0.043,0.02-0.63,0.05,0.010/0.807,0.134,0.124-0.70,0.043,0.02-0.63,0.05,0.010" NVlikeInit="14./4." NTTlikeInit="6./8." EffEbsel="0.0515,0.4170,0.5281/0.0187,0.2604,0.7049" VJEstFixParam="0,1,2" NofIterationsVJestShapeEstim="40"/>
   
@@ -465,23 +524,25 @@ int main(int argc, const char* argv[]) {
         triggerTestsList = triggerTestsListMC ;
       }
       
-      ULong64_t num = (1<<triggerTestsList.size());
-      histo1D["TriggerTests_"+datasets[d]->Name()]  = new TH1I(("TriggerTests_"+datasets[d]->Name()).c_str(), ("TriggerTests_"+datasets[d]->Name()).c_str(), num, 0, num) ;
-      for (ULong64_t i=0; i<num; i++) {
-        string label = "";
-        ULong64_t j = i;
-        for (vector<string>::iterator iter=triggerTestsList.begin(); iter!=triggerTestsList.end(); iter++) {
-          if((j&1)==1) {
-            if (label!="") {
-              label = label + " && ";
-            }
-            label = label + (*iter);
-          }
-          j = (j >> 1);
-        }
-        histo1D["TriggerTests_"+datasets[d]->Name()]->GetXaxis()->SetBinLabel((Int_t)(i+1), label.c_str());
-      }
-      
+      ULong64_t num = (1 << triggerTestsList.size());
+      printf("Trigger Size = %lu , 2**size = %llu", triggerTestsList.size(), num);
+      histo1D["TriggerTests_"+datasets[d]->Name()]  = new TH1I(("TriggerTests_"+datasets[d]->Name()).c_str(), ("TriggerTests_"+datasets[d]->Name()).c_str(), 1, 0, 1) ;
+      histo1D["TriggerTests_"+datasets[d]->Name()]->SetBit(TH1::kCanRebin);
+      /*      for (ULong64_t i=0; i<num; i++) {
+       string label = "";
+       ULong64_t j = i;
+       for (vector<string>::iterator iter=triggerTestsList.begin(); iter!=triggerTestsList.end(); iter++) {
+       if((j&1)==1) {
+       if (label!="") {
+       label = label + " && ";
+       }
+       label = label + (*iter);
+       }
+       j = (j >> 1);
+       }
+       histo1D["TriggerTests_"+datasets[d]->Name()]->GetXaxis()->SetBinLabel((Int_t)(i+1), label.c_str());
+       }
+       */    
       
         /////////////////////////////////////
         /// Initialize JEC factors
@@ -743,6 +804,7 @@ int main(int argc, const char* argv[]) {
             triggerSignature = triggerSignature<<1;
           }
         }
+        
         string label = "" ;
         ULong64_t j = triggerSignature;
           //      printf("triggerSignature : %llu\n", triggerSignature);
@@ -756,24 +818,26 @@ int main(int argc, const char* argv[]) {
           j = (j >> 1);
         }
           //printf("Fired : %s            \t Name : %s\n", labelFired.c_str(), label.c_str());
-        histo1D["TriggerTests_"+datasets[d]->Name()]->Fill(triggerSignature, eventWeight);
+        histo1D["TriggerTests_"+datasets[d]->Name()]->Fill(label.c_str(), eventWeight);
         
         
-        
+        /* Beam scraping events veto and HBHE filter noise are implemented in the TopBrussels/AutoMaticTopTreeProducer/ConfigTemplates/PatTemplate_*_data_*_cfg.py */
         if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
         {
             // Apply the scraping veto. (Is it still needed?)
+          
+          
           bool isBeamBG = true;
           if(event->nTracks() > 10)
           {
             if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
               isBeamBG = false;
           }
-          selecTable.Fill(d,1,eventWeight);
-          if(isBeamBG) continue;
-        }
-        else {
-          selecTable.Fill(d,1,eventWeight);
+            //          selecTable.Fill(d,1,eventWeight);
+          if(isBeamBG) {
+            printf("Beam scraping event rejected !!!\n");
+            continue;
+          }
         }
         
         /*
@@ -789,58 +853,44 @@ int main(int argc, const char* argv[]) {
         
           //Declare selection instance    
         Selection selection(init_jets, init_muons, init_electrons, mets);
-          //selection.setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatches, float DistVzPVz, int NPixelLayersWithMeas);
-          //selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
-        selection.setMuonCuts(20,2.1,FLT_MAX,10,0.02,0.3,1,1,1); //critères manquants : 
-        /*
-         //       if ( muon_in[i].GlobalMuonPromptTight  !=1   ) continue;
-         if ( muon_in[i].IsTraM !=1                   ) continue; // really needed ??
-         reco::Track TMu = muon_in[i].TrackMu;
-         //     if ( TMu.chi2()/TMu.ndof()   >= 10.          ) continue;   
-         if ( TMu.numberOfValidHits() <= 10           ) continue; 
-         if (  fabs(muon_in[i].D0Inner) >= 0.02       ) continue;
-         bool leptonMatch = false;
-         for (unsigned int j=0;j<vertex_in.size();++j){
-         if (vertex_in[j].isFake==1 || vertex_in[j].rho>=2.0 || vertex_in[j].ndof<=4 || fabs(vertex_in[j].XYZ.z()) >= 24 ) continue;  
-         if ( fabs( muon_in[i].vertex.z() - vertex_in[j].XYZ.z() ) < 1 ) leptonMatch = true;
-         }
-         if(leptonMatch == false) continue;
-         muon_out.push_back(muon_in[i]);
-         */
-          //selection.setJetCuts(float Pt, float Eta, float EMF, float n90Hits, float fHPD, float dRJetElectron, float dRJetMuon);
-          //selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
-        selection.setJetCuts(30.,2.5,FLT_MAX,1.,0.98,0.3,0.1);
-        /*
-         for(std::vector<TopTree::Jet>::iterator ij = jets.begin(); ij!=jets.end(); ij++){    
-         if ( ij->v4.Pt()>PtJetCut_ && fabs(ij->v4.Eta())<2.5 && ij->isLOOSE) {jets_out.push_back(*ij);}
-         }
-         */
-          //selection.setElectronCuts(float Et, float Eta, float RelIso, float d0, float DistVzPVz, float DRJets);
-          //selection.setElectronCuts(20,2.5,0.125,0.02,1,0.3);
-        selection.setElectronCuts(20,2.5,FLT_MAX,0.02,1,0.3);
-        /*
-         if ( elec_in[i].SCEnergy<=15.0) continue;
-         //pass1 synch if ( elec_in[i].elecIdLoose != 1  ) continue;
-         int eid = elec_in[i].elecIdWP90_c;
-         bool hadId(eid & 0x1);
-         bool isNotConv(eid & 0x4);
-         if ( ! hadId                                ) continue;
-         if ( ! isNotConv                            ) continue;
-         if ( elec_in[i].elspike != 0.               ) continue;         
-         if ( elec_in[i].isEcalDriven!=1             ) continue;
-         if ( elec_in[i].nLost>=2 ) continue;
-         if ( fabs(elec_in[i].v4.Eta()) >= 2.5       ) continue;
-         if ( fabs(elec_in[i].D0) >= 0.04            ) continue;
-         bool leptonMatch = false;
-         for (unsigned int j=0;j<vertex_in.size();++j){
-         if (vertex_in[j].isFake==1 || vertex_in[j].rho>=2.0 || vertex_in[j].ndof<=4 || fabs(vertex_in[j].XYZ.z()) >= 24 ) continue;  
-         if ( fabs( elec_in[i].vertex.z() - vertex_in[j].XYZ.z() ) < 1 ) leptonMatch = true;
-         }
-         if(leptonMatch == false) continue;
-         elec_out.push_back(elec_in[i]);
-         */
         
-          //      bool isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  
+          // Ne teste que le premier PV
+        Bool_t isGoodPV = selection.isPVSelected(vertex, 4, 24, 2.);  
+        
+        if (channel_Single_Muon) {
+            //selection.setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NPixelLayersWithMeas);
+            // critères manquants :
+            //selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
+            //        selection.setMuonCuts(20,2.1,FLT_MAX,10,0.02,0.3,1,1,1);    // Selection of the beginning (Synchronisation exercise with Gent)
+          selection.setMuonCuts(20.,2.1,0.125, 10 ,0.02,0.3,1,1.,1); //relIso can be 0.1 ;
+          
+          
+          
+            //selection.setLooseMuonCuts(float Pt, float Eta, float RelIso)
+            //selection.setLooseMuonCuts(10,2.5,0.2);
+            //        // Selection of the beginning (Synchronisation exercise with Gent) : no loose muon veto
+          selection.setLooseMuonCuts(10,2.5,0.2);
+            //selection.setElectronCuts(float Et, float Eta, float RelIso, float d0, float DistVzPVz, float DRJets);
+            //selection.setElectronCuts(20,2.5,0.125,0.02,1,0.3);
+            //selection.setElectronCuts(20,2.5,FLT_MAX,0.02,1,0.3);// Selection of the beginning (Synchronisation exercise with Gent) : Hard electron veto
+            //          selection.setElectronCuts(15,2.5,0.2,0.02,1,0.3); //ATTENTION DistVzPVz and DRJets not mentionned in https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTopRefEventSel (2012/03/07)
+          selection.setLooseElectronCuts(15,2.5,0.2);
+            //selection.setJetCuts(float Pt, float Eta, float EMF, float n90Hits, float fHPD, float dRJetElectron, float dRJetMuon);
+            //selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
+            //          selection.setJetCuts(30.,2.4,(-1.)*FLT_MAX,(-1.)*FLT_MAX,(-1.)*FLT_MAX,0.3,0.1);//e+jets //RELIRE
+            //          selection.setJetCuts(30.,2.4,(-1.)*FLT_MAX,(-1.)*FLT_MAX,(-1.)*FLT_MAX,-1.,0.3); //RELIRE : 0.3 ou 0.1 pour PF ???
+          selection.setJetCuts(30.,2.4,(-1.)*FLT_MAX,(-1.)*FLT_MAX,(-1.)*FLT_MAX,0.3,0.1); // Partie en DeltaR : prise du code de Stijn
+          /*
+           for(std::vector<TopTree::Jet>::iterator ij = jets.begin(); ij!=jets.end(); ij++){    
+           if ( ij->v4.Pt()>PtJetCut_ && fabs(ij->v4.Eta())<2.5 && ij->isLOOSE) {jets_out.push_back(*ij);}
+           }
+           */
+          
+        } else if (channel_Single_Electron) {
+          printf("Electron channel analysis\n");
+        } else {
+          printf("Neither Single Muon nor Single Electron channel\n");
+        }
         
         
           // FILL THE SELECTION TABLE //
@@ -849,21 +899,28 @@ int main(int argc, const char* argv[]) {
         
         vector<TRootJet*> selectedJets;
         vector<TRootMuon*> selectedMuons;
-        vector<TRootMuon*> selectedOldIsoMuons;
+        vector<TRootMuon*> vetoMuons;
         vector<TRootElectron*> vetoElectrons;
         
-        if(trigged){
-          selecTable.Fill(d,2,eventWeight);
+        if(isGoodPV && trigged){
+          selecTable.Fill(d,1,eventWeight);
           
-          selectedJets = selection.GetSelectedJets(true);
+          selectedJets = selection.GetSelectedJets(true);///////// Vient du code de Stijn
+                                                         //GetSelectedJets(PtThr, EtaThr, electrons, dRElectronCut, applyJetID)
+                                                         //          selection.GetSelectedJets(jet_pT_cut, jet_eta_cut, selectedMuonsSelection, dRMuonCut, kTRUE); ///
+          
           sort(selectedJets.begin(), selectedJets.end(), HighestPt());
-          selectedMuons = selection.GetSelectedMuons();
-          for(vector<TRootMuon*>::const_iterator muon=selectedMuons.begin() ; muon != selectedMuons.end() ; muon++)
-          {
-            if ((*muon)->relativeIso03() < 0.15)
-              selectedOldIsoMuons.push_back((TRootMuon*) (*muon));
-          }   
-          vetoElectrons = selection.GetSelectedElectrons();
+          selectedMuons = selection.GetSelectedMuons(vertex[0], selectedJets);
+          vetoMuons = selection.GetSelectedLooseMuons();
+          
+          /* // Selection of the beginning (Synchronisation exercise with Gent)
+           for(vector<TRootMuon*>::const_iterator muon=selectedMuons.begin() ; muon != selectedMuons.end() ; muon++)
+           {
+           if ((*muon)->relativeIso03() < 0.15)
+           selectedOldIsoMuons.push_back((TRootMuon*) (*muon));
+           } 
+           */
+          vetoElectrons = selection.GetSelectedLooseElectrons(false);
           vector<Double_t> btagDiscs_selectedJets;
           for (vector<TRootJet*>::iterator jet = selectedJets.begin(); jet != selectedJets.end(); jet++) {
             btagDiscs_selectedJets.push_back((*jet)->btag_trackCountingHighEffBJetTags());
@@ -871,46 +928,55 @@ int main(int argc, const char* argv[]) {
           cutCP["Trigger"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*eventWeight);/** if scale==true: histo are scaled by data.NormFactor()*Lumi */
           for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
             btagDiscCP["Trigger"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-          if(selectedOldIsoMuons.size()==1){
-            selecTable.Fill(d,3,eventWeight);
+          if(selectedMuons.size()==1){
+            selecTable.Fill(d,2,eventWeight);
             cutCP["IsolatedMuon"]->Fill(vetoElectrons.size(), datasets[d], true, Luminosity*eventWeight);
             for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
               btagDiscCP["IsolatedMuon"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-            if(vetoElectrons.size()==0){
-              selecTable.Fill(d,4,eventWeight);
-              selectedForVJetEstimation = true;
-              if (selectedJets.size()>0)
-                cutCP["VetoElectron"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*eventWeight);
+            
+            if(vetoMuons.size()==1){
+              selecTable.Fill(d,3,eventWeight);
+              cutCP["IsolatedMuon"]->Fill(vetoElectrons.size(), datasets[d], true, Luminosity*eventWeight);
               for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
-                btagDiscCP["VetoElectron"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-              if(selectedJets.size() >= 1) {
-                selecTable.Fill(d,5,eventWeight);
-                if (selectedJets.size()>1)
-                  cutCP["AtLeast1Jet"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*eventWeight);
+                btagDiscCP["IsolatedMuon"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
+              
+              
+              if(vetoElectrons.size()==0){
+                selecTable.Fill(d,4,eventWeight);
+                selectedForVJetEstimation = true;
+                if (selectedJets.size()>0)
+                  cutCP["VetoElectron"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*eventWeight);
                 for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
-                  btagDiscCP["AtLeast1Jet"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-                if(selectedJets.size() >= 2) {
-                  selecTable.Fill(d,6,eventWeight);
-                  if (selectedJets.size()>2)
-                    cutCP["AtLeast2Jets"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*eventWeight);
+                  btagDiscCP["VetoElectron"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
+                if(selectedJets.size() >= 1) {
+                  selecTable.Fill(d,5,eventWeight);
+                  if (selectedJets.size()>1)
+                    cutCP["AtLeast1Jet"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*eventWeight);
                   for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
-                    btagDiscCP["AtLeast2Jets"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-                  if(selectedJets.size() >= 3) {
-                    selecTable.Fill(d,7,eventWeight);
-                    selected = true;
-                    if (selectedJets.size()>3)
-                      cutCP["AtLeast3Jets"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*eventWeight);
+                    btagDiscCP["AtLeast1Jet"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
+                  if(selectedJets.size() >= 2) {
+                    selecTable.Fill(d,6,eventWeight);
+                    if (selectedJets.size()>2)
+                      cutCP["AtLeast2Jets"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*eventWeight);
                     for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
-                      btagDiscCP["AtLeast3Jets"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-                    if(selectedJets.size() >= 4) {
-                      selecTable.Fill(d,8,eventWeight);
-                      if (selectedJets.size()>4)
-                        cutCP["AtLeast4Jets"]->Fill(selectedJets[4]->Pt(), datasets[d], true, Luminosity*eventWeight);
+                      btagDiscCP["AtLeast2Jets"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
+                    if(selectedJets.size() >= 3) {
+                      selecTable.Fill(d,7,eventWeight);
+                      selected = true;
+                      if (selectedJets.size()>3)
+                        cutCP["AtLeast3Jets"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*eventWeight);
                       for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
-                        btagDiscCP["AtLeast4Jets"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
-                      if(selectedJets.size() >= 5) {
-                        selecTable.Fill(d,9,eventWeight);
-                        /*                      cutCP["AtLeast5Jets"]->Fill(, datasets[d], eventWeight, true, Lumi = Luminosity*eventWeight); */ /** if scale==true: histo are scaled by data.NormFactor()*Lumi */
+                        btagDiscCP["AtLeast3Jets"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
+                      if(selectedJets.size() >= 4) {
+                        selecTable.Fill(d,8,eventWeight);
+                        if (selectedJets.size()>4)
+                          cutCP["AtLeast4Jets"]->Fill(selectedJets[4]->Pt(), datasets[d], true, Luminosity*eventWeight);
+                        for (vector<Double_t>::iterator btagDisc = btagDiscs_selectedJets.begin(); btagDisc != btagDiscs_selectedJets.end(); btagDisc++)
+                          btagDiscCP["AtLeast4Jets"]->Fill(*btagDisc, datasets[d], true, Luminosity*eventWeight);
+                        if(selectedJets.size() >= 5) {
+                          selecTable.Fill(d,9,eventWeight);
+                          /*                      cutCP["AtLeast5Jets"]->Fill(, datasets[d], eventWeight, true, Lumi = Luminosity*eventWeight); */ /** if scale==true: histo are scaled by data.NormFactor()*Lumi */
+                        }
                       }
                     }
                   }
@@ -925,6 +991,10 @@ int main(int argc, const char* argv[]) {
             histo1D["JetMultiplicities_Vlike"]->Fill(selectedJets.size(), eventWeight*currentDatasetNormFactor*Luminosity);
           if (find(iDTTLike.begin(),iDTTLike.end(),(int) d) != iDTTLike.end())
             histo1D["JetMultiplicities_TTlike"]->Fill(selectedJets.size(), eventWeight*currentDatasetNormFactor*Luminosity);
+          if (find(iDVLike.begin(),iDVLike.end(),(int) d) != iDVLike.end())
+            histo1D["b-JetMultiplicities_Vlike"]->Fill(selectedJets.size(), eventWeight*currentDatasetNormFactor*Luminosity);
+          if (find(iDTTLike.begin(),iDTTLike.end(),(int) d) != iDTTLike.end())
+            histo1D["b-JetMultiplicities_TTlike"]->Fill(selectedJets.size(), eventWeight*currentDatasetNormFactor*Luminosity);
           /*
            printf("Vl decision : %d (index %d)   TTl decision : %d (index %d)\n",
            (find(iDVLike.begin(),iDVLike.end(),d) != iDVLike.end()),
@@ -933,52 +1003,70 @@ int main(int argc, const char* argv[]) {
            *find(iDTTLike.begin(),iDTTLike.end(),d));
            */
           if (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") { // Data!
-            /*
-             vJetEst__data->Fill(selectedJets, n_data_datasets, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             */
+            /**/
+              //            printf("Fill data dataset : %u", n_data_datasets-1);
+            vJetEst__data->Fill(selectedJets, d/*n_data_datasets-1*/, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            /**/
               //         vJetEst->BckgdSubstraction(MCObsExpBjetMult, BckgdNames, Luminosity);
           }
           if ((dataSetName.find("TT_")==0) || (dataSetName.find("Stop_")==0)) {
-            vJetEst__tt__W->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-            /*
-             vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             */
+              //            printf("Fill MC dataset (TT) : %u", d_notData);
+            vJetEst__tt__W->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            /**/
+            vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            
+            vJetEst__tt_SingleT__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt_SingleT__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            /**/
           } 
           if (dataSetName.find("W_")==0) {
-            vJetEst__tt__W->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-            /*
-             vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-             */
+              //            printf("Fill MC dataset (W) : %u", d);
+            vJetEst__tt__W->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            /**/
+            vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+
+            vJetEst__tt_SingleT__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt_SingleT__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            /**/
           }
           if ((dataSetName.find("Z_")==0) || (dataSetName.find("DY_")==0)) {
-            ; /*
-               vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               */
+            ; /**/
+              //            printf("Fill MC dataset (Z) : %u", d);
+            vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            
+            vJetEst__tt_SingleT__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt_SingleT__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            /**/
           }
           if (dataSetName.find("ST_")==0) {
-            ; /*
-               vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               */
+            ; /**/
+            vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            
+            vJetEst__tt_SingleT__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt_SingleT__W_Z->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+
+            /**/
           }
           if (dataSetName.find("QCD_")==0) {
-            ; /*
-               vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d_notData, btagAlgo,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
-               */
+            ; /**/
+            vJetEst__tt__W__Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt__W_Z__SingleT__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+            vJetEst__tt_SingleT__W_Z__QCD->Fill(selectedJets, d, TCHE,(Float_t) eventWeight*currentDatasetNormFactor*Luminosity);
+/**/
           }
         }
         if (! selected)
@@ -1008,18 +1096,66 @@ int main(int argc, const char* argv[]) {
   selecTable.Write(stopReport);
   
     // V-jets estimation
-  std::vector<VJetEstimation*> vJetEst_MC_methods;
-  vJetEst_MC_methods.push_back(vJetEst__tt__W);
-  /*
-   vJetEst_MC_methods.push_back(vJetEst__tt__W__Z__SingleT__QCD);
-   vJetEst_MC_methods.push_back(vJetEst__tt__W_Z);
-   vJetEst_MC_methods.push_back(vJetEst__tt__W_Z__QCD);
-   vJetEst_MC_methods.push_back(vJetEst__tt__W_Z__SingleT__QCD);
-   */
+  std::vector<VJetEstimation*> vJetEst_MC_methods;// crashe si Xlike pointe sur un dataset, et que ce dataset n'est pas rempli
+  vJetEst_MC_methods.push_back(vJetEst__tt__W_Z);//OK with W_Z
+  vJetEst_MC_methods.push_back(vJetEst__tt__W__Z__SingleT__QCD);//OK with W_Z
+  vJetEst_MC_methods.push_back(vJetEst__tt__W);//KO with W_Z ; OK with W
+  /**/
+  vJetEst_MC_methods.push_back(vJetEst__tt__W_Z__QCD);
+  vJetEst_MC_methods.push_back(vJetEst__tt__W_Z__SingleT__QCD);
+  
+  vJetEst_MC_methods.push_back(vJetEst__tt_SingleT__W_Z__QCD);
+  vJetEst_MC_methods.push_back(vJetEst__tt_SingleT__W_Z);
+  /**/
   
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
+    std::string dirName = "";
+    if (*iter == vJetEst__tt__W) {
+      dirName="vJetEst__tt__W";
+    } else if (*iter == vJetEst__tt__W__Z__SingleT__QCD) {
+      dirName="vJetEst__tt__W__Z__SingleT__QCD";
+    } else if (*iter == vJetEst__tt__W_Z) {
+      dirName="vJetEst__tt__W_Z";
+    } else if (*iter == vJetEst__tt__W_Z__QCD) {
+      dirName="vJetEst__tt__W_Z__QCD";
+    } else if (*iter == vJetEst__tt__W_Z__SingleT__QCD) {
+      dirName="vJetEst__tt__W_Z__SingleT__QCD";
+    } else if (*iter == vJetEst__tt_SingleT__W_Z__QCD) {
+      dirName="vJetEst__tt_SingleT__W_Z__QCD";
+    } else if (*iter == vJetEst__tt_SingleT__W_Z) {
+      dirName="vJetEst__tt_SingleT__W_Z";
+    } else {
+      printf("Houston, we have a problem !\n");
+      exit(1);
+    }
+    printf("\n\n\n\n\n\n     FOR %s\n\n", dirName.c_str());
+    std::vector<Bool_t> vMask;
+    for (std::vector<Dataset>::const_iterator dataset=vDatasets.begin(); dataset!=vDatasets.end(); dataset++) {
+      if(dataset->Name() == "Data" || dataset->Name() == "data" || dataset->Name() == "DATA") { // Data!
+        vMask.push_back(kFALSE);
+      }
+      else {
+        vMask.push_back(kTRUE);
+      }
+    }
+    printf("vMask = { ");
+    for (std::vector<Bool_t>::const_iterator it=vMask.begin(); it!=vMask.end(); it++) {
+      if (*it ==kTRUE) {
+        printf("kTRUE, ");
+      } else {
+        printf("kFALSE, ");
+      }
+    }
+      printf("};\n");
+    printf("SetProcesses();\n");
+/*    if ( *iter == vJetEst__tt__W || *iter == vJetEst__tt__W__Z__SingleT__QCD)
+      (*iter)->SetProcesses(vMask, ttLikeNames, vLikeNames, vbLikeNames);
+      else*/
+    (*iter)->SetProcesses(vMask, ttLikeNames, vLikeNames, vbLikeNames);
+    printf("ComputeEffFromMC();\n");
     (*iter)->ComputeEffFromMC();
-    (*iter)->ComputeEffbqFromMC(iDTTLike[0]);  // From ttbar sample
+    printf("ComputeEffbqFromMC();\n");
+    (*iter)->ComputeEffbqFromMC();  // From ttbar sample
   }
     //    vJetEst__data ->ComputeEffFromMC();
     //    vJetEst__data->ComputeEffbqFromMC(iDTTLike[0]);  // From ttbar sample
@@ -1034,15 +1170,15 @@ int main(int argc, const char* argv[]) {
     printf("\n");
   }
   printf("\n\n\n");
-  /* 
-   vJetEst__data ->SumOverAllInputs();
-   */
+  /**/ 
+  vJetEst__data ->SumOverAllInputs();
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->SumOverAllInputs();
   }
-  /*
-   vJetEst__data ->PrintInputs();
-   */
+  /**/
+  vJetEst__data ->PrintInputs();
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->PrintInputs();
   }
@@ -1054,17 +1190,19 @@ int main(int argc, const char* argv[]) {
    */
   vector<Double_t> init;
     //  Double_t initForMinVJetArray[NofJetBins][2+3*NofBtagWorkingPoint]
-  init.clear();  for (UInt_t i=0; i<NofJetBins; i++) { init.push_back(initForMinVJet[i][0]); }
-  /*
-   vJetEst__data->SetInitialValues_Nttlike(init); //[njets][btagIdx]
-   */
+    //init.clear();  for (UInt_t i=0; i<NofJetBins; i++) { init.push_back(initForMinVJet[i][0]); }
+  init.clear();  for (UInt_t i=0; i<NofJetBins; i++) { init.push_back(vJetEst__tt__W->GetPredNtt(0,i)); }
+  /**/
+  vJetEst__data->SetInitialValues_Nttlike(init); //[njets][btagIdx]
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->SetInitialValues_Nttlike(init); //[njets][btagIdx]
   }
-  init.clear();  for (UInt_t i=0; i<NofJetBins; i++) { init.push_back(initForMinVJet[i][1]); }
-  /*
-   vJetEst__data->SetInitialValues_Nvlike(init); //[njets][btagIdx]
-   */
+    //  init.clear();  for (UInt_t i=0; i<NofJetBins; i++) { init.push_back(initForMinVJet[i][1]); }
+  init.clear();  for (UInt_t i=0; i<NofJetBins; i++) { init.push_back(vJetEst__tt__W->GetPredNv(0,i)); }
+  /**/
+  vJetEst__data->SetInitialValues_Nvlike(init); //[njets][btagIdx]
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->SetInitialValues_Nvlike(init); //[njets][btagIdx]
   }
@@ -1072,12 +1210,13 @@ int main(int argc, const char* argv[]) {
   init2.clear();
   for (UInt_t i=0; i<NofJetBins; i++) { 
     vector<Double_t> tmpInit ;
-    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(initForMinVJet[i][2+3*j]); }
+      //    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(initForMinVJet[i][2+3*j]); }
+    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(vJetEst__tt__W->GetPredEb(j,i)); }
     init2.push_back(tmpInit);
   }
-  /*
-   vJetEst__data->SetInitialValues_Eb(init2); //[njets][btagIdx]
-   */
+  /**/
+  vJetEst__data->SetInitialValues_Eb(init2); //[njets][btagIdx]
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->SetInitialValues_Eb(init2); //[njets][btagIdx]
   }
@@ -1085,24 +1224,26 @@ int main(int argc, const char* argv[]) {
   init2.clear();
   for (UInt_t i=0; i<NofJetBins; i++) { 
     vector<Double_t> tmpInit ;
-    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(initForMinVJet[i][2+1+3*j]); }
+      //    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(initForMinVJet[i][2+1+3*j]); }
+    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(vJetEst__tt__W->GetPredEudsc(j,i)); }
     init2.push_back(tmpInit);
   }
-  /*
-   vJetEst__data->SetInitialValues_Eudsc(init2); //[njets][btagIdx]
-   */
+  /**/
+  vJetEst__data->SetInitialValues_Eudsc(init2); //[njets][btagIdx]
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->SetInitialValues_Eudsc(init2); //[njets][btagIdx]
   }
   init2.clear();
   for (UInt_t i=0; i<NofJetBins; i++) { 
     vector<Double_t> tmpInit ;
-    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(initForMinVJet[i][2+2+3*j]); }
+      //    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(initForMinVJet[i][2+2+3*j]); }
+    for (UInt_t j=0; j<NofBtagWorkingPoint; j++) { tmpInit.push_back(vJetEst__tt__W->GetPredEuds(j,i)); }
     init2.push_back(tmpInit);
   }
-  /*
-   vJetEst__data->SetInitialValues_Euds(init2); //[njets][btagIdx]
-   */
+  /**/
+  vJetEst__data->SetInitialValues_Euds(init2); //[njets][btagIdx]
+  /**/
   for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
     (*iter)->SetInitialValues_Euds(init2); //[njets][btagIdx]
   }
@@ -1113,11 +1254,40 @@ int main(int argc, const char* argv[]) {
   TFile *fout = new TFile (outputRootFileName.c_str(), "RECREATE");
     ////////////vJetEst->FillSummaryHistos();
     //  for (UInt_t index_wp=0; index_wp< NofBtagWorkingPoint ; index_wp++) {
-  /*    vJetEst.UnBinnedMaximumNjetsLikelihoodEst(index_wp, fixedVar, doMinos, verbose);
-   vJetEst.FillSummaryHistos();
-   vJetEst.PrintResults();
-   vJetEst.PrintResults_LatexFormat(stopReport);
-   */
+    //  vJetEst__tt__W.UnBinnedMaximumNjetsLikelihoodEst(index_wp, fixedVar, doMinos, verbose);
+    //vJetEst__tt__W->FillSummaryHistos();
+  vJetEst__tt__W->PrintResults();
+  vJetEst__tt__W->PrintResults_LatexFormat(stopReport, 5, 6);
+  vJetEst__tt__W->PrintResults_LatexFormat(5, 6);
+  
+  /**/
+   vJetEst__data->FillSummaryHistos();
+  std::string dirName = "vJetEst__data";
+  system( (std::string("mkdir -p ")+outputDirectory+"/"+dirName+" && mv "+outputDirectory+"/hNbjetsSummary_*.pdf "+outputDirectory+"/"+dirName+" ;").c_str());
+   /**/
+  for (std::vector<VJetEstimation*>::iterator iter=vJetEst_MC_methods.begin(); iter!=vJetEst_MC_methods.end(); iter++) {
+    (*iter)->FillSummaryHistos();
+    std::string dirName = "";
+    if (*iter == vJetEst__tt__W) {
+      dirName="vJetEst__tt__W";
+    } else if (*iter == vJetEst__tt__W__Z__SingleT__QCD) {
+      dirName="vJetEst__tt__W__Z__SingleT__QCD";
+    } else if (*iter == vJetEst__tt__W_Z) {
+      dirName="vJetEst__tt__W_Z";
+    } else if (*iter == vJetEst__tt__W_Z__QCD) {
+      dirName="vJetEst__tt__W_Z__QCD";
+    } else if (*iter == vJetEst__tt__W_Z__SingleT__QCD) {
+      dirName="vJetEst__tt__W_Z__SingleT__QCD";
+    } else if (*iter == vJetEst__tt_SingleT__W_Z__QCD) {
+      dirName="vJetEst__tt_SingleT__W_Z__QCD";
+    } else if (*iter == vJetEst__tt_SingleT__W_Z) {
+      dirName="vJetEst__tt_SingleT__W_Z";
+    } else {
+      printf("Houston, we have a problem !\n");
+      exit(1);
+    }
+    system( (std::string("mkdir -p ")+outputDirectory+"/"+dirName+" && mv "+outputDirectory+"/hNbjetsSummary_*.pdf "+outputDirectory+"/"+dirName+" ;").c_str());
+  }
   /*  vJetEst.Write(fout, "_allJetsInclusive_", (verbose>0));
    fout->cd();*/
   
@@ -1142,16 +1312,19 @@ int main(int argc, const char* argv[]) {
    } */
   fout->cd();
   
-  /*
-   vJetEst__data->Write("VJetEstimation-TCHE_LM--Data");
-   */
+  /**/
+  vJetEst__data->Write("VJetEstimation-TCHE_LM--Data");
+  /**/
   vJetEst__tt__W->Write("VJetEstimation-TCHE_LM--tt_W");
-  /*
-   vJetEst__tt__W__Z__SingleT__QCD->Write("VJetEstimation-TCHE_LM--tt_W_Z_SingleT_QCD");
-   vJetEst__tt__W_Z->Write("VJetEstimation-TCHE_LM--tt_W-Z");
-   vJetEst__tt__W_Z__QCD->Write("VJetEstimation-TCHE_LM--tt_W-Z_QCD");
-   vJetEst__tt__W_Z__SingleT__QCD->Write("VJetEstimation-TCHE_LM--tt_W-Z_SingleT_QCD");
-   */
+  /**/
+  vJetEst__tt__W__Z__SingleT__QCD->Write("VJetEstimation-TCHE_LM--tt_W_Z_SingleT_QCD");
+  vJetEst__tt__W_Z->Write("VJetEstimation-TCHE_LM--tt_W-Z");
+  vJetEst__tt__W_Z__QCD->Write("VJetEstimation-TCHE_LM--tt_W-Z_QCD");
+  vJetEst__tt__W_Z__SingleT__QCD->Write("VJetEstimation-TCHE_LM--tt_W-Z_SingleT_QCD");
+  
+  vJetEst__tt_SingleT__W_Z__QCD->Write("VJetEstimation-TCHE_LM--tt-SingleT_W-Z_QCD");
+  vJetEst__tt_SingleT__W_Z->Write("VJetEstimation-TCHE_LM--tt-SingleT_W-Z");
+  /**/
   
   stopReport << "\\end{document}" << std::endl;
   stopReport.close();
@@ -1173,9 +1346,17 @@ int main(int argc, const char* argv[]) {
       TCanvas* tempCanvas = TCanvasCreator((TH1F*)temp, it->first);
       tempCanvas->SaveAs( (outputDirectory + "/"+it->first+".root").c_str() );
       if (it->first.find("TriggerTests_")==0) {
-        printf("\n%s\n", it->first.c_str());
+        UInt_t numBins = 0;
         for (Int_t bin = 1; bin <= temp->GetNbinsX(); bin++) {
-          printf("  %s \t : %10lf\n", temp->GetXaxis()->GetBinLabel(bin), temp->GetBinContent(bin));
+          if (temp->GetBinContent(bin) != 0.) {
+            numBins++;
+          }
+        }
+        printf("\n%s (%u/%d)\n", it->first.c_str(), numBins, temp->GetNbinsX());
+        for (Int_t bin = 1; bin <= temp->GetNbinsX(); bin++) {
+          if (temp->GetBinContent(bin) != 0.) {
+            printf("  %s \t : %10lf\n", temp->GetXaxis()->GetBinLabel(bin), temp->GetBinContent(bin));
+          }
         }
       }
       
@@ -1196,13 +1377,13 @@ int main(int argc, const char* argv[]) {
       delete iter->second ;
     }
   }
-  fout->ls();
-  fout->Map();
+    //fout->ls();
+    //fout->Map();
   fout->Close();
   
   TFile *ftest = new TFile (outputRootFileName.c_str(), "READ");
-  ftest->ls();
-  ftest->Map();
+    //ftest->ls();
+    //ftest->Map();
   printf("Trying to read back\n");
   VJetEstimation *vje = NULL;
   vje = (VJetEstimation*) ftest->Get("VJetEstimation-TCHE_LM--Data");
@@ -1211,6 +1392,9 @@ int main(int argc, const char* argv[]) {
   vje = (VJetEstimation*) ftest->Get("VJetEstimation-TCHE_LM--tt_W-Z");
   vje = (VJetEstimation*) ftest->Get("VJetEstimation-TCHE_LM--tt_W-Z_QCD");
   vje = (VJetEstimation*) ftest->Get("VJetEstimation-TCHE_LM--tt_W-Z_SingleT_QCD");
+  vje = (VJetEstimation*) ftest->Get("VJetEstimation-TCHE_LM--tt-SingleT_W-Z_QCD");
+  vje = (VJetEstimation*) ftest->Get("VJetEstimation-TCHE_LM--tt-SingleT_W-Z");
+
   printf("Could read back\n");
   ftest->Close();
   

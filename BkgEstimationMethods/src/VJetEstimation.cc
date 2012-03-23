@@ -28,9 +28,10 @@ VJetEstimation::VJetEstimation(){
 }
 
 /**_________________________________________________________________________________________________________________________________________________*/
-VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingPoint, UInt_t NofJets, UInt_t NofJetBins, UInt_t NofDatasets, vector<Int_t> iDTTLike, vector<Int_t> iDVLike, vector<Int_t> iDVbLike):TObject(){
+VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingPoint, UInt_t NofJets, UInt_t NofJetBins, std::vector<Dataset> datasets, std::vector<std::string> ttLikeDatasetNames, std::vector<std::string> vLikeDatasetNames, std::vector<std::string> vbLikeDatasetNames):TObject(){
 	cout<<"Object from the class VJetEstimation being instantiated"<<endl;
-	NbOfDatasets_ = NofDatasets;
+  vDatasets_ = datasets;
+	NbOfDatasets_ = datasets.size();
 	NbOfBtagWorkingPoint_ = NofBtagWorkingPoint;
 	BtagWorkingPoint_ = new Float_t[NbOfBtagWorkingPoint_];
 	for(UInt_t i=0; i<NbOfBtagWorkingPoint_; i++) BtagWorkingPoint_[i] = BtagWorkingPoint[i];
@@ -38,10 +39,7 @@ VJetEstimation::VJetEstimation(UInt_t NofBtagWorkingPoint, Float_t* BtagWorkingP
 	iDatasetsTTLike_.clear();
 	iDatasetsVLike_.clear();
 	iDatasetsVbLike_.clear();
-	iDatasetsTTLike_ = iDTTLike;
-	iDatasetsVLike_  = iDVLike;
-	iDatasetsVbLike_ = iDVbLike;
-	
+  this->SetProcesses(std::vector<Bool_t>(NbOfDatasets_, kTRUE), ttLikeDatasetNames, vLikeDatasetNames, vbLikeDatasetNames);	
 	NbOfJetsBins_ = NofJetBins;
 	Njets_ = new UInt_t[NbOfJetsBins_];
 	for(UInt_t i=0;i<NbOfJetsBins_;i++) Njets_[i] = NofJets+i;
@@ -1185,7 +1183,7 @@ VJetEstimation::~VJetEstimation(){
  }
  */
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::Fill(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t btagAlgo, Double_t weight){
+void VJetEstimation::Fill(vector<TopTree::TRootJet*> &SelectedJets, UInt_t idx, Double_t (*btag_algo)(TopTree::TRootJet*), Double_t weight){
 	Double_t btagDisc = 0;
 	
   
@@ -1200,17 +1198,10 @@ void VJetEstimation::Fill(vector<TRootJet*> &SelectedJets, UInt_t idx, Int_t bta
 	UInt_t nbofbjetsIdx[NbOfBtagWorkingPoint_];
 	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) nbofbjetsIdx[i]=0;
   
-	std::vector<TRootJet*> SelectedBGenJets;
+	std::vector<TopTree::TRootJet*> SelectedBGenJets;
   
 	for(UInt_t i=0;i<SelectedJets.size();i++){
-    if(     btagAlgo == 0) btagDisc = SelectedJets[i]->btag_trackCountingHighEffBJetTags();
-    else if(btagAlgo == 1) btagDisc = SelectedJets[i]->btag_trackCountingHighPurBJetTags();
-    else if(btagAlgo == 2) btagDisc = SelectedJets[i]->btag_jetProbabilityBJetTags();
-    else if(btagAlgo == 3) btagDisc = SelectedJets[i]->btag_jetBProbabilityBJetTags();
-    else if(btagAlgo == 4) btagDisc = SelectedJets[i]->btag_simpleSecondaryVertexHighEffBJetTags();
-    else if(btagAlgo == 5) btagDisc = SelectedJets[i]->btag_simpleSecondaryVertexHighPurBJetTags();
-    else if(btagAlgo == 6) btagDisc = SelectedJets[i]->btag_combinedSecondaryVertexBJetTags();
-		else                   btagDisc = -999999;
+    btagDisc = btag_algo(SelectedJets[i]);
     
 		for(UInt_t j=0;j<NbOfBtagWorkingPoint_;j++){
 			if(btagDisc>BtagWorkingPoint_[j]) nbofbjetsIdx[j]++;
@@ -1387,23 +1378,70 @@ void VJetEstimation::ReScaleInputs(UInt_t idx, Float_t Ntot, Double_t factor){
 }
 
 /**________________________________________________________________________________________________________________*/
+void VJetEstimation::SetProcesses(std::vector<Bool_t> processMask, std::vector<std::string> ttLikeDatasetNames, std::vector<std::string> vLikeDatasetNames, std::vector<std::string> vbLikeDatasetNames)
+{
+  if(processMask.size()==vDatasets_.size()) {
+    processMask_ = processMask;
+  } else {
+    fprintf(stderr, "VJetEstimation::SetProcesses : processMask has wrong size (%lu) compared to datasets(%lu) !\n", processMask.size(), vDatasets_.size());
+    exit(1);
+  }
+  iDatasetsTTLike_.clear();
+  iDatasetsVLike_.clear();
+  iDatasetsVbLike_.clear();
+  Int_t indexDataset = 0;
+  for (std::vector<Dataset>::const_iterator it=vDatasets_.begin(); it!=vDatasets_.end(); it++) {
+    for (std::vector<std::string>::const_iterator like=ttLikeDatasetNames.begin(); like!=ttLikeDatasetNames.end(); like++) {
+      if (it->Name() == *like) {
+        iDatasetsTTLike_.push_back(indexDataset);
+      }
+    }
+    for (std::vector<std::string>::const_iterator like=vLikeDatasetNames.begin(); like!=vLikeDatasetNames.end(); like++) {
+      if (it->Name() == *like) {
+        iDatasetsVLike_.push_back(indexDataset);
+      }
+    }
+    for (std::vector<std::string>::const_iterator like=vbLikeDatasetNames.begin(); like!=vbLikeDatasetNames.end(); like++) {
+      if (it->Name() == *like) {
+        iDatasetsVbLike_.push_back(indexDataset);
+      }
+    }
+    indexDataset++;
+  }
+}
+
+    
+/**________________________________________________________________________________________________________________*/
 void VJetEstimation::SumOverAllInputs(){
 	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++){
 		for(UInt_t j=0;j<NbOfJetsBins_;j++){
 			for(UInt_t k=0;k<NbOfBJetsBins_;k++){
 				Nbjets_[i][j][k] = 0; // Reset value
-				for(UInt_t l=0;l<NbOfDatasets_;l++) Nbjets_[i][j][k] += N_[i][j][k][l]; //Loop over all the datasets and sum their weighted contributions.
+				for(UInt_t l=0;l<NbOfDatasets_;l++)
+          if (processMask_[l]) {
+            Nbjets_[i][j][k] += N_[i][j][k][l]; //Loop over all the datasets and sum their weighted contributions.
+          }
 			}
 		}
 	}	
 }
 /**________________________________________________________________________________________________________________*/
-void VJetEstimation::ComputeEffbqFromMC(UInt_t idx){
-	for(UInt_t i=0;i<NbOfJetsBins_;i++){
-		e0bq_[i] = hNbOfBGenJets_[idx][i].GetBinContent(1)/hNbOfBGenJets_[idx][i].Integral();
-		e1bq_[i] = hNbOfBGenJets_[idx][i].GetBinContent(2)/hNbOfBGenJets_[idx][i].Integral();
-		e2bq_[i] = hNbOfBGenJets_[idx][i].GetBinContent(3)/hNbOfBGenJets_[idx][i].Integral();
-	}
+void VJetEstimation::ComputeEffbqFromMC(){
+  Double_t num0b = 0.;
+  Double_t num1b = 0.;
+  Double_t num2b = 0.;
+  Double_t denom = 0.;
+  for(UInt_t i=0;i<NbOfJetsBins_;i++){
+    for(UInt_t idx=0;idx<iDatasetsTTLike_.size();idx++){
+      num0b += hNbOfBGenJets_[iDatasetsTTLike_[idx]][i].GetBinContent(1);
+      num1b += hNbOfBGenJets_[iDatasetsTTLike_[idx]][i].GetBinContent(2);
+      num2b += hNbOfBGenJets_[iDatasetsTTLike_[idx]][i].GetBinContent(3);
+      denom += hNbOfBGenJets_[iDatasetsTTLike_[idx]][i].Integral();
+    }
+    e0bq_[i] = num0b/denom;
+    e1bq_[i] = num1b/denom;
+    e2bq_[i] = num2b/denom;
+  }
 }
 /**________________________________________________________________________________________________________________*/
 void VJetEstimation::ComputeEffFromMC(){
@@ -1412,50 +1450,79 @@ void VJetEstimation::ComputeEffFromMC(){
 	TH1D* histo_total = 0;
 	TH1D* histo_passed = 0;
   
-	for(UInt_t idx=0;idx<NbOfDatasets_;idx++){
-		for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++){
-      
-			histo_total  = (TH1D*)hNbOfBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
-			histo_passed = (TH1D*)hNbOfBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
-			if(histo_total->GetEntries()>0){
-				sprintf(name,"bTagEff_vs_Njets_%d_wp_%d",idx,i);
-        bTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
-        bTagEff_vs_Njets_[idx][i]->SetName(name);
-        bTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
+  {
+    UInt_t idx=0;
+    for(std::vector<Bool_t>::const_iterator iter=processMask_.begin() ; iter!=processMask_.end() ;iter++) {
+      if ( (*iter) == kFALSE ) {
+        idx++;
+        continue;
       }
-			histo_total  = (TH1D*)hNbOfCGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
-			histo_passed = (TH1D*)hNbOfCGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
-			if(histo_total->GetEntries()>0){
-        sprintf(name,"cTagEff_vs_Njets_%d_wp_%d",idx,i);
-        cTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
-        cTagEff_vs_Njets_[idx][i]->SetName(name);
-        cTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
+      for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++){
+        
+        histo_total  = (TH1D*)hNbOfBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
+        histo_passed = (TH1D*)hNbOfBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
+        if(histo_total->GetEntries()>0){
+          sprintf(name,"bTagEff_vs_Njets_%d_wp_%d",idx,i);
+          bTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
+          bTagEff_vs_Njets_[idx][i]->SetName(name);
+          bTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
+        }
+        histo_total  = (TH1D*)hNbOfCGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
+        histo_passed = (TH1D*)hNbOfCGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
+        if(histo_total->GetEntries()>0){
+          sprintf(name,"cTagEff_vs_Njets_%d_wp_%d",idx,i);
+          cTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
+          cTagEff_vs_Njets_[idx][i]->SetName(name);
+          cTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
+        }
+        histo_total  = (TH1D*)hNbOfUDSGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
+        histo_passed = (TH1D*)hNbOfUDSGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
+        if(histo_total->GetEntries()>0){
+          sprintf(name,"udsTagEff_vs_Njets_%d_wp_%d",idx,i);
+          udsTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
+          udsTagEff_vs_Njets_[idx][i]->SetName(name);
+          udsTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
+        }
+        histo_total  = (TH1D*)hNbOfNonBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
+        histo_passed = (TH1D*)hNbOfNonBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
+        if(histo_total->GetEntries()>0){
+          sprintf(name,"misTagEff_vs_Njets_%d_wp_%d",idx,i);
+          misTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
+          misTagEff_vs_Njets_[idx][i]->SetName(name);
+          misTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
+        }
+        
       }
-			histo_total  = (TH1D*)hNbOfUDSGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
-			histo_passed = (TH1D*)hNbOfUDSGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
-			if(histo_total->GetEntries()>0){
-				sprintf(name,"udsTagEff_vs_Njets_%d_wp_%d",idx,i);
-        udsTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
-        udsTagEff_vs_Njets_[idx][i]->SetName(name);
-        udsTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
-      }
-			histo_total  = (TH1D*)hNbOfNonBGenJets_vs_JetPt_vs_JetEta_vs_Njets_[idx].Project3D("z");
-			histo_passed = (TH1D*)hNbOfNonBGenBJets_vs_JetPt_vs_JetEta_vs_Njets_[idx][i].Project3D("z");
-			if(histo_total->GetEntries()>0){
-				sprintf(name,"misTagEff_vs_Njets_%d_wp_%d",idx,i);
-        misTagEff_vs_Njets_[idx][i] = new TEfficiency(*histo_passed,*histo_total);
-        misTagEff_vs_Njets_[idx][i]->SetName(name);
-        misTagEff_vs_Njets_[idx][i]->SetTitle(";Nb. of jets;eff.");
-      }
-      
-		}
-	}
+      idx++ ;
+    }
+  }
   
     //TGraphAsymmErrors* Combine(TCollection* pList, Option_t* opt = "", Int_t n = 0, const Double_t* w = 0)
-	Double_t w_ttlike[iDatasetsTTLike_.size()];
-	for(UInt_t i=0;i<iDatasetsTTLike_.size();i++) w_ttlike[i] = GetPredN(i);
-	Double_t w_vlike[iDatasetsVLike_.size()];
-	for(UInt_t i=0;i<iDatasetsVLike_.size();i++) w_vlike[i] = GetPredN(i);
+  UInt_t nEmpty_vlike = 0;
+  UInt_t nEmpty_ttlike = 0;
+  Double_t w_ttlike[iDatasetsTTLike_.size()];
+  Double_t w_vlike[iDatasetsVLike_.size()];
+  {
+    UInt_t index=0;
+    for(UInt_t i=0;i<iDatasetsTTLike_.size();i++) {
+      w_ttlike[index] = GetPredN(iDatasetsTTLike_[i]);
+      if (w_ttlike[index]==0.) {
+        nEmpty_ttlike++;
+      } else {
+        index++;
+      }
+    }
+    index=0;
+    for(UInt_t i=0;i<iDatasetsVLike_.size();i++) {
+      w_vlike[index] = GetPredN(iDatasetsVLike_[i]);
+      if (w_vlike[index]==0.) {
+        nEmpty_vlike++; //if empty, the weight==0 or -1 causes a crash ; invalid custom weight found w = -1.00
+                        //The "index" game is to same only the non empty weights in the range [0;iDatasetsVLike_.size()-nEmpty_vlike[ of indices
+      } else {
+        index++;
+      }
+    }
+  }
 	TList *pColl_bTagEff = new TList();
 	TList *pColl_misTagEff_TTlike = new TList();
 	TList *pColl_misTagEff_Vlike  = new TList();
@@ -1472,9 +1539,9 @@ void VJetEstimation::ComputeEffFromMC(){
       if(!misTagEff_vs_Njets_[iDatasetsVLike_[i]][j]) continue;
       pColl_misTagEff_Vlike->Add((TEfficiency*)misTagEff_vs_Njets_[iDatasetsVLike_[i]][j]);
 		}
-    bTagEff_vs_Njets_TTlike_[j]   = bTagEff_vs_Njets_[iDatasetsTTLike_[0]][j]->Combine(pColl_bTagEff,"",iDatasetsTTLike_.size(), w_ttlike);
-    misTagEff_vs_Njets_TTlike_[j] = misTagEff_vs_Njets_[iDatasetsTTLike_[0]][j]->Combine(pColl_misTagEff_TTlike,"",iDatasetsTTLike_.size(), w_ttlike);
-    misTagEff_vs_Njets_Vlike_[j]  = misTagEff_vs_Njets_[iDatasetsVLike_[0]][j]->Combine(pColl_misTagEff_Vlike,"",iDatasetsVLike_.size(), w_vlike);
+    bTagEff_vs_Njets_TTlike_[j]   = bTagEff_vs_Njets_[iDatasetsTTLike_[0]][j]->Combine(pColl_bTagEff,"",iDatasetsTTLike_.size()-nEmpty_ttlike, w_ttlike);
+    misTagEff_vs_Njets_TTlike_[j] = misTagEff_vs_Njets_[iDatasetsTTLike_[0]][j]->Combine(pColl_misTagEff_TTlike,"",iDatasetsTTLike_.size()-nEmpty_ttlike, w_ttlike);
+    misTagEff_vs_Njets_Vlike_[j]  = misTagEff_vs_Njets_[iDatasetsVLike_[0]][j]->Combine(pColl_misTagEff_Vlike,"",iDatasetsVLike_.size()-nEmpty_vlike, w_vlike);
     
 		for(UInt_t k = 0 ; k < NbOfJetsBins_ ; k++)
 		{
@@ -2711,7 +2778,9 @@ Double_t VJetEstimation::GetPredNtotal(Int_t wp, Int_t njets, Int_t nbjets) cons
 Double_t VJetEstimation::GetPredN(Int_t idx) const {
 	Double_t N_MC = 0;
 	for(UInt_t i=0;i<NbOfJetsBins_;i++){
-    for(UInt_t j=0;j<NbOfBJetsBins_;j++) N_MC += N_[0][i][j][idx];
+    for(UInt_t j=0;j<NbOfBJetsBins_;j++) {
+      N_MC += N_[0][i][j][idx];
+    }
 	}
 	return N_MC;
 }
@@ -3246,13 +3315,13 @@ void VJetEstimation::PrintInputs(UInt_t njets){
 		for(UInt_t k=0;k<iDatasetsTTLike_.size();k++){
 			if(N_[i][njets][0][iDatasetsTTLike_[k]]==0 && N_[i][njets][0][iDatasetsTTLike_[k]]==N_[i][njets][1][iDatasetsTTLike_[k]] && N_[i][njets][0][iDatasetsTTLike_[k]]==N_[i][njets][2][iDatasetsTTLike_[k]] && N_[i][njets][0][iDatasetsTTLike_[k]]==N_[i][njets][3][iDatasetsTTLike_[k]]) continue;
       /*			cout<<"Dataset "<<k+1<<" : N (0/1/2/3 jets) = "<<GetPredN(iDatasetsTTLike_[k],njets)<<" ("<<N_[i][njets][0][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][1][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][2][iDatasetsTTLike_[k]]<<"/"<<N_[i][njets][3][iDatasetsTTLike_[k]]<<")"<<endl; */
-      printf("Dataset %d : N (0/1/2/3 jets) = %5lg (%5lg/%5lg/%5lg/%5lg)\n", k+1, GetPredN(iDatasetsTTLike_[k],njets), N_[i][njets][0][iDatasetsTTLike_[k]], N_[i][njets][1][iDatasetsTTLike_[k]], N_[i][njets][2][iDatasetsTTLike_[k]], N_[i][njets][3][iDatasetsTTLike_[k]]);
+      printf("Dataset %s : N (0/1/2/3 jets) = %5lg (%5lg/%5lg/%5lg/%5lg)\n", vDatasets_[k].Name().c_str(), GetPredN(iDatasetsTTLike_[k],njets), N_[i][njets][0][iDatasetsTTLike_[k]], N_[i][njets][1][iDatasetsTTLike_[k]], N_[i][njets][2][iDatasetsTTLike_[k]], N_[i][njets][3][iDatasetsTTLike_[k]]);
 		}
 		cout<<"Total number : N (0/1/2/3 jets) = "<<GetPredNtt(i,njets)<<" ("<<GetPredNtt(i,njets,0)<<"/"<<GetPredNtt(i,njets,1)<<"/"<<GetPredNtt(i,njets,2)<<"/"<<GetPredNtt(i,njets,3)<<")"<<endl;
 		cout<<"For V-like datasets : "<<endl;
 		for(UInt_t k=0;k<iDatasetsVLike_.size();k++){
 			if(N_[i][njets][0][iDatasetsVLike_[k]]==0 && N_[i][njets][0][iDatasetsVLike_[k]]==N_[i][njets][1][iDatasetsVLike_[k]] && N_[i][njets][0][iDatasetsVLike_[k]]==N_[i][njets][2][iDatasetsVLike_[k]] && N_[i][njets][0][iDatasetsVLike_[k]]==N_[i][njets][3][iDatasetsVLike_[k]]) continue;
-			printf("Dataset %d : N (0/1/2/3 jets) = %lg (%lg/%lg/%lg/%lg)\n", k+1, GetPredN(iDatasetsVLike_[k],njets), N_[i][njets][0][iDatasetsVLike_[k]], N_[i][njets][1][iDatasetsVLike_[k]], N_[i][njets][2][iDatasetsVLike_[k]], N_[i][njets][3][iDatasetsVLike_[k]]);
+			printf("Dataset %s : N (0/1/2/3 jets) = %lg (%lg/%lg/%lg/%lg)\n", vDatasets_[k].Name().c_str(), GetPredN(iDatasetsVLike_[k],njets), N_[i][njets][0][iDatasetsVLike_[k]], N_[i][njets][1][iDatasetsVLike_[k]], N_[i][njets][2][iDatasetsVLike_[k]], N_[i][njets][3][iDatasetsVLike_[k]]);
 		}
 		cout<<"Total number : N (0/1/2/3 jets) = "<<GetPredNv(i,njets)<<" ("<<GetPredNv(i,njets,0)<<"/"<<GetPredNv(i,njets,1)<<"/"<<GetPredNv(i,njets,2)<<"/"<<GetPredNv(i,njets,3)<<")"<<endl;
 	}
