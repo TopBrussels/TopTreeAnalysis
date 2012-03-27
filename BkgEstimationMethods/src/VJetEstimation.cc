@@ -2273,12 +2273,12 @@ void VJetEstimation::PrintResults(){
   
 	cout<<"***********************************************************"<<endl;
 	cout<<"************        ALL INCLUSIF             **************"<<endl; 
-	cout<<std::ios::fixed<<setprecision(4);
+  cout<<std::fixed<<setprecision(4);
 	cout<<"Btag working point : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<BtagWorkingPoint_[i]<<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted eb	 : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEb(i)   <<" +/- "<<GetEstEbErr(i)	<<" / "<<GetPredEb(i)   <<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted eudsc : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEudsc(i)<<" +/- "<<GetEstEudscErr(i)	<<" / "<<GetPredEudsc(i)<<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted euds  : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEuds(i) <<" +/- "<<GetEstEudsErr(i)	<<" / "<<GetPredEuds(i) <<" || ";} cout<<endl;
-	cout<<std::ios::fixed<<setprecision(5);
+	cout<<std::fixed<<setprecision(5);
 	cout<<"Estimated Ntt-like : "<<GetEstNtt(0)<<" / Predicted value from MC : "<< GetPredNtt(0)<<endl;
 	cout<<"- 0 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i,-1,0)<<" +/- "<<GetEstNttErr(i,-1,0)<<" / "<< GetPredNtt(i,-1,0)<<" +/- "<<GetPredNttErr(i,-1,0) <<" || ";} cout<<endl;
 	cout<<"- 1 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i,-1,1)<<" +/- "<<GetEstNttErr(i,-1,1)<<" / "<< GetPredNtt(i,-1,1)<<" +/- "<<GetPredNttErr(i,-1,1) <<" || ";} cout<<endl;
@@ -2295,7 +2295,7 @@ void VJetEstimation::PrintResults(){
 	cout<<"- 2 b-jets         : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNv(i,-1,2)<<" +/- "<<GetEstNvErr(i,-1,2)<<" / "<<GetPredNv(i,-1,2)<<" +/- "<<GetPredNvErr(i,-1,2) <<" || ";} cout<<endl;
 	cout<<"- 3 b-jets         : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNv(i,-1,3)<<" +/- "<<GetEstNvErr(i,-1,3)<<" / "<<GetPredNv(i,-1,3)<<" +/- "<<GetPredNvErr(i,-1,3) <<" || ";} cout<<endl;
 	cout<<"***********************************************************"<<endl;
-  cout << resetiosflags( std::ios::fixed ) << setprecision(-1);
+  cout << resetiosflags( std::ios_base::fixed ) << setprecision(-1);
 }
 
 /**________________________________________________________________________________________________________________*/
@@ -2309,10 +2309,10 @@ void VJetEstimation::PrintResults_LatexFormat(ostream &ofile, Int_t Eff_prec, In
     ofile<<" \\multicolumn{"<<NbOfJetsBins_+1<<"}{l}{Estimation / Monte Carlo prediction : }\\\\"<<endl;
     ofile<<"			      &";for(UInt_t j=0;j<NbOfJetsBins_;j++){ofile<<"$"<<Njets_[j]<<"$ jets & ";}ofile<<"Inclusive \\\\"<<endl;
     ofile<<"\\hline"<<endl;
-    ofile<<" $\\epsilon_b$                &$"<<std::ios::fixed<<setprecision(Eff_prec);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEb(   i,j)<<" \\pm "<<GetEstEbErr(   i,j)<<" $/$ "<<GetPredEb(   i,j)<<" \\pm "<<GetPredEbErr(   i,j)<<"$&$";}ofile<<GetEstEb(    i)<<" \\pm "<<GetEstEbErr(   i)<<"$/$"<<GetPredEb(   i)<<" \\pm "<<GetPredEbErr(   i)<<"$ \\\\"<<endl;
-    ofile<<" $\\epsilon_{eudsc}$          &$"<<std::ios::fixed<<setprecision(Eff_prec);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEudsc(i,j)<<"\\pm "<<GetEstEudscErr(i,j)<<" $/$ "<<GetPredEudsc(i,j)<<" \\pm "<<GetPredEudscErr(i,j)<<"$&$";}ofile<<GetEstEudsc( i)<<" \\pm "<<GetEstEudscErr(i)<<"$/$"<<GetPredEudsc(i)<<" \\pm "<<GetPredEudscErr(i)<<"$ \\\\"<<endl;
-    ofile<<" $\\epsilon_{euds} $          &$"<<std::ios::fixed<<setprecision(Eff_prec);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEuds( i,j)<<"\\pm "<<GetEstEudsErr( i,j)<<" $/$ "<<GetPredEuds( i,j)<<" \\pm "<<GetPredEudsErr( i,j)<<"$&$";}ofile<<GetEstEuds(  i)<<" \\pm "<<GetEstEudsErr( i)<<"$/$"<<GetPredEuds( i)<<" \\pm "<<GetPredEudsErr( i)<<"$ \\\\"<<endl;
-    ofile<< std::ios::fixed << setprecision(N_prec);        
+    ofile<<" $\\epsilon_b$                &$"<<std::fixed<<setprecision(Eff_prec);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEb(   i,j)<<" \\pm "<<GetEstEbErr(   i,j)<<" $/$ "<<GetPredEb(   i,j)<<" \\pm "<<GetPredEbErr(   i,j)<<"$&$";}ofile<<GetEstEb(    i)<<" \\pm "<<GetEstEbErr(   i)<<"$/$"<<GetPredEb(   i)<<" \\pm "<<GetPredEbErr(   i)<<"$ \\\\"<<endl;
+    ofile<<" $\\epsilon_{eudsc}$          &$"<<std::fixed<<setprecision(Eff_prec);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEudsc(i,j)<<"\\pm "<<GetEstEudscErr(i,j)<<" $/$ "<<GetPredEudsc(i,j)<<" \\pm "<<GetPredEudscErr(i,j)<<"$&$";}ofile<<GetEstEudsc( i)<<" \\pm "<<GetEstEudscErr(i)<<"$/$"<<GetPredEudsc(i)<<" \\pm "<<GetPredEudscErr(i)<<"$ \\\\"<<endl;
+    ofile<<" $\\epsilon_{euds} $          &$"<<std::fixed<<setprecision(Eff_prec);for(UInt_t j=0;j<NbOfJetsBins_;j++) {ofile<<GetEstEuds( i,j)<<"\\pm "<<GetEstEudsErr( i,j)<<" $/$ "<<GetPredEuds( i,j)<<" \\pm "<<GetPredEudsErr( i,j)<<"$&$";}ofile<<GetEstEuds(  i)<<" \\pm "<<GetEstEudsErr( i)<<"$/$"<<GetPredEuds( i)<<" \\pm "<<GetPredEudsErr( i)<<"$ \\\\"<<endl;
+    ofile<< std::fixed << setprecision(N_prec);        
     ofile<<"\\hline"<<endl;
     ofile<<" \\multicolumn{"<<NbOfJetsBins_+1<<"}{l}{$t\\bar{t}+jets$ and single top : }\\\\"<<endl;
     ofile<<"\\hline"<<endl;
@@ -2339,7 +2339,7 @@ void VJetEstimation::PrintResults_LatexFormat(ostream &ofile, Int_t Eff_prec, In
     ofile<<"	\\label{tab:}"<<endl;
     ofile<<"\\end{table}"<<endl;
 	}
-  ofile << resetiosflags( std::ios::fixed ) << setprecision(-1);
+  ofile << resetiosflags( std::ios_base::fixed ) << setprecision(-1);
 }
 
 void VJetEstimation::PrintResults_LatexFormat(Int_t Eff_prec, Int_t N_prec) {
@@ -3329,13 +3329,13 @@ void VJetEstimation::PrintInputs(UInt_t njets){
 void VJetEstimation::PrintResults(UInt_t njets){
 	cout<<"***********************************************************"<<endl;
 	cout<<"For N = "<<Njets_[njets]<<" jets"<<endl;
-	cout<<std::ios::fixed<<setprecision(4);
+	cout<<std::fixed<<setprecision(4);
 	cout<<"e0bq/e1bq/e2bq = : "<<e0bq_[njets]<<"/"<<e1bq_[njets]<<"/"<<e2bq_[njets]<<"/"<<endl;
 	cout<<"Btag working point : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<BtagWorkingPoint_[i]<<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted eb	 : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEb(i,njets)	<<" +/- "<<GetEstEbErr(i,njets)		<<" // "<<GetPredEb(i,njets)   <<" +/- "<<GetPredEbErr(i,njets)<<" || ";}    cout<<endl;
 	cout<<"Estimated/Predicted eudsc : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEudsc(i,njets)<<" +/- "<<GetEstEudscErr(i,njets)	<<" // "<<GetPredEudsc(i,njets)<<" +/- "<<GetPredEudscErr(i,njets)<<" || ";} cout<<endl;
 	cout<<"Estimated/Predicted euds  : ";	for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstEuds(i,njets) <<" +/- "<<GetEstEudsErr(i,njets)	<<" // "<<GetPredEuds(i,njets) <<" +/- "<<GetPredEudsErr(i,njets)<<" || ";}  cout<<endl;
-	cout<<std::ios::fixed<<setprecision(5);
+	cout<<std::fixed<<setprecision(5);
 	cout<<"Estimated Ntt-like : ";cout<<GetEstNtt(0,njets)<<" +/- "<<GetEstNttErr(0,njets)<<" / Predicted value from MC : "<<GetPredNtt(0,njets)<<"	+/- "<<GetPredNttErr(0,njets)<<endl;
 	cout<<"- 0 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i, njets, 0)<<" +/- "<<GetEstNttErr(i,njets,0)<<" // "<< GetPredNtt(i, njets, 0)<<" +/- "<<GetPredNttErr(i,njets,0)<<" || ";} cout<<endl;
 	cout<<"- 1 b-jet          : ";for(UInt_t i=0;i<NbOfBtagWorkingPoint_;i++) {cout<<GetEstNtt(i, njets, 1)<<" +/- "<<GetEstNttErr(i,njets,1)<<" // "<< GetPredNtt(i, njets, 1)<<" +/- "<<GetPredNttErr(i,njets,1)<<" || ";} cout<<endl;

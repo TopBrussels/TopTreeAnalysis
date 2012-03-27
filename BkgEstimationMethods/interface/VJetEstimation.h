@@ -109,7 +109,7 @@ public:
   /**
    processMask : process disabled if false ; can be used to switch between data and mc (complementary masks)
    */
-  void SetProcesses(std::vector<Bool_t> processMask,std::vector<std::string> ttLikeDatasetNames, std::vector<std::string> vLikeDatasetNames, std::vector<std::string> vLikeDatasetNames);
+  void SetProcesses(std::vector<Bool_t> processMask,std::vector<std::string> ttLikeDatasetNames, std::vector<std::string> vLikeDatasetNames, std::vector<std::string> vbLikeDatasetNames);
 	/** Sum the weighted contribution of all the datasets. Method to be used after having looped over all events of all datasets.*/
 	void SumOverAllInputs();
 	/** Compute ebq efficiencies from MC. Method to be used after having looped over all events of all datasets.
