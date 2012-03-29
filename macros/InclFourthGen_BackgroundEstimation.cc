@@ -94,11 +94,11 @@ int main (int argc, char *argv[])
 { 
 
   //which systematic to run?
-  string systematic = "Nominal";
+  string option = "ChargeMisid";
   if (argc >= 2)
-		systematic = string(argv[1]);
-  cout << "Systematic to be used: " << systematic << endl;
-  if( ! (systematic == "Nominal"  || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus") )
+		option = string(argv[1]);
+  cout << "Option to be used: " << option << endl;
+  if( ! (option == "ChargeMisId" || option == "MuonFake" || option == "ElectronFake") )
   {
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: " << endl;
@@ -128,19 +128,17 @@ int main (int argc, char *argv[])
   //setMyStyle();
 
   string postfix = "_21Feb2012"; // to relabel the names of the output file  
-	postfix= postfix+"_"+systematic;
+	postfix= postfix+"_"+option;
 
   /////////////////////
   // Configuration
   /////////////////////
+	bool verbosity = true;
 	string channelpostfix = "";
   bool semiElectron = false; // use semiElectron channel?
-  bool semiMuon = true; // use semiMuon channel?
-	if (argc >= 3)
-	{	
-	  semiMuon = atoi(argv[2]);
-		semiElectron = !semiMuon;
-	}
+  bool semiMuon = false; // use semiMuon channel?
+  if(option=="MuonFake") semiMuon = true;
+	else semiElectron = true;
 	
   if(semiElectron && semiMuon)
   {
@@ -165,10 +163,8 @@ int main (int argc, char *argv[])
   
   //xml file
   string xmlFileName = "";
-  //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
-  //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
-  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_BackgroundEstimation.xml";
+  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11_BackgroundEstimation.xml";
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
   
@@ -222,6 +218,9 @@ int main (int argc, char *argv[])
   histo1D["LeptonPt_tight"] = new TH1F("leptonpt tight","leptonpt;pt leptons;#events",250,0,500);
 	histo1D["LeptonReliso_loose"] = new TH1F("Lepton reliso loose", "Lepton reliso; reliso; # events", 50, 0, 1);
 	histo1D["LeptonReliso_tight"] = new TH1F("Lepton reliso tight", "Lepton reliso; reliso; # events", 50, 0, 1);
+
+  MSPlot["MS_Zmass"] = new MultiSamplePlot(datasets,"Z mass", 150, 0, 150, "Z mass (GeV)");
+
 
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -371,162 +370,136 @@ int main (int argc, char *argv[])
 				{
 					if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
 					{
+						//Run2011A
 						if (event->runId() >= 160431 && event->runId() <= 163261)//May10ReReco
-							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);
+							itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v1"), currentRun, iFile);	
   					else if (event->runId() >= 163270 && event->runId() <= 163869)
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile);
+    				  itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v2"), currentRun, iFile);
   					else if (event->runId() >= 165088 && event->runId() <= 165633)//PromptReco_v4; splitted over 2 toptrees: 565 and 641
-    					itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile);
+    					itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v3"), currentRun, iFile);
   					else if (event->runId() >= 165970 && event->runId() <= 167043 && event->runId() != 166346)
-    					itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile);
+    					itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v3"), currentRun, iFile);
   					else if (event->runId() == 166346)
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v10"), currentRun, iFile);
+    				  continue;
   					else if (event->runId() >= 167078 && event->runId() <= 167913)
-    				  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v11"), currentRun, iFile);
-						else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco: equivalent to the run range of PromptReco_v5 normally, but Aug05 replaces this. Warning: somewhere we last about 5/pb in this data?
-				  		itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
+    				  itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v5"), currentRun, iFile);
+						else if (event->runId() >= 170249 && event->runId() <= 172619) //Aug05ReReco: 
+				  		itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v7"), currentRun, iFile);
 						else if (event->runId() >= 172620 && event->runId() <= 173198) //first part of PromptReco_v6, same as previous trigger
-            	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
+            	itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v7"), currentRun, iFile);
 						else if (event->runId() >= 173236 && event->runId() <= 173692) //second part of PromptReco_v6
-				  		itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);
-				
-        			// RUN2011B (promptv1)
-   					else if( event->runId() >= 175860 && event->runId() <= 177452 )// TopTree ID 722
-   				  	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-   					else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
-   				  	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-   					else if( event->runId() >=  178420 && event->runId() <=  178479 )
-   				  	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);								
-						else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
-							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);
-						else if( event->runId() >=  179959 && event->runId() <=  180252 )
-							itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); 
-									   
-  					if(itrigger == 9999)
+				  		itrigger = treeLoader.iTrigger (string ("HLT_Mu8_v8"), currentRun, iFile);
+						
+						//no Run2011B	   
+  					
+						if(itrigger == 9999)
 						{
-    				  cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
+    				  cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << currentRun << endl;
     				  exit(1);
   					}
-	   			}
-	   			else 
-	   			{  
-   					if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
-						  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);//Summer11 MC! also the TTJets systematic samples...!
-						else
-						  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);//Fall11 MC!
-						
-    
-  					if(itrigger == 9999)
-						{
-    			  	cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
-    			  	exit(1);
-						}
-					}
+	   			}			
 				} //end if semiMuon
 	 			else if(semiElectron)
 				{
-	  			if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-	   			{      		
-						// /SingleElectron/Run2011A-May10ReReco-v1/AOD 
-						if (event->runId() >= 160404 && event->runId() < 161217)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1"), currentRun, iFile);
-						else if (event->runId() >= 161217 && event->runId() < 163270)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);
-     				else if (event->runId() >= 163270 && event->runId() <= 163869)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3"), currentRun, iFile);				 
-						// /ElectronHad/Run2011A-PromptReco-v4/AOD
-						else if (event->runId() >= 165088 && event->runId() < 165970)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_BTagIP_v4"), currentRun, iFile);
-						else if (event->runId() >= 165970 && event->runId() < 167038)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v1"), currentRun, iFile);
-						else if (event->runId() >= 167038 && event->runId() <= 167913)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v2"), currentRun, iFile);			  
-						// /ElectronHad/Run2011A-05Aug2011-v1/AOD
-						else if (event->runId() >= 170249 && event->runId() <= 172619)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v4"), currentRun, iFile);  
-						// /ElectronHad/Run2011A-PromptReco-v6/AOD 
-						else if (event->runId() >= 172620 && event->runId() < 173212)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v4"), currentRun, iFile);  
-						else if (event->runId() >= 173212 && event->runId() <= 173692)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   				   	
-						// RUN2011B (promptv1)
-						else if (event->runId() >= 175832 && event->runId() < 178411)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);  				   					
-						else if (event->runId() >= 178411 && event->runId() < 179942)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v8"), currentRun, iFile);  				   					
-						else if (event->runId() >= 179942 && event->runId() <= 180296)
-    					itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v9"), currentRun, iFile);  				   											   
-  					if(itrigger == 9999)
-						{
-    					cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
-    					exit(1);
-  					}// semi-electron
- 	   			}
-	   			else 
-	   			{
-					  //Problem: a trigger reweighting procedure for MC should be done when using the summer11 electron trigger...
-					  if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
-   						itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
-						else
-						  itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);//Fall11 MC!
+	  			if(option == "ElectronFake"){
+						if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+	   				{      		
+							// /SingleElectron/Run2011A-May10ReReco-v1/AOD 	
+							if (event->runId() >= 160404 && event->runId() < 161217)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v1"), currentRun, iFile);
+							else if (event->runId() >= 161217 && event->runId() < 163270)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v2"), currentRun, iFile);
+     					else if (event->runId() >= 163270 && event->runId() <= 163869)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v3"), currentRun, iFile);				 
+							// /ElectronHad/Run2011A-PromptReco-v4/AOD
+							else if (event->runId() >= 165088 && event->runId() < 165970)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v4"), currentRun, iFile);
+							else if (event->runId() >= 165970 && event->runId() < 167038)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v5"), currentRun, iFile);
+							else if (event->runId() >= 167038 && event->runId() <= 167913)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v6"), currentRun, iFile);			  
+							// /ElectronHad/Run2011A-05Aug2011-v1/AOD
+							else if (event->runId() >= 170249 && event->runId() <= 172619)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v7"), currentRun, iFile);  
+							// /ElectronHad/Run2011A-PromptReco-v6/AOD 
+							else if (event->runId() >= 172620 && event->runId() <= 173198)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v7"), currentRun, iFile);  
+							else if (event->runId() >= 173199 && event->runId() <= 178380)
+    						itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v8"), currentRun, iFile);  				   				   	
+							else if(currentRun >= 178381 && currentRun <= 179889)
+              	itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v11"), currentRun, iFile);
+            	else if(currentRun >= 179959 && currentRun <= 999999)
+              	itrigger = treeLoader.iTrigger (string ("HLT_Ele8_CaloIdL_CaloIsoVL_Jet40_v12"), currentRun, iFile);
+							
+							
+  						if(itrigger == 9999)
+							{
+    						cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
+    						exit(1);
+  						}// semi-electron
+ 	   				}
+	   				else 
+	   				{
+					  	//Problem: a trigger reweighting procedure for MC should be done when using the summer11 electron trigger...
+					  	if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
+   							itrigger = treeLoader.iTrigger (string (""), currentRun, iFile);//Summer11 MC has other triggers!	
+							else
+						  	itrigger = treeLoader.iTrigger (string (""), currentRun, iFile);//Fall11 MC!
 						
-						if(itrigger == 9999)
-						{
-							cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;	
-							exit(1);
+							if(itrigger == 9999)
+							{
+								cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;	
+								exit(1);
+							}
 						}
-					}	 
+					}
+					else if(option == "ChargeMisId")
+					{
+						if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+	   				{      		
+						// DoubleElectron triggers for chargeMisId
+ 							if(currentRun >= 150000 && currentRun <= 161176){
+            	  itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1"), currentRun, iFile);
+            	}else if(currentRun >= 161179 && currentRun <= 163261){
+            	  itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2"), currentRun, iFile);
+            	}else if(currentRun >= 163262 && currentRun <= 164237){
+            	  itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3"), currentRun, iFile);
+            	}else if(currentRun >= 165085 && currentRun <= 165888){
+            	  itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4"), currentRun, iFile);
+            	}else if(currentRun >= 165900 && currentRun <= 167037){
+            	  itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5"), currentRun, iFile);
+            	}else if(currentRun >= 167038 && currentRun <= 170053){
+            	  itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6"), currentRun, iFile);
+            	}else if(currentRun >= 170054 && currentRun <= 170759){
+             	 itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6"), currentRun, iFile);
+            	}else if(currentRun >= 170760 && currentRun <= 173198){
+								itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"), currentRun, iFile);
+            	}else if(currentRun >= 173199 && currentRun <= 178380){
+            		itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8"), currentRun, iFile);
+            	}else if(currentRun >= 178381 && currentRun <= 179958){
+              	itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9"), currentRun, iFile);
+            	}else if(currentRun >= 179959 && currentRun <= 999999){
+              	itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v10"), currentRun, iFile);
+							}
+								
+							if(itrigger == 9999)
+							{
+    						cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << currentRun << endl;
+    						exit(1);
+  						}// semi-electron
+						} //no trigger on MC
+					}
 				} //end if semiElectron	
 			} //end previousRun != currentRun
-
-
-//		cout << "bla 1" << endl;
-
-			// JES CORRECTION   
-      // Apply Jet Corrections on-the-fly: not if already in toptrees! (our first Fall11 round)
-			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
-//			if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-//				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
-//			else
-//				jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-		  //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
-
-      //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
-      //----------------------------------------------------------
-      // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
-      //---------------------------------------------------------
-      
-			//not if already in toptrees! (our first Fall11 round)
-			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
-//      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-//        jetTools->correctMETTypeOne(init_jets,mets[0],true);
-//      else
-//        jetTools->correctMETTypeOne(init_jets,mets[0],false);
-      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-     	 
 		  
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
       {	
 	
       	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JER correction:");
-				if(systematic == "JERMinus")
-					jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
-				else if(systematic == "JERPlus")
-					jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
-				else
-					jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
+				jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 				//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
 		
-
-				// JES systematic! 
-				if (systematic == "JESMinus")
-					jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-				else if (systematic == "JESPlus")
-					jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
       }
-
-//		cout << "bla 2" << endl;
-
 
 			double lumiWeight3D = 1.0;
 			if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"))
@@ -539,16 +512,20 @@ int main (int argc, char *argv[])
       	//histo1D["lumiWeights"]->Fill(scaleFactor);	
 			}
 						
-//		cout << "bla 3" << endl;
-								
       /////////////////////////////
       // Selection
       /////////////////////////////
+      bool eventSelected = false;
 
-     //Declare selection instance    
-      Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-      Selection nonstandard_selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected... 
-      
+      vector<TRootMCParticle*> mcParticles;
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before treeLoader.LoadMCEvent:");      
+      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || dataSetName.find("NP_Tprime")==0 || dataSetName.find("NP_overlay_Tprime")==0)
+      {
+        treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
+        sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
+      }
+
+			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After treeLoader.LoadMCEvent:");
       if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
       {
         // Apply the scraping veto. Note: should be checked if still necessary, maybe already done in toptree production
@@ -562,342 +539,268 @@ int main (int argc, char *argv[])
       }	
 
       bool trigged, isGoodPV;
-      trigged = treeLoader.EventTrigged (itrigger);			
-      isGoodPV = selection.isPVSelected(vertex, 4, 24., 2); //in the past this was put in the config, but this is not very useful, since the PV cuts are quite standard
-			
-//		cout << "bla 4" << endl;
-      bool eventSelected = false;
-      
-      vector<TRootJet*> selectedJets;//selectedJetsFromW,selectedJetsFromW_DropUsedJets,selectedJetsFromW_DropUsedJets_tmp;
-      vector<TRootJet*> selectedForwardJets, selectedJetsLargeEtaRange;
-      vector<TRootMuon*> selectedMuons;
-      vector<TRootElectron*> selectedElectrons;
-      vector<TRootElectron*> selectedLooseElectronsNoVBTFid;
-      vector<TRootElectron*> selectedLooseElectronsVBTFid;
-      vector<TRootMuon*> selectedLooseMuons;
-      vector<TRootMCParticle*> mcParticles;
-      vector<TRootMuon*> selectedFakeMuons;
-      vector<TRootElectron*> selectedFakeElectrons;
-//		cout << "bla 5" << endl;
+      trigged = false;
+			if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+				trigged = treeLoader.EventTrigged (itrigger);		
+			else trigged = true; // for MC (no jet trigger available)
 
+     //Declare selection instances    
+      Selection selectionFakeMuon(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
+      Selection selectionFakeElectron(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
+      Selection selectionChargeMisId(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
 
-      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before treeLoader.LoadMCEvent:");      
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || dataSetName.find("NP_Tprime")==0 || dataSetName.find("NP_overlay_Tprime")==0)
-      {
-        treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
-        sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
-      }
-			//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After treeLoader.LoadMCEvent:");
-//		cout << "bla 6" << endl;
+			//need at least one loose muon with pT>10 (trigger = single muon with pt 8)
+      selectionFakeMuon.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
+      selectionFakeMuon.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
+      selectionFakeMuon.setLooseMuonCuts(10,2.5,9999.);
+      selectionFakeMuon.setLooseElectronCuts(15,2.5,9999.);	 				
 
-      
-      float METCut = 40;
-      selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
-      selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
-      selection.setLooseMuonCuts(10,2.5,0.2);
-      selection.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
-      selection.setLooseElectronCuts(15,2.5,0.2);	 				
-      
-//		cout << "bla 7" << endl;
-      if (init_jets.size() > 0)
-      {
-	    	selectedJets = selection.GetSelectedJets(true);				
-	    	selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
-	    	selectedElectrons = selection.GetSelectedElectrons(vertex[0],selectedJets);
-      }
-      selectedLooseElectronsNoVBTFid = selection.GetSelectedLooseElectrons(false); //no vbtfid is required
-      selectedLooseElectronsVBTFid = selection.GetSelectedLooseElectrons(true); //loose vbtfid is required 
-      selectedLooseMuons = selection.GetSelectedLooseMuons(); //veto muons	
-//		cout << "bla 8" << endl;
-      
-      selection.setMuonCuts(10,2.5,0.2,0,99999.,1.0,0,1,0);
-      selectedFakeMuons = selection.GetSelectedMuons(); //muons that could fake tight muons
-      selection.setLooseElectronCuts(15,2.5,0.2);
-      selectedFakeElectrons = selection.GetSelectedLooseElectrons(false); //electrons that could fake tight electrons
+			//need at least one loosely isolated electron with pT>10 and a jet with pt>40 (trigger = loose caloiso single electron with pt 8 + jet with pt 40)
+      selectionFakeElectron.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
+      selectionFakeElectron.setLooseMuonCuts(10,2.5,0.2);
+      selectionFakeElectron.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
+      selectionFakeElectron.setLooseElectronCuts(15,2.5,9999.);	 				
 
-			vector<TRootMuon*> selectedMuons_semiMuon, selectedFakeMuons_semiMuon;
-			vector<TRootElectron*> selectedElectrons_semiElectron, selectedFakeElectrons_semiElectron;
-			
-//		cout << "test1 " << endl;
-			if(semiMuon){
-				for(unsigned int j=0;j<selectedMuons.size();j++)
-					if(j>0) selectedMuons_semiMuon.push_back(selectedMuons[j]);
- 				for(unsigned int i=0;i<selectedFakeMuons.size();i++)
-				{
-					if(selectedMuons.size()>0)
-					{
-						TRootMuon* mu1 = (TRootMuon*) selectedMuons[0];
-						TRootMuon* mu2 = (TRootMuon*) selectedFakeMuons[i];
-						if( fabs(mu2->Pt() - mu1->Pt()) > 0.001 && fabs(mu2->Eta() - mu1->Eta()) > 0.001){
-							selectedFakeMuons_semiMuon.push_back(selectedFakeMuons[i]);
-						}
-					}else
-						selectedFakeMuons_semiMuon.push_back(selectedFakeMuons[i]);
-				}
-			}
-			
-//		cout << "test2 " << endl;
-			if(semiElectron){
-				for(unsigned int j=0;j<selectedElectrons.size();j++)
-					if(j>0) selectedElectrons_semiElectron.push_back(selectedElectrons[j]);			
- 				for(unsigned int i=0;i<selectedFakeElectrons.size();i++)
-				{
-					if(selectedElectrons.size()>0)
-					{
-						TRootElectron* el1 = (TRootElectron*) selectedElectrons[0];
-						TRootElectron* el2 = (TRootElectron*) selectedFakeElectrons[i];
-						if( fabs(el2->Pt() - el1->Pt()) > 0.001 && fabs(el2->Eta() - el1->Eta()) > 0.001){
-							selectedFakeElectrons_semiElectron.push_back(selectedFakeElectrons[i]);
-						}
-					}else
-						selectedFakeElectrons_semiElectron.push_back(selectedFakeElectrons[i]);
-					
-				}
-			}
-			
-//		cout << "test3 " << endl;
-			//// EVENTS TRIGGERED BY MUON TRIGGER			
+			//need at least 2 tight isolated electrons with pT>20 (trigger = 2 isolated electrons with pt 17 and pt 8)
+      selectionChargeMisId.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
+      selectionChargeMisId.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
+      selectionChargeMisId.setLooseElectronCuts(15,2.5,0.2);	 				
+      			      
+ 
       if(trigged && semiMuon)
       { 
+      	if(verbosity) cout <<  " event is triggered, will do fake muon probability estimation"  << endl;
+      	vector<TRootJet*> selectedJets_FM;
+      	vector<TRootMuon*> selectedMuons_FM;
+      	vector<TRootMuon*> selectedFakeMuons_FM;
+      	vector<TRootElectron*> selectedFakeElectrons_FM;
+      	
+				if (init_jets.size() > 0)
+      	{
+	    		selectedJets_FM = selectionFakeMuon.GetSelectedJets(true);				
+	    		selectedMuons_FM = selectionFakeMuon.GetSelectedMuons(vertex[0],selectedJets_FM);
+      	}
+      	selectedFakeMuons_FM = selectionFakeMuon.GetSelectedLooseMuons();
+       	selectedFakeElectrons_FM = selectionFakeMuon.GetSelectedLooseElectrons(false);
+
+	      isGoodPV = selectionFakeMuon.isPVSelected(vertex, 4, 24., 2); //in the past this was put in the config, but this is not very useful, since the PV cuts are quite standard
+					
         if(isGoodPV)
 				{
-					if(selectedMuons.size()>=1 && selectedMuons[0]->Pt()>40)
+					if(selectedFakeMuons_FM.size()>=1 && mets[0]->Et()<20)
 					{
-						sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
+						sort(selectedJets_FM.begin(),selectedJets_FM.end(),HighestPt()); // HighestPt() is included from the Selection class
 						
-						if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
+						float MT = sqrt(2*selectedFakeMuons_FM[0]->Pt()*mets[0]->Pt()*(1-cos(selectedFakeMuons_FM[0]->DeltaPhi(*mets[0]))));
+						if(selectedJets_FM.size()>=(unsigned int)anaEnv.NofJets && MT<25)
 						{  //at least 1 jet!
-						
+
+							if(dataSetName == "Data")
+							{
+  							bool foundZ = false;
+  							if(selectedFakeMuons_FM.size()>=1){
+									for(unsigned int j=0;j<selectedFakeMuons_FM.size();j++)
+  								{
+  									for(unsigned int i=0;i<selectedFakeMuons_FM.size();i++)
+								 		{
+   										TRootMuon* mu1 = (TRootMuon*) selectedFakeMuons_FM[j];
+   										TRootMuon* mu2 = (TRootMuon*) selectedFakeMuons_FM[i];
+    									if( fabs(mu2->Pt() - mu1->Pt()) > 0.001 && fabs(mu2->Eta() - mu1->Eta()) > 0.001 && mu1->charge() != mu2->charge())
+    									{	
+      									if( (*mu1 + *mu2).M() >= (91.-20) && (*mu1 + *mu2).M() <= (91.+20) )
+        									foundZ = true;
+											}
+								    }
+								  }
+								}
+ 								if(selectedFakeElectrons_FM.size()>=1)
+								{
+  								for(unsigned int j=0;j<selectedFakeElectrons_FM.size();j++)
+  								{
+  									for(unsigned int i=0;i<selectedFakeElectrons_FM.size();i++)
+								 		{
+   										TRootElectron* el1 = (TRootElectron*) selectedFakeElectrons_FM[j];
+   										TRootElectron* el2 = (TRootElectron*) selectedFakeElectrons_FM[i];
+    									if( fabs(el2->Pt() - el1->Pt()) > 0.001 && fabs(el2->Eta() - el1->Eta()) > 0.001 && el1->charge() != el2->charge())
+    									{	
+      									if( (*el1 + *el2).M() >= (91.-20) && (*el1 + *el2).M() <= (91.+20) )
+        									foundZ = true;
+											}
+								    }
+								  }
+								}
+								if(!foundZ) // reject events with a Z boson
+								{											
+									for(unsigned int j=0;j<selectedFakeMuons_FM.size();j++)
+									{
+										if(selectedFakeMuons_FM[j]->Pt()<35)	
+											NbOfLooseMuons++;
+									}
+									for(unsigned int j=0;j<selectedMuons_FM.size();j++)
+									{
+										if(selectedMuons_FM[j]->Pt()<35) 
+											NbOfTightMuons++;
+									}
+								}
+							}
 							////////////////////// FAKE LEPTON RATE ESTIMATION ///////////////////
-									//if(dataSetName == "Data")
-									//{
-  									bool foundZ = false;
-  									if(selectedFakeMuons.size()>=1){
-											for(unsigned int j=0;j<selectedFakeMuons.size();j++)
-  										{
-  											for(unsigned int i=0;i<selectedFakeMuons.size();i++)
-										 		{
-   												TRootMuon* mu1 = (TRootMuon*) selectedFakeMuons[j];
-   												TRootMuon* mu2 = (TRootMuon*) selectedFakeMuons[i];
-    											if( fabs(mu2->Pt() - mu1->Pt()) > 0.001 && fabs(mu2->Eta() - mu1->Eta()) > 0.001 && mu1->charge() != mu2->charge())
-    											{	
-      											if( (*mu1 + *mu2).M() >= (91.-20) && (*mu1 + *mu2).M() <= (91.+20) )
-        											foundZ = true;
-													}
-										    }
-										  }
-										}
- 										if(selectedFakeElectrons.size()>=1)
-										{
-  										for(unsigned int j=0;j<selectedFakeElectrons.size();j++)
-  										{
-  											for(unsigned int i=0;i<selectedFakeElectrons.size();i++)
-										 		{
-   												TRootElectron* el1 = (TRootElectron*) selectedFakeElectrons[j];
-   												TRootElectron* el2 = (TRootElectron*) selectedFakeElectrons[i];
-    											if( fabs(el2->Pt() - el1->Pt()) > 0.001 && fabs(el2->Eta() - el1->Eta()) > 0.001 && el1->charge() != el2->charge())
-    											{	
-      											if( (*el1 + *el2).M() >= (91.-20) && (*el1 + *el2).M() <= (91.+20) )
-        											foundZ = true;
-													}
-										    }
-										  }
-										}
-//		cout << "test6 " << endl;
-										
-										if(mets[0]->Et() < 20 && !foundZ) // reject events with MET>20 and with a Z boson
-										{											
-											float MT = 999999.;
-											if(selectedFakeMuons_semiMuon.size()>=1)
-											{
-												//cout << "selectedFakeMuons.size() "<< selectedFakeMuons.size() << endl;
-												//cout << "selectedMuons.size() "<< selectedMuons.size() << endl;
-												for(unsigned int j=0;j<selectedFakeMuons_semiMuon.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedFakeMuons_semiMuon[j]->Et(),2)-pow(mets[0]->Pt()+selectedFakeMuons_semiMuon[j]->Pt(),2));
-													//if(selectedFakeMuons[j]->Pt()<35 && 
-													//if(MT<25) 
-														NbOfLooseMuons++;
-												}
-												for(unsigned int j=0;j<selectedMuons_semiMuon.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedMuons_semiMuon[j]->Et(),2)-pow(mets[0]->Pt()+selectedMuons_semiMuon[j]->Pt(),2));
-													//if(selectedMuons[j]->Pt()<35 && 	
-													//if(MT<25) 
-														NbOfTightMuons++;
-												}
-											}
-//		cout << "test7 " << endl;
-											if(selectedFakeElectrons_semiElectron.size()>=1)
-											{
-												//cout << "selectedFakeElectrons_semiElectron.size() "<< selectedFakeElectrons_semiElectron.size() << endl;
-												//cout << "selectedElectrons_semiElectron.size() "<< selectedElectrons_semiElectron.size() << endl;
-												float MT = 999999.;
-												for(unsigned int j=0;j<selectedFakeElectrons_semiElectron.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedFakeElectrons[j]->Et(),2)-pow(mets[0]->Pt()+selectedFakeElectrons[j]->Pt(),2));
-													//if(selectedFakeElectrons[j]->Pt()<55 && 
-													//if(MT<25)
-														NbOfLooseElectrons++;      
-												}
-												float relIso = (selectedFakeElectrons_semiElectron[0]->chargedHadronIso()+selectedFakeElectrons_semiElectron[0]->neutralHadronIso()+selectedFakeElectrons_semiElectron[0]->photonIso())/selectedFakeElectrons_semiElectron[0]->Pt();
-												for(unsigned int j=0;j<selectedElectrons_semiElectron.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedElectrons_semiElectron[j]->Et(),2)-pow(mets[0]->Pt()+selectedElectrons_semiElectron[j]->Pt(),2));
-													//if(selectedElectrons_semiElectron[j]->Pt()<55 && 
-													//if(MT<25)
-														NbOfTightElectrons++;
-												}
-											}
-//		cout << "test8 " << endl;
-										}
-									//}
-									////////////////////// FAKE LEPTON RATE ESTIMATION ///////////////////
-						} //end 'at least one jet'  
-          } // end if selectedMuons.size()>=1
+						} 
+          } 
         } // end good PV
       }// end trigged & semiMuon
       
 			///// EVENTS TRIGGERED BY ELECTRON TRIGGER
 			else if(trigged && semiElectron)
       {
-//		cout << "test4 " << endl;
-    	 	
-        if( isGoodPV )
-        {
-          if( selectedElectrons.size() >= 1 && selectedElectrons[0]->Pt()>40)
-          {
-              if( selection.passConversionRejection(selectedElectrons[0]) )
+      	
+				if(option=="ChargeMisId")////////////////////// CHARGE MIS-ID PROBABILITY ESTIMATION //////////////////
+				{
+      		if(verbosity) cout <<  " event is triggered, will do charge misid probability estimation for electrons"  << endl;
+
+      		vector<TRootJet*> selectedJets_CM;
+      		vector<TRootElectron*> selectedElectrons_CM;
+      		vector<TRootElectron*> selectedLooseElectronsVBTFid_CM;
+					
+					if (init_jets.size() > 0)
+      		{
+	    			selectedJets_CM = selectionChargeMisId.GetSelectedJets(true);				
+	    			selectedElectrons_CM = selectionChargeMisId.GetSelectedElectrons(vertex[0],selectedJets_CM);
+      		}
+      		selectedLooseElectronsVBTFid_CM = selectionChargeMisId.GetSelectedLooseElectrons(false); //loose vbtfid is required 
+
+      		isGoodPV = selectionChargeMisId.isPVSelected(vertex, 4, 24., 2); //in the past this was put in the config, but this is not very useful, since the PV cuts are quite standard
+        	if( isGoodPV )
+        	{
+          	if( selectedElectrons_CM.size() == 2 && selectedLooseElectronsVBTFid_CM.size() == selectedElectrons_CM.size() && mets[0]->Et()<20)
+          	{
+              if( selectionChargeMisId.passConversionRejection(selectedElectrons_CM[0])  && selectionChargeMisId.passConversionRejection(selectedElectrons_CM[1]))
               {
-								sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class
+								sort(selectedJets_CM.begin(),selectedJets_CM.end(),HighestPt()); // HighestPt() is included from the Selection class
 
-								if( selectedJets.size()>=(unsigned int)anaEnv.NofJets)
+								float MT = sqrt(2*selectedElectrons_CM[0]->Pt()*mets[0]->Pt()*(1-cos(selectedElectrons_CM[0]->DeltaPhi(*mets[0]))));
+								float MT2 = sqrt(2*selectedElectrons_CM[1]->Pt()*mets[0]->Pt()*(1-cos(selectedElectrons_CM[1]->DeltaPhi(*mets[0]))));
+								if(MT<25 && MT2<25)
 								{
+									float Zmass = ((TLorentzVector) *selectedElectrons_CM[0]+ (TLorentzVector) *selectedElectrons_CM[1]).M();
+									MSPlot["MS_Zmass"]->Fill(Zmass,datasets[d],true,Luminosity*scaleFactor);
+									if(selectionChargeMisId.foundZCandidate(selectedElectrons_CM, selectedElectrons_CM, 10.))
+									{								
+										if(selectedElectrons_CM[0]->charge() == selectedElectrons_CM[1]->charge())
+										{ 
+											if(fabs(selectedElectrons_CM[0]->superClusterEta())<1.4442 && fabs(selectedElectrons_CM[1]->superClusterEta())<1.4442){
+												selecTableChargeMisId_2El.Fill(d,0,scaleFactor);
+												if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_SS_data+=scaleFactor;
+												else Nb_Zpeak_EB_SS_MC+=scaleFactor;
+											}else if(fabs(selectedElectrons_CM[0]->superClusterEta())>1.5660 && fabs(selectedElectrons_CM[1]->superClusterEta())>1.5660){
+												selecTableChargeMisId_2El.Fill(d,1,scaleFactor);
+												if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_SS_data+=scaleFactor;
+												else Nb_Zpeak_EE_SS_MC+=scaleFactor;
+											}
+										}else{
+											if(fabs(selectedElectrons_CM[0]->superClusterEta())<1.4442 && fabs(selectedElectrons_CM[1]->superClusterEta())<1.4442){
+												selecTableChargeMisId_2El.Fill(d,2,scaleFactor);
+												if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_OS_data+=scaleFactor;
+												else Nb_Zpeak_EB_OS_MC+=scaleFactor;
+											}else if(fabs(selectedElectrons_CM[0]->superClusterEta())>1.5660 && fabs(selectedElectrons_CM[1]->superClusterEta())>1.5660){
+												selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
+												if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_OS_data+=scaleFactor;
+												else Nb_Zpeak_EE_OS_MC+=scaleFactor;
+											}															
+										}
+									}	
+								}
+							}
+						}
+					}
+				}
+				else if (option=="ElectronFake")////////////////////// FAKE LEPTON PROBABILITY ESTIMATION ///////////////////
+				{
+      			      
+      		if(verbosity) cout <<  " event is triggered, will do fake electron probability estimation"  << endl;
 
-									////////////////////// CHARGE MIS-ID RATE (NO B-TAG CUT & MET CUT!!!) ///////////////////////
- 									if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
-									{
-										if(selection.passConversionRejection(selectedElectrons[1]))
-										{
-											if(selection.foundZCandidate(selectedElectrons, selectedElectrons, 10.))
-											{								
-												if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
-												{ 
-													if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
-														selecTableChargeMisId_2El.Fill(d,0,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_SS_data+=scaleFactor;
-														else Nb_Zpeak_EB_SS_MC+=scaleFactor;
-													}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
-														selecTableChargeMisId_2El.Fill(d,1,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_SS_data+=scaleFactor;
-														else Nb_Zpeak_EE_SS_MC+=scaleFactor;
-													}
-												}else{
-													if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
-														selecTableChargeMisId_2El.Fill(d,2,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_OS_data+=scaleFactor;
-														else Nb_Zpeak_EB_OS_MC+=scaleFactor;
-													}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660){
-														selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
-														if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_OS_data+=scaleFactor;
-														else Nb_Zpeak_EE_OS_MC+=scaleFactor;
-													}															
+      		vector<TRootJet*> selectedJets_EF;
+    		  vector<TRootElectron*> selectedElectrons_EF;
+     			vector<TRootMuon*> selectedFakeMuons_EF;
+		      vector<TRootElectron*> selectedFakeElectrons_EF;
+
+					if (init_jets.size() > 0)
+      		{
+	    			selectedJets_EF = selectionFakeElectron.GetSelectedJets(true);				
+	    			selectedElectrons_EF = selectionFakeElectron.GetSelectedElectrons(vertex[0],selectedJets_EF);
+      		}
+      		selectedFakeMuons_EF = selectionFakeElectron.GetSelectedLooseMuons();
+      		selectedFakeElectrons_EF = selectionFakeElectron.GetSelectedLooseElectrons(false); 
+    	 	
+      		isGoodPV = selectionFakeElectron.isPVSelected(vertex, 4, 24., 2); //in the past this was put in the config, but this is not very useful, since the PV cuts are quite standard
+        	
+					if( isGoodPV )
+        	{
+          	if( selectedFakeElectrons_EF.size() >= 1 && mets[0]->Et()<20)
+          	{
+              if( selectionFakeElectron.passConversionRejection(selectedFakeElectrons_EF[0]) )
+              {
+								sort(selectedJets_EF.begin(),selectedJets_EF.end(),HighestPt()); // HighestPt() is included from the Selection class
+
+								float MT = sqrt(2*selectedFakeElectrons_EF[0]->Pt()*mets[0]->Pt()*(1-cos(selectedFakeElectrons_EF[0]->DeltaPhi(*mets[0]))));
+								if( selectedJets_EF.size()>=(unsigned int)anaEnv.NofJets && selectedJets_EF[0]->Pt()>50 && MT<25)
+								{
+  								bool foundZ = false;
+  								if(selectedFakeMuons_EF.size()>=1){
+										for(unsigned int j=0;j<selectedFakeMuons_EF.size();j++)
+  									{
+  										for(unsigned int i=0;i<selectedFakeMuons_EF.size();i++)
+									 		{
+   											TRootMuon* mu1 = (TRootMuon*) selectedFakeMuons_EF[j];
+   											TRootMuon* mu2 = (TRootMuon*) selectedFakeMuons_EF[i];
+    										if( fabs(mu2->Pt() - mu1->Pt()) > 0.001 && fabs(mu2->Eta() - mu1->Eta()) > 0.001 && mu1->charge() != mu2->charge())
+    										{	
+      										if( (*mu1 + *mu2).M() >= (91.-20) && (*mu1 + *mu2).M() <= (91.+20) )
+        										foundZ = true;
 												}
-											}	
+									    }
+									  }
+									}
+ 									if(selectedFakeElectrons_EF.size()>=1)
+									{
+  									for(unsigned int j=0;j<selectedFakeElectrons_EF.size();j++)
+  									{
+  										for(unsigned int i=0;i<selectedFakeElectrons_EF.size();i++)
+									 		{
+   											TRootElectron* el1 = (TRootElectron*) selectedFakeElectrons_EF[j];
+   											TRootElectron* el2 = (TRootElectron*) selectedFakeElectrons_EF[i];
+    										if( fabs(el2->Pt() - el1->Pt()) > 0.001 && fabs(el2->Eta() - el1->Eta()) > 0.001 && el1->charge() != el2->charge())
+    										{	
+      										if( (*el1 + *el2).M() >= (91.-20) && (*el1 + *el2).M() <= (91.+20) )
+        										foundZ = true;
+												}
+									    }
+									  }
+									}
+									
+									if(!foundZ) // reject events with a Z boson
+									{											
+										for(unsigned int j=0;j<selectedFakeElectrons_EF.size();j++){
+											if(selectedFakeElectrons_EF[j]->Pt()<35)	
+												NbOfLooseElectrons++;      
+										}
+										histo1D["LeptonPt_loose"]->Fill(selectedFakeElectrons_EF[0]->Pt(),scaleFactor);	
+										float relIso = (selectedFakeElectrons_EF[0]->chargedHadronIso()+selectedFakeElectrons_EF[0]->neutralHadronIso()+selectedFakeElectrons_EF[0]->photonIso())/selectedFakeElectrons_EF[0]->Pt();
+										histo1D["LeptonReliso_loose"]->Fill(relIso,scaleFactor);	
+										for(unsigned int j=0;j<selectedElectrons_EF.size();j++){
+											if(selectedElectrons_EF[j]->Pt()<35)	
+												NbOfTightElectrons++;
+										}
+										if(selectedElectrons_EF.size()>=1){
+											histo1D["LeptonPt_tight"]->Fill(selectedElectrons_EF[0]->Pt(),scaleFactor);	
+											relIso = (selectedElectrons_EF[0]->chargedHadronIso()+selectedElectrons_EF[0]->neutralHadronIso()+selectedElectrons_EF[0]->photonIso())/selectedElectrons_EF[0]->Pt();
+											histo1D["LeptonReliso_tight"]->Fill(relIso,scaleFactor);	
 										}
 									}
-									////////////////////// CHARGE MIS-ID RATE ----- END //////////////////
-								
-//		cout << "test5 " << endl;
-								
-									////////////////////// FAKE LEPTON RATE ESTIMATION ///////////////////
-									//if(dataSetName == "Data")
-									//{
-  									bool foundZ = false;
-  									if(selectedFakeMuons.size()>=1){
-											for(unsigned int j=0;j<selectedFakeMuons.size();j++)
-  										{
-  											for(unsigned int i=0;i<selectedFakeMuons.size();i++)
-										 		{
-   												TRootMuon* mu1 = (TRootMuon*) selectedFakeMuons[j];
-   												TRootMuon* mu2 = (TRootMuon*) selectedFakeMuons[i];
-    											if( fabs(mu2->Pt() - mu1->Pt()) > 0.001 && fabs(mu2->Eta() - mu1->Eta()) > 0.001 && mu1->charge() != mu2->charge())
-    											{	
-      											if( (*mu1 + *mu2).M() >= (91.-20) && (*mu1 + *mu2).M() <= (91.+20) )
-        											foundZ = true;
-													}
-										    }
-										  }
-										}
- 										if(selectedFakeElectrons.size()>=1)
-										{
-  										for(unsigned int j=0;j<selectedFakeElectrons.size();j++)
-  										{
-  											for(unsigned int i=0;i<selectedFakeElectrons.size();i++)
-										 		{
-   												TRootElectron* el1 = (TRootElectron*) selectedFakeElectrons[j];
-   												TRootElectron* el2 = (TRootElectron*) selectedFakeElectrons[i];
-    											if( fabs(el2->Pt() - el1->Pt()) > 0.001 && fabs(el2->Eta() - el1->Eta()) > 0.001 && el1->charge() != el2->charge())
-    											{	
-      											if( (*el1 + *el2).M() >= (91.-20) && (*el1 + *el2).M() <= (91.+20) )
-        											foundZ = true;
-													}
-										    }
-										  }
-										}
-//		cout << "test6 " << endl;
-										
-										if(mets[0]->Et() < 20 && !foundZ) // reject events with MET>20 and with a Z boson
-										{											
-											float MT = 999999.;
-											if(selectedFakeMuons.size()>=1)
-											{
-												cout << "selectedFakeMuons.size() "<< selectedFakeMuons.size() << endl;
-												cout << "selectedMuons.size() "<< selectedMuons.size() << endl;
-												for(unsigned int j=0;j<selectedFakeMuons.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedFakeMuons[j]->Et(),2)-pow(mets[0]->Pt()+selectedFakeMuons[j]->Pt(),2));
-													//if(selectedFakeMuons[j]->Pt()<35 && 
-													//if(MT<25) 
-														NbOfLooseMuons++;
-												}
-												for(unsigned int j=0;j<selectedMuons.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedMuons[j]->Et(),2)-pow(mets[0]->Pt()+selectedMuons[j]->Pt(),2));
-													//if(selectedMuons[j]->Pt()<35 && 	
-													//if(MT<25) 
-														NbOfTightMuons++;
-												}
-											}
-//		cout << "test7 " << endl;
-											if(selectedFakeElectrons_semiElectron.size()>=1)
-											{
-												cout << "selectedFakeElectrons_semiElectron.size() "<< selectedFakeElectrons_semiElectron.size() << endl;
-												cout << "selectedElectrons_semiElectron.size() "<< selectedElectrons_semiElectron.size() << endl;
-												float MT = 999999.;
-												for(unsigned int j=0;j<selectedFakeElectrons_semiElectron.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedFakeElectrons[j]->Et(),2)-pow(mets[0]->Pt()+selectedFakeElectrons[j]->Pt(),2));
-													//if(selectedFakeElectrons[j]->Pt()<55 && 
-													//if(MT<25)
-														NbOfLooseElectrons++;      
-												}
-												histo1D["LeptonPt_loose"]->Fill(selectedFakeElectrons_semiElectron[0]->Pt(),scaleFactor);	
-												float relIso = (selectedFakeElectrons_semiElectron[0]->chargedHadronIso()+selectedFakeElectrons_semiElectron[0]->neutralHadronIso()+selectedFakeElectrons_semiElectron[0]->photonIso())/selectedFakeElectrons_semiElectron[0]->Pt();
-												histo1D["LeptonReliso_loose"]->Fill(relIso,scaleFactor);	
-												for(unsigned int j=0;j<selectedElectrons_semiElectron.size();j++){
-													MT = sqrt(pow(mets[0]->Et()+selectedElectrons_semiElectron[j]->Et(),2)-pow(mets[0]->Pt()+selectedElectrons_semiElectron[j]->Pt(),2));
-													//if(selectedElectrons_semiElectron[j]->Pt()<55 && 
-													//if(MT<25)
-														NbOfTightElectrons++;
-												}
-												if(selectedElectrons_semiElectron.size()>=1){
-													histo1D["LeptonPt_tight"]->Fill(selectedElectrons_semiElectron[0]->Pt(),scaleFactor);	
-													relIso = (selectedElectrons_semiElectron[0]->chargedHadronIso()+selectedElectrons_semiElectron[0]->neutralHadronIso()+selectedElectrons_semiElectron[0]->photonIso())/selectedElectrons_semiElectron[0]->Pt();
-												histo1D["LeptonReliso_tight"]->Fill(relIso,scaleFactor);	
-												}
-											}
-//		cout << "test8 " << endl;
-										}
-									//}
-									////////////////////// FAKE LEPTON RATE ESTIMATION ///////////////////
 								} // end 'at least one jet'
 							} // end conversion rejection for leading electron
-          } // end if selectedElectrons.size()>=1
-        } // end good PV
+          	} // end if selectedElectrons.size()>=1
+        	} // end good PV
+				}
       } // end trigged & semiElectron
 						
     
@@ -914,28 +817,42 @@ int main (int argc, char *argv[])
     
   } //loop on datasets
 
-	if(semiElectron){
+	if(semiElectron && option=="ChargeMisId"){
 		float chargeMisId_Barrel_MC = (float)Nb_Zpeak_EB_SS_MC/(2*(float)Nb_Zpeak_EB_OS_MC);
-		float chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
 		float chargeMisId_Endcap_MC = (float)Nb_Zpeak_EE_SS_MC/(2*(float)Nb_Zpeak_EE_OS_MC);
+		float chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
 		float chargeMisId_Endcap_data = (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data);
-  
-		cout << "chargeMisId_Barrel_MC " << chargeMisId_Barrel_MC << endl;
-		cout << "chargeMisId_Barrel_data " << chargeMisId_Barrel_data << endl;
-		cout << "chargeMisId_Endcap_MC " << chargeMisId_Endcap_MC << endl;
-		cout << "chargeMisId_Endcap_data " << chargeMisId_Endcap_data << endl;
-	
-		float MuonFakeRate = (float)NbOfTightMuons/(float)(NbOfLooseMuons);
-		float ElectronFakeRate = (float)NbOfTightElectrons/(float)(NbOfLooseElectrons);
-				
-		cout << "Number of tight muons " << NbOfTightMuons << endl;
-		cout << "Number of loose muons " << NbOfLooseMuons << endl;
-		cout << "Fake rate for muons " << MuonFakeRate << endl;
-		cout << "Number of tight electrons " << NbOfTightElectrons << endl;
-		cout << "Number of loose electrons " << NbOfLooseElectrons << endl;
-		cout << "Fake rate for electrons " << ElectronFakeRate << endl;
+		float chargeMisId_Barrel_data_unc = sqrt(pow((sqrt((float)Nb_Zpeak_EB_SS_data)/(2*(float)Nb_Zpeak_EB_OS_data)),2)+pow(((float)Nb_Zpeak_EB_SS_data*sqrt((float)Nb_Zpeak_EB_OS_data)/pow((float)Nb_Zpeak_EB_OS_data,2)),2));	
+		float chargeMisId_Endcap_data_unc = sqrt(pow((sqrt((float)Nb_Zpeak_EE_SS_data)/(2*(float)Nb_Zpeak_EE_OS_data)),2)+pow(((float)Nb_Zpeak_EE_SS_data*sqrt((float)Nb_Zpeak_EE_OS_data)/pow((float)Nb_Zpeak_EE_OS_data,2)),2));	
+		
+		cout << endl;
+		cout << "charge mis-reconstruction probability in MC: " << endl;
+		cout << " # SS events barrel: " <<  Nb_Zpeak_EB_SS_MC << "  and endcap: " <<  Nb_Zpeak_EE_SS_MC << endl;
+		cout << " # OS events barrel: " <<  Nb_Zpeak_EB_OS_MC << "  and endcap: " <<  Nb_Zpeak_EE_OS_MC << endl;
+		cout << " chargeMisId_Barrel_MC " << chargeMisId_Barrel_MC << endl;
+		cout << " chargeMisId_Endcap_MC " << chargeMisId_Endcap_MC << endl;
+		cout << endl;
+		cout << "charge mis-reconstruction probability in DATA: " << endl;
+		cout << " # SS events barrel: " << Nb_Zpeak_EB_SS_data  << "  and endcap: " << Nb_Zpeak_EE_SS_data  << endl;
+		cout << " # OS events barrel: " << Nb_Zpeak_EB_OS_data  << "  and endcap: " << Nb_Zpeak_EE_OS_data  << endl;
+		cout << " chargeMisId_Barrel_data " << chargeMisId_Barrel_data << " +- " << chargeMisId_Barrel_data_unc << endl;
+		cout << " chargeMisId_Endcap_data " << chargeMisId_Endcap_data << " +- " << chargeMisId_Endcap_data_unc << endl;
 	}
+	
+	float MuonFakeRate = (float)NbOfTightMuons/(float)(NbOfLooseMuons);
+	float ElectronFakeRate = (float)NbOfTightElectrons/(float)(NbOfLooseElectrons);
 
+	cout << endl;
+	cout << "Number of tight muons " << NbOfTightMuons << endl;
+	cout << "Number of loose muons " << NbOfLooseMuons << endl;
+	cout << "Fake rate for muons " << MuonFakeRate << endl;
+	cout << endl;
+	cout << "Number of tight electrons " << NbOfTightElectrons << endl;
+	cout << "Number of loose electrons " << NbOfLooseElectrons << endl;
+	cout << "Fake rate for electrons " << ElectronFakeRate << endl;
+	cout << endl;
+
+	
   ///////////////////
   // Writing
   //////////////////
@@ -946,6 +863,19 @@ int main (int argc, char *argv[])
 	if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),false, true, false, false, false, false, false);
  
     fout->cd();
+    //Write histograms: MSPlots
+    //if(savePNG) mkdir((pathPNG+"MSPlot/").c_str(),0777);
+    //cout << "mkdir " << (pathPNG+"MSPlot/").c_str()<< endl;
+		cout << "Running over all MS plots" << endl;
+    for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
+    {
+        MultiSamplePlot *temp = it->second;
+        string name = it->first;
+        temp->Draw(false, name, true, true, true, true, true,5,false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
+        temp->Write(fout, name, false, "MSPlot/");//bool savePNG
+    }
+    cout << "MultiSamplePlots written" << endl;
+
     //Write histograms: 1D 
     TDirectory* th1dir = fout->mkdir("1D_histograms");
     fout->cd();
@@ -962,6 +892,7 @@ int main (int argc, char *argv[])
 			tempCanvas->SaveAs( (it->first+".pdf").c_str() ); //well, is actually not png but pdf...
     }    
     cout << "1D plots written" << endl;
+
     fout->Close();
   delete fout;
 
