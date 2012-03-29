@@ -67,21 +67,8 @@ using namespace TopTree;
 using namespace RooFit;
 //using namespace reweight;
 
-//defined in InclFourthGenSearchTools.h
-//std::string IntToStr( int n ){	std::ostringstream result;	result << n;	return result.str();}
-
-struct sort_pair_decreasing
-{
-    bool operator()(const std::pair<int,float> &left, const std::pair<int,float> &right)
-    {
-        return left.second > right.second;
-    }
-};
-
 //To cout the Px, Py, Pz, E and Pt of objects
 void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElectron* > init_electrons, vector < TRootJet* > init_jets, vector < TRootMET* > mets, string Comment);
-
-float jetprob(float jetpt, float btagvalue);
 
 /// Normal Plots (TH1F* and TH2F*)
 map<string,TH1F*> histo1D;
@@ -101,48 +88,55 @@ int main (int argc, char *argv[])
   if( ! (systematic == "Nominal"  || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus") )
   {
     cout << "Unknown systematic!!!" << endl;
-    cout << "Possible options are: " << endl;
+    cout << "Possible options are: Nominal JESPlus JESMinus JERPlus JERMinus" << endl;
+    exit(-1);
+  }
+	
+	//which channel to run?
+	string channelpostfix = "";
+  bool semiElectron = false; // use semiElectron channel?
+  bool semiMuon = true; // use semiMuon channel?
+	if (argc >= 3)
+	{	
+	  semiMuon = atoi(argv[2]);
+		semiElectron = !semiMuon;
+	}
+	
+	if(semiElectron && semiMuon)
+  {
+     cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
+     exit(1);
+  }
+  else
+  {
+    if(semiMuon){
+       cout << " --> Using the semiMuon channel..." << endl;
+       channelpostfix = "_semiMu";
+    }
+    else if(semiElectron){
+       cout << " --> Using the semiElectron channel..." << endl;
+       channelpostfix = "_semiEl";
+    }
+  }
+
+	//which additional option to run?
+  string option = "";
+  bool datadriven = false;
+	if (argc >= 4)
+	{
+		option = string(argv[3]);
+  	cout << "Option to be used: " << option << endl;
+  	datadriven = true;
+	}
+	if( ! (option == "ChargeMisId" || option == "FakeLepton") )
+  {
+    cout << "Unknown option!!!" << endl;
+    cout << "Possible options are: ChargeMisId , FakeLepton" << endl;
     exit(-1);
   }
 
-
+	//btagger to use and corresponding workingpoints
   string btagger = "TCHPM";
-//from BTV-11-001; WARNING: btag SFs are for jets of 20-240 GeV, averaged over eta; and mistag SFs are for jets of 50-80 GeV
-// b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10,    TCHEM: data/MC scalefactor = 0.94 +- 0.09,	TCHPM: data/MC scalefactor =  0.91 +- 0.09
-// mistag scalefactor => TCHEL: data/MC scalefactor = 1.11 +- 0.12,    TCHEM: data/MC scalefactor = 1.21 +- 0.17,	TCHPM: data/MC scalefactor =  1.27 +- 0.15
-  float scalefactorbtageff = 1, mistagfactor = 1;
-  if(btagger == "TCHEL") //track counting high eff loose working point
-  {
-		scalefactorbtageff = 0.95;
-		mistagfactor = 1.11;		
-  }
-  else if(btagger == "TCHEM") //track counting high eff medium working point
-  {
-		scalefactorbtageff = 0.94;
-		mistagfactor = 1.21;
-  }
-	else if(btagger == "TCHPM") //track counting high pur medium working point
-  {
-		scalefactorbtageff = 0.91;		
-		mistagfactor = 1.27;
-  }
-	else if(btagger == "TCHPT") //track counting high pur tight working point
-  {
-	  cout<<"WARNING: look up SFs for TCHPT"<<endl;
-  	 /* if(dobTagEffShift == 0)
-		scalefactorbtageff = 0.91;
-	  if(dobTagEffShift == 1)
-		scalefactorbtageff = 0.8194;
-	  if(dobTagEffShift == 2)
-		scalefactorbtageff = 1.0006;
-		
-	  if(domisTagEffShift == 0)
-		mistagfactor = 1.27;
-	  if(domisTagEffShift == 1)
-		mistagfactor = 1.1187;
-	  if(domisTagEffShift == 2)
-		mistagfactor = 1.4213;*/
-  }
   float workingpointvalue = 9999; //{1.7,3.3,10.2}; trackcountinghighefficiency working points: loose, medium, tight
   if(btagger == "TCHEL")
      workingpointvalue = 1.7;
@@ -159,51 +153,30 @@ int main (int argc, char *argv[])
   cout << " Beginning of the program for the fourth generation search ! " << endl;
   cout << "*************************************************************" << endl;
 
+	int NbOSMuons_data = 0;
+	int NbOSElectrons_data = 0; int NbOSElectrons_EBEB_data = 0; int NbOSElectrons_EBEE_data = 0; int NbOSElectrons_EEEE_data = 0;
+	int NbOSElMu_data = 0; int NbOSElMu_EB_data = 0; int NbOSElMu_EE_data = 0;
+	int NbSSLooseMuonTightMuon_data = 0; int NbSSLooseElectronTightMuon_data = 0;
+	int NbSSLooseElectronTightElectron_data = 0; int NbSSLooseMuonTightElectron_data = 0;
+
   //SetStyle if needed
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_28Feb2012"; // to relabel the names of the output file  
+  string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_28Feb2012";
+  string Treespath = "InclFourthGenTrees_Fall11_29MarchTESTING";
   Treespath = Treespath +"/";
-  mkdir(Treespath.c_str(),0777);
+  if(!datadriven) mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
 	
   /////////////////////
   // Configuration
   /////////////////////
-	string channelpostfix = "";
-  bool semiElectron = false; // use semiElectron channel?
-  bool semiMuon = true; // use semiMuon channel?
-	if (argc >= 3)
-	{	
-	  semiMuon = atoi(argv[2]);
-		semiElectron = !semiMuon;
-	}
-	
-  if(semiElectron && semiMuon)
-  {
-     cout << "  --> Using both semiMuon and semiElectron channel? Choose only one (for the moment, since this requires running on different samples/skims)!" << endl;
-     exit(1);
-  }
-  else
-  {
-    if(semiMuon){
-       cout << " --> Using the semiMuon channel..." << endl;
-       channelpostfix = "_semiMu";
-    }
-    else if(semiElectron){
-       cout << " --> Using the semiElectron channel..." << endl;
-       channelpostfix = "_semiEl";
-    }
-  }
   
   //xml file
   string xmlFileName = "";
-  //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
-  //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
 	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
   else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";
   const char *xmlfile = xmlFileName.c_str();
@@ -440,12 +413,15 @@ int main (int argc, char *argv[])
     string TreeFileName;
 		TreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+postfix+channelpostfix+".root";
     cout << "INFO: creating InclFourthGenTree file "+TreeFileName << endl;        
-    TFile* treeFile = new TFile(TreeFileName.c_str(),"RECREATE");
-		
+    TFile* treeFile;
+		TTree* myInclFourthGenTree;
     InclFourthGenTree* myBranch_selectedEvents = 0;		
-    TTree* myInclFourthGenTree = new TTree("myInclFourthGenTree","Tree containing the FourthGen information");    
-		myInclFourthGenTree->Branch("InclFourthGenBranch_selectedEvents","InclFourthGenTree",&myBranch_selectedEvents);
-
+		if(!datadriven)
+		{
+			treeFile = new TFile(TreeFileName.c_str(),"RECREATE");
+			myInclFourthGenTree = new TTree("myInclFourthGenTree","Tree containing the FourthGen information");    
+			myInclFourthGenTree->Branch("InclFourthGenBranch_selectedEvents","InclFourthGenTree",&myBranch_selectedEvents);
+		}
 
 
     ////////////////////////////////////
@@ -459,6 +435,7 @@ int main (int argc, char *argv[])
       cout << " - Loop over events " << endl;      
     
     for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (int ievt = 0; ievt < 100000; ievt++)
     {        
 
       if(ievt%1000 == 0)
@@ -674,7 +651,8 @@ int main (int argc, char *argv[])
      //Declare selection instance    
       Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
       Selection nonstandard_selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected... 
-      
+      Selection selectionFakeLepton(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
+
       if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
       {
         // Apply the scraping veto. Note: should be checked if still necessary, maybe already done in toptree production
@@ -710,14 +688,11 @@ int main (int argc, char *argv[])
 			bool isEBEB = false;
 			bool isEBEE = false;
 			bool isEEEE = false;
+			
       
-      vector<TRootJet*> selectedJets;//selectedJetsFromW,selectedJetsFromW_DropUsedJets,selectedJetsFromW_DropUsedJets_tmp;
-      vector<TRootJet*> selectedForwardJets, selectedJetsLargeEtaRange;
-      vector<TRootMuon*> selectedMuons;
-      vector<TRootElectron*> selectedElectrons;
-      vector<TRootElectron*> selectedLooseElectronsNoVBTFid;
-      vector<TRootElectron*> selectedLooseElectronsVBTFid;
-      vector<TRootMuon*> selectedLooseMuons;
+      vector<TRootJet*> selectedJets, selectedForwardJets, selectedJetsLargeEtaRange;
+      vector<TRootMuon*> selectedMuons, selectedLooseMuons, selectedMuons_FL, selectedLooseMuons_FL, selectedOnlyLooseMuons_FL;
+      vector<TRootElectron*> selectedElectrons, selectedLooseElectronsNoVBTFid, selectedLooseElectronsVBTFid, selectedElectrons_FL, selectedLooseElectrons_FL, selectedOnlyLooseElectrons_FL;
       vector<TRootMCParticle*> mcParticles;
 
 
@@ -737,23 +712,55 @@ int main (int argc, char *argv[])
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
       selection.setLooseElectronCuts(15,2.5,0.2);	 				 
-      
+
       if (init_jets.size() > 0)
       {
 	    	selectedJets = selection.GetSelectedJets(true);				
 	    	selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
 	    	selectedElectrons = selection.GetSelectedElectrons(vertex[0],selectedJets);
 	    	selectedJetsLargeEtaRange = nonstandard_selection.GetSelectedJets(true);	    	    
+      	for(unsigned int i = 0; i<selectedJetsLargeEtaRange.size(); i++)
+      	{
+	    		if(selectedJetsLargeEtaRange[i]->Eta() > 2.4)
+	      		selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
+      	}
       }
       selectedLooseElectronsNoVBTFid = selection.GetSelectedLooseElectrons(false); //no vbtfid is required
       selectedLooseElectronsVBTFid = selection.GetSelectedLooseElectrons(true); //vbtfid is required 
       selectedLooseMuons = selection.GetSelectedLooseMuons(); //veto muons	
-      
-      for(unsigned int i = 0; i<selectedJetsLargeEtaRange.size(); i++)
-      {
-	    	if(selectedJetsLargeEtaRange[i]->Eta() > 2.4)
-	      	selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
-      }
+
+      if(datadriven)
+			{
+      	selectionFakeLepton.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1); //selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
+      	selectionFakeLepton.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
+				selectedMuons_FL = selectionFakeLepton.GetSelectedMuons(vertex[0],selectedJets);
+	    	selectedElectrons_FL = selectionFakeLepton.GetSelectedElectrons(vertex[0],selectedJets);
+      	selectionFakeLepton.setLooseMuonCuts(10,2.5,9999.);
+      	selectionFakeLepton.setLooseElectronCuts(15,2.5,9999.);	 				
+      	selectedLooseElectrons_FL = selectionFakeLepton.GetSelectedLooseElectrons(false); //for data-driven background estimation
+      	selectedLooseMuons_FL = selectionFakeLepton.GetSelectedLooseMuons(); //for data-driven background estimation
+				for(unsigned int i = 0; i<selectedLooseMuons_FL.size(); i++)
+      	{
+      		int IsTight = 0;
+      		for(unsigned int j = 0; j<selectedMuons.size(); j++)
+      		{
+						if(fabs(selectedLooseMuons_FL[i]->Pt()-selectedMuons[j]->Pt()) < 0.00001) // the loose muon is tight
+							IsTight = IsTight+1;
+					}
+					if(IsTight==0) selectedOnlyLooseMuons_FL.push_back(selectedLooseMuons_FL[i]); // we found no tight muon, so this loose muon is not tight!
+				}
+				for(unsigned int i = 0; i<selectedLooseElectrons_FL.size(); i++)
+      	{
+      		int IsTight = 0;
+      		for(unsigned int j = 0; j<selectedElectrons.size(); j++)
+      		{
+						if(fabs(selectedLooseElectrons_FL[i]->Pt()-selectedElectrons[j]->Pt()) < 0.00001)
+							IsTight = IsTight+1;
+					}
+					if(IsTight==0) selectedOnlyLooseElectrons_FL.push_back(selectedLooseElectrons_FL[i]);
+				}
+			}
+
      
       selecTableSemiLep.Fill(d,1,scaleFactor);		
 			
@@ -825,6 +832,19 @@ int main (int argc, char *argv[])
 											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
 											{
 											  isDiLepton = true;
+												
+												if(option=="ChargeMisId")
+												{
+													if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+													{
+														bool eventBtag = false;
+														for(unsigned int j = 0; j < selectedJets.size(); j++)
+															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																eventBtag = true;
+														if(selectedMuons[0]->charge() != selectedMuons[1]->charge() && eventBtag) 
+															NbOSMuons_data++;
+													}
+												}
 												//require the same charge
 												if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
 												{
@@ -838,12 +858,31 @@ int main (int argc, char *argv[])
 											}
 										}
 										
-										////for same-sign muon and electron require exactly 1 muon, veto for other loose muons
-										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size())
+										//// for data-driven part: same-sign muons with 1 loose and 1 tight muon 
+										else if(datadriven && selectedMuons.size() == 1 && selectedOnlyLooseMuons_FL.size() == 1  && selectedLooseElectronsVBTFid.size() == 0)
 										{
-											//require exactly 1 electron
-											if(selectedElectrons.size() == 1 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+											if(option =="FakeLepton")
 											{
+												//require that there are the two muons do not form the Z mass
+												if( !selectionFakeLepton.foundZCandidate(selectedMuons_FL, selectedOnlyLooseMuons_FL, 10.) )
+												{
+													if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+													{
+														bool eventBtag = false;
+														for(unsigned int j = 0; j < selectedJets.size(); j++)
+															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																eventBtag = true;
+														if(selectedMuons[0]->charge() == selectedOnlyLooseMuons_FL[0]->charge() && eventBtag) 
+															NbSSLooseMuonTightMuon_data++;
+													}
+										 		
+												}
+											}
+										}
+										
+										////for same-sign muon and electron require exactly 1 muon, veto for other loose muons
+										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedElectrons.size() == 1 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+										{
 				    						//require that there are no two electrons forming the Z mass
 												if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid,10.))
 												{
@@ -857,6 +896,23 @@ int main (int argc, char *argv[])
 															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
 														}
 														isDiLepton = true;																											
+														
+														if(option=="ChargeMisId")
+														{
+															if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+															{
+																bool eventBtag = false;
+																for(unsigned int j = 0; j < selectedJets.size(); j++)
+																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																		eventBtag = true;
+																if(selectedElectrons[0]->charge() != selectedMuons[0]->charge() && eventBtag)
+																{
+																	NbOSElMu_data++;
+																	if(fabs(selectedElectrons[0]->superClusterEta())<1.4442) NbOSElMu_EB_data++;
+																	else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660) NbOSElMu_EE_data++;
+																}
+															}
+														}
 														//require the same charge for muon and electron
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
@@ -880,6 +936,26 @@ int main (int argc, char *argv[])
 																selecTableChargeMisId_ElMu.Fill(d,6,scaleFactor);
 															}
 														}
+													}
+												}
+										}
+										
+										//// for data-driven part: same-sign muon and electron with 1 tight muon and 1 loose electron 
+										else if(datadriven && selectedMuons.size() == 1 && selectedOnlyLooseElectrons_FL.size() == 1 && selectedElectrons.size()==0  && selectedOnlyLooseMuons_FL.size() == 0)
+										{
+											if(option =="FakeLepton")
+											{
+												//it should not be an electron from a conversion!
+												if( selectionFakeLepton.passConversionRejection(selectedOnlyLooseElectrons_FL[0]) )
+												{
+													if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+													{
+														bool eventBtag = false;
+														for(unsigned int j = 0; j < selectedJets.size(); j++)
+															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																eventBtag = true;
+														if(selectedMuons[0]->charge() == selectedOnlyLooseElectrons_FL[0]->charge() && eventBtag) 
+															NbSSLooseElectronTightMuon_data++;
 													}
 												}
 											}
@@ -909,7 +985,6 @@ int main (int argc, char *argv[])
 											//require that there are no two muons forming the Z mass
 											if( !selection.foundZCandidate(selectedMuons, selectedMuons, 10.) )
 											{
-												//require exactly 1 electron
 													//require that there are no two electrons forming the Z mass
 													if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid,10.))
 													{
@@ -928,12 +1003,9 @@ int main (int argc, char *argv[])
 											}
 										}
 										
-										//require exactly 1 muon
-										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() )
+										//require exactly 1 muon and 2 electrons
+										else if(selectedMuons.size() == 1 && selectedLooseMuons.size() == selectedMuons.size() && selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
 										{
-											//require at least 2 electrons
-											if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
-											{
 												//require that there are no two electrons forming the Z mass
 												if(!selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.))
 												{
@@ -948,7 +1020,6 @@ int main (int argc, char *argv[])
 														//cout << "-> electron 2 pt: " << selectedElectrons[1]->Pt() << endl;
 													}
 												}
-											}
 										}
 									} // end MET cut
 								//} // end requirement of at least a b-tagged jet larger than a certain pre-defined cut																		
@@ -1035,6 +1106,26 @@ int main (int argc, char *argv[])
 																selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
 															}																
 															isDiLepton = true;
+															
+															if(option=="ChargeMisId")
+															{
+																if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+																{
+																	bool eventBtag = false;
+																	for(unsigned int j = 0; j < selectedJets.size(); j++)
+																		if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																			eventBtag = true;
+																	if(selectedElectrons[0]->charge() != selectedElectrons[1]->charge() && eventBtag)
+																	{ 
+																		NbOSElectrons_data++;
+																		if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) NbOSElectrons_EBEB_data++;
+																		else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())>1.5660) NbOSElectrons_EEEE_data++;
+																		else if((fabs(selectedElectrons[0]->superClusterEta())>1.5660 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) || (fabs(selectedElectrons[1]->superClusterEta())>1.5660 && fabs(selectedElectrons[0]->superClusterEta())<1.4442)) NbOSElectrons_EBEE_data++;
+																	
+																	}
+																}
+															}
+															
 															if(selectedElectrons[0]->charge()== selectedElectrons[1]->charge())
 															{ 
 																isSSLepton = true;
@@ -1065,6 +1156,28 @@ int main (int argc, char *argv[])
 														}
 													}
 												}
+										
+												//// for data-driven part: same-sign muons with 1 loose and 1 tight muon 
+												else if(datadriven && selectedElectrons.size() == 1 && selectedOnlyLooseElectrons_FL.size() == 1  && selectedLooseMuons.size() == 0)
+												{
+													if(option =="FakeLepton")
+													{
+														//require that there are the two electrons do not form the Z mass
+														if( !selectionFakeLepton.foundZCandidate(selectedElectrons_FL, selectedOnlyLooseElectrons_FL, 10.) )
+														{
+															if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+															{
+																bool eventBtag = false;
+																for(unsigned int j = 0; j < selectedJets.size(); j++)
+																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																		eventBtag = true;
+																if(selectedElectrons[0]->charge() == selectedOnlyLooseElectrons_FL[0]->charge() && eventBtag) 
+																	NbSSLooseElectronTightElectron_data++;
+															}
+										 		
+														}
+													}
+												}
 												
 												//// a same-sign electron and muon
 												else if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
@@ -1078,6 +1191,23 @@ int main (int argc, char *argv[])
 															selecTableChargeMisId_ElMu.Fill(d,2,scaleFactor);
 														}
 														isDiLepton = true;																										
+														
+														if(option=="ChargeMisId")
+														{
+															if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+															{
+																bool eventBtag = false;
+																for(unsigned int j = 0; j < selectedJets.size(); j++)
+																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																		eventBtag = true;
+																if(selectedElectrons[0]->charge() != selectedMuons[0]->charge() && eventBtag)
+																{ 
+																	NbOSElMu_data++;
+																	if(fabs(selectedElectrons[0]->superClusterEta())<1.4442) NbOSElMu_EB_data++;
+																	else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660) NbOSElMu_EE_data++;
+																}
+															}
+														}	
 														if(selectedElectrons[0]->charge()== selectedMuons[0]->charge())
 														{
 															isSSLepton = true;
@@ -1100,6 +1230,23 @@ int main (int argc, char *argv[])
 																selecTableChargeMisId_ElMu.Fill(d,6,scaleFactor);
 															}
 														}
+													}
+												}
+												
+												//// for data-driven part: same-sign muon and electron with 1 tight electron and 1 loose muon 
+												else if(datadriven && selectedElectrons.size() == 1 && selectedOnlyLooseMuons_FL.size() == 1 && selectedMuons.size()==0  && selectedOnlyLooseElectrons_FL.size() == 0)
+												{
+													if(option =="FakeLepton")
+													{
+															if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+															{
+																bool eventBtag = false;
+																for(unsigned int j = 0; j < selectedJets.size(); j++)
+																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																		eventBtag = true;
+																if(selectedElectrons[0]->charge() == selectedOnlyLooseMuons_FL[0]->charge() && eventBtag) 
+																	NbSSLooseMuonTightElectron_data++;
+															}
 													}
 												}
 											
@@ -1161,6 +1308,7 @@ int main (int argc, char *argv[])
 						
       //if(!isSingleLepton && !isSSLepton && !isTriLepton) continue; //same as all cuts just above (baseline selection is there) 
 			if(!isSingleLepton && !isDiLepton && !isTriLepton) continue; //all dilepton events (SS and OS) will be stored in the trees
+			if(option=="ChargeMisId" || option=="ElectronFake" || option=="MuonFake") continue;
 
 			MSPlot["MS_nPV"]->Fill(vertex.size(),datasets[d], true, Luminosity*scaleFactor);				
 
@@ -1461,90 +1609,93 @@ int main (int argc, char *argv[])
       }
 
 
-			myBranch_selectedEvents = new InclFourthGenTree();
-      myBranch_selectedEvents->setEventID( event->eventId() );
-      myBranch_selectedEvents->setRunID( event->runId() );
-      myBranch_selectedEvents->setLumiBlockID( event->lumiBlockId() );
-      myBranch_selectedEvents->setNPV( vertex.size() );
-      myBranch_selectedEvents->setNPUBXm1( event->nPu(-1) );
-      myBranch_selectedEvents->setNPU( event->nPu(0) );
-      myBranch_selectedEvents->setNPUBXp1( event->nPu(1) );
-			myBranch_selectedEvents->setFlavorHistoryPath( event->flavorHistoryPath() );
+			if(!datadriven)
+			{
+				myBranch_selectedEvents = new InclFourthGenTree();
+      	myBranch_selectedEvents->setEventID( event->eventId() );
+      	myBranch_selectedEvents->setRunID( event->runId() );
+      	myBranch_selectedEvents->setLumiBlockID( event->lumiBlockId() );
+      	myBranch_selectedEvents->setNPV( vertex.size() );
+      	myBranch_selectedEvents->setNPUBXm1( event->nPu(-1) );
+      	myBranch_selectedEvents->setNPU( event->nPu(0) );
+      	myBranch_selectedEvents->setNPUBXp1( event->nPu(1) );
+				myBranch_selectedEvents->setFlavorHistoryPath( event->flavorHistoryPath() );
 			
-      myBranch_selectedEvents->setSelectedSingleLepton( isSingleLepton );
-			myBranch_selectedEvents->setSelectedSingleMu( isSingleMuon );
-			myBranch_selectedEvents->setSelectedSingleEl( isSingleElectron );
-			myBranch_selectedEvents->setSelectedSSLepton( isSSLepton );
-			myBranch_selectedEvents->setSelectedSSMu( isSSMuon );
-			myBranch_selectedEvents->setSelectedSSEl( isSSElectron );
-			myBranch_selectedEvents->setSelectedSSMuEl( isSSMuEl );
-			myBranch_selectedEvents->setSelectedTriLepton( isTriLepton );
-			myBranch_selectedEvents->setSelectedMuMuMu( isTriMuon );
-			myBranch_selectedEvents->setSelectedMuMuEl( isTriMu2El1 );
-			myBranch_selectedEvents->setSelectedMuElEl( isTriMu1El2 );
-			myBranch_selectedEvents->setSelectedElElEl( isTriElectron );
-			myBranch_selectedEvents->setSelectedEE( isEE );
-			myBranch_selectedEvents->setSelectedEB( isEB );
-			myBranch_selectedEvents->setSelectedEBEB( isEBEB );
-			myBranch_selectedEvents->setSelectedEBEE( isEBEE );
-			myBranch_selectedEvents->setSelectedEEEE( isEEEE );
+      	myBranch_selectedEvents->setSelectedSingleLepton( isSingleLepton );
+				myBranch_selectedEvents->setSelectedSingleMu( isSingleMuon );
+				myBranch_selectedEvents->setSelectedSingleEl( isSingleElectron );
+				myBranch_selectedEvents->setSelectedSSLepton( isSSLepton );
+				myBranch_selectedEvents->setSelectedSSMu( isSSMuon );
+				myBranch_selectedEvents->setSelectedSSEl( isSSElectron );
+				myBranch_selectedEvents->setSelectedSSMuEl( isSSMuEl );
+				myBranch_selectedEvents->setSelectedTriLepton( isTriLepton );
+				myBranch_selectedEvents->setSelectedMuMuMu( isTriMuon );
+				myBranch_selectedEvents->setSelectedMuMuEl( isTriMu2El1 );
+				myBranch_selectedEvents->setSelectedMuElEl( isTriMu1El2 );
+				myBranch_selectedEvents->setSelectedElElEl( isTriElectron );
+				myBranch_selectedEvents->setSelectedEE( isEE );
+				myBranch_selectedEvents->setSelectedEB( isEB );
+				myBranch_selectedEvents->setSelectedEBEB( isEBEB );
+				myBranch_selectedEvents->setSelectedEBEE( isEBEE );
+				myBranch_selectedEvents->setSelectedEEEE( isEEEE );
 			
-      if(selectedJets.size()>=4 && (dataSetName.find("TTbarJets_Semi") == 0 || TprimePairSample))
-      {
-			  if(mcQuarksForMatching.size()==4) //is always the case in ttbarjets semi-lep, but for inclusive t' pair samples this is only the case when indeed all mc quarks for matching are found (ie in the semi-lep case, actually)
-				{	
-				  //actually the if statement is not needed, this will be put in the branch for any event anyway (empty or not...)  
-					myBranch_selectedEvents->setmcQuarksForMatching( mcQuarksForMatching );
+      	if(selectedJets.size()>=4 && (dataSetName.find("TTbarJets_Semi") == 0 || TprimePairSample))
+      	{
+			  	if(mcQuarksForMatching.size()==4) //is always the case in ttbarjets semi-lep, but for inclusive t' pair samples this is only the case when indeed all mc quarks for matching are found (ie in the semi-lep case, actually)
+					{	
+				  	//actually the if statement is not needed, this will be put in the branch for any event anyway (empty or not...)  
+						myBranch_selectedEvents->setmcQuarksForMatching( mcQuarksForMatching );
+					}
+					//myBranch_selectedEvents->setAll4JetsMCMatched( all4JetsMatched_MCdef );
+        	//myBranch_selectedEvents->setAllHadronicJetsMCMatched( hadronictopJetsMatched_MCdef );
+					//vector<unsigned int> MatchedJetsIndices;
+					//MatchedJetsIndices.push_back(hadronicWJet1_.first);
+					//MatchedJetsIndices.push_back(hadronicWJet2_.first);
+					//MatchedJetsIndices.push_back(hadronicBJet_.first);
+					//MatchedJetsIndices.push_back(leptonicBJet_.first);
+					//myBranch_selectedEvents->setMatchedJetsIndices( MatchedJetsIndices );
 				}
-				//myBranch_selectedEvents->setAll4JetsMCMatched( all4JetsMatched_MCdef );
-        //myBranch_selectedEvents->setAllHadronicJetsMCMatched( hadronictopJetsMatched_MCdef );
-				//vector<unsigned int> MatchedJetsIndices;
-				//MatchedJetsIndices.push_back(hadronicWJet1_.first);
-				//MatchedJetsIndices.push_back(hadronicWJet2_.first);
-				//MatchedJetsIndices.push_back(hadronicBJet_.first);
-				//MatchedJetsIndices.push_back(leptonicBJet_.first);
-				//myBranch_selectedEvents->setMatchedJetsIndices( MatchedJetsIndices );
-			}
 			
-			if(dataSetName.find("TTbarJets_Semi") == 0)
-      {
-      	myBranch_selectedEvents->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
-      	myBranch_selectedEvents->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
-				myBranch_selectedEvents->setWbosonpartonsmatched(Wbosonpartonsmatched);
-				if(Wbosonpartonsmatched)
-				  myBranch_selectedEvents->setWMassmatched(WMassmatched_);
-      }
-			myBranch_selectedEvents->setEventWeight( scaleFactor );
-			myBranch_selectedEvents->setMET( *mets[0] );
-      myBranch_selectedEvents->setSelectedJets( SelectedJetsTLV );
-			myBranch_selectedEvents->setBTagTCHE( bTagTCHE );
-      myBranch_selectedEvents->setBTagTCHP( bTagTCHP );
-			myBranch_selectedEvents->setpartonFlavourJet( partonFlavourJet );
-			myBranch_selectedEvents->setSelectedForwardJets( SelectedForwardJetsTLV );
-			myBranch_selectedEvents->setInitJets( InitJets );
-			myBranch_selectedEvents->setInitJetsBTagTCHE( InitJetsbTagTCHE );
-      myBranch_selectedEvents->setInitJetsBTagTCHP( InitJetsbTagTCHP );				     						
-      myBranch_selectedEvents->setMuons( SelectedMuonsTLV );
-      myBranch_selectedEvents->setElectrons( SelectedElectronsTLV );
-			myBranch_selectedEvents->setMuonsRelIso( SelectedMuonsRelIso );
-      myBranch_selectedEvents->setElectronsRelIso( SelectedElectronsRelIso );
+				if(dataSetName.find("TTbarJets_Semi") == 0)
+      	{
+      		myBranch_selectedEvents->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
+      		myBranch_selectedEvents->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
+					myBranch_selectedEvents->setWbosonpartonsmatched(Wbosonpartonsmatched);
+					if(Wbosonpartonsmatched)
+				  	myBranch_selectedEvents->setWMassmatched(WMassmatched_);
+      	}
+				myBranch_selectedEvents->setEventWeight( scaleFactor );
+				myBranch_selectedEvents->setMET( *mets[0] );
+     		myBranch_selectedEvents->setSelectedJets( SelectedJetsTLV );
+				myBranch_selectedEvents->setBTagTCHE( bTagTCHE );
+      	myBranch_selectedEvents->setBTagTCHP( bTagTCHP );
+				myBranch_selectedEvents->setpartonFlavourJet( partonFlavourJet );
+				myBranch_selectedEvents->setSelectedForwardJets( SelectedForwardJetsTLV );
+				myBranch_selectedEvents->setInitJets( InitJets );
+				myBranch_selectedEvents->setInitJetsBTagTCHE( InitJetsbTagTCHE );
+      	myBranch_selectedEvents->setInitJetsBTagTCHP( InitJetsbTagTCHP );				     						
+      	myBranch_selectedEvents->setMuons( SelectedMuonsTLV );
+      	myBranch_selectedEvents->setElectrons( SelectedElectronsTLV );
+				myBranch_selectedEvents->setMuonsRelIso( SelectedMuonsRelIso );
+      	myBranch_selectedEvents->setElectronsRelIso( SelectedElectronsRelIso );
 			
-			//myBranch_selectedEvents->setTopDecayedLept( topDecayedLept );
-      //myBranch_selectedEvents->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
-      //myBranch_selectedEvents->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
-      //myBranch_selectedEvents->setMvaVals(mvaValsVector);
-      //myBranch_selectedEvents->setMvaResults(mvaResultsVector);
-      //myBranch_selectedEvents->setHadrBJet( hadrBJetIndex );
-      //myBranch_selectedEvents->setHadrLJet1( lightJet1Index );
-      //myBranch_selectedEvents->setHadrLJet2( lightJet2Index );
-      //myBranch_selectedEvents->setLeptBJet( leptBJetIndex );      
-      //myBranch_selectedEvents->setHadrBQuark( jetCombiner->GetHadrBQuark() );
-      //myBranch_selectedEvents->setHadrLQuark1( jetCombiner->GetLightQuark1() );
-      //myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
-      //myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
+				//myBranch_selectedEvents->setTopDecayedLept( topDecayedLept );
+      	//myBranch_selectedEvents->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
+      	//myBranch_selectedEvents->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
+      	//myBranch_selectedEvents->setMvaVals(mvaValsVector);
+      	//myBranch_selectedEvents->setMvaResults(mvaResultsVector);
+      	//myBranch_selectedEvents->setHadrBJet( hadrBJetIndex );
+      	//myBranch_selectedEvents->setHadrLJet1( lightJet1Index );
+      	//myBranch_selectedEvents->setHadrLJet2( lightJet2Index );
+      	//myBranch_selectedEvents->setLeptBJet( leptBJetIndex );      
+      	//myBranch_selectedEvents->setHadrBQuark( jetCombiner->GetHadrBQuark() );
+      	//myBranch_selectedEvents->setHadrLQuark1( jetCombiner->GetLightQuark1() );
+      	//myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
+      	//myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
 			
-      myInclFourthGenTree->Fill();
-	    delete myBranch_selectedEvents;
+     		myInclFourthGenTree->Fill();
+	    }
+			delete myBranch_selectedEvents;
 
 	
     }//loop on events
@@ -1553,7 +1704,7 @@ int main (int argc, char *argv[])
     cout<<endl;
 		
 		
-    treeFile->cd();
+    if(!datadriven) treeFile->cd();
 		
 		TTree *configTreeFile = new TTree("configTreeFile","configuration Tree in tree File");
     TClonesArray* tcdatasettreefile = new TClonesArray("Dataset",1);
@@ -1566,8 +1717,8 @@ int main (int argc, char *argv[])
     configTreeFile->Fill();
     configTreeFile->Write();
 
-		myInclFourthGenTree->Write();
-		treeFile->Close();
+		if(!datadriven) myInclFourthGenTree->Write();
+		if(!datadriven) treeFile->Close();
 		delete treeFile;
 		
     if(jetTools) delete jetTools;
@@ -1577,7 +1728,8 @@ int main (int argc, char *argv[])
 	
     
   } //loop on datasets
-  	
+
+	
 	//Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
   
@@ -1661,6 +1813,49 @@ int main (int argc, char *argv[])
  
   delete fout;
 
+  ofstream myfile1;
+	if(option=="ChargeMisId" && systematic=="Nominal")
+	{
+		string myRockingFile1 = "ChargeMisId_OSEvents"+channelpostfix+".txt";
+		myfile1.open(myRockingFile1.c_str());
+		cout << endl;
+		
+		if(semiMuon) myfile1 << "THIS IS FOR THE MUON TRIGGER PART OF THE DATA"  << "\n"; 
+		else  myfile1 << "THIS IS FOR THE ELECTRON TRIGGER PART OF THE DATA" << "\n";
+		myfile1 << "# OS el+mu events: " << "\n";
+		myfile1 << " barrel: " << NbOSElMu_EB_data << "\n"; 	
+		myfile1 << " endcap: " << NbOSElMu_EE_data << "\n"; 	 	
+		myfile1 << "\n";
+		if(!semiMuon)
+		{
+			myfile1 << "# OS el+el events: " << "\n";
+			myfile1 << " 2 barrel: " << NbOSElectrons_EBEB_data << "\n"; 	
+			myfile1 << " 2 endcap: " << NbOSElectrons_EEEE_data<< "\n"; 	 	
+			myfile1 << " barrel+endcap: " << NbOSElectrons_EBEE_data<< "\n"; 	 	
+			myfile1 << "\n";
+			myfile1.close();
+		}
+	}
+	if(option=="FakeLepton" && systematic=="Nominal")
+	{
+		string myRockingFile1 = "FakeLepton_Events"+channelpostfix+".txt";
+		myfile1.open(myRockingFile1.c_str());
+		myfile1 << "\n";
+		if(semiMuon) myfile1 << "THIS IS FOR THE MUON TRIGGER PART OF THE DATA" << "\n";
+		else  myfile1 << "THIS IS FOR THE ELECTRON TRIGGER PART OF THE DATA" << "\n";
+		if(semiMuon)
+			myfile1 << "# mu+mu events with fake muon: " << NbSSLooseMuonTightMuon_data << "\n";
+		if(!semiMuon)
+			myfile1 << "# el+mu events with fake muon: " << NbSSLooseMuonTightElectron_data << "\n";
+		myfile1 << "\n";
+		if(!semiMuon)
+			myfile1 << "# el+el events with fake electron: " << NbSSLooseElectronTightElectron_data<< "\n";
+		if(semiMuon)
+			myfile1 << "# el+mu events with fake electron: " << NbSSLooseElectronTightMuon_data << "\n";
+		myfile1 << "\n";
+		myfile1.close();
+	}
+
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
 
   cout << "********************************************" << endl;
@@ -1710,10 +1905,3 @@ void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElect
      }
 };
 
-//https://twiki.cern.ch/twiki/bin/viewauth/CMS/SingleTopTurnOnCurves
-float jetprob(float jetpt, float btagvalue){
-	float prob=0.982*exp(-30.6*exp(-0.151*jetpt));
-  prob*=0.844*exp((-6.72*exp(-0.720*btagvalue))); //"for the offline TCHP tagger"
-	//prob*=0.736*exp((-8.01*exp(-0.540*btagvalue))); //"for the offline TCHE tagger"
-	return prob;
-};

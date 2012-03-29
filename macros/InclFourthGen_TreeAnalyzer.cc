@@ -110,63 +110,12 @@ int main (int argc, char *argv[])
   if( ! (systematic == "Nominal"  || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "misTagPlus" || systematic == "misTagMinus" || systematic == "PUPlus" || systematic == "PUMinus"))
   {
     cout << "Unknown systematic!!!" << endl;
-    cout << "Possible options are: " << endl;
+    cout << "Possible options are: Nominal JESPlus JESMinus JERPlus JERMinus bTagPlus bTagMinus misTagPlus misTagMinus PUPlus PUMinus" << endl;
     exit(-1);
   }	  
 
   string btagger = "TCHPM";
-//from BTV-11-001; WARNING: btag SFs are for jets of 20-240 GeV, averaged over eta; and mistag SFs are for jets of 50-80 GeV
-// b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10,    TCHEM: data/MC scalefactor = 0.94 +- 0.09,	TCHPM: data/MC scalefactor =  0.91 +- 0.09
-// mistag scalefactor => TCHEL: data/MC scalefactor = 1.11 +- 0.12,    TCHEM: data/MC scalefactor = 1.21 +- 0.17,	TCHPM: data/MC scalefactor =  1.27 +- 0.15
-  float scalefactorbtageff = 1, mistagfactor = 1;
-  if(btagger == "TCHEL") //track counting high eff loose working point
-  {	  
-		scalefactorbtageff = 0.95;
-	  if(systematic == "bTagMinus")
-			scalefactorbtageff = 0.85;
-	  if(systematic == "bTagPlus")
-			scalefactorbtageff = 1.05;
-	  
-		mistagfactor = 1.11;
-	  if(systematic == "misTagMinus")
-			mistagfactor = 0.99;
-	  if(systematic == "misTagPlus")
-			mistagfactor = 1.23;
-		
-  }
-  else if(btagger == "TCHEM") //track counting high eff medium working point
-  {
-		scalefactorbtageff = 0.94;
-	  if(systematic == "bTagMinus")
-			scalefactorbtageff = 0.85;
-	  if(systematic == "bTagPlus")
-			scalefactorbtageff = 1.03;
-		
-		mistagfactor = 1.21;
-	  if(systematic == "misTagMinus")
-			mistagfactor = 1.04;
-	  if(systematic == "misTagPlus")
-			mistagfactor = 1.38;
-  }
-	else if(btagger == "TCHPM") //track counting high pur medium working point
-  {
-		scalefactorbtageff = 0.91;
-	  if(systematic == "bTagMinus")
-			scalefactorbtageff = 0.8194;
-	  if(systematic == "bTagPlus")
-			scalefactorbtageff = 1.0006;
-		
-		mistagfactor = 1.27;
-	  if(systematic == "misTagMinus")
-			mistagfactor = 1.1187;
-	  if(systematic == "misTagPlus")
-			mistagfactor = 1.4213;
-  }
-	else if(btagger == "TCHPT") //track counting high pur tight working point
-  {
-	  cout<<"WARNING: look up SFs for TCHPT"<<endl;
-  }
-  float workingpointvalue = 9999; //{1.7,3.3,10.2}; trackcountinghighefficiency working points: loose, medium, tight
+   float workingpointvalue = 9999; //{1.7,3.3,10.2}; trackcountinghighefficiency working points: loose, medium, tight
   if(btagger == "TCHEL")
      workingpointvalue = 1.7;
   else if(btagger == "TCHEM")
@@ -186,16 +135,15 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string inputpostfixOld = "_22Mar2012_WJetsHTcutTESTS"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+  string inputpostfixOld = "_28Feb2012"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_22Mar2012_WJetsHTcutTESTS";// "InclFourthGenTrees_Fall11_Round4";
+  string Treespath = "InclFourthGenTrees_Fall11_22March2012";// "InclFourthGenTrees_Fall11_Round4";
   Treespath = Treespath + "/"; 		
-  //mkdir(TreespathPNG.c_str(),0777);
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_22Mar2012_WJetsHTcutTESTS";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_22March2012";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -261,8 +209,8 @@ int main (int argc, char *argv[])
   string xmlFileName = "";
   //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
   //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
-  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";	
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_temp.xml";
+  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11_temp.xml";	
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
   
@@ -483,8 +431,8 @@ int main (int argc, char *argv[])
   vector<string> CutsSelecTableMultiLep;
   CutsSelecTableMultiLep.push_back(string("SS leptons: all")); //0
   CutsSelecTableMultiLep.push_back(string("SS leptons: 2 muons")); //1
-  CutsSelecTableMultiLep.push_back(string("SS leptons: electron+muon")); //2
-  CutsSelecTableMultiLep.push_back(string("SS leptons: 2 electrons")); //3
+  CutsSelecTableMultiLep.push_back(string("SS leptons: 2 electrons")); //2
+  CutsSelecTableMultiLep.push_back(string("SS leptons: electron+muon")); //3
   CutsSelecTableMultiLep.push_back(string("trileptons in all boxes combined")); //4
   
 	SelectionTable selecTableSemiLep(CutsSelecTableSemiLep, datasets);
@@ -788,21 +736,7 @@ int main (int argc, char *argv[])
 					selectedForwardJets_cuts.push_back(selectedForwardJets[i]);													
 			}
 			selectedForwardJets.clear();
-			selectedForwardJets = selectedForwardJets_cuts;
-
-
-
-////something very strange going on...
-			//cout<<"isSingleLepton = "<<isSingleLepton<<", isSSLepton = "<<isSSLepton<<", isTriLepton = "<<isTriLepton<<endl;
-			if(!(isSingleLepton || isSSLepton || isTriLepton)){
-			 //cout<<"OSLepton? "<<endl;
-			 //cout<<"event: "<<myBranch_selectedEvents->eventID()<<endl;
-			 continue;
-			}
-			//cout<<"HERE1"<<endl;
-			
-      //if(isSSLepton) cout<<"event: "<<myBranch_selectedEvents->eventID()<<endl;
-			
+			selectedForwardJets = selectedForwardJets_cuts;			
 			
 
 			MSPlot["MS_nPV_nobtag"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
@@ -845,6 +779,23 @@ int main (int argc, char *argv[])
 			}
 			if(!eventSelected) continue;
 			
+			//cout<<"isSingleLepton = "<<isSingleLepton<<", isSSLepton = "<<isSSLepton<<", isTriLepton = "<<isTriLepton<<endl;
+			if(!(isSingleLepton || isSSLepton || isTriLepton)){
+				//cout<<"OSLepton? "<<endl;
+			 	//cout<<"event: "<<myBranch_selectedEvents->eventID()<<endl;
+				continue;
+			}
+			
+			if(isSSLepton && dataSetName=="Data"){
+				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
+				if(isSSElectron && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
+				if(isSSMuEl && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
+			
+			}else if(isTriLepton && dataSetName=="Data" && systematic=="Nominal"){
+				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
+			}
+
+
 					
 			bool TprimeEvaluation = false;
 			//////////////////////////////////////////////////////////////////////////
@@ -937,7 +888,6 @@ int main (int argc, char *argv[])
 				int bJet2 = 999;
 				for(unsigned int i = 0; i<jetindex_btagvalue.size(); i++)
 				{
-			  	//cout<<" jetindex_btagvalue["<<i<<"].first = "<<jetindex_btagvalue[i].first<<", jetindex_btagvalue["<<i<<"].second = "<<jetindex_btagvalue[i].second<<", selectedJetsForBtagging[jetindex_btagvalue["<<i<<"].first]->partonFlavour() = "<<selectedJetsForBtagging[jetindex_btagvalue[i].first]->partonFlavour()<<endl;
 					if(jetindex_btagvalue[i].second > workingpointvalue)
 					{
 						nbOfBtags++;
@@ -951,32 +901,23 @@ int main (int argc, char *argv[])
 							bJet1 = jetindex_btagvalue[i].first;
 							bTagValuesForMVA_1B_2W.push_back(bTagValuesForMVA[bJet1]);
 							bTagValuesForMVA_2B_2W.push_back(bTagValuesForMVA[bJet1]);
-							//cout << "flavour of first b-tagged jet is: " << fabs((myBranch_selectedEvents->partonFlavourJet())[bJet1]) << endl;
 							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{
 								if(doBtagSFreweighting && bJet1 == jetindex_isb[j].first)
 								{
 									if(jetindex_isb[j].second)
 									{ // jet is b-tagged and a true b
-								  	//cout<<" jet is b-tagged and a true b"<<endl;
-										//scaleFactor = scaleFactor * scalefactorbtageff;
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic);
-								  	//cout<<" scaleFactor (pt, btagger, systematic): (" << selectedJetsForBtagging[bJet1].Pt() << "," << btagger << "," << systematic << ") = " << SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic) << endl;
 									}
 									else if(fabs((myBranch_selectedEvents->partonFlavourJet())[bJet1]) == 4)
 									{ //jet is b-tagged but is a c quark
-										//cout<<" jet is b-tagged but it is a c quark"<<endl;
 										if(systematic == "bTagMinus") systematicnew = "bTagMinus_c";
 										if(systematic == "bTagPlus") systematicnew = "bTagPlus_c";
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematicnew);										
-								  	//cout<<" scaleFactor (pt, btagger, systematic): (" << selectedJetsForBtagging[bJet1].Pt() << "," << btagger << "," << systematic << ") = " << SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematicnew) << endl;
 									}
 									else
 									{ // jet is b-tagged but NOT a true b and also not a c
-										//cout<<" jet is b-tagged but NOT a true b"<<endl;
-										//scaleFactor = scaleFactor * mistagfactor;
 										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[bJet1].Pt(),selectedJetsForBtagging[bJet1].Eta(),btagger,systematic);
-								  	//cout<<" scaleFactor (pt, eta, btagger, systematic): (" << selectedJetsForBtagging[bJet1].Pt() << "," << selectedJetsForBtagging[bJet1].Eta() << "," << btagger << "," << systematic << ") = " << SFl(selectedJetsForBtagging[bJet1].Pt(), selectedJetsForBtagging[bJet1].Eta(),btagger,systematic) << endl;
 									}										
 								}
 							}
@@ -985,29 +926,22 @@ int main (int argc, char *argv[])
 						{
 							bJet2 = jetindex_btagvalue[i].first;
 							bTagValuesForMVA_2B_2W.push_back(bTagValuesForMVA[bJet2]);
-							//cout << "flavour of second b-tagged jet is: " << fabs((myBranch_selectedEvents->partonFlavourJet())[bJet2]) << endl;
 							for(unsigned int j = 0; j < jetindex_isb.size(); j++)
 							{								
 								if(doBtagSFreweighting &&bJet2 == jetindex_isb[j].first)
 								{       
-							  	//cout<<"    jetindex_isb["<<j<<"].second = "<<jetindex_isb[j].second<<endl;
 									if(jetindex_isb[j].second)
 									{ // jet is b-tagged and a true b
-								  	//cout<<" jet is b-tagged and a true b"<<endl;
-										//scaleFactor = scaleFactor * scalefactorbtageff;
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet2].Pt(),btagger,systematic);
 									}									
 									else if(fabs((myBranch_selectedEvents->partonFlavourJet())[bJet2]) == 4)
 									{ //jet is b-tagged but is a c quark
-										//cout<<" jet is b-tagged but it is a c quark"<<endl;
 										if(systematic == "bTagMinus") systematicnew = "bTagMinus_c";
 										if(systematic == "bTagPlus") systematicnew = "bTagPlus_c";
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet2].Pt(),btagger,systematicnew);										
 									}									
 									else
 									{ // jet is b-tagged but NOT a true b and not a c
-										//cout<<" jet is b-tagged but NOT a true b"<<endl;
-										//scaleFactor = scaleFactor * mistagfactor;
 										scaleFactor = scaleFactor * SFl(selectedJetsForBtagging[jetindex_btagvalue[i].first].Pt(),selectedJetsForBtagging[bJet2].Eta(),btagger,systematic);
 									} 
 								}
@@ -1016,14 +950,6 @@ int main (int argc, char *argv[])
 					}
 				} //end loop over jets (~ b-tagging)
 				
-			if(isSSLepton && dataSetName=="Data"){
-				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
-				if(isSSElectron && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
-				if(isSSMuEl && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
-			
-			}else if(isTriLepton && dataSetName=="Data" && systematic=="Nominal"){
-				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
-			}
 			
 			if(doPUreweighting) MSPlot["MS_nPV_beforePUreweighting"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor/lumiWeight3D);	
 			MSPlot["MS_nPV"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
@@ -1852,6 +1778,12 @@ int main (int argc, char *argv[])
 
   return 0;
 }
+
+
+
+
+
+
 
 //To cout the Px, Py, Pz, E and Pt of objects
 void coutObjectsFourVector(vector < TRootMuon* > init_muons, vector < TRootElectron* > init_electrons, vector < TRootJet* > init_jets, vector < TRootMET* > mets, string Comment)
