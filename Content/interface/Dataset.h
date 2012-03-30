@@ -54,6 +54,7 @@ public:
 	void SetPreselEffAndNumberOfPreselEvents(float PreselEff, int NofSEvts){ if(NofSEvts>0) NormFactor_ = Xsection_*PreselEff/NofSEvts; NofEvtsToRunOver_ = NofSEvts; PreSelEfficiency_ = PreselEff;}; /** will compute NormFactor = Xsection*PreselEff/NofPreselEvts */
 	void SetXsectionError(float xsectionError){XsectionError_ = xsectionError;};
 	void ReadJSONFile(string JSONFile);
+	void SetColor(int Color){Color_=Color;};
 
 private:	
 	string Name_;
