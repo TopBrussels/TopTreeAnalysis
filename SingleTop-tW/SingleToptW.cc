@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
       else if (dataSetName == "at"){    	sprintf(name, "at");        	xlweight = lumi*22.65/1938263;} 
       else if (dataSetName == "ts"){    	sprintf(name, "ts");        	xlweight = lumi*3.19/259378;}
       else if (dataSetName == "ats"){    	sprintf(name, "ats");        	xlweight = lumi*1.44/137556;} 
-      else if (dataSetName == "wjets"){     	sprintf(name, "wjets");	        xlweight = lumi*31314/49708092;} //
+      else if (dataSetName == "wjets"){     	sprintf(name, "wjets");	        xlweight = lumi*31314/68090152;} 
       else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3048/35799272;} 
       else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*11908.83/31193930;}
       else if (dataSetName == "ww"){		sprintf(name, "ww");		xlweight = lumi*42.9/4223584;} 
@@ -338,7 +338,9 @@ int main(int argc, char* argv[]) {
       if (RunA) Lumi3DWeights = Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunA.root", "pileup", "pileup");
       else if (RunB) Lumi3DWeights = Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunB.root", "pileup", "pileup");
       else Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/RunAB.root", "pileup", "pileup");
+      //else Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/MC_Fall11.root","pileupHistos/PromptRecov6.root", "pileup", "pileup");
      
+
       if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
       else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);
       else Lumi3DWeights.weight3D_init(1.0);
