@@ -185,6 +185,7 @@ int main (int argc, char *argv[])
   
   histo1D["FourthJetPt"] = new TH1F("FourthJetPt","FourthJetPt",100,0,100);
   histo1D["FourthJetPtTriggered"] = new TH1F("FourthJetPtTriggered","FourthJetPtTriggered",100,0,100);
+  histo1D["AlignSystSF"] = new TH1F("AlignSystSF","AlignSystSF",200,-.001,.001);
   
   ////////////////////////////////////
   /// Selection table
@@ -370,7 +371,7 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
 
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 10000; ievt++)
+//    for (unsigned int ievt = 0; ievt < 20000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -480,10 +481,8 @@ int main (int argc, char *argv[])
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
           else if( event->runId() >= 161177 && event->runId() <= 163261 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun, iFile);
-          else if( event->runId() >= 163262 && event->runId() <= 163869 )
+          else if( event->runId() >= 163262 && event->runId() <= 165633 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v3"), currentRun, iFile);
-          else if( event->runId() >= 163870 && event->runId() <= 165633 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v3"), currentRun, iFile);
           else if( event->runId() >= 165970 && event->runId() <= 166967 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v1"), currentRun, iFile);
           else if( event->runId() >= 167039 && event->runId() <= 167913 )
@@ -492,8 +491,10 @@ int main (int argc, char *argv[])
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v4"), currentRun, iFile);
           else if( event->runId() >= 173236 && event->runId() <= 178380 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun, iFile);
-          else if( event->runId() >= 178381 && event->runId() <= 178479 )
+          else if( event->runId() >= 178381 && event->runId() <= 179889 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v2"), currentRun, iFile);
+          else if( event->runId() >= 179959 && event->runId() <= 180252 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun, iFile);
           else
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiEl == 9999 )
@@ -554,6 +555,7 @@ int main (int argc, char *argv[])
             float deltaPtFraction = ( chargedAveragePt * chargedAveragePt * charge * 0.0001 ) / jet->Pt();
             if( systematic == "AlignMinus" ) deltaPtFraction *= -1.;
             init_jets_corrected[iJet]->SetPxPyPzE(jet->Px()*(1+deltaPtFraction), jet->Py()*(1+deltaPtFraction), jet->Pz()*(1+deltaPtFraction), jet->E()*(1+deltaPtFraction));
+            histo1D["AlignSystSF"]->Fill(deltaPtFraction);
           }
         }
       }
@@ -564,7 +566,7 @@ int main (int argc, char *argv[])
       
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
-      selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
+      selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
       selection.setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1);
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setElectronCuts(30,2.5,0.1,0.02,1,0.3); // FIXME: RelIso to 0.1
@@ -614,7 +616,7 @@ int main (int argc, char *argv[])
       
       MSPlot["nEventsAfterCutsSemiMu"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
       selecTableSemiMu.Fill(d,0,scaleFactor*lumiWeight);
-//      if( triggedSemiMu && semiMuon )
+      if( triggedSemiMu && semiMuon )
       {
         MSPlot["nEventsAfterCutsSemiMu"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
         selecTableSemiMu.Fill(d,1,scaleFactor*lumiWeight);
@@ -622,8 +624,7 @@ int main (int argc, char *argv[])
         {
           MSPlot["nEventsAfterCutsSemiMu"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
           selecTableSemiMu.Fill(d,2,scaleFactor*lumiWeight);
-//          if( selectedMuons.size() == 1 )
-          if( selectedMuons.size() >= 1 )
+          if( selectedMuons.size() == 1 )
           {
             MSPlot["nEventsAfterCutsSemiMu"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
   		      selecTableSemiMu.Fill(d,3,scaleFactor*lumiWeight);
@@ -672,7 +673,7 @@ int main (int argc, char *argv[])
       
       MSPlot["nEventsAfterCutsSemiEl"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
       selecTableSemiEl.Fill(d,0,scaleFactor*lumiWeight);
-//      if( semiElectron && triggedSemiEl )
+      if( semiElectron && triggedSemiEl )
       {
         MSPlot["nEventsAfterCutsSemiEl"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
         selecTableSemiEl.Fill(d,1,scaleFactor*lumiWeight);
@@ -680,8 +681,7 @@ int main (int argc, char *argv[])
         {
           MSPlot["nEventsAfterCutsSemiEl"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
           selecTableSemiEl.Fill(d,2,scaleFactor*lumiWeight);
-//          if( selectedElectrons.size() == 1 )
-          if( selectedElectrons.size() >= 1 )
+          if( selectedElectrons.size() == 1 )
           {
             MSPlot["nEventsAfterCutsSemiEl"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
             selecTableSemiEl.Fill(d,3,scaleFactor*lumiWeight);
@@ -737,7 +737,7 @@ int main (int argc, char *argv[])
       
       if( eventSelectedSemiEl && eventSelectedSemiMu )
         cout << "Event selected in semiEl and semiMu channel???" << endl;
-      
+        
       vector<TRootMCParticle*> mcParticles;
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
       {
