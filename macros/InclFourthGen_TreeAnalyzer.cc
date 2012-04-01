@@ -204,13 +204,15 @@ int main (int argc, char *argv[])
 	bool make2Dbinning = false;
 	if (argc >= 6)
   	make2Dbinning = atoi(argv[5]);
+	bool SplitTTbarSample_for2Dbinning = false; //split ttbar sample in two pieces to make the 2D binning and to do the evalution
+	bool UseBinningTTbarSample_forEvaluation = false; //i.e. use for the evaluation the piece of the ttbar sample that is used to create the 2D binning 
   
   //xml file
   string xmlFileName = "";
   //if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron.xml";
   //else if(semiMuon) xmlFileName = "../config/myFourthGenconfig.xml";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_temp.xml";
-  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11_temp.xml";	
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
+  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";	
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
   
@@ -585,6 +587,12 @@ int main (int argc, char *argv[])
     int end = nEvents;
 		float fracLumi = 1.; //will be multiplied with the scalefactor per event!
 		float fracTTJetsTraining = 1./3.;
+		float fracTotalTTJetsBinning = 1./2.; //1/2 of total ttbar used for 2D flat binning purposes... //NOTE: we will reuse the mva-training events in the binning! BTW, just choose fracTotalTTJetsBinning larger than fracTTJetsTraining (or code should be slightly adapted)
+		if(SplitTTbarSample_for2Dbinning && fracTotalTTJetsBinning<fracTTJetsTraining)
+		{
+			cout << "Choose fracTotalTTJetsBinning > fracTTJetsTraining"<< endl;
+			exit(1);
+		}
 		if(dataSetName == "TTbarJets_SemiMuon" || dataSetName == "TTbarJets_SemiElectron")
 		{
 			if(TrainMVA)
@@ -595,15 +603,53 @@ int main (int argc, char *argv[])
 			}
 			else
 			{
-				start = int(nEvents*fracTTJetsTraining);
+				if(!SplitTTbarSample_for2Dbinning)
+				{
+					start = int(nEvents*fracTTJetsTraining);
+        	end = nEvents;
+					fracLumi = 1 - fracTTJetsTraining;
+				}
+				else
+				{
+					if(make2Dbinning || UseBinningTTbarSample_forEvaluation)
+					{
+						start = 0;
+						end = int(nEvents*fracTotalTTJetsBinning);
+						fracLumi = fracTotalTTJetsBinning;
+						cout<<"start = "<<start<<", end = "<<end<<", fracLumi = "<<fracLumi<<endl;
+					}
+					else if(!make2Dbinning)
+					{
+						start = int(nEvents*fracTotalTTJetsBinning);
+     		    end = nEvents;
+						fracLumi = 1 - fracTotalTTJetsBinning;
+						cout<<"start = "<<start<<", end = "<<end<<", fracLumi = "<<fracLumi<<endl;
+					}
+				}
+			}
+		}
+		else if(SplitTTbarSample_for2Dbinning && dataSetName == "TTbarJets_Other")
+		{
+			if(make2Dbinning || UseBinningTTbarSample_forEvaluation)
+			{
+				start = 0;
+				end = int(nEvents*fracTotalTTJetsBinning);
+				fracLumi = fracTotalTTJetsBinning;
+				cout<<"start = "<<start<<", end = "<<end<<", fracLumi = "<<fracLumi<<endl;
+			}
+			else if(!make2Dbinning)
+			{
+				start = int(nEvents*fracTotalTTJetsBinning);
         end = nEvents;
-				fracLumi = 1 - fracTTJetsTraining;
+				fracLumi = 1 - fracTotalTTJetsBinning;
+				cout<<"start = "<<start<<", end = "<<end<<", fracLumi = "<<fracLumi<<endl;
 			}
 		}
     else{
         start = 0;
         end = nEvents;
     }
+		cout << "    WARNING: fracLumi for this dataset and settings = " << fracLumi << endl;
      
     cout << " - Loop over events " << endl;      
     //cout<<"start = "<<start<<"end = "<<end<<endl;
