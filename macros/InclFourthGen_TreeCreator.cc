@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
   	cout << "Option to be used: " << option << endl;
   	datadriven = true;
 	}
-	if( ! (option == "ChargeMisId" || option == "FakeLepton") )
+	if( ! (option == "" || option == "ChargeMisId" || option == "FakeLepton") )
   {
     cout << "Unknown option!!!" << endl;
     cout << "Possible options are: ChargeMisId , FakeLepton" << endl;
@@ -166,7 +166,7 @@ int main (int argc, char *argv[])
   string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_29MarchTESTING";
+  string Treespath = "InclFourthGenTrees_Fall11_30MarchTEST";
   Treespath = Treespath +"/";
   if(!datadriven) mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -217,7 +217,7 @@ int main (int argc, char *argv[])
   if(Luminosity != anaEnvLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
   
   //Output ROOT file
-  string rootFileName ("InclFourthGenSearch_TreeCreator"+postfix+channelpostfix+".root");
+  string rootFileName = (Treespath+"InclFourthGenSearch_TreeCreator"+postfix+channelpostfix+".root");
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
 
  
@@ -232,7 +232,7 @@ int main (int argc, char *argv[])
   //Global variable
   TRootEvent* event = 0;
 
-  string pathPNG = "InclFourthGenSearchPlots_TreeCreator"+postfix+channelpostfix;
+  string pathPNG = Treespath+"InclFourthGenSearchPlots_TreeCreator"+postfix+channelpostfix;
   pathPNG = pathPNG +"/"; 	
   pathPNG = pathPNG +"/"; 	
   if(savePNG) mkdir(pathPNG.c_str(),0777);
@@ -353,6 +353,11 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
   ////////////////////////////////////
   cout << " - Loop over datasets ... " << datasets.size () << " datasets !" << endl;
+  ofstream myfileSS, myfileLLL;
+	string mySSFile = Treespath+"InterestingEvents_SS"+channelpostfix+".txt";
+	if(systematic=="Nominal") myfileSS.open(mySSFile.c_str());
+	string myLLLFile = Treespath+"InterestingEvents_lll"+channelpostfix+".txt";
+	if(systematic=="Nominal") myfileLLL.open(myLLLFile.c_str());
 
   for (unsigned int d = 0; d < datasets.size(); d++) //d < datasets.size()
   {
@@ -846,10 +851,16 @@ int main (int argc, char *argv[])
 													}
 												}
 												//require the same charge
-												if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
+												if(selectedMuons[0]->charge() == selectedMuons[1]->charge())
 												{
 													isSSLepton = true; // we have two same-sign muons
 													isSSMuon = true;
+													bool eventBtag = false;
+													for(unsigned int j = 0; j < selectedJets.size(); j++)
+														if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+															eventBtag = true;
+													if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+														myfileSS << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mm" << "\n";
 													//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 													//cout << "is same-sign muon!" << endl;
 													//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
@@ -928,7 +939,14 @@ int main (int argc, char *argv[])
 															}else if(fabs(selectedElectrons[0]->superClusterEta())>1.5660){
 																selecTableChargeMisId_ElMu.Fill(d,4,scaleFactor);
 																isEE = true;
-															}																
+															}
+															
+															bool eventBtag = false;
+															for(unsigned int j = 0; j < selectedJets.size(); j++)
+																if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																	eventBtag = true;
+															if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+																myfileSS << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " me" << "\n";
 														}else{ //opposite charge!!!
 															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 																selecTableChargeMisId_ElMu.Fill(d,5,scaleFactor);
@@ -971,7 +989,13 @@ int main (int argc, char *argv[])
 											{
 												isTriLepton = true; // at least three muons
 												isTriMuon = true;
-												std::cout<<"Processing the "<<ievt<<"th event" << endl;
+												//std::cout<<"Processing the "<<ievt<<"th event" << endl;
+												bool eventBtag = false;
+												for(unsigned int j = 0; j < selectedJets.size(); j++)
+													if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+														eventBtag = true;
+												if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+													myfileLLL << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mmm" << "\n";
 												//cout << "is trilepton: 3 muons!" << endl;
 												//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
 												//cout << "-> muon 2 pt: " << selectedMuons[1]->Pt() << endl;
@@ -993,6 +1017,12 @@ int main (int argc, char *argv[])
 														{
 															isTriLepton = true; //at least two muons and one electron
 															isTriMu2El1 = true;
+															bool eventBtag = false;
+															for(unsigned int j = 0; j < selectedJets.size(); j++)
+																if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																	eventBtag = true;
+															if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+																myfileLLL << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mme" << "\n";
 															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 															//cout << "is trilepton: 2 muons + 1 electron!" << endl;
 															//cout << "-> muon 1 pt: " << selectedMuons[0]->Pt() << endl;
@@ -1013,6 +1043,12 @@ int main (int argc, char *argv[])
 													{
 														isTriLepton = true; //one muon and at least two electrons
 														isTriMu1El2 = true;
+														bool eventBtag = false;
+														for(unsigned int j = 0; j < selectedJets.size(); j++)
+															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																eventBtag = true;
+														if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+															myfileLLL << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mee" << "\n";
 														//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 														//cout << "is trilepton: 1 muon + 2 electrons!" << endl;
 														//cout << "-> muon pt: " << selectedMuons[0]->Pt() << endl;
@@ -1144,6 +1180,13 @@ int main (int argc, char *argv[])
 																	selecTableChargeMisId_2El.Fill(d,6,scaleFactor);
 																	isEBEE = true;
 																}																
+																
+																bool eventBtag = false;
+																for(unsigned int j = 0; j < selectedJets.size(); j++)
+																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																	eventBtag = true;
+																if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+																	myfileSS << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " ee" << "\n";
 															}else{ //opposite charge!!!
 																if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442){
 																	selecTableChargeMisId_2El.Fill(d,7,scaleFactor);
@@ -1157,7 +1200,7 @@ int main (int argc, char *argv[])
 													}
 												}
 										
-												//// for data-driven part: same-sign muons with 1 loose and 1 tight muon 
+												//// for data-driven part: same-sign muons with 1 loose and 1 tight electron 
 												else if(datadriven && selectedElectrons.size() == 1 && selectedOnlyLooseElectrons_FL.size() == 1  && selectedLooseMuons.size() == 0)
 												{
 													if(option =="FakeLepton")
@@ -1180,9 +1223,9 @@ int main (int argc, char *argv[])
 												}
 												
 												//// a same-sign electron and muon
-												else if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												else if(selectedElectrons.size() == 1 && !selection.foundZCandidate(selectedElectrons, selectedLooseElectronsNoVBTFid, 10.) && selectedLooseElectronsVBTFid.size() == selectedElectrons.size() && selectedMuons.size() == 1)
 												{
-													if(selectedMuons.size() == 1 && selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
+													if(selectedMuons[0]->Pt()<40 && selectedLooseMuons.size() == selectedMuons.size())
 													{
 														selecTableChargeMisId_ElMu.Fill(d,0,scaleFactor);
 														if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
@@ -1223,6 +1266,12 @@ int main (int argc, char *argv[])
 																selecTableChargeMisId_ElMu.Fill(d,4,scaleFactor);
 																isEE = true;
 															}																
+															bool eventBtag = false;
+															for(unsigned int j = 0; j < selectedJets.size(); j++)
+																if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																eventBtag = true;
+															if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+																myfileSS << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " me" << "\n";
 														}else{ //opposite charge!!!
 															if(fabs(selectedElectrons[0]->superClusterEta())<1.4442){
 																selecTableChargeMisId_ElMu.Fill(d,5,scaleFactor);
@@ -1257,6 +1306,12 @@ int main (int argc, char *argv[])
 													{
 														isTriLepton = true;
 														isTriMu2El1 = true;
+														bool eventBtag = false;
+														for(unsigned int j = 0; j < selectedJets.size(); j++)
+															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+															eventBtag = true;
+														if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+															myfileLLL << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mme" << "\n";
 														//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 														//cout << "is tri-lepton: 1 electron and 2 muons!" << endl;
 														//cout << "-> electron pt: " << selectedElectrons[0]->Pt() << endl;
@@ -1274,6 +1329,12 @@ int main (int argc, char *argv[])
 														{
 															isTriLepton = true;
 															isTriMu1El2 = true;
+															bool eventBtag = false;
+															for(unsigned int j = 0; j < selectedJets.size(); j++)
+																if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+																eventBtag = true;
+															if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+																myfileLLL << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mee" << "\n";
 															//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 															//cout << "is tri-lepton: 2 electrons and 1 muon!" << endl;
 															//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
@@ -1290,6 +1351,12 @@ int main (int argc, char *argv[])
 													{
 														isTriLepton = true; // at least three electrons
 														isTriElectron = true;
+														bool eventBtag = false;
+														for(unsigned int j = 0; j < selectedJets.size(); j++)
+															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
+															eventBtag = true;
+														if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+															myfileLLL << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " eee" << "\n";
 														//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 														//cout << "is trilepton: 3 electrons!" << endl;
 														//cout << "-> electron 1 pt: " << selectedElectrons[0]->Pt() << endl;
@@ -1728,6 +1795,8 @@ int main (int argc, char *argv[])
 	
     
   } //loop on datasets
+	if(systematic=="Nominal") myfileSS.close();
+	if(systematic=="Nominal") myfileLLL.close();
 
 	
 	//Once everything is filled ...
@@ -1787,22 +1856,22 @@ int main (int argc, char *argv[])
     
     //Selection tables
     selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_"+postfix+channelpostfix;
+    string selectiontableSemiLep = Treespath+"InclFourthGenSearch_SelectionTable_"+postfix+channelpostfix;
     selectiontableSemiLep = selectiontableSemiLep +".tex"; 	
     selecTableSemiLep.Write(selectiontableSemiLep.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
 	    
     selecTableMultiLepton.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableMultiLepton = "InclFourthGenSearch_SelectionTable_MultiLepton"+postfix+channelpostfix;
+    string selectiontableMultiLepton = Treespath+"InclFourthGenSearch_SelectionTable_MultiLepton"+postfix+channelpostfix;
     selectiontableMultiLepton = selectiontableMultiLepton +".tex"; 	
     selecTableMultiLepton.Write(selectiontableMultiLepton.c_str(),false, true, false, false, false, false, false);
 
     selecTableChargeMisId_ElMu.TableCalculator(true, true, true, true, true, false, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableChargeMisId_ElMu = "InclFourthGenSearch_SelectionTable_ChargeMisIdElMu"+postfix+channelpostfix;
+    string selectiontableChargeMisId_ElMu = Treespath+"InclFourthGenSearch_SelectionTable_ChargeMisIdElMu"+postfix+channelpostfix;
     selectiontableChargeMisId_ElMu = selectiontableChargeMisId_ElMu +".tex"; 	
     selecTableChargeMisId_ElMu.Write(selectiontableChargeMisId_ElMu.c_str(),false, true, false, false, false, false, false);
 
     selecTableChargeMisId_2El.TableCalculator(true, true, true, true, true, false, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
-    string selectiontableChargeMisId_2El = "InclFourthGenSearch_SelectionTable_ChargeMisId2El"+postfix;
+    string selectiontableChargeMisId_2El = Treespath+"InclFourthGenSearch_SelectionTable_ChargeMisId2El"+postfix;
     selectiontableChargeMisId_2El = selectiontableChargeMisId_2El +".tex"; 	
 		if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),false, true, false, false, false, false, false);
 
@@ -1816,7 +1885,7 @@ int main (int argc, char *argv[])
   ofstream myfile1;
 	if(option=="ChargeMisId" && systematic=="Nominal")
 	{
-		string myRockingFile1 = "ChargeMisId_OSEvents"+channelpostfix+".txt";
+		string myRockingFile1 = Treespath+"ChargeMisId_OSEvents"+channelpostfix+".txt";
 		myfile1.open(myRockingFile1.c_str());
 		cout << endl;
 		
@@ -1838,7 +1907,7 @@ int main (int argc, char *argv[])
 	}
 	if(option=="FakeLepton" && systematic=="Nominal")
 	{
-		string myRockingFile1 = "FakeLepton_Events"+channelpostfix+".txt";
+		string myRockingFile1 = Treespath+"FakeLepton_Events"+channelpostfix+".txt";
 		myfile1.open(myRockingFile1.c_str());
 		myfile1 << "\n";
 		if(semiMuon) myfile1 << "THIS IS FOR THE MUON TRIGGER PART OF THE DATA" << "\n";

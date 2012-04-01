@@ -135,7 +135,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string inputpostfixOld = "_28Feb2012"; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+  string inputpostfixOld = ""; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
   string Treespath = "InclFourthGenTrees_Fall11_22March2012";// "InclFourthGenTrees_Fall11_Round4";
@@ -143,7 +143,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_22March2012";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_30March2012TEST";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
