@@ -166,7 +166,7 @@ int main (int argc, char *argv[])
   string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_30MarchTEST";
+  string Treespath = "InclFourthGenTrees_Fall11_2Apr";
   Treespath = Treespath +"/";
   if(!datadriven) mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -440,7 +440,7 @@ int main (int argc, char *argv[])
       cout << " - Loop over events " << endl;      
     
     for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (int ievt = 0; ievt < 100000; ievt++)
+//    for (int ievt = 0; ievt < 200; ievt++)
     {        
 
       if(ievt%1000 == 0)
@@ -702,7 +702,8 @@ int main (int argc, char *argv[])
 
 
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before treeLoader.LoadMCEvent:");      
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || dataSetName.find("NP_Tprime")==0 || dataSetName.find("NP_overlay_Tprime")==0)
+      //if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || dataSetName.find("NP_Tprime")==0 || dataSetName.find("NP_overlay_Tprime")==0)
+			if(dataSetName != "data" && dataSetName != "Data" && dataSetName != "Data")
       {
         treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
@@ -1639,6 +1640,83 @@ int main (int argc, char *argv[])
 			} //end selectedJets.size()>=4 && (dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiElectron") == 0 || TprimePairSample)
 
 
+
+			// find quarks from W bosons 
+      int nW=0;
+			vector < TRootMCParticle *> mcWbosons; 
+			for(unsigned int i=0; i<mcParticles.size(); i++)
+			{
+				if(mcParticles[i]->status() != 3) continue;
+				
+				if(abs(mcParticles[i]->type()) == 24) 
+				{
+					//cout << "THIS W BOSON HAS " << mcParticles[i]->nDau() << " DAUGHTERS" << endl;
+					if(mcParticles[i]->nDau() <= 3){ //crucial to avoid W bosons "inside" diagrams instead of the actual decay product
+						nW++;
+						//cout << "first daughter " << mcParticles[i]->dauOneId() << endl;
+						//cout << "second daughter " << mcParticles[i]->dauTwoId() << endl;
+						//cout << "third daughter " << mcParticles[i]->dauThreeId() << endl;
+						//cout << "fourth daughter " << mcParticles[i]->dauFourId() << endl;
+						mcWbosons.push_back(mcParticles[i]);
+					}
+				}
+			}	
+			//cout << "EVENT HAS " << nW << " or " << mcWbosons.size() << " W BOSONS ON GENERATOR LEVEL "<< endl;
+			
+			vector < pair <TLorentzVector, int> > quarksFromW;
+			vector < pair <int, int> > quarksFromW_;
+			pair<TLorentzVector,int> qW_tmp; 
+			int Wboson = 0;
+			if(dataSetName != "data" && dataSetName != "Data" && dataSetName != "DATA")
+			{
+		  	//cout << "mcParticles.size " << mcParticles.size() << endl;
+        for(unsigned int i=0; i<mcParticles.size(); i++)
+    		{
+					if( mcParticles[i]->status() != 3) continue;
+        	for(unsigned int j=0; j < i; j++)
+    			{
+			  		if( mcParticles[j]->status() != 3) continue;
+					
+      			if( abs(mcParticles[i]->type()) < 6 && abs(mcParticles[j]->type()) < 6) //light/b quarks
+      			{
+							if(mcParticles[i]->motherType() == -24 || mcParticles[i]->motherType() == 24)
+							{
+								TLorentzVector W = (TLorentzVector) *mcParticles[i]+(TLorentzVector) *mcParticles[j];
+								if( mcParticles[i]->motherType() == mcParticles[j]->motherType() && mcParticles[i]->grannyType() == mcParticles[j]->grannyType())
+								{// same W boson as mother and same granny!
+									//cout << "W boson mass from quarks "<< W.M() << endl;
+									int thew = 999;
+									for(int w = 0; w < mcWbosons.size(); w++){
+										//cout << "W boson mass from generator W " << mcWbosons[w]->M() << endl;
+										if(fabs(W.M()-mcWbosons[w]->M())<0.0001) thew = w; //important to avoid that a single quark makes multiple W bosons
+									}
+									if(thew<999){
+										//cout << "grannyType: "<< mcParticles[i]->grannyType() << endl;
+										//cout << "quark type 1: " << mcParticles[i]->type() << " quark type 2: " << mcParticles[j]->type() << endl;
+										Wboson++;
+										qW_tmp.second = Wboson;
+										qW_tmp.first = (TLorentzVector) *mcParticles[i];
+										quarksFromW.push_back(qW_tmp);
+										qW_tmp.first = (TLorentzVector) *mcParticles[j];
+										quarksFromW.push_back(qW_tmp);
+										//if(mcParticles[i]->motherType() == -24) cout << "found W boson (-) number " << Wboson << " with mass "<<W.M() <<" decaying to quarks " << i << " and " << j << endl;
+										//if(mcParticles[i]->motherType() == 24) cout << "found W boson (+) number " << Wboson << " with mass "<<W.M() <<" decaying to quarks " << i << " and " << j << endl;
+									}
+								}
+							}
+						}
+					}
+				}				
+			}
+			
+			//cout << "EVENT SUMMARY for dataset: " << dataSetName << endl;
+			//cout << "We have "<< (float) quarksFromW.size()/2 << " hadronically decaying W bosons" << endl;
+			//for(unsigned int q=0; q<quarksFromW.size(); q++)
+			//{
+				//cout << "quark " << q << " with pt = "<< (quarksFromW[q].first).Pt() <<" is the decay product of W " << quarksFromW[q].second << endl;
+			//}
+			//cout << endl;
+
       vector<float> bTagTCHE, bTagTCHP, InitJetsbTagTCHE, InitJetsbTagTCHP;
 			vector<int> partonFlavourJet;
       vector<TLorentzVector> SelectedJetsTLV, SelectedForwardJetsTLV, SelectedMuonsTLV, SelectedElectronsTLV, InitJets;
@@ -1759,6 +1837,8 @@ int main (int argc, char *argv[])
       	//myBranch_selectedEvents->setHadrLQuark1( jetCombiner->GetLightQuark1() );
       	//myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
       	//myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
+      	
+				if(dataSetName != "Data" && dataSetName != "data" && dataSetName != "DATA") myBranch_selectedEvents->setQuarksFromW( quarksFromW );
 			
      		myInclFourthGenTree->Fill();
 	    }
