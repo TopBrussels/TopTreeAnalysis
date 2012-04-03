@@ -289,25 +289,41 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
   double xbins[xarraysize];
   //xbins[0] = xvariables[0];//can be changed later //warning, possible conflicts when not changed?
   xbins[0] = 0;
-  unsigned int index = 1;
-  float sum_eventweights_bin = 0, totalsum_eventweights = 0;
+  unsigned int index = 1, alternator = 0;
+  float sum_eventweights_bin = 0, totalsum_eventweights = 0, sum_eventweights_updated = 0;
   for(unsigned int w = 0; w < xvariables_withweights.size (); w++)
   {
      totalsum_eventweights = totalsum_eventweights + xvariables_withweights[w].second;
   }
 ////  cout<<" totalsum_eventweights = "<<totalsum_eventweights<<", xvariables_withweights.size () = "<<xvariables_withweights.size ()<<endl;
 
+
+	xbins[index] = xvariables_withweights[0].first;
+	index++;
+////////  cout<<" for variable "<<xvariable<<", made a new bin at 'event' j = "<<0<<", variable value = "<<xvariables_withweights[0].first<<", sum_eventweights_bin = "<<sum_eventweights_bin<<", sum of weights updated = " << sum_eventweights_updated << ", total sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[xvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[xvariable]<<endl;	   
+  sum_eventweights_bin = 0;
   for (unsigned int j = 0; j < xvariables_withweights.size (); j++)
-  {  
-     sum_eventweights_bin = sum_eventweights_bin + xvariables_withweights[j].second;
-     //cout<<" sum_eventweights_bin = "<<sum_eventweights_bin<<", totalsum_eventweights = "<<totalsum_eventweights<<", totalsum_eventweights/nbinsMap[xvariable] = "<<totalsum_eventweights/nbinsMap[xvariable]<<endl;
-     if (((sum_eventweights_bin / (totalsum_eventweights/nbinsMap[xvariable])) >= 1) || j==0)
-     { 	    
-	 xbins[index] = xvariables_withweights[j].first;
-	 index++;
-////	 cout<<" for variable "<<xvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<xvariables_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[xvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[xvariable]<<endl;	   
+  {  		
+       sum_eventweights_bin = sum_eventweights_bin + xvariables_withweights[j].second;
+////////       cout<<" ... sum_eventweights_bin = "<<sum_eventweights_bin<<endl;
+       sum_eventweights_updated = sum_eventweights_updated + xvariables_withweights[j].second; //is not resetted, unlike sum_eventweights_bin
+		   if ((sum_eventweights_bin / (totalsum_eventweights/nbinsMap[xvariable])) >= 1)
+       {
+		 	   if(alternator % 2 == 1)
+			   { //new! alternating between "exceeding" or "just not exceeding" the 'constructed number of events/bin'; for an odd j, go one step back in the loop to place the bin boundary at the event just *before* the sum_eventweights_bin exceeds the 'constructed number of events/bin'
+		  		 sum_eventweights_bin = sum_eventweights_bin - xvariables_withweights[j].second;
+					 sum_eventweights_updated = sum_eventweights_updated - xvariables_withweights[j].second;
+////////					 cout<<" Changing sum_eventweights_bin to " << sum_eventweights_bin << endl;
+			  	 sum_eventweights_updated = sum_eventweights_updated - xvariables_withweights[j].second;
+			     j = j - 1;
+				 }
+			   alternator++;
+	 		   //xbins[index] = xvariables_withweights[j].first; //old
+	 		   xbins[index] = xvariables_withweights[j].first;
+			   index++;
+////////   	 	   cout<<" for variable "<<xvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<xvariables_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin<<", sum of weights updated = " << sum_eventweights_updated << ", total sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[xvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[xvariable]<<endl;	   
          sum_eventweights_bin = 0;
-     }
+       }
   }
   
   xbins[xarraysize-1] = xvariables_withweights[xvariables_withweights.size ()-1].first; //by definition this is the last element of the array xbins, and the last element of the vector xvariables
@@ -374,17 +390,33 @@ void MakeBinning::Binning_forTprimeAnalysis(string myxvariable, string myyvariab
     }
 ////    cout<<" totalsum_eventweights = "<<totalsum_eventweights<<", xvariables_withweights.size () = "<<xvariables_withweights.size ()<<endl;
     
+		alternator = 0;
+		sum_eventweights_bin = 0;
+		sum_eventweights_updated = 0;
+		ybins[index] = yvariables_CurrentxvariableBin_withweights[0].first;
+	  index++;
+////////    cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<0<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[0].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", total sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[yvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
     for (unsigned int j = 0; j < yvariables_CurrentxvariableBin_withweights.size (); j++)
     {
        sum_eventweights_bin = sum_eventweights_bin + yvariables_CurrentxvariableBin_withweights[j].second;
-       if (((sum_eventweights_bin / (totalsum_eventweights/nbinsMap[yvariable])) >= 1) || j==0)
-       { 	    
-	   			ybins[index] = yvariables_CurrentxvariableBin_withweights[j].first;
-	   			index++;
-////	   			cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin <<", sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[yvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
-          sum_eventweights_bin = 0;
+////////       cout<<" ... sum_eventweights_bin = "<<sum_eventweights_bin<<endl;
+       sum_eventweights_updated = sum_eventweights_updated + yvariables_CurrentxvariableBin_withweights[j].second; //is not resetted, unlike sum_eventweights_bin		   
+			 if ((sum_eventweights_bin / (totalsum_eventweights/nbinsMap[yvariable])) >= 1)
+       { 	    			
+					if(alternator % 2 == 1)
+			   	{ //new! alternating between "exceeding" or "just not exceeding" the 'constructed number of events/bin'; for an odd j, go one step back in the loop to place the bin boundary at the event just *before* the sum_eventweights_bin exceeds the 'constructed number of events/bin'
+		  		 	sum_eventweights_bin = sum_eventweights_bin - yvariables_CurrentxvariableBin_withweights[j].second;
+					 	sum_eventweights_updated = sum_eventweights_updated - yvariables_CurrentxvariableBin_withweights[j].second;
+////////					 	cout<<" Changing sum_eventweights_bin to " << sum_eventweights_bin << endl;
+			   	  j = j - 1;
+					}
+			   	alternator++;
+	 		   	ybins[index] = yvariables_CurrentxvariableBin_withweights[j].first;
+			   	index++;
+////////   	 	   	cout<<" for variable "<<yvariable<<", made a new bin at 'event' j = "<<j<<", variable value = "<<yvariables_CurrentxvariableBin_withweights[j].first<<", sum_eventweights_bin = "<<sum_eventweights_bin<<", sum of weights updated = " << sum_eventweights_updated << ", total sum of weights = "<<totalsum_eventweights<<", nbins = "<<nbinsMap[xvariable]<<", and constructed number of events/bin = "<<totalsum_eventweights/nbinsMap[yvariable]<<endl;	   
+         	sum_eventweights_bin = 0;
        }
-    }
+    }			
     ybins[yarraysize-1] = yvariables_CurrentxvariableBin_withweights[yvariables_CurrentxvariableBin_withweights.size ()-1].first; //by definition this is the last element of the array xbins, and the last element of the vector VariableValuesMap[xvariable]
 
     if(yvariable == "MassHadTop" || yvariable == "MTop" ||  yvariable == "Mtop")
