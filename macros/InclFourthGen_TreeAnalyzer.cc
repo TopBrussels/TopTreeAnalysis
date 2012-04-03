@@ -135,15 +135,15 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string inputpostfixOld = ""; // "_Fall11_Round4"; // should be same as postfix in TreeCreator of the trees
+  string inputpostfixOld = ""; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_22March2012";// "InclFourthGenTrees_Fall11_Round4";
+  string Treespath = "InclFourthGenTrees_Fall11_3Apr";
   Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_30March2012TEST";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_3Apr";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -359,6 +359,10 @@ int main (int argc, char *argv[])
 	histo2D["HTvsMTop_1B_2W_TprimeTprime"] = new TH2F("HTvsMTop_1B_2W_TprimeTprime","HTvsMTop_1B_2W_TprimeTprime",400,0,1500,400,0,1500);
 	histo2D["HTvsMTop_2B_2W_TprimeTprime"] = new TH2F("HTvsMTop_2B_2W_TprimeTprime","HTvsMTop_2B_2W_TprimeTprime",400,0,1500,400,0,1500);
 
+	for(unsigned int i = 0; i<datasets.size(); i++){
+		string histoWcounting = "nbOfGenHadW_vs_nbOfRecoHadW_"+datasets[i]->Name();
+		histo2D[histoWcounting.c_str()] = new TH2F(histoWcounting.c_str(),histoWcounting.c_str(),6,-0.5,5.5,6,-0.5,5.5);
+	}
 	
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -503,8 +507,34 @@ int main (int argc, char *argv[])
 	if(systematic=="Nominal") myfile1.open(myRockingFile1.c_str());
 	string myRockingFile2 = Outputpath+"InterestingEvents_lll"+channelpostfix+".txt";
 	if(systematic=="Nominal") myfile2.open(myRockingFile2.c_str());
+  ofstream file_Wsummary, file_Wsummary2;
+	string myWsummary = Outputpath+"WcountingSummary"+channelpostfix+".txt";
+	file_Wsummary.open(myWsummary.c_str());
+	string myWsummary2 = Outputpath+"WcountingGeneratorSummary"+channelpostfix+".txt";
+	file_Wsummary2.open(myWsummary2.c_str());
 
-  for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
+	float MC_correct[inputTrees.size()][4];
+	float MC_wrong[inputTrees.size()][4];
+
+	float Reco_0W_correct[inputTrees.size()][4];
+	float Reco_1W_correct[inputTrees.size()][4], Reco_1W_1fakeW[inputTrees.size()][4];
+	float Reco_2W_correct[inputTrees.size()][4], Reco_2W_1fakeW[inputTrees.size()][4], Reco_2W_2fakeW[inputTrees.size()][4];
+	float Reco_3W_correct[inputTrees.size()], Reco_3W_1fakeW[inputTrees.size()][4], Reco_3W_2fakeW[inputTrees.size()][4], Reco_3W_3fakeW[inputTrees.size()][4];
+	float Reco_0W[inputTrees.size()], Reco_1W[inputTrees.size()], Reco_2W[inputTrees.size()], Reco_3W[inputTrees.size()];
+	for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
+	{
+		Reco_3W_correct[d] = 0;
+		Reco_0W[d] = 0; Reco_1W[d] = 0; Reco_2W[d] = 0; Reco_3W[d] = 0;
+		for(int k = 0;k < 4; k++)
+		{
+			MC_correct[d][k] = 0; MC_wrong[d][k] = 0;
+			Reco_0W_correct[d][k] = 0; Reco_1W_1fakeW[d][k] = 0;
+			Reco_1W_correct[d][k] = 0; Reco_2W_1fakeW[d][k] = 0; Reco_2W_2fakeW[d][k] = 0;
+			Reco_2W_correct[d][k] = 0; Reco_3W_1fakeW[d][k] = 0; Reco_3W_2fakeW[d][k] = 0; Reco_3W_3fakeW[d][k] = 0;
+		}
+	}
+  
+	for (unsigned int d = 0; d < inputTrees.size(); d++) //d < datasets.size()
   {
 		string dataSetName = datasets[d]->Name();
 		
@@ -1099,7 +1129,18 @@ int main (int argc, char *argv[])
 			///////////////////////////////
 			// start the W counting procedure here
 			///////////////////////////////
-			int nbOfWs = 0; 
+			vector< TLorentzVector > quarksWmother;
+			vector<TLorentzVector> chosenWJets;
+			int nbOfGenHadWs;		
+			int nbOfWs = 0; int nbOfHadWs = 0;
+			if(systematic == "Nominal")
+			{
+				quarksWmother = myBranch_selectedEvents->quarksFromW();
+				cout << "quarksWmother.size " << quarksWmother.size() << endl;
+				if(quarksWmother.size()>0) cout << "pt first quark " << quarksWmother[0].Pt() << endl;
+				nbOfGenHadWs = (int) quarksWmother.size()/2;
+			}
+			
 			if(isSingleLepton) nbOfWs = 1;
 			if(isSSLepton) nbOfWs = 2;
 			if(isTriLepton) nbOfWs = 3;
@@ -1155,7 +1196,11 @@ int main (int argc, char *argv[])
 				if(massdifference < SigmaWmass && indexWjet1<999 && indexWjet2<999)
 				{
 					nbOfWs++;
-
+					nbOfHadWs++;
+					
+					chosenWJets.push_back(indexWjet1);
+					chosenWJets.push_back(indexWjet2);
+					
 					HT = HT + (selectedJetsFromW_DropUsedJets[indexWjet1] + selectedJetsFromW_DropUsedJets[indexWjet2]).Pt();
 					
 					if(selectedJets_MVAinput.size()<=2) //you're only using it for the nbOfWs=2 boxes anyway...
@@ -1190,6 +1235,252 @@ int main (int argc, char *argv[])
 			}
 			while(selectedJetsFromW_DropUsedJets.size()>=2 && selectedJetsFromW_DropUsedJets.size()!= (unsigned int)previoussize);
 
+			if(systematic == "Nominal")
+			{
+				//plot the number of generated hadronically decaying W bosons versus the number of reconstructed hadronically decaying W bosons for each dataset
+				string histoWcounting = "nbOfGenHadW_vs_nbOfRecoHadW_"+dataSetName;
+				histo2D[histoWcounting.c_str()]->Fill(nbOfGenHadWs,nbOfHadWs,datasets[d]->NormFactor()*Luminosity*scaleFactor);
+
+				//count the generated W bosons for which the best matching exists -> GenWmatched
+				int GenWmatched = 0;
+				//cout << "COUNT THE NUMBER OF GENERATED W BOSONS WITH BEST MATCHING!" << endl;
+				//cout << "there are " << selectedJetsFromW.size() << " jets that can be used for the matching" << endl;
+				for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+					//cout << " for the quarks of the "<< w+1 << " W boson:" << endl;
+					int tmp = w;
+					vector<TLorentzVector> quarkpair;
+					quarkpair.push_back(quarksWmother[tmp]);
+					//cout << (quarksWmother[tmp]).Pt() << endl;
+					tmp = w+1;
+					quarkpair.push_back(quarksWmother[tmp]);				
+					//cout << (quarksWmother[tmp]).Pt() << endl;
+					JetPartonMatching matching = JetPartonMatching(quarkpair, selectedJetsFromW, 2, true, true, 0.3);
+					//cout << "  matching -> # combinations " << matching.getNumberOfAvailableCombinations() << endl;
+					//cout << "  matching -> match for first parton " << matching.getMatchForParton(0,0) << endl;
+					//cout << "  matching -> match for second parton " << matching.getMatchForParton(1,0) << endl;
+					//cout << "  matching -> unmatched partons: " << matching.getNumberOfUnmatchedPartons() << endl;
+					if(matching.getNumberOfUnmatchedPartons() == 0) GenWmatched++;
+				}
+			
+				//number of generated W bosons for which the best matching exists (GenWmatched) is always <= the number of generated W bosons for each dataset
+				if(nbOfGenHadWs == 0)
+				{
+					if(nbOfGenHadWs == GenWmatched) MC_correct[d][0]++;
+					else MC_wrong[d][0]++; //it can not be smaller!
+				}
+				else if(nbOfGenHadWs == 1)
+				{
+					if(nbOfGenHadWs == GenWmatched) MC_correct[d][1]++;
+					else MC_wrong[d][1]++;			
+				}
+				else if(nbOfGenHadWs == 2)
+				{
+					if(nbOfGenHadWs == GenWmatched) MC_correct[d][2]++;
+					else MC_wrong[d][2]++;			
+				}
+				else if(nbOfGenHadWs >= 3)
+				{
+					if(nbOfGenHadWs == GenWmatched) MC_correct[d][3]++;
+					else MC_wrong[d][3]++;			
+				}
+
+				//analyze the reconstructed hadronically decaying W bosons, how many fakes, how many wrongly combined,...
+				if(nbOfHadWs == 0) //////////////// 0 RECONSTRUCTED W
+				{
+					Reco_0W[d]++;
+					if(nbOfGenHadWs == 0) Reco_0W_correct[d][0]++;			// 0W reconstructed, 0 generated
+					else if(nbOfGenHadWs == 1) Reco_0W_correct[d][1]++; // 1W less reconstructed than generated
+					else if(nbOfGenHadWs == 2) Reco_0W_correct[d][2]++; // 2W less reconstructed than generated
+					else if(nbOfGenHadWs >= 3) Reco_0W_correct[d][3]++; // 3W less reconstructed than generated
+				}
+				else if(nbOfHadWs == 1) //////////////// 1 RECONSTRUCTED W
+				{
+					Reco_1W[d]++;
+					if(nbOfGenHadWs == 0) Reco_1W_1fakeW[d][0]++; // there was no generated W, so the reconstructed one must be fake
+					
+					else if(nbOfGenHadWs == 1) // as many reconstructed as generated
+					{
+						int RecoWmatched = 0;
+						vector<TLorentzVector> quarkpair;
+						quarkpair.push_back(quarksWmother[0]);
+						quarkpair.push_back(quarksWmother[1]);				
+						JetPartonMatching matching = JetPartonMatching(quarkpair, chosenWJets, 2, true, true, 0.3);
+						if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+					
+						if(RecoWmatched == 1) Reco_1W_correct[d][1]++; // the reconstructed W is the generated W
+						else Reco_1W_1fakeW[d][1]++; // the reconstructed W is not the generated W
+					}
+					else if (nbOfGenHadWs == 2) // 1 more reconstructed than generated
+					{
+						int RecoWmatched = 0;
+						for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+							int tmp = w;
+							vector<TLorentzVector> quarkpair;
+							quarkpair.push_back(quarksWmother[tmp]);
+							tmp=w+1;
+							quarkpair.push_back(quarksWmother[tmp]);				
+							JetPartonMatching matching = JetPartonMatching(quarkpair, chosenWJets, 2, true, true, 0.3);
+							if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+						}
+						if(RecoWmatched == 1) Reco_1W_correct[d][2]++; // the reconstructed is one of the 2 generated W
+						else Reco_1W_1fakeW[d][2]++; // the reconstructed is none of the 2 generated W			
+					}
+					else if (nbOfGenHadWs >= 3) // 2 more reconstructed than generated
+					{
+						int RecoWmatched = 0;
+						for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+							int tmp = w;
+							vector<TLorentzVector> quarkpair;
+							quarkpair.push_back(quarksWmother[tmp]);
+							tmp=w+1;
+							quarkpair.push_back(quarksWmother[tmp]);				
+							JetPartonMatching matching = JetPartonMatching(quarkpair, chosenWJets, 2, true, true, 0.3);
+							if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+						}
+						if(RecoWmatched == 1) Reco_1W_correct[d][3]++; //the reconstructed is one of the 3 generated W
+						else Reco_1W_1fakeW[d][3]++; // the reconstructed is none of the 3 generated W				
+					}
+				}
+				else if(nbOfHadWs == 2) //////////////// 2 RECONSTRUCTED W
+				{
+					Reco_2W[d]++;
+					if(nbOfGenHadWs == 0) Reco_2W_2fakeW[d][0]++; // 2 less reconstructed than generated -> both reconstructed are fake
+					else if(nbOfGenHadWs == 1) // 1 less reconstructed than generated
+					{
+						int RecoWmatched = 0;
+						vector<TLorentzVector> quarkpair;
+						quarkpair.push_back(quarksWmother[0]);
+						quarkpair.push_back(quarksWmother[1]);
+						for(int jj = 0; jj < (int)chosenWJets.size()/2; jj++){			
+							int tmpj=0;
+							vector<TLorentzVector> jetpair;
+							jetpair.push_back(chosenWJets[tmpj]);
+							tmpj = jj+1;
+							jetpair.push_back(chosenWJets[tmpj]);
+							JetPartonMatching matching = JetPartonMatching(quarkpair, jetpair, 2, true, true, 0.3);
+							if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+						}
+						if(RecoWmatched == 1) Reco_2W_1fakeW[d][1]++; // 1 reconstructed matches the generated, 1 is fake
+						else if(RecoWmatched == 0) Reco_2W_2fakeW[d][1]++; // none of the reconstructed matches the generated -> both are fake
+					}
+					else if(nbOfGenHadWs == 2) // as many reconstructed as generated
+					{
+						int RecoWmatched = 0;
+						for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+							int tmp = w;
+							vector<TLorentzVector> quarkpair;
+							quarkpair.push_back(quarksWmother[tmp]);
+							tmp=w+1;
+							quarkpair.push_back(quarksWmother[tmp]);
+							for(int jj = 0; jj < (int)chosenWJets.size()/2; jj++){			
+								int tmpj=0;
+								vector<TLorentzVector> jetpair;
+								jetpair.push_back(chosenWJets[tmpj]);
+								tmpj = jj+1;
+								jetpair.push_back(chosenWJets[tmpj]);
+								JetPartonMatching matching = JetPartonMatching(quarkpair, jetpair, 2, true, true, 0.3);
+								if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+							}
+						}
+						if(RecoWmatched == 2) Reco_2W_correct[d][2]++; // 2 reconstructed matching the 2 generated
+						else if(RecoWmatched == 1) Reco_2W_1fakeW[d][2]++; // 1 reconstructed matches 1 of the generated -> one is fake
+						else if(RecoWmatched == 0) Reco_2W_2fakeW[d][2]++; // none of the 2 reconstructed matches the 2 generated -> 2 fake
+					}
+					else if (nbOfGenHadWs >= 3) // 1 more reconstructed than generated
+					{
+						int RecoWmatched = 0;
+						for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+							int tmp = w;
+							vector<TLorentzVector> quarkpair;
+							quarkpair.push_back(quarksWmother[tmp]);
+							tmp=w+1;
+							quarkpair.push_back(quarksWmother[tmp]);
+							for(int jj = 0; jj < (int)chosenWJets.size()/2; jj++){			
+								int tmpj=0;
+								vector<TLorentzVector> jetpair;
+								jetpair.push_back(chosenWJets[tmpj]);
+								tmpj = jj+1;
+								jetpair.push_back(chosenWJets[tmpj]);
+								JetPartonMatching matching = JetPartonMatching(quarkpair, jetpair, 2, true, true, 0.3);
+								if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+							}
+						}
+						if(RecoWmatched == 2) Reco_2W_correct[d][3]++; // the 2 reconstructed match 2 of the 3 generated -> 
+						else if(RecoWmatched == 1) Reco_2W_1fakeW[d][3]++; // 1 of the 2 reconstructed matches 1 of the 3 generated
+						else if(RecoWmatched == 0) Reco_2W_2fakeW[d][3]++; // none of the 2 reconstructed matches the 3 generated
+					}
+				}
+				else if(nbOfHadWs >= 3) //////////////// 3 RECONSTRUCTED W
+				{
+					Reco_3W[d]++;
+					if(nbOfGenHadWs == 0) Reco_3W_3fakeW[d][0]++;
+					else if(nbOfGenHadWs == 1)
+					{
+						int RecoWmatched = 0;
+						vector<TLorentzVector> quarkpair;
+						quarkpair.push_back(quarksWmother[0]);
+						quarkpair.push_back(quarksWmother[1]);
+						for(int jj = 0; jj < (int)chosenWJets.size()/2; jj++){			
+							int tmpj=0;
+							vector<TLorentzVector> jetpair;
+							jetpair.push_back(chosenWJets[tmpj]);
+							tmpj = jj+1;
+							jetpair.push_back(chosenWJets[tmpj]);
+							JetPartonMatching matching = JetPartonMatching(quarkpair, jetpair, 2, true, true, 0.3);
+							if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+						}
+						if(RecoWmatched == 1) Reco_3W_2fakeW[d][1]++; // 1 of the 3 reconstructed matches the 1 generated -> 2 fake
+						else if(RecoWmatched == 0) Reco_3W_3fakeW[d][1]++; // none of the 3 reconstructed matches the 1 generated -> 3 fake
+					}
+					else if(nbOfGenHadWs == 2)
+					{
+						int RecoWmatched = 0;
+						for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+							int tmp = w;
+							vector<TLorentzVector> quarkpair;
+							quarkpair.push_back(quarksWmother[tmp]);
+							tmp=w+1;
+							quarkpair.push_back(quarksWmother[tmp]);
+							for(int jj = 0; jj < (int)chosenWJets.size()/2; jj++){			
+								int tmpj=0;
+								vector<TLorentzVector> jetpair;
+								jetpair.push_back(chosenWJets[tmpj]);
+								tmpj = jj+1;
+								jetpair.push_back(chosenWJets[tmpj]);
+								JetPartonMatching matching = JetPartonMatching(quarkpair, jetpair, 2, true, true, 0.3);
+								if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+							}
+						}
+						if(RecoWmatched == 2) Reco_3W_1fakeW[d][2]++; // 2 of the 3 reconstructed matches the 2 generated -> 1 fake
+						else if(RecoWmatched == 1) Reco_3W_2fakeW[d][2]++;// 1 of the 3 reconstructed matches the 2 generated -> 2 fake
+						else if(RecoWmatched == 0) Reco_3W_3fakeW[d][2]++;// none of the 3 reconstructed matches the 2 generated -> 3 fake
+					}
+					else if (nbOfGenHadWs >= nbOfHadWs)
+					{
+						int RecoWmatched = 0;
+						for(int w = 0; w<(int)quarksWmother.size()/2; w++){	
+							int tmp = w;
+							vector<TLorentzVector> quarkpair;
+							quarkpair.push_back(quarksWmother[tmp]);
+							tmp=w+1;
+							quarkpair.push_back(quarksWmother[tmp]);
+							for(int jj = 0; jj < (int)chosenWJets.size()/2; jj++){			
+								int tmpj=0;
+								vector<TLorentzVector> jetpair;
+								jetpair.push_back(chosenWJets[tmpj]);
+								tmpj = jj+1;
+								jetpair.push_back(chosenWJets[tmpj]);
+								JetPartonMatching matching = JetPartonMatching(quarkpair, jetpair, 2, true, true, 0.3);
+								if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+							}
+						}
+						if(RecoWmatched >= 3) Reco_3W_correct[d]++; // 3 of the 3 reconstructed matches the 3 generated
+						else if(RecoWmatched == 2) Reco_3W_1fakeW[d][3]++; // 2 of the 3 reconstructed matches the 3 generated -> 1 fake
+						else if(RecoWmatched == 1) Reco_3W_2fakeW[d][3]++; // 1 of the 3 reconstructed matches the 3 generated -> 2 fake
+						else if(RecoWmatched == 0) Reco_3W_3fakeW[d][3]++; // 3 of the 3 reconstructed matches the 3 generated -> 3 fake
+					}
+				}
+			}
 				
 			if(nbOfBtags>=2) nbOfBtags = 2; //to make sure that events with more than 2 b-jets end up in the 2 b-jet bin			
 			
@@ -1649,9 +1940,84 @@ int main (int argc, char *argv[])
 		inFile->Close();
 		delete inFile;
 		
+		if(systematic=="Nominal"){
+			file_Wsummary<<"\\begin{landscape}"<<endl;
+			file_Wsummary<<"\\begin{table}"<<endl;
+  		file_Wsummary<<"\\caption{W counting summary for "<<dataSetName<<"}"<<endl;
+  		file_Wsummary<<"\\label{tab:}"<<endl;
+  		file_Wsummary<<"\\centering"<<endl;
+  		file_Wsummary<<"\\begin{tabular}{|c|";
+			for(unsigned int i=0;i<4;i++) file_Wsummary<<"c";
+			file_Wsummary<<"|}"<<endl;
+  		//file_Wsummary<<"\\hline"<<endl;
+			file_Wsummary<<"&";
+			for(unsigned int i=0;i<4;i++) {
+				file_Wsummary<< i << " generated W \\rightarrow q\\bar{q} \t ";
+				if(i<3) file_Wsummary<<" &";
+				else file_Wsummary<<"\\\\"<<endl;
+			}
+			file_Wsummary<<endl;
+			file_Wsummary<<"\\hline"<<endl;
+			for(unsigned int i=0;i<4;i++){
+				if(i==0){
+					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_0W[d] <<"\t & ";
+					for(unsigned int j=0;j<4;j++){
+						file_Wsummary<<Reco_0W_correct[d][j]<<"\t";	
+						if(j<3) file_Wsummary<<"&";
+						else file_Wsummary<<"\\\\"<<endl;
+					}
+				}else if(i==1){
+					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_1W[d] <<"\t & ";
+					file_Wsummary<<Reco_1W_1fakeW[d][0]<<"\t &";			
+					file_Wsummary<<Reco_1W_correct[d][1]<<"\t " << Reco_1W_1fakeW[d][1] <<"\t &";			
+					file_Wsummary<<Reco_1W_correct[d][2]<<"\t " << Reco_1W_1fakeW[d][2] <<"\t &";			
+					file_Wsummary<<Reco_1W_correct[d][3]<<"\t " << Reco_1W_1fakeW[d][3] <<"\t \\\\";			
+				}else if(i==2){
+					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_2W[d] <<"\t & ";
+					file_Wsummary<<Reco_2W_2fakeW[d][0]<<"\t &";			
+					file_Wsummary<<Reco_2W_1fakeW[d][1]<<"\t " << Reco_2W_2fakeW[d][1] <<"\t &";			
+					file_Wsummary<<Reco_2W_correct[d][2]<<"\t " << Reco_2W_1fakeW[d][2] <<"\t " << Reco_2W_2fakeW[d][2] <<"\t &";			
+					file_Wsummary<<Reco_2W_correct[d][3]<<"\t " << Reco_2W_1fakeW[d][3] <<"\t " << Reco_2W_2fakeW[d][3] <<"\t \\\\";			
+				}else if(i==3){
+					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_3W[d] <<"\t & ";
+					file_Wsummary<<Reco_3W_3fakeW[d][0]<<"\t &";			
+					file_Wsummary<<Reco_3W_2fakeW[d][1]<<"\t " << Reco_3W_3fakeW[d][1] <<"\t &";			
+					file_Wsummary<<Reco_3W_1fakeW[d][2]<<"\t " << Reco_3W_2fakeW[d][2] <<"\t " << Reco_3W_3fakeW[d][2] <<"\t &";			
+					file_Wsummary<<Reco_3W_correct[d]<<"\t " << Reco_3W_1fakeW[d][3] <<"\t " <<Reco_3W_2fakeW[d][3] <<"\t " << Reco_3W_3fakeW[d][3] <<"\t \\\\";						}
+				file_Wsummary<<endl;
+			}
+  		file_Wsummary<<"\\end{tabular}"<<endl;
+  		file_Wsummary<<"\\end{table}"<<endl;
+			file_Wsummary<<"\\end{landscape}"<<endl;
+  		file_Wsummary<<endl;
+		
+			file_Wsummary2<<"\\begin{landscape}"<<endl;
+			file_Wsummary2<<"\\begin{table}"<<endl;
+  		file_Wsummary2<<"\\caption{W counting (generator) summary for "<<dataSetName<<"}"<<endl;
+  		file_Wsummary2<<"\\label{tab:}"<<endl;
+  		file_Wsummary2<<"\\centering"<<endl;
+  		file_Wsummary2<<"\\begin{tabular}{|c|";
+			for(unsigned int i=0;i<2;i++) file_Wsummary2<<"c";
+			file_Wsummary2<<"|}"<<endl;
+  		//file_Wsummary2<<"\\hline"<<endl;
+			file_Wsummary2<<"& matched & \\qeq 1 not matched \\\\";
+			file_Wsummary2<<endl;
+			file_Wsummary2<<"\\hline"<<endl;
+			for(unsigned int i=0;i<4;i++){
+				file_Wsummary2<< i << " W\\rightarrow q\\bar{q} generated  "<< MC_correct[d][i] <<"\t & "<< MC_wrong[d][i] <<"\\\\ ";
+				file_Wsummary2<<endl;
+			}
+  		file_Wsummary2<<"\\end{tabular}"<<endl;
+  		file_Wsummary2<<"\\end{table}"<<endl;
+			file_Wsummary2<<"\\end{landscape}"<<endl;
+  		file_Wsummary2<<endl;
+		}
   } //loop on 'datasets'
+	
 	if(systematic=="Nominal") myfile1.close();
 	if(systematic=="Nominal") myfile2.close();
+	if(systematic=="Nominal") file_Wsummary.close();
+	if(systematic=="Nominal") file_Wsummary2.close();
 
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;

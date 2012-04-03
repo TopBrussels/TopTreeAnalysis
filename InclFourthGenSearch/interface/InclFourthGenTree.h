@@ -145,7 +145,7 @@ class InclFourthGenTree : public TObject
 //  TLorentzVector hadrLQuark2() const { return hadrLQuark2_; }	
   float chargeMisIdRateBarrel() { return chargeMisIdRateBarrel_; }
   float chargeMisIdRateEndcap() { return chargeMisIdRateEndcap_; }
-	vector< pair <TLorentzVector, int> > quarksFromW() const { return quarksFromW_; }
+	vector<TLorentzVector> quarksFromW() const { return quarksFromW_; }
 
 	void setEventID(unsigned int eventID) { eventID_ = eventID; }
   void setRunID(unsigned int runID) { runID_ = runID; }
@@ -204,7 +204,7 @@ class InclFourthGenTree : public TObject
 //  void setHadrLQuark2(TLorentzVector hadrLQuark2) { hadrLQuark2_ = hadrLQuark2; }
 	void setChargeMisIdRateBarrel(float chargeMisIdRateBarrel) { chargeMisIdRateBarrel_ = chargeMisIdRateBarrel; }	
 	void setChargeMisIdRateEndcap(float chargeMisIdRateEndcap) { chargeMisIdRateEndcap_ = chargeMisIdRateEndcap; }	
-	void setQuarksFromW(vector< pair <TLorentzVector, int>  > quarksFromW) { quarksFromW_ = quarksFromW; }
+	void setQuarksFromW(vector<TLorentzVector> quarksFromW) { quarksFromW_ = quarksFromW; }
 	
 	//bool topDecayedLept() const { return topDecayedLept_; }
   //float* mvaVals() { return mvaVals_; }
@@ -289,7 +289,7 @@ class InclFourthGenTree : public TObject
   //bool topDecayedLept_;
   //float mvaVals_[12];
   //unsigned int mvaResults_[12][4]; // jet indices
-	vector< pair <TLorentzVector, int > > quarksFromW_;
+	vector<TLorentzVector> quarksFromW_;
   
 	
 	ClassDef (InclFourthGenTree,1);

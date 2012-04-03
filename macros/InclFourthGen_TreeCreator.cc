@@ -166,7 +166,7 @@ int main (int argc, char *argv[])
   string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_2Apr";
+  string Treespath = "InclFourthGenTrees_Fall11_3Apr";
   Treespath = Treespath +"/";
   if(!datadriven) mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -1663,9 +1663,8 @@ int main (int argc, char *argv[])
 			}	
 			//cout << "EVENT HAS " << nW << " or " << mcWbosons.size() << " W BOSONS ON GENERATOR LEVEL "<< endl;
 			
-			vector < pair <TLorentzVector, int> > quarksFromW;
-			vector < pair <int, int> > quarksFromW_;
-			pair<TLorentzVector,int> qW_tmp; 
+			vector < TLorentzVector > quarksFromW;
+			TLorentzVector qW_tmp; 
 			int Wboson = 0;
 			if(dataSetName != "data" && dataSetName != "Data" && dataSetName != "DATA")
 			{
@@ -1694,10 +1693,9 @@ int main (int argc, char *argv[])
 										//cout << "grannyType: "<< mcParticles[i]->grannyType() << endl;
 										//cout << "quark type 1: " << mcParticles[i]->type() << " quark type 2: " << mcParticles[j]->type() << endl;
 										Wboson++;
-										qW_tmp.second = Wboson;
-										qW_tmp.first = (TLorentzVector) *mcParticles[i];
+										qW_tmp = (TLorentzVector) *mcParticles[i];
 										quarksFromW.push_back(qW_tmp);
-										qW_tmp.first = (TLorentzVector) *mcParticles[j];
+										qW_tmp = (TLorentzVector) *mcParticles[j];
 										quarksFromW.push_back(qW_tmp);
 										//if(mcParticles[i]->motherType() == -24) cout << "found W boson (-) number " << Wboson << " with mass "<<W.M() <<" decaying to quarks " << i << " and " << j << endl;
 										//if(mcParticles[i]->motherType() == 24) cout << "found W boson (+) number " << Wboson << " with mass "<<W.M() <<" decaying to quarks " << i << " and " << j << endl;
@@ -1838,6 +1836,13 @@ int main (int argc, char *argv[])
       	//myBranch_selectedEvents->setHadrLQuark2( jetCombiner->GetLightQuark2() );
       	//myBranch_selectedEvents->setLeptBQuark( jetCombiner->GetLeptBQuark() );
       	
+				//cout << "EVENT SUMMARY for dataset: " << dataSetName << endl;
+				//cout << "We have "<< (float) quarksFromW.size()/2 << " hadronically decaying W bosons" << endl;
+				//for(unsigned int q=0; q<quarksFromW.size(); q++)
+				//{
+				//	cout << "quark " << q << " with pt = "<< quarksFromW[q].Pt() <<" is the decay product of W " << (int)(q/2)+1 << endl;
+				//}
+				//cout << endl;
 				if(dataSetName != "Data" && dataSetName != "data" && dataSetName != "DATA") myBranch_selectedEvents->setQuarksFromW( quarksFromW );
 			
      		myInclFourthGenTree->Fill();
