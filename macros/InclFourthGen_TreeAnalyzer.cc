@@ -1136,8 +1136,8 @@ int main (int argc, char *argv[])
 			if(systematic == "Nominal")
 			{
 				quarksWmother = myBranch_selectedEvents->quarksFromW();
-				cout << "quarksWmother.size " << quarksWmother.size() << endl;
-				if(quarksWmother.size()>0) cout << "pt first quark " << quarksWmother[0].Pt() << endl;
+				//cout << "quarksWmother.size " << quarksWmother.size() << endl;
+				//if(quarksWmother.size()>0) cout << "pt first quark " << quarksWmother[0].Pt() << endl;
 				nbOfGenHadWs = (int) quarksWmother.size()/2;
 			}
 			
@@ -1198,8 +1198,8 @@ int main (int argc, char *argv[])
 					nbOfWs++;
 					nbOfHadWs++;
 					
-					chosenWJets.push_back(indexWjet1);
-					chosenWJets.push_back(indexWjet2);
+					chosenWJets.push_back(selectedJetsFromW_DropUsedJets[indexWjet1]);
+					chosenWJets.push_back(selectedJetsFromW_DropUsedJets[indexWjet2]);
 					
 					HT = HT + (selectedJetsFromW_DropUsedJets[indexWjet1] + selectedJetsFromW_DropUsedJets[indexWjet2]).Pt();
 					
@@ -1303,9 +1303,19 @@ int main (int argc, char *argv[])
 						int RecoWmatched = 0;
 						vector<TLorentzVector> quarkpair;
 						quarkpair.push_back(quarksWmother[0]);
-						quarkpair.push_back(quarksWmother[1]);				
+						quarkpair.push_back(quarksWmother[1]);
+						//cout << "quark 1 has pt "<< quarksWmother[0].Pt() << endl;				
+						//cout << "quark 2 has pt "<< quarksWmother[1].Pt() << endl;				
+						//cout << "chosenWJets.size() "<< chosenWJets.size() << endl;				
+						//if(chosenWJets.size()>0) cout << "jet 1 has pt "<< chosenWJets[0].Pt() << endl;				
+						//if(chosenWJets.size()>1) cout << "jet 2 has pt "<< chosenWJets[1].Pt() << endl;				
 						JetPartonMatching matching = JetPartonMatching(quarkpair, chosenWJets, 2, true, true, 0.3);
+						//cout << "  matching -> # combinations " << matching.getNumberOfAvailableCombinations() << endl;
+						//cout << "  matching -> match for first parton " << matching.getMatchForParton(0,0) << endl;
+						//cout << "  matching -> match for second parton " << matching.getMatchForParton(1,0) << endl;
+						//cout << "  matching -> unmatched partons: " << matching.getNumberOfUnmatchedPartons() << endl;
 						if(matching.getNumberOfUnmatchedPartons() == 0) RecoWmatched++;
+						//cout << "RecoWmatched "<< RecoWmatched << endl;
 					
 						if(RecoWmatched == 1) Reco_1W_correct[d][1]++; // the reconstructed W is the generated W
 						else Reco_1W_1fakeW[d][1]++; // the reconstructed W is not the generated W
@@ -1941,18 +1951,19 @@ int main (int argc, char *argv[])
 		delete inFile;
 		
 		if(systematic=="Nominal"){
+			file_Wsummary<< fixed << setprecision(0);
 			file_Wsummary<<"\\begin{landscape}"<<endl;
 			file_Wsummary<<"\\begin{table}"<<endl;
-  		file_Wsummary<<"\\caption{W counting summary for "<<dataSetName<<"}"<<endl;
+  		file_Wsummary<<"\\caption{W counting summary for $"<<dataSetName<<"$}"<<endl;
   		file_Wsummary<<"\\label{tab:}"<<endl;
   		file_Wsummary<<"\\centering"<<endl;
-  		file_Wsummary<<"\\begin{tabular}{|c|";
+  		file_Wsummary<<"\\begin{tabular}{|l|";
 			for(unsigned int i=0;i<4;i++) file_Wsummary<<"c";
 			file_Wsummary<<"|}"<<endl;
   		//file_Wsummary<<"\\hline"<<endl;
 			file_Wsummary<<"&";
 			for(unsigned int i=0;i<4;i++) {
-				file_Wsummary<< i << " generated W \\rightarrow q\\bar{q} \t ";
+				file_Wsummary<< i << " generated $W \\rightarrow q\\bar{q}$ \t ";
 				if(i<3) file_Wsummary<<" &";
 				else file_Wsummary<<"\\\\"<<endl;
 			}
@@ -1960,51 +1971,56 @@ int main (int argc, char *argv[])
 			file_Wsummary<<"\\hline"<<endl;
 			for(unsigned int i=0;i<4;i++){
 				if(i==0){
-					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_0W[d] <<"\t & ";
+					file_Wsummary<< i << " reco'ed $W \\rightarrow q\\bar{q}$ \t & ";
 					for(unsigned int j=0;j<4;j++){
-						file_Wsummary<<Reco_0W_correct[d][j]<<"\t";	
+						file_Wsummary<<Reco_0W_correct[d][j]<<" (" << (float) Reco_0W_correct[d][j]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t";	
 						if(j<3) file_Wsummary<<"&";
 						else file_Wsummary<<"\\\\"<<endl;
 					}
 				}else if(i==1){
-					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_1W[d] <<"\t & ";
-					file_Wsummary<<Reco_1W_1fakeW[d][0]<<"\t &";			
-					file_Wsummary<<Reco_1W_correct[d][1]<<"\t " << Reco_1W_1fakeW[d][1] <<"\t &";			
-					file_Wsummary<<Reco_1W_correct[d][2]<<"\t " << Reco_1W_1fakeW[d][2] <<"\t &";			
-					file_Wsummary<<Reco_1W_correct[d][3]<<"\t " << Reco_1W_1fakeW[d][3] <<"\t \\\\";			
+					file_Wsummary<< i << " reco'ed $W \\rightarrow q\\bar{q}$ &\t fake &\t correct \t fake & correct \t fake & correct \t fake\\\\";
+					file_Wsummary<<"\t &" <<Reco_1W_1fakeW[d][0]<< " (" << (float) Reco_1W_1fakeW[d][0]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_1W_correct[d][1]<<" (" << (float) Reco_1W_correct[d][1]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_1W_1fakeW[d][1] <<" (" << (float) Reco_1W_1fakeW[d][1]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_1W_correct[d][2]<<" (" << (float) Reco_1W_correct[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_1W_1fakeW[d][2] <<" (" << (float) Reco_1W_1fakeW[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_1W_correct[d][3]<<" (" << (float) Reco_1W_correct[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_1W_1fakeW[d][3] <<" (" << (float) Reco_1W_1fakeW[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t \\\\";			
+		  		file_Wsummary<<endl;
 				}else if(i==2){
-					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_2W[d] <<"\t & ";
-					file_Wsummary<<Reco_2W_2fakeW[d][0]<<"\t &";			
-					file_Wsummary<<Reco_2W_1fakeW[d][1]<<"\t " << Reco_2W_2fakeW[d][1] <<"\t &";			
-					file_Wsummary<<Reco_2W_correct[d][2]<<"\t " << Reco_2W_1fakeW[d][2] <<"\t " << Reco_2W_2fakeW[d][2] <<"\t &";			
-					file_Wsummary<<Reco_2W_correct[d][3]<<"\t " << Reco_2W_1fakeW[d][3] <<"\t " << Reco_2W_2fakeW[d][3] <<"\t \\\\";			
+					file_Wsummary<< i << " reco'ed $W \\rightarrow q\\bar{q}$ &\t 2 fake &\t 1 fake \t 2 fake &\t correct \t 1 fake \t 2 fake &\t correct \t 1 fake \t 2 fake \\\\";
+					file_Wsummary<<"\t &"<<Reco_2W_2fakeW[d][0]<<" (" << (float) Reco_2W_2fakeW[d][0]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_2W_1fakeW[d][1]<<" (" << (float) Reco_2W_1fakeW[d][1]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_2W_2fakeW[d][1] <<" (" << (float) Reco_2W_2fakeW[d][1]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_2W_correct[d][2]<<" (" << (float) Reco_2W_correct[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_2W_1fakeW[d][2] <<" (" << (float) Reco_2W_1fakeW[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_2W_2fakeW[d][2] <<" (" << (float) Reco_2W_2fakeW[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_2W_correct[d][3]<<" (" << (float) Reco_2W_correct[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_2W_1fakeW[d][3] <<" (" << (float) Reco_2W_1fakeW[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_2W_2fakeW[d][3] <<" (" << (float) Reco_2W_2fakeW[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t \\\\";			
+		  		file_Wsummary<<endl;
 				}else if(i==3){
-					file_Wsummary<< i << " reco'ed W \\rightarrow q\\bar{q} "<< Reco_3W[d] <<"\t & ";
-					file_Wsummary<<Reco_3W_3fakeW[d][0]<<"\t &";			
-					file_Wsummary<<Reco_3W_2fakeW[d][1]<<"\t " << Reco_3W_3fakeW[d][1] <<"\t &";			
-					file_Wsummary<<Reco_3W_1fakeW[d][2]<<"\t " << Reco_3W_2fakeW[d][2] <<"\t " << Reco_3W_3fakeW[d][2] <<"\t &";			
-					file_Wsummary<<Reco_3W_correct[d]<<"\t " << Reco_3W_1fakeW[d][3] <<"\t " <<Reco_3W_2fakeW[d][3] <<"\t " << Reco_3W_3fakeW[d][3] <<"\t \\\\";						}
-				file_Wsummary<<endl;
+					file_Wsummary<< i << " reco'ed $ W \\rightarrow q\\bar{q}$ &\t 3 fake &\t 2 fake \t 3 fake &\t 1 fake \t 2 fake \t 3 fake &\t correct \t 1 fake \t 2 fake \t 3 fake\\\\ ";
+					file_Wsummary<<"\t &"<<Reco_3W_3fakeW[d][0]<<" (" << (float) Reco_3W_3fakeW[d][0]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_3W_2fakeW[d][1]<<" (" << (float) Reco_3W_2fakeW[d][1]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_3W_3fakeW[d][1] <<" (" << (float) Reco_3W_3fakeW[d][1]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_3W_1fakeW[d][2]<<" (" << (float) Reco_3W_1fakeW[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_3W_2fakeW[d][2] <<" (" << (float) Reco_3W_2fakeW[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_3W_3fakeW[d][2] <<" (" << (float) Reco_3W_3fakeW[d][2]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t &";			
+					file_Wsummary<<Reco_3W_correct[d]<<" (" << (float) Reco_3W_correct[d]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_3W_1fakeW[d][3] <<" (" << (float) Reco_3W_1fakeW[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " <<Reco_3W_2fakeW[d][3] <<" (" << (float) Reco_3W_2fakeW[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t " << Reco_3W_3fakeW[d][3] <<" (" << (float) Reco_3W_3fakeW[d][3]/(Reco_0W[d]+Reco_1W[d]+Reco_2W[d]+Reco_3W[d])*100 <<"\\%)\t \\\\";						
+					file_Wsummary<<endl;
+				}
 			}
   		file_Wsummary<<"\\end{tabular}"<<endl;
   		file_Wsummary<<"\\end{table}"<<endl;
 			file_Wsummary<<"\\end{landscape}"<<endl;
   		file_Wsummary<<endl;
 		
+			file_Wsummary2<< fixed << setprecision(0);
 			file_Wsummary2<<"\\begin{landscape}"<<endl;
 			file_Wsummary2<<"\\begin{table}"<<endl;
-  		file_Wsummary2<<"\\caption{W counting (generator) summary for "<<dataSetName<<"}"<<endl;
+  		file_Wsummary2<<"\\caption{W counting (generator) summary for $"<<dataSetName<<"$}"<<endl;
   		file_Wsummary2<<"\\label{tab:}"<<endl;
   		file_Wsummary2<<"\\centering"<<endl;
-  		file_Wsummary2<<"\\begin{tabular}{|c|";
+  		file_Wsummary2<<"\\begin{tabular}{|l|";
 			for(unsigned int i=0;i<2;i++) file_Wsummary2<<"c";
 			file_Wsummary2<<"|}"<<endl;
   		//file_Wsummary2<<"\\hline"<<endl;
-			file_Wsummary2<<"& matched & \\qeq 1 not matched \\\\";
+			file_Wsummary2<<"& matched & $\\qeq 1$ not matched \\\\";
 			file_Wsummary2<<endl;
 			file_Wsummary2<<"\\hline"<<endl;
 			for(unsigned int i=0;i<4;i++){
-				file_Wsummary2<< i << " W\\rightarrow q\\bar{q} generated  "<< MC_correct[d][i] <<"\t & "<< MC_wrong[d][i] <<"\\\\ ";
+				if(MC_correct[d][i]+MC_wrong[d][i]<0.00001 ) file_Wsummary2<< i << " $W\\rightarrow q\\bar{q}$ generated  "<< MC_correct[d][i] <<" (0\\%)\t & "<< MC_wrong[d][i] <<" (0\\%)\\\\ ";
+				else file_Wsummary2<< i << " $W\\rightarrow q\\bar{q}$ generated  "<< MC_correct[d][i] <<" ("<< (float)MC_correct[d][i]/(MC_correct[d][i]+MC_wrong[d][i])*100  <<"\\%)\t & "<< MC_wrong[d][i] <<" ("<< (float)MC_correct[d][i]/(MC_correct[d][i]+MC_wrong[d][i])*100  <<"\\%)\\\\ ";
 				file_Wsummary2<<endl;
 			}
   		file_Wsummary2<<"\\end{tabular}"<<endl;
