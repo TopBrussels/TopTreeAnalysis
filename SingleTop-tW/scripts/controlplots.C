@@ -152,8 +152,10 @@ void controlplots(int mode = 0){
   labelcms2->Draw();
   
   c1->SaveAs("plots/control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".png");
+  c1->SaveAs("plots/pdf/control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".pdf");
   c1->SetLogy();
   hStack->SetMaximum(max * 10);
   c1->SaveAs("plots/control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.png");
+  c1->SaveAs("plots/pdf/control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.pdf");
   
 }

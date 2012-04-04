@@ -160,9 +160,11 @@ void plotmakerall(){
     labelcms2->Draw();
     
     c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/pdf/plot_3_" + cutLabel[iVariable] + ".pdf");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
     c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/pdf/plot_3_" + cutLabel[iVariable] + "_log.pdf");
   }
  
 }

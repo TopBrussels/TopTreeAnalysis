@@ -143,9 +143,12 @@ void plotmaker(int mode = 0){
     labelcms2->Draw();
     
     c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/pdf/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
+    
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
     c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/pdf/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
     
   }
   

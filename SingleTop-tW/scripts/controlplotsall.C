@@ -219,9 +219,11 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   labelcms2->Draw();
   
   c1->SaveAs("plots/control_summer_" + nregion + "_3_" + cutLabel + ".png");
+  c1->SaveAs("plots/pdf/control_summer_" + nregion + "_3_" + cutLabel + ".pdf");
   c1->SetLogy();
   hStack->SetMaximum(max * 20);
   c1->SaveAs("plots/control_summer_" + nregion + "_3_" + cutLabel + "_log.png");  
+  c1->SaveAs("plots/pdf/control_summer_" + nregion + "_3_" + cutLabel + "_log.pdf"); 
   
   
 }
