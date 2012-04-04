@@ -3,12 +3,10 @@
 
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/data/*"/> 
 
- <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/T_tW_DR*"/> 
-
  <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/TTJets*"/> 
- 
+
+ <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/T_tW_DR*"/> 
  <d name="atwdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/Tbar_tW_DR*"/> 
- 
 
  <d name="twds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/T_tW_DS*"/> 
  <d name="atwds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/Tbar_tW_DS*"/> 
@@ -26,24 +24,14 @@
   
  <d name="qcd_mu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/QCD*"/>  
 
-  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/DY_50*"/>
- <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/DY_10To50*"/>
+ <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/DY_50*"/>
+ <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/DY_10to50*"/>
+
+ <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/data/*"/> 
+ <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/data/*"/> 
 
 <!--
- <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/data_4535.root"/> 
- <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/data_4535.root"/> 
---->
-
-<!----
- <d name="dymumu" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/DYToMuMu_M20.root"/> 
- <d name="dyee" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/DYToEE_M20.root"/> 
- <d name="dytautau" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/DYToTauTau_M20.root"/>
---->
-<!---
- <d name="tt2l" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu/TT2L.root"/>
---->
-<!--
-<d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttscaleup/*"/> 
+ <d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttscaleup/*"/> 
  <d name="tt_scaledown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttscaledown/*"/> 
  
  <d name="tt_matchingup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_2mu/ttmatchingup/*"/> 
@@ -59,6 +47,8 @@
 </datasets>
 
 <analysis>
-<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="1" TrackMETCollection="TrackMET_trackMet" />
+<!-- <a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="1" TrackMETCollection="TrackMET_trackMet" />
+-->
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patType1CorrectedPFMet" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="1" TrackMETCollection="TrackMET_trackMet" />
 </analysis>
 

@@ -19,7 +19,7 @@ void plotmaker(int mode = 0){
   gStyle->SetErrorX(0);
   setTDRStyle();
   gROOT->SetBatch(1);
-
+  
   labelcms  = new TPaveText(0.12,0.88,0.5,0.94,"NDCBR");
   labelcms->SetTextAlign(12);
   labelcms->SetTextSize(0.045);
@@ -32,9 +32,9 @@ void plotmaker(int mode = 0){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  if (mode == 0) labelcms2->AddText("4.5 fb^{-1}, e#mu channel  ");
-  if (mode == 1) labelcms2->AddText("4.5 fb^{-1}, #mu#mu channel  ");
-  if (mode == 2) labelcms2->AddText("4.5 fb^{-1}, ee channel  ");
+  if (mode == 0) labelcms2->AddText("4.9 fb^{-1}, e#mu channel  ");
+  if (mode == 1) labelcms2->AddText("4.9 fb^{-1}, #mu#mu channel  ");
+  if (mode == 2) labelcms2->AddText("4.9 fb^{-1}, ee channel  ");
   
   labelcms2->SetBorderSize(0);
   
@@ -46,7 +46,7 @@ void plotmaker(int mode = 0){
   gStyle->SetCanvasDefH(600);
   gStyle->SetCanvasDefW(600);
   gStyle->SetLabelFont(18,"");
-
+  
   gStyle->SetTitleXOffset(1.2);//1.5
   gStyle->SetTitleYOffset(1.2);//1.7
   
@@ -54,9 +54,9 @@ void plotmaker(int mode = 0){
   char myRootFile[300];
   double lumi = 1000;
   
-  if (mode == 0 )        lumi = 4626.297;
-  else if ( mode == 1)   lumi = 4534.871;
-  else if ( mode == 2)   lumi = 4593.348;
+  if (mode == 0 )        lumi = 4904.338;
+  else if ( mode == 1)   lumi = 4919.924;
+  else if ( mode == 2)   lumi = 4919.924;
   
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   
@@ -67,11 +67,11 @@ void plotmaker(int mode = 0){
   const int nPlots = 9;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
-  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
+  Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
   TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex"};
-  int rebinHisto[nPlots] =       {1, 4, 4, 1, 1, 4, 12, 4, 1};
-  TString cutTitle[nPlots] =     {"Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex"};
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex"};
   TString modeString[3] = {"0", "1", "2"};
   
   TH1F*  h [nPlots][nProcess];
@@ -79,7 +79,7 @@ void plotmaker(int mode = 0){
   
   for (int iVariable = 0; iVariable < nProcess; iVariable++){
     leg = new TLegend(0.7,0.7,0.94,0.94);
-    leg ->SetFillStyle(1);
+    leg ->SetFillStyle(1001);
     leg ->SetFillColor(kWhite);
     leg ->SetBorderSize(1);
     hStack[iVariable] = new THStack(cutLabel[iVariable],cutLabel[iVariable]);
@@ -88,7 +88,7 @@ void plotmaker(int mode = 0){
       h[iVariable][iProcess]->Rebin(rebinHisto[iVariable]);
       h[iVariable][iProcess]->SetFillColor(color[iProcess]);
       h[iVariable][iProcess]->SetLineColor(kBlack);
-      h[iVariable][iProcess]->SetLineWidth(1);
+      h[iVariable][iProcess]->SetLineWidth(2);
     }
     
     h[iVariable][5]->Add(h[iVariable][1]);
@@ -111,7 +111,7 @@ void plotmaker(int mode = 0){
     
     h[iVariable][7]->SetMarkerStyle(20);
     h[iVariable][7]->SetMarkerSize(1.2);
-    h[iVariable][7]->SetLineWidth(4);
+    h[iVariable][7]->SetLineWidth(2);
     h[iVariable][7]->SetMarkerColor(kBlack);
     h[iVariable][7]->SetLineColor(kBlack);
     
@@ -121,8 +121,8 @@ void plotmaker(int mode = 0){
     hStack[iVariable]->SetMaximum(max * 1.2);
     hStack[iVariable]->SetMinimum(1);
     hStack[iVariable]->GetXaxis()->SetTitle(cutTitle[iVariable]);
-    hStack[iVariable]->GetYaxis()->SetTitle("events / 4.5 fb^{-1}");
-   
+    hStack[iVariable]->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
+    
     hStack[iVariable]->GetYaxis()->CenterTitle(); 
     
     if (iVariable == 0){
@@ -137,15 +137,15 @@ void plotmaker(int mode = 0){
     }
     
     if (iVariable == 5) hStack[iVariable]->GetYaxis()->SetRangeUser(1,100);
-    h[iVariable][7]->Draw("e2, sames");
+    h[iVariable][7]->Draw("e, sames");
     leg->Draw();
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
     
   }
   

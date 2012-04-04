@@ -176,23 +176,23 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; isData = true;}
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3628285; isTop = true;} 
+      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
+      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3628285; 		isTop = true;} 
       else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/811897;} 
       else if (dataSetName == "atwdr"){ 	sprintf(name, "atw_dr");        xlweight = lumi*7.87/807505;} 
       else if (dataSetName == "twds"){ 	     	sprintf(name, "tw_ds");	        xlweight = lumi*7.87/793031;} 
       else if (dataSetName == "atwds"){    	sprintf(name, "atw_ds");        xlweight = lumi*7.87/807505;} 
-      else if (dataSetName == "t"){    		sprintf(name, "t");        	xlweight = lumi*41.92/3888894;} 
-      else if (dataSetName == "at"){    	sprintf(name, "at");        	xlweight = lumi*22.65/1938263;} 
+      else if (dataSetName == "t"){    		sprintf(name, "t");        	xlweight = lumi*41.92/3888894; 		if (mode == 0) xlweight = lumi*41.92/3689490;} 
+      else if (dataSetName == "at"){    	sprintf(name, "at");        	xlweight = lumi*22.65/1938263; 		if (mode == 0) xlweight = lumi*22.65/1934547;} 
       else if (dataSetName == "ts"){    	sprintf(name, "ts");        	xlweight = lumi*3.19/259378;}
       else if (dataSetName == "ats"){    	sprintf(name, "ats");        	xlweight = lumi*1.44/137556;} 
-      else if (dataSetName == "wjets"){     	sprintf(name, "wjets");	        xlweight = lumi*31314/68090152;} 
-      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3048/35799272;} 
-      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*11908.83/31193930;}
+      else if (dataSetName == "wjets"){     	sprintf(name, "wjets");	        xlweight = lumi*31314/68090152; 	if (mode == 2) xlweight = lumi*31314/67987281; 	if (mode == 0) xlweight = lumi*31314/67981303;} 
+      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3048/35799272; 		if (mode == 0) xlweight = lumi*3048/35203706; 	if (mode == 2)  xlweight = lumi*3048/35606900;} 
+      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*11908.83/31193930; 	if (mode == 0) xlweight = lumi*11908.83/30978317;}
       else if (dataSetName == "ww"){		sprintf(name, "ww");		xlweight = lumi*42.9/4223584;} 
-      else if (dataSetName == "wz"){		sprintf(name, "wz");		xlweight = lumi*18.3/4242845;} 
+      else if (dataSetName == "wz"){		sprintf(name, "wz");		xlweight = lumi*18.3/4242845; 		if (mode == 2) xlweight = lumi*18.3/4036353;} 
       else if (dataSetName == "zz"){		sprintf(name, "zz");		xlweight = lumi*7.67/4188621;} 
-      else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/24787499;} 
+      else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/24787499; 	if (mode == 0) xlweight = lumi*84679.3/24186153;if (mode == 2) xlweight = lumi*84679.3/24785478; } 
       
       //special files
       else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/437736;}
