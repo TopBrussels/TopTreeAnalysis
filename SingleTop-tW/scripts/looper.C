@@ -48,7 +48,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   double lumi = luminosity; 
   if (mode == 0 )        lumi = 4904.338;
   else if ( mode == 1)   lumi = 4919.924;
-  else if ( mode == 2)   lumi = 4919.924;
+  else if ( mode == 2)   lumi = 4895.249;
   else if ( mode == 3)   lumi = 4.9;
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   

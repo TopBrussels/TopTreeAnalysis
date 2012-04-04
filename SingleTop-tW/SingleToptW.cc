@@ -131,9 +131,9 @@ int main(int argc, char* argv[]) {
   
   // Luminosity and xml files
   double lumi = 0;
-  if      (mode == 0){ 	 lumi = 4904.338;	if(!useTestXML) xmlfile ="twemu.xml";}
+  if      (mode == 0){ 	 lumi = 4904.338;	 if(!useTestXML) xmlfile ="twemu.xml";}
   else if (mode == 1){	 lumi = 4919.924;	 if(!useTestXML) xmlfile = "twmumu.xml";}
-  else if (mode == 2){	 lumi = 4919.924;	 if(!useTestXML) xmlfile = "twee.xml";}
+  else if (mode == 2){	 lumi = 4895.249;	 if(!useTestXML) xmlfile = "twee.xml";}
   if(useTestXML)
     std::cout << "using file: " << xmlfile << std::endl;
   

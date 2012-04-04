@@ -56,7 +56,7 @@ void plotmaker(int mode = 0){
   
   if (mode == 0 )        lumi = 4904.338;
   else if ( mode == 1)   lumi = 4919.924;
-  else if ( mode == 2)   lumi = 4919.924;
+  else if ( mode == 2)   lumi = 4895.249;
   
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   
