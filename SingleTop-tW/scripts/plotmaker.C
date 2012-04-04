@@ -88,7 +88,7 @@ void plotmaker(int mode = 0){
       h[iVariable][iProcess]->Rebin(rebinHisto[iVariable]);
       h[iVariable][iProcess]->SetFillColor(color[iProcess]);
       h[iVariable][iProcess]->SetLineColor(kBlack);
-      h[iVariable][iProcess]->SetLineWidth(2);
+      h[iVariable][iProcess]->SetLineWidth(1);
     }
     
     h[iVariable][5]->Add(h[iVariable][1]);
@@ -111,7 +111,7 @@ void plotmaker(int mode = 0){
     
     h[iVariable][7]->SetMarkerStyle(20);
     h[iVariable][7]->SetMarkerSize(1.2);
-    h[iVariable][7]->SetLineWidth(2);
+    h[iVariable][7]->SetLineWidth(1);
     h[iVariable][7]->SetMarkerColor(kBlack);
     h[iVariable][7]->SetLineColor(kBlack);
     
@@ -142,10 +142,10 @@ void plotmaker(int mode = 0){
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
     
   }
   

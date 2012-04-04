@@ -32,9 +32,9 @@ void controlplots(int mode = 0){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  if (mode == 0) labelcms2->AddText("4.5 fb^{-1}, e#mu channel  ");
-  if (mode == 1) labelcms2->AddText("4.5 fb^{-1}, #mu#mu channel  ");
-  if (mode == 2) labelcms2->AddText("4.5 fb^{-1}, ee channel  ");
+  if (mode == 0) labelcms2->AddText("4.9 fb^{-1}, e#mu channel  ");
+  if (mode == 1) labelcms2->AddText("4.9 fb^{-1}, #mu#mu channel  ");
+  if (mode == 2) labelcms2->AddText("4.9 fb^{-1}, ee channel  ");
   labelcms2->SetBorderSize(0);
   
   gStyle->SetOptStat(0);
@@ -51,9 +51,11 @@ void controlplots(int mode = 0){
   
   char myRootFile[300];
   double lumi = 0;
-  if (mode == 0 )       lumi = 4626.297;
-  else if ( mode == 1)  lumi = 4534.871;
-  else if ( mode == 2)  lumi = 4593.348;
+  
+  if (mode == 0 )        lumi = 4904.338;
+  else if ( mode == 1)   lumi = 4919.924;
+  else if ( mode == 2)   lumi = 4895.249;
+
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   
   
@@ -127,13 +129,14 @@ void controlplots(int mode = 0){
   histo[7]->SetMarkerSize(1.2);
   histo[7]->SetMarkerColor(kBlack);
   histo[7]->SetLineColor(kBlack);
+  histo[7]->SetLineWidth(1);
   
   double max = TMath::Max(hStack->GetMaximum(), histo[7]->GetMaximum());
   TCanvas *c1 = new TCanvas();
   hStack->Draw("histo");
   hStack->SetMaximum(max * 1.25);
   hStack->SetMinimum(1);
-  hStack->GetYaxis()->SetTitle("events / 4.5 fb^{-1}");
+  hStack->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
   hStack->GetYaxis()->SetTitleOffset(1.4);
   hStack->GetYaxis()->CenterTitle(); 
   
@@ -143,7 +146,7 @@ void controlplots(int mode = 0){
   hStack->GetXaxis()->SetBinLabel(2,"2 jet 1 tag");
   hStack->GetXaxis()->SetBinLabel(3,"2 jet 2 tag");
   
-  histo[7]->Draw("e2, sames");
+  histo[7]->Draw("e, sames");
   leg->Draw();
   labelcms->Draw();
   labelcms2->Draw();

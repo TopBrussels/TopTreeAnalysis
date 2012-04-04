@@ -34,7 +34,7 @@ void plotmakerall(){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  labelcms2->AddText("4.5 fb^{-1}, ee/e#mu/#mu#mu");
+  labelcms2->AddText("4.9 fb^{-1}, ee/e#mu/#mu#mu");
   
   labelcms2->SetBorderSize(0);
   
@@ -52,7 +52,6 @@ void plotmakerall(){
   
   
   char myRootFile[300];
-  double lumi = 1000; //doesn't matter in this one
   
   TString processName[8] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[8] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
@@ -68,14 +67,13 @@ void plotmakerall(){
 
   for (int iVariable = 0; iVariable < 8; iVariable++){
     leg = new TLegend(0.7,0.7,0.94,0.94);
-    leg ->SetFillStyle(1);
+    leg ->SetFillStyle(1001);
     leg ->SetFillColor(kWhite);
     leg ->SetBorderSize(1);
-    // leg ->SetTextSize(0.027);
 
     hStack[iVariable] = new THStack(cutLabel[iVariable],cutLabel[iVariable]);
     for (int iProcess = 0; iProcess < 8; iProcess++){
-      sprintf(myRootFile,"results/an_4626pb_0.root");
+      sprintf(myRootFile,"results/an_4904pb_0.root");
       
       TFile *_file0 = TFile::Open(myRootFile);
       histo[0][iVariable][iProcess] = (TH1F*) _file0->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
@@ -86,7 +84,7 @@ void plotmakerall(){
       if (iProcess == 0) histo[0][iVariable][iProcess]->SetLineColor(kBlack);
       
       
-      sprintf(myRootFile,"results/an_4534pb_1.root");
+      sprintf(myRootFile,"results/an_4919pb_1.root");
       
       TFile *_file1 = TFile::Open(myRootFile);
       histo[1][iVariable][iProcess] = (TH1F*) _file1->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
@@ -96,7 +94,7 @@ void plotmakerall(){
       histo[1][iVariable][iProcess]->SetLineWidth(1);
       if (iProcess == 0) histo[1][iVariable][iProcess]->SetLineColor(kBlack);
       
-      sprintf(myRootFile,"results/an_4593pb_2.root");
+      sprintf(myRootFile,"results/an_4895pb_2.root");
   
       TFile *_file2 = TFile::Open(myRootFile);
       histo[2][iVariable][iProcess] = (TH1F*) _file2->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
@@ -130,7 +128,7 @@ void plotmakerall(){
      
     h[iVariable][7]->SetMarkerStyle(20);
     h[iVariable][7]->SetMarkerSize(1.2);
-    h[iVariable][7]->SetLineWidth(4);
+    h[iVariable][7]->SetLineWidth(1);
     h[iVariable][7]->SetMarkerColor(kBlack);
     h[iVariable][7]->SetLineColor(kBlack);
     
@@ -140,7 +138,7 @@ void plotmakerall(){
     hStack[iVariable]->SetMaximum(max * 1.2);
     hStack[iVariable]->SetMinimum(1);
     hStack[iVariable]->GetXaxis()->SetTitle(cutTitle[iVariable]);
-    hStack[iVariable]->GetYaxis()->SetTitle("events / 4.5 fb^{-1}");
+    hStack[iVariable]->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
 
     hStack[iVariable]->GetYaxis()->CenterTitle(); 
     
@@ -156,15 +154,15 @@ void plotmakerall(){
      }
     
     if (iVariable == 5) hStack[iVariable]->GetYaxis()->SetRangeUser(1,100);
-    h[iVariable][7]->Draw("e2, sames");
+    h[iVariable][7]->Draw("e, sames");
     leg->Draw();
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + ".png");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + "_log.png");
   }
  
 }

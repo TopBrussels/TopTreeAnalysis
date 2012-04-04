@@ -13,7 +13,8 @@
 using namespace std;
 
 void controlplotsall(bool dyonly = false, bool ttdy = false){
-   //gROOT->SetStyle("Plain");
+
+  //gROOT->SetStyle("Plain");
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
   gStyle->SetErrorX(0);
@@ -33,7 +34,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  labelcms2->AddText("4.5 fb^{-1}, ee/e#mu/#mu#mu");
+  labelcms2->AddText("4.9 fb^{-1}, ee/e#mu/#mu#mu");
   
   labelcms2->SetBorderSize(0);
   
@@ -78,21 +79,21 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   hStack2 = new THStack();
   for (int iProcess = 0; iProcess < 8; iProcess++){
     
-    sprintf(myRootFile,"results/crtt_summer_4626pb_0.root");
+    sprintf(myRootFile,"results/an_4904pb_0.root");
     
     TFile *_file0 = TFile::Open(myRootFile);
     h0[iProcess] = (TH1F*) _file0->Get("R_" + processName[iProcess]);
    
-    sprintf(myRootFile,"results/crtt_summer_4534pb_1.root");
+    sprintf(myRootFile,"results/an_4919pb_1.root");
     
     TFile *_file1 = TFile::Open(myRootFile);
     h1[iProcess] = (TH1F*) _file1->Get("R_" + processName[iProcess]);
  
-    sprintf(myRootFile,"results/crtt_summer_4593pb_2.root");
+    sprintf(myRootFile,"results/an_4895pb_2.root");
     
     TFile *_file2 = TFile::Open(myRootFile);
     h2[iProcess] = (TH1F*) _file2->Get("R_" + processName[iProcess]);
-    
+    /*
     if (ttdy){
       
       if (iProcess == 2){
@@ -111,17 +112,18 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
 	
       }
       
-    }
+    }*/
 
     h[iProcess] =  h0[iProcess];
     h[iProcess]->Add(h1[iProcess]);
     h[iProcess]->Add(h2[iProcess]);
    
     h[iProcess]->SetFillColor(color[iProcess]);
-    h[iProcess]->SetLineColor(color[iProcess]);
+    h[iProcess]->SetLineColor(kBlack);
+    h[iProcess]->SetLineWidth(1);
     
     histo[iProcess] = new TH1F("histo"+processName[iProcess], "", 3, 0, 3);
-    histo[iProcess]->SetLineColor(color[iProcess]);
+    histo[iProcess]->SetLineColor(kBlack);
     histo[iProcess]->SetFillColor(color[iProcess]);
     histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(2));
     histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(7));
@@ -129,7 +131,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
     histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(2));
     histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(7));
     histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(8));
-    
+    /*
     if (dyonly == true){
       if (iProcess == 4){
 	histo[iProcess]->SetBinContent(1,76.4);
@@ -142,7 +144,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
 	histo[iProcess]->SetBinContent(1,76.4);
 	histo[iProcess]->SetBinError(1,6.1);
       }
-    }
+    }*/
     
     histo2[iProcess] = new TH1F("histo2"+processName[iProcess], "", 5, 0, 5);
     histo2[iProcess]->SetLineColor(kBlack);
@@ -188,15 +190,10 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   leg->AddEntry(histo[4], processTitle[4], "f");
   leg->AddEntry(histo[5], "Other", "f");
      
-  histo[7]->SetMarkerStyle(20);
-  histo[7]->SetMarkerSize(1.2);
-  histo[7]->SetLineWidth(4);
-  histo[7]->SetMarkerColor(kBlack);
-  histo[7]->SetLineColor(kBlack);
   
   histo[7]->SetMarkerStyle(20);
   histo[7]->SetMarkerSize(1.2);
-  histo[7]->SetLineWidth(1.2);
+  histo[7]->SetLineWidth(1);
   histo[7]->SetMarkerColor(kBlack);
   histo[7]->SetLineColor(kBlack);
   
@@ -206,7 +203,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   hStack->SetMaximum(max * 1.25);
   hStack->SetMinimum(1);
   hStack->GetXaxis()->SetTitle(cutTitle);
-  hStack->GetYaxis()->SetTitle("events / 4.5 fb^{-1}");
+  hStack->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
   hStack->GetYaxis()->SetTitleOffset(1.4);
   hStack->GetYaxis()->CenterTitle(); 
   
@@ -216,15 +213,15 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   hStack->GetXaxis()->SetBinLabel(2,"2 jet 1 tag");
   hStack->GetXaxis()->SetBinLabel(3,"2 jet 2 tag");
   
-  histo[7]->Draw("e2, sames");
+  histo[7]->Draw("e, sames");
   leg->Draw();
   labelcms->Draw();
   labelcms2->Draw();
   
-  c1->SaveAs("plots/control_summer_" + nregion + "_3_" + cutLabel + ".pdf");
+  c1->SaveAs("plots/control_summer_" + nregion + "_3_" + cutLabel + ".png");
   c1->SetLogy();
   hStack->SetMaximum(max * 20);
-  c1->SaveAs("plots/control_summer_" + nregion + "_3_" + cutLabel + "_log.pdf");  
+  c1->SaveAs("plots/control_summer_" + nregion + "_3_" + cutLabel + "_log.png");  
   
   
 }
