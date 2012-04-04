@@ -143,7 +143,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_3Apr";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_4Apr";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -1174,6 +1174,8 @@ int main (int argc, char *argv[])
 						if(!(dataSetName.find("NP_")<=dataSetName.size()))
  							MSPlot["allDiJetMasses"]->Fill(recoWmass, datasets[d], true, Luminosity*scaleFactor);
 						if( fabs(recoWmass-Wmass)<massdifference)
+//						if( fabs(recoWmass-Wmass)<massdifference && selectedJetsFromW_DropUsedJets[i].DeltaR(selectedJetsFromW_DropUsedJets[j])<1.0)
+//						if( fabs(recoWmass-Wmass)<massdifference && selectedJetsFromW_DropUsedJets[i].DeltaR(selectedJetsFromW_DropUsedJets[j])<1.5)
 						{
 							massdifference = fabs(recoWmass-Wmass);
 							newrecoWmass = recoWmass;
@@ -1194,6 +1196,8 @@ int main (int argc, char *argv[])
 				}
 
 				if(massdifference < SigmaWmass && indexWjet1<999 && indexWjet2<999)
+//				if(massdifference < 1.5*SigmaWmass && indexWjet1<999 && indexWjet2<999)
+//				if(massdifference < 0.8*SigmaWmass && indexWjet1<999 && indexWjet2<999)
 				{
 					nbOfWs++;
 					nbOfHadWs++;
@@ -1954,7 +1958,7 @@ int main (int argc, char *argv[])
 			file_Wsummary<< fixed << setprecision(0);
 			file_Wsummary<<"\\begin{landscape}"<<endl;
 			file_Wsummary<<"\\begin{table}"<<endl;
-  		file_Wsummary<<"\\caption{W counting summary for $"<<dataSetName<<"$}"<<endl;
+  		file_Wsummary<<"\\caption{W counting summary for $"<<datasets[d]->Title()<<"$}"<<endl;
   		file_Wsummary<<"\\label{tab:}"<<endl;
   		file_Wsummary<<"\\centering"<<endl;
   		file_Wsummary<<"\\begin{tabular}{|l|";
@@ -2008,7 +2012,7 @@ int main (int argc, char *argv[])
 			file_Wsummary2<< fixed << setprecision(0);
 			file_Wsummary2<<"\\begin{landscape}"<<endl;
 			file_Wsummary2<<"\\begin{table}"<<endl;
-  		file_Wsummary2<<"\\caption{W counting (generator) summary for $"<<dataSetName<<"$}"<<endl;
+  		file_Wsummary2<<"\\caption{W counting (generator) summary for $"<<datasets[d]->Title()<<"$}"<<endl;
   		file_Wsummary2<<"\\label{tab:}"<<endl;
   		file_Wsummary2<<"\\centering"<<endl;
   		file_Wsummary2<<"\\begin{tabular}{|l|";
