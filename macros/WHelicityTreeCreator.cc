@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
   // Which decay channel //
   /////////////////////////
   
-  bool semiElectron = true; // use semiElectron channel,
-  bool semiMuon = false; // use semiMuon channel?
+  bool semiElectron = false; // use semiElectron channel,
+  bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
   {
@@ -112,14 +112,11 @@ int main (int argc, char *argv[])
   //  Which trigger  //
   /////////////////////
   bool TriCentralJet30Trigger = false;
-  bool IsoMu172024Trigger = true;
-  if(TriCentralJet30Trigger == true){
-    rootFileName = "MacroOutputTriCentralJet30Trigger.root";         //Root output file
-  }
-  else if(IsoMu172024Trigger == true){
-    rootFileName = "MacroOutputIsoMu172024Trigger.root";
-  }
-
+  bool IsoMu172024Trigger = false;
+  if(TriCentralJet30Trigger == true) rootFileName = "MacroOutputTriCentralJet30Trigger.root";         //Root output file
+  else if(IsoMu172024Trigger == true) rootFileName = "MacroOutputIsoMu172024Trigger.root";
+  else if(TriCentralJet30Trigger == false && IsoMu172024Trigger == false) rootFileName = "MacroOutputNoTrigger.root";
+  
   ////////////////////////
   //  Which systematics //
   ////////////////////////
@@ -447,13 +444,15 @@ int main (int argc, char *argv[])
     }
 
     string UsedTrigger;
-    if(TriCentralJet30Trigger == true){ UsedTrigger = "TriCentralJet30Trigger";}
-    else if(IsoMu172024Trigger == true){ UsedTrigger = "IsoMu172024Trigger";}
+    if(TriCentralJet30Trigger == true) UsedTrigger = "TriCentralJet30Trigger";
+    else if(IsoMu172024Trigger == true) UsedTrigger = "IsoMu172024Trigger";
+    else if(TriCentralJet30Trigger == false && IsoMu172024Trigger == false) UsedTrigger = "NoTrigger";
 
     //------------------------------------
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
+
     if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
     if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
     if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
@@ -896,14 +895,23 @@ int main (int argc, char *argv[])
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);   //CIEMAT values, not refSel values !!!!
       if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,0.3,1,1,1); //Values for TriCentralJet trigger
       if(IsoMu172024Trigger == true) selection.setMuonCuts(35,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
+      if(TriCentralJet30Trigger == false && IsoMu172024Trigger == false) selection.setMuonCuts(10,2.1,0.15,10,0.02,0.3,1,1,1);
       selection.setLooseMuonCuts(10,2.1,0.15);
       selection.setElectronCuts(30,2.5,0.15,0.02,1,0.3);
       selection.setLooseElectronCuts(15,2.5,0.2); // semiMu looseMuon cuts
         
       bool triggedSemiMu = false;
       bool triggedSemiEl = false;
-      if(semiMuon == true){ triggedSemiMu = treeLoader.EventTrigged (itriggerSemiMu);}
-      else if(semiElectron == true){triggedSemiEl = treeLoader.EventTrigged (itriggerSemiEl);}
+      if(TriCentralJet30Trigger != false && IsoMu172024Trigger != false){
+	if(semiMuon == true){ triggedSemiMu = treeLoader.EventTrigged (itriggerSemiMu);}
+	else if(semiElectron == true){triggedSemiEl = treeLoader.EventTrigged (itriggerSemiEl);}
+      }
+      else if(TriCentralJet30Trigger == false && IsoMu172024Trigger == false){
+	//Look at semi-mu sample without trigger influence:
+	if(semiMuon == true) triggedSemiMu = true;
+	else if(semiElectron == true) triggedSemiEl = true;
+      }
+
       bool isGoodPV = selection.isPVSelected(vertex, anaEnv.PVertexNdofCut, anaEnv.PVertexZCut, anaEnv.PVertexRhoCut);
 
       vector<TRootElectron*> vetoElectronsSemiMu = selection.GetSelectedLooseElectrons(false);
@@ -1411,7 +1419,7 @@ int main (int argc, char *argv[])
 	    jetCombi.push_back(-9999);
 	    jetCombi.push_back(-9999);
 	  }
-	
+
 	  //Set all variables defined in WTree
 	  wTree = new WTree();
 	  wTree->setEventID( event->eventId() );
@@ -1465,14 +1473,23 @@ int main (int argc, char *argv[])
       
       std::cout << " sigma values : Top = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(2) << " , W = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2) << std::endl;
       std::cout << " mass values : Top = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(1) << " , W = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1) << std::endl;
-      
+
+      cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;
+      cout << " Performing helicity Generator fit : " << endl;
+      cout << " ------------------------------------" << endl;
+      TF1 *helicityFit = new TF1("helicityFit","[0]*((((1-[1]-[2])*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
+      std::cout << " fit values (before event selection) : Norm =" <<helicityFit->GetParameter(0) << " , Left = " << helicityFit->GetParameter(1) << " Long = " << helicityFit->GetParameter(2) << " ==> Right = " << 1-(helicityFit->GetParameter(1))-(helicityFit->GetParameter(2))<< std::endl;
+      std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
+      cout << "                      ------------------------------------" << endl;
       histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
       histo1D["StandardCosThetaFit"]->SetMinimum(0);
       histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
-      TF1 *helicityFit = new TF1("helicityFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
-      histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
-      std::cout << " fit values (before event selection) : " << helicityFit->GetParameter(0) << " " << helicityFit->GetParameter(1) << " " << helicityFit->GetParameter(2) << std::endl;
-      std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
+      TF1 *helicityFit2 = new TF1("helicityFit2","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["StandardCosThetaFit"]->Fit("helicityFit2","Q");
+      std::cout << " fit values 2 (before event selection) : " << helicityFit2->GetParameter(0) << " " << helicityFit2->GetParameter(1) << " " << helicityFit2->GetParameter(2) << std::endl;
+      std::cout << " fit values error 2 (before event selection) : " << helicityFit2->GetParError(0) << " " << helicityFit2->GetParError(1) << " " << helicityFit2->GetParError(2) << std::endl;
+      cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;    
     }
     
     WTreeFile->cd();
