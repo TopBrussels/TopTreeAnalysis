@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
+      if (dataSetName == "data"){		sprintf(name, "data_hlt");  	xlweight = 1; 				isData = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3628285; 		isTop = true;} 
       else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/811897;} 
       else if (dataSetName == "atwdr"){ 	sprintf(name, "atw_dr");        xlweight = lumi*7.87/807505;} 
@@ -403,8 +403,9 @@ int main(int argc, char* argv[]) {
 	 
 	    //No trigger after first test
 	    bool trigged = true;
-	    
 	    /*
+	    bool trigged = false;
+	    
 	    int currentRun = event->runId();
 	    bool itrigger = false;
 	    bool isecondtrigger = false;
@@ -494,8 +495,8 @@ int main(int argc, char* argv[]) {
 	   
 	  
 	  if (itrigger || isecondtrigger) trigged = true;
-	 */
-	    
+	 
+	    */
 	 
 	   
 	    // Systematics

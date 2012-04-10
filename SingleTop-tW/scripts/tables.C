@@ -16,9 +16,11 @@ using namespace std;
 void tables(int mode = 0){
 
   double lumi = luminosity;
-  if (mode == 0 )      lumi = 4626.297;
-  else if ( mode == 1)   lumi = 4534.871;
-  else if ( mode == 2)   lumi = 4593.348;
+  
+  if (mode == 0 )        lumi = 4904.338;
+  else if ( mode == 1)   lumi = 4919.924;
+  else if ( mode == 2)   lumi = 4895.249;
+  
   
   char myTexFile[300];
   sprintf(myTexFile,"tables/table_%d_%dpb.tex", mode, lumi);

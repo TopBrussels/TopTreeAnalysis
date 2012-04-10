@@ -75,9 +75,11 @@ void plotmaker(int mode = 0){
   TString modeString[3] = {"0", "1", "2"};
   
   TH1F*  h [nPlots][nProcess];
+  TH1F*  hextra [nPlots];
   THStack* hStack[nPlots];
+  TGraphAsymmErrors *GE[nPlots];
   
-  for (int iVariable = 0; iVariable < nProcess; iVariable++){
+  for (const int iVariable = 0; iVariable < nProcess; iVariable++){
     leg = new TLegend(0.7,0.7,0.94,0.94);
     leg ->SetFillStyle(1001);
     leg ->SetFillColor(kWhite);
@@ -115,6 +117,8 @@ void plotmaker(int mode = 0){
     h[iVariable][7]->SetMarkerColor(kBlack);
     h[iVariable][7]->SetLineColor(kBlack);
     
+    
+    
     double max = TMath::Max(hStack[iVariable]->GetMaximum(), h[iVariable][7]->GetMaximum());
     TCanvas *c1 = new TCanvas();
     hStack[iVariable]->Draw("histo");
@@ -149,6 +153,38 @@ void plotmaker(int mode = 0){
     hStack[iVariable]->SetMaximum(max * 10);
     c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
     c1->SaveAs("plots/pdf/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
+    
+    
+    c1->SetLogy(0);
+   
+    TH1F* hextra[iVariable] = (TH1F*) h[iVariable][5]->Clone();
+    hextra[iVariable]->Add(h[iVariable][4]);
+    hextra[iVariable]->Add(h[iVariable][2]);
+    hextra[iVariable]->Add(h[iVariable][0]);
+    TExec *setex2 = new TExec("setex2","gStyle->SetErrorX(0.5)");
+    setex2->Draw();
+    TGraphAsymmErrors *GE[iVariable] = (TGraphAsymmErrors*) hextra[iVariable];
+   
+    GE[iVariable]->SetFillColor(28);
+    GE[iVariable]->SetFillStyle(3018);
+    GE[iVariable]->SetMarkerSize(0);
+    GE[iVariable]->SetLineWidth(0);
+    GE[iVariable]->SetLineColor(kWhite);
+    leg->AddEntry( GE[iVariable], "uncertainty", "f");
+    hStack[iVariable]->SetMaximum(max*1.2);
+    GE[iVariable]->Draw("sames, e2");
+    TExec *setex1 = new TExec("setex1","gStyle->SetErrorX(0)");
+    setex1->Draw();
+    h[iVariable][7]->Draw("e, sames");
+    
+    c1->SaveAs("plots/error_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/pdf/error_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
+     
+    c1->SetLogy();
+    hStack[iVariable]->SetMaximum(max * 10);
+    c1->SaveAs("plots/error_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/pdf/error_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
+    
     
   }
   
