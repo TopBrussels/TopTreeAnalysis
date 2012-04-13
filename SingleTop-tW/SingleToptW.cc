@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data"){		sprintf(name, "data_hlt");  	xlweight = 1; 				isData = true;}
+      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3628285; 		isTop = true;} 
       else if (dataSetName == "twdr"){      	sprintf(name, "tw_dr");		xlweight = lumi*7.87/811897;} 
       else if (dataSetName == "atwdr"){ 	sprintf(name, "atw_dr");        xlweight = lumi*7.87/807505;} 
@@ -228,8 +228,6 @@ int main(int argc, char* argv[]) {
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
       else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/noPU_%d_%s.root", mode, name);
-      else if (name != "data1" && RunA)  sprintf(rootFileName,"outputs/out_runA_%d_%s.root", mode, name);
-      else if (name != "data2" && RunB)  sprintf(rootFileName,"outputs/out_runB_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
       // Objects
@@ -730,7 +728,8 @@ int main(int argc, char* argv[]) {
 			  cutflow->Fill(6, weight);
 			  cutflow_raw->Fill(6);
 			  // MET in ee and mumu
-			  if (met_pt > 30 || mode == 0){
+			  if (TMath::Min(met_pt, trackmet[0]->Pt()) >= 30 || mode ==0){
+			  //if (met_pt > 30 || mode == 0){
 			    cutflow->Fill(7, weight);
 			    cutflow_raw->Fill(7);
 			    

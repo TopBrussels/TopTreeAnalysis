@@ -205,6 +205,12 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_R = new TH1F( title, " ", 40,  0, 40 );
   histo_R->Sumw2();
   
+  
+   // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
+  sprintf(title,"R_dy_%s",plotName);
+  TH1F* histo_R_dy = new TH1F( title, " ", 40,  0, 40 );
+  histo_R_dy->Sumw2();
+  
 
   if (fChain == 0) return;
   
@@ -252,7 +258,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
       
       if (pair.M() > 20){
 	histo->Fill(1, xlWeight);
-       
+
 	double SFval, SFerror;
 	if ( nsel == 666 || nosf){
 	  SFval = 1;
@@ -332,12 +338,34 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
 	else if (mode == 2 && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
 	
+	//DY control region
+        // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
+	if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(1, xlWeight);
+	else histo_R_dy->Fill(2, xlWeight);
+	
+	if (metPt >= metCut || mode == 0){
+	  if (nJets == 1){
+	    TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	    if (nTightJetsBT == 1 && bTagged && nJetsBT == 1){
+	      double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
+	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
+	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
+	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	      if ((ptSystem <= ptsysCut && mode !=0) || (mode ==0 && ht > htMin)){
+		if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(3, xlWeight);
+		else histo_R_dy->Fill(4, xlWeight);
+	      }
+	    }
+	  }
+	} 
+	//
+
 	if (invMass){
 	  histo->Fill(2, xlWeight);
 	  histo_mll_after->Fill(pair.M(),  xlWeight);
 	  histo_met_cut->Fill(metPt,  xlWeight);
-	  
-	  if (metPt >= metCut || mode ==0){
+	  if (TMath::Min(metPt, tmetPt) >= metCut || mode ==0){
+	  //if (metPt >= metCut || mode ==0){
 	    //if (promet >= metCut || mode ==0){
 	    histo->Fill(3, xlWeight);
 	    histo_njets_cut->Fill(nJets, xlWeight);
@@ -384,8 +412,8 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  
 	  
 	  //tt control region from here
-	  if (metPt >= metCut || mode ==0){
-	    
+	  //if (metPt >= metCut || mode ==0){
+	  if (TMath::Min(metPt, tmetPt) >= metCut || mode == 0){  
 	    if (nJets != 0){
 	      
 	      TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));

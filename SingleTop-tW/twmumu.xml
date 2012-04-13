@@ -2,7 +2,7 @@
 <datasets>
 
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/data/*"/> 
-<!--
+
  <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/TTJets*"/> 
 
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_2mu_v2/T_tW_DR*"/> 
@@ -47,8 +47,9 @@
 </datasets>
 
 <analysis>
-<!-- <a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="1" TrackMETCollection="TrackMET_trackMet" />
--->
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="1" TrackMETCollection="TrackMET_trackMet" />
+<!--
 <a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patType1CorrectedPFMet" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="1" TrackMETCollection="TrackMET_trackMet" />
+--->
 </analysis>
 
