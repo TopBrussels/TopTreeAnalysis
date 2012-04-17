@@ -134,6 +134,17 @@ int main (int argc, char *argv[])
     cout << "Possible options are: ChargeMisId , FakeLepton" << endl;
     exit(-1);
   }
+	
+	
+	float CM_EB = 0.00140; //charge misid probability barrel electron
+	float CM_EB_UNC = 0.00015;
+	float CM_EE = 0.01393; //charge misid probability endcap electron
+	float CM_EE_UNC = 0.00176;
+
+	float Eff_TL_e = 0.0821;	
+	float Eff_TL_e_unc = 0.0071;
+	float Eff_TL_m = 0.0331;	
+	float Eff_TL_m_unc = 0.0019;
 
 	//btagger to use and corresponding workingpoints
   string btagger = "TCHPM";
@@ -166,7 +177,7 @@ int main (int argc, char *argv[])
   string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_3Apr";
+  string Treespath = "InclFourthGenTrees_Fall11_dataonly";
   Treespath = Treespath +"/";
   if(!datadriven) mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -1127,7 +1138,7 @@ int main (int argc, char *argv[])
 												}
 												
 												//// two same-sign electrons
-												else if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size())
+												else if(selectedElectrons.size() == 2 && selectedLooseElectronsVBTFid.size() == selectedElectrons.size() && selectedLooseMuons.size() == 0)
 												{
 													if(selection.passConversionRejection(selectedElectrons[1]))
 													{
@@ -1201,8 +1212,8 @@ int main (int argc, char *argv[])
 													}
 												}
 										
-												//// for data-driven part: same-sign muons with 1 loose and 1 tight electron 
-												else if(datadriven && selectedElectrons.size() == 1 && selectedOnlyLooseElectrons_FL.size() == 1  && selectedLooseMuons.size() == 0)
+												//// for data-driven part: same-sign electrons with 1 loose and 1 tight electron 
+												else if(datadriven && selectedElectrons.size() == 1 && selectedOnlyLooseElectrons_FL.size() == 1  && selectedLooseMuons_FL.size() == 0)
 												{
 													if(option =="FakeLepton")
 													{
@@ -1970,42 +1981,81 @@ int main (int argc, char *argv[])
   ofstream myfile1;
 	if(option=="ChargeMisId" && systematic=="Nominal")
 	{
-		string myRockingFile1 = Treespath+"ChargeMisId_OSEvents"+channelpostfix+".txt";
+		string myRockingFile1 = "ChargeMisId_OSEvents"+channelpostfix+".txt";
 		myfile1.open(myRockingFile1.c_str());
 		cout << endl;
-		
+
 		if(semiMuon) myfile1 << "THIS IS FOR THE MUON TRIGGER PART OF THE DATA"  << "\n"; 
 		else  myfile1 << "THIS IS FOR THE ELECTRON TRIGGER PART OF THE DATA" << "\n";
 		myfile1 << "# OS el+mu events: " << "\n";
-		myfile1 << " barrel: " << NbOSElMu_EB_data << "\n"; 	
-		myfile1 << " endcap: " << NbOSElMu_EE_data << "\n"; 	 	
+		myfile1 << " barrel: " << NbOSElMu_EB_data << " +- " << sqrt(NbOSElMu_EB_data) << "\n"; 	
+		myfile1 << " endcap: " << NbOSElMu_EE_data << " +- " << sqrt(NbOSElMu_EE_data) << "\n"; 	 	
 		myfile1 << "\n";
+		
+		myfile1 << "# predicted SS el+mu events: " << "\n";
+		
+		float Unc_EB_events = sqrt(pow(CM_EB*sqrt(NbOSElMu_EB_data),2)+pow(NbOSElMu_EB_data*CM_EB_UNC,2));
+		myfile1 << " 1 barrel el: " << NbOSElMu_EB_data*CM_EB  << " +- " << Unc_EB_events << "\n"; 	
+		float Unc_EE_events = sqrt(pow(CM_EE*sqrt(NbOSElMu_EE_data),2)+pow(NbOSElMu_EE_data*CM_EE_UNC,2));
+		myfile1 << " 1 endcap el: " << NbOSElMu_EE_data*CM_EE << " +- " << Unc_EE_events << "\n"; 	
+		myfile1 << "\n";
+		
 		if(!semiMuon)
 		{
 			myfile1 << "# OS el+el events: " << "\n";
-			myfile1 << " 2 barrel: " << NbOSElectrons_EBEB_data << "\n"; 	
-			myfile1 << " 2 endcap: " << NbOSElectrons_EEEE_data<< "\n"; 	 	
-			myfile1 << " barrel+endcap: " << NbOSElectrons_EBEE_data<< "\n"; 	 	
+			myfile1 << " 2 barrel: " << NbOSElectrons_EBEB_data << " +- " << sqrt(NbOSElectrons_EBEB_data) << "\n"; 	
+			myfile1 << " 2 endcap: " << NbOSElectrons_EEEE_data << " +- " << sqrt(NbOSElectrons_EEEE_data) << "\n"; 	 	
+			myfile1 << " barrel+endcap: " << NbOSElectrons_EBEE_data << " +- " << sqrt(NbOSElectrons_EBEE_data) << "\n"; 	 	
+			myfile1 << "\n";
+			
+			myfile1 << "# predicted SS el+el events: " << "\n";
+			
+			float Unc_EBEB_events = sqrt(pow(2*CM_EB*sqrt(NbOSElectrons_EBEB_data),2)+ pow(NbOSElectrons_EBEB_data*2*CM_EB_UNC,2));
+			myfile1 << " 2 barrel: " << NbOSElectrons_EBEB_data*2*CM_EB << " +- " << Unc_EBEB_events << "\n"; 	
+			
+			float Unc_EEEE_events = sqrt(pow(2*CM_EE*sqrt(NbOSElectrons_EEEE_data),2)+ pow(NbOSElectrons_EEEE_data*2*CM_EE_UNC,2));
+			myfile1 << " 2 endcap: " << NbOSElectrons_EEEE_data*2*CM_EE << " +- " << Unc_EEEE_events << "\n"; 	 	
+			
+			float Unc_EBEE_events = sqrt(pow((CM_EB+CM_EE)*sqrt(NbOSElectrons_EBEE_data),2)+ pow(NbOSElectrons_EBEE_data*CM_EB_UNC,2)+pow(NbOSElectrons_EBEE_data*CM_EE_UNC,2));
+			myfile1 << " barrel+endcap: " << NbOSElectrons_EBEE_data*(CM_EB+CM_EE) << " +- " << Unc_EBEE_events << "\n"; 	 	
+			
+			myfile1 << "\n";
+			myfile1 << " total: " <<  NbOSElectrons_EBEB_data*2*CM_EB+NbOSElectrons_EEEE_data*2*CM_EE+NbOSElectrons_EBEE_data*(CM_EB+CM_EE) << " +- " << sqrt(pow(Unc_EBEB_events,2)+pow(Unc_EEEE_events,2)+pow(Unc_EBEE_events,2)) << "\n"; 	 	
 			myfile1 << "\n";
 			myfile1.close();
 		}
 	}
 	if(option=="FakeLepton" && systematic=="Nominal")
 	{
-		string myRockingFile1 = Treespath+"FakeLepton_Events"+channelpostfix+".txt";
+		
+		string myRockingFile1 = "FakeLepton_Events"+channelpostfix+".txt";
 		myfile1.open(myRockingFile1.c_str());
 		myfile1 << "\n";
-		if(semiMuon) myfile1 << "THIS IS FOR THE MUON TRIGGER PART OF THE DATA" << "\n";
-		else  myfile1 << "THIS IS FOR THE ELECTRON TRIGGER PART OF THE DATA" << "\n";
+
 		if(semiMuon)
-			myfile1 << "# mu+mu events with fake muon: " << NbSSLooseMuonTightMuon_data << "\n";
+		{
+			myfile1 << "THIS IS FOR THE MUON TRIGGER PART OF THE DATA" << "\n";
+			myfile1 << "# mu+mu events with fake muon: " << NbSSLooseMuonTightMuon_data << " +- " << sqrt(NbSSLooseMuonTightMuon_data)  << "\n";
+			myfile1 << "# el+mu events with fake electron: " << NbSSLooseElectronTightMuon_data << " +- " << sqrt(NbSSLooseElectronTightMuon_data) << "\n";
+			myfile1 << "\n";
+			
+			float Unc_mm = pow(Eff_TL_m*(1-Eff_TL_m)*sqrt(NbSSLooseMuonTightMuon_data),2)+pow(NbSSLooseMuonTightMuon_data*(1-2*Eff_TL_m)*Eff_TL_m_unc,2);
+			myfile1 << "# predicted SS mu+muL events: " << NbSSLooseMuonTightMuon_data*Eff_TL_m*(1-Eff_TL_m) << " +- " << sqrt(Unc_mm) << "\n";
+			float Unc_me = pow(Eff_TL_e*(1-Eff_TL_e)*sqrt(NbSSLooseElectronTightMuon_data),2)+pow(NbSSLooseElectronTightMuon_data*(1-2*Eff_TL_e)*Eff_TL_e_unc,2);
+			myfile1 << "# predicted SS mu+eL events: " << NbSSLooseElectronTightMuon_data*Eff_TL_e*(1-Eff_TL_e) << " +- " << sqrt(Unc_me) << "\n";
+		}
+
 		if(!semiMuon)
-			myfile1 << "# el+mu events with fake muon: " << NbSSLooseMuonTightElectron_data << "\n";
-		myfile1 << "\n";
-		if(!semiMuon)
-			myfile1 << "# el+el events with fake electron: " << NbSSLooseElectronTightElectron_data<< "\n";
-		if(semiMuon)
-			myfile1 << "# el+mu events with fake electron: " << NbSSLooseElectronTightMuon_data << "\n";
+		{
+			myfile1 << "THIS IS FOR THE ELECTRON TRIGGER PART OF THE DATA" << "\n";
+			myfile1 << "# el+el events with fake electron: " << NbSSLooseElectronTightElectron_data << " +- " << sqrt(NbSSLooseElectronTightElectron_data)<< "\n";
+			myfile1 << "# el+mu events with fake muon: " << NbSSLooseMuonTightElectron_data << " +- " << sqrt(NbSSLooseMuonTightElectron_data) << "\n";
+			
+			float Unc_ee = pow(Eff_TL_e*(1-Eff_TL_e)*sqrt(NbSSLooseElectronTightElectron_data),2)+pow(NbSSLooseElectronTightElectron_data*(1-2*Eff_TL_e)*Eff_TL_e_unc,2);
+			myfile1 << "# predicted SS e+eL events: " << NbSSLooseElectronTightElectron_data*Eff_TL_e*(1-Eff_TL_e) << " +- " << sqrt(Unc_ee) << "\n";
+			float Unc_em = pow(Eff_TL_m*(1-Eff_TL_m)*sqrt(NbSSLooseMuonTightElectron_data),2)+pow(NbSSLooseMuonTightElectron_data*(1-2*Eff_TL_m)*Eff_TL_m_unc,2);
+			myfile1 << "# predicted SS e+muL events: " << NbSSLooseMuonTightElectron_data*Eff_TL_m*(1-Eff_TL_m) << " +- " << sqrt(Unc_em) << "\n";
+		}	
 		myfile1 << "\n";
 		myfile1.close();
 	}

@@ -127,7 +127,7 @@ int main (int argc, char *argv[])
   setTDRStyle();
   //setMyStyle();
 
-  string postfix = "_21Feb2012"; // to relabel the names of the output file  
+  string postfix = "_16Apr2012_CHARGEMISID"; // to relabel the names of the output file  
 	postfix= postfix+"_"+option;
 
   /////////////////////
@@ -163,8 +163,8 @@ int main (int argc, char *argv[])
   
   //xml file
   string xmlFileName = "";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_BackgroundEstimation.xml";
-  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11_BackgroundEstimation.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_BackgroundEstimationNEW.xml";
+  else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11_BackgroundEstimationNEW.xml";
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
   
@@ -243,6 +243,14 @@ int main (int argc, char *argv[])
   SelectionTable selecTableChargeMisId_2El(CutsSelecTableChargeMisId_2El, datasets);
   selecTableChargeMisId_2El.SetLuminosity(Luminosity);
   selecTableChargeMisId_2El.SetPrecision(2);
+
+  vector<string> CutsSelecTableFakeLepton;
+  CutsSelecTableFakeLepton.push_back(string("basic cuts"));
+  CutsSelecTableFakeLepton.push_back(string("lepton pt > 35"));
+  SelectionTable selecTableFakeLepton(CutsSelecTableFakeLepton, datasets);
+	selecTableFakeLepton.SetLuminosity(Luminosity);
+  selecTableFakeLepton.SetPrecision(1);
+
 
   cout << " - SelectionTable instantiated ..." << endl;
 
@@ -438,20 +446,6 @@ int main (int argc, char *argv[])
     						exit(1);
   						}// semi-electron
  	   				}
-	   				else 
-	   				{
-					  	//Problem: a trigger reweighting procedure for MC should be done when using the summer11 electron trigger...
-					  	if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
-   							itrigger = treeLoader.iTrigger (string (""), currentRun, iFile);//Summer11 MC has other triggers!	
-							else
-						  	itrigger = treeLoader.iTrigger (string (""), currentRun, iFile);//Fall11 MC!
-						
-							if(itrigger == 9999)
-							{
-								cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;	
-								exit(1);
-							}
-						}
 					}
 					else if(option == "ChargeMisId")
 					{
@@ -511,7 +505,9 @@ int main (int argc, char *argv[])
 	 			scaleFactor = scaleFactor*lumiWeight3D;
       	//histo1D["lumiWeights"]->Fill(scaleFactor);	
 			}
-						
+			cout << "scaleFactor " << scaleFactor << endl;
+			
+					
       /////////////////////////////
       // Selection
       /////////////////////////////
@@ -557,7 +553,7 @@ int main (int argc, char *argv[])
 
 			//need at least one loosely isolated electron with pT>10 and a jet with pt>40 (trigger = loose caloiso single electron with pt 8 + jet with pt 40)
       selectionFakeElectron.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
-      selectionFakeElectron.setLooseMuonCuts(10,2.5,0.2);
+      selectionFakeElectron.setLooseMuonCuts(10,2.5,9999.);
       selectionFakeElectron.setElectronCuts(20,2.5,0.1,0.02,1,0.3);
       selectionFakeElectron.setLooseElectronCuts(15,2.5,9999.);	 				
 
@@ -569,7 +565,7 @@ int main (int argc, char *argv[])
  
       if(trigged && semiMuon)
       { 
-      	if(verbosity) cout <<  " event is triggered, will do fake muon probability estimation"  << endl;
+      	//if(verbosity) cout <<  " event is triggered, will do fake muon probability estimation"  << endl;
       	vector<TRootJet*> selectedJets_FM;
       	vector<TRootMuon*> selectedMuons_FM;
       	vector<TRootMuon*> selectedFakeMuons_FM;
@@ -594,9 +590,8 @@ int main (int argc, char *argv[])
 						float MT = sqrt(2*selectedFakeMuons_FM[0]->Pt()*mets[0]->Pt()*(1-cos(selectedFakeMuons_FM[0]->DeltaPhi(*mets[0]))));
 						if(selectedJets_FM.size()>=(unsigned int)anaEnv.NofJets && MT<25)
 						{  //at least 1 jet!
-
-							if(dataSetName == "Data")
-							{
+//							if(dataSetName == "Data")
+//							{
   							bool foundZ = false;
   							if(selectedFakeMuons_FM.size()>=1){
 									for(unsigned int j=0;j<selectedFakeMuons_FM.size();j++)
@@ -631,18 +626,20 @@ int main (int argc, char *argv[])
 								}
 								if(!foundZ) // reject events with a Z boson
 								{											
+									selecTableFakeLepton.Fill(d,0,scaleFactor);
 									for(unsigned int j=0;j<selectedFakeMuons_FM.size();j++)
 									{
 										if(selectedFakeMuons_FM[j]->Pt()<35)	
-											NbOfLooseMuons++;
+											if(dataSetName == "Data") NbOfLooseMuons++;
 									}
 									for(unsigned int j=0;j<selectedMuons_FM.size();j++)
 									{
 										if(selectedMuons_FM[j]->Pt()<35) 
-											NbOfTightMuons++;
+											if(dataSetName == "Data") NbOfTightMuons++;
 									}
+									if(selectedFakeMuons_FM.size() > 0 && selectedFakeMuons_FM[0]->Pt()>35) selecTableFakeLepton.Fill(d,1,scaleFactor);
 								}
-							}
+							//}
 							////////////////////// FAKE LEPTON RATE ESTIMATION ///////////////////
 						} 
           } 
@@ -655,7 +652,7 @@ int main (int argc, char *argv[])
       	
 				if(option=="ChargeMisId")////////////////////// CHARGE MIS-ID PROBABILITY ESTIMATION //////////////////
 				{
-      		if(verbosity) cout <<  " event is triggered, will do charge misid probability estimation for electrons"  << endl;
+      		//if(verbosity) cout <<  " event is triggered, will do charge misid probability estimation for electrons"  << endl;
 
       		vector<TRootJet*> selectedJets_CM;
       		vector<TRootElectron*> selectedElectrons_CM;
@@ -690,21 +687,21 @@ int main (int argc, char *argv[])
 											if(fabs(selectedElectrons_CM[0]->superClusterEta())<1.4442 && fabs(selectedElectrons_CM[1]->superClusterEta())<1.4442){
 												selecTableChargeMisId_2El.Fill(d,0,scaleFactor);
 												if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_SS_data+=scaleFactor;
-												else Nb_Zpeak_EB_SS_MC+=scaleFactor;
+												else if(dataSetName.find("ZJets") == 0) Nb_Zpeak_EB_SS_MC+=1;
 											}else if(fabs(selectedElectrons_CM[0]->superClusterEta())>1.5660 && fabs(selectedElectrons_CM[1]->superClusterEta())>1.5660){
 												selecTableChargeMisId_2El.Fill(d,1,scaleFactor);
 												if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_SS_data+=scaleFactor;
-												else Nb_Zpeak_EE_SS_MC+=scaleFactor;
+												else if(dataSetName.find("ZJets") == 0) Nb_Zpeak_EE_SS_MC+=1;
 											}
 										}else{
 											if(fabs(selectedElectrons_CM[0]->superClusterEta())<1.4442 && fabs(selectedElectrons_CM[1]->superClusterEta())<1.4442){
 												selecTableChargeMisId_2El.Fill(d,2,scaleFactor);
 												if(dataSetName.find("Data") == 0) Nb_Zpeak_EB_OS_data+=scaleFactor;
-												else Nb_Zpeak_EB_OS_MC+=scaleFactor;
+												else if(dataSetName.find("ZJets") == 0) Nb_Zpeak_EB_OS_MC+=1;
 											}else if(fabs(selectedElectrons_CM[0]->superClusterEta())>1.5660 && fabs(selectedElectrons_CM[1]->superClusterEta())>1.5660){
 												selecTableChargeMisId_2El.Fill(d,3,scaleFactor);
 												if(dataSetName.find("Data") == 0) Nb_Zpeak_EE_OS_data+=scaleFactor;
-												else Nb_Zpeak_EE_OS_MC+=scaleFactor;
+												else if(dataSetName.find("ZJets") == 0) Nb_Zpeak_EE_OS_MC+=1;
 											}															
 										}
 									}	
@@ -716,7 +713,7 @@ int main (int argc, char *argv[])
 				else if (option=="ElectronFake")////////////////////// FAKE LEPTON PROBABILITY ESTIMATION ///////////////////
 				{
       			      
-      		if(verbosity) cout <<  " event is triggered, will do fake electron probability estimation"  << endl;
+      		//if(verbosity) cout <<  " event is triggered, will do fake electron probability estimation"  << endl;
 
       		vector<TRootJet*> selectedJets_EF;
     		  vector<TRootElectron*> selectedElectrons_EF;
@@ -779,17 +776,20 @@ int main (int argc, char *argv[])
 									
 									if(!foundZ) // reject events with a Z boson
 									{											
+										selecTableFakeLepton.Fill(d,0,scaleFactor);
 										for(unsigned int j=0;j<selectedFakeElectrons_EF.size();j++){
 											if(selectedFakeElectrons_EF[j]->Pt()<35)	
-												NbOfLooseElectrons++;      
+												if(dataSetName == "Data") NbOfLooseElectrons++;      
 										}
 										histo1D["LeptonPt_loose"]->Fill(selectedFakeElectrons_EF[0]->Pt(),scaleFactor);	
 										float relIso = (selectedFakeElectrons_EF[0]->chargedHadronIso()+selectedFakeElectrons_EF[0]->neutralHadronIso()+selectedFakeElectrons_EF[0]->photonIso())/selectedFakeElectrons_EF[0]->Pt();
 										histo1D["LeptonReliso_loose"]->Fill(relIso,scaleFactor);	
 										for(unsigned int j=0;j<selectedElectrons_EF.size();j++){
 											if(selectedElectrons_EF[j]->Pt()<35)	
-												NbOfTightElectrons++;
+												if(dataSetName == "Data") NbOfTightElectrons++;
 										}
+										if(selectedFakeElectrons_EF.size()>0 && selectedFakeElectrons_EF[0]->Pt()>35) selecTableFakeLepton.Fill(d,1,scaleFactor);
+
 										if(selectedElectrons_EF.size()>=1){
 											histo1D["LeptonPt_tight"]->Fill(selectedElectrons_EF[0]->Pt(),scaleFactor);	
 											relIso = (selectedElectrons_EF[0]->chargedHadronIso()+selectedElectrons_EF[0]->neutralHadronIso()+selectedElectrons_EF[0]->photonIso())/selectedElectrons_EF[0]->Pt();
@@ -820,6 +820,8 @@ int main (int argc, char *argv[])
 	if(semiElectron && option=="ChargeMisId"){
 		float chargeMisId_Barrel_MC = (float)Nb_Zpeak_EB_SS_MC/(2*(float)Nb_Zpeak_EB_OS_MC);
 		float chargeMisId_Endcap_MC = (float)Nb_Zpeak_EE_SS_MC/(2*(float)Nb_Zpeak_EE_OS_MC);
+		float chargeMisId_Barrel_MC_unc = sqrt(pow((sqrt((float)Nb_Zpeak_EB_SS_MC)/(2*(float)Nb_Zpeak_EB_OS_MC)),2)+pow(((float)Nb_Zpeak_EB_SS_MC*sqrt((float)Nb_Zpeak_EB_OS_MC)/pow((float)Nb_Zpeak_EB_OS_MC,2)),2));	
+		float chargeMisId_Endcap_MC_unc = sqrt(pow((sqrt((float)Nb_Zpeak_EE_SS_MC)/(2*(float)Nb_Zpeak_EE_OS_MC)),2)+pow(((float)Nb_Zpeak_EE_SS_MC*sqrt((float)Nb_Zpeak_EE_OS_MC)/pow((float)Nb_Zpeak_EE_OS_MC,2)),2));	
 		float chargeMisId_Barrel_data = (float)Nb_Zpeak_EB_SS_data/(2*(float)Nb_Zpeak_EB_OS_data);
 		float chargeMisId_Endcap_data = (float)Nb_Zpeak_EE_SS_data/(2*(float)Nb_Zpeak_EE_OS_data);
 		float chargeMisId_Barrel_data_unc = sqrt(pow((sqrt((float)Nb_Zpeak_EB_SS_data)/(2*(float)Nb_Zpeak_EB_OS_data)),2)+pow(((float)Nb_Zpeak_EB_SS_data*sqrt((float)Nb_Zpeak_EB_OS_data)/pow((float)Nb_Zpeak_EB_OS_data,2)),2));	
@@ -829,8 +831,8 @@ int main (int argc, char *argv[])
 		cout << "charge mis-reconstruction probability in MC: " << endl;
 		cout << " # SS events barrel: " <<  Nb_Zpeak_EB_SS_MC << "  and endcap: " <<  Nb_Zpeak_EE_SS_MC << endl;
 		cout << " # OS events barrel: " <<  Nb_Zpeak_EB_OS_MC << "  and endcap: " <<  Nb_Zpeak_EE_OS_MC << endl;
-		cout << " chargeMisId_Barrel_MC " << chargeMisId_Barrel_MC << endl;
-		cout << " chargeMisId_Endcap_MC " << chargeMisId_Endcap_MC << endl;
+		cout << " chargeMisId_Barrel_MC " << chargeMisId_Barrel_MC << " +- " << chargeMisId_Barrel_MC_unc  << endl;
+		cout << " chargeMisId_Endcap_MC " << chargeMisId_Endcap_MC << " +- " << chargeMisId_Endcap_MC_unc  << endl;
 		cout << endl;
 		cout << "charge mis-reconstruction probability in DATA: " << endl;
 		cout << " # SS events barrel: " << Nb_Zpeak_EB_SS_data  << "  and endcap: " << Nb_Zpeak_EE_SS_data  << endl;
@@ -843,13 +845,15 @@ int main (int argc, char *argv[])
 	float ElectronFakeRate = (float)NbOfTightElectrons/(float)(NbOfLooseElectrons);
 
 	cout << endl;
-	cout << "Number of tight muons " << NbOfTightMuons << endl;
-	cout << "Number of loose muons " << NbOfLooseMuons << endl;
-	cout << "Fake rate for muons " << MuonFakeRate << endl;
+	cout << "Number of tight muons " << NbOfTightMuons << " +- " << sqrt(NbOfTightMuons) << endl;
+	cout << "Number of loose muons " << NbOfLooseMuons << " +- " << sqrt(NbOfLooseMuons) << endl;
+	float MuonFakeRate_unc = sqrt(pow(sqrt(NbOfTightMuons)/NbOfLooseMuons,2)+pow((NbOfTightMuons*sqrt(NbOfLooseMuons))/pow((float)NbOfLooseMuons,2),2));
+	cout << "Fake rate for muons " << MuonFakeRate <<  " +- " << MuonFakeRate_unc << endl;
 	cout << endl;
-	cout << "Number of tight electrons " << NbOfTightElectrons << endl;
-	cout << "Number of loose electrons " << NbOfLooseElectrons << endl;
-	cout << "Fake rate for electrons " << ElectronFakeRate << endl;
+	cout << "Number of tight electrons " << NbOfTightElectrons << " +- " << sqrt(NbOfTightElectrons) <<  endl;
+	cout << "Number of loose electrons " << NbOfLooseElectrons << " +- " << sqrt(NbOfLooseElectrons) <<  endl;
+	float ElectronFakeRate_unc = sqrt(pow(sqrt(NbOfTightElectrons)/NbOfLooseElectrons,2)+pow((NbOfTightElectrons*sqrt(NbOfLooseElectrons))/pow((float)NbOfLooseElectrons,2),2));
+	cout << "Fake rate for electrons " << ElectronFakeRate <<  " +- " << ElectronFakeRate_unc << endl;
 	cout << endl;
 
 	
@@ -861,6 +865,11 @@ int main (int argc, char *argv[])
   string selectiontableChargeMisId_2El = "InclFourthGenSearch_SelectionTable_ChargeMisId2El"+postfix;
   selectiontableChargeMisId_2El = selectiontableChargeMisId_2El +".tex"; 	
 	if(semiElectron) selecTableChargeMisId_2El.Write(selectiontableChargeMisId_2El.c_str(),false, true, false, false, false, false, false);
+
+  selecTableFakeLepton.TableCalculator(true, true, true, true, true, false, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+  string selectiontablefakelepton = "InclFourthGenSearch_SelectionTable_FakeLepton"+postfix;
+  selectiontablefakelepton = selectiontablefakelepton +".tex"; 	
+	selecTableFakeLepton.Write(selectiontablefakelepton.c_str(),false, true, false, false, false, false, false);
  
     fout->cd();
     //Write histograms: MSPlots

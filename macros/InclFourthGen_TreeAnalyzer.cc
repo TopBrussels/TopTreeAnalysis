@@ -143,7 +143,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_4Apr";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_17Apr_4jetsTEST";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -861,6 +861,7 @@ int main (int argc, char *argv[])
 			 	//cout<<"event: "<<myBranch_selectedEvents->eventID()<<endl;
 				continue;
 			}
+
 			
 			if(isSSLepton && dataSetName=="Data"){
 				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
@@ -871,7 +872,15 @@ int main (int argc, char *argv[])
 				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			}
 
-
+/*			if(isSSLepton && selectedJets.size()>=4 && dataSetName=="Data"){
+				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
+				if(isSSElectron && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
+				if(isSSMuEl && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
+			
+			}else if(isTriLepton && dataSetName=="Data" && systematic=="Nominal"){
+				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
+			}
+*/
 					
 			bool TprimeEvaluation = false;
 			//////////////////////////////////////////////////////////////////////////
@@ -1064,8 +1073,8 @@ int main (int argc, char *argv[])
 			}			
 			
 			if(isSSLepton)
+//			if(isSSLepton && selectedJets.size()>=4)
 			{
-				
 				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
 				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
 				
