@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <datasets>
-
+<!---
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/data/*"/> 
-
+-->
  <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TTJets/*"/> 
 
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_tW_DR/*"/> 
@@ -10,7 +10,7 @@
  
  <d name="twds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_tW_DS/*"/> 
  <d name="atwds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_tW_DS/*"/> 
- 
+ <!--
  <d name="t" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_t/*"/> 
  <d name="at" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_t/*"/> 
  <d name="ats" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_s/*"/> 
@@ -27,24 +27,26 @@
  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/DY_50/*"/>
  <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/DY_10to50/*"/>
 
-
+<!---
  <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/data/*"/> 
  <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/data/*"/> 
 
 
-<!--
-<d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/ttscaleup/*"/> 
- <d name="tt_scaledown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/ttscaledown/*"/> 
+ <d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TT_scaledown/*"/> 
+ <d name="tt_scaledown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TT_scaledown/*"/> 
  
- <d name="tt_matchingup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/ttmatchingup/*"/> 
- <d name="tt_matchingdown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/ttmatchingdown/*"/> 
+ <d name="tt_matchingup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TT_matchingup/*"/> 
+ <d name="tt_matchingdown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TT_matchingdown/*"/> 
  
- <d name="tt_largeISR" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_1e1mu/TT_LargeISRFSR.root"/> 
- <d name="tt_smallISR" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/SytSamples_1e1mu/TT_SmallISRFSR.root"/> 
+ <d name="t_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_scaleup_tW_DR/*"/> //
+ <d name="tbar_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_scaleup_tW_DR/*"/> 
+ <d name="t_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_scaledown_tW_DR/*"/> 
+ <d name="tbar_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_scaledown_tW_DR/*"/> 
  
- <d name="t_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/T_scaleup_tW.root"/> 
- <d name="tbar_sup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/Tbar_scaleup_tW.root"/> 
- <d name="tbar_sdo" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer11_1e1mu/Tbar_scaledown_tW.root"/> 
+ <d name="t_sup_ds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_scaleup_tW_DS/*"/> 
+ <d name="tbar_sup_ds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_scaleup_tW_DS/*"/>  
+ <d name="t_sdo_ds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_scaledown_tW_DS/*"/> 
+ <d name="tbar_sdo_ds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_scaledown_tW_DS/*"/> 
 --->
 
 </datasets>

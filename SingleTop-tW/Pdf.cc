@@ -233,7 +233,12 @@ int main(int argc, char* argv[]) {
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
       else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/noPU_%d_%s.root", mode, name);
-      else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
+      else sprintf(rootFileName,"outputs/pdf_2j2t_%d_%s.root", mode, name);
+      
+      char myFile[300];
+      sprintf(myFile,"textfiles/pdf_2j2t_%d_%s.txt", mode, name);
+      ofstream salida(myFile); 
+  
       
       // Objects
       vector < TRootVertex* > vertex;
@@ -252,88 +257,19 @@ int main(int argc, char* argv[]) {
       
       TRootEvent* event = 0;
       
-      
-      // Histograms
-      map<string,TH1F*> histo1D;
-      map<string,TH2F*> histo2D;
-      
-      TH1F* cutflow = new TH1F("cutflow", " ", 31,  -0.5, 30.5 );
-      TH1F* cutflow_raw = new TH1F("cutflow_raw", " ", 31,  -0.5, 30.5 );
-      TH1F* R = new TH1F( "R", " ", 40,  0, 40 );
-      
-      cutflow->Sumw2();
-      cutflow_raw->Sumw2();
-      R->Sumw2();
-      
-      
+     
       // Branches of the output Tree
-      double xlWeight; 
-      double lum;
-      
-      int npu;
-      int nvertex;
-      
-      double metPt;
-      double metPx;
-      double metPy;
-      
-      double tmetPt;
-      double tmetPx;
-      double tmetPy;
-      
-      std::vector<double> *ptLepton;
-      std::vector<double> *pxLepton;
-      std::vector<double> *pyLepton;
-      std::vector<double> *pzLepton;
-      std::vector<double> *eLepton;
-      std::vector<double> *qLepton;
-      
-      std::vector<double> *ptJet;
-      std::vector<double> *pxJet;
-      std::vector<double> *pyJet;
-      std::vector<double> *pzJet;
-      std::vector<double> *eJet;
-      std::vector<double> *qJet;
-      std::vector<double> *btTCHPJet;
-      std::vector<double> *btTCHEJet;
-      std::vector<double> *btSSVHPJet;
-      std::vector<double> *btSSVHEJet;
-      
+      double id1,id2, x1, x2, q, xlWeight;
+     
       // Output Tree
       TTree* myTree = new TTree("myTree", "   ");
       
       myTree->Branch("xlWeight", &xlWeight, "xlWeight/D");
-      myTree->Branch("lum", &lum, "lum/D");
-      
-      myTree->Branch("npu", &npu, "npu/I");
-      myTree->Branch("nvertex", &nvertex, "nvertex/I");
-      
-      myTree->Branch("metPt", &metPt, "metPt/D");
-      myTree->Branch("metPx", &metPx, "metPx/D");
-      myTree->Branch("metPy", &metPy, "metPy/D");
-      
-      myTree->Branch("tmetPt", &tmetPt, "tmetPt/D");
-      myTree->Branch("tmetPx", &tmetPx, "tmetPx/D");
-      myTree->Branch("tmetPy", &tmetPy, "tmetPy/D");
-      
-      myTree->Branch("ptLepton","std::vector<double>",&ptLepton);
-      myTree->Branch("pxLepton","std::vector<double>",&pxLepton);
-      myTree->Branch("pyLepton","std::vector<double>",&pyLepton);
-      myTree->Branch("pzLepton","std::vector<double>",&pzLepton);
-      myTree->Branch("eLepton","std::vector<double>",&eLepton);
-      myTree->Branch("qLepton","std::vector<double>",&qLepton);
-      
-      myTree->Branch("ptJet","std::vector<double>",&ptJet);
-      myTree->Branch("pxJet","std::vector<double>",&pxJet);
-      myTree->Branch("pyJet","std::vector<double>",&pyJet);
-      myTree->Branch("pzJet","std::vector<double>",&pzJet);
-      myTree->Branch("eJet","std::vector<double>",&eJet);
-      myTree->Branch("qJet","std::vector<double>",&qJet);
-      myTree->Branch("btTCHPJet","std::vector<double>",&btTCHPJet);
-      myTree->Branch("btTCHEJet","std::vector<double>",&btTCHEJet);
-      myTree->Branch("btSSVHPJet","std::vector<double>",&btSSVHPJet);
-      myTree->Branch("btSSVHEJet","std::vector<double>",&btSSVHEJet);
-      
+      myTree->Branch("x1", &x1, "x1/D");
+      myTree->Branch("x2", &x2, "x2/D");
+      myTree->Branch("id1", &id1, "id1/D");
+      myTree->Branch("id2", &id2, "id2/D");
+      myTree->Branch("q", &q, "q/D");
       
       //Pile-Up reweighting  
       Lumi3DReWeighting Lumi3DWeights;
@@ -406,101 +342,6 @@ int main(int argc, char* argv[]) {
 	 
 	    //No trigger after first test
 	    bool trigged = true;
-	    /*
-	    bool trigged = false;
-	    
-	    int currentRun = event->runId();
-	    bool itrigger = false;
-	    bool isecondtrigger = false;
-	    if(isData) { 
-	      if (mode == 0){
-		if(currentRun >= 150000 && currentRun <= 161176){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v1", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v1", currentRun);
-		}else if(currentRun >= 161179 && currentRun <= 163261){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v2", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v2", currentRun);
-		}else if(currentRun >= 163262 && currentRun <= 164237){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v3", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v3", currentRun);
-		}else if(currentRun >= 165085 && currentRun <= 165888){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v4", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v4", currentRun);
-		}else if(currentRun >= 165900 && currentRun <= 166967){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v5", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v5", currentRun);
-		}else if(currentRun >= 166968 && currentRun <= 170053){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v6", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v6", currentRun);
-		}else if(currentRun >= 170054 && currentRun <= 173198){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v8", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v3", currentRun);
-		}else if(currentRun >= 173199 && currentRun <= 178380){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v4", currentRun);
-		}else if(currentRun >= 178381 && currentRun <= 999999){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v7", currentRun);
-		  isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v7", currentRun);
-		}
-	      } else if (mode == 1){
-		if(currentRun >= 150000 && currentRun <= 161176){
-		  itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
-		}else if(currentRun >= 161179 && currentRun <= 163261){
-		  itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
-		}else if(currentRun >= 163262 && currentRun <= 164237){
-		  itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v2", currentRun);
-		}else if(currentRun >= 165085 && currentRun <= 165888){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
-		}else if(currentRun >= 165900 && currentRun <= 167043){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
-		}else if(currentRun >= 167044 && currentRun <= 170053){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v4", currentRun);
-		}else if(currentRun >= 170054 && currentRun <= 173198){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v6", currentRun);
-		}else if(currentRun >= 173199 && currentRun <= 178380){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v7", currentRun);
-		}else if(currentRun >= 178381 && currentRun <= 999999){
-		  itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v10", currentRun);
-		}
-	      } else if (mode == 2){
-		if(currentRun >= 150000 && currentRun <= 161176){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
-		}else if(currentRun >= 161179 && currentRun <= 163261){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2", currentRun);
-		}else if(currentRun >= 163262 && currentRun <= 164237){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3", currentRun);
-		}else if(currentRun >= 165085 && currentRun <= 165888){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4", currentRun);
-		}else if(currentRun >= 165900 && currentRun <= 167043){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5", currentRun);
-	      }else if(currentRun >= 167044 && currentRun <= 170053){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6", currentRun);
-		}else if(currentRun >= 170054 && currentRun <= 170759){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
-		}else if(currentRun >= 170760 && currentRun <= 173198){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
-		}else if(currentRun >= 173199 && currentRun <= 178380){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
-		}else if(currentRun >= 178381 && currentRun <= 999999){
-		  itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9", currentRun);
-		}
-	      }
-	      
-	      //No trigger for quicker tests
-	      // itrigger = true;
-	      // isecondtrigger = true;
-	      
-	    } else {
-	      // No trigger in MC
-	      itrigger = true;
-	      isecondtrigger = true;
-	    }
-	   
-	  
-	  if (itrigger || isecondtrigger) trigged = true;
-	 
-	    */
-	 
 	   
 	    // Systematics
 	    //JES and JER
@@ -554,14 +395,8 @@ int main(int argc, char* argv[]) {
 	    double met_pt = sqrt(met_px*met_px + met_py*met_py);
 	    
 	    // Cut Flow Starts
-	    cutflow->Fill(1, weight);
-	    cutflow_raw->Fill(1);
 	    if(trigged){
-	      cutflow->Fill(2, weight);
-	      cutflow_raw->Fill(2);
 	      if(isGoodPV){
-		cutflow->Fill(3, weight);
-		cutflow_raw->Fill(3);
 		
 		// Select Objects -> Cuts
 		selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
@@ -622,8 +457,7 @@ int main(int argc, char* argv[]) {
 		  }
 		  
 		  if (charge){
-		    cutflow->Fill(4, weight);
-		    cutflow_raw->Fill(4);
+		    
 		    // Loose lepton veto
 		    bool leptonVeto = false;
 		    if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
@@ -631,115 +465,21 @@ int main(int argc, char* argv[]) {
 		    else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
 		    
 		    if (leptonVeto) {
-		      cutflow->Fill(5, weight);
-		      cutflow_raw->Fill(5);
 		      
 		      // Low mll cut (all final states)
 		      TLorentzVector pair = lepton0 + lepton1;   
 		      if (pair.M() > 20){
 			
-			//Filling the Tree (at pre-selection level, leptons and mll)
-			lum = lumi;
+			
 			
 			if (isRAW) weight = 1;
 			xlWeight = weight;
 			
-			npu = event->nPu(0);
-			nvertex = vertex.size();
 			
-			metPt = met_pt;
-			metPx = met_px;
-			metPy = met_py;
-			
-			 //cout << trackmet[0]->Pt() << endl;
-			
-			tmetPt = trackmet[0]->Pt();
-			tmetPx = trackmet[0]->Px();
-			tmetPy = trackmet[0]->Py();
-			
-			
-			ptLepton = new std::vector<double>; 
-			pxLepton = new std::vector<double>; 
-			pyLepton = new std::vector<double>; 
-			pzLepton = new std::vector<double>; 
-			eLepton = new std::vector<double>; 
-			qLepton = new std::vector<double>;
-			
-			ptJet = new std::vector<double>; 
-			pxJet = new std::vector<double>; 
-			pyJet = new std::vector<double>; 
-			pzJet = new std::vector<double>; 
-			eJet = new std::vector<double>; 
-			qJet = new std::vector<double>; 
-			btTCHPJet = new std::vector<double>; 
-			btTCHEJet = new std::vector<double>; 
-			btSSVHPJet = new std::vector<double>;
-			btSSVHEJet = new std::vector<double>; 
-			
-			ptLepton->push_back(lepton0.Pt());
-			ptLepton->push_back(lepton1.Pt());
-			
-			pxLepton->push_back(lepton0.Px());
-			pxLepton->push_back(lepton1.Px());
-			
-			pyLepton->push_back(lepton0.Py());
-			pyLepton->push_back(lepton1.Py());
-			
-			pzLepton->push_back(lepton0.Pz());
-			pzLepton->push_back(lepton1.Pz());
-			
-			eLepton->push_back(lepton0.Energy());
-			eLepton->push_back(lepton1.Energy());
-			
-			qLepton->push_back(q0);
-			qLepton->push_back(q1);
-			
-			for (unsigned int i =0; i < selectedJets.size(); i ++){
-			  TRootJet* tempJet = (TRootJet*) selectedJets[i];
-			  ptJet->push_back(tempJet->Pt());
-			  pxJet->push_back(tempJet->Px());
-			  pyJet->push_back(tempJet->Py());
-			  pzJet->push_back(tempJet->Pz());
-			  eJet->push_back(tempJet->Energy());
-			  qJet->push_back(tempJet->charge());
-			  btTCHPJet->push_back(tempJet->btag_trackCountingHighPurBJetTags() );
-			  btTCHEJet->push_back(tempJet->btag_trackCountingHighEffBJetTags() );
-			  btSSVHPJet->push_back(tempJet->btag_simpleSecondaryVertexHighPurBJetTags() );
-			  btSSVHEJet->push_back(tempJet->btag_simpleSecondaryVertexHighEffBJetTags() );  
-			}
-			
-			myTree->Fill();
-			
-			delete ptLepton;
-			delete pxLepton;
-			delete pyLepton;
-			delete pzLepton;
-			delete eLepton;
-			delete qLepton;
-			
-			delete ptJet;
-			delete pxJet;
-			delete pyJet;
-			delete pzJet;
-			delete eJet;
-			delete qJet;
-			delete btTCHPJet;
-			delete btTCHEJet;
-			delete btSSVHPJet;
-			delete btSSVHEJet;
 			
 			// Invariant mass in ee and mumu
 			if (pair.M() > 101 || pair.M() < 81 || mode == 0){
-			  cutflow->Fill(6, weight);
-			  cutflow_raw->Fill(6);
-			  // MET in ee and mumu
 			  if (TMath::Min(met_pt, trackmet[0]->Pt()) >= 30 || mode ==0){
-			  //if (met_pt > 30 || mode == 0){
-			    cutflow->Fill(7, weight);
-			    cutflow_raw->Fill(7);
-			    
-			    
-			    // double SFval = 0.95;  //Summer11 version
 			    double SFval, SFerror;
 			    if (isData || !scaleFactor){
 			      SFval = 1;
@@ -795,6 +535,21 @@ int main(int argc, char* argv[]) {
 			      double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
 			      if (ptSys < 60){
 				if (Ht > 160 || mode != 0){
+				if (nJets == 2 && nTightJetsBT == 2){
+				
+				xlWeight = weight;
+				id1 = event->idParton1();
+				id2 = event->idParton2();
+				x1 = event->xParton1();
+				x2 = event->xParton2();
+				q = event->factorizationScale();
+				myTree->Fill();
+				salida << weight << ", " << x1 << ", " << x2 << ", " << q << ", " << id1 << ", " << id2 << ", " << name << ", " << mode << endl;
+				
+				}
+			
+				
+				/*
 				  if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged)R->Fill(1, weight);
 				  if (nJets == 1 && nTightJetsBT == 2)  R->Fill(2, weight);
 				  if (nJets == 1 && nTightJetsBT > 0)  R->Fill(3, weight);
@@ -813,35 +568,12 @@ int main(int argc, char* argv[]) {
 				  if (nJets == 3 && nTightJetsBT ==1 )  R->Fill(16, weight);
 				  if (nJets == 3 && nTightJetsBT ==2 )  R->Fill(17, weight);
 				  if (nJets == 3 && nTightJetsBT ==3 )  R->Fill(18, weight);
+				  */
 				}
 			      }
 			    }
 			    
-			    // Filling the signal region
-			    if(nJets == 1){
-			      TRootJet* jet = (TRootJet*) selectedJets[iJet];
-			      cutflow->Fill(8, weight);
-			      cutflow_raw->Fill(8);
-			      if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
-				cutflow->Fill(9,weight);
-				cutflow_raw->Fill(9);
-				
-				double ptSysPx = lepton0.Px() + lepton1.Px() + jet->Px() + met_px;
-				double ptSysPy = lepton0.Py() + lepton1.Py() + jet->Py() + met_py;
-				double ptSys = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-				double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
-				
-				if (ptSys < 60){
-				  cutflow->Fill(10, weight);
-				  cutflow_raw->Fill(10);
-				  if (Ht > 160 || mode != 0){
-				    cutflow->Fill(11, weight);
-				    cutflow_raw->Fill(11);
-				  }
-				}
-			      }
-			    }
-			    //
+			    
 			    
 			  }	      
 			}      
@@ -859,52 +591,9 @@ int main(int argc, char* argv[]) {
       allForTopoCalc.resize(0);
       
       if(jetTools) delete jetTools;   
-      double scaler1 = cutflow->GetBinContent(2) ;
-      if(scaler1<=0.0)
-	scaler1=1.;
-      cout << "--------------------------------------------------" << endl;
-      cout << "[Results Normalized:] " <<  endl;
-      cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << "\t = " << 100.*cutflow->GetBinContent(2)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(2)/scaler1 << "%" << endl;
-      cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) <<  "\t = " << 100.*cutflow->GetBinContent(3)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(3)/scaler1 << "%" <<endl;
-      cout << "PV:        " <<  cutflow->GetBinContent(4) << " +/- "  << cutflow->GetBinError(4) <<  "\t = " << 100.*cutflow->GetBinContent(4)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(4)/scaler1 << "%" <<endl;
-      cout << "Lep. Sel:  " <<  cutflow->GetBinContent(5) << " +/- "  << cutflow->GetBinError(5) <<  "\t = " << 100.*cutflow->GetBinContent(5)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(5)/scaler1 << "%" <<endl;
-      cout << "Lep. Veto: " <<  cutflow->GetBinContent(6) << " +/- "  << cutflow->GetBinError(6) <<  "\t = " << 100.*cutflow->GetBinContent(6)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(6)/scaler1 << "%" <<endl;
-      cout << "mll:       " <<  cutflow->GetBinContent(7) << " +/- "  << cutflow->GetBinError(7) <<  "\t = " << 100.*cutflow->GetBinContent(7)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(7)/scaler1 << "%" << endl;
-      cout << "MET:       " <<  cutflow->GetBinContent(8) << " +/- "  << cutflow->GetBinError(8) <<  "\t = " << 100.*cutflow->GetBinContent(8)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(8)/scaler1 << "%" << endl;
-      cout << "1 jet:     " <<  cutflow->GetBinContent(9) << " +/- "  << cutflow->GetBinError(9) <<  "\t = " << 100.*cutflow->GetBinContent(9)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(9)/scaler1 << "%" <<endl;
-      cout << "1 jet BT:  " <<  cutflow->GetBinContent(10) << " +/- " << cutflow->GetBinError(10) <<  "\t = " << 100.*cutflow->GetBinContent(10)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(10)/scaler1 << "%" <<endl;
-      cout << "Pt tW:     " <<  cutflow->GetBinContent(11) << " +/- " << cutflow->GetBinError(11) <<  "\t = " << 100.*cutflow->GetBinContent(11)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(11)/scaler1 << "%" <<endl;
-      cout << "Ht:        " <<  cutflow->GetBinContent(12) << " +/- " << cutflow->GetBinError(12) <<  "\t = " << 100.*cutflow->GetBinContent(12)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(12)/scaler1 << "%" <<endl;
-      
-      cout << "--------------------------------------------------" << endl;
-      cout << "[Results Raw:] " <<  endl;
-      double scaler2 =  cutflow_raw->GetBinContent(2);
-      if(scaler2 <=0.0)
-	scaler2=1.;
-      cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) <<  "\t = " << 100.*cutflow_raw->GetBinContent(2)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(2)/scaler2 << "%" << endl;
-      cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) <<  "\t = " << 100.*cutflow_raw->GetBinContent(3)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(3)/scaler2 << "%" << endl;
-      cout << "PV:        " <<  cutflow_raw->GetBinContent(4) << " +/- "  << cutflow_raw->GetBinError(4) <<  "\t = " << 100.*cutflow_raw->GetBinContent(4)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(4)/scaler2 << "%" <<endl;
-      cout << "Lep. Sel:  " <<  cutflow_raw->GetBinContent(5) << " +/- "  << cutflow_raw->GetBinError(5) <<  "\t = " << 100.*cutflow_raw->GetBinContent(5)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(5)/scaler2 << "%" <<endl;
-      cout << "Lep. Veto: " <<  cutflow_raw->GetBinContent(6) << " +/- "  << cutflow_raw->GetBinError(6) <<  "\t = " << 100.*cutflow_raw->GetBinContent(6)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(6)/scaler2 << "%" <<endl;
-      cout << "mll:       " <<  cutflow_raw->GetBinContent(7) << " +/- "  << cutflow_raw->GetBinError(7) <<  "\t = " << 100.*cutflow_raw->GetBinContent(7)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(7)/scaler2 << "%" <<endl;
-      cout << "MET:       " <<  cutflow_raw->GetBinContent(8) << " +/- "  << cutflow_raw->GetBinError(8) <<  "\t = " << 100.*cutflow_raw->GetBinContent(8)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(8)/scaler2 << "%" <<endl;
-      cout << "1 jet:     " <<  cutflow_raw->GetBinContent(9) << " +/- "  << cutflow_raw->GetBinError(9) <<  "\t = " << 100.*cutflow_raw->GetBinContent(9)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(9)/scaler2 << "%" <<endl;
-      cout << "1 jet BT:  " <<  cutflow_raw->GetBinContent(10) << " +/- " << cutflow_raw->GetBinError(10) <<  "\t = " << 100.*cutflow_raw->GetBinContent(10)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(10)/scaler2 << "%" <<endl;
-      cout << "Pt tW:     " <<  cutflow_raw->GetBinContent(11) << " +/- " << cutflow_raw->GetBinError(11) <<  "\t = " << 100.*cutflow_raw->GetBinContent(11)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(11)/scaler2 << "%" <<endl;
-      cout << "Ht:        " <<  cutflow_raw->GetBinContent(12) << " +/- " << cutflow_raw->GetBinError(12) <<  "\t = " << 100.*cutflow_raw->GetBinContent(12)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(12)/scaler2 << "%" <<endl;
-      
-      cout << "--------------------------------------------------" << endl;
-      cout << "[Jet Multiplicity Check:]" << endl;
-      cout << "1 jet 1 tag: " << R->GetBinContent(2) << " +/- " << R->GetBinError(2) << "\t = " << 100.*R->GetBinContent(2)/scaler1 << " +/- "  << 100.*R->GetBinError(2)/scaler1 << "%" << endl;
-      cout << "2 jet 1 tag: " << R->GetBinContent(7) << " +/- " << R->GetBinError(2) << "\t = " << 100.*R->GetBinContent(7)/scaler1 << " +/- "  << 100.*R->GetBinError(7)/scaler1 << "%" << endl;
-      cout << "2 jet 2 tag: " << R->GetBinContent(8) << " +/- " << R->GetBinError(2) << "\t = " << 100.*R->GetBinContent(8)/scaler1 << " +/- "  << 100.*R->GetBinError(8)/scaler1 << "%" <<endl;
-      cout << "--------------------------------------------------" << endl;
-    
-      fout->Write();
+       fout->Write();
       fout->Close();
-      
-    }// dataset loop
-  
+   }  
   cout << "It took you " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
   
 }
