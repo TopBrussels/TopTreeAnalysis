@@ -71,10 +71,10 @@ class PtEtaBin{
   void DefineControlSamplePlots(int, double, double, int, double, double, int, double, double);
   //void FillSignalSamplePlots(double, int, double, double, double, double, int, double, double, double, double, double, double, double);
 
-  void FillSignalSamplePlots(double, double, int, bool, bool, double, double, double*, double, double, double, double, double, double, double, double);
+  void FillSignalSamplePlots(double, double, int, bool, bool, double, double, double*, double, double, double, double, double, double, double, double,double);
   void FillControlSamplePlots(double, int, bool, bool, double, double, double, double, double, double, double, double);
 
-	void FillXStemplates(double weight, string datasetname, int partonflavour, double btag, double *btagCuts, double controlVar0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0);
+	void FillXStemplates(double weight, string datasetname, int partonflavour, double btag, double *btagCuts, double controlVar0, double m3,double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0);
 
 	void SetVarBins(vector<float> rangesbTag);
 
@@ -118,7 +118,7 @@ void GetLeftRightPars(double*, double*, double*);
   void GetWPEff(bool, bool, double, double*, bool, bool, double);
   void CoutWPEff(bool, bool, double, double*, bool, bool, int, int, double);
 
-  vector<double> doMLJTemplateFit(string chi2cut);
+  vector<double> doMLJTemplateFit(string chi2cut,int mode, string data_postfix);
 	
 	std::map<std::string,float> GetEffCalcDetails() const { return EffCalcDetails_; }
 	
@@ -151,6 +151,16 @@ void GetLeftRightPars(double*, double*, double*);
 
 private:
 	vector<float> doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1D* data, TString PrefixPlot);
+    
+    bool findTemplates(string chi2cut,int mode, string data_postfix);
+    void loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi2cut,int mode, string data_postfix);
+    void writeTemplates(string chi2cut,int mode, string data_postfix);
+    
+    void FillTemplates(string process,double weight, int partonflavour, double btag, double *btagCuts, double controlVar0, double m3);
+
+    int nBinsVar0_;
+    float lowRangeVar0_;
+    float upRangeVar0_;
     
     double lumi_;
     double templateLumi_;
@@ -606,7 +616,9 @@ private:
 	
 	float nTTbar_;
 
+    int fitMode; // template fit variable 0: mlj 1: M3 2: 2D (mlj,m3)
 
+	string data_postfix_;
 };
 
 

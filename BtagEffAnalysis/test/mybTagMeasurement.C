@@ -28,6 +28,12 @@ int centerleftlimit = 150;
 int centerrightlimit = 150;
 int rightlimit = 250;
 
+//good for e+jets
+//int leftlimit = 80;
+//int centerleftlimit = 160;
+//int centerrightlimit = 160;
+//int rightlimit = 220;
+
 //////////////////////////////////////////////////
 /////
 ///// Settings for running the btag efficiency with fixed bins (remark, the boolean doVarBins=false in myNtupleAnalyzer.cc)
@@ -243,7 +249,6 @@ int inRunSample=-1;
 
 int main(int argc, char* argv[]){
 
-
   time_t curr=time(0);
   cout << "current start time is: " << ctime(&curr) <<endl;
 
@@ -259,8 +264,8 @@ int main(int argc, char* argv[]){
   inRunSample=atoi(argv[5]);
   inBin=atoi(argv[6]);
   outBin=atoi(argv[7]);
-	
-	if (argc == 9)
+	 
+ 	if (argc == 9)
 		nSystematic = (int)atoi(argv[8]);
 	
 	else if (argc > 9) {
@@ -345,6 +350,8 @@ int main(int argc, char* argv[]){
 
 	cout << "desired lumi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << desiredIntLum << endl;
   myNTupleAnalyzer myAnalyzer(inName,outName,runSamples,tmp_nRunSamples,chisqCut[(int) chisqCutNumber],inBin,outBin,desiredIntLum,nPseudoExp,doPseudoExp);
+    
+    myNTupleAnalyzer myAnalyzer2(inName,outName,runSamples,tmp_nRunSamples,chisqCut[(int) chisqCutNumber],inBin,outBin,desiredIntLum,nPseudoExp,doPseudoExp);
 
   if(doFbiasTest){ myAnalyzer.setFMCBias(Biases[inFbias]); }
   if(doBackgroundFraction) myAnalyzer.setBackgroundFraction(backgroundFraction[inBackgroundFraction]);
@@ -383,8 +390,33 @@ int main(int argc, char* argv[]){
   if(doFfromMC) doNewF=false;
   //myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF);
 
+    //int decay=1;
+    int fitMode=2; // choose fit variable -> 0: m_lj 1: M3 2: 2D fit of (m_lj,M3)
+
+    /*if (decay==1) {
+        
+        cout << "Warning: E+jets selected, changing left and right defs" << endl;
+        
+        leftlimit = 80;
+        centerleftlimit = 160;
+        centerrightlimit = 160;
+        rightlimit = 220;
+        
+    }*/
+    
   //int *percentiles = new int(3);
-  myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic);
+    //mu+jets
+    myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,0,fitMode);
+    
+    cout << "Warning: E+jets selected, changing left and right defs" << endl;
+
+    leftlimit = 80;
+    centerleftlimit = 160;
+    centerrightlimit = 160;
+    rightlimit = 220;
+
+    //e+jets
+    myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
   
   //  myAnalyzer.getPercentiles(percentiles);
   //cout << percentiles[0] << " " << percentiles[1] << " " << percentiles [2]<< endl;

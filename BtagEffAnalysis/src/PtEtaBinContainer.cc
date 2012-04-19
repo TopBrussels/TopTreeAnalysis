@@ -296,7 +296,7 @@ void PtEtaBinContainer::SetErrorsControlSamples(){
 }
 
 //void PtEtaBinContainer::FillSignalSamplePlots(double weight, int partonFlavour, double *bTag, double var1, double var2, double var0, int partonFlavourControl, double bTagControl, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralCutVar0, double upCutVar0){
-void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonrew, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, std::map<int,vector<double> > WPMap, double var1, double var2, double var0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
+void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonrew, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, std::map<int,vector<double> > WPMap, double var1, double var2, double var0, double var3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
   for (int k=0; k<nBdiscrAlgos_; k++){
 	  
 	  double *bTagCuts = new double[3];
@@ -319,7 +319,7 @@ void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonre
 	  
     for(int i=0; i<nPtBins_; i++){ 
       if(var1>ptBins_[i] && var1<ptBins_[i+1]){
-	binVector_[i][k]->FillSignalSamplePlots(weight,weight_nonrew,partonFlavour,isW,isR,chisq,bTag[k],bTagCuts,var1,var2,var0,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0,bTag[0]);
+	binVector_[i][k]->FillSignalSamplePlots(weight,weight_nonrew,partonFlavour,isW,isR,chisq,bTag[k],bTagCuts,var1,var2,var0,var3,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0,bTag[0]);
       }
     }
 
@@ -327,7 +327,7 @@ void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonre
       int index=j-nPtBins_;
       if(var2>etaBins_[index] && var2<etaBins_[index+1]){// this is the absolute value of the pseudo-rapidity
 
-	binVector_[j][k]->FillSignalSamplePlots(weight,weight_nonrew,partonFlavour,isW,isR,chisq,bTag[k],bTagCuts,var1,var2,var0,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0,bTag[0]);
+	binVector_[j][k]->FillSignalSamplePlots(weight,weight_nonrew,partonFlavour,isW,isR,chisq,bTag[k],bTagCuts,var1,var2,var0,var3,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0,bTag[0]);
       } //else {cout << "WARNING:: this events falls outside the eta ranges " << var2 << endl;}
 	
     }
@@ -335,7 +335,7 @@ void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonre
     //if(var1>ptLowCut_ && var1<ptUpCut_){
     if(var1>ptLowCut_ && var1<ptUpCut_){
       if(!(var1>ptLowCutComplement_ && var1<ptUpCutComplement_)){
-	binGlobal_[k]->FillSignalSamplePlots(weight,weight_nonrew,partonFlavour,isW,isR,chisq,bTag[k],bTagCuts,var1,var2,var0,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0,bTag[0]);
+	binGlobal_[k]->FillSignalSamplePlots(weight,weight_nonrew,partonFlavour,isW,isR,chisq,bTag[k],bTagCuts,var1,var2,var0,var3,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0,bTag[0]);
       }
     }
   }
@@ -365,7 +365,7 @@ void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour,
  }
 }
 
-void PtEtaBinContainer::FillXStemplates(double weight, string datasetname, int partonFlavour, double *btag, std::map<int,vector<double> > WPMap, double controlVar0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0) {
+void PtEtaBinContainer::FillXStemplates(double weight, string datasetname, int partonFlavour, double *btag, std::map<int,vector<double> > WPMap, double controlVar0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0) {
 	for (int k=0; k<nBdiscrAlgos_; k++){
 		
 		double *btagCuts = new double[3];
@@ -392,7 +392,7 @@ void PtEtaBinContainer::FillXStemplates(double weight, string datasetname, int p
 		cout << "PtEtaBinContainer::FillXStemplates::bTagCuts[1] " << btagCuts[1] << endl;
 		cout << "PtEtaBinContainer::FillXStemplates::bTagCuts[2] " << btagCuts[2] << endl;*/
 		
-		binGlobal_[k]->FillXStemplates(weight,datasetname,partonFlavour,btag[k],btagCuts,controlVar0,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
+		binGlobal_[k]->FillXStemplates(weight,datasetname,partonFlavour,btag[k],btagCuts,controlVar0,m3, lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
 
 	}
 	
@@ -878,7 +878,7 @@ void PtEtaBinContainer::MeasureEffLR(bool doSCreweigh){
   }
 }
 
-std::map<int,vector<double> > PtEtaBinContainer::doMLJTemplateFit(string chi2cut) {
+std::map<int,vector<double> > PtEtaBinContainer::doMLJTemplateFit(string chi2cut,int mode, string data_postfix) {
 
 	std::map<int,vector<double> > results;
 	
@@ -888,7 +888,7 @@ std::map<int,vector<double> > PtEtaBinContainer::doMLJTemplateFit(string chi2cut
 		if (debug_ > 0) cout << "PtEtaBinContainer::doMLJTemplateFit **************** TAGGER " << k << " *******************" << endl;
 		if (debug_ > 0) cout << "*********************************************************************************************" << endl << endl;
 		
-		vector<double> tmp = binGlobal_[k]->doMLJTemplateFit(chi2cut);
+		vector<double> tmp = binGlobal_[k]->doMLJTemplateFit(chi2cut,mode,data_postfix);
 		
 		for (unsigned int i=0; i<tmp.size(); i++) results[k].push_back(tmp[i]);
 		

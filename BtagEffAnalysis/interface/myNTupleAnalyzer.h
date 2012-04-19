@@ -102,7 +102,9 @@ public:
 			 bool doNewF, double, double, double,
 			 double runNb,
 			 bool doFfromMC,
-			 int nSystematic);
+			 int nSystematic,
+			 int decay,
+			 int fitMode);
 	void getEff(double*);
 	void getEffVal(double*);
 	void getEffMCVal(double*);

@@ -70,14 +70,14 @@ iFbias=-1 # only MC
     #FILENAME="info_bias_"$i"_and_bg_"$j".txt" 
     FILENAME="info.txt" 
     
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../..:../../TMVA/lib/
-    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../..:../../TMVA/lib/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../..:../../TMVA/lib/:/Users/michael/lib
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../..:../../TMVA/lib/:/Users/michael/lib
 
     #echo g++ -m64 -L `pwd` -l Toto -l bTagAnalysis -l TopTreeAna -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
     #echo g++ -m64 -L../../ -L../../TMVA/lib/ -lTopTreeAnaContent -lTopTreeAna -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
     #echo g++ -m64 -L../../ -lBtagAnalysis -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
-    g++ -m64 -L../../ -lBtagAnalysis -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
-    
+
+    g++ -m64 -I../../../ -I../../ -I.. -L/Users/michael/lib -lBtagAnalysis42 -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement
     #The value on the 4th position will tell you how much of the background you will remove (exact value from a list in mybTagMeasurement)
 
     ### For testing Fbias=true
