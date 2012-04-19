@@ -16,7 +16,7 @@
 #include <vector>
 #include <TCanvas.h>
 
-#include "../../../TopBrussels/TopTreeProducer/interface/TRootJet.h"
+#include "TopTreeProducer/interface/TRootJet.h"
 #include "../interface/PtEtaBin.h"
 
 class PtEtaBinContainer{

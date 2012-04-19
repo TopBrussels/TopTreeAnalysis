@@ -22,8 +22,13 @@ public:
 	  ,eventId_(-999)
 	  ,runId_(-999)
 	  ,lumiBlockId_(-999)
+	  ,selSemiMu_(0)
+	  ,trueSemiMu_(0)
+	  ,selSemiEl_(0)
+	  ,trueSemiEl_(0)
 	  ,nPV_(-999)
 	  ,mlj_(-999.) //property of signal sample jet
+	  ,m3_(-999.) //property of signal sample jet
 	  ,pt_(-999.) //property of signal sample jet
 	  ,E_(-999.) //property of signal sample jet
 	  ,eta_(-999) //property of signal sample jet
@@ -114,10 +119,16 @@ public:
 	  Int_t eventId() const { return eventId_; }
 	  Int_t runId() const { return runId_; }
 	  Int_t lumiBlockId() const { return lumiBlockId_; }
-	  
+
+	  Bool_t semiMu() const {return selSemiMu_;}
+	  Bool_t truesemiMu() const {return trueSemiMu_;}
+	  Bool_t semiEl() const {return selSemiEl_;}
+	  Bool_t truesemiEl() const {return trueSemiEl_;}
+
 	  Int_t nPV ( ) const { return nPV_; }
 
 	Double_t mlj() const { return mlj_;}
+	Double_t m3() const { return m3_;}
 	
 	Double_t Btag(unsigned int index) const { return Btag_[index]; }
 	
@@ -220,9 +231,17 @@ public:
 	void setRunId( int i ) { runId_ = i; }
 	void setLumiBlockId( int i ) { lumiBlockId_ = i; }
 
+	void setDecay(bool selSemiMu, bool trueSemiMu, bool selSemiEl, bool trueSemiEl) {
+	  selSemiMu_=selSemiMu;
+	  trueSemiMu_=trueSemiMu;
+	  selSemiEl_=selSemiEl;
+	  trueSemiEl_=trueSemiEl;
+	}
+
 	void setnPV ( int i ) { nPV_ = i; }
 	
 	void setMlj(Double_t mlj) { mlj_=mlj;}
+	void setM3(Double_t m3) { m3_=m3;}
 	
 	void setBtag(unsigned int index, Double_t btag) { Btag_[index] = btag; }
 	
@@ -322,12 +341,19 @@ private:
 	Int_t runId_;
 	Int_t lumiBlockId_;
 
+	bool selSemiMu_;
+	bool trueSemiMu_;
+	bool selSemiEl_;
+	bool trueSemiEl_;
+
 	Int_t nPV_;
 
 	Double_t mlj_;
+	Double_t m3_;
 	
 	Double_t Btag_[20];
-		
+
+ 
 	Double_t pt_;
 	Double_t E_;
 	Double_t eta_;

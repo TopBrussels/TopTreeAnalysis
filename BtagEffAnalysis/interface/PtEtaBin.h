@@ -25,7 +25,7 @@
 #include "TRandom3.h"
 #include "TFractionFitter.h"
 
-#include "../../../TopBrussels/TopTreeProducer/interface/TRootJet.h"
+#include "TopTreeProducer/interface/TRootJet.h"
 
 //from Greg's http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/NewPhysicsBrussels/TopTreeAnalysis/BkgEstimationMethods/interface/VJetEstimation.h?revision=1.1.2.10&view=markup&pathrev=CMSSW_36X
 // RooFit librairies
