@@ -1,13 +1,15 @@
 {
   // should be run on an lxplus-like system with a version of CMSSW set up!!
 
-  // Make sure you link or obtain the LHAPDF functions. There also is a scram command to do this!!!
+  // Make sure you link or obtain the LHAPDF functions. 
   // for the top group, also see: https://twiki.cern.ch/twiki/bin/view/CMS/TWikiTopRefSyst#PDF_uncertainties
-  // these are for CMSSW_426, paths might very well be different for other versions!!!                                                                                                                 
-  //  ln -s /afs/cern.ch/cms/slc5_amd64_gcc434/external/lhapdf/5.6.0-cms4/lib/libLHAPDF*.so .                                                                                                          
-  // ln -s /afs/cern.ch/cms/slc5_amd64_gcc434/external/lhapdf/5.6.0-cms4/include/LHAPDF LHAPDF                                                                                                         
-  // ln -s /afs/cern.ch/cms/slc5_amd64_gcc434/external/lhapdf/5.6.0-cms4/share/lhapdf/PDFsets PDFsets        
+ 
+//  ln -s /afs/cern.ch/cms/slc5_amd64_gcc434/external/lhapdf/5.6.0-cms4/lib/libLHAPDF*.so .                                                                                                   
+// ln -s /afs/cern.ch/cms/slc5_amd64_gcc434/external/lhapdf/5.6.0-cms4/include/LHAPDF LHAPDF                                                                                                  
+// ln -s /afs/cern.ch/cms/slc5_amd64_gcc434/external/lhapdf/5.6.0-cms4/share/lhapdf/PDFsets PDFsets        
 
+// and EVERY TIME you log in (equivalent to cmsenv), set up the workspace by issueing the following command:
+// scram setup lhapdffull
 
   // setting up fwlight, actually probably not necessary
   gSystem->Load("libFWCoreFWLite.so"); 
