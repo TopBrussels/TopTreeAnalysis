@@ -98,17 +98,22 @@ void JetTools::correctJetJESUnc(TRootJet* inJet, string direction, float nSigma)
   if (fabs(inJet->Eta()) < 4.7) {
     jecUnc_->setJetEta(inJet->Eta());
     jecUnc_->setJetPt(inJet->Pt());
-    float unc = jecUnc_->getUncertainty(true);  
-    //  unc = sqrt((unc*unc) + (0.025*0.025) + ((0.2*0.8*5.62)/inJet->Pt()));
-//    cout << "jet:  Pt: " << inJet->Pt() << "  Eta: " << inJet->Eta() << "  unc: " << unc;
+//  float unc = jecUnc_->getUncertainty(true);  
+//  unc = sqrt((unc*unc) + (0.025*0.025) + ((0.2*0.8*5.62)/inJet->Pt()));
     float corr=1;
-    if(direction == "plus")
+    float unc =0;
+    if(direction == "plus"){
+      unc  = jecUnc_->getUncertainty(true);
       corr = 1 + unc*nSigma;
-    else if(direction == "minus")
+    }
+    else if(direction == "minus"){
+      unc  = jecUnc_->getUncertainty(false);
       corr = 1 - unc*nSigma;
+    }
     else cout << "JetTools::correctJetJESUnc  unknown direction: " << direction << endl;
+//  cout << "jet:  Pt: " << inJet->Pt() << "  Eta: " << inJet->Eta() << "  unc: " << unc;
     inJet->SetPxPyPzE(inJet->Px()*corr, inJet->Py()*corr, inJet->Pz()*corr, inJet->E()*corr);
-//    cout << "  corrected pt: " << inJet->Pt() << endl;
+//  cout << "  corrected pt: " << inJet->Pt() << endl;
   }
 }
 
