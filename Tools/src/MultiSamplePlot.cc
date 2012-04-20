@@ -67,7 +67,7 @@ MultiSamplePlot::MultiSamplePlot(vector<Dataset*> datasets, string PlotName, int
 	showNumberEntries_ = true;
 }
 
-MultiSamplePlot::MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec){
+MultiSamplePlot::MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec, string XaxisLabel, string YaxisLabel, string AddText){
 	plots_ = vec;
 	Nbins_ = (vec[0].first)->GetNbinsX();
 	string histoName = "";
@@ -82,13 +82,15 @@ MultiSamplePlot::MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec){
 	hStack_ = 0;
 	hStackAreaNorm_ = 0;
 	maxY_ = -1;
-	text_ = "";
+	text_ = TString(AddText);
 	showNumberEntries_ = true;
 	for(unsigned int i=0;i<vec.size();i++)
 	{
 	  if(vec[i].second->Name().find("data") == 0 || vec[i].second->Name().find("Data") == 0 || vec[i].second->Name().find("DATA") == 0 )
 	    lumi_ = vec[i].second->EquivalentLumi();
-  }	
+		(vec[i].first)->GetXaxis()->SetTitle(XaxisLabel.c_str());
+		(vec[i].first)->GetYaxis()->SetTitle(YaxisLabel.c_str());
+  }
 }
 
 MultiSamplePlot::~MultiSamplePlot(){

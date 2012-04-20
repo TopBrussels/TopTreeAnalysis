@@ -29,7 +29,7 @@ class MultiSamplePlot{
 	public:
 		MultiSamplePlot(vector<Dataset*> datasets, string PlotName, int Nbins, float Min, float Max, string XaxisLabel = string("Variable"), string YaxisLabel = string("#Events"));
 		MultiSamplePlot(vector<Dataset*> datasets, string PlotName, int Nbins, float* binsX, string XaxisLabel = string("Variable"), string YaxisLabel = string("#Events"));
-		MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec);
+		MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec, string XaxisLabel = string("Variable"), string YaxisLabel = string("#Events"), string AddText = string(""));
 		~MultiSamplePlot();
 
  		void AddDataHisto(TH1F* histo);/** Consider an additional histo as coming from data or pseudo-data*/
