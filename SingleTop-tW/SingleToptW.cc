@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   clock_t start = clock();
   
   //modes: 0 emu, 1mumu, 2ee 
-  int  mode = 0; 
+  int  mode = 2; 
   bool isRAW = false;
   
   //Pile-up reweighting
@@ -99,13 +99,13 @@ int main(int argc, char* argv[]) {
       cout << "--PUup: PU reweghting scaled up " << endl;
       cout << "--PUdown: PU reweghting scaled down " << endl;
       cout << "--uncMETup: Unclustered MET syst. Up " << endl;
-      cout << "--xml <file.xml>: custom xml file. " << endl;
       cout << "--uncMETdown: Unclustered MET syst. Down " << endl;
       cout << "--NoPU: Do not apply pileup re-weighting" << endl;
       cout << "--NoSF: Do not apply b-tag scale factor" << endl;
       cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
       cout << "--RunA: Run over RunA only" << endl;
       cout << "--RunB: Run over RunB only" << endl;
+      cout << "--xml <file.xml>: custom xml file. " << endl;
       return 0;
     }
     if (argval=="--ee") mode = 2;
@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
       else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/24787499; 	if (mode == 0) xlweight = lumi*84679.3/24186153;if (mode == 2) xlweight = lumi*84679.3/24785478; } 
       
       //special files
-      else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/437736;}//
+      else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/436624;}
       else if (dataSetName == "tbar_sup"){      	sprintf(name, "tbar_sup");		xlweight = lumi*7.87/436710;}
       else if (dataSetName == "t_sdo"){      		sprintf(name, "t_sdo");			xlweight = lumi*7.87/436971;}
       else if (dataSetName == "tbar_sdo"){      	sprintf(name, "tbar_sdo");		xlweight = lumi*7.87/436991;}

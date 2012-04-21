@@ -233,10 +233,10 @@ int main(int argc, char* argv[]) {
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
       else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/noPU_%d_%s.root", mode, name);
-      else sprintf(rootFileName,"outputs/pdf_2j2t_%d_%s.root", mode, name);
+      else sprintf(rootFileName,"outputs/pdf_signal_%d_%s.root", mode, name);
       
       char myFile[300];
-      sprintf(myFile,"textfiles/pdf_2j2t_%d_%s.txt", mode, name);
+      sprintf(myFile,"textfiles/pdf_signal_%d_%s.txt", mode, name);
       ofstream salida(myFile); 
   
       
@@ -259,7 +259,7 @@ int main(int argc, char* argv[]) {
       
      
       // Branches of the output Tree
-      double id1,id2, x1, x2, q, xlWeight;
+      double id1,id2, x1, x2, q, xlWeight, ptsys, ht;
      
       // Output Tree
       TTree* myTree = new TTree("myTree", "   ");
@@ -270,6 +270,8 @@ int main(int argc, char* argv[]) {
       myTree->Branch("id1", &id1, "id1/D");
       myTree->Branch("id2", &id2, "id2/D");
       myTree->Branch("q", &q, "q/D");
+      myTree->Branch("ptsys", &ptsys, "ptsys/D");
+      myTree->Branch("ht", &ht, "ht/D");
       
       //Pile-Up reweighting  
       Lumi3DReWeighting Lumi3DWeights;
@@ -535,7 +537,7 @@ int main(int argc, char* argv[]) {
 			      double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
 			      if (ptSys < 60){
 				if (Ht > 160 || mode != 0){
-				if (nJets == 2 && nTightJetsBT == 2){
+				if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
 				
 				xlWeight = weight;
 				id1 = event->idParton1();
@@ -543,8 +545,10 @@ int main(int argc, char* argv[]) {
 				x1 = event->xParton1();
 				x2 = event->xParton2();
 				q = event->factorizationScale();
+				ptsys = ptSys;
+				ht = Ht;
 				myTree->Fill();
-				salida << weight << ", " << x1 << ", " << x2 << ", " << q << ", " << id1 << ", " << id2 << ", " << name << ", " << mode << endl;
+				salida << weight << ", " << x1 << ", " << x2 << ", " << q << ", " << id1 << ", " << id2 << ", " << ptsys << ", " << ht << ", " << name << ", " << mode << endl;
 				
 				}
 			
