@@ -135,7 +135,7 @@ int main (int argc, char *argv[])
     exit(-1);
   }
 	
-	
+
 	float CM_EB = 0.00140; //charge misid probability barrel electron
 	float CM_EB_UNC = 0.00015;
 	float CM_EE = 0.01393; //charge misid probability endcap electron
@@ -177,18 +177,25 @@ int main (int argc, char *argv[])
   string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_dataonly";
+  string Treespath = "InclFourthGenTrees_Fall11_17Apr_TESTING";
   Treespath = Treespath +"/";
-  if(!datadriven) mkdir(Treespath.c_str(),0777);
+  mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
 	
+  string Outpath = "DatadrivenBackgroundEstimations";
+  Outpath = Outpath + postfix;
+  Outpath = Outpath +"/";
+	if(datadriven)
+  	mkdir(Outpath.c_str(),0777);
+
+
   /////////////////////
   // Configuration
   /////////////////////
   
   //xml file
   string xmlFileName = "";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_tmp.xml";
   else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
@@ -858,7 +865,7 @@ int main (int argc, char *argv[])
 														for(unsigned int j = 0; j < selectedJets.size(); j++)
 															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																eventBtag = true;
-														if(selectedMuons[0]->charge() != selectedMuons[1]->charge() && eventBtag) 
+														if(selectedMuons[0]->charge() != selectedMuons[1]->charge() && eventBtag && selectedJets.size()>=4) 
 															NbOSMuons_data++;
 													}
 												}
@@ -871,7 +878,7 @@ int main (int argc, char *argv[])
 													for(unsigned int j = 0; j < selectedJets.size(); j++)
 														if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 															eventBtag = true;
-													if(eventBtag && dataSetName=="Data" && systematic=="Nominal")
+													if(eventBtag && dataSetName=="Data" && systematic=="Nominal" && selectedJets.size()>=4)
 														myfileSS << "Run: " << event->runId() << " Evt: " << event->eventId() << " Lumi: " << event->lumiBlockId() << " mm" << "\n";
 													//std::cout<<"Processing the "<<ievt<<"th event" << endl;
 													//cout << "is same-sign muon!" << endl;
@@ -895,7 +902,7 @@ int main (int argc, char *argv[])
 														for(unsigned int j = 0; j < selectedJets.size(); j++)
 															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																eventBtag = true;
-														if(selectedMuons[0]->charge() == selectedOnlyLooseMuons_FL[0]->charge() && eventBtag) 
+														if(selectedMuons[0]->charge() == selectedOnlyLooseMuons_FL[0]->charge() && eventBtag && selectedJets.size()>=4) 
 															NbSSLooseMuonTightMuon_data++;
 													}
 										 		
@@ -928,7 +935,7 @@ int main (int argc, char *argv[])
 																for(unsigned int j = 0; j < selectedJets.size(); j++)
 																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																		eventBtag = true;
-																if(selectedElectrons[0]->charge() != selectedMuons[0]->charge() && eventBtag)
+																if(selectedElectrons[0]->charge() != selectedMuons[0]->charge() && eventBtag && selectedJets.size() >=4)
 																{
 																	NbOSElMu_data++;
 																	if(fabs(selectedElectrons[0]->superClusterEta())<1.4442) NbOSElMu_EB_data++;
@@ -984,7 +991,7 @@ int main (int argc, char *argv[])
 														for(unsigned int j = 0; j < selectedJets.size(); j++)
 															if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																eventBtag = true;
-														if(selectedMuons[0]->charge() == selectedOnlyLooseElectrons_FL[0]->charge() && eventBtag) 
+														if(selectedMuons[0]->charge() == selectedOnlyLooseElectrons_FL[0]->charge() && eventBtag && selectedJets.size()>=4) 
 															NbSSLooseElectronTightMuon_data++;
 													}
 												}
@@ -1163,7 +1170,7 @@ int main (int argc, char *argv[])
 																	for(unsigned int j = 0; j < selectedJets.size(); j++)
 																		if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																			eventBtag = true;
-																	if(selectedElectrons[0]->charge() != selectedElectrons[1]->charge() && eventBtag)
+																	if(selectedElectrons[0]->charge() != selectedElectrons[1]->charge() && eventBtag && selectedJets.size()>=4)
 																	{ 
 																		NbOSElectrons_data++;
 																		if(fabs(selectedElectrons[0]->superClusterEta())<1.4442 && fabs(selectedElectrons[1]->superClusterEta())<1.4442) NbOSElectrons_EBEB_data++;
@@ -1226,7 +1233,7 @@ int main (int argc, char *argv[])
 																for(unsigned int j = 0; j < selectedJets.size(); j++)
 																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																		eventBtag = true;
-																if(selectedElectrons[0]->charge() == selectedOnlyLooseElectrons_FL[0]->charge() && eventBtag) 
+																if(selectedElectrons[0]->charge() == selectedOnlyLooseElectrons_FL[0]->charge() && eventBtag && selectedJets.size()>=4) 
 																	NbSSLooseElectronTightElectron_data++;
 															}
 										 		
@@ -1255,7 +1262,7 @@ int main (int argc, char *argv[])
 																for(unsigned int j = 0; j < selectedJets.size(); j++)
 																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																		eventBtag = true;
-																if(selectedElectrons[0]->charge() != selectedMuons[0]->charge() && eventBtag)
+																if(selectedElectrons[0]->charge() != selectedMuons[0]->charge() && eventBtag && selectedJets.size()>=4)
 																{ 
 																	NbOSElMu_data++;
 																	if(fabs(selectedElectrons[0]->superClusterEta())<1.4442) NbOSElMu_EB_data++;
@@ -1305,7 +1312,7 @@ int main (int argc, char *argv[])
 																for(unsigned int j = 0; j < selectedJets.size(); j++)
 																	if(selectedJets[j]->btag_trackCountingHighPurBJetTags() > workingpointvalue)
 																		eventBtag = true;
-																if(selectedElectrons[0]->charge() == selectedOnlyLooseMuons_FL[0]->charge() && eventBtag) 
+																if(selectedElectrons[0]->charge() == selectedOnlyLooseMuons_FL[0]->charge() && eventBtag && selectedJets.size()>=4) 
 																	NbSSLooseMuonTightElectron_data++;
 															}
 													}
@@ -1981,7 +1988,7 @@ int main (int argc, char *argv[])
   ofstream myfile1;
 	if(option=="ChargeMisId" && systematic=="Nominal")
 	{
-		string myRockingFile1 = "ChargeMisId_OSEvents"+channelpostfix+".txt";
+		string myRockingFile1 = Outpath+"ChargeMisId_OSEvents"+channelpostfix+".txt";
 		myfile1.open(myRockingFile1.c_str());
 		cout << endl;
 
@@ -2028,7 +2035,7 @@ int main (int argc, char *argv[])
 	if(option=="FakeLepton" && systematic=="Nominal")
 	{
 		
-		string myRockingFile1 = "FakeLepton_Events"+channelpostfix+".txt";
+		string myRockingFile1 = Outpath+"FakeLepton_Events"+channelpostfix+".txt";
 		myfile1.open(myRockingFile1.c_str());
 		myfile1 << "\n";
 
