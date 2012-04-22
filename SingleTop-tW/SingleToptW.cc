@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   clock_t start = clock();
   
   //modes: 0 emu, 1mumu, 2ee 
-  int  mode = 2; 
+  int  mode = 0; 
   bool isRAW = false;
   
   //Pile-up reweighting

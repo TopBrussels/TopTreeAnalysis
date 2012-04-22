@@ -12,12 +12,10 @@
 #include "inputs.h"
 
 using namespace std;
-void datacardmaker(int kindofdata = 0){
+void datacardmaker(){
 
-  ofstream datacard("singletop_tW45.txt"); 
-  if (kindofdata == 1) ofstream datacard("singletop_tW45A.txt"); 
-  if (kindofdata == 2) ofstream datacard("singletop_tW45B.txt"); 
-  
+  ofstream datacard("singletop_tW_5fb.txt"); 
+ 
   TString processName[3] =  { "twdr", "tt","others"};
   char myRootFile[300]; 
   TH1F*  hdata [3];
@@ -26,26 +24,22 @@ void datacardmaker(int kindofdata = 0){
     int mode = 0;
     if (i < 2) mode = i+1;
     sprintf(myRootFile,"outputs/out_%d_data.root", i);
-    if (kindofdata == 1) sprintf(myRootFile,"outputs/out_%d_data1.root", i);
-    if (kindofdata == 2) sprintf(myRootFile,"outputs/out_%d_data2.root", i);
     TFile *_file0 = TFile::Open(myRootFile);
     hdata[mode] = (TH1F*) _file0->Get("R");
     for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"outputs/out_%d_", i);
       TFile *_file1 = TFile::Open(myRootFile + processName[j] + ".root");
       hnominal[mode][j] = (TH1F*) _file1->Get("R");
-      if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 55.34);
-      if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 14);
-      if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 111.709);
+      if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 21.5);
+      if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 62);
+      if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 26);
     
-      if (kindofdata == 1) hnominal[mode][j]->Scale(2.1/4.5);
-      if (kindofdata == 2) hnominal[mode][j]->Scale(2.5/4.5);
     
     }
   } 
   
   datacard << "# this is the version with *exclusive* jet / tag bins " << endl;
-  datacard << "# based on 4.5/fb " << endl;
+  datacard << "# based on 4.9/fb " << endl;
   datacard << "imax 9 # number of bins " << endl;
   datacard << "jmax 2 # number of processes - 1 " << endl;
   datacard << "kmax * # number of uncertainties " << endl;
@@ -101,65 +95,52 @@ void datacardmaker(int kindofdata = 0){
     if (i < 2) mode = i+1;
     for (int j = 0; j < 3; j++){
       if (j == 0){
-	sprintf(myRootFile,"outputs/noPU_%d_tbar_sup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tw_sup_dr.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hup[mode][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tbar_sdo.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tw_sdo_dr.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hdown[mode][j] = (TH1F*) _file1->Get("R");
       } else if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_scaleup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tt_scaleup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hup[mode][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_scaledown.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tt_scaledown.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hdown[mode][j] = (TH1F*) _file1->Get("R");
       }
     }
   } 
   
-  double scale1[3]; 
-  double scale2[3];
-  double scale3[3];
-  scale1[0] = 1.07377;
-  scale1[1] = 1.09354;
-  scale1[2] = 1.12114;
-  scale2[0] = 1.05014;
-  scale2[1] = 1.02729;
-  scale2[2] = 1.0958;
-  scale3[0] = 1.10415;
-  scale3[1] = 1.17215;
-  scale3[2] = 1.04999;
- 
 
   datacard << "ttscale   lnN  ";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j == 1){
+      if(j < 2){
 	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - average)/average) << "         ";
 	else datacard << "-         ";
-      } else if (j == 2) datacard << scale1[i] < <"         ";
+      } 
       else datacard << "-         ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j == 1){
+      if(j < 2){
 	double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - average)/average) << "         ";
 	else datacard << "-         ";
-      }else if (j == 2) datacard << scale2[i] < <"         ";
+      }
       else datacard << "-         ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j ==1){
+      if(j < 2){
 	double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - average)/average) << "         ";
 	else datacard << "-         ";
-      }else if (j == 2) datacard << scale3[i] < <"         ";
+      }
       else datacard << "-         ";
     }
   }
@@ -172,83 +153,27 @@ void datacardmaker(int kindofdata = 0){
     if (i < 2) mode = i+1;
     for (int j = 0; j < 3; j++){
       if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tt_matchingup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hup[mode][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingdown.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tt_matchingdown.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hdown[mode][j] = (TH1F*) _file1->Get("R");
       }
     }
   } 
   
-  double matching1[3];
-  double matching2[3];
-  double matching3[3];
-  matching1[0] = 1.05805;
-  matching1[1] = 1.00403;
-  matching1[2] = 1.00146;
-  matching2[0] = 1.03177;
-  matching2[1] = 1.00943;
-  matching2[2] = 1.06217;
-  matching3[0] = 1.07399;
-  matching3[1] = 1.00235;
-  matching3[2] = 1.046;
   
 
   datacard << "ttmatch   lnN  ";
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 1){
-	datacard << matching1[i] << "         ";
-      }
-      else datacard << "-            ";
-    }
-  }
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 1){
-	datacard << matching2[i] << "         ";
-      }
-      else datacard << "-            ";
-    }
-  }
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 1){
-	datacard << matching3[i] << "         ";
-      }
-      else datacard << "-            ";
-    }
-  }
-  datacard << endl;
-  
-  TH1F*  hup [3][3];
-  TH1F*  hdown [3][3];
-  for (int i = 0; i < 3; i++){
-    int mode = 0;
-    if (i < 2) mode = i+1;
-    for (int j = 0; j < 3; j++){
-      if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_largeISR.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hup[mode][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_smallISR.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[mode][j] = (TH1F*) _file1->Get("R");
-      }
-    }
-  } 
-  
-  datacard << "ttifsr    lnN  ";
-  for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
 	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(2) - average)/average) << "         ";
-	else datacard << "-            ";
-      }
-      else datacard << "-            ";
+	else datacard << "-         ";
+      } 
+      else datacard << "-         ";
     }
   }
   for (int i = 0; i < 3; i++){
@@ -256,9 +181,9 @@ void datacardmaker(int kindofdata = 0){
       if(j == 1){
 	double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(7) - average)/average) << "         ";
-	else datacard << "-            ";
+	else datacard << "-         ";
       }
-      else datacard << "-            ";
+      else datacard << "-         ";
     }
   }
   for (int i = 0; i < 3; i++){
@@ -266,11 +191,12 @@ void datacardmaker(int kindofdata = 0){
       if(j == 1){
 	double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
 	if (average !=0) datacard << 1 + fabs((hup[i][j]->GetBinContent(8) - average)/average) << "         ";
-	else datacard << "-            ";
+	else datacard << "-         ";
       }
-      else datacard << "-            ";
+      else datacard << "-         ";
     }
   }
+  
   datacard << endl;
   
   TH1F*  h [3][3];
@@ -369,7 +295,7 @@ void datacardmaker(int kindofdata = 0){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -414,7 +340,7 @@ void datacardmaker(int kindofdata = 0){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -459,7 +385,7 @@ void datacardmaker(int kindofdata = 0){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -505,7 +431,7 @@ void datacardmaker(int kindofdata = 0){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -544,7 +470,7 @@ void datacardmaker(int kindofdata = 0){
   }
   datacard << endl;
   
-  datacard << "pdf       lnN  1.045        -            -         1.045        -           -          1.045        -            -           1.045       -            -         1.045        -           -          1.045        -            -         1.045      -           -        1.045       -            -        1.045        -            -" << endl;
+  datacard << "pdf       lnN  1.0199/0.978     1.0242/0.975     -     1.0178/0.9799      1.024/0.9752     -     1.0177/0.98     1.0242/0.975     -    1.0248/0.9738    1.0237/0.9754    -     1.0207/0.9775     1.0232/0.9759    -     1.0195/0.9785     1.0235/0.9756    -    1.0193/0.9789     1.0225/0.9765     -     1.0206/0.9776     1.0236/0.9754    -     1.02/0.9779      1.0231/0.9759     -" << endl;
   
   datacard << "# mc statistics for signal:" << endl;
   datacard << "mcstatst1 lnN  ";
@@ -577,7 +503,7 @@ void datacardmaker(int kindofdata = 0){
   }
   datacard << endl;
   
-  datacard << "# mc statitics for other: use from Z+jets for ee and mumu and from other for emu; they are very similar anyway ..." << endl;
+  datacard << "# mc statitics for other" << endl;
   datacard << "mcstatot1 lnN  ";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <9; j++){ 
