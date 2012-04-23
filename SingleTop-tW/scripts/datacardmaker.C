@@ -45,7 +45,7 @@ void datacardmaker(){
   datacard << setprecision(3) << "jmax 2 # number of processes - 1 " << endl;
   datacard << setprecision(3) << "kmax * # number of uncertainties " << endl;
   datacard << setprecision(3) << "------------ " << endl;
-  datacard << setprecision(3) << "bin \t\t ee1j1t\t emu1j1t\t mumu1j1t\t ee2j1t\t emu2j1t\t mumu2j1t\t ee2j2t\t emu2j2t\t mumu2j2t " << endl;
+  datacard << setprecision(3) << "bin \t\tee1j1t\t emu1j1t\t mumu1j1t\t ee2j1t\t emu2j1t\t mumu2j1t\t ee2j2t\t emu2j2t\t mumu2j2t " << endl;
   datacard << setprecision(3) << "observation" ;
   
   for (int i = 0; i < 3; i++){
@@ -60,10 +60,10 @@ void datacardmaker(){
   
   datacard << setprecision(3) << endl;
   datacard << setprecision(3) << "------------ " << endl;
-  datacard << setprecision(3) << "bin\t\t ee1j1t\t ee1j1t\t ee1j1t\t emu1j1t\t emu1j1t\t emu1j1t\t mumu1j1t\t mumu1j1t\t mumu1j1t\t ee2j1t\t ee2j1t \t ee2j1t\t emu2j1t\t emu2j1t\t emu2j1t\t mumu2j1t\t mumu2j1t\t mumu2j1t\t ee2j2t\t ee2j2t\t ee2j2t\t emu2j2t\t emu2j2t\t emu2j2t\t mumu2j2t\t mumu2j2t\t mumu2j2t" << endl;
-  datacard << setprecision(3) << "process\t\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt    \t other\t st\t tt\t other" << endl;
-  datacard << setprecision(3) << "process\t\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2" << endl;
-  datacard << setprecision(3) << "rate\t\t " ;
+  datacard << setprecision(3) << "bin        \tee1j1t\t ee1j1t\t ee1j1t\t emu1j1t\t emu1j1t\t emu1j1t\t mumu1j1t\t mumu1j1t\t mumu1j1t\t ee2j1t\t ee2j1t \t ee2j1t\t emu2j1t\t emu2j1t\t emu2j1t\t mumu2j1t\t mumu2j1t\t mumu2j1t\t ee2j2t\t ee2j2t\t ee2j2t\t emu2j2t\t emu2j2t\t emu2j2t\t mumu2j2t\t mumu2j2t\t mumu2j2t" << endl;
+  datacard << setprecision(3) << "process    \tst\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt\t other\t st\t tt    \t other\t st\t tt\t other" << endl;
+  datacard << setprecision(3) << "process    \t0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2\t 0\t 1\t 2" << endl;
+  datacard << setprecision(3) << "rate       \t" ;
   
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -83,11 +83,11 @@ void datacardmaker(){
   datacard << setprecision(3) << endl;
 
   datacard << setprecision(3) << "---------------------- " << endl;
-  datacard << setprecision(3) <<  "lumi\t  lnN\t1.045\t 1.045\t -\t  1.045\t 1.045\t 1.045\t 1.045\t 1.045\t -\t 1.045\t 1.045\t 1.045\t 1.045\t 1.045\t 1.045\t  1.045\t 1.045\t 1.045	1.045\t  1.045\t 1.045    1.045\t 1.045\t 1.045    1.045\t 1.045\t 1.045 " << endl;
-  datacard << setprecision(3) <<  "hlte\t  lnN\t1.015\t 1.015\t -\t  1.011\t 1.011\t 1.011\t -\t\t -\t\t -\t 1.015\t 1.015\t 1.015\t 1.011\t 1.011\t 1.011\t  -\t -\t -\t  1.015\t  1.015\t 1.015    1.011\t 1.011\t 1.011	-\t	-\t	- " << endl;
-  datacard << setprecision(3) <<  "hltmu\t lnN\t-\t\t -\t\t -\t  1.011\t 1.011\t 1.011\t 1.015\t 1.015\t -\t -\t	-\t	-\t  1.011\t 1.011\t 1.011	1.015\t 1.015\t 1.015\t -\t	-\t    -\t 1.011\t 1.011\t 1.011    1.015\t 1.015\t 1.015 " << endl;
-  datacard << setprecision(3) <<  "ele\t   lnN\t1.02\t  1.02\t  -\t  1.02\t  1.02\t 1.02\t -\t\t -\t -\t  1.02\t 1.02\t  1.02\t  1.02\t  1.02\t 1.02\t -\t -\t -\t  1.02\t 1.02\t 1.02\t 1.02\t 1.02\t  1.02\t -\t -\t - " << endl;
-  datacard << setprecision(3) <<  "mu	\t lnN\t-\t\t -\t\t -\t  1.01\t  1.01\t 1.01\t 1.01\t  1.01\t  -\t    -\t    -\t -\t  1.01\t  1.01\t 1.01\t 1.01\t  1.01\t  1.01	-\t   -\t    -\t 1.01\t 1.01\t  1.01	 1.01\t  1.01\t  1.01 " << endl;
+  datacard << setprecision(3) <<  "lumi      lnN\t1.045\t 1.045\t -\t1.045\t 1.045\t 1.045\t 1.045\t 1.045\t -\t 1.045\t 1.045\t 1.045\t 1.045\t 1.045\t 1.045\t1.045\t 1.045\t 1.045	1.045\t1.045\t 1.045    1.045\t 1.045\t 1.045    1.045\t 1.045\t 1.045 " << endl;
+  datacard << setprecision(3) <<  "hlte      lnN\t1.015\t 1.015\t -\t1.011\t 1.011\t 1.011\t -\t  -\t  -\t 1.015\t 1.015\t 1.015\t 1.011\t 1.011\t 1.011\t-\t -\t -\t1.015\t1.015\t 1.015    1.011\t 1.011\t 1.011	-\t	-\t	- " << endl;
+  datacard << setprecision(3) <<  "hltmu     lnN\t-\t  -\t  -\t1.011\t 1.011\t 1.011\t 1.015\t 1.015\t -\t -\t	-\t	-\t1.011\t 1.011\t 1.011	1.015\t 1.015\t 1.015\t -\t	-\t  -\t 1.011\t 1.011\t 1.011    1.015\t 1.015\t 1.015 " << endl;
+  datacard << setprecision(3) <<  "ele       lnN\t1.02\t1.02\t-\t1.02\t1.02\t 1.02\t -\t  -\t -\t1.02\t 1.02\t1.02\t1.02\t1.02\t 1.02\t -\t -\t -\t1.02\t 1.02\t 1.02\t 1.02\t 1.02\t1.02\t -\t -\t - " << endl;
+  datacard << setprecision(3) <<  "mu        lnN\t-\t  -\t  -\t1.01\t1.01\t 1.01\t 1.01\t1.01\t-\t  -\t  -\t -\t1.01\t1.01\t 1.01\t 1.01\t1.01\t1.01	-\t -\t  -\t 1.01\t 1.01\t1.01	 1.01\t1.01\t1.01 " << endl;
 	
 
   
@@ -115,7 +115,6 @@ void datacardmaker(){
       }
     }
   } 
-  
   
   datacard << setprecision(3) << "ttscale   lnN\t";
   for (int i = 0; i < 3; i++){
@@ -325,7 +324,7 @@ void datacardmaker(){
   }
   datacard << setprecision(3) << endl;
   
-  datacard << "ttxs      lnN\t -\t 1.06\t -\t -\t  1.06\t -\t -\t 1.06\t -\t -\t 1.06\t -\t -\t 1.06\t -\t -\t 1.06\t - \t -\t 1.06 \t - \t -\t 1.06 \t - \t  - \t  1.06 \t   -" << endl;
+  datacard << "ttxs      lnN\t -\t 1.06\t -\t -\t1.06\t -\t -\t 1.06\t -\t -\t 1.06\t -\t -\t 1.06\t -\t -\t 1.06\t - \t -\t 1.06 \t - \t -\t 1.06 \t - \t- \t1.06 \t -" << endl;
   
   
   TString SystName = "JES";
