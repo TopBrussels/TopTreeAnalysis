@@ -31,7 +31,7 @@ void syst(){
   cout << "Breakdown of the systematics " << endl;
   cout << "* Lumi " << endl;
   for (int i = 0; i < 3; i++){
-    cout << "mode:" << i << "      4.5%" << endl;
+    cout << "mode:" << i << "      2.2%" << endl;
   }
   cout << "* HLT (electron):" << endl;
   for (int i = 0; i < 3; i++){
@@ -61,27 +61,30 @@ void syst(){
   
   cout.precision(2);
   
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
+  TH1F*  hup [3][3];
+  TH1F*  hdown [3][3];
   for (int i = 0; i < 3; i++){
+    int mode = 0;
+    if (i < 2) mode = i+1;
     for (int j = 0; j < 3; j++){
       if (j == 0){
-	sprintf(myRootFile,"outputs/noPU_%d_tbar_sup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tw_sup_dr.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tbar_sdo.root", i);
+	hup[mode][j] = (TH1F*) _file1->Get("R");
+	sprintf(myRootFile,"outputs/out_%d_tw_sdo_dr.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+	hdown[mode][j] = (TH1F*) _file1->Get("R");
       } else if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_scaleup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tt_scaleup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_scaledown.root", i);
+	hup[mode][j] = (TH1F*) _file1->Get("R");
+	sprintf(myRootFile,"outputs/out_%d_tt_scaledown.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+	hdown[mode][j] = (TH1F*) _file1->Get("R");
       }
     }
   } 
+  
   
   cout << "* Factorization/Normalization Scale " << endl;
   for (int i = 0; i < 3; i++){
@@ -97,20 +100,23 @@ void syst(){
     cout << endl;
   }
   
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
+   TH1F*  hup [3][3];
+  TH1F*  hdown [3][3];
   for (int i = 0; i < 3; i++){
+    int mode = 0;
+    if (i < 2) mode = i+1;
     for (int j = 0; j < 3; j++){
       if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tt_matchingup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingdown.root", i);
+	hup[mode][j] = (TH1F*) _file1->Get("R");
+	sprintf(myRootFile,"outputs/out_%d_tt_matchingdown.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+	hdown[mode][j] = (TH1F*) _file1->Get("R");
       }
     }
   } 
+  
   
   cout << "* ME/PS matching thresholds" << endl;
   for (int i = 0; i < 3; i++){
@@ -125,36 +131,7 @@ void syst(){
     }
     cout << endl;
   }
-  
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_largeISR.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_smallISR.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
-      }
-    }
-  } 
-  
-  cout << "* ISR/FSR " << endl;
-  for (int i = 0; i < 3; i++){
-    cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 3; j++){ 
-      if(j == 1){
-	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(2) - average)/average)*100 << "%    " ;
-	else cout << " -      ";
-      }
-    }
-    cout << endl;
-  }
-  
+ 
   
   TH1F*  h [3][4];
   for (int i = 0; i < 3; i++){
@@ -218,7 +195,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -230,7 +207,7 @@ void syst(){
   cout << "* JES" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
+    for (int j = 0; j <2; j++){ 
       if (j < 2){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
@@ -244,7 +221,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -256,7 +233,7 @@ void syst(){
   cout << "* B-tagging" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
+    for (int j = 0; j <2; j++){ 
       if (j < 2){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
@@ -270,7 +247,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -282,7 +259,7 @@ void syst(){
   cout << "* JER" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
+    for (int j = 0; j <2; j++){ 
       if (j < 2){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
@@ -296,7 +273,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
+    for (int j = 0; j < 2; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -308,7 +285,7 @@ void syst(){
   cout << "* Missing ET (unclustered)" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
+    for (int j = 0; j <2; j++){ 
       if (j == 0){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
@@ -320,9 +297,9 @@ void syst(){
 
   cout << "* pdf:" << endl;
   for (int i = 0; i < 3; i++){
-    if (i == 0) cout << "mode:" << i << "      4.5%" << endl;
-    else if (i == 1) cout << "mode:" << i << "      4.5%" << endl;
-    else if (i == 2) cout << "mode:" << i << "      4.5%" << endl;
+    if (i == 0) cout << "mode:" << i << "      -2.0/1.8%" << endl;
+    else if (i == 1) cout << "mode:" << i << "      -2.0/1.8%" << endl;
+    else if (i == 2) cout << "mode:" << i << "      -2.2/2.0%" << endl;
   }
   
 
