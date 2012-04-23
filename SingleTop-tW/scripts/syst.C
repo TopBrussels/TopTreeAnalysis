@@ -68,10 +68,10 @@ void syst(){
     if (i < 2) mode = i+1;
     for (int j = 0; j < 3; j++){
       if (j == 0){
-	sprintf(myRootFile,"outputs/out_%d_tw_sup_dr.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tbar_sup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hup[mode][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/out_%d_tw_sdo_dr.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tbar_sdo.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hdown[mode][j] = (TH1F*) _file1->Get("R");
       } else if (j == 1) {

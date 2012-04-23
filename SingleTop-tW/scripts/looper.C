@@ -343,7 +343,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(1, xlWeight);
 	else histo_R_dy->Fill(2, xlWeight);
 	
-	if (metPt >= metCut || mode == 0){
+	if (TMath::Min(metPt, tmetPt) >= metCut){
 	  if (nJets == 1){
 	    TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
 	    if (nTightJetsBT == 1 && bTagged && nJetsBT == 1){
@@ -351,7 +351,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	      if ((ptSystem <= ptsysCut && mode !=0) || (mode ==0 && ht > htMin)){
+	      if (ptSystem <= ptsysCut ){
 		if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(3, xlWeight);
 		else histo_R_dy->Fill(4, xlWeight);
 	      }
@@ -432,8 +432,8 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		  if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
 		  if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
 		  if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight);
+		  if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(6, xlWeight);
+		  if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(7, xlWeight);
 		  if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
 		  if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
 		  if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
