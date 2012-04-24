@@ -94,7 +94,7 @@ void datacardmaker(){
   datacard << setprecision(3) << endl;
 
   datacard << setprecision(3) << "---------------------- " << endl;
-  datacard << setprecision(3) <<  "lumi      lnN\t1.045\t 1.045\t -\t1.045\t 1.045\t 1.045\t 1.045\t 1.045\t -\t 1.045\t 1.045\t 1.045\t 1.045\t 1.045\t 1.045\t1.045\t 1.045\t 1.045	1.045\t1.045\t 1.045    1.045\t 1.045\t 1.045    1.045\t 1.045\t 1.045 " << endl;
+  datacard << setprecision(3) <<  "lumi      lnN\t1.022\t 1.022\t -\t1.022\t 1.022\t 1.022\t 1.022\t 1.022\t -\t 1.022\t 1.022\t 1.022\t 1.022\t 1.022\t 1.022\t1.022\t 1.022\t 1.022	1.022\t1.022\t 1.022    1.022\t 1.022\t 1.022    1.022\t 1.022\t 1.022 " << endl;
   datacard << setprecision(3) <<  "hlte      lnN\t1.015\t 1.015\t -\t1.011\t 1.011\t 1.011\t -\t  -\t  -\t 1.015\t 1.015\t 1.015\t 1.011\t 1.011\t 1.011\t-\t -\t -\t1.015\t1.015\t 1.015    1.011\t 1.011\t 1.011	-\t	-\t	- " << endl;
   datacard << setprecision(3) <<  "hltmu     lnN\t-\t  -\t  -\t1.011\t 1.011\t 1.011\t 1.015\t 1.015\t -\t -\t	-\t	-\t1.011\t 1.011\t 1.011	1.015\t 1.015\t 1.015\t -\t	-\t  -\t 1.011\t 1.011\t 1.011    1.015\t 1.015\t 1.015 " << endl;
   datacard << setprecision(3) <<  "ele       lnN\t1.02\t1.02\t-\t1.02\t1.02\t 1.02\t -\t  -\t -\t1.02\t 1.02\t1.02\t1.02\t1.02\t 1.02\t -\t -\t -\t1.02\t 1.02\t 1.02\t 1.02\t 1.02\t1.02\t -\t -\t - " << endl;
