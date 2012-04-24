@@ -37,12 +37,12 @@ void datacardmaker(){
       if (j == 2 && mode == 1){
        hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 62);
        hnominal[mode][j]->SetBinContent(7,  hnominal[mode][j]->GetBinContent(7) + 18.7);
-       hnominal[mode][j]->SetBinContent(8,  hnominal[mode][j]->GetBinContent(8) + 0.6);
+       hnominal[mode][j]->SetBinContent(8,  hnominal[mode][j]->GetBinContent(8) + 1.2);
       }
       if (j == 2 && mode == 2){
        hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 26);
-       hnominal[mode][j]->SetBinContent(7,  hnominal[mode][j]->GetBinContent(7) + 5.9);
-       hnominal[mode][j]->SetBinContent(8,  hnominal[mode][j]->GetBinContent(8) + 1.2);
+       hnominal[mode][j]->SetBinContent(7,  hnominal[mode][j]->GetBinContent(7) + 13.3);
+       hnominal[mode][j]->SetBinContent(8,  hnominal[mode][j]->GetBinContent(8) + 3);
       }
     
     }
@@ -520,7 +520,7 @@ void datacardmaker(){
   
   datacard << setprecision(3) << "pdf       lnN\t1.020/0.978     1.024/0.975     -     1.018/0.980      1.024/0.975     -     1.018/0.98     1.024/0.975     -    1.025/0.974    1.024/0.975    -     1.021/0.977     1.023/0.976    -     1.019/0.978     1.023/0.976    -    1.019/0.979     1.022/0.976     -     1.021/0.978     1.024/0.975    -     1.02/0.978      1.023/0.976     -" << endl;
   
-  datacard << setprecision(3) << "dynorm   lnN\t";
+  datacard << setprecision(3) << "dynorm    lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 2)datacard << setprecision(3) << "1.5\t ";
@@ -535,7 +535,7 @@ void datacardmaker(){
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-       if(j == 2)datacard << setprecision(3) << "1.5\t ";
+       if(j == 2)datacard << setprecision(3) << "2\t ";
        else datacard << setprecision(3) << "-\t ";
     }
   }
