@@ -344,9 +344,9 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	else histo_R_dy->Fill(2, xlWeight);
 	
 	if (TMath::Min(metPt, tmetPt) >= metCut){
-	  if (nJets == 1){
+	  if (nJets == 2){
 	    TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
-	    if (nTightJetsBT == 1 && bTagged && nJetsBT == 1){
+	//    if (nTightJetsBT == 1 && bTagged && nJetsBT == 1){
 	      double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
 	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
@@ -355,7 +355,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(3, xlWeight);
 		else histo_R_dy->Fill(4, xlWeight);
 	      }
-	    }
+	 //   }
 	  }
 	} 
 	//
