@@ -35,7 +35,7 @@ using namespace TopTree;
 class TopFCNC_KinFit {
 
   public:
-    TopFCNC_KinFit(Dataset* dataset, ResolutionFit *resFitLightJets, ResolutionFit *resFitBJets);
+    TopFCNC_KinFit(Dataset* dataset, ResolutionFit *resFitLeptons, ResolutionFit *resFitLightJets, ResolutionFit *resFitBJets);
     ~TopFCNC_KinFit();
     void FitEvent(TopFCNC_Evt *topFCNC_Evt, float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5);
     void Write(TFile* fout, bool savePNG = false, string pathPNG = string(""));
@@ -50,6 +50,7 @@ class TopFCNC_KinFit {
     map<string, TH1F*> histo1D_;
     Dataset       *dataset_;
 
+    ResolutionFit *resFitLeptons_;
     ResolutionFit *resFitLightJets_;
     ResolutionFit *resFitBJets_;
 

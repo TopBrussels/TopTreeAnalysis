@@ -66,8 +66,8 @@ class TopFCNC_GenEvt : public TObject
 
 		void ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles);
 		void MatchJetsToPartons(const std::vector<TRootJet*> &jets, const int algorithm = JetPartonMatching::totalMinDist, const bool useMaxDist = true, const bool useDeltaR = true, const double maxDist = 0.3);
-		void MatchLeptonsToZ(const std::vector<TRootMuon*> &leptons, const double zMass = 91.18, const double zMassWindowWidth = 30.);
-		void MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons, const double zMass = 91.18, const double zMassWindowWidth = 30.);
+		void MatchLeptonsToZ(const std::vector<TRootMuon*>     &leptons, const int algorithm = JetPartonMatching::totalMinDist, const bool useMaxDist = true, const bool useDeltaR = true, const double maxDist = 0.1);
+		void MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons, const int algorithm = JetPartonMatching::totalMinDist, const bool useMaxDist = true, const bool useDeltaR = true, const double maxDist = 0.1);
 
     void FillResolutions(ResolutionFit* resLeptons, ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets);
 	protected:

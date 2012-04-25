@@ -228,9 +228,17 @@ int main (int argc, char *argv[])
   MSPlot["RhoCorrection"]              = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
   MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 20, 0, 20, "Nb. of vertices");
 
-  MSPlot["1stLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
-  MSPlot["2ndLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
-  MSPlot["3rdLeadingMuonRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["1stLeadingLeptonPt"]           = new MultiSamplePlot(datasets, "1stLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["2ndLeadingLeptonPt"]           = new MultiSamplePlot(datasets, "2ndLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
+
+  MSPlot["3rdLeadingMuonPt"]             = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["3rdLeadingElectronPt"]         = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 300, 0, 150, "p_{T} [GeV/c]");
+
+  MSPlot["1stLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["2ndLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 500, 0, 0.5, "RelIso");
+
+  MSPlot["3rdLeadingMuonRelIsolation"]     = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingElectronRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 500, 0, 0.5, "RelIso");
 
   MSPlot["NbOfIsolatedMuons"]          = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]      = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -247,6 +255,13 @@ int main (int argc, char *argv[])
   MSPlot["NbOfSelectedJets_ee_ch"]                  = new MultiSamplePlot(datasets, "NbOfSelectedJets_ee_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_eee_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_eee_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_eem_ch"]                 = new MultiSamplePlot(datasets, "NbOfSelectedJets_eem_ch", 15, 0, 15, "Nb. of jets");
+
+  MSPlot["FirstLeadingJetPt"]                 = new MultiSamplePlot(datasets, "FirstLeadingJetPt", 100, 0, 500, "Jet p_{T} [GeV/c]");
+  MSPlot["SecondLeadingJetPt"]                = new MultiSamplePlot(datasets, "SecondLeadingJetPt", 80, 0, 400, "Jet p_{T} [GeV/c]");
+  MSPlot["ThirdLeadingJetPt_mm_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_mm_ch",  60, 0, 300, "Jet p_{T} [GeV/c]");
+  MSPlot["ThirdLeadingJetPt_ee_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_ee_ch",  60, 0, 300, "Jet p_{T} [GeV/c]");
+  MSPlot["FourthLeadingJetPt_mm_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_mm_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
+  MSPlot["FourthLeadingJetPt_ee_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_ee_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
 
   MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 100, 0, 1, "CSV b-disc.");
   MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 100, 0, 1, "CSV b-disc.");
@@ -268,26 +283,26 @@ int main (int argc, char *argv[])
   MSPlot["HighestBdisc_mm_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_TCHE",100, 0, 50, "TCHE b-disc.");
   MSPlot["HighestBdisc_ee_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_TCHE",100, 0, 50, "TCHE b-disc.");
   
-  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "MET");
-  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "MET");
-  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 100, 0, 200, "MET");
-  MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  100, 0, 200, "MET");
-  MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 100, 0, 200, "MET");
-  MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 100, 0, 200, "MET");
+  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  100, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
 
-  MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  100, 0, 1000, "m_{t#bar{t}}");
-  MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 100, 0, 1000, "m_{t#bar{t}}");
-  MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 100, 0, 1000, "m_{t#bar{t}}");
-  MSPlot["Mtt_ee_ch"]                         = new MultiSamplePlot(datasets, "Mtt_ee_ch",  100, 0, 1000, "m_{t#bar{t}}");
-  MSPlot["Mtt_eee_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eee_ch", 100, 0, 1000, "m_{t#bar{t}}");
-  MSPlot["Mtt_eem_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eem_ch", 100, 0, 1000, "m_{t#bar{t}}");
+  MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_ee_ch"]                         = new MultiSamplePlot(datasets, "Mtt_ee_ch",  100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_eee_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eee_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_eem_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eem_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
 
-  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 80, 300, "m_{Zq}");
-  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 80, 300, "m_{Zq}");
-  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 80, 300, "m_{Zq}");
-  MSPlot["Mzq_ee_ch"]                         = new MultiSamplePlot(datasets, "Mzq_ee_ch",  100, 80, 300, "m_{Zq}");
-  MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 100, 80, 300, "m_{Zq}");
-  MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 100, 80, 300, "m_{Zq}");
+  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_ee_ch"]                         = new MultiSamplePlot(datasets, "Mzq_ee_ch",  100, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
 
   MSPlot["MassChi2_mm_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_mm_ch",  20, 0, 20, "\\chi^{2}");
   MSPlot["MassChi2_mmm_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mmm_ch", 20, 0, 20, "\\chi^{2}");
@@ -310,10 +325,10 @@ int main (int argc, char *argv[])
   MSPlot["MassChi2_FCNC_eem_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eem_ch", 20, 0, 20, "\\chi^{2}");
   MSPlot["MassChi2_FCNC_eee_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eee_ch", 20, 0, 20, "\\chi^{2}");
 
-  MSPlot["TriLeptonInvMass_mmm_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mmm_ch", 160, 50, 130, "m_{lll}");
-  MSPlot["TriLeptonInvMass_mme_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mme_ch", 160, 50, 130, "m_{lll}");
-  MSPlot["TriLeptonInvMass_eem_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eem_ch", 160, 50, 130, "m_{lll}");
-  MSPlot["TriLeptonInvMass_eee_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eee_ch", 160, 50, 130, "m_{lll}");
+  MSPlot["TriLeptonInvMass_mmm_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mmm_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
+  MSPlot["TriLeptonInvMass_mme_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mme_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
+  MSPlot["TriLeptonInvMass_eem_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eem_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
+  MSPlot["TriLeptonInvMass_eee_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eee_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
 //  MSPlot["NbOfLooseMuon"]     = new MultiSamplePlot(datasets, "NbOfLooseMuon", 10, 0, 10, "Nb. of loose muons");
 //  MSPlot["NbOfLooseElectron"] = new MultiSamplePlot(datasets, "NbOfLooseElectron", 10, 0, 10, "Nb. of loose electrons");
 
@@ -540,15 +555,30 @@ int main (int argc, char *argv[])
     vCorrParam.push_back(*L3JetPar);
 
     if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
-      {
-	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
-	vCorrParam.push_back(*ResJetCorPar);
-      }
+    {
+      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
+      vCorrParam.push_back(*ResJetCorPar);
+    }
     
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!    
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////// Create TTree ///////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    string TTreeFileName ("TopFCNC"+postfix+channelpostfix+"_TTree_"+dataSetName+".root");
+    
+    cout << "INFO: creating file : "+TTreeFileName << endl;
+    
+    TFile* TTreeFile = new TFile(TTreeFileName.c_str(),"RECREATE");
+        
+    TTree* Tree = new TTree("Tree","Tree containing the TopFCNC event candidate");
+
+//    TopFCNC_Evt* MyTopFCNC_EvtCand = 0;
+    Tree->Branch("TheTopFCNC_Evt","TopFCNC_Evt",&MyTopFCNC_EvtCand);
+    
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////// Loop on events //////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -563,67 +593,71 @@ int main (int argc, char *argv[])
     for (unsigned int ievt = start; ievt < end; ievt++)
     {        
 
-	if(ievt%1000 == 0)
-		std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
+      if(ievt%1000 == 0)
+		  std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
 
-	//load event
-	event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
+      //load event
+      event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
 
-	vector<TRootGenJet*> genjets;
-	if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-	{
-		genjets = treeLoader.LoadGenJet(ievt);
-	}
+      vector<TRootGenJet*> genjets;
+	    if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
+	    {
+		    genjets = treeLoader.LoadGenJet(ievt);
+	    }
+      //cout << "run: " << event->runId() << "  lumi: " << event->lumiBlockId() << "  event: " << event->eventId() << endl;
 
-	// check which file in the dataset it is to have the HLTInfo right
-	string currentFilename = datasets[d]->eventTree()->GetFile()->GetName();
-	if(previousFilename != currentFilename)
-	{
-		previousFilename = currentFilename;
-        	iFile++;
-		cout<<"File changed!!! => iFile = "<<iFile<<endl;
-	}
+      // check which file in the dataset it is to have the HLTInfo right
+      string currentFilename = datasets[d]->eventTree()->GetFile()->GetName();
+      if(previousFilename != currentFilename)
+      {
+		    previousFilename = currentFilename;
+        iFile++;
+        cout<<"File changed!!! => iFile = "<<iFile<<endl;
+      }
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////// trigger /////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool trigged = false;
-	int currentRun = event->runId();
-	if(previousRun != currentRun)
-	{
-      		previousRun = currentRun;
-		if(diMuon)
-		{
-			if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-			{
-				/*------------------------------------------------------------------
-				Dataset : DoubleMu/Run2011A-May10ReReco-v1
-				--------------------------------------------------------------------
-				Trigger HLT_DoubleMu7_v1 available for runs 160431-163261
-				Trigger HLT_DoubleMu7_v2 available for runs 163270-163869
-				------------------------------------------------------------------*/
-				if(event->runId() >= 160431 && event->runId() <= 163261) // IntLumi = 33.601(/pb)
-					itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
-  			else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 167.434(/pb)
-    			itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v2"), currentRun, iFile);
-				/*--------------------------------------------------------------------
-				Sub-Total integrated luminosity = 201,035(/pb)
-				    Total integrated luminosity = 201,035(/pb)
-				------------------------------------------------------------------*/
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////// trigger /////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      bool trigged = false;
+      int currentRun = event->runId();
+      if(previousRun != currentRun)
+      {
+        previousRun = currentRun;
+        if(diMuon)
+        {
+          if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+          {
+				    /*------------------------------------------------------------------
+				    Dataset : DoubleMu/Run2011A-May10ReReco-v1
+				    --------------------------------------------------------------------
+				    Trigger HLT_DoubleMu7_v1 available for runs 160431-163261
+				    Trigger HLT_DoubleMu7_v2 available for runs 163270-163869
+				    ------------------------------------------------------------------*/
+				    if(event->runId() >= 160404 && event->runId() <= 163261) // IntLumi = 33.601(/pb)
+					    itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
+  			    else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 167.434(/pb)
+    			    itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v2"), currentRun, iFile);
+				    /*--------------------------------------------------------------------
+				    Sub-Total integrated luminosity = 201,035(/pb)
+				        Total integrated luminosity = 201,035(/pb)
+				    ------------------------------------------------------------------*/
 
-				/*------------------------------------------------------------------
-				Dataset : DoubleMu/Run2011A-PromptReco-v4
-				--------------------------------------------------------------------
+				    /*------------------------------------------------------------------
+				    Dataset : DoubleMu/Run2011A-PromptReco-v4
+				    --------------------------------------------------------------------
 				Trigger HLT_Mu13_Mu8_v2 available for runs 165088-167043
 				Trigger HLT_Mu13_Mu8_v3 available for runs 166346-166346
 				Trigger HLT_Mu13_Mu8_v4 available for runs 167078-167913
+        Trigger HLT_Mu17_Mu8_v2 available for runs 165970-167043
+        Trigger HLT_Mu17_Mu8_v3 available for runs 166346-166346
+        Trigger HLT_Mu17_Mu8_v4 available for runs 167078-167913
 				------------------------------------------------------------------*/
   		  else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 619,142(/pb)
-          itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v2"), currentRun, iFile);
+          itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v2"), currentRun, iFile);
   		  else if (event->runId() == 166346) // IntLumi = 4.291(/pb)
-          itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v3"), currentRun, iFile);
+          itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v3"), currentRun, iFile);
   		  else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 226.454(/pb)
-          itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v4"), currentRun, iFile);
+          itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v4"), currentRun, iFile);
 				/*--------------------------------------------------------------------
 				Sub-Total integrated luminosity =  849,887(/pb)
 				    Total integrated luminosity = 1050,922(/pb)
@@ -633,9 +667,10 @@ int main (int argc, char *argv[])
 				Dataset : DoubleMu/Run2011A-05Aug2011-v1
 				--------------------------------------------------------------------
 				Trigger HLT_Mu13_Mu8_v6 available for runs 170826-172619
+				Trigger HLT_Mu17_Mu8_v6 available for runs 170826-172619
 				------------------------------------------------------------------*/
 				else if (event->runId() >= 170249 && event->runId() <= 172619)  // IntLumi = //Aug05ReReco equivalent to PromptReco_v5
-				  itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v6"), currentRun, iFile);
+				  itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
 				/*------------------------------------------------------------------
 				Sub-Total integrated luminosity =  XXXX(/pb)
 				    Total integrated luminosity = XXXX(/pb)
@@ -644,13 +679,13 @@ int main (int argc, char *argv[])
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011A-PromptReco-v6
 				--------------------------------------------------------------------
-				Trigger HLT_Mu13_Mu8_v6 available for runs 172620-173198
-				Trigger HLT_Mu13_Mu8_v7 available for runs 173236-173692
+				Trigger HLT_Mu17_Mu8_v6 available for runs 172620-173198
+				Trigger HLT_Mu17_Mu8_v7 available for runs 173236-173692
 				------------------------------------------------------------------*/
-				else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = 
-          itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v6"), currentRun, iFile);
-				else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = 
-				  itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
+				else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = (/pb)
+          itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
+				else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = (/pb)
+				  itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
 				/*------------------------------------------------------------------
 				Sub-Total integrated luminosity =  XXXX(/pb)
 				    Total integrated luminosity = XXXX(/pb)
@@ -659,16 +694,20 @@ int main (int argc, char *argv[])
 				/*------------------------------------------------------------------
 				Dataset : DoubleMu/Run2011B-PromptReco-v1
 				--------------------------------------------------------------------
-				Trigger HLT_Mu13_Mu8_v7  available for runs 175860-178380
-				Trigger HLT_Mu13_Mu8_v10 available for runs 178420-179889
-				Trigger HLT_Mu13_Mu8_v11 available for runs 179959-180252
+				Trigger HLT_Mu17_Mu8_v7  available for runs 175860-178380
+				Trigger HLT_Mu17_Mu8_v10 available for runs 178420-179889
+				Trigger HLT_Mu17_Mu8_v11 available for runs 179959-180252
 				------------------------------------------------------------------*/
-        else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = 
-   			  itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
-        else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi = 
-					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v10"),currentRun, iFile);
-        else if( event->runId() >=  179959 && event->runId() <=  180252 ) // IntLumi = 
-					itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v11"),currentRun, iFile); 
+        else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = (/pb)
+   			  itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
+        else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi = (/pb)
+					itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v10"),currentRun, iFile);
+        else if( event->runId() >=  179959 && event->runId() <=  180252 ) // IntLumi = (/pb)
+					itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v11"),currentRun, iFile); 
+				/*------------------------------------------------------------------
+				Sub-Total integrated luminosity =  XXXX(/pb)
+				    Total integrated luminosity = XXXX(/pb)
+				------------------------------------------------------------------*/
 									   
   		  if(itrigger == 9999)
 				{
@@ -680,7 +719,7 @@ int main (int argc, char *argv[])
 	   		}
 	   		else 
 	   		{
-				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v7"), currentRun, iFile);
+				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
 				else itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
     
   				if(itrigger == 9999)
@@ -946,8 +985,6 @@ int main (int argc, char *argv[])
 	//vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
 	//vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
 
-	MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-
 	// Apply primary vertex selection
 	bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
   if(!isGoodPV) continue;
@@ -966,17 +1003,19 @@ int main (int argc, char *argv[])
 		if(selectedElectrons_NoIso.size()<2) continue;
 	}
 
+	MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+
 	if(diMuon){
-		MSPlot["1stLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
-		MSPlot["2ndLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
-		if(selectedMuons_NoIso.size()>2)
-			MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[2]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["1stLeadingLeptonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingLeptonPt"]->Fill(selectedMuons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["1stLeadingLeptonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 	}
 	else if(diElectron){
-		MSPlot["1stLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
-		MSPlot["2ndLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
-		if(selectedElectrons_NoIso.size()>2)
-			MSPlot["3rdLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[2]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["1stLeadingLeptonRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+		MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(selectedElectrons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 	}
 
 	MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
@@ -1055,10 +1094,26 @@ int main (int argc, char *argv[])
 	selectedExtraElectrons = selectedElectrons;
 	// Erase Z boson lepton candidates
 	if(diMuon){
+		if(selectedMuons_NoIso.size()>2){
+		  MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons_NoIso[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[2]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+    }
+		if(selectedElectrons_NoIso.size()>0){
+		  MSPlot["3rdLeadingElectronPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["3rdLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+    }
 		selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
 		selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
 	}
 	else if(diElectron){
+		if(selectedMuons_NoIso.size()>0){
+		  MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["3rdLeadingMuonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+    }
+		if(selectedElectrons_NoIso.size()>2){
+		  MSPlot["3rdLeadingElectronPt"]->Fill(selectedElectrons_NoIso[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["3rdLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[2]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+    }
 		selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_2);
 		selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_1);
 
@@ -1077,12 +1132,18 @@ int main (int argc, char *argv[])
 		selecTableDiMu.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_mm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
+		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		  if(selectedJets[0]->Pt()<50) continue;
 			selecTableDiMu.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
+		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		    if(selectedJets[1]->Pt()<30) continue;
 				selecTableDiMu.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2){ //at least 3 jets
+   		    MSPlot["ThirdLeadingJetPt_mm_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 					selecTableDiMu.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
+     		    MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiMu.Fill(d,10,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
@@ -1111,11 +1172,16 @@ int main (int argc, char *argv[])
 		selecTableDiMuEl.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_mme_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
+		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		  if(selectedJets[0]->Pt()<50) continue;
 			selecTableDiMuEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
+		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		    if(selectedJets[1]->Pt()<30) continue;
 				selecTableDiMuEl.Fill(d,8,scaleFactor);
-				if(selectedJets.size()>2){ //at least 3 jets
-					selecTableDiMuEl.Fill(d,9,scaleFactor);
+  			if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor); //at least 3 jets
+  			//{
+  				//selecTableDiMuEl.Fill(d,9,scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0], true);
 					invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedElectrons[0]).M();
@@ -1129,7 +1195,7 @@ int main (int argc, char *argv[])
 					MSPlot["MassChi2_FCNC_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
 					MSPlot["TriLeptonInvMass_mme_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
 					histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-				}
+        //}
 			}
 		}
 	}
@@ -1137,11 +1203,16 @@ int main (int argc, char *argv[])
 		selecTableTriMu.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_mmm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
+		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		  if(selectedJets[0]->Pt()<50) continue;
 			selecTableTriMu.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
+		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		    if(selectedJets[1]->Pt()<30) continue;
 				selecTableTriMu.Fill(d,8,scaleFactor);
-				if(selectedJets.size()>2){ //at least 3 jets
-					selecTableTriMu.Fill(d,9,scaleFactor);
+  			if(selectedJets.size()>2) selecTableTriMu.Fill(d,9,scaleFactor); //at least 3 jets
+  			//{	
+          //selecTableTriMu.Fill(d,9,scaleFactor);
 					MSPlot["MET_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedExtraMuons[0], selectedJets, mets[0], true);
@@ -1155,7 +1226,7 @@ int main (int argc, char *argv[])
 					MSPlot["MassChi2_FCNC_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
 					MSPlot["TriLeptonInvMass_mmm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
 					histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-				}
+        //}
 			}
 		}
 	}
@@ -1163,12 +1234,18 @@ int main (int argc, char *argv[])
 		selecTableDiEl.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_ee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
+		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		  if(selectedJets[0]->Pt()<50) continue;
 			selecTableDiEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
+		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		    if(selectedJets[1]->Pt()<30) continue;
 				selecTableDiEl.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2){ //at least 3 jets
+		      MSPlot["ThirdLeadingJetPt_ee_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 					selecTableDiEl.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
+		        MSPlot["FourthLeadingJetPt_ee_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiEl.Fill(d,10,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
@@ -1197,11 +1274,16 @@ int main (int argc, char *argv[])
 		selecTableDiElMu.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_eem_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
+		  if(selectedJets[0]->Pt()<50) continue;
+		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 			selecTableDiElMu.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
+		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		    if(selectedJets[1]->Pt()<30) continue;
 				selecTableDiElMu.Fill(d,8,scaleFactor);
-				if(selectedJets.size()>2){ //at least 3 jets
-					selecTableDiElMu.Fill(d,9,scaleFactor);
+				if(selectedJets.size()>2) selecTableDiElMu.Fill(d,9,scaleFactor); //at least 3 jets
+				//{
+          //selecTableDiElMu.Fill(d,9,scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedMuons[0], selectedJets, mets[0]);
 					invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedMuons[0]).M();
@@ -1215,7 +1297,7 @@ int main (int argc, char *argv[])
 					MSPlot["MassChi2_FCNC_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 					
 					MSPlot["TriLeptonInvMass_eem_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
           histo2D[("MET_vs_Mzq_eem_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-				}
+        //}
 			}
 		}
 	}
@@ -1223,11 +1305,16 @@ int main (int argc, char *argv[])
 		selecTableTriEl.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_eee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
+		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		  if(selectedJets[0]->Pt()<50) continue;
 			selecTableTriEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
+		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+		    if(selectedJets[1]->Pt()<30) continue;
 				selecTableTriEl.Fill(d,8,scaleFactor);
-				if(selectedJets.size()>2){ //at least 3 jets
-					selecTableTriEl.Fill(d,9,scaleFactor);
+				if(selectedJets.size()>2) selecTableTriEl.Fill(d,9,scaleFactor); //at least 3 jets
+				//{
+				  //selecTableTriEl.Fill(d,9,scaleFactor);
 					MSPlot["MET_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
 					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedExtraElectrons[0], selectedJets, mets[0]);
@@ -1241,26 +1328,46 @@ int main (int argc, char *argv[])
 					MSPlot["MassChi2_FCNC_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 					
 					MSPlot["TriLeptonInvMass_eee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
           histo2D[("MET_vs_Mzq_eee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-				}
+  			//}
 			}
 		}
 	}
 	else fourIsoLeptCounter++;
-
-
-// opposite charge leptons
-//if(selectedMuons[0]->charge()== selectedMuons[1]->charge())
-//require that there are no two electrons forming the Z mass
-//if( selection.foundZCandidate(selectedMuons, selectedMuons, 20.) )
-//it should not be an electron from a conversion!
-
+  if(MyTopFCNC_EvtCand){
+    MyTopFCNC_EvtCand->SetEventID( event->eventId() );
+    MyTopFCNC_EvtCand->SetRunID( event->runId() );
+    MyTopFCNC_EvtCand->SetLumiBlockID( event->lumiBlockId() );
+    MyTopFCNC_EvtCand->SetIdParton1( event->idParton1() );
+    MyTopFCNC_EvtCand->SetIdParton2( event->idParton2() );
+    MyTopFCNC_EvtCand->SetxParton1( event->xParton1() );
+    MyTopFCNC_EvtCand->SetxParton2( event->xParton2() );
+    MyTopFCNC_EvtCand->SetFactorizationScale( event->factorizationScale() );
+    MyTopFCNC_EvtCand->SetnPV(vertex.size());
+    MyTopFCNC_EvtCand->SetnPUBXm1(event->nPu(-1));
+    MyTopFCNC_EvtCand->SetnPU(event->nPu(0));
+    MyTopFCNC_EvtCand->SetnPUBXp1(event->nPu(1));
+  }
+  Tree->Fill();
 
 	//delete selection;
 	if(MyTopFCNC_EvtCand) delete MyTopFCNC_EvtCand;
-    }//loop on events
+  }//loop on events
     
     cout<<endl;
     cout<<"FYI ; nb of events with at least four isolated leptons = "<<fourIsoLeptCounter<<endl;
+
+    TTreeFile->cd();
+    
+    TTree *configTree = new TTree("configTree","configuration Tree");
+    TClonesArray* tcdataset = new TClonesArray("Dataset",1);
+    configTree->Branch("Dataset","TClonesArray",&tcdataset);
+    new ((*tcdataset)[0]) Dataset(*datasets[d]);
+    
+    configTree->Fill();
+    configTree->Write();
+    Tree->Write();
+    TTreeFile->Close();
+    delete TTreeFile;
     
     //important: free memory
     treeLoader.UnLoadDataset();
@@ -1279,52 +1386,52 @@ int main (int argc, char *argv[])
 
   //Selection tables
   if(diMuon){ 
-	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-	selecTableDiMu.TableCalculator(  false, true, true, true, true);
-	selecTableDiMuEl.TableCalculator(false, true, true, true, true);
-	selecTableTriMu.TableCalculator( false, true, true, true, true);
-  //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-	selecTableDiMu.Write(  "TopFCNC"+postfix+"Table_DiMu.tex",    true,true,true,true,false,false,true);
-	selecTableDiMuEl.Write("TopFCNC"+postfix+"Table_DiMuElec.tex",true,true,true,true,false,false,true);
-	selecTableTriMu.Write( "TopFCNC"+postfix+"Table_TriMu.tex",   true,true,true,true,false,false,true);
+	  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+	  selecTableDiMu.TableCalculator(  false, true, true, true, true);
+	  selecTableDiMuEl.TableCalculator(false, true, true, true, true);
+	  selecTableTriMu.TableCalculator( false, true, true, true, true);
+    //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+	  selecTableDiMu.Write(  "TopFCNC"+postfix+"Table_DiMu.tex",    true,true,true,true,false,false,true);
+	  selecTableDiMuEl.Write("TopFCNC"+postfix+"Table_DiMuElec.tex",true,true,true,true,false,false,true);
+	  selecTableTriMu.Write( "TopFCNC"+postfix+"Table_TriMu.tex",   true,true,true,true,false,false,true);
   }
   else if(diElectron){
-	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-	selecTableDiEl.TableCalculator(  false, true, true, true, true);
-	selecTableDiElMu.TableCalculator(false, true, true, true, true);
-	selecTableTriEl.TableCalculator( false, true, true, true, true);
-  //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-	selecTableDiEl.Write(  "TopFCNC"+postfix+"Table_DiEl.tex",  true,true,true,true,false,false,true);
-	selecTableDiElMu.Write("TopFCNC"+postfix+"Table_DiElMu.tex",true,true,true,true,false,false,true);
-	selecTableTriEl.Write( "TopFCNC"+postfix+"Table_TriEl.tex", true,true,true,true,false,false,true);
+	  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
+	  selecTableDiEl.TableCalculator(  false, true, true, true, true);
+	  selecTableDiElMu.TableCalculator(false, true, true, true, true);
+	  selecTableTriEl.TableCalculator( false, true, true, true, true);
+    //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+	  selecTableDiEl.Write(  "TopFCNC"+postfix+"Table_DiEl.tex",  true,true,true,true,false,false,true);
+	  selecTableDiElMu.Write("TopFCNC"+postfix+"Table_DiElMu.tex",true,true,true,true,false,false,true);
+  	selecTableTriEl.Write( "TopFCNC"+postfix+"Table_TriEl.tex", true,true,true,true,false,false,true);
   }
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
   {
-	MultiSamplePlot *temp = it->second;
-	//temp->addText("CMS preliminary");
-	string name = it->first;
-	temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
-	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
-	temp->Write(fout, name, true, pathPNG, "pdf");
+	  MultiSamplePlot *temp = it->second;
+	  //temp->addText("CMS preliminary");
+	  string name = it->first;
+	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
+	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+	  temp->Write(fout, name, true, pathPNG, "pdf");
   }
   TDirectory* th1dir = fout->mkdir("Histos1D");
   th1dir->cd();
   for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
   {
-	TH1F *temp = it->second;
-	temp->Write();
-	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+	  TH1F *temp = it->second;
+	  temp->Write();
+	  //TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+	  //tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
   TDirectory* th2dir = fout->mkdir("Histos2D");
   th2dir->cd();
-   for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
+  for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
   {
-	TH2F *temp = it->second;
-	temp->Write();
-	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+    TH2F *temp = it->second;
+    temp->Write();
+	  //TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+	  //tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
 
   

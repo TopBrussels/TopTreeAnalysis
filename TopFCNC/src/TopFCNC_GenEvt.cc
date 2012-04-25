@@ -143,67 +143,56 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 	if(myJetPartonMatcher) delete myJetPartonMatcher;
 }
 
-void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootMuon*> &leptons, const double zMass, const double zMassWindowWidth){
+void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootMuon*> &leptons, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
  
-	bool foundZ = false;
-	int idx_Z_1 = -1, idx_Z_2 = -1;
-	// Calculate the invariant mass for each isolated lepton pairs
-	// - return true if the mass is the Z boson mass window 
-	// - return the indices of the lepton candidates
-  	for(unsigned int i=0;i<leptons.size()-1;i++)
-  	{
-  		for(unsigned int j=i+1;j<leptons.size();j++)
-  		{
-   			TRootParticle* lep1 = (TRootParticle*) leptons[i];
-   			TRootParticle* lep2 = (TRootParticle*) leptons[j];
-			if(lep1->charge() == lep2->charge()) continue;
-			double invMass = (*lep1 + *lep2).M();
-			if( invMass >= (zMass-zMassWindowWidth) && invMass <= (zMass+zMassWindowWidth) )
-			{
-				idx_Z_1 = i;
-				idx_Z_2 = j;
-				foundZ  = true;
-			}
-    		}
-  	}
-	matchedLepton1FromZ_ = (foundZ ? (TRootParticle) *leptons[idx_Z_1] : TRootParticle() );
-	matchedLepton2FromZ_ = (foundZ ? (TRootParticle) *leptons[idx_Z_2] : TRootParticle() );
-	matchedZ_            = matchedLepton1FromZ_+matchedLepton2FromZ_;
+	JetPartonMatching *myLeptonMatcher = 0;
+
+	std::vector<TLorentzVector> genlept;
+	std::vector<TLorentzVector> tleptons;
+
+	for(unsigned int i=0;i<leptons.size();i++){
+		tleptons.push_back((TLorentzVector)*leptons[i]);
+	}
+
+  genlept.push_back(lepton1FromZ_);
+  genlept.push_back(lepton2FromZ_);
+
+	myLeptonMatcher = new JetPartonMatching(genlept,tleptons,algorithm,useMaxDist,useDeltaR,maxDist);
+
+  if(myLeptonMatcher->getMatchForParton(0,0) >0) matchedLepton1FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(0,0)];
+  if(myLeptonMatcher->getMatchForParton(1,0) >0) matchedLepton2FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(1,0)];
+
+	matchedZ_ = matchedLepton1FromZ_+matchedLepton2FromZ_;
 
 }
-void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons, const double zMass, const double zMassWindowWidth){
+void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
  
-	foundZ_ = false;
-	int idx_Z_1 = -1, idx_Z_2 = -1;
-	// Calculate the invariant mass for each isolated lepton pairs
-	// - return true if the mass is the Z boson mass window 
-	// - return the indices of the lepton candidates
-  for(unsigned int i=0;i<leptons.size()-1;i++)
-  {
-  	for(unsigned int j=i+1;j<leptons.size();j++)
-  	{
-      TRootParticle* lep1 = (TRootParticle*) leptons[i];
-   		TRootParticle* lep2 = (TRootParticle*) leptons[j];
-			if(lep1->charge() == lep2->charge()) continue;
-			double invMass = (*lep1 + *lep2).M();
-			if( invMass >= (zMass-zMassWindowWidth) && invMass <= (zMass+zMassWindowWidth) )
-			{
-				idx_Z_1 = i;
-				idx_Z_2 = j;
-				foundZ_  = true;
-			}
-    }
-  }
-	matchedLepton1FromZ_ = (foundZ_ ? (TRootParticle) *leptons[idx_Z_1] : TRootParticle() );
-	matchedLepton2FromZ_ = (foundZ_ ? (TRootParticle) *leptons[idx_Z_2] : TRootParticle() );
-	matchedZ_            = matchedLepton1FromZ_+matchedLepton2FromZ_;
+	JetPartonMatching *myLeptonMatcher = 0;
+
+	std::vector<TLorentzVector> genlept;
+	std::vector<TLorentzVector> tleptons;
+
+	for(unsigned int i=0;i<leptons.size();i++){
+		tleptons.push_back((TLorentzVector)*leptons[i]);
+	}
+
+  genlept.push_back(lepton1FromZ_);
+  genlept.push_back(lepton2FromZ_);
+
+	myLeptonMatcher = new JetPartonMatching(genlept,tleptons,algorithm,useMaxDist,useDeltaR,maxDist);
+
+  if(myLeptonMatcher->getMatchForParton(0,0) >0) matchedLepton1FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(0,0)];
+  if(myLeptonMatcher->getMatchForParton(1,0) >0) matchedLepton2FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(1,0)];
+
+	matchedZ_ = matchedLepton1FromZ_+matchedLepton2FromZ_;
+
 }
 
-void TopFCNC_GenEvt::FillResolutions(ResolutionFit* resLeptons, ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets){
+void TopFCNC_GenEvt::FillResolutions(ResolutionFit* resFitLeptons, ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets){
 
   if(foundZ_){
-    resLeptons->Fill(&matchedLepton1FromZ_,&lepton1FromZ_);
-    resLeptons->Fill(&matchedLepton2FromZ_,&lepton2FromZ_);
+    resFitLeptons->Fill(&matchedLepton1FromZ_,&lepton1FromZ_);
+    resFitLeptons->Fill(&matchedLepton2FromZ_,&lepton2FromZ_);
   }
   resFitBJets->Fill(&matchedB_,&B_);
   resFitLightJets->Fill(&matchedQ_,&Q_);
