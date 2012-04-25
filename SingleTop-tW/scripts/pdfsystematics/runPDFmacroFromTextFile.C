@@ -83,6 +83,12 @@ filenames[44]="forPDF/txt/nocommas_pdf_signal_2_tw_ds.txt";
   sets[2]="NNPDF10_100.LHgrid";
   sets[3]="MRST2007lomod.LHgrid";
 
+  float scales[4];
+  scales[0]=1./1.645; // cteq6.6 has 90% CL contours, not 68%.
+  scales[1]=1.;
+  scales[2]=1.;
+  scales[3]=1.;
+
   // loop over samples
   for(size_t isam=0; isam<45; isam++){
     TChain *ch = new TChain("myTree","myTree");
@@ -94,7 +100,7 @@ filenames[44]="forPDF/txt/nocommas_pdf_signal_2_tw_ds.txt";
       pdfMacro macro(ch);
       macro.SetPdfSetName(sets[iset]);
       //      macro.Loop();
-      macro.ReadFromTextFile(filenames[isam]);
+      macro.ReadFromTextFile(filenames[isam],scales[iset]);
       std::cout << "looking at sample "<< filenames[isam] << std::endl;
     }
     std::cout << "DONE with sample "<< filenames[isam] << std::endl;
