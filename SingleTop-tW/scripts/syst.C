@@ -77,23 +77,22 @@ void syst(){
   TH1F*  hup [3][3];
   TH1F*  hdown [3][3];
   for (int i = 0; i < 3; i++){
-    int mode = 0;
-    if (i < 2) mode = i+1;
+  
     for (int j = 0; j < 3; j++){
       if (j == 0){
 	sprintf(myRootFile,"outputs/out_%d_tbar_sup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hup[mode][j] = (TH1F*) _file1->Get("R");
+	hup[i][j] = (TH1F*) _file1->Get("R");
 	sprintf(myRootFile,"outputs/out_%d_tbar_sdo.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[mode][j] = (TH1F*) _file1->Get("R");
+	hdown[i][j] = (TH1F*) _file1->Get("R");
       } else if (j == 1) {
 	sprintf(myRootFile,"outputs/out_%d_tt_scaleup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hup[mode][j] = (TH1F*) _file1->Get("R");
+	hup[i][j] = (TH1F*) _file1->Get("R");
 	sprintf(myRootFile,"outputs/out_%d_tt_scaledown.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[mode][j] = (TH1F*) _file1->Get("R");
+	hdown[i][j] = (TH1F*) _file1->Get("R");
       }
     }
   } 
@@ -135,16 +134,15 @@ void syst(){
   TH1F*  hup [3][3];
   TH1F*  hdown [3][3];
   for (int i = 0; i < 3; i++){
-    int mode = 0;
-    if (i < 2) mode = i+1;
+  
     for (int j = 0; j < 3; j++){
       if (j == 1) {
 	sprintf(myRootFile,"outputs/out_%d_tt_matchingup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hup[mode][j] = (TH1F*) _file1->Get("R");
+	hup[i][j] = (TH1F*) _file1->Get("R");
 	sprintf(myRootFile,"outputs/out_%d_tt_matchingdown.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[mode][j] = (TH1F*) _file1->Get("R");
+	hdown[i][j] = (TH1F*) _file1->Get("R");
       }
     }
   } 
