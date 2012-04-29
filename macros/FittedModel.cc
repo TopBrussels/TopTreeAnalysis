@@ -70,6 +70,15 @@ int main(unsigned int argc, char *argv[])
 	setTDRStyle();
   //gStyle->SetOptFit(0);
   //gStyle->SetOptStat(0);
+	////////////////////////////////////
+	// define and open the inputfiles //
+	////////////////////////////////////
+	string Outputpath = "Plots_FittedModel_PASPlots_27Apr2012_DijetMassFixSignal/";
+	gSystem->mkdir(Outputpath.c_str());
+	
+	//string inputfiledir = "CalculateLimits/Apr2012_Systematics/INPUT_2012_04_16/";
+	string inputfiledir = "OutputFiles_InclFourthGenTreeAnalyzer_27Apr_PASPlots_DijetMassFixSignal/";
+	bool mergeSignal = true;
 	
 	cout<<"The arguments passed to the executable are: "<<endl;
   for(unsigned int i=1;i<argc;i++)
@@ -77,42 +86,71 @@ int main(unsigned int argc, char *argv[])
 		cout<<argv[i]<<endl;
 	}
 	
+	bool semiLepton = true; //if true, semiElectron and semiMuon will be combined
 	string channelpostfix = "";
 	bool semiElectron = false; // use semiElectron channel?
-  bool semiMuon = true; // use semiMuon channel?
-	string TTbarJets_SemiLepton_datasetname = "";
+  bool semiMuon = false; // use semiMuon channel?
+	
+	if(semiLepton)
+	{
+		semiMuon = true; //first start with semiMuon
+		semiElectron = false;
+	}
+	
 	if (argc >= 2)
 	{	
 	  semiMuon = atoi(argv[1]);
 		semiElectron = !semiMuon;
 	}
 	
-	if(semiElectron && semiMuon)
-  {
-     cout << "  --> Using both semiMuon and semiElectron channel? Choose only one!" << endl;
-     exit(1);
-  }
-  else
-  {
-    if(semiMuon){
+	vector<vector<pair<TH1F*,Dataset*> > > vec_AllBoxes_semiMu;
+	vector<vector<pair<TH1F*,Dataset*> > > vec_AllBoxes_semiEl;
+	vector<vector<pair<TH1F*,Dataset*> > > vec_AllBoxes_semiLep;
+	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiMu;
+	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiEl;
+	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiLep;
+	
+	string basedir = "1D_histograms/";
+	const unsigned int nplots = 10;
+	string boxdistributions[nplots] = {"HT_1B_1W","HT_1B_2W","HT_1B_3W","nEvents_1B_4W","HT_2B_1W","HT_2B_2W","HT_2B_3W","nEvents_2B_4W","Mtop_MVA_1B_2W","Mtop_MVA_2B_2W"}; 
+  string boxText[nplots] = {"1B_1W","1B_2W","1B_3W","1B_4W","2B_1W","2B_2W","2B_3W","2B_4W","1B_2W","2B_2W"}; 
+	string basedir_Nonfitted = "MultiSamplePlot_allDiJetMasses/";
+	const unsigned int nplots_Nonfitted = 1;
+	string distributions_Nonfitted[nplots_Nonfitted] = {"allDiJetMasses_"};
+
+	//make sure the 3 single top processes are the 6 last in the array!!! -> outdated?	
+	//string datasetnamesSM[ndatasetnamesSM] = {TTbarJets_SemiLepton_datasetname,"TTbarJets_Other","WJets_HF","WJets_LF","ZJets","WW","WZ","ZZ","ttW","ttZ","samesignWWjj","ST_tChannel_t","ST_tWChannel_t","ST_sChannel_t","ST_tChannel_tbar","ST_tWChannel_tbar","ST_sChannel_tbar"};
+
+	string axisnames[nplots] = {"S_{T} (GeV)","S_{T} (GeV)","S_{T} (GeV)","","S_{T} (GeV)","S_{T} (GeV)","S_{T} (GeV)","","m_{bW} (GeV)","m_{bW} (GeV)"};
+	string axisnames_Nonfitted[nplots_Nonfitted] = {"Dijet mass (GeV)"};
+	
+	const unsigned int nsystfiles = 1; //9
+//	string syst_filespostfix[nsystfiles] = {"Nominal","JESPlus","JESMinus","JERPlus","JERMinus","bTagPlus","bTagMinus","misTagPlus","misTagMinus"}; //"PUPlus","PUMinus"
+	string syst_filespostfix[nsystfiles] = {"Nominal"}; //"PUPlus","PUMinus"
+
+	
+	//string nominal_fileName = inputfiledir+"InclFourthGenSearch_TreeAnalyzer"+channelpostfix+"_Nominal"+".root";
+	///cout << " Nominal filename = " << nominal_fileName << endl;
+	//TFile* nominal_file = TFile::Open(nominal_fileName.c_str());
+
+   vector < Dataset* > datasets;
+	 vector < Dataset* > datasets_AfterMerging;
+	 
+while(semiElectron==true || semiMuon==true){
+  	
+	string TTbarJets_SemiLepton_datasetname = "";
+	
+  if(semiMuon){
        cout << " --> Using the semiMuon channel..." << endl;
        channelpostfix = "_semiMu";
 			 TTbarJets_SemiLepton_datasetname = "TTbarJets_SemiMuon";
-    }
-    else if(semiElectron){
+  }
+  else if(semiElectron){
        cout << " --> Using the semiElectron channel..." << endl;
        channelpostfix = "_semiEl";
 			 TTbarJets_SemiLepton_datasetname = "TTbarJets_SemiElectron";
-    }
   }
-	
-	////////////////////////////////////
-	// define and open the inputfiles //
-	////////////////////////////////////
-	string Outputpath = "Plots_FittedModel/";
-	gSystem->mkdir(Outputpath.c_str());
-	
-	string inputfiledir = "CalculateLimits/Apr2012_Systematics/INPUT_2012_04_16/";
+
 	
 	//xml file
   string xmlFileName = "";
@@ -137,27 +175,11 @@ int main(unsigned int argc, char *argv[])
   /////////////////////
 
   TTreeLoader treeLoader;
-  vector < Dataset* > datasets;
+  datasets.clear();
+	datasets_AfterMerging.clear();
   cout << " - Loading datasets ..." << endl;
   treeLoader.LoadDatasets (datasets, xmlfile);
 	
-	
-	
-	string basedir = "1D_histograms/";
-	const unsigned int nplots = 10;
-	string boxdistributions[nplots] = {"HT_1B_1W","HT_1B_2W","HT_1B_3W","nEvents_1B_4W","HT_2B_1W","HT_2B_2W","HT_2B_3W","nEvents_2B_4W","Mtop_MVA_1B_2W","Mtop_MVA_2B_2W"};
-
-	//make sure the 3 single top processes are the 6 last in the array!!! -> outdated?	
-	//string datasetnamesSM[ndatasetnamesSM] = {TTbarJets_SemiLepton_datasetname,"TTbarJets_Other","WJets_HF","WJets_LF","ZJets","WW","WZ","ZZ","ttW","ttZ","samesignWWjj","ST_tChannel_t","ST_tWChannel_t","ST_sChannel_t","ST_tChannel_tbar","ST_tWChannel_tbar","ST_sChannel_tbar"};
-
-	string axisnames[nplots] = {"H_{T} (GeV)","H_{T} (GeV)","H_{T} (GeV)","","H_{T} (GeV)","H_{T} (GeV)","H_{T} (GeV)","","m_{bW} (GeV)","m_{bW} (GeV)"};
-	
-	const unsigned int nsystfiles = 9;
-	string syst_filespostfix[nsystfiles] = {"Nominal","JESPlus","JESMinus","JERPlus","JERMinus","bTagPlus","bTagMinus","misTagPlus","misTagMinus"}; //"PUPlus","PUMinus"
-	
-	//string nominal_fileName = inputfiledir+"InclFourthGenSearch_TreeAnalyzer"+channelpostfix+"_Nominal"+".root";
-	///cout << " Nominal filename = " << nominal_fileName << endl;
-	//TFile* nominal_file = TFile::Open(nominal_fileName.c_str());
 	
 	vector<string> syst_fileNames;
 	vector<TFile*> syst_files;
@@ -172,7 +194,7 @@ int main(unsigned int argc, char *argv[])
 	//float nuisanceparameters = {Lumi,alpha_btag,alpha_jer,alpha_jes,};
 	
 //source: /user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/Apr2012_Systematics/RooStatsLimit/CLs_PBS/logs/SignalFix_combinedmuonelectron_floating_w_CKMA0_mass550_16042012_234658.txt
-	float Lumi =  0.993358;
+/*	float Lumi =  0.993358;
 	float alpha_btag =  0.231355;
 	float alpha_jer =  -0.363060;
 	float alpha_jes   = 0.394299;
@@ -190,6 +212,7 @@ int main(unsigned int argc, char *argv[])
 	float alpha_norm_zz_syst =  0.00286032;
 	float norm_w_hf  =  1.0000;//note; W 'floating'!
 	float norm_w_lf =   0.950000;//note; W 'floating'!
+	*/
 //source: /user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/Apr2012_Systematics/RooStatsLimit/2012_04_16_SignalFix_combinedmuonelectron_floating_w/CKMA0/mass550/hf_tprime.xml
 	float rel_unc_mu_eff 	= 0.03;
 	float rel_unc_el_eff 	= 0.05;
@@ -205,7 +228,31 @@ int main(unsigned int argc, char *argv[])
 	float rel_unc_ssww = 0.95;
 	float rel_unc_st = 0.30;
 
-	
+//source: /user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/Apr2012_Systematics/RooStatsLimit/CLs_PBS/logs/combined_NuisParamTest_CKMA0_mass550_25042012_183212.txt
+  float Lumi  =    0.966712;
+  float alpha_btag  = 0.326854;
+  float alpha_jer =  -0.252486;
+	float alpha_jes =   0.420719;
+	float alpha_lepton_eff_el = -1.20028;
+	float alpha_lepton_eff_mu = -1.38267;
+	float alpha_mistag = -1.21184;
+  float alpha_norm_ssww_syst = -0.122225;
+  float alpha_norm_st_syst =  1.61569;
+  float alpha_norm_top_syst =  0.766222;
+  float alpha_norm_ttw_syst =  0.134449;
+  float alpha_norm_ttz_syst = -0.0574255;
+  float alpha_norm_ww_syst = -0.0186962;
+  float alpha_norm_wz_syst =  0.129456;
+  float alpha_norm_z_syst =  0.000369715;
+  float alpha_norm_zz_syst =  0.00123987;
+  float alpha_unc_ch_e =  0.0522277;
+  float alpha_unc_fl_e =  0.107090;
+  float alpha_unc_fl_mu =  0.0522324;
+  float norm_ttz  =   1.00000;
+  float norm_w_hf  =  1.00000;
+  float norm_w_lf  =  0.950000;
+
+
   map<string,pair<float,float> > alpha_XS_systs;
 	//hardcoded, and correspond to the SM datasetnames in the configs (they don't have to be put on add="1" btw), do not change this without a reason
 	alpha_XS_systs["TTbarJets_SemiMuon"] = make_pair(rel_unc_top,alpha_norm_top_syst);	
@@ -233,7 +280,6 @@ int main(unsigned int argc, char *argv[])
 	///////////////////////////////////////	
 	
 	map<string,TH1F*** > boxes_processes_map; //second entry should become a matrix of TH1F*'s
-
 	for(unsigned int s = 0; s < nsystfiles; s++)
 	{
 		//TH1F* boxes_processes[nplots][datasets.size()];
@@ -244,6 +290,7 @@ int main(unsigned int argc, char *argv[])
 			{
 				string dataSetName = datasets[d]->Name();
 				string histoname = basedir + boxdistributions[box_i].c_str() + dataSetName;
+				
 				if(dataSetName=="Data")
 					boxes_processes[box_i][d] = (TH1F*) syst_files[0]->Get(histoname.c_str()); //element of matrix is filled; 0 = nominal (not very well coded...)
 				else
@@ -254,8 +301,107 @@ int main(unsigned int argc, char *argv[])
 			}
 		}
 		boxes_processes_map[syst_filespostfix[s]] = boxes_processes;
+	}	
+	cout << "retrieved histograms for processes for all plots (towards fitted plots)" << endl;
+	
+	
+	//map<string,TH1F*** > distributions_Nonfitted_processes_map; //second entry should become a matrix of TH1F*'s
+	//TH1F*** distributions_Nonfitted_processes = create2D_TH1F_Array(nplots_Nonfitted,datasets.size());
+	for(unsigned int i = 0; i < nplots_Nonfitted; i++)
+	{
+		  vector<pair<TH1F*,Dataset*> > vec;
+			TH1F* htemp_SignalA1 = 0;
+		  TH1F* htemp_SignalA08 = 0;
+		  Dataset* dataSet_SignalA1 = new Dataset("NP_overlay_SignalA1","Signal for A=1",true,1,1,2,1.,1.); //color and style overwritten in MultiSamplePlot
+		  Dataset* dataSet_SignalA08 = new Dataset("NP_overlay_SignalA08","Signal for A=0.8",true,1,1,2,1.,1.); //color and style overwritten in MultiSamplePlot
+		  pair<TH1F*,Dataset*> histodataset_pair_SignalA1;
+		  pair<TH1F*,Dataset*> histodataset_pair_SignalA08;
+		  float A;
+		  bool firstoverlaysignalA1 = true, firstoverlaysignalA08 = true;
+			for(unsigned int d = 0; d<datasets.size(); d++)
+			{
+				string dataSetName = datasets[d]->Name();
+				string histoname = basedir_Nonfitted + distributions_Nonfitted[i].c_str() + dataSetName;				
+				TH1F* htemp = (TH1F*) syst_files[0]->Get(histoname.c_str());
+				if(dataSetName.find("NP_overlay")==0 && mergeSignal)
+				{
+			 	//cout<<dataSetName<<endl; 
+				  A = 1;								
+					if(dataSetName.find("NP_overlay_Tprime")<=0 && firstoverlaysignalA1)
+					{ //first of the signal processes in the config...
+					  htemp_SignalA1 = (TH1F*) htemp->Clone(); //clone is necessary! (otherwise htemp_SignalA1 and htemp_SignalA08 the same pointer eventually...)
+						htemp_SignalA1->Scale(A);
+						firstoverlaysignalA1 = false;
+					}
+			 		else
+					{
+					  if(!firstoverlaysignalA1)
+						{
+					  	if(dataSetName.find("NP_overlay_STprime")<=0)
+							  htemp_SignalA1->Add(htemp,1.-A);
+							if(dataSetName.find("NP_overlay_Bprime")<=0)
+							  htemp_SignalA1->Add(htemp,A);
+							if(dataSetName.find("NP_overlay_SBprime")<=0)
+							  htemp_SignalA1->Add(htemp,1.-A);
+							if(dataSetName.find("NP_overlay_BprimeTprime")<=0)
+							  htemp_SignalA1->Add(htemp,A);
+						}						
+					}
+					
+				  A = 0.8;							
+					if(dataSetName.find("NP_overlay_Tprime")<=0 && firstoverlaysignalA08)
+					{ //first of the signal processes in the config...
+					  htemp_SignalA08 = (TH1F*) htemp->Clone();//clone is necessary! (otherwise htemp_SignalA1 and htemp_SignalA08 the same pointer eventually...)
+						htemp_SignalA1->Scale(A);
+						firstoverlaysignalA08 = false;
+					}
+			 		else
+					{
+					  if(!firstoverlaysignalA08)
+						{
+					  	if(dataSetName.find("NP_overlay_STprime")<=0)
+							  htemp_SignalA08->Add(htemp,1.-A);
+							if(dataSetName.find("NP_overlay_Bprime")<=0)
+							  htemp_SignalA08->Add(htemp,A);
+							if(dataSetName.find("NP_overlay_SBprime")<=0)
+							  htemp_SignalA08->Add(htemp,1.-A);
+							if(dataSetName.find("NP_overlay_BprimeTprime")<=0)
+							  htemp_SignalA08->Add(htemp,A);
+						}						
+					}					
+				}
+				else
+				{
+					pair<TH1F*,Dataset*> histodataset_pair;	
+					histodataset_pair = make_pair((TH1F*) htemp->Clone(),datasets[d]);
+					vec.push_back(histodataset_pair);
+				}	
+			}
+			
+			if(mergeSignal)	
+			{
+					histodataset_pair_SignalA1 = make_pair(htemp_SignalA1,dataSet_SignalA1);
+					vec.push_back(histodataset_pair_SignalA1);
+					datasets_AfterMerging.push_back(dataSet_SignalA1);
+					histodataset_pair_SignalA08 = make_pair(htemp_SignalA08,dataSet_SignalA08);
+					vec.push_back(histodataset_pair_SignalA08);
+					datasets_AfterMerging.push_back(dataSet_SignalA08);
+			}
+	
+			if(!semiLepton)
+		  	MSPlot[distributions_Nonfitted[i]] = new MultiSamplePlot(vec,axisnames_Nonfitted[i],"#Events");
+
+			if(semiLepton)
+			{		
+				if(semiMuon)
+			  	vec_AllDistributions_Nonfitted_semiMu.push_back(vec);
+				else if(semiElectron)
+			  	vec_AllDistributions_Nonfitted_semiEl.push_back(vec);
+			}
 	}
-	cout << "retrieved histograms for processes for all plots" << endl;
+  //distributions_Nonfitted_processes_map["Nominal"] = distributions_Nonfitted_processes;
+	cout << "retrieved histograms for processes for all plots (towards non-fitted plots)" << endl;
+	
 	
 	
 	//loop over plots: remake each plot using fitted nuisance parameters
@@ -285,29 +431,39 @@ int main(unsigned int argc, char *argv[])
     }
 		
 		vector<pair<TH1F*,Dataset*> > vec;
+		TH1F* htemp_SignalA1 = 0;
+		TH1F* htemp_SignalA08 = 0;
+		Dataset* dataSet_SignalA1 = new Dataset("NP_overlay_SignalA1","Signal for A=1",true,1,1,2,1.,1.); //color and style overwritten in MultiSamplePlot
+		Dataset* dataSet_SignalA08 = new Dataset("NP_overlay_SignalA08","Signal for A=0.8",true,1,1,2,1.,1.); //color and style overwritten in MultiSamplePlot
+		pair<TH1F*,Dataset*> histodataset_pair_SignalA1;
+		pair<TH1F*,Dataset*> histodataset_pair_SignalA08;
+		float A;
+		bool firstoverlaysignalA1 = true, firstoverlaysignalA08 = true;
+		datasets_AfterMerging.clear();
 		for(unsigned int d = 0; d<datasets.size(); d++)
 		{
 			string dataSetName = datasets[d]->Name();	
 			pair<TH1F*,Dataset*> histodataset_pair;
 			if(dataSetName=="Data")
 			{
-			  cout << "Data..." << endl;
+			  //cout << "Data..." << endl;
 			  TH1F * htemp_Data = (boxes_processes_map["Nominal"])[box_i][d];	
 				histodataset_pair = make_pair((TH1F*) htemp_Data->Clone(),datasets[d]);
 				vec.push_back(histodataset_pair);
+				datasets_AfterMerging.push_back(datasets[d]);
 				continue;			
 			}
 			
 			if(dataSetName.find("NP")<=0 && !(dataSetName.find("NP_overlay")<=0))
 				continue; //no use in looping over signal that is not overlayed
 			
-			cout << "lumi contribution" << endl;
+			//cout << "lumi contribution" << endl;
 			TH1F * htemp_Nominal = (boxes_processes_map["Nominal"])[box_i][d];					
 			//cout<<htemp->GetName()<<endl;
-			contribution_lumi[d] = (TH1F*) htemp_Nominal->Clone();
+		/*	contribution_lumi[d] = (TH1F*) htemp_Nominal->Clone();
 			contribution_lumi[d]->Scale(Lumi-1); //if lumi > 1 ===> contribution is positive //else contribution is negative
 			
-			cout << "lepton eff contribution" << endl;
+			//cout << "lepton eff contribution" << endl;
 			contribution_mueff[d] = (TH1F*) htemp_Nominal->Clone();
 			contribution_mueff[d]->Scale(rel_unc_mu_eff*alpha_lepton_eff_mu);
 			contribution_eleff[d] = (TH1F*) htemp_Nominal->Clone();
@@ -315,14 +471,14 @@ int main(unsigned int argc, char *argv[])
 			
 			if(!(dataSetName.find("NP")<=0))
 			{
-				cout << "cross section contributions" << endl;
+				//cout << "cross section contributions" << endl;
 				contribution_XS[d] = (TH1F*) htemp_Nominal->Clone();
 				contribution_XS[d]->Scale(alpha_XS_systs[dataSetName].first * alpha_XS_systs[dataSetName].second);
 			}
 			
 			//cout << "PU contribution" << endl;
 			
-			cout << "JES contribution" << endl;
+			//cout << "JES contribution" << endl;
 			TH1F* htemp_JES = 0;
 			if(alpha_jes>0)
 			{
@@ -336,7 +492,7 @@ int main(unsigned int argc, char *argv[])
 			contribution_JES[d]->Add(htemp_Nominal,-1);
 			contribution_JES[d]->Scale(fabs(alpha_jes));
 			
-			cout << "JER contribution" << endl;
+			//cout << "JER contribution" << endl;
 			TH1F* htemp_JER = 0;
 			if(alpha_jer>0)
 			{
@@ -350,7 +506,7 @@ int main(unsigned int argc, char *argv[])
 			contribution_JER[d]->Add(htemp_Nominal,-1);
 			contribution_JER[d]->Scale(fabs(alpha_jer));			
 			
-			cout << "misTag contribution" << endl;
+			//cout << "misTag contribution" << endl;
 			TH1F* htemp_misTag = 0;
 			if(alpha_mistag>0)
 			{
@@ -364,7 +520,7 @@ int main(unsigned int argc, char *argv[])
 			contribution_misTag[d]->Add(htemp_Nominal,-1);
 			contribution_misTag[d]->Scale(fabs(alpha_mistag));
 			
-			cout << "bTag contribution" << endl;
+			//cout << "bTag contribution" << endl;
 			TH1F* htemp_bTag = 0;
 			if(alpha_btag>0)
 			{
@@ -377,10 +533,10 @@ int main(unsigned int argc, char *argv[])
 			contribution_bTag[d] = (TH1F*) htemp_bTag->Clone();	
 			contribution_bTag[d]->Add(htemp_Nominal,-1);
 			contribution_bTag[d]->Scale(fabs(alpha_btag));
-			
-			cout << "add the contributions of all systematic effects to the nominal histogram" << endl;
+		*/	
+			//cout << "add the contributions of all systematic effects to the nominal histogram" << endl;
 			contribution_All[d] = (TH1F*) htemp_Nominal->Clone();
-			contribution_All[d]->Add(contribution_lumi[d]);
+		/*	contribution_All[d]->Add(contribution_lumi[d]);
 			if(!(dataSetName.find("NP")<=0)) contribution_All[d]->Add(contribution_XS[d]);
 			contribution_All[d]->Add(contribution_JES[d]);
 			contribution_All[d]->Add(contribution_JER[d]);
@@ -388,17 +544,180 @@ int main(unsigned int argc, char *argv[])
 			contribution_All[d]->Add(contribution_bTag[d]);
 			if(channelpostfix == "_semiMu") contribution_All[d]->Add(contribution_mueff[d]);
 			if(channelpostfix == "_semiEl") contribution_All[d]->Add(contribution_eleff[d]);
-			
-			//no put them in a format for the MultiSamplePlot
-			histodataset_pair = make_pair(contribution_All[d],datasets[d]);
-			vec.push_back(histodataset_pair);
+		*/	
+			//now put them in a format for the MultiSamplePlot	
+						
+			if(dataSetName.find("NP_overlay")==0 && mergeSignal)
+			{
+			 	//cout<<dataSetName<<endl; 
+				  A = 1;								
+					if(dataSetName.find("NP_overlay_Tprime")<=0 && firstoverlaysignalA1)
+					{ //first of the signal processes in the config...
+					  htemp_SignalA1 = (TH1F*) contribution_All[d]->Clone(); //clone is necessary! (otherwise htemp_SignalA1 and htemp_SignalA08 the same pointer eventually...)
+						htemp_SignalA1->Scale(A);
+						firstoverlaysignalA1 = false;
+					}
+			 		else
+					{
+					  if(!firstoverlaysignalA1)
+						{
+					  	if(dataSetName.find("NP_overlay_STprime")<=0)
+							  htemp_SignalA1->Add(contribution_All[d],1.-A);
+							if(dataSetName.find("NP_overlay_Bprime")<=0)
+							  htemp_SignalA1->Add(contribution_All[d],A);
+							if(dataSetName.find("NP_overlay_SBprime")<=0)
+							  htemp_SignalA1->Add(contribution_All[d],1.-A);
+							if(dataSetName.find("NP_overlay_BprimeTprime")<=0)
+							  htemp_SignalA1->Add(contribution_All[d],A);
+						}						
+					}
+					
+				  A = 0.8;							
+					if(dataSetName.find("NP_overlay_Tprime")<=0 && firstoverlaysignalA08)
+					{ //first of the signal processes in the config...
+					  htemp_SignalA08 = (TH1F*) contribution_All[d]->Clone();//clone is necessary! (otherwise htemp_SignalA1 and htemp_SignalA08 the same pointer eventually...)
+						htemp_SignalA1->Scale(A);
+						firstoverlaysignalA08 = false;
+					}
+			 		else
+					{
+					  if(!firstoverlaysignalA08)
+						{
+					  	if(dataSetName.find("NP_overlay_STprime")<=0)
+							  htemp_SignalA08->Add(contribution_All[d],1.-A);
+							if(dataSetName.find("NP_overlay_Bprime")<=0)
+							  htemp_SignalA08->Add(contribution_All[d],A);
+							if(dataSetName.find("NP_overlay_SBprime")<=0)
+							  htemp_SignalA08->Add(contribution_All[d],1.-A);
+							if(dataSetName.find("NP_overlay_BprimeTprime")<=0)
+							  htemp_SignalA08->Add(contribution_All[d],A);
+						}						
+					}					
+			}
+			else
+			{		
+				histodataset_pair = make_pair(contribution_All[d],datasets[d]);
+				vec.push_back(histodataset_pair);
+				datasets_AfterMerging.push_back(datasets[d]);
+			}
+		
+		}		
+		
+		if(mergeSignal)	
+		{
+			histodataset_pair_SignalA1 = make_pair(htemp_SignalA1,dataSet_SignalA1);
+			vec.push_back(histodataset_pair_SignalA1);
+			datasets_AfterMerging.push_back(dataSet_SignalA1);
+			histodataset_pair_SignalA08 = make_pair(htemp_SignalA08,dataSet_SignalA08);
+			vec.push_back(histodataset_pair_SignalA08);
+			datasets_AfterMerging.push_back(dataSet_SignalA08);
 		}
 		
-		MSPlot[boxdistributions[box_i]] = new MultiSamplePlot(vec,axisnames[box_i],"#Events","Fitted nuisance parameters applied"); //last argument is text which is written on the canvas
+		if(!semiLepton)
+		  MSPlot[boxdistributions[box_i]] = new MultiSamplePlot(vec,axisnames[box_i],"#Events","Fitted nuisance parameters applied"); //last argument is text which is written on the canvas
+
+		if(semiLepton)
+		{		
+			if(semiMuon)
+			  vec_AllBoxes_semiMu.push_back(vec);
+			else if(semiElectron)
+			  vec_AllBoxes_semiEl.push_back(vec);
+		}
+	}	
+	
+	if(!semiLepton)
+	   break;
+	else
+	{	   
+		if(semiElectron==false)
+		{
+			semiMuon = false;
+		  semiElectron = true;
+		}
+		else
+		{
+			semiMuon = false;
+		  semiElectron = false;
+		}
+	}
+}
 
 
+ if(semiLepton)
+ {  
+	for(unsigned int box_i=0; box_i<nplots; box_i++)
+	{
+		//cout<<"box_i = "<<box_i<<endl;
+	  vector<pair<TH1F*,Dataset*> > vec;
+		
+		//data; do some dirty stuff to order the datasets differently... the data still has to go first, but then I would like to revers the order
+		string dataSetName = datasets_AfterMerging[0]->Name();
+		//cout<<"  dataSetName "<<0<<" = "<<dataSetName<<endl;
+		pair<TH1F*,Dataset*> histodataset_pair;
+		TH1F* htemp = (TH1F*) (((vec_AllBoxes_semiMu[box_i])[0]).first)->Clone();
+		TH1F* htemp_semiEl = (TH1F*) (((vec_AllBoxes_semiEl[box_i])[0]).first)->Clone();
+		htemp->Add(htemp_semiEl);
+		//cout<<"  htemp->Integral() = "<<htemp->Integral()<<endl;
+		histodataset_pair = make_pair(htemp,datasets_AfterMerging[0]);
+		vec.push_back(histodataset_pair);
+	  
+		for(unsigned int d = datasets_AfterMerging.size()-1; d>0; d--)
+		{
+			string dataSetName = datasets_AfterMerging[d]->Name();
+			//cout<<"  dataSetName "<<d<<" = "<<dataSetName<<endl;
+			pair<TH1F*,Dataset*> histodataset_pair;
+			TH1F* htemp = (TH1F*) (((vec_AllBoxes_semiMu[box_i])[d]).first)->Clone();
+			TH1F* htemp_semiEl = (TH1F*) (((vec_AllBoxes_semiEl[box_i])[d]).first)->Clone();
+			htemp->Add(htemp_semiEl);
+			//cout<<"  htemp->Integral() = "<<htemp->Integral()<<endl;
+			histodataset_pair = make_pair(htemp,datasets_AfterMerging[d]);
+			vec.push_back(histodataset_pair);
+		}
+
+		
+		//MSPlot[boxdistributions[box_i]] = new MultiSamplePlot(vec,axisnames[box_i],"Events","Fitted nuisance parameters applied"); //last argument is text which is written on the canvas
+		string text = "lepton+jets, " + boxText[box_i];
+		MSPlot[boxdistributions[box_i]] = new MultiSamplePlot(vec,axisnames[box_i],"Events",text,false); //second last argument is text which is written on the canvas
 	}
 	
+	for(unsigned int i=0; i<nplots_Nonfitted; i++)
+	{
+	  vector<pair<TH1F*,Dataset*> > vec;
+		
+		//data; do some dirty stuff to order the datasets differently... the data still has to go first, but then I would like to revers the order
+		string dataSetName = datasets_AfterMerging[0]->Name();
+		//cout<<"  dataSetName "<<0<<" = "<<dataSetName<<endl;
+		pair<TH1F*,Dataset*> histodataset_pair;
+		TH1F* htemp = (TH1F*) (((vec_AllDistributions_Nonfitted_semiMu[i])[0]).first)->Clone();
+		TH1F* htemp_semiEl = (TH1F*) (((vec_AllDistributions_Nonfitted_semiEl[i])[0]).first)->Clone();
+		htemp->Add(htemp_semiEl);
+		//cout<<"  htemp->Integral() = "<<htemp->Integral()<<endl;
+		histodataset_pair = make_pair(htemp,datasets_AfterMerging[0]);
+		vec.push_back(histodataset_pair);
+	  for(unsigned int d = datasets_AfterMerging.size()-1; d>0; d--)
+		{
+			string dataSetName = datasets_AfterMerging[d]->Name();
+			//cout<<"dataSetName "<<d<<" = "<<dataSetName<<endl;
+			pair<TH1F*,Dataset*> histodataset_pair;
+			TH1F* htemp = (TH1F*) (((vec_AllDistributions_Nonfitted_semiMu[i])[d]).first)->Clone();
+			TH1F* htemp_semiEl = (TH1F*) (((vec_AllDistributions_Nonfitted_semiEl[i])[d]).first)->Clone();
+			htemp->Add(htemp_semiEl);
+			histodataset_pair = make_pair(htemp,datasets_AfterMerging[d]);
+			vec.push_back(histodataset_pair);
+		}
+		//do some dirty stuff to order the datasets differently..
+		
+		string text = "lepton+jets";
+		MSPlot[distributions_Nonfitted[i]] = new MultiSamplePlot(vec,axisnames_Nonfitted[i],"Events",text,false); //second last argument is text which is written on the canvas
+	}
+	
+	channelpostfix = "_semiLep";
+ }
+	 
+	//do some dirty stuff to order the datasets differently...
+	
+	 
+	 
 	//Output ROOT file
   string rootFileName (Outputpath+"FittedModel"+channelpostfix+".root");
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
@@ -410,10 +729,16 @@ int main(unsigned int argc, char *argv[])
 	for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
   {
         MultiSamplePlot *temp = it->second;
-        string name = it->first + "_Fitted"+channelpostfix;
-        temp->Draw(false, name, true, true, true, true, true,5,false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
-        temp->Write(fout, name, savePDF, pathPDF,"pdf");//bool savePDF     , pathPDF+"MSPlot/"
-  }
+				string name;
+        if(it->first != "allDiJetMasses_") name = it->first + "_Fitted" +channelpostfix; //dirty hardcoded
+				else name = it->first +channelpostfix;
+        //temp->Draw(false, name, true, true, true, true, true,5,false, true, true); //old way
+				if( (it->first).find("Mtop") <= (it->first).size() )
+				  temp->Draw(false, name, true, false, true, false, true,8,false, false, false, false, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV, bool mergeOtherTTJetsWJetsST) // previously: temp->Draw(false, name, true, true, true, true, true,5,false, true,true)
+  			else
+				  temp->Draw(false, name, true, false, true, false, true,8,false, false, false, true, false);
+				temp->Write(fout, name, savePDF, pathPDF,"pdf");//bool savePDF     , pathPDF+"MSPlot/"
+	}
 
 }
 
