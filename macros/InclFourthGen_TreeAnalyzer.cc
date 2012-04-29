@@ -107,7 +107,8 @@ int main (int argc, char *argv[])
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used: " << systematic << endl;
-  if( ! (systematic == "Nominal"  || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "misTagPlus" || systematic == "misTagMinus" || systematic == "PUPlus" || systematic == "PUMinus"))
+  if( ! (systematic == "Nominal"  || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "misTagPlus" || systematic == "misTagMinus" 
+		|| systematic == "PUPlus" || systematic == "PUMinus" || systematic == "Scaleup" || systematic == "Scaledown" ||systematic == "Matchingup" || systematic == "Matchingdown" ))
   {
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: Nominal JESPlus JESMinus JERPlus JERMinus bTagPlus bTagMinus misTagPlus misTagMinus PUPlus PUMinus" << endl;
@@ -138,12 +139,13 @@ int main (int argc, char *argv[])
   string inputpostfixOld = ""; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  string Treespath = "InclFourthGenTrees_Fall11_3Apr";
-  Treespath = Treespath + "/"; 		
+  //string Treespath = "/user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/InclFourthGenTrees_Fall11_3Apr";
+  string Treespath = "InclFourthGenTrees_Fall11_28Apr_TTJetsSystematics";
+	Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_17Apr_4jetsTEST";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_28Apr_TTJetsSystematics";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -267,6 +269,10 @@ int main (int argc, char *argv[])
 				}
 				else
 					inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+inputpostfix+channelpostfix+".root";		
+		}
+		else if(systematic == "Scaleup" || systematic == "Scaledown" || systematic == "Matchingup" || systematic == "Matchingdown")
+		{
+			inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+channelpostfix+".root"; //the 'systematic' should already be in the datasetname
 		}
 		else inputTreeFileName = Treespath+"InclFourthGenTree_"+dataSetName+inputpostfixOld+"_Nominal"+channelpostfix+".root";
 		inputTrees.push_back(inputTreeFileName);
@@ -551,7 +557,18 @@ int main (int argc, char *argv[])
 		{
 		  cout<<"  Running systematics: skipping data"<<endl;
 		  continue;
-		}	
+		}
+		
+		if(systematic == "Scaleup" && !(dataSetName.find("Scaleup")<=dataSetName.size()))
+		  continue;
+		if(systematic == "Scaledown" && !(dataSetName.find("Scaledown")<=dataSetName.size()))
+			continue;
+		if(systematic == "Matchingup" && !(dataSetName.find("Matchingup")<=dataSetName.size()))
+			continue;
+		if(systematic == "Matchingdown" && !(dataSetName.find("Matchingdown")<=dataSetName.size()))
+			continue;
+		if(!(systematic == "Scaleup" || systematic == "Scaledown" || systematic == "Matchingup" || systematic == "Matchingdown") && (dataSetName.find("Scaleup")<=dataSetName.size() || dataSetName.find("Scaledown")<=dataSetName.size() || dataSetName.find("Matchingup")<=dataSetName.size() || dataSetName.find("Matchingdown")<=dataSetName.size()))
+		  continue;
 			
     if (verbose > 1)
       cout << "file: " << inputTrees[d] << endl;
@@ -1180,7 +1197,7 @@ int main (int argc, char *argv[])
 					for(unsigned int j = 0; j<i; j++)
 					{
 						recoWmass = (selectedJetsFromW_DropUsedJets[i] + selectedJetsFromW_DropUsedJets[j]).M();
-						if(!(dataSetName.find("NP_")<=dataSetName.size()))
+						//if(!(dataSetName.find("NP_")<=dataSetName.size()))
  							MSPlot["allDiJetMasses"]->Fill(recoWmass, datasets[d], true, Luminosity*scaleFactor);
 						if( fabs(recoWmass-Wmass)<massdifference)
 //						if( fabs(recoWmass-Wmass)<massdifference && selectedJetsFromW_DropUsedJets[i].DeltaR(selectedJetsFromW_DropUsedJets[j])<1.0)
