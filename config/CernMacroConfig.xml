@@ -19,9 +19,9 @@ beta_QCD = 2.09
 
 <!-- Simulation samples : -->
 <!-- TTbarJets samples were created without HLT trigger HENCE can be used for both applied triggers !! -->
-<!--
-<d name="TTbarJets_SemiMuon" title="t#bar{t}+jets semi-#mu" add="1" color="4" ls="1" lw="2" normf="1" xsection="23.333333" EqLumi="23504.3556" filenames="/user/aolbrech/Samples/Summer11_v2/TTJets-madgraph-Summer11_42X_v2_NoPreSel/TopTree_Skimmed_SemiMu.root"/>
 
+<d name="TTbarJets_SemiMuon" title="t#bar{t}+jets semi-#mu" add="1" color="4" ls="1" lw="2" normf="1" xsection="23.333333" EqLumi="23504.3556" filenames="/home/annik/TopTree/OLD_42X_V2/Samples/TTJets-madgraph-Summer11_42X_v2_NoPreSel/TopTree_Skimmed_SemiMu.root"/>
+<!--
 <d name="TTbarJets_SemiEl" title="t#bar{t}+jets semi-el" add="1" color="4" ls="1" lw="2" normf="1" xsection="23.333333" EqLumi="23504.3556" filenames="/user/aolbrech/Samples/Summer11_v2/TTJets-madgraph-Summer11_42X_v2_NoPreSel/TopTree_Skimmed_SemiEl.root"/>
 
 <d name="TTbarJets_Other" title="t#bar{t}+jets other" add="1" color="5" ls="1" lw="2" normf="1" xsection="110.833334" EqLumi="23504.3556" filenames="/user/aolbrech/Samples/Summer11_v2/TTJets-madgraph-Summer11_42X_v2_NoPreSel/TopTree_Skimmed_AllOther.root"/> 
@@ -99,7 +99,7 @@ beta_QCD = 2.09
 <!--  Electron data sample with TriCentralJet30 trigger: (Run2011A only: 2161.744 EqLumi)-->
 <!--
 <d name="Data" title="Data (2.2 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="2161.744" filenames="/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_Aug5ReReco_Id819_15022012_144129/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_May10ReReco_Id821_15022012_142142/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV4_Id827_15022012_143418/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV6_Id815_15022012_145233/TopTree_Skimmed_*.root"/>
-<!--
+
 <d name="Data" title="Data (4.6 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1" EqLumi="4665.744" filenames="/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_Aug5ReReco_Id819_15022012_144129/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_May10ReReco_Id821_15022012_142142/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV4_Id827_15022012_143418/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_PromptRecoV6_Id815_15022012_145233/TopTree_Skimmed_*.root,/user/aolbrech/Samples/Data_42X/Data_ElectronHadTrigger/Elec3JetsSkim_NormalPF2PAT_ElHad_2011BPromptRecoV1_Id871_15022012_142142/TopTree_Skimmed_*.root"/>
 -->
 

@@ -49,6 +49,8 @@ const int NumberSSVHE=14;
 const int NumberTCHP=14;
 const int NumberTCHE=14;
 const int NumberCSV=14;
+const int NumberJP=14;
+const int NumberJBP=14;
 int NumberOfHelicityBins=100; 
 TNtuple *genttbarhisto[CosThetaBinNumber];  //This is the vector of ntuples containing the generated values of cos theta* for each cos theta* reconstructed bin
 

@@ -546,20 +546,20 @@ int main (int argc, char *argv[])
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v4"), currentRun, iFile); 
 	      else if( event->runId() >= 165088 && event->runId() <= 165633 )
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v5"), currentRun, iFile); 
-	      else if( event->runId() == 166346 )
-		itriggerSemiMu= treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v2"), currentRun, iFile);IsoMuTrigger =1; 	      
-	      else if( event->runId() >= 165970 && event->runId() <= 167043 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v1"), currentRun, iFile); IsoMuTrigger = 1;
-	      else if( event->runId() >= 167078 && event->runId() <= 167913 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v3"), currentRun, iFile); IsoMuTrigger = 1;
-	      else if( event->runId() >= 170826 && event->runId() <= 173198 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v5"), currentRun, iFile); IsoMuTrigger = 1;
-	      else if( event->runId() >= 173236 && event->runId() <= 178380 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralJet30_v1"), currentRun, iFile); IsoMuTrigger = 1;
-	      else if( event->runId() >= 178381 && event->runId() <= 179889 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile); IsoMuTrigger = 1;
-	      else if( event->runId() >= 179959 && event->runId() <= 180252 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile); IsoMuTrigger = 1;
+	      else if( event->runId() == 166346 ){
+		itriggerSemiMu= treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v2"), currentRun, iFile);IsoMuTrigger =1; }	      
+	      else if( event->runId() >= 165970 && event->runId() <= 167043 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v1"), currentRun, iFile); IsoMuTrigger = 1;}
+	      else if( event->runId() >= 167078 && event->runId() <= 167913 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v3"), currentRun, iFile); IsoMuTrigger = 1;}
+	      else if( event->runId() >= 170826 && event->runId() <= 173198 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v5"), currentRun, iFile); IsoMuTrigger = 1;}
+	      else if( event->runId() >= 173236 && event->runId() <= 178380 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralJet30_v1"), currentRun, iFile); IsoMuTrigger = 1;}
+	      else if( event->runId() >= 178381 && event->runId() <= 179889 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile); IsoMuTrigger = 1;}
+	      else if( event->runId() >= 179959 && event->runId() <= 180252 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile); IsoMuTrigger = 1;}
 	      else
 		cout << "Unknown run for HLTpath selection: " << event->runId() << endl;     
 	    }
@@ -577,59 +577,59 @@ int main (int argc, char *argv[])
 	    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") {
 	      
 	      // the first 1.1/fb part of RUN2011A (may10->promptv4)
-	      if( event->runId() <= 163261 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile); MuonTriggerValue = 17;
-	      else if( event->runId() >= 163270 && event->runId() <= 163869 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile); MuonTriggerValue = 17;
-	      else if( event->runId() >= 165088 && event->runId() <= 165633 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile); MuonTriggerValue = 17;
-	      else if( event->runId() == 166346 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v10"), currentRun, iFile); MuonTriggerValue = 17;
-	      else if( event->runId() >= 165970 && event->runId() <= 167043 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile); MuonTriggerValue = 17;
-	      else if( event->runId() >= 167078 && event->runId() <= 167913 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v11"), currentRun, iFile); MuonTriggerValue = 17;
+	      if( event->runId() <= 163261 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile); MuonTriggerValue = 17;}
+	      else if( event->runId() >= 163270 && event->runId() <= 163869 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile); MuonTriggerValue = 17;}
+	      else if( event->runId() >= 165088 && event->runId() <= 165633 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile); MuonTriggerValue = 17;}
+	      else if( event->runId() == 166346 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v10"), currentRun, iFile); MuonTriggerValue = 17;}
+	      else if( event->runId() >= 165970 && event->runId() <= 167043 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile); MuonTriggerValue = 17;}
+	      else if( event->runId() >= 167078 && event->runId() <= 167913 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v11"), currentRun, iFile); MuonTriggerValue = 17;}
 	      
 	      // the other part of RUN2011A (another 1/fb) (aug05,promptv6)
 	      
-	      else if( event->runId() >= 170249 && event->runId() <= 172619 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile); MuonTriggerValue = 20;
-	      else if( event->runId() >= 172620 && event->runId() <= 173198 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile); MuonTriggerValue = 20;
-	      else if (event->runId() >= 173236 && event->runId() <= 173692)
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile); MuonTriggerValue = 24
+	      else if( event->runId() >= 170249 && event->runId() <= 172619 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile); MuonTriggerValue = 20;}
+	      else if( event->runId() >= 172620 && event->runId() <= 173198 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile); MuonTriggerValue = 20;}
+	      else if (event->runId() >= 173236 && event->runId() <= 173692){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile); MuonTriggerValue = 24;}
 
 	      // RUN2011B (promptv1)
 	      
-	      else if( event->runId() ==  176928 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;
-	      else if( event->runId() == 176982 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;
+	      else if( event->runId() ==  176928 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+	      else if( event->runId() == 176982 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
 	      
-	      else if( event->runId() >= 175860 && event->runId() <= 176469 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;
-	      else if( event->runId() >=  176548 && event->runId() <=  176702 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;
-	      else if( event->runId() >=  176797 && event->runId() <=  176889 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;
-	      else if( event->runId() >=  176929 && event->runId() <=  176959 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;
-	      else if( event->runId() >=  177053 && event->runId() <=  177452 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;
+	      else if( event->runId() >= 175860 && event->runId() <= 176469 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+	      else if( event->runId() >=  176548 && event->runId() <=  176702 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+	      else if( event->runId() >=  176797 && event->runId() <=  176889 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+	      else if( event->runId() >=  176929 && event->runId() <=  176959 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+	      else if( event->runId() >=  177053 && event->runId() <=  177452 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
 	      
-	      else if( event->runId() >=  176545 && event->runId() <=  176547 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;
-	      else if( event->runId() >=  176765 && event->runId() <=  176796 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;
+	      else if( event->runId() >=  176545 && event->runId() <=  176547 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+	      else if( event->runId() >=  176765 && event->runId() <=  176796 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
 	      
-	      else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;
-	      else if( event->runId() >=  178420 && event->runId() <=  178479 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;                               
-	      else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;
-	      else if( event->runId() >=  179959 && event->runId() <=  180252 )
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); MuonTriggerValue = 30;
+	      else if( event->runId() >=  177718 && event->runId() <=  178380 ){ // TopTree ID 804
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+	      else if( event->runId() >=  178420 && event->runId() <=  178479 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;}
+	      else if( event->runId() >=  178703 && event->runId() <=  179889 ){ // TopTree ID 816
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;}
+	      else if( event->runId() >=  179959 && event->runId() <=  180252 ){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); MuonTriggerValue = 30;}
 	      
 	      else
 		cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
@@ -644,12 +644,12 @@ int main (int argc, char *argv[])
 	    } 
 	    else {
 	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun); MuonTriggerValue = 17;
-	      if (itriggerSemiMu == 9999)
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); MuonTriggerValue = 17;// Spring11: HLT_Mu15_v1
-	      if (itriggerSemiMu == 9999)
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); MuonTriggerValue = 9; // Fall10: HLT_Mu9
-	      if (itriggerSemiMu == 9999)
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v14"), currentRun); MuonTriggerValue = 17; // Fall 11
+	      if (itriggerSemiMu == 9999){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); MuonTriggerValue = 17;}// Spring11: HLT_Mu15_v1
+	      if (itriggerSemiMu == 9999){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); MuonTriggerValue = 9;} // Fall10: HLT_Mu9
+	      if (itriggerSemiMu == 9999){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v14"), currentRun); MuonTriggerValue = 17;} // Fall 11
 	      //  Summer11 MC:        HLT_IsoMu17_v5        HLT_Mu15_v2
 	      //  Spring11 MC:        HLT_IsoMu17_v4        HLT_Mu15_v1 or HLT_Mu17_v1
 	      //  Fall10 MC:          HLT_IsoMu9            HLT_Mu9 or HLT_Mu11
@@ -983,6 +983,7 @@ int main (int argc, char *argv[])
  
       bool eventSelectedSemiMu = false;
       bool eventSelectedSemiEl = false;
+      float reliso;
       
       //selecTable.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
       
@@ -1034,7 +1035,7 @@ int main (int argc, char *argv[])
 					MSPlot["nEventsAfterCutsSemiMu"]->Fill(9, datasets[d], true, Luminosity*scaleFactor);
 					selecTableSemiMu.Fill(d,9,scaleFactor*lumiWeight);
 					eventSelectedSemiMu = true;
-					float reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
+					reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
 					MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);         
 
 					//if(dataSetName.find("TTbarJets_SemiMu") ==0 && selectedJets[3]->Pt() >30. && selectedJets[3]->Pt() <30.5)
@@ -1095,7 +1096,7 @@ int main (int argc, char *argv[])
 					      MSPlot["nEventsAfterCutsSemiEl"]->Fill(10, datasets[d], true, Luminosity*scaleFactor);
 					      selecTableSemiEl.Fill(d,10,scaleFactor*lumiWeight);
 					      eventSelectedSemiEl = true;
-					      float reliso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
+					      reliso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
 					      MSPlot["SelectedEventsElectronsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
 					      
 					    }
@@ -1265,12 +1266,12 @@ int main (int argc, char *argv[])
 	    CorrectRecMassW=(*selectedJets[jetCombi[0]]+*selectedJets[jetCombi[1]]).M();
 	    CorrectRecMassTop=(*selectedJets[jetCombi[0]]+*selectedJets[jetCombi[1]]+*selectedJets[jetCombi[2]]).M();
 	    if(semiMuon){
-	      CorrectRecMassWLept=(*selectedMuons[0]+mets[0]).M();
-	      CorrectRecMassTopLept=(*selectedJets[jetCombi[3]]+*selectedMuons[0]+mets[0]).M();
+	      CorrectRecMassWLept=(*selectedMuons[0]+*mets[0]).M();
+	      CorrectRecMassTopLept=(*selectedJets[jetCombi[3]]+*selectedMuons[0]+*mets[0]).M();
 	    }
 	    else if(semiElectron){
-	      CorrectRecMassWLept=(*selectedElectrons[0]+mets[0]).M();
-	      CorrectRecMassTopLept=(*selectedJets[jetCombi[3]]+*selectedElectrons[0]+mets[0]).M();	      
+	      CorrectRecMassWLept=(*selectedElectrons[0]+*mets[0]).M();
+	      CorrectRecMassTopLept=(*selectedJets[jetCombi[3]]+*selectedElectrons[0]+*mets[0]).M();	      
 	    }
 	    
 	    histo1D["WMass"]->Fill(CorrectRecMassW);
@@ -1467,7 +1468,7 @@ int main (int argc, char *argv[])
 	  //           Initialize and define all variables necessary for WTree
 	  //oooooooooOOOOOOOOOOOOOOOooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOOOOOO	
 	
-	  std::vector<float> TCHEbTagValues, TCHPbTagValues, SSVHEbTagValues, SSVHPbTagValues, CSVbTagValues, JPbTagValues;
+	  std::vector<float> TCHEbTagValues, TCHPbTagValues, SSVHEbTagValues, SSVHPbTagValues, CSVbTagValues, JPbTagValues,JBPbTagValues;
 	  for(int ii = 0; ii<selectedJets.size();ii++){
 	    TCHEbTagValues.push_back(selectedJets[ii]->btag_trackCountingHighEffBJetTags());
 	    TCHPbTagValues.push_back(selectedJets[ii]->btag_trackCountingHighPurBJetTags());
@@ -1475,6 +1476,7 @@ int main (int argc, char *argv[])
 	    SSVHPbTagValues.push_back(selectedJets[ii]->btag_simpleSecondaryVertexHighPurBJetTags());
 	    CSVbTagValues.push_back(selectedJets[ii]->btag_combinedSecondaryVertexBJetTags());
 	    JPbTagValues.push_back(selectedJets[ii]->btag_jetProbabilityBJetTags());
+	    JBPbTagValues.push_back(selectedJets[ii]->btag_jetBProbabilityBJetTags());
 	  }
 	
 	  vector<TLorentzVector> SelectedJets;
@@ -1524,6 +1526,7 @@ int main (int argc, char *argv[])
 	  wTree->setBTagSSVHP(SSVHPbTagValues);
 	  wTree->setBTagCSV(CSVbTagValues);
 	  wTree->setBTagJP( JPbTagValues );
+	  wTree->setBTagJBP( JBPbTagValues );
 	  
 	  //Store the correct LorentzVectors for the 4 relevant quarks:
 	  wTree->setHadrBQuark( hadrBQuark );  
