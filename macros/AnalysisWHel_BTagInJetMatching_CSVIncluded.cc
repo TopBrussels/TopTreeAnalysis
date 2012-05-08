@@ -191,8 +191,8 @@ int main (int argc, char *argv[])
   float KinFitCut = 0.;
 
   string decayChannel;
-  bool semiMuon = true;
-  bool semiElectron = false;
+  bool semiMuon = false;
+  bool semiElectron = true;
   if(semiMuon == true){decayChannel = "SemiMu";}
   else if(semiElectron == true){decayChannel = "SemiEl";}
 
@@ -203,7 +203,7 @@ int main (int argc, char *argv[])
 
   string UsedTrigger;
   bool IsoMu172024Trigger = false;
-  bool TriCentralJet30Trigger = false;
+  bool TriCentralJet30Trigger = true;
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
     if(fullDataSet == true){ 
@@ -230,8 +230,8 @@ int main (int argc, char *argv[])
   cout << "Executing the W Helicities analysis for an integrated luminosity of " << Luminosity << " pb^-1" << endl;
 
   //Booleans to load in different root files
-  bool SignalOnly = true;
-  bool DataResults = false;
+  bool SignalOnly = false;
+  bool DataResults = true;
   bool JESMinusResults = false;
   bool JESPlusResults = false;
   bool WSystResults = false;
@@ -246,7 +246,7 @@ int main (int argc, char *argv[])
 
   //Booleans for event selection cuts
   bool SSVHEbTag = false;
-  bool MTCut = true;
+  bool MTCut = false;
   bool MuonPtCut = false;  //Require a muon Pt larger than 27 (to avoid turn-over of IsoMu17/20/24 triggers)  -- Ciemat uses 25
   string AppliedCuts = "";
   if(SSVHEbTag == true)
@@ -382,6 +382,7 @@ int main (int argc, char *argv[])
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
 
   string PresentationTexTitle;
+  PresentationTexTitle =("BTagPerformanceStudy_CSV/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+".tex").c_str();
   if(DataResults == true) PresentationTexTitle =("BTagPerformanceStudy_CSV/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+".tex").c_str();
   if(JESMinusResults == true) PresentationTexTitle =("BTagPerformanceStudy_CSV/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+"_JESMin.tex").c_str();
   if(JESPlusResults == true) PresentationTexTitle = ("BTagPerformanceStudy_CSV/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+"_JESPlus.tex").c_str();
@@ -443,10 +444,10 @@ int main (int argc, char *argv[])
 
   //Zie code Stijn voor alle gebruikte controle plots !
 
-  histo1D["HadronicWMass"] = new TH1F("HadronicWMass","HadronicWMass",50,0,400);
-  histo1D["HadronicTopMass"] = new TH1F("HadronicTopMass","HadronicTopMass",50,0,400);
-  histo1D["LeptonicWMass"] = new TH1F("LeptonicWMass","LeptonicWMass",50,0,400);
-  histo1D["LeptonicTopMass"] = new TH1F("LeptonicTopMass","LeptonicTopMass",50,0,400); 
+  histo1D["HadronicWMass"] = new TH1F("HadronicWMass","HadronicWMass",50,50,100);
+  histo1D["HadronicTopMass"] = new TH1F("HadronicTopMass","HadronicTopMass",50,150,200);
+  histo1D["LeptonicWMass"] = new TH1F("LeptonicWMass","LeptonicWMass",50,50,100);
+  histo1D["LeptonicTopMass"] = new TH1F("LeptonicTopMass","LeptonicTopMass",50,150,200); 
 
   histo1D["KinFitProbCorrectBLept"] = new TH1F("KinFitProbCorrectBLept","KinFitProbCorrectBLept",25,0,1);
   histo1D["KinFitProbWrongBLept"] = new TH1F("KinFitProbWrongBLept","KinFitProbWrongBLept",25,0,1);
@@ -459,20 +460,182 @@ int main (int argc, char *argv[])
   histo1D["CosThetaCorrectBLeptSSVHEM"]=new TH1F("CosThetaCorrectBLeptSSVHEM","CosThetaCorrectBLeptSSVHEM",CosThetaBinNumber,-1,1);
   histo1D["CosThetaWrongBLeptSSVHEM"]=new TH1F("CosThetaWrongBLeptSSVHEM","CosThetaWrongBLeptSSVHEM",CosThetaBinNumber,-1,1);
   
-  histo1D["CosThetaResNobTag"] = new TH1F("CosThetaResNobTag","CosThetaResNobTag",200,-2,2);
+  histo1D["CosThetaRes"] = new TH1F("CosThetaRes","CosThetaRes",200,-2,2);
   histo1D["CosThetaDistributionSignal"] = new TH1F("CosThetaDistributionSignal","CosThetaDistributionSignal",100,-1,1);
   histo1D["CosThetaDistributionSignalRatio"] = new TH1F("CosThetaDistributionSignalRatio","CosThetaDistributionSignalRatio",100,-1,1);
   histo1D["CosThetaDistributionSignalGen"] = new TH1F("CosThetaDistributionSignalGen","CosThetaDistributionSignalGen",100,-1,1);
   histo1D["MuonPtSignal"] = new TH1F("MuonPtSignal","MuonPtSignal",100,0,200);
-  histo1D["CosThetaResNobTagPtSmaller30"] = new TH1F("CosThetaResNobTagPtSmaller30","CosThetaResNobTagPtSmaller30",200,-2,2);
-  histo1D["CosThetaResNobTagPtLarger30"] = new TH1F("CosThetaResNobTagPtLarger30","CosThetaResNobTagPtLarger30",200,-2,2);
-  histo1D["CosThetaDistributionPtSmaller30"] = new TH1F("CosThetaDistributionPtSmaller30","CosThetaDistributionPtSmaller30",100,-1,1);
-  histo1D["CosThetaDistributionPtSmaller30Ratio"] = new TH1F("CosThetaDistributionPtSmaller30Ratio","CosThetaDistributionPtSmaller30Ratio",100,-1,1);
-  histo1D["CosThetaDistributionPtSmaller30Gen"] = new TH1F("CosThetaDistributionPtSmaller30Gen","CosThetaDistributionPtSmaller30Gen",100,-1,1);
-  histo1D["CosThetaDistributionPtLarger30"] = new TH1F("CosThetaDistributionPtLarger30","CosThetaDistributionPtLarger30",100,-1,1);
-  histo1D["CosThetaDistributionPtLarger30Ratio"] = new TH1F("CosThetaDistributionPtLarger30Ratio","CosThetaDistributionPtLarger30Ratio",100,-1,1);
-  histo1D["CosThetaDistributionPtLarger30Gen"] = new TH1F("CosThetaDistributionPtLarger30Gen","CosThetaDistributionPtLarger30Gen",100,-1,1);
+  TProfile *CosThetaDiffVSRecoSignal = new TProfile("CosThetaDiffVSRecoSignal","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 20 to inf GeV",10,-1,1,-2,2);
+
+  //Histos to determine optimal muon Pt cut:
+  histo1D["CosThetaDifferencePt10ToInf"] = new TH1F("CosThetaDifferencePt10ToInf","CosThetaDifferencePt10ToInf",200,-2,2);
+  histo1D["CosThetaRecoPt10ToInf"] = new TH1F("CosThetaRecoPt10ToInf","CosThetaRecoPt10ToInf",100,-1,1);
+  histo1D["CosThetaRecoPt10ToInfForRatio"] = new TH1F("CosThetaRecoPt10ToInfForRatio","CosThetaRecoPt10ToInfForRatio",100,-1,1);
+  histo1D["CosThetaGenPt10ToInf"] = new TH1F("CosThetaGenPt10ToInf","CosThetaGenPt10ToInf",100,-1,1);
+  TProfile *CosThetaDiffVSRecoPt10ToInf = new TProfile("CosThetaDiffVSRecoPt10ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 10 to inf GeV",10,-1,1,-2,2);
+  histo2D["CosThetaGenVsRecoPt10ToInf"] = new TH2F("CosThetaGenVsRecoPt10ToInf","CosThetaGenVsRecoPt10ToInf",50,-1,1,20,-1,1);
+  histo1D["CosThetaDiffPt10ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt10ToInfGenFirstBin","CosThetaDiffPt10ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt10ToInfGenSecondBin","CosThetaDiffPt10ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt10ToInfGenThirdBin","CosThetaDiffPt10ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt10ToInfGenFourthBin","CosThetaDiffPt10ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt10ToInfGenFifthBin","CosThetaDiffPt10ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt10ToInfGenSixthBin","CosThetaDiffPt10ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt10ToInfGenSeventhBin","CosThetaDiffPt10ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt10ToInfGenEighthBin","CosThetaDiffPt10ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt10ToInfGenNinthBin","CosThetaDiffPt10ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaDiffPt10ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt10ToInfGenTenthBin","CosThetaDiffPt10ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt10ToInfGenFirstBin","CosThetaRecoPt10ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt10ToInfGenSecondBin","CosThetaRecoPt10ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt10ToInfGenThirdBin","CosThetaRecoPt10ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt10ToInfGenFourthBin","CosThetaRecoPt10ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt10ToInfGenFifthBin","CosThetaRecoPt10ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt10ToInfGenSixthBin","CosThetaRecoPt10ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt10ToInfGenSeventhBin","CosThetaRecoPt10ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt10ToInfGenEighthBin","CosThetaRecoPt10ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt10ToInfGenNinthBin","CosThetaRecoPt10ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt10ToInfGenTenthBin","CosThetaRecoPt10ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt10ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt10ToInfGenFirstBin","CosThetaRecoPt10ToInfGenFirstBin",50,-1,1);
+
+  histo1D["CosThetaDifferencePt15ToInf"] = new TH1F("CosThetaDifferencePt15ToInf","CosThetaDifferencePt15ToInf",200,-2,2);
+  histo1D["CosThetaRecoPt15ToInf"] = new TH1F("CosThetaRecoPt15ToInf","CosThetaRecoPt15ToInf",100,-1,1);
+  histo1D["CosThetaRecoPt15ToInfForRatio"] = new TH1F("CosThetaRecoPt15ToInfForRatio","CosThetaRecoPt15ToInfForRatio",100,-1,1);
+  histo1D["CosThetaGenPt15ToInf"] = new TH1F("CosThetaGenPt15ToInf","CosThetaGenPt15ToInf",100,-1,1);
+  TProfile *CosThetaDiffVSRecoPt15ToInf = new TProfile("CosThetaDiffVSRecoPt15ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 15 to inf GeV",10,-1,1,-2,2);
+  histo2D["CosThetaGenVsRecoPt15ToInf"] = new TH2F("CosThetaGenVsRecoPt15ToInf","CosThetaGenVsRecoPt15ToInf",50,-1,1,20,-1,1);
+  histo1D["CosThetaDiffPt15ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt15ToInfGenFirstBin","CosThetaDiffPt15ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt15ToInfGenSecondBin","CosThetaDiffPt15ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt15ToInfGenThirdBin","CosThetaDiffPt15ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt15ToInfGenFourthBin","CosThetaDiffPt15ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt15ToInfGenFifthBin","CosThetaDiffPt15ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt15ToInfGenSixthBin","CosThetaDiffPt15ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt15ToInfGenSeventhBin","CosThetaDiffPt15ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt15ToInfGenEighthBin","CosThetaDiffPt15ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt15ToInfGenNinthBin","CosThetaDiffPt15ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaDiffPt15ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt15ToInfGenTenthBin","CosThetaDiffPt15ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt15ToInfGenFirstBin","CosThetaRecoPt15ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt15ToInfGenSecondBin","CosThetaRecoPt15ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt15ToInfGenThirdBin","CosThetaRecoPt15ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt15ToInfGenFourthBin","CosThetaRecoPt15ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt15ToInfGenFifthBin","CosThetaRecoPt15ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt15ToInfGenSixthBin","CosThetaRecoPt15ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt15ToInfGenSeventhBin","CosThetaRecoPt15ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt15ToInfGenEighthBin","CosThetaRecoPt15ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt15ToInfGenNinthBin","CosThetaRecoPt15ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt15ToInfGenTenthBin","CosThetaRecoPt15ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt15ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt15ToInfGenFirstBin","CosThetaRecoPt15ToInfGenFirstBin",50,-1,1);
+
+  histo1D["CosThetaDifferencePt20ToInf"] = new TH1F("CosThetaDifferencePt20ToInf","CosThetaDifferencePt20ToInf",200,-2,2);
+  histo1D["CosThetaRecoPt20ToInf"] = new TH1F("CosThetaRecoPt20ToInf","CosThetaRecoPt20ToInf",100,-1,1);
+  histo1D["CosThetaRecoPt20ToInfForRatio"] = new TH1F("CosThetaRecoPt20ToInfForRatio","CosThetaRecoPt20ToInfForRatio",100,-1,1);
+  histo1D["CosThetaGenPt20ToInf"] = new TH1F("CosThetaGenPt20ToInf","CosThetaGenPt20ToInf",100,-1,1);
+  TProfile *CosThetaDiffVSRecoPt20ToInf = new TProfile("CosThetaDiffVSRecoPt20ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 20 to inf GeV",10,-1,1,-2,2);
+  histo2D["CosThetaGenVsRecoPt20ToInf"] = new TH2F("CosThetaGenVsRecoPt20ToInf","CosThetaGenVsRecoPt20ToInf",50,-1,1,20,-1,1);
+  histo1D["CosThetaDiffPt20ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt20ToInfGenFirstBin","CosThetaDiffPt20ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt20ToInfGenSecondBin","CosThetaDiffPt20ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt20ToInfGenThirdBin","CosThetaDiffPt20ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt20ToInfGenFourthBin","CosThetaDiffPt20ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt20ToInfGenFifthBin","CosThetaDiffPt20ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt20ToInfGenSixthBin","CosThetaDiffPt20ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt20ToInfGenSeventhBin","CosThetaDiffPt20ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt20ToInfGenEighthBin","CosThetaDiffPt20ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt20ToInfGenNinthBin","CosThetaDiffPt20ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaDiffPt20ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt20ToInfGenTenthBin","CosThetaDiffPt20ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt20ToInfGenFirstBin","CosThetaRecoPt20ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt20ToInfGenSecondBin","CosThetaRecoPt20ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt20ToInfGenThirdBin","CosThetaRecoPt20ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt20ToInfGenFourthBin","CosThetaRecoPt20ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt20ToInfGenFifthBin","CosThetaRecoPt20ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt20ToInfGenSixthBin","CosThetaRecoPt20ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt20ToInfGenSeventhBin","CosThetaRecoPt20ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt20ToInfGenEighthBin","CosThetaRecoPt20ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt20ToInfGenNinthBin","CosThetaRecoPt20ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt20ToInfGenTenthBin","CosThetaRecoPt20ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt20ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt20ToInfGenFirstBin","CosThetaRecoPt20ToInfGenFirstBin",50,-1,1);
+
+  histo1D["CosThetaDifferencePt25ToInf"] = new TH1F("CosThetaDifferencePt25ToInf","CosThetaDifferencePt25ToInf",200,-2,2);
+  histo1D["CosThetaRecoPt25ToInf"] = new TH1F("CosThetaRecoPt25ToInf","CosThetaRecoPt25ToInf",100,-1,1);
+  histo1D["CosThetaRecoPt25ToInfForRatio"] = new TH1F("CosThetaRecoPt25ToInfForRatio","CosThetaRecoPt25ToInfForRatio",100,-1,1);
+  histo1D["CosThetaGenPt25ToInf"] = new TH1F("CosThetaGenPt25ToInf","CosThetaGenPt25ToInf",100,-1,1);
+  TProfile *CosThetaDiffVSRecoPt25ToInf = new TProfile("CosThetaDiffVSRecoPt25ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 25 to inf GeV",10,-1,1,-2,2);
+  histo2D["CosThetaGenVsRecoPt25ToInf"] = new TH2F("CosThetaGenVsRecoPt25ToInf","CosThetaGenVsRecoPt25ToInf",50,-1,1,20,-1,1);
+  histo1D["CosThetaDiffPt25ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt25ToInfGenFirstBin","CosThetaDiffPt25ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt25ToInfGenSecondBin","CosThetaDiffPt25ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt25ToInfGenThirdBin","CosThetaDiffPt25ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt25ToInfGenFourthBin","CosThetaDiffPt25ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt25ToInfGenFifthBin","CosThetaDiffPt25ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt25ToInfGenSixthBin","CosThetaDiffPt25ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt25ToInfGenSeventhBin","CosThetaDiffPt25ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt25ToInfGenEighthBin","CosThetaDiffPt25ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt25ToInfGenNinthBin","CosThetaDiffPt25ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaDiffPt25ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt25ToInfGenTenthBin","CosThetaDiffPt25ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt25ToInfGenFirstBin","CosThetaRecoPt25ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt25ToInfGenSecondBin","CosThetaRecoPt25ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt25ToInfGenThirdBin","CosThetaRecoPt25ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt25ToInfGenFourthBin","CosThetaRecoPt25ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt25ToInfGenFifthBin","CosThetaRecoPt25ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt25ToInfGenSixthBin","CosThetaRecoPt25ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt25ToInfGenSeventhBin","CosThetaRecoPt25ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt25ToInfGenEighthBin","CosThetaRecoPt25ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt25ToInfGenNinthBin","CosThetaRecoPt25ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt25ToInfGenTenthBin","CosThetaRecoPt25ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt25ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt25ToInfGenFirstBin","CosThetaRecoPt25ToInfGenFirstBin",50,-1,1);
+
+  histo1D["CosThetaDifferencePt30ToInf"] = new TH1F("CosThetaDifferencePt30ToInf","CosThetaDifferencePt30ToInf",200,-2,2);
+  histo1D["CosThetaRecoPt30ToInf"] = new TH1F("CosThetaRecoPt30ToInf","CosThetaRecoPt30ToInf",100,-1,1);
+  histo1D["CosThetaRecoPt30ToInfForRatio"] = new TH1F("CosThetaRecoPt30ToInfForRatio","CosThetaRecoPt30ToInfForRatio",100,-1,1);
+  histo1D["CosThetaGenPt30ToInf"] = new TH1F("CosThetaGenPt30ToInf","CosThetaGenPt30ToInf",100,-1,1);
+  TProfile *CosThetaDiffVSRecoPt30ToInf = new TProfile("CosThetaDiffVSRecoPt30ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 30 to inf GeV",10,-1,1,-2,2);
+  histo2D["CosThetaGenVsRecoPt30ToInf"] = new TH2F("CosThetaGenVsRecoPt30ToInf","CosThetaGenVsRecoPt30ToInf",50,-1,1,20,-1,1);
+  histo1D["CosThetaDiffPt30ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt30ToInfGenFirstBin","CosThetaDiffPt30ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt30ToInfGenSecondBin","CosThetaDiffPt30ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt30ToInfGenThirdBin","CosThetaDiffPt30ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt30ToInfGenFourthBin","CosThetaDiffPt30ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt30ToInfGenFifthBin","CosThetaDiffPt30ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt30ToInfGenSixthBin","CosThetaDiffPt30ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt30ToInfGenSeventhBin","CosThetaDiffPt30ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt30ToInfGenEighthBin","CosThetaDiffPt30ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt30ToInfGenNinthBin","CosThetaDiffPt30ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaDiffPt30ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt30ToInfGenTenthBin","CosThetaDiffPt30ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt30ToInfGenFirstBin","CosThetaRecoPt30ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt30ToInfGenSecondBin","CosThetaRecoPt30ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt30ToInfGenThirdBin","CosThetaRecoPt30ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt30ToInfGenFourthBin","CosThetaRecoPt30ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt30ToInfGenFifthBin","CosThetaRecoPt30ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt30ToInfGenSixthBin","CosThetaRecoPt30ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt30ToInfGenSeventhBin","CosThetaRecoPt30ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt30ToInfGenEighthBin","CosThetaRecoPt30ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt30ToInfGenNinthBin","CosThetaRecoPt30ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt30ToInfGenTenthBin","CosThetaRecoPt30ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt30ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt30ToInfGenFirstBin","CosThetaRecoPt30ToInfGenFirstBin",50,-1,1);
   
+  histo1D["CosThetaDifferencePt35ToInf"] = new TH1F("CosThetaDifferencePt35ToInf","CosThetaDifferencePt35ToInf",200,-2,2);
+  histo1D["CosThetaRecoPt35ToInf"] = new TH1F("CosThetaRecoPt35ToInf","CosThetaRecoPt35ToInf",100,-1,1);
+  histo1D["CosThetaRecoPt35ToInfForRatio"] = new TH1F("CosThetaRecoPt35ToInfForRatio","CosThetaRecoPt35ToInfForRatio",100,-1,1);
+  histo1D["CosThetaGenPt35ToInf"] = new TH1F("CosThetaGenPt35ToInf","CosThetaGenPt35ToInf",100,-1,1);
+  TProfile *CosThetaDiffVSRecoPt35ToInf = new TProfile("CosThetaDiffVSRecoPt35ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 35 to inf GeV",10,-1,1,-2,2);
+  histo2D["CosThetaGenVsRecoPt35ToInf"] = new TH2F("CosThetaGenVsRecoPt35ToInf","CosThetaGenVsRecoPt35ToInf",50,-1,1,20,-1,1);
+  histo1D["CosThetaDiffPt35ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt35ToInfGenFirstBin","CosThetaDiffPt35ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt35ToInfGenSecondBin","CosThetaDiffPt35ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt35ToInfGenThirdBin","CosThetaDiffPt35ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt35ToInfGenFourthBin","CosThetaDiffPt35ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt35ToInfGenFifthBin","CosThetaDiffPt35ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt35ToInfGenSixthBin","CosThetaDiffPt35ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt35ToInfGenSeventhBin","CosThetaDiffPt35ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt35ToInfGenEighthBin","CosThetaDiffPt35ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt35ToInfGenNinthBin","CosThetaDiffPt35ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaDiffPt35ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt35ToInfGenTenthBin","CosThetaDiffPt35ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt35ToInfGenFirstBin","CosThetaRecoPt35ToInfGenFirstBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt35ToInfGenSecondBin","CosThetaRecoPt35ToInfGenSecondBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt35ToInfGenThirdBin","CosThetaRecoPt35ToInfGenThirdBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt35ToInfGenFourthBin","CosThetaRecoPt35ToInfGenFourthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt35ToInfGenFifthBin","CosThetaRecoPt35ToInfGenFifthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt35ToInfGenSixthBin","CosThetaRecoPt35ToInfGenSixthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt35ToInfGenSeventhBin","CosThetaRecoPt35ToInfGenSeventhBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt35ToInfGenEighthBin","CosThetaRecoPt35ToInfGenEighthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt35ToInfGenNinthBin","CosThetaRecoPt35ToInfGenNinthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt35ToInfGenTenthBin","CosThetaRecoPt35ToInfGenTenthBin",100,-2,2);
+  histo1D["CosThetaRecoPt35ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt35ToInfGenFirstBin","CosThetaRecoPt35ToInfGenFirstBin",50,-1,1);
+
   histo1D["CosThetaResLastBin"] = new TH1F("CosThetaResLastBin","CosThetaResLastBin",200,-2,2);
   histo1D["CosThetaResSecondNegBin"] = new TH1F("CosThetaResSecondNegBin","CosThetaResSecondNegBin",200,-2,2);
   histo1D["CosThetaResThirdNegBin"] = new TH1F("CosThetaResThirdNegBin","CosThetaResThirdNegBin",200,-2,2);
@@ -493,11 +656,6 @@ int main (int argc, char *argv[])
   histo1D["CosThetaResThirdBin"] = new TH1F("CosThetaResThirdBin","CosThetaResThirdBin",200,-2,2);
   histo1D["CosThetaResSecondBin"] = new TH1F("CosThetaResSecondBin","CosThetaResSecondBin",200,-2,2);
   histo1D["CosThetaResFirstBin"] = new TH1F("CosThetaResFirstBin","CosThetaResFirstBin",200,-2,2);
-
-  //TProfile histos:
-  TProfile *CosThetaDiffVSRecoSignal = new TProfile("CosThetaDiffVSRecoSignal","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 20 to inf GeV",10,-1,1,-2,2);
-  TProfile *CosThetaDiffVSRecoPtSmaller30 = new TProfile("CosThetaDiffVSRecoPtSmaller30","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 20 to 30 GeV",10,-1,1,-2,2);
-  TProfile *CosThetaDiffVSRecoPtLarger30 = new TProfile("CosThetaDiffVSRecoPtLarger30","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 30 to inf GeV",10,-1,1,-2,2);
 
   histo1D["CosThetaResTCHELLept"] = new TH1F("CosThetaResTCHELLept","CosThetaResTCHELLept",200,-2,2);
   histo1D["CosThetaResTCHEMLept"] = new TH1F("CosThetaResTCHEMLept","CosThetaResTCHEMLept",200,-2,2);
@@ -627,10 +785,10 @@ int main (int argc, char *argv[])
   cout << " colors defined " << endl;
 
   //MSPlots for mass distributions after Kinematic Fit:
-  MSPlot["HadronicWMass"] = new MultiSamplePlot(datasets,"HadronicWMass",50,0,400,"HadronicWMass");
-  MSPlot["HadronicTopMass"] = new MultiSamplePlot(datasets,"HadronicTopMass",50,0,400,"HadronicTopMass");
-  MSPlot["LeptonicWMass"] = new MultiSamplePlot(datasets,"LeptonicWMass",50,0,400,"LeptonicWMass");
-  MSPlot["LeptonicTopMass"] = new MultiSamplePlot(datasets,"LeptonicTopMass",50,0,400,"LeptonicTopMass");
+  MSPlot["HadronicWMass"] = new MultiSamplePlot(datasets,"HadronicWMass",50,50,100,"HadronicWMass");
+  MSPlot["HadronicTopMass"] = new MultiSamplePlot(datasets,"HadronicTopMass",50,150,200,"HadronicTopMass");
+  MSPlot["LeptonicWMass"] = new MultiSamplePlot(datasets,"LeptonicWMass",50,50,100,"LeptonicWMass");
+  MSPlot["LeptonicTopMass"] = new MultiSamplePlot(datasets,"LeptonicTopMass",50,150,200,"LeptonicTopMass");
   
   //MSPlots for Cos theta distribution and KinFit probability distribution
   MSPlot["CosThetaSSVHEMLept"]= new MultiSamplePlot(datasets, "CosThetaSSVHEMLept", CosThetaBinNumber,-1,1,"CosThetaSSVHEMLept");  
@@ -698,9 +856,7 @@ int main (int argc, char *argv[])
   MSPlot["LeptonPx"]=new MultiSamplePlot(datasets,"LeptonPx",60,-20,20,"LeptonPx");
   MSPlot["LeptonPy"]=new MultiSamplePlot(datasets,"LeptonPy",60,-20,20,"LeptonPy");
   MSPlot["LeptonPz"]=new MultiSamplePlot(datasets,"LeptonPz",60,-20,20,"LeptonPz");
-  
-  std::cout << " MSPlots defined " << endl;
-  
+    
   // Zie Code Stijn voor alle gebruikte controle plots
 
   ////////////////////////////////
@@ -1058,6 +1214,18 @@ int main (int argc, char *argv[])
     /////////////////////////////////////////
     // Loop on events
     /////////////////////////////////////////
+    float ProbabilityPt10ToInf[10][10];
+    float ProbabilityPt30ToInf[10][10];
+    float TotalPt10ToInf[10];			    
+    float TotalPt30ToInf[10];			    
+    for(int ii=0;ii<10;ii++){
+      TotalPt10ToInf[ii] = 0;
+      TotalPt30ToInf[ii] = 0;
+      for(int jj=0;jj<10;jj++){
+	ProbabilityPt10ToInf[ii][jj]=0;
+	ProbabilityPt30ToInf[ii][jj]=0;
+      }
+    }
     
     for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
     //for(unsigned int iEvt=0; iEvt<3000; iEvt++){
@@ -1449,9 +1617,9 @@ int main (int argc, char *argv[])
 			  NumberUsedEvents++;
 			  
 			  //Histos using all signal events:
-			  histo1D["CosThetaResNobTag"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			  histo1D["CosThetaRes"]->Fill(CosThetaCalculation - CosThetaGenerator); 
 			  histo1D["CosThetaDistributionSignal"]->Fill(CosThetaCalculation);
-			  histo1D["CosThetaDistributionSignalRatio"]->Fill(CosThetaCalculation);
+			  histo1D["CosThetaDistributionSignalRatio"]->Fill(CosThetaCalculation); //Extra histo to avoid double naming when calculating ratio!!
 			  histo1D["CosThetaDistributionSignalGen"]->Fill(CosThetaGenerator);
 			  histo1D["MuonPtSignal"]->Fill(lepton.Pt());
 			  CosThetaDiffVSRecoSignal->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
@@ -1477,20 +1645,526 @@ int main (int argc, char *argv[])
 			  if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) histo1D["CosThetaResSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
 			  if(CosThetaCalculation > 0.8) histo1D["CosThetaResFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
 
-			  //Histos using Pt </> 30 GeV events to investigate Trigger muon Pt constraint influence:
-			  if(leptonKinFit[JetCombination].Pt()<30){
-			    histo1D["CosThetaResNobTagPtSmaller30"]->Fill(CosThetaCalculation - CosThetaGenerator); 
-			    histo1D["CosThetaDistributionPtSmaller30"]->Fill(CosThetaCalculation);
-			    histo1D["CosThetaDistributionPtSmaller30Ratio"]->Fill(CosThetaCalculation);
-			    histo1D["CosThetaDistributionPtSmaller30Gen"]->Fill(CosThetaGenerator);
-			    CosThetaDiffVSRecoPtSmaller30->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			  //Histos using different muon Pt to determine optimal muon pt cut:
+			  if(leptonKinFit[JetCombination].Pt()>=10){ //No real difference in using leptonKinFit or muon since muon doesn't change much with KinFit!!
+			    histo1D["CosThetaDifferencePt10ToInf"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			    histo1D["CosThetaRecoPt10ToInf"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaRecoPt10ToInfForRatio"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaGenPt10ToInf"]->Fill(CosThetaGenerator);
+			    CosThetaDiffVSRecoPt10ToInf->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			    histo2D["CosThetaGenVsRecoPt10ToInf"]->Fill(CosThetaCalculation,CosThetaGenerator);
+
+			    if(CosThetaGenerator <= -0.8){
+			      TotalPt10ToInf[9]++;
+			      histo1D["CosThetaDiffPt10ToInfGenTenthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenTenthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[9][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[9][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[9][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[9][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[9][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[9][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[9][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[9][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[9][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[9][0]++;			      
+			    }	
+			    else if(CosThetaGenerator > -0.8 && CosThetaGenerator <= -0.6){
+			      TotalPt10ToInf[8]++;
+			      histo1D["CosThetaDiffPt10ToInfGenNinthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenNinthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[8][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[8][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[8][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[8][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[8][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[8][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[8][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[8][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[8][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[8][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.6 && CosThetaGenerator <= -0.4){
+			      TotalPt10ToInf[7]++;
+			      histo1D["CosThetaDiffPt10ToInfGenEighthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenEighthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[7][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[7][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[7][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[7][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[7][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[7][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[7][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[7][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[7][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[7][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.4 && CosThetaGenerator <= -0.2){
+			      TotalPt10ToInf[6]++;
+			      histo1D["CosThetaDiffPt10ToInfGenSeventhBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenSeventhBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[6][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[6][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[6][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[6][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[6][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[6][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[6][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[6][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[6][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[6][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.2 && CosThetaGenerator <= 0.){
+			      TotalPt10ToInf[5]++;
+			      histo1D["CosThetaDiffPt10ToInfGenSixthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenSixthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[5][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[5][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[5][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[5][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[5][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[5][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[5][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[5][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[5][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[5][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0. && CosThetaGenerator <= 0.2){
+			      TotalPt10ToInf[4]++;
+			      histo1D["CosThetaDiffPt10ToInfGenFifthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenFifthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[4][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[4][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[4][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[4][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[4][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[4][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[4][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[4][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[4][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[4][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.2 && CosThetaGenerator <= 0.4){
+			      TotalPt10ToInf[3]++;
+			      histo1D["CosThetaDiffPt10ToInfGenFourthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenFourthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[3][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[3][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[3][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[3][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[3][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[3][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[3][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[3][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[3][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[3][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.4 && CosThetaGenerator <= 0.6){
+			      TotalPt10ToInf[2]++;
+			      histo1D["CosThetaDiffPt10ToInfGenThirdBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenThirdBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[2][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[2][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[2][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[2][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[2][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[2][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[2][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[2][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[2][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[2][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.6 && CosThetaGenerator <= 0.8){
+			      TotalPt10ToInf[1]++;
+			      histo1D["CosThetaDiffPt10ToInfGenSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenSecondBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[1][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[1][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[1][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[1][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[1][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[1][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[1][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[1][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[1][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[1][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.8 && CosThetaGenerator <= 1.){
+			      TotalPt10ToInf[0]++;
+			      histo1D["CosThetaDiffPt10ToInfGenFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt10ToInfGenFirstBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt10ToInf[0][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt10ToInf[0][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt10ToInf[0][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt10ToInf[0][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt10ToInf[0][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt10ToInf[0][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt10ToInf[0][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt10ToInf[0][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt10ToInf[0][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt10ToInf[0][0]++;
+			    }	
+			      
 			  }
-			  if(leptonKinFit[JetCombination].Pt()>30){ 
-			    histo1D["CosThetaResNobTagPtLarger30"]->Fill(CosThetaCalculation - CosThetaGenerator); 
-			    histo1D["CosThetaDistributionPtLarger30"]->Fill(CosThetaCalculation);			    
-			    histo1D["CosThetaDistributionPtLarger30Ratio"]->Fill(CosThetaCalculation);			    
-			    histo1D["CosThetaDistributionPtLarger30Gen"]->Fill(CosThetaGenerator);			    
-			    CosThetaDiffVSRecoPtLarger30->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			  if(leptonKinFit[JetCombination].Pt()>=15){
+			    histo1D["CosThetaDifferencePt15ToInf"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			    histo1D["CosThetaRecoPt15ToInf"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaRecoPt15ToInfForRatio"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaGenPt15ToInf"]->Fill(CosThetaGenerator);
+			    CosThetaDiffVSRecoPt15ToInf->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			    histo2D["CosThetaGenVsRecoPt15ToInf"]->Fill(CosThetaCalculation,CosThetaGenerator);
+
+			    if(CosThetaGenerator <= -0.8){
+			      histo1D["CosThetaDiffPt15ToInfGenTenthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenTenthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.8 && CosThetaGenerator <= -0.6){
+			      histo1D["CosThetaDiffPt15ToInfGenNinthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenNinthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.6 && CosThetaGenerator <= -0.4){
+			      histo1D["CosThetaDiffPt15ToInfGenEighthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenEighthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.4 && CosThetaGenerator <= -0.2){
+			      histo1D["CosThetaDiffPt15ToInfGenSeventhBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenSeventhBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.2 && CosThetaGenerator <= 0.){
+			      histo1D["CosThetaDiffPt15ToInfGenSixthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenSixthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0. && CosThetaGenerator <= 0.2){
+			      histo1D["CosThetaDiffPt15ToInfGenFifthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenFifthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.2 && CosThetaGenerator <= 0.4){
+			      histo1D["CosThetaDiffPt15ToInfGenFourthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenFourthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.4 && CosThetaGenerator <= 0.6){
+			      histo1D["CosThetaDiffPt15ToInfGenThirdBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenThirdBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.6 && CosThetaGenerator <= 0.8){
+			      histo1D["CosThetaDiffPt15ToInfGenSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenSecondBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.8 && CosThetaGenerator <= 1.){
+			      histo1D["CosThetaDiffPt15ToInfGenFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt15ToInfGenFirstBin"]->Fill(CosThetaCalculation);
+			    }	
+
+			  }
+			  if(leptonKinFit[JetCombination].Pt()>=20){
+			    histo1D["CosThetaDifferencePt20ToInf"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			    histo1D["CosThetaRecoPt20ToInf"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaRecoPt20ToInfForRatio"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaGenPt20ToInf"]->Fill(CosThetaGenerator);
+			    CosThetaDiffVSRecoPt20ToInf->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			    histo2D["CosThetaGenVsRecoPt20ToInf"]->Fill(CosThetaCalculation,CosThetaGenerator);
+
+			    if(CosThetaGenerator <= -0.8){
+			      histo1D["CosThetaDiffPt20ToInfGenTenthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenTenthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.8 && CosThetaGenerator <= -0.6){
+			      histo1D["CosThetaDiffPt20ToInfGenNinthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenNinthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.6 && CosThetaGenerator <= -0.4){
+			      histo1D["CosThetaDiffPt20ToInfGenEighthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenEighthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.4 && CosThetaGenerator <= -0.2){
+			      histo1D["CosThetaDiffPt20ToInfGenSeventhBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenSeventhBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.2 && CosThetaGenerator <= 0.){
+			      histo1D["CosThetaDiffPt20ToInfGenSixthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenSixthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0. && CosThetaGenerator <= 0.2){
+			      histo1D["CosThetaDiffPt20ToInfGenFifthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenFifthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.2 && CosThetaGenerator <= 0.4){
+			      histo1D["CosThetaDiffPt20ToInfGenFourthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenFourthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.4 && CosThetaGenerator <= 0.6){
+			      histo1D["CosThetaDiffPt20ToInfGenThirdBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenThirdBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.6 && CosThetaGenerator <= 0.8){
+			      histo1D["CosThetaDiffPt20ToInfGenSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenSecondBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.8 && CosThetaGenerator <= 1.){
+			      histo1D["CosThetaDiffPt20ToInfGenFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt20ToInfGenFirstBin"]->Fill(CosThetaCalculation);
+			    }	
+
+			  }
+			  if(leptonKinFit[JetCombination].Pt()>=25){
+			    histo1D["CosThetaDifferencePt25ToInf"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			    histo1D["CosThetaRecoPt25ToInf"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaRecoPt25ToInfForRatio"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaGenPt25ToInf"]->Fill(CosThetaGenerator);
+			    CosThetaDiffVSRecoPt25ToInf->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			    histo2D["CosThetaGenVsRecoPt25ToInf"]->Fill(CosThetaCalculation,CosThetaGenerator);
+
+			    if(CosThetaGenerator <= -0.8){
+			      histo1D["CosThetaDiffPt25ToInfGenTenthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenTenthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.8 && CosThetaGenerator <= -0.6){
+			      histo1D["CosThetaDiffPt25ToInfGenNinthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenNinthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.6 && CosThetaGenerator <= -0.4){
+			      histo1D["CosThetaDiffPt25ToInfGenEighthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenEighthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.4 && CosThetaGenerator <= -0.2){
+			      histo1D["CosThetaDiffPt25ToInfGenSeventhBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenSeventhBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.2 && CosThetaGenerator <= 0.){
+			      histo1D["CosThetaDiffPt25ToInfGenSixthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenSixthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0. && CosThetaGenerator <= 0.2){
+			      histo1D["CosThetaDiffPt25ToInfGenFifthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenFifthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.2 && CosThetaGenerator <= 0.4){
+			      histo1D["CosThetaDiffPt25ToInfGenFourthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenFourthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.4 && CosThetaGenerator <= 0.6){
+			      histo1D["CosThetaDiffPt25ToInfGenThirdBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenThirdBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.6 && CosThetaGenerator <= 0.8){
+			      histo1D["CosThetaDiffPt25ToInfGenSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenSecondBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.8 && CosThetaGenerator <= 1.){
+			      histo1D["CosThetaDiffPt25ToInfGenFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt25ToInfGenFirstBin"]->Fill(CosThetaCalculation);
+			    }	
+
+			  }
+			  if(leptonKinFit[JetCombination].Pt()>=30){
+			    histo1D["CosThetaDifferencePt30ToInf"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			    histo1D["CosThetaRecoPt30ToInf"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaRecoPt30ToInfForRatio"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaGenPt30ToInf"]->Fill(CosThetaGenerator);
+			    CosThetaDiffVSRecoPt30ToInf->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			    histo2D["CosThetaGenVsRecoPt30ToInf"]->Fill(CosThetaCalculation,CosThetaGenerator);
+
+			    if(CosThetaGenerator <= -0.8){
+			      TotalPt30ToInf[9]++;
+			      histo1D["CosThetaDiffPt30ToInfGenTenthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenTenthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[9][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[9][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[9][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[9][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[9][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[9][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[9][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[9][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[9][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[9][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.8 && CosThetaGenerator <= -0.6){
+			      TotalPt30ToInf[8]++;
+			      histo1D["CosThetaDiffPt30ToInfGenNinthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenNinthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[8][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[8][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[8][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[8][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[8][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[8][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[8][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[8][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[8][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[8][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.6 && CosThetaGenerator <= -0.4){
+			      TotalPt30ToInf[7]++;
+			      histo1D["CosThetaDiffPt30ToInfGenEighthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenEighthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[7][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[7][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[7][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[7][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[7][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[7][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[7][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[7][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[7][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[7][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.4 && CosThetaGenerator <= -0.2){
+			      TotalPt30ToInf[6]++;
+			      histo1D["CosThetaDiffPt30ToInfGenSeventhBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenSeventhBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[6][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[6][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[6][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[6][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[6][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[6][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[6][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[6][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[6][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[6][0]++;
+			    }	
+			    else if(CosThetaGenerator > -0.2 && CosThetaGenerator <= 0.){
+			      TotalPt30ToInf[5]++;
+			      histo1D["CosThetaDiffPt30ToInfGenSixthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenSixthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[5][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[5][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[5][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[5][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[5][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[5][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[5][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[5][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[5][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[5][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0. && CosThetaGenerator <= 0.2){
+			      TotalPt30ToInf[4]++;
+			      histo1D["CosThetaDiffPt30ToInfGenFifthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenFifthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[4][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[4][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[4][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[4][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[4][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[4][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[4][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[4][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[4][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[4][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.2 && CosThetaGenerator <= 0.4){
+			      TotalPt30ToInf[3]++;
+			      histo1D["CosThetaDiffPt30ToInfGenFourthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenFourthBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[3][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[3][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[3][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[3][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[3][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[3][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[3][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[3][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[3][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[3][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.4 && CosThetaGenerator <= 0.6){
+			      TotalPt30ToInf[2]++;
+			      histo1D["CosThetaDiffPt30ToInfGenThirdBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenThirdBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[2][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[2][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[2][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[2][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[2][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[2][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[2][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[2][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[2][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[2][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.6 && CosThetaGenerator <= 0.8){
+			      TotalPt30ToInf[1]++;
+			      histo1D["CosThetaDiffPt30ToInfGenSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenSecondBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[1][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[1][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[1][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[1][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[1][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[1][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[1][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[1][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[1][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[1][0]++;
+			    }	
+			    else if(CosThetaGenerator > 0.8 && CosThetaGenerator <= 1.){
+			      TotalPt30ToInf[0]++;
+			      histo1D["CosThetaDiffPt30ToInfGenFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt30ToInfGenFirstBin"]->Fill(CosThetaCalculation);
+			      if(CosThetaCalculation <= -0.8) ProbabilityPt30ToInf[0][9]++;
+			      if(CosThetaCalculation > -0.8 && CosThetaCalculation <= -0.6) ProbabilityPt30ToInf[0][8]++;
+			      if(CosThetaCalculation > -0.6 && CosThetaCalculation <= -0.4) ProbabilityPt30ToInf[0][7]++;
+			      if(CosThetaCalculation > -0.4 && CosThetaCalculation <= -0.2) ProbabilityPt30ToInf[0][6]++;
+			      if(CosThetaCalculation > -0.2 && CosThetaCalculation <= 0.) ProbabilityPt30ToInf[0][5]++;
+			      if(CosThetaCalculation > 0. && CosThetaCalculation <= 0.2) ProbabilityPt30ToInf[0][4]++;
+			      if(CosThetaCalculation > 0.2 && CosThetaCalculation <= 0.4) ProbabilityPt30ToInf[0][3]++;
+			      if(CosThetaCalculation > 0.4 && CosThetaCalculation <= 0.6) ProbabilityPt30ToInf[0][2]++;
+			      if(CosThetaCalculation > 0.6 && CosThetaCalculation <= 0.8) ProbabilityPt30ToInf[0][1]++;
+			      if(CosThetaCalculation > 0.8 && CosThetaCalculation <= 1.) ProbabilityPt30ToInf[0][0]++;
+			    }	
+
+			  }
+			  if(leptonKinFit[JetCombination].Pt()>=35){
+			    histo1D["CosThetaDifferencePt35ToInf"]->Fill(CosThetaCalculation - CosThetaGenerator); 
+			    histo1D["CosThetaRecoPt35ToInf"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaRecoPt35ToInfForRatio"]->Fill(CosThetaCalculation);
+			    histo1D["CosThetaGenPt35ToInf"]->Fill(CosThetaGenerator);
+			    CosThetaDiffVSRecoPt35ToInf->Fill(CosThetaCalculation, (CosThetaCalculation - CosThetaGenerator) );
+			    histo2D["CosThetaGenVsRecoPt35ToInf"]->Fill(CosThetaCalculation,CosThetaGenerator);
+
+			    if(CosThetaGenerator <= -0.8){
+			      histo1D["CosThetaDiffPt35ToInfGenTenthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenTenthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.8 && CosThetaGenerator <= -0.6){
+			      histo1D["CosThetaDiffPt35ToInfGenNinthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenNinthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.6 && CosThetaGenerator <= -0.4){
+			      histo1D["CosThetaDiffPt35ToInfGenEighthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenEighthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.4 && CosThetaGenerator <= -0.2){
+			      histo1D["CosThetaDiffPt35ToInfGenSeventhBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenSeventhBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > -0.2 && CosThetaGenerator <= 0.){
+			      histo1D["CosThetaDiffPt35ToInfGenSixthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenSixthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0. && CosThetaGenerator <= 0.2){
+			      histo1D["CosThetaDiffPt35ToInfGenFifthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenFifthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.2 && CosThetaGenerator <= 0.4){
+			      histo1D["CosThetaDiffPt35ToInfGenFourthBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenFourthBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.4 && CosThetaGenerator <= 0.6){
+			      histo1D["CosThetaDiffPt35ToInfGenThirdBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenThirdBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.6 && CosThetaGenerator <= 0.8){
+			      histo1D["CosThetaDiffPt35ToInfGenSecondBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenSecondBin"]->Fill(CosThetaCalculation);
+			    }	
+			    else if(CosThetaGenerator > 0.8 && CosThetaGenerator <= 1.){
+			      histo1D["CosThetaDiffPt35ToInfGenFirstBin"]->Fill(CosThetaCalculation - CosThetaGenerator);
+			      histo1D["CosThetaRecoPt35ToInfGenFirstBin"]->Fill(CosThetaCalculation);
+			    }	
+			    
 			  }
 
 			  //Leptonic side of event correct/wrong reconstructed:
@@ -1769,6 +2443,59 @@ int main (int argc, char *argv[])
       std::cout << " fit values error 2 (before event selection) : " << helicityFit2->GetParError(0) << " " << helicityFit2->GetParError(1) << " " << helicityFit2->GetParError(2) << std::endl;
       cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;    
     }
+
+    cout << " " << endl;
+    cout << " oooooooooooOOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOOOOOOOOOOOOOOoooooooooooooooooooooooOOOOOOOOOOOOOOOOOOOOOOOOoooooooooooo " << endl;
+    cout << "                                               Probability matrix Reco vs Gen (Pt 10 To Inf)" << endl;
+    cout << "                                              ----------------------------------- " << endl;
+    cout << "    Gen " << endl;
+    cout << "    1    " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[0][9]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][8]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][7]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][6]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][5]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][4]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][3]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][2]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][1]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][0]/TotalPt10ToInf[0] << endl;
+    cout << "   0.8   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[1][9]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][8]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][7]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][6]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][5]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][4]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][3]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][2]/TotalPt10ToInf[1] << "  " << ProbabilityPt10ToInf[1][1]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][0]/TotalPt10ToInf[1] << endl;
+    cout << "   0.6   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[2][9]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][8]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][7]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][6]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][5]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][4]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][3]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][2]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][1]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][0]/TotalPt10ToInf[2] << endl;
+    cout << "   0.4   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[3][9]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][8]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][7]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][6]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][5]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][4]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][3]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][2]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][1]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][0]/TotalPt10ToInf[3] << endl;
+    cout << "   0.2   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[4][9]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][8]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][7]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][6]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][5]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][4]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][3]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][2]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][1]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][0]/TotalPt10ToInf[4] << endl;
+    cout << "   0.   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[5][9]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][8]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][7]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][6]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][5]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][4]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][3]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][2]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][1]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][0]/TotalPt10ToInf[5] << endl;
+    cout << "   -0.2   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[6][9]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][8]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][7]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][6]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][5]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][4]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][3]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][2]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][1]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][0]/TotalPt10ToInf[6] << endl;
+    cout << "   -0.4   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[7][9]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][8]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][7]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][6]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][5]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][4]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][3]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][2]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][1]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][0]/TotalPt10ToInf[7] << endl;
+    cout << "   -0.6   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[8][9]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][8]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][7]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][6]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][5]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][4]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][3]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][2]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][1]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][0]/TotalPt10ToInf[8] << endl;
+    cout << "   -0.8   " << endl;
+    cout << "         " <<  ProbabilityPt10ToInf[9][9]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][8]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][7]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][6]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][5]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][4]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][3]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][2]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][1]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][0]/TotalPt10ToInf[9] << endl;
+    cout << "   -1.  -1         -0.8         -0.6        -0.4         -0.2       0.        0.2           0.4          0.6           0.8          1      Reco" << endl;
+    cout << " " << endl;
+    cout << "                                               Probability matrix Reco vs Gen (Pt 30 To Inf)" << endl;
+    cout << "                                              ----------------------------------- " << endl;
+    cout << "    Gen " << endl;
+    cout << "    1    " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[0][9]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][8]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][7]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][6]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][5]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][4]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][3]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][2]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][1]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][0]/TotalPt30ToInf[0] << endl;
+    cout << "   0.8   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[1][9]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][8]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][7]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][6]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][5]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][4]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][3]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][2]/TotalPt30ToInf[1] << "  " << ProbabilityPt30ToInf[1][1]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][0]/TotalPt30ToInf[1] << endl;
+    cout << "   0.6   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[2][9]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][8]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][7]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][6]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][5]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][4]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][3]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][2]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][1]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][0]/TotalPt30ToInf[2] << endl;
+    cout << "   0.4   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[3][9]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][8]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][7]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][6]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][5]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][4]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][3]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][2]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][1]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][0]/TotalPt30ToInf[3] << endl;
+    cout << "   0.2   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[4][9]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][8]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][7]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][6]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][5]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][4]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][3]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][2]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][1]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][0]/TotalPt30ToInf[4] << endl;
+    cout << "   0.   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[5][9]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][8]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][7]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][6]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][5]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][4]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][3]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][2]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][1]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][0]/TotalPt30ToInf[5] << endl;
+    cout << "   -0.2   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[6][9]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][8]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][7]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][6]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][5]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][4]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][3]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][2]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][1]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][0]/TotalPt30ToInf[6] << endl;
+    cout << "   -0.4   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[7][9]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][8]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][7]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][6]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][5]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][4]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][3]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][2]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][1]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][0]/TotalPt30ToInf[7] << endl;
+    cout << "   -0.6   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[8][9]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][8]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][7]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][6]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][5]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][4]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][3]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][2]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][1]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][0]/TotalPt30ToInf[8] << endl;
+    cout << "   -0.8   " << endl;
+    cout << "         " <<  ProbabilityPt30ToInf[9][9]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][8]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][7]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][6]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][5]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][4]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][3]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][2]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][1]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][0]/TotalPt30ToInf[9] << endl;
+    cout << "   -1.  -1         -0.8         -0.6        -0.4         -0.2       0.        0.2           0.4          0.6           0.8          1      Reco" << endl;
+ 
     
     int TCHE=0;
     int TCHP=0;
@@ -1828,7 +2555,9 @@ int main (int argc, char *argv[])
 		  histo1D[CosThetaDataString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],scaleFactor*(LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii])*Luminosity*dataSet->NormFactor());    				
 		if(WSystResults == false && (dataSetName.find("Data") == 0 || dataSetName.find("JES") == 0)) //Nominal and JES systematics
 		  histo1D[CosThetaDataString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],scaleFactor*(LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii])*Luminosity*dataSet->NormFactor());    				
-		
+		if(SignalOnly == true && (dataSetName.find("TTbarJets_SemiMu") == 0)){
+		  histo1D[CosThetaDataString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],scaleFactor*(LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii])*Luminosity*dataSet->NormFactor());    				
+		}		
 		if(((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0)
 		  histo1D[CosThetaSignalString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],Luminosity*scaleFactor*(LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii])*NominalNormFactor);
 		else if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("Syst") != 0) 
@@ -2420,58 +3149,114 @@ int main (int argc, char *argv[])
 
   //Obtain TProfile histos for Reco-Gen vs Reco distribution:
   tprofdir->cd();
-  TCanvas *CosThetaDiffVSRecoCanvasSignal = new TCanvas("CosThetaDiffVSRecoCanvasSignal","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 20 to inf GeV");
-  TCanvas *CosThetaDiffVSRecoCanvasPtLarger30 = new TCanvas("CosThetaDiffVSRecoCanvasPtLarger30","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 30 to inf GeV");
-  TCanvas *CosThetaDiffVSRecoCanvasPtSmaller30 = new TCanvas("CosThetaDiffVSRecoCanvasPtSmaller30","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 20 to 30 Gev");
-  CosThetaDiffVSRecoCanvasSignal->cd();
-  CosThetaDiffVSRecoSignal->Draw();
-  CosThetaDiffVSRecoSignal->Write();
-  CosThetaDiffVSRecoCanvasSignal->Update();
-  CosThetaDiffVSRecoCanvasSignal->Write();
-  CosThetaDiffVSRecoCanvasSignal->SaveAs("CosThetaDiffVSRecoSignalProfile.png");
-  CosThetaDiffVSRecoCanvasSignal->SaveAs("CosThetaDiffVSRecoSignalProfile.root");
+  //TCanvas *CosThetaDiffVSRecoCanvasSignal = new TCanvas("CosThetaDiffVSRecoCanvasSignal","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 20 to inf GeV");
+  TCanvas *CosThetaDiffVSRecoCanvasPt10ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt10ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 10 to inf GeV");
+  TCanvas *CosThetaDiffVSRecoCanvasPt15ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt15ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 15 to inf GeV");
+  TCanvas *CosThetaDiffVSRecoCanvasPt20ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt20ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 20 to inf GeV");
+  TCanvas *CosThetaDiffVSRecoCanvasPt25ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt25ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 25 to inf GeV");
+  TCanvas *CosThetaDiffVSRecoCanvasPt30ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt30ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 30 to inf GeV");
+  TCanvas *CosThetaDiffVSRecoCanvasPt35ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt35ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 35 to inf GeV");
+//   CosThetaDiffVSRecoCanvasSignal->cd();
+//   CosThetaDiffVSRecoSignal->Draw();
+//   CosThetaDiffVSRecoSignal->Write();
+//   CosThetaDiffVSRecoCanvasSignal->Update();
+//   CosThetaDiffVSRecoCanvasSignal->Write();
+//   CosThetaDiffVSRecoCanvasSignal->SaveAs("CosThetaDiffVSRecoSignalProfile.png");
+//   CosThetaDiffVSRecoCanvasSignal->SaveAs("CosThetaDiffVSRecoSignalProfile.root");
 
-  CosThetaDiffVSRecoCanvasPtLarger30->cd();
-  CosThetaDiffVSRecoPtLarger30->Draw();
-  CosThetaDiffVSRecoPtLarger30->Write();
-  CosThetaDiffVSRecoCanvasPtLarger30->Update();
-  CosThetaDiffVSRecoCanvasPtLarger30->Write();
-  CosThetaDiffVSRecoCanvasPtLarger30->SaveAs("CosThetaDiffVSRecoPtLarger30Profile.png");
-  CosThetaDiffVSRecoCanvasPtLarger30->SaveAs("CosThetaDiffVSRecoPtLarger30Profile.root");
+  CosThetaDiffVSRecoCanvasPt10ToInf->cd();
+  CosThetaDiffVSRecoPt10ToInf->Draw();
+  CosThetaDiffVSRecoPt10ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt10ToInf->Update();
+  CosThetaDiffVSRecoCanvasPt10ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt10ToInf->SaveAs("CosThetaDiffVSRecoPt10ToInfProfile.png");
+  CosThetaDiffVSRecoCanvasPt10ToInf->SaveAs("CosThetaDiffVSRecoPt10ToInfProfile.root");
 
-  CosThetaDiffVSRecoCanvasPtSmaller30->cd();
-  CosThetaDiffVSRecoPtSmaller30->Draw();
-  CosThetaDiffVSRecoPtSmaller30->Write();
-  CosThetaDiffVSRecoCanvasPtSmaller30->Update();
-  CosThetaDiffVSRecoCanvasPtSmaller30->Write();
-  CosThetaDiffVSRecoCanvasPtSmaller30->SaveAs("CosThetaDiffVSRecoPtSmaller30Profile.png");
-  CosThetaDiffVSRecoCanvasPtSmaller30->SaveAs("CosThetaDiffVSRecoPtSmaller30Profile.root");
+  CosThetaDiffVSRecoCanvasPt15ToInf->cd();
+  CosThetaDiffVSRecoPt15ToInf->Draw();
+  CosThetaDiffVSRecoPt15ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt15ToInf->Update();
+  CosThetaDiffVSRecoCanvasPt15ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt15ToInf->SaveAs("CosThetaDiffVSRecoPt15ToInfProfile.png");
+  CosThetaDiffVSRecoCanvasPt15ToInf->SaveAs("CosThetaDiffVSRecoPt15ToInfProfile.root");
+
+  CosThetaDiffVSRecoCanvasPt20ToInf->cd();
+  CosThetaDiffVSRecoPt20ToInf->Draw();
+  CosThetaDiffVSRecoPt20ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt20ToInf->Update();
+  CosThetaDiffVSRecoCanvasPt20ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt20ToInf->SaveAs("CosThetaDiffVSRecoPt20ToInfProfile.png");
+  CosThetaDiffVSRecoCanvasPt20ToInf->SaveAs("CosThetaDiffVSRecoPt20ToInfProfile.root");
+
+  CosThetaDiffVSRecoCanvasPt25ToInf->cd();
+  CosThetaDiffVSRecoPt25ToInf->Draw();
+  CosThetaDiffVSRecoPt25ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt25ToInf->Update();
+  CosThetaDiffVSRecoCanvasPt25ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt25ToInf->SaveAs("CosThetaDiffVSRecoPt25ToInfProfile.png");
+  CosThetaDiffVSRecoCanvasPt25ToInf->SaveAs("CosThetaDiffVSRecoPt25ToInfProfile.root");
+
+  CosThetaDiffVSRecoCanvasPt30ToInf->cd();
+  CosThetaDiffVSRecoPt30ToInf->Draw();
+  CosThetaDiffVSRecoPt30ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt30ToInf->Update();
+  CosThetaDiffVSRecoCanvasPt30ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt30ToInf->SaveAs("CosThetaDiffVSRecoPt30ToInfProfile.png");
+  CosThetaDiffVSRecoCanvasPt30ToInf->SaveAs("CosThetaDiffVSRecoPt30ToInfProfile.root");
+
+  CosThetaDiffVSRecoCanvasPt35ToInf->cd();
+  CosThetaDiffVSRecoPt35ToInf->Draw();
+  CosThetaDiffVSRecoPt35ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt35ToInf->Update();
+  CosThetaDiffVSRecoCanvasPt35ToInf->Write();
+  CosThetaDiffVSRecoCanvasPt35ToInf->SaveAs("CosThetaDiffVSRecoPt35ToInfProfile.png");
+  CosThetaDiffVSRecoCanvasPt35ToInf->SaveAs("CosThetaDiffVSRecoPt35ToInfProfile.root");
 
   th1dir->cd();
 
   //Calculate ratio histos for cos theta distribution reco/gen for different muon pt cuts:
-  cout << " Calculating ratio histos " << endl;
-  //1) Muon Pt 20 - 30 Gev
-  histo1D["CosThetaRatioMuon20To30"] = (TH1F*) histo1D["CosThetaDistributionPtSmaller30Ratio"]->Clone();
-  histo1D["CosThetaRatioMuon20To30"]->Divide(histo1D["CosThetaDistributionPtSmaller30Gen"]);
-  histo1D["CosThetaRatioMuon20To30"]->SaveAs("CosThetaRatioMuon20To30.root");
-  histo1D["CosThetaRatioMuon20To30"]->SaveAs("CosThetaRatioMuon20To30.png");
-  histo1D["CosThetaRatioMuon20To30"]->Write();
+//   histo1D["CosThetaRatioMuon20To30"] = (TH1F*) histo1D["CosThetaDistributionPtSmaller30Ratio"]->Clone();
+//   histo1D["CosThetaRatioMuon20To30"]->Divide(histo1D["CosThetaDistributionPtSmaller30Gen"]);
+//   histo1D["CosThetaRatioMuon20To30"]->SaveAs("CosThetaRatioMuon20To30.root");
+//   histo1D["CosThetaRatioMuon20To30"]->SaveAs("CosThetaRatioMuon20To30.png");
+//   histo1D["CosThetaRatioMuon20To30"]->Write();
 
-  //2) Muon Pt 20 - inf GeV
-  histo1D["CosThetaRatioMuon20ToInf"] = (TH1F*) histo1D["CosThetaDistributionSignalRatio"]->Clone();
-  histo1D["CosThetaRatioMuon20ToInf"]->Divide(histo1D["CosThetaDistributionSignalGen"]);
+  histo1D["CosThetaRatioMuon10ToInf"] = (TH1F*) histo1D["CosThetaRecoPt10ToInfForRatio"]->Clone();
+  histo1D["CosThetaRatioMuon10ToInf"]->Divide(histo1D["CosThetaGenPt10ToInf"]);
+  histo1D["CosThetaRatioMuon10ToInf"]->SaveAs("CosThetaRatioMuon10ToInf.root");
+  histo1D["CosThetaRatioMuon10ToInf"]->SaveAs("CosThetaRatioMuon10ToInf.png");
+  histo1D["CosThetaRatioMuon10ToInf"]->Write();
+
+  histo1D["CosThetaRatioMuon15ToInf"] = (TH1F*) histo1D["CosThetaRecoPt15ToInfForRatio"]->Clone();
+  histo1D["CosThetaRatioMuon15ToInf"]->Divide(histo1D["CosThetaGenPt15ToInf"]);
+  histo1D["CosThetaRatioMuon15ToInf"]->SaveAs("CosThetaRatioMuon15ToInf.root");
+  histo1D["CosThetaRatioMuon15ToInf"]->SaveAs("CosThetaRatioMuon15ToInf.png");
+  histo1D["CosThetaRatioMuon15ToInf"]->Write();
+
+  histo1D["CosThetaRatioMuon20ToInf"] = (TH1F*) histo1D["CosThetaRecoPt20ToInfForRatio"]->Clone();
+  histo1D["CosThetaRatioMuon20ToInf"]->Divide(histo1D["CosThetaGenPt20ToInf"]);
   histo1D["CosThetaRatioMuon20ToInf"]->SaveAs("CosThetaRatioMuon20ToInf.root");
   histo1D["CosThetaRatioMuon20ToInf"]->SaveAs("CosThetaRatioMuon20ToInf.png");
   histo1D["CosThetaRatioMuon20ToInf"]->Write();
-  
-  //3) Muon Pt 30 - inf GeV
-  histo1D["CosThetaRatioMuon30ToInf"] = (TH1F*) histo1D["CosThetaDistributionPtLarger30Ratio"]->Clone();
-  histo1D["CosThetaRatioMuon30ToInf"]->Divide(histo1D["CosThetaDistributionPtLarger30Gen"]);
+
+  histo1D["CosThetaRatioMuon25ToInf"] = (TH1F*) histo1D["CosThetaRecoPt25ToInfForRatio"]->Clone();
+  histo1D["CosThetaRatioMuon25ToInf"]->Divide(histo1D["CosThetaGenPt25ToInf"]);
+  histo1D["CosThetaRatioMuon25ToInf"]->SaveAs("CosThetaRatioMuon25ToInf.root");
+  histo1D["CosThetaRatioMuon25ToInf"]->SaveAs("CosThetaRatioMuon25ToInf.png");
+  histo1D["CosThetaRatioMuon25ToInf"]->Write();
+
+  histo1D["CosThetaRatioMuon30ToInf"] = (TH1F*) histo1D["CosThetaRecoPt30ToInfForRatio"]->Clone();
+  histo1D["CosThetaRatioMuon30ToInf"]->Divide(histo1D["CosThetaGenPt30ToInf"]);
   histo1D["CosThetaRatioMuon30ToInf"]->SaveAs("CosThetaRatioMuon30ToInf.root");
-  histo1D["CosThetaRatioMuon30ToInf"]->SaveAs("CosThetaRatioMuon30ToInf.png"); 
+  histo1D["CosThetaRatioMuon30ToInf"]->SaveAs("CosThetaRatioMuon30ToInf.png");
   histo1D["CosThetaRatioMuon30ToInf"]->Write();
 
+  histo1D["CosThetaRatioMuon35ToInf"] = (TH1F*) histo1D["CosThetaRecoPt35ToInfForRatio"]->Clone();
+  histo1D["CosThetaRatioMuon35ToInf"]->Divide(histo1D["CosThetaGenPt35ToInf"]);
+  histo1D["CosThetaRatioMuon35ToInf"]->SaveAs("CosThetaRatioMuon35ToInf.root");
+  histo1D["CosThetaRatioMuon35ToInf"]->SaveAs("CosThetaRatioMuon35ToInf.png");
+  histo1D["CosThetaRatioMuon35ToInf"]->Write();
+  
   //Write resolution histos for separate bins in one canvas:
   TCanvas *ResolutionBinsNegCanvas = new TCanvas("ResolutionBinsNegCanvas","Resolution histos for separate bins (neg)");
   TCanvas *ResolutionBinsCanvas = new TCanvas("ResolutionBinsCanvas","Resolution histos for separate bins");
