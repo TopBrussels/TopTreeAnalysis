@@ -111,7 +111,7 @@ int main (int argc, char *argv[])
 		|| systematic == "PUPlus" || systematic == "PUMinus" || systematic == "Scaleup" || systematic == "Scaledown" ||systematic == "Matchingup" || systematic == "Matchingdown" ))
   {
     cout << "Unknown systematic!!!" << endl;
-    cout << "Possible options are: Nominal JESPlus JESMinus JERPlus JERMinus bTagPlus bTagMinus misTagPlus misTagMinus PUPlus PUMinus" << endl;
+    cout << "Possible options are: Nominal JESPlus JESMinus JERPlus JERMinus bTagPlus bTagMinus misTagPlus misTagMinus PUPlus PUMinus Scaleup Scaledown Matchingup Matchingdown" << endl;
     exit(-1);
   }	  
 
@@ -139,13 +139,12 @@ int main (int argc, char *argv[])
   string inputpostfixOld = ""; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
-  //string Treespath = "/user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/InclFourthGenTrees_Fall11_3Apr";
-  string Treespath = "InclFourthGenTrees_Fall11_28Apr_TTJetsSystematics";
-	Treespath = Treespath + "/"; 		
+  string Treespath = "InclFourthGenTrees_Fall11_3May"; //copy from 3Apr trees and the 1May WNJetsRun from Gerrit
+  Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_28Apr_TTJetsSystematics";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_8May";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -243,12 +242,12 @@ int main (int argc, char *argv[])
   float Luminosity = anaEnvLuminosity;
   for (unsigned int d = 0; d < datasets.size (); d++)
   {
-    	string dataSetName = datasets[d]->Name();
-	if(dataSetName.find("Data")<=0 || dataSetName.find("data")<=0 || dataSetName.find("DATA")<=0)
-	{
+    string dataSetName = datasets[d]->Name();
+		if(dataSetName.find("Data")<=0 || dataSetName.find("data")<=0 || dataSetName.find("DATA")<=0)
+		{
 		  Luminosity = datasets[d]->EquivalentLumi();
 		  break;
-	 }
+		}
   }
   if(Luminosity != anaEnvLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
 	
@@ -801,7 +800,10 @@ int main (int argc, char *argv[])
 			  isSemiLep_MC = true;
 			
 			float met = (myBranch_selectedEvents->met()).Et();
-      vector<TLorentzVector> selectedJets = myBranch_selectedEvents->selectedJets();
+			//if(fabs(met-(myBranch_selectedEvents->met()).Pt())<0.001) 
+			//	cout << "MET.Et() " << met << " and MET.Pt() " << (myBranch_selectedEvents->met()).Pt() << endl;
+			
+			vector<TLorentzVector> selectedJets = myBranch_selectedEvents->selectedJets();
 			vector<TLorentzVector> selectedForwardJets = myBranch_selectedEvents->selectedForwardJets();
 			vector<TLorentzVector> selectedMuons = myBranch_selectedEvents->selectedMuons();
 			vector<TLorentzVector> selectedElectrons = myBranch_selectedEvents->selectedElectrons();
@@ -879,7 +881,7 @@ int main (int argc, char *argv[])
 				continue;
 			}
 
-			
+/*			
 			if(isSSLepton && dataSetName=="Data"){
 				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
 				if(isSSElectron && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
@@ -888,16 +890,16 @@ int main (int argc, char *argv[])
 			}else if(isTriLepton && dataSetName=="Data" && systematic=="Nominal"){
 				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			}
-
-/*			if(isSSLepton && selectedJets.size()>=4 && dataSetName=="Data"){
+*/
+			if(isSSLepton && selectedJets.size()>=4 && dataSetName=="Data"){
 				if(isSSMuon && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " mm" << "\n"; 
 				if(isSSElectron && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " ee" << "\n"; 
 				if(isSSMuEl && systematic=="Nominal") myfile1 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << " me" << "\n"; 
 			
-			}else if(isTriLepton && dataSetName=="Data" && systematic=="Nominal"){
+			}else if(isTriLepton && selectedJets.size()>=2 && dataSetName=="Data" && systematic=="Nominal"){
 				myfile2 << "Run: " << myBranch_selectedEvents->runID() << " Evt: " << myBranch_selectedEvents->eventID() << " Lumi: " << myBranch_selectedEvents->lumiBlockID() << "\n"; 
 			}
-*/
+
 					
 			bool TprimeEvaluation = false;
 			//////////////////////////////////////////////////////////////////////////
@@ -1089,8 +1091,8 @@ int main (int argc, char *argv[])
 				}			
 			}			
 			
-			if(isSSLepton)
-//			if(isSSLepton && selectedJets.size()>=4)
+//			if(isSSLepton)
+			if(isSSLepton && selectedJets.size()>=4)
 			{
 				//cout << "IS SAME-SIGN LEPTON EVENT" << endl;
 				NbSSevents = NbSSevents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
@@ -1120,7 +1122,7 @@ int main (int argc, char *argv[])
 					selecTableMultiLep.Fill(d,3,scaleFactor);
 				}	
 			}
-			if(isTriLepton)
+			if(isTriLepton && selectedJets.size()>=2)
 			{
 				//cout << "IS TRI-LEPTON EVENT" << endl;
 				NbTrievents = NbTrievents + datasets[d]->NormFactor()*Luminosity*scaleFactor;
@@ -2095,7 +2097,7 @@ int main (int argc, char *argv[])
     {
         MultiSamplePlot *temp = it->second;
         string name = it->first;
-        temp->Draw(false, name, true, true, true, true, true,5,false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
+        temp->Draw(false, name, true, true, true, true, true,5 , false, true, true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV)
         temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     cout << "MultiSamplePlots written" << endl;
