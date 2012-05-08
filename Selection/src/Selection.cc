@@ -49,9 +49,9 @@ Selection::Selection(const Selection& s) {
   setMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_,s.MuonDRJetsCut_,s.MuonNMatchedStations_,s.MuonDistVzPVz_,s.MuonNTrackerLayersWithMeasurement_);
   setDiMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_);
   setLooseMuonCuts(s.JetPtThreshold_,s.JetEtaThreshold_,s.MuonRelIso_);
-  setElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronDistVzPVz_,s.ElectronDRJetsCut_);
+  setElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronMVAId_,s.ElectronDistVzPVz_,s.ElectronDRJetsCut_);
   setDiElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronDistVzPVz_);
-  setLooseElectronCuts(s.ElectronLooseEtThreshold_,s.ElectronLooseEtaThreshold_,s.ElectronLooseRelIso_);
+  setLooseElectronCuts(s.ElectronLooseEtThreshold_,s.ElectronLooseEtaThreshold_,s.ElectronLooseRelIso_,s.ElectronLooseMVAId_);
 }
 
 //______________________________________________________________________//
@@ -84,27 +84,18 @@ void Selection::setJetCuts() {
   setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1); // refSelV4 values
 }
 
-void Selection::setElectronCuts(float Et, float Eta, float RelIso, float d0, float DistVzPVz, float DRJets) {
+void Selection::setElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets) {
   ElectronEtThreshold_ = Et;
   ElectronEtaThreshold_ = Eta;
   ElectronRelIso_ = RelIso;
   Electrond0Cut_ = d0;
   ElectronDistVzPVz_ = DistVzPVz;
   ElectronDRJetsCut_ = DRJets;
-
-  // setup VBTF cuts (DO NOT TOUCH)
-  cutsVBTFWP80["sigmaIEtaIEta_B"]=0.01;
-  cutsVBTFWP80["deltaPhi_B"]=0.06;
-  cutsVBTFWP80["deltaETA_B"]=0.004;
-  cutsVBTFWP80["HoverE_B"]=0.04;
-  cutsVBTFWP80["sigmaIEtaIEta_E"]=0.03;
-  cutsVBTFWP80["deltaPhi_E"]=0.03;
-  cutsVBTFWP80["deltaETA_E"]=0.007;
-  cutsVBTFWP80["HoverE_E"]=0.025;
+  ElectronMVAId_ = MVAId_;
 }
 
 void Selection::setElectronCuts() {
-  setElectronCuts(20,2.5,0.125,0.02,1,0.3);
+  setElectronCuts(35,2.5,0.1,0.02,0.,1,0.3);
 }
 
 
@@ -114,17 +105,6 @@ void Selection::setDiElectronCuts(float Et, float Eta, float RelIso, float d0, f
   ElectronRelIso_ = RelIso;
   Electrond0Cut_ = d0;
   ElectronDistVzPVz_ = DistVzPVz;
-
-  // setup VBTF cuts (DO NOT TOUCH)
-  cutsVBTFWP70["sigmaIEtaIEta_B"]=0.01;
-  cutsVBTFWP70["deltaPhi_B"]=0.03;
-  cutsVBTFWP70["deltaETA_B"]=0.004;
-  cutsVBTFWP70["HoverE_B"]=0.025;
-  cutsVBTFWP70["sigmaIEtaIEta_E"]=0.03;
-  cutsVBTFWP70["deltaPhi_E"]=0.02;
-  cutsVBTFWP70["deltaETA_E"]=0.005;
-  cutsVBTFWP70["HoverE_E"]=0.025;
-
 }
 
 void Selection::setDiElectronCuts() {
@@ -132,24 +112,15 @@ void Selection::setDiElectronCuts() {
 }
 
 
-void Selection::setLooseElectronCuts(float Et, float Eta, float RelIso) {
+void Selection::setLooseElectronCuts(float Et, float Eta, float RelIso, float MVAId_) {
   ElectronLooseEtThreshold_ = Et;
   ElectronLooseEtaThreshold_ = Eta;
   ElectronLooseRelIso_ = RelIso;
-  
-  // setup VBTF cuts (DO NOT TOUCH)
-  cutsVBTFWP95["sigmaIEtaIEta_B"]=0.01;
-  cutsVBTFWP95["deltaPhi_B"]=0.8;
-  cutsVBTFWP95["deltaETA_B"]=0.007;
-  cutsVBTFWP95["HoverE_B"]=0.15;
-  cutsVBTFWP95["sigmaIEtaIEta_E"]=0.03;
-  cutsVBTFWP95["deltaPhi_E"]=0.7;
-  cutsVBTFWP95["deltaETA_E"]=0.01;
-  cutsVBTFWP95["HoverE_E"]=0.07;
+  ElectronLooseMVAId_ = MVAId_;
 }
 
 void Selection::setLooseElectronCuts() {
-  setLooseElectronCuts(15,2.5,0.2); // refSelV4 (mu) values
+  setLooseElectronCuts(20,2.5,0.2,0.); // refSel 2012 values
 }
 
 void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NTrackerLayersWithMeas) {
@@ -165,7 +136,7 @@ void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, f
 }
 
 void Selection::setMuonCuts() {
-  setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1); // 2012 values
+  setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,5); // 2012 values
 }
 
 void Selection::setDiMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0) {
@@ -194,33 +165,6 @@ void Selection::setLooseMuonCuts() {
 //______________________________________________________________________//
 
 //__EXTRA METHODS_______________________________________________________//
-
-bool passVBTFID(TRootElectron* el, std::map<std::string,float> cuts) {
-
-  //try the cuts manually
-  bool passvbtf = false;
-  
-  float sigmaiEtaiEta = el->sigmaIEtaIEta();
-  float deltaPhi = el->deltaPhiIn();
-  float deltaETA = el->deltaEtaIn();
-  float HoverE = el->hadronicOverEm();
-
-  if (fabs(el->superClusterEta()) < 1.4442)
-    if (sigmaiEtaiEta <  cuts["sigmaIEtaIEta_B"])
-      if (fabs(deltaPhi) < cuts["deltaPhi_B"])
-	if (fabs(deltaETA) < cuts["deltaETA_B"])
-	  if (HoverE < cuts["HoverE_B"])
-	    passvbtf=true;
-  
-  if (fabs(el->superClusterEta()) > 1.5660)
-    if (sigmaiEtaiEta <  cuts["sigmaIEtaIEta_E"])
-      if (fabs(deltaPhi) < cuts["deltaPhi_E"])
-        if (fabs(deltaETA) < cuts["deltaETA_E"])
-	  if (HoverE < cuts["HoverE_E"])
-	    passvbtf=true;
-
-  return passvbtf;
-}
 
 //______________________________________________________________________//
 
@@ -562,7 +506,7 @@ std::vector<TRootMuon*> Selection::GetSelectedMuonsIsoRange(float PtThr, float E
 }
   
   // ______________ELECTRONS____________________________________________//
-  
+
 bool Selection::passConversionRejection(TRootElectron* electron)
 {
   bool passed = false;
@@ -658,25 +602,25 @@ bool Selection::foundZCandidate(std::vector<TRootMuon*>& muons1, std::vector<TRo
   return foundZ;
 }
 
-std::vector<TRootElectron*> Selection::GetSelectedElectrons(float EtThr, float EtaThr, float ElectronRelIso) const {
+std::vector<TRootElectron*> Selection::GetSelectedElectrons(float PtThr, float EtaThr, float ElectronRelIso) const {
   std::vector<TRootElectron*> selectedElectrons;
   //cout << ElectronRelIso << endl;
   for(unsigned int i=0;i<electrons.size();i++)
   {
     TRootElectron* el = (TRootElectron*) electrons[i];
+
     //Compute isolation
 //    float RelIso = (el->caloIso(3)+el->trackerIso(3)) / el->Et();
     //float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
-    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt();
-    //try the cuts manually
-    bool passvbtf = passVBTFID(el,cutsVBTFWP80);
-    // supercluster eta cut -> EB-EE transition region
-    if(el->Pt() > EtThr && fabs(el->Eta())< EtaThr)
+    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt(); // dBeta corrected
+
+    if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
+      if (fabs(el->superClusterEta()) < 1.4442 || fabs(el->superClusterEta()) > 1.5660)
     	if ( fabs(el->d0()) < Electrond0Cut_ )
-    	  if ( RelIso < ElectronRelIso )
-    	    if (passvbtf)
-//      	    if((fabs(el->Dist()) >= 0.02 || fabs(el->DCot()) >= 0.02) && el->missingHits() == 0) 
-      	      selectedElectrons.push_back(electrons[i]);
+    	    if (el->passConversion())
+	      if (el->mvaTrigId() > ElectronMVAId_)
+		if ( RelIso < ElectronRelIso )
+		  selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
   return selectedElectrons;
@@ -739,7 +683,6 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float
     int eidBit = 0;//el->CiCTightId();
     int eidBitMask = 5; // id + conv rejection, 
     bool passEId = ((eidBit & eidBitMask) == eidBitMask);
-    // bool passvbtf = passVBTFID(el,cutsVBTFWP70);
     
     if(el->Et() > EtThr && fabs(el->Eta())< EtaThr)
       if ( fabs(el->superClusterEta()) > 1.5660 ||  fabs(el->superClusterEta()) < 1.4442 )
@@ -776,7 +719,7 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float
 }
 
 //
-std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float EtThr, float EtaThr, float ElectronRelIso, bool vbtfid) const {
+std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, float EtaThr, float ElectronRelIso, bool vbtfid) const {
   std::vector<TRootElectron*> selectedElectrons;
   for(unsigned int i=0;i<electrons.size();i++){
     TRootElectron* el = (TRootElectron*) electrons[i];
@@ -785,13 +728,12 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float EtThr, fl
     //float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
     float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt();
 
-    //try the cuts manually
-    //bool passvbtf = passVBTFID(el,cutsVBTFWP95);
-    
-    if(el->Pt() > EtThr && fabs(el->Eta()) < EtaThr  && RelIso < ElectronRelIso)
-      //if (!vbtfid || (vbtfid && passvbtf))
-      if (!vbtfid || (vbtfid && el->mvaTrigId()>0) )
-	selectedElectrons.push_back(electrons[i]);
+    if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
+      if (fabs(el->superClusterEta()) < 1.4442 || fabs(el->superClusterEta()) > 1.5660)
+    	if ( fabs(el->d0()) < Electrond0Cut_ )
+	  if (!vbtfid || (vbtfid && el->mvaTrigId()>ElectronLooseMVAId_) )
+	    if ( RelIso < ElectronRelIso )
+	      selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
   return selectedElectrons;
