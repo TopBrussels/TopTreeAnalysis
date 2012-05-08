@@ -50,7 +50,7 @@ int main() {
   // Configuration
   /////////////////////
 
-    unsigned int lepton = 1; // 0 = muon+jets 1= electron +jets
+    unsigned int lepton = 0; // 0 = muon+jets 1= electron +jets
 
   //xml file
   string xmlfile ="../config/myRefSelconfig.xml";
@@ -107,6 +107,7 @@ int main() {
   vector < TRootElectron* > init_electrons;
   vector < TRootJet* > init_jets;
   vector < TRootMET* > mets;
+      vector < TRootGenJet* > genjets;
 
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
   //Global variable
@@ -142,6 +143,8 @@ int main() {
     CutsSelecTable.push_back(string(LabelNJets));
     sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets);
     CutsSelecTable.push_back(string(LabelNJets));
+
+    CutsSelecTable.push_back("$\\geq$ 1 CSVM tag");
   } else if (lepton == 1){
     cout << " - Preparing the cutflow table for e+jets refSelV4" << endl;
     CutsSelecTable.push_back(string("initial"));
@@ -173,10 +176,33 @@ int main() {
   if (verbose > 0)
     cout << " - CutsSelectionTable instantiated ... size: " << CutsSelecTable.size() <<endl;
   SelectionTable selecTable(CutsSelecTable, datasets);
-  //selecTable.SetLuminosity(Luminosity);
+  selecTable.SetLuminosity(Luminosity);
   if (verbose > 0)
     cout << " - SelectionTable instantiated ..." << endl;
 
+
+  vector<JetCorrectorParameters> vCorrParam;
+
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
+
+    //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vCorrParam.push_back(*L1JetPar);
+    vCorrParam.push_back(*L2JetPar);
+    vCorrParam.push_back(*L3JetPar);
+
+ 
+  //vCorrParam.push_back(new JetCorrectorParameters());
+
+    JetCorrectionUncertainty *jecUnc = NULL;
+
+    // true means redo also the L1
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
+    
+    ////////////////////////////////////////////////////////////
+    // CREATE OUTPUT FILE AND TTREE FOR STORAGE OF THE NTUPLE //
+    ////////////////////////////////////////////////////////////
 
   ////////////////////////////////////
   //	Loop on datasets
@@ -195,7 +221,7 @@ int main() {
     cout<<"LoadEvent"<<endl;
     treeLoader.LoadDataset (datasets[d], anaEnv);
 
-    //selecTable.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
+    //seleTable.Fill(d,0, datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
 
     string dataSetName = datasets[d]->Name();
 
@@ -210,9 +236,6 @@ int main() {
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
 //    for (unsigned int ievt = 0; ievt < 50000; ievt++)
     {
-
-      selecTable.Fill(d,0,1.);
-
       
       //nEvents[d]++;
 
@@ -220,12 +243,28 @@ int main() {
       //cout << "anaEnv.METType -> " << anaEnv.METType << " --- " <<  endl;
 
 
-      if(ievt%500 == 0)
-        std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
+      //if(ievt%500 == 0)
+      //std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
         
       //load event
 
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
+
+      //jetTools->unCorrectJets(init_jets,false);
+
+      //cout << mets.size() << endl;
+
+      // check with genEvent which ttbar channel it is
+      
+      /*if(dataSetName.find("TTbarJets") == 0)  {
+	//cout << "Loading GenEvent" << endl;
+        TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
+        if( ! genEvt->isSemiLeptonic(TRootGenEvent::kMuon) ) {
+	  continue;
+	}
+	}*/
+
+      selecTable.Fill(d,0,1.);
 
       /////////////
       // TRIGGER //
@@ -240,9 +279,11 @@ int main() {
 	//if(previousRun != currentRun) {
 	//  previousRun = currentRun;
 	//cout << currentRun << endl;
-	itrigger = treeLoader.iTrigger ("HLT_Mu9", currentRun);
+	itrigger = treeLoader.iTrigger ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2", currentRun,0);
+	//itrigger = treeLoader.iTrigger ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2", currentRun,0);
+	//itrigger = treeLoader.iTrigger ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v4", currentRun);
 	//}
-	
+
 	trigged = treeLoader.EventTrigged (itrigger);
 	
 	//} else 
@@ -253,7 +294,7 @@ int main() {
 
 	trigged=false;
 	
-	if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") {
+	/*if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") {
 	  
 	  // SHOULD BE CHECKED ?!
 	  std::map<std::string,std::vector<double> > filters= event->getTriggerFilters();
@@ -272,9 +313,18 @@ int main() {
 	    trigged=false;
 	  
 	}
-	else
+	else*/
 	  trigged=true;
       }
+      
+      //jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+
+      if(! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
+        genjets = treeLoader.LoadGenJet(ievt,false);
+        sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
+      }
+
+      //jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 
       /////////////////////////////
       //   Selection
@@ -295,55 +345,129 @@ int main() {
 	
 	if(trigged){
 	  selecTable.Fill(d,1,1.);
-	  
+ 	  
 	  if(isGoodPV){
 	    selecTable.Fill(d,2,1.);
 	    
 	    vector<TRootJet*> selectedJets;
 	    vector<TRootMuon*> selectedMuons;
-	   
-	    bool doPF2PAT = false; // not supported/synced atm...
+	    
+	    selection.setJetCuts(35.,2.5,0.01,1.,0.98,0.3,0.1);
+	    selection.setMuonCuts(20,2.1,0.125,0,0.02,0.3,1,1,5);
+	    selection.setLooseMuonCuts(10,2.5,0.2);
+	    selection.setLooseElectronCuts(20,2.5,0.2); // semiMu looseElectron cuts
 
-	    if (init_jets.size() > 0) {
-	      if (init_jets[0]->jetType() == 1 || doPF2PAT) { // calojets
-		//cout << "Selecting for caloJets" << endl;
-		selectedJets = selection.GetSelectedJets(true);
-		selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
-	      }	else {
-		//cout << "Selecting for PF/JPT jets" << endl;
-		vector<TRootMuon*> overlapMuons = selection.GetSelectedMuons(vertex[0]);
-		//selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1); // refSelV4 values
-		selectedJets = selection.GetSelectedJets(overlapMuons,true);
-		selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);	
-	      }
-	    }
+	    selectedJets = selection.GetSelectedJets(true);
+	    selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
 
 	    vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons();
 	    vector<TRootElectron*> vetoElectrons = selection.GetSelectedLooseElectrons(false);
 
+	    //cout << event->runId() << " : " << event->eventId() << " : " << event->lumiBlockId() << endl;
+
+	    //cout << "" << endl;
+	    //cout << "Event " << ievt << " nMuons: " << init_muons.size() << endl;
+	    //cout << "" << endl;
+	    //cout << "muon reliso " << 
+
+	    //cout << event->eventId() << " : " << event->runId() << " : " << event->lumiBlockId() << endl;
+	    /*if (event->eventId() == 95595184 && event->lumiBlockId() == 318715) {
+	      cout << "Special event " << ievt << " -> vetoMuons.size() = " << vetoMuons.size() << endl;
+	      cout << "Special event " << ievt << " -> initMuons.size() = " << init_muons.size() << endl;
+	      for (unsigned int i=0; i<init_muons.size(); i++) {
+		if (init_muons[i]->puChargedHadronIso() == -9999.) init_muons[i]->setPuChargedHadronIso(0);
+
+		float reliso = (init_muons[i]->chargedHadronIso()+init_muons[i]->neutralHadronIso()+init_muons[i]->photonIso())/init_muons[i]->Pt();
+		float dZ = fabs(init_muons[i]->vz() - vertex[0]->Z());
+
+		cout << "Muon " << i << " pT " << init_muons[i]->Pt() << " " << " relIso " << reliso << " dZ " << dZ <<  endl;
+	      }
+	      }*/
+
+	    //if (event->eventId() == 64704220) {
+	    if (event->eventId() == 38694703) {
+	      cout << "Special event # " << ievt << " ID " << event->eventId() << " -> jets.size() = " << init_jets.size() << endl;
+	      for (unsigned int i=0; i<init_jets.size(); i++) {
+		TRootJet* raw = (TRootJet*) init_jets[i]->Clone();
+		jetTools->unCorrectJet(raw,false);
+		cout << "jet " << i << " -- raw pt " << raw->Pt() << " -- pt " << init_jets[i]->Pt() << " -- eta " << init_jets[i]->Eta() << " -- CSV value " << init_jets[i]->btag_combinedSecondaryVertexBJetTags() << endl;
+	      }
+	    }
+
+	    if (event->eventId() == 96660436) {
+	      cout << "Special event # " << ievt << " ID " << event->eventId() << " -> electrons.size() = " << init_electrons.size() << endl;
+	      cout << endl << "Initial electrons in this event: " << endl;
+	      for (unsigned int i=0; i<init_electrons.size(); i++) {
+		float RelIso = (init_electrons[i]->chargedHadronIso()+init_electrons[i]->neutralHadronIso()+init_electrons[i]->photonIso())/init_electrons[i]->Pt();
+		cout << "electron " << i << " -- pt " << init_electrons[i]->Pt() << " -- eta " << init_electrons[i]->Eta() << " -- RelIso " << RelIso << endl;
+	      }
+
+	      cout << endl << "Loose electrons in this event: " << endl;
+	      for (unsigned int i=0; i<vetoElectrons.size(); i++) {
+		float RelIso = (vetoElectrons[i]->chargedHadronIso()+vetoElectrons[i]->neutralHadronIso()+vetoElectrons[i]->photonIso())/vetoElectrons[i]->Pt();
+		cout << "electron " << i << " -- pt " << vetoElectrons[i]->Pt() << " -- eta " << vetoElectrons[i]->Eta() << " -- RelIso " << RelIso <<  endl;
+	      }
+
+	    }
+	    
+	    /*if (init_muons.size() > 100) {
+
+	      cout << event->runId() << " : " << event->eventId() << " : " << event->lumiBlockId() << endl;
+
+	      for (unsigned int i=0; i<init_muons.size(); i++) {
+		float reliso = (init_muons[i]->chargedHadronIso()+init_muons[i]->neutralHadronIso()+init_muons[i]->photonIso())/init_muons[i]->Pt();
+		float reliso2 = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
+
+		cout << "Muon " << i << " pT " << init_muons[i]->Pt() << " " << " relIso " << reliso << " relIso2 " << reliso2 << endl;
+	      }
+	      
+	      }*/
+	    
 	    if(selectedMuons.size()==1){
 	      selecTable.Fill(d,3,1.);
-	      
+
 	      if(vetoMuons.size()==1){
 		selecTable.Fill(d,4,1.);
 		
+		//cout << event->runId() << " : " << event->eventId() << " : " << event->lumiBlockId() << endl;
+
 		if(vetoElectrons.size()==0) {
-		  selecTable.Fill(d,5,1.);			    
+		  selecTable.Fill(d,5,1.);
+
+		  if (event->eventId() == 38694853) {
+		    cout << "After electron veto event # " << ievt << " ID " << event->eventId() << " -> jets.size() = " << init_jets.size() << endl;
+		    for (unsigned int i=0; i<init_jets.size(); i++) {
+		      TRootJet* raw = (TRootJet*) init_jets[i]->Clone();
+		      jetTools->unCorrectJet(raw,false);
+		      cout << "jet " << i << " -- raw pt " << raw->Pt() << " -- pt " << init_jets[i]->Pt() << " -- eta " << init_jets[i]->Eta() << endl;
+		    }
+		  }
 		  
-		  if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-3) {
+		  
+		  if(selectedJets.size()>=1) {
 		    selecTable.Fill(d,6,1.);
 		    
-		    if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-2) {
+		    if(selectedJets.size()>=2) {
 		      selecTable.Fill(d,7,1.);
 		      
-		      if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-1)
+		      if(selectedJets.size()>=3)
 			{
 			  selecTable.Fill(d,8,1.);
 			  
-			  if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
+			  if(selectedJets.size()>=4)
 			    {
 			      selecTable.Fill(d,9,1.);
 
+			      int nTags = 0;
+
+			      for (int j=0; j<selectedJets.size(); j++) {
+				if (selectedJets[j]->btag_combinedSecondaryVertexBJetTags() > 0.679) {
+				  nTags++;
+				}
+			      }
+			      
+			      if (nTags >= 1)
+				selecTable.Fill(d,10,1.);
 			      // EVENT IS SELECTED!!!!
  
 			    }
@@ -460,7 +584,7 @@ int main() {
   } // dataset loop
 
   //Selection tables
-  selecTable.TableCalculator(false, true, true, true);
+  selecTable.TableCalculator(false, true, true, true,true);
   string selectiontable = "SelectionTable_SyncEx";
   selectiontable = selectiontable +".tex"; 	
   selecTable.Write(selectiontable.c_str());

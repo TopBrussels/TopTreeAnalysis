@@ -46,7 +46,7 @@ Selection::Selection(const Selection& s) {
   mets = s.mets;
   // copy the cutvalues
   setJetCuts(s.JetPtThreshold_,s.JetEtaThreshold_,s.JetEMFThreshold_,s.n90HitsThreshold_,s.fHPDThreshold_,s.DRJetElectron_,s.DRJetMuon_);
-  setMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_,s.MuonDRJetsCut_,s.MuonNMatchedStations_,s.MuonDistVzPVz_,s.MuonNPixelLayersWithMeasurement_);
+  setMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_,s.MuonDRJetsCut_,s.MuonNMatchedStations_,s.MuonDistVzPVz_,s.MuonNTrackerLayersWithMeasurement_);
   setDiMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_);
   setLooseMuonCuts(s.JetPtThreshold_,s.JetEtaThreshold_,s.MuonRelIso_);
   setElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronDistVzPVz_,s.ElectronDRJetsCut_);
@@ -152,7 +152,7 @@ void Selection::setLooseElectronCuts() {
   setLooseElectronCuts(15,2.5,0.2); // refSelV4 (mu) values
 }
 
-void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NPixelLayersWithMeas) {
+void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NTrackerLayersWithMeas) {
   MuonPtThreshold_ = Pt;
   MuonEtaThreshold_ = Eta;
   MuonRelIso_ = RelIso;
@@ -161,11 +161,11 @@ void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, f
   MuonDRJetsCut_ = DRJets;
   MuonNMatchedStations_ = NMatchedStations;
   MuonDistVzPVz_ = DistVzPVz;
-  MuonNPixelLayersWithMeasurement_ = NPixelLayersWithMeas;
+  MuonNTrackerLayersWithMeasurement_ = NTrackerLayersWithMeas;
 }
 
 void Selection::setMuonCuts() {
-  setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1); // 2011 values
+  setMuonCuts(20,2.1,0.125,10,0.02,0.3,1,1,1); // 2012 values
 }
 
 void Selection::setDiMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0) {
@@ -258,7 +258,7 @@ std::vector<TRootJet*> Selection::GetSelectedJets(float PtThr, float EtaThr, boo
     { // PFJets
       const TRootPFJet* PFJet = static_cast<const TRootPFJet*>(init_jet);
       
-//      cout << "jet pT:  " << PFJet->Pt() << "  cutValue: " << PtThr << endl;
+      //      cout << "jet pT:  " << PFJet->Pt() << "  cutValue: " << PtThr << endl;
 //      cout << "jet Eta:  " << fabs(PFJet->Eta()) << "  cutValue: " << EtaThr << endl;
 //      cout << "jet nConstituents:  " << PFJet->nConstituents() << endl;
 //      cout << "jet chargedEmEnergyFraction:  " << PFJet->chargedEmEnergyFraction() << endl;
@@ -272,18 +272,18 @@ std::vector<TRootJet*> Selection::GetSelectedJets(float PtThr, float EtaThr, boo
 	      if ( applyJetID )
 	      {
 	        if (PFJet->nConstituents() > 1 )
-            if (PFJet->neutralHadronEnergyFraction() < 0.99 )
-              if (PFJet->neutralEmEnergyFraction() < 0.99 )
-                if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedEmEnergyFraction() < 0.99 )
-		              if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedHadronEnergyFraction() > 0) 
-		                if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedMultiplicity() > 0)
-		                {
-//		                  cout << "  -->  OK!" << endl;
-		                  selectedJets.push_back(init_jet);
-		                }
+		  if (PFJet->neutralHadronEnergyFraction() < 0.99 )
+		    if (PFJet->neutralEmEnergyFraction() < 0.99 )
+		      if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedEmEnergyFraction() < 0.99 )
+			if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedHadronEnergyFraction() > 0) 
+			  if (fabs(PFJet->Eta()) >= 2.4 || PFJet->chargedMultiplicity() > 0)
+			    {
+			      //		                  cout << "  -->  OK!" << endl;
+			      selectedJets.push_back(init_jet);
+			    }
 	      }
 	      else selectedJets.push_back(init_jet);
-	    }
+      }
     }
     else if (init_jet->jetType() == 3)
     { // JPTJets
@@ -385,7 +385,12 @@ std::vector<TRootJet*> Selection::GetSelectedBJets(const std::vector<TRootJet*>&
 std::vector<TRootMuon*> Selection::GetSelectedMuons(float PtThr, float EtaThr,float MuonRelIso) const{
   std::vector<TRootMuon*> selectedMuons;
   for(unsigned int i=0;i<muons.size();i++){
-    float reliso = (muons[i]->chargedHadronIso()+muons[i]->neutralHadronIso()+muons[i]->photonIso())/muons[i]->Pt();
+    
+    //float reliso = (muons[i]->chargedHadronIso()+muons[i]->neutralHadronIso()+muons[i]->photonIso())/muons[i]->Pt();
+    float reliso = (muons[i]->chargedHadronIso() + max( 0.0, muons[i]->neutralHadronIso() + muons[i]->photonIso() - 0.5*muons[i]->puChargedHadronIso() ) ) / muons[i]->Pt(); // dBeta corrected
+
+    //cout << muons[i]->puChargedHadronIso() << endl;
+
 //    cout << "mu global:  " << muons[i]->isGlobalMuon() << endl;
 //    cout << "mu tracker:  " << muons[i]->isTrackerMuon() << endl;
 //    cout << "mu globalMuPromptTight:  " << muons[i]->idGlobalMuonPromptTight() << endl;
@@ -395,15 +400,18 @@ std::vector<TRootMuon*> Selection::GetSelectedMuons(float PtThr, float EtaThr,fl
 //    cout << "mu d0:  " << fabs(muons[i]->d0()) << "  cutValue: " << Muond0Cut_ << endl;
 //    cout << "mu nValidHits:  " << muons[i]->nofValidHits() << "  cutValue: " << MuonNofValidHits_ << endl;
 //    cout << "mu nMatches:  " << muons[i]->nofMatches() << "  cutValue: " << MuonNMatches_ << endl;
-//    cout << "mu nPixLayers:  " << muons[i]->nofPixelLayersWithMeasurement() << "  cutValue: " << MuonNPixelLayersWithMeasurement_ << endl;
-    if(muons[i]->isGlobalMuon() && muons[i]->isTrackerMuon() && muons[i]->idGlobalMuonPromptTight() 
+//    cout << "mu nPixLayers:  " << muons[i]->nofValidPixelHits() << "  cutValue: " << MuonNTrackerLayersWithMeasurement_ << endl;
+    if(muons[i]->isGlobalMuon() && muons[i]->isTrackerMuon()
+       && muons[i]->idGlobalMuonPromptTight() 
        && muons[i]->Pt()>PtThr 
        && fabs(muons[i]->Eta())<EtaThr 
        && reliso < MuonRelIso 
        && fabs(muons[i]->d0()) <Muond0Cut_
        && muons[i]->nofValidHits()>MuonNofValidHits_ 
        && muons[i]->nofMatchedStations()>MuonNMatchedStations_ 
-       && muons[i]->nofPixelLayersWithMeasurement() >= MuonNPixelLayersWithMeasurement_ 
+       && muons[i]->nofTrackerLayersWithMeasurement() > MuonNTrackerLayersWithMeasurement_
+   
+       && muons[i]->nofValidPixelHits() > 0
        ) {
       selectedMuons.push_back(muons[i]);
     }
@@ -487,7 +495,9 @@ std::vector<TRootMuon*> Selection::GetSelectedDiMuons() const{
 std::vector<TRootMuon*> Selection::GetSelectedLooseMuons(float PtThr, float EtaThr,float MuonRelIso) const{
   std::vector<TRootMuon*> selectedMuons;
   for(unsigned int i=0;i<muons.size();i++){
-    float reliso = (muons[i]->chargedHadronIso()+muons[i]->neutralHadronIso()+muons[i]->photonIso())/muons[i]->Pt();
+    //float reliso = (muons[i]->chargedHadronIso()+muons[i]->neutralHadronIso()+muons[i]->photonIso())/muons[i]->Pt();
+    float reliso = (muons[i]->chargedHadronIso() + max( 0.0, muons[i]->neutralHadronIso() + muons[i]->photonIso() - 0.5*muons[i]->puChargedHadronIso() ) ) / muons[i]->Pt(); // dBeta corrected
+
 //    float reliso = muons[i]->relativeIso03();
 //    cout << "mu global:  " << muons[i]->isGlobalMuon() << endl;
 //    cout << "mu pT:  " << muons[i]->Pt() << "  cutValue: " << PtThr << endl;
@@ -656,11 +666,12 @@ std::vector<TRootElectron*> Selection::GetSelectedElectrons(float EtThr, float E
     TRootElectron* el = (TRootElectron*) electrons[i];
     //Compute isolation
 //    float RelIso = (el->caloIso(3)+el->trackerIso(3)) / el->Et();
-    float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
+    //float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
+    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt();
     //try the cuts manually
     bool passvbtf = passVBTFID(el,cutsVBTFWP80);
     // supercluster eta cut -> EB-EE transition region
-    if(el->Et() > EtThr && fabs(el->Eta())< EtaThr)
+    if(el->Pt() > EtThr && fabs(el->Eta())< EtaThr)
     	if ( fabs(el->d0()) < Electrond0Cut_ )
     	  if ( RelIso < ElectronRelIso )
     	    if (passvbtf)
@@ -725,7 +736,7 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float
     TRootElectron* el = (TRootElectron*) electrons[i];
     float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
     
-    int eidBit = el->CiCTightId();
+    int eidBit = 0;//el->CiCTightId();
     int eidBitMask = 5; // id + conv rejection, 
     bool passEId = ((eidBit & eidBitMask) == eidBitMask);
     // bool passvbtf = passVBTFID(el,cutsVBTFWP70);
@@ -771,14 +782,16 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float EtThr, fl
     TRootElectron* el = (TRootElectron*) electrons[i];
     //Compute isolation
 //    float RelIso = (el->caloIso(3)+el->trackerIso(3)) / el->Et();
-    float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
-    
+    //float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
+    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt();
+
     //try the cuts manually
-    bool passvbtf = passVBTFID(el,cutsVBTFWP95);
+    //bool passvbtf = passVBTFID(el,cutsVBTFWP95);
     
-    if(el->Et() > EtThr && fabs(el->Eta()) < EtaThr  && RelIso < ElectronRelIso)
-  	  if (!vbtfid || (vbtfid && passvbtf))
-	      selectedElectrons.push_back(electrons[i]);
+    if(el->Pt() > EtThr && fabs(el->Eta()) < EtaThr  && RelIso < ElectronRelIso)
+      //if (!vbtfid || (vbtfid && passvbtf))
+      if (!vbtfid || (vbtfid && el->mvaTrigId()>0) )
+	selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
   return selectedElectrons;

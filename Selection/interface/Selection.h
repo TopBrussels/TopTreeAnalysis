@@ -92,7 +92,7 @@ class Selection{
       void setLooseElectronCuts();
       void setLooseElectronCuts(float Et, float Eta, float RelIso);
       void setMuonCuts();
-      void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NPixelLayersWithMeas);
+      void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NTrackerLayersWithMeas);
       void setDiMuonCuts();
       void setDiMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0);
       void setLooseMuonCuts();
@@ -182,7 +182,7 @@ class Selection{
       float MuonNormChi2_;
       float MuonNMatchedStations_;
       float MuonDistVzPVz_;
-      float MuonNPixelLayersWithMeasurement_;
+      float MuonNTrackerLayersWithMeasurement_;
 
       float DRJetMuon_; // for pflow mu-jet cleaning
 
