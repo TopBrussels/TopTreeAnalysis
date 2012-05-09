@@ -889,82 +889,22 @@ int main (int argc, char *argv[])
       //   Selection
       /////////////////////////////        
       //Declare selection instance    
-
-      //Study the different Delta R variables:
-      //Selection class line 315 - 331:
-      /*std::vector<TRootJet*> Selection::GetSelectedJets(float PtThr, float EtaThr, vector<TLorentzVector*>& lepton, float dRLeptonJet, bool applyJetID) const {
-	std::vector<TRootJet*> init_jets = GetSelectedJets(PtThr,EtaThr,applyJetID);
-	std::vector<TRootJet*> selectedJets;
-	for (unsigned int i=0; i<init_jets.size(); i++) {
-	  float minDrElJet = 9999999999.;
-	  for (unsigned int j=0; j<lepton.size(); j++) {
-	    TLorentzVector* l = (TLorentzVector*) lepton[j];
-	    float dr = l->DeltaR(*init_jets[i]);
-	    if ( dr < minDrElJet ) minDrElJet = dr;
-	  }
-	  
-	  if (minDrElJet >= dRLeptonJet)
-	    selectedJets.push_back(init_jets[i]);
-	}
-	std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
-	return selectedJets;
-      }*/
-
-      //Selection class line 420 - 438:
-      /*std::vector<TRootMuon*> Selection::GetSelectedMuons(float PtThr, float EtaThr,float MuonRelIso, vector<TRootJet*> selJets) const{
-	std::vector<TRootMuon*> selectedMuons;
-	std::vector<TRootMuon*> init_muons=GetSelectedMuons(PtThr,EtaThr,MuonRelIso);
-	for(unsigned int i=0;i<init_muons.size();i++){
-	  float mindRMuJet = 999999.;
-	  TRootJet* jet;
-	  for(unsigned int j=0;j<selJets.size();j++) {
-	    jet = selJets.at(j);
-	    float dRMuJet = init_muons[i]->DeltaR(*jet);
-	    if(dRMuJet < mindRMuJet) mindRMuJet = dRMuJet;  //Store in this case the values for the 4 selected jets!!
-	  }
-	  if(mindRMuJet > MuonDRJetsCut_){
-	    selectedMuons.push_back(init_muons[i]);
-	  }
-	}
-	std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
-	return selectedMuons;
-	}*/
-
-      //Selection class line 701 - 718:
-      /*std::vector<TRootElectron*> Selection::GetSelectedElectrons(float EtThr, float EtaThr, float ElectronRelIso, TRootVertex* vertex, vector<TRootJet*>& selJets) const{
-	std::vector<TRootElectron*> init_electrons = GetSelectedElectrons(EtThr,EtaThr,ElectronRelIso,vertex);
-	std::vector<TRootElectron*> selectedElectrons;
-	for(unsigned int i=0;i<init_electrons.size();i++){
-	  float mindRElJet = 999999.;
-	  TRootJet* jet;
-	  for(unsigned int j=0;j<selJets.size();j++) {
-	    jet = selJets.at(j);
-	    float dRElJet = init_electrons[i]->DeltaR(*jet);
-	    if(dRElJet < mindRElJet) mindRElJet = dRElJet;
-	  }
-	  if(mindRElJet > ElectronDRJetsCut_){
-	    selectedElectrons.push_back(init_electrons[i]);
-	  }
-	}
-	std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
-	return selectedElectrons;
-      }*/
-      
+    
       Selection selection(init_jets, init_muons, init_electrons, mets);
       selection.setJetCuts(30.,2.4,0.01,1.,0.98,9999,9999);   //CIEMAT values, not refSel values !!!!
       //Do not apply DeltaR cut on jet selection since this should already be applied with PF2PAT matching of lepton!!
-      if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,0.3,1,1,1); //Values for TriCentralJet trigger
-      if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,0.3,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
+      if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,9999,1,1,1); //Values for TriCentralJet trigger
+      if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,9999,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
       selection.setLooseMuonCuts(10,2.1,0.15);
-      selection.setElectronCuts(30,2.5,0.15,0.02,1,0.3);
+      selection.setElectronCuts(30,2.5,0.15,0.02,1,9999);
       selection.setLooseElectronCuts(15,2.5,0.2); // semiMu looseMuon cuts
+      
         
       bool triggedSemiMu = false;
       bool triggedSemiEl = false;
       if(semiMuon == true){ triggedSemiMu = treeLoader.EventTrigged (itriggerSemiMu);}
       else if(semiElectron == true){triggedSemiEl = treeLoader.EventTrigged (itriggerSemiEl);}
       bool isGoodPV = selection.isPVSelected(vertex, anaEnv.PVertexNdofCut, anaEnv.PVertexZCut, anaEnv.PVertexRhoCut);
-
       vector<TRootElectron*> vetoElectronsSemiMu = selection.GetSelectedLooseElectrons(false);
       vector<TRootElectron*> vetoElectronsSemiEl = selection.GetSelectedLooseElectrons(20,2.5,1.0,true);      
 
@@ -976,6 +916,42 @@ int main (int argc, char *argv[])
       //      vector<TRootMuon*> looseMuonCIEMAT = selection.GetSelectedDiMuons();
       //      vector<TRootMuon*> tightMuonCIEMAT = selection.GetSelectedDiMuonsTight();
       //      vector<TRootElectron*> goodElectronCIEMAT = selection.GetSelectedLooseElectrons();   
+      
+      float minDrElJet = 9999999999.;
+      for (unsigned int i=0; i<init_jets.size(); i++) {
+	if(semiMuon == true){
+	  for (unsigned int j=0; j<init_muons.size(); j++) {
+	    TLorentzVector* l = (TLorentzVector*) lepton[j];
+	    float dr = l->DeltaR(*init_jets[i]);
+	    if ( dr < minDrElJet ) minDrElJet = dr;   //??Verschil met electron jet verschil (init_electrons)
+	  }	
+	}
+	else if(semiElectron == true){
+	  TLorentzVector* l = (TLorentzVector*) lepton[j];
+	  float dr = l->DeltaR(*init_jets[i]);
+	  if ( dr < minDrElJet ) minDrElJet = dr;
+	}
+      }
+      
+      float mindRMuJet = 999999.;
+      for(unsigned int i=0;i<init_muons.size();i++){
+	TRootJet* jet;
+	for(unsigned int j=0;j<selectedJets.size();j++) {
+	  jet = selectedJets.at(j);
+	  float dRMuJet = init_muons[i]->DeltaR(*jet);
+	  if(dRMuJet < mindRMuJet) mindRMuJet = dRMuJet; 
+	}
+      }
+      
+      float mindRElJet = 999999.;
+      for(unsigned int i=0;i<init_electrons.size();i++){
+	TRootJet* jet;
+	for(unsigned int j=0;j<selJets.size();j++) {
+	  jet = selJets.at(j);
+	  float dRElJet = init_electrons[i]->DeltaR(*jet);
+	  if(dRElJet < mindRElJet) mindRElJet = dRElJet;
+	}
+      }      
         
       /////////////////////////
       //   Event selection   //
@@ -1552,6 +1528,11 @@ int main (int argc, char *argv[])
 	  wTree->setIsoMuTriggerBool( IsoMuTrigger );
 	  wTree->setMuonTriggerValue( MuonTriggerValue );
 	  wTree->setElectronTriggerValue( ElectronTriggerValue );
+
+	  //Store DeltaR variables:
+	  wTree->setDeltaRJetLepton( minDrElJet);
+	  wTree->setDeltaRMuonJet( mindRMuJet);
+	  wTree->setDeltaRElectronJet( mindRElJet);
           
 	  WTreeTree->Fill();
 	  delete wTree;
