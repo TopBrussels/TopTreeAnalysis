@@ -138,13 +138,14 @@ int main (int argc, char *argv[])
 
   string inputpostfixOld = ""; // should be same as postfix in TreeCreator of the trees
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
-
-  string Treespath = "InclFourthGenTrees_Fall11_3May"; //copy from 3Apr trees and the 1May WNJetsRun from Gerrit
+  
+	string Treespath = "/user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/InclFourthGenTrees_Fall11_3Apr/"; //this also contains newer trees than 3apr, for example the WNJets trees in InclFourthGenTrees_Fall11_01May12_WNJetsRun/ 
+  //string Treespath = "InclFourthGenTrees_Fall11_3May"; //copy from 3Apr trees and the 1May WNJetsRun from Gerrit
   Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_8May";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_9May_JetCombinationsTest";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -358,6 +359,9 @@ int main (int argc, char *argv[])
   MSPlot["MS_JetPt_all_used"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
 	MSPlot["MS_JetHt_all_used"] = new MultiSamplePlot(datasets,"JetHt_all", 80, 0, 800, "Ht of all jets (GeV)");
 	MSPlot["MS_nPV_used"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
+	
+	MSPlot["MS_nJets_SingleLepton"] = new MultiSamplePlot(datasets,"nJets", 10, 0, 10, "nJets");
+	MSPlot["MS_nJets_2B1W_XB2W"] = new MultiSamplePlot(datasets,"nJets", 10, 0, 10, "nJets");
 	
 	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1500);
 	histo2D["HTvsMTop_2B_2W_TTbarJets"] = new TH2F("HTvsMTop_2B_2W_TTbarJets","HTvsMTop_2B_2W_TTbarJets",400,0,1500,400,0,1500);
@@ -1088,7 +1092,9 @@ int main (int argc, char *argv[])
 					  MSPlot["MS_JetPt_btagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 					else
 					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
-				}			
+				}
+				
+				MSPlot["MS_nJets_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);		
 			}			
 			
 //			if(isSSLepton)
@@ -1596,7 +1602,9 @@ int main (int argc, char *argv[])
 						}
 						MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
-
+						
+						MSPlot["MS_nJets_2B1W_XB2W"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+						
 						HT = HT + selectedJetsFromW_DropUsedJets[0].Pt();
 
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
@@ -1630,6 +1638,11 @@ int main (int argc, char *argv[])
 					   else
 					     cout<<"WARNING: vector of selected jets for MVA input is not equal to 4 (but to "<<selectedJets_MVAinput.size()<<"); fix this!!"<<endl;					   
 					
+					
+						 ////to test 'purity' of good jet combinations with a 'simple' method (not MVA)... 
+						 myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,isSemiLep_MC,myBranch_selectedEvents->mcQuarksForMatching(),selectedJets_MVAinput,TprimeEvaluation,scaleFactor);
+						
+						
 					   //reconstructing the mass of the top/t', and fill vector for binning
 					   myInclFourthGenSearchTools.CalculateTopMass(selectedJets_MVAinput[MVAvals.second[0]],selectedJets_MVAinput[MVAvals.second[1]],selectedJets_MVAinput[MVAvals.second[2]]); //(light 1, light 2, hadronic b-jet);
 					   myInclFourthGenSearchTools.FillMassPlots(d,nbOfBtags,nbOfWs,scaleFactor);
@@ -1767,7 +1780,9 @@ int main (int argc, char *argv[])
 							MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
-				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
+							MSPlot["MS_nJets_2B1W_XB2W"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+				      
+							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,1,scaleFactor);
 							selecTableSemiLep.Fill(d,6,scaleFactor);
 				   }
@@ -1799,6 +1814,8 @@ int main (int argc, char *argv[])
 							MSPlot["MS_JetHt_all_used"]->Fill(JetsHT,datasets[d], true, Luminosity*scaleFactor);
 							MSPlot["MS_nPV_used"]->Fill(myBranch_selectedEvents->nPV(),datasets[d], true, Luminosity*scaleFactor);	
 
+							MSPlot["MS_nJets_2B1W_XB2W"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+							
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,1,scaleFactor);
 							selecTableSemiLep.Fill(d,7,scaleFactor);
@@ -1824,9 +1841,9 @@ int main (int argc, char *argv[])
 
 	   					//coutObjectsFourVector(init_muons,init_electrons,selectedJets_MVAinput,mets,"*** Before kinematic fit ***");
 						
-						////to test 'purity' of good jet combinations with a 'simple' method (not MVA)... for the moment only testable in 2B_2W box
-					        //myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,genEvt,mcParticles,selectedJets_MVAinput,TprimeEvaluation,scaleFactor);
-					        
+						      ////to test 'purity' of good jet combinations with a 'simple' method (not MVA)...
+						      myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,isSemiLep_MC,myBranch_selectedEvents->mcQuarksForMatching(),selectedJets_MVAinput,TprimeEvaluation,scaleFactor);
+						
 						
 					        //reconstructing the mass of the top/t', and fill vector for binning
 					   			myInclFourthGenSearchTools.CalculateTopMass(selectedJets_MVAinput[MVAvals.second[0]],selectedJets_MVAinput[MVAvals.second[1]],selectedJets_MVAinput[MVAvals.second[2]]); //(light 1, light 2, hadronic b-jet);
@@ -1940,10 +1957,10 @@ int main (int argc, char *argv[])
    // cout << "done processing event" << endl;
 		}//loop on events
 
-    ////to test 'purity' of good jet combinations with a 'simple' method (not MVA). For the moment not supported
-    //myInclFourthGenSearchTools.PrintPurityGoodCombinations();
+    ////to test 'purity' of good jet combinations with a 'simple' method (not MVA).
+    myInclFourthGenSearchTools.PrintPurityGoodCombinations();
     
-    cout<<endl;
+		cout<<endl;
     
     //important: free memory
     treeLoader.UnLoadDataset();
