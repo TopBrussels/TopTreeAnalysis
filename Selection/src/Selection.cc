@@ -81,7 +81,8 @@ void Selection::setJetCuts(float Pt, float Eta, float EMF, float n90Hits, float 
 }
 
 void Selection::setJetCuts() {
-  setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1); // refSelV4 values
+  //setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1); // refSelV4 values
+  setJetCuts(35.,2.5,0.01,1.,0.98,0.3,0.1);
 }
 
 void Selection::setElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets) {
@@ -617,10 +618,10 @@ std::vector<TRootElectron*> Selection::GetSelectedElectrons(float PtThr, float E
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
       if (fabs(el->superClusterEta()) < 1.4442 || fabs(el->superClusterEta()) > 1.5660)
     	if ( fabs(el->d0()) < Electrond0Cut_ )
-    	    if (el->passConversion())
-	      if (el->mvaTrigId() > ElectronMVAId_)
-		if ( RelIso < ElectronRelIso )
-		  selectedElectrons.push_back(electrons[i]);
+	  if (el->passConversion())
+	  if (el->mvaTrigId() > ElectronMVAId_)
+	    if ( RelIso < ElectronRelIso )
+	      selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
   return selectedElectrons;
@@ -730,7 +731,6 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, fl
 
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
       if (fabs(el->superClusterEta()) < 1.4442 || fabs(el->superClusterEta()) > 1.5660)
-    	if ( fabs(el->d0()) < Electrond0Cut_ )
 	  if (!vbtfid || (vbtfid && el->mvaTrigId()>ElectronLooseMVAId_) )
 	    if ( RelIso < ElectronRelIso )
 	      selectedElectrons.push_back(electrons[i]);

@@ -50,7 +50,7 @@ int main() {
   // Configuration
   /////////////////////
 
-    unsigned int lepton = 0; // 0 = muon+jets 1= electron +jets
+    unsigned int lepton = 1; // 0 = muon+jets 1= electron +jets
 
   //xml file
   string xmlfile ="../config/myRefSelconfig.xml";
@@ -152,7 +152,7 @@ int main() {
     CutsSelecTable.push_back(string("Good PV"));
     CutsSelecTable.push_back(string("1 isolated electron"));
     CutsSelecTable.push_back(string("Loose muon veto"));
-    CutsSelecTable.push_back(string("Z veto"));
+    CutsSelecTable.push_back(string("Dilepton veto"));
     CutsSelecTable.push_back(string("Conversion rejection"));
     CutsSelecTable.push_back(string("Partnertrack veto"));
     char LabelNJets[100];
@@ -164,6 +164,8 @@ int main() {
     CutsSelecTable.push_back(string(LabelNJets));
     sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets);
     CutsSelecTable.push_back(string(LabelNJets));
+
+    CutsSelecTable.push_back("$\\geq$ 1 CSVM tag");
 
   } else {
 
@@ -292,29 +294,15 @@ int main() {
       
       else if (lepton == 1) {
 
-	trigged=false;
+	int currentRun = event->runId();
 	
-	/*if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") {
+	itrigger = treeLoader.iTrigger ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8", currentRun,0);
 	  
-	  // SHOULD BE CHECKED ?!
-	  std::map<std::string,std::vector<double> > filters= event->getTriggerFilters();
-	  
-	  if (event->runId() < 140041 && filters.find("hltL1NonIsoHLTNonIsoSingleElectronLWEt10PixelMatchFilter") != filters.end())
-	    trigged=true;
-	  else if (event->runId() >= 140041 && event->runId() <= 143962 && filters.find("hltL1NonIsoHLTNonIsoSingleElectronEt15PixelMatchFilter") != filters.end())
-	    trigged=true;
-	  else if (event->runId() >= 143963 && event->runId() <= 146427 && filters.find("hltL1NonIsoHLTNonIsoSingleElectronEt15CaloEleIdPixelMatchFilter") != filters.end())
-	    trigged=true;
-	  else if (event->runId() >= 146428 && event->runId() <= 147116 && filters.find("hltL1NonIsoHLTNonIsoSingleElectronEt17CaloEleIdPixelMatchFilter") != filters.end())
-	    trigged=true;
-	  else if (event->runId() >= 147117 && filters.find("hltL1NonIsoHLTNonIsoSingleElectronEt17CaloEleIdPixelMatchFilter") != filters.end())
-	    trigged=true;
-	  else
-	    trigged=false;
-	  
-	}
-	else*/
-	  trigged=true;
+	trigged = treeLoader.EventTrigged (itrigger);
+
+	//}
+	//else*/
+	//  trigged=true;
       }
       
       //jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
@@ -355,7 +343,7 @@ int main() {
 	    selection.setJetCuts(35.,2.5,0.01,1.,0.98,0.3,0.1);
 	    selection.setMuonCuts(20,2.1,0.125,0,0.02,0.3,1,1,5);
 	    selection.setLooseMuonCuts(10,2.5,0.2);
-	    selection.setLooseElectronCuts(20,2.5,0.2); // semiMu looseElectron cuts
+	    selection.setLooseElectronCuts(20,2.5,0.2,0.); // semiMu looseElectron cuts
 
 	    selectedJets = selection.GetSelectedJets(true);
 	    selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
@@ -410,18 +398,20 @@ int main() {
 
 	    }
 	    
-	    /*if (init_muons.size() > 100) {
+	    if (event->lumiBlockId()==129009 && init_muons.size() > 0) {
 
-	      cout << event->runId() << " : " << event->eventId() << " : " << event->lumiBlockId() << endl;
+	      cout << "Run " <<event->runId() << " Event " << event->eventId() << " Lumi " << event->lumiBlockId();
 
 	      for (unsigned int i=0; i<init_muons.size(); i++) {
 		float reliso = (init_muons[i]->chargedHadronIso()+init_muons[i]->neutralHadronIso()+init_muons[i]->photonIso())/init_muons[i]->Pt();
 		float reliso2 = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
 
-		cout << "Muon " << i << " pT " << init_muons[i]->Pt() << " " << " relIso " << reliso << " relIso2 " << reliso2 << endl;
+		cout << " ** Muon " << i << " pT " << init_muons[i]->Pt() << " " << " relIso " << reliso << " relIso(dBCorr) " << reliso2;
 	      }
 	      
-	      }*/
+	      cout << endl;
+
+	    }
 	    
 	    if(selectedMuons.size()==1){
 	      selecTable.Fill(d,3,1.);
@@ -494,14 +484,50 @@ int main() {
 	  
 	  if(isGoodPV){
 	    selecTable.Fill(d,2,1.);
-	    
-	    vector<TRootElectron*> selectedElectrons = selection.GetSelectedElectrons(vertex[0]);
-	    vector<TRootJet*> selectedJets = selection.GetSelectedJets(selectedElectrons,true);
-	    vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(20,2.5,1.,true);
+
+	    selection.setJetCuts(35.,2.5,0.01,1.,0.98,0.3,0.1);
+	    selection.setLooseElectronCuts(35,2.5,0.2,0.);
+		    
+	    vector<TRootElectron*> selectedElectrons = selection.GetSelectedElectrons();
+	    vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
+
+
+	    vector<TRootElectron*> vetoElectrons = selection.GetSelectedLooseElectrons(true);
 	    vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons();
+
+	    if (event->eventId() == 65253633 || event->eventId() == 38694968) {
+	      cout << "Special event # " << ievt << " ID " << event->eventId() << " -> electrons.size() = " << init_electrons.size() << endl;
+	      cout << endl << "Initial electrons in this event: " << endl;
+	      for (unsigned int i=0; i<init_electrons.size(); i++) {
+		//float RelIso = (init_electrons[i]->chargedHadronIso()+init_electrons[i]->neutralHadronIso()+init_electrons[i]->photonIso())/init_electrons[i]->Pt();
+		float RelIso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
+		cout << "electron " << i;
+		cout << " -- pt " << init_electrons[i]->Pt();
+		cout << " -- eta " << init_electrons[i]->Eta();
+		cout << " -- RelIso " << RelIso;
+		cout << " -- dXY " << fabs(init_electrons[i]->d0());
+		cout << " -- mvaTrigV0 " << init_electrons[i]->mvaTrigId();
+		cout << " -- mvaNonTrigV0 " << init_electrons[i]->mvaNonTrigId();
+		cout << " -- conv " << init_electrons[i]->passConversion();
+		cout << endl;
+
+
+		cout << "electron " << i;
+		cout << " -- chargedHadronIso " << init_electrons[i]->chargedHadronIso();
+		cout << " -- puChargedHadronIso " << init_electrons[i]->puChargedHadronIso();
+		cout << " -- neutralHadronIso " << init_electrons[i]->neutralHadronIso();
+		cout << " -- photonIso " << init_electrons[i]->photonIso();
+
+		cout << endl;
+
+	      }
+
+	    }
 	    
 	    if (selectedElectrons.size()==1) {
 	      selecTable.Fill(d,3,1.);
+
+	      //cout << event->runId() << " : " << event->eventId() << " : " << event->lumiBlockId() << endl;
 	      
 	      TRootElectron* electron = (TRootElectron*) selectedElectrons[0];
 	      
@@ -528,22 +554,8 @@ int main() {
 	      
 	      if (vetoMuons.size()==0) {
 		selecTable.Fill(d,4,1.);
-
-		bool passZVeto = true;
-		for (unsigned int e=0;e<looseElectrons.size();e++) {
-		  
-		  TRootElectron* el = (TRootElectron*) looseElectrons[e];
-		  
-		  if (fabs(el->superClusterEta()) > 1.5660 || fabs(el->superClusterEta()) < 1.4442) {
-		    TLorentzVector Zcand = *looseElectrons[e]+*selectedElectrons[0];
-		    
-		    //cout << Zcand.M() << endl;
-		    if (Zcand.M() > 76 && Zcand.M() < 106)
-		      passZVeto = false;
-		  }
-		}
 		
-		if (passZVeto) {
+		if (vetoElectrons.size() == 1) {
 		  selecTable.Fill(d,5,1.);
 		  
 		  if (selectedElectrons[0]->missingHits() == 0) {
@@ -564,7 +576,17 @@ int main() {
 			    if(selectedJets.size()>=(unsigned int)anaEnv.NofJets) {
 			      selecTable.Fill(d,11,1.);
 
-			      // EVENT IS SELECTED
+			      int nTags = 0;
+
+			      for (int j=0; j<selectedJets.size(); j++) {
+				if (selectedJets[j]->btag_combinedSecondaryVertexBJetTags() > 0.679) {
+				  nTags++;
+				}
+			      }
+			      
+			      if (nTags >= 1)
+				selecTable.Fill(d,12,1.);
+			      // EVENT IS SELECTED!!!!
 
 			    }
 			  }
