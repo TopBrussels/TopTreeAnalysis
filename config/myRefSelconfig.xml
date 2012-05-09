@@ -7,24 +7,29 @@
 
 <datasets>
 <!-- SM samples -->
+<!--
+Scale factors for MC samples (from the KIT cross section analysis):
 
-<d name="TTbarJets" title="TTJets" add="0" color="4" ls="1" lw="2" normf="1" xsection="157.5" EqLumi="63.4920635" filenames="/Users/michael/Documents/doctoraat/38XDev/samples/test3.root "/>
+beta_ttbar  = 1.06
+beta_singletop = 1.0
+beta_W = 1.34
+beta_Z = 1.32
+beta_QCD = 2.09
+-->
 
-<d name="Data" title="Data (testfile)" add="1" color="1"  ls="1" lw="1" normf="1" xsection="1" EqLumi="3.036384" filenames="/user/gvonsem/TopTreesSpring11/24032011_223233_TOPTREE_1_1_7XC.root"/>
+<!-- Summer11 LEPTON+JETS Samples -->
 
-<!--<d name="Data" title="Data (3.036 pb-1)" add="1" color="1"  ls="1" lw="1" normf="1" xsection="1" EqLumi="3.036384" filenames="/Users/michael/Documents/doctoraat/JESanalysis/samples/JES/Mu_PD_CMSSW361patch4_JSON_HLT_Mu9_Skimmed_ALL_MERGED.root"/>-->
-
-
+<d name="TTbarJets" title="t#bar{t}+jets" add="1" color="4" ls="1" lw="2" normf="1" xsection="157.5" EqLumi="23504.3556" filenames="./RefSelTTbar.root"/>
 
 </datasets>
 
 <!-- All parameters needed for the selection and the bkg estimation methods -->
 <analysis>
 <!-- JetType: 0=TRootJet - 1=TRootCaloJet - 2=TRootPFJet -->
-<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsAK5PF" METType="2" METCollection="PFMET" MuonCollection="Muons_selectedPatMuons" ElectronCollection="Electrons_selectedPatElectrons" loadGenJetCollection="0" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles"/>
-<a type="Selection" PVertexNdofCut="4" PVertexZCut="15." PVertexRhoCut="2." MuonPtCutSR="20." MuonEtaCutSR="2.1" MuonRelIsoCutSR="0.05" MuonNHitsCutSR="10" MuonD0CutSR="0.02" MuonDRJetsCut="0.3" MuonPtCutVetoSR="10." MuonEtaCutVetoSR="2.5" MuonRelIsoCutVetoSR="0.2" ElectronPtCut="15." ElectronEtaCut="2.5" ElectronRelIsoCut="0.2" JetsPtCutSR="30." JetsEtaCutSR="2.4" applyJetID="1" JetEMFCut="0.01" n90HitsCut="1" fHPDCut="0.98" NofJets="4" NofJetBins="2"/>
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="1" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="1" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
+<a type="Selection" PVertexNdofCut="4" PVertexZCut="24." PVertexRhoCut="2." MuonPtCutSR="20." MuonEtaCutSR="2.1" MuonRelIsoCutSR="0.05" MuonNHitsCutSR="10" MuonD0CutSR="0.02" MuonDRJetsCut="0.3" MuonPtCutVetoSR="10." MuonEtaCutVetoSR="2.5" MuonRelIsoCutVetoSR="0.2" ElectronPtCut="15." ElectronEtaCut="2.5" ElectronRelIsoCut="0.2" JetsPtCutSR="30." JetsEtaCutSR="2.4" applyJetID="1" JetEMFCut="0.01" n90HitsCut="1" fHPDCut="0.98" NofJets="4" NofJetBins="2"/>
 
-<a type="Conditions" isMC="1" MCRound="0" Vars_ByFile="0" VarsFile="m0_100_m12_100" IntToCut="4" Verbose="2" Luminosity="50" JES="1." nPseudoExp="0" nPseudoSession="0" runonTTrees="0" doABCD="1" doVJEstim="1" doVJEstPE="1" doTtJEstim="1" doTemplComp="0" doSystematics="0"/><!-- Luminosity in pb-1 -->
+<a type="Conditions" isMC="1" MCRound="0" Vars_ByFile="0" VarsFile="m0_100_m12_100" IntToCut="4" Verbose="2" Luminosity="99999" JES="1." nPseudoExp="0" nPseudoSession="0" runonTTrees="0" doABCD="1" doVJEstim="1" doVJEstPE="1" doTtJEstim="1" doTemplComp="0" doSystematics="0"/><!-- Luminosity in pb-1 -->
 <a type="CRForTtbarEstimation"  BtagAlgo_ttjEst="0" BtagDiscriCut_ttjEst="4.38" MuonPtCutCR="30." MuonEtaCutCR="2.1" MuonRelIsoCutCR="0.1" JetsPtCutCR="30." JetsEtaCutCR="2.4" MblCut="160." DRBBCut="2.3" HTBBCut="500." NREvtFraction="0.75"/>
 <a type="CRForABCDEstimation"   NXbinsABCD="200" NYbinsABCD="200" XbinMinABCD="0" XbinMaxABCD="20" YbinMinABCD="0" YbinMaxABCD="20" cutXmin="0" cutX0="0.1" cutX1="0.2" cutXmax="20." cutYmin="0." cutY0="3." cutY1="4." cutYmax="20." region="1"/>
 
