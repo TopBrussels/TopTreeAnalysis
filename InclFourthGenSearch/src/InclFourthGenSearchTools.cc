@@ -483,14 +483,14 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 							   		}
 							   		if(HadTop_choice.Pt() > Mtop_largestPt)
 							   		{
-							     		Mtop_largestPt = HadTop_choice.M();
+							     		Mtop_largestPt = HadTop_choice.Pt();
 							     		jetindexWJet1_largestPt = i;
 							     		jetindexWJet2_largestPt = j;
 							     		jetindexHadB_largestPt = k;
 							   		}
 							   		if(HadTop_choice.Pt() < Mtop_smallestPt)
 							   		{
-							     		Mtop_smallestPt = HadTop_choice.M();
+							     		Mtop_smallestPt = HadTop_choice.Pt();
 							     		jetindexWJet1_smallestPt = i;
 							     		jetindexWJet2_smallestPt = j;
 							     		jetindexHadB_smallestPt = k;
@@ -501,16 +501,11 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 							   		{
 							  		   jetindexWJet1_WJetsFixed = 2; //j
 							 		     jetindexWJet2_WJetsFixed = 3; //k
-							      	 if(i==0)
-							      	 {
-							        		Mtop_WJetsFixed_choice1 = HadTop_choice.M();
-													Pttop_WJetsFixed_choice1 = HadTop_choice.Pt();								
-							      	 }
-							      	 else if(i==1)
-							         {
-							            Mtop_WJetsFixed_choice2 = HadTop_choice.M();
-								          Pttop_WJetsFixed_choice2 = HadTop_choice.Pt();
-							         }
+
+						        		Mtop_WJetsFixed_choice1 = (selectedJets[0] + selectedJets[j] + selectedJets[k]).M();
+												Pttop_WJetsFixed_choice1 = (selectedJets[0] + selectedJets[j] + selectedJets[k]).Pt();								
+ 						            Mtop_WJetsFixed_choice2 = (selectedJets[1] + selectedJets[j] + selectedJets[k]).M();
+							          Pttop_WJetsFixed_choice2 = (selectedJets[1] + selectedJets[j] + selectedJets[k]).Pt();
 							     
 							      	 if(Mtop_WJetsFixed_choice1 > Mtop_WJetsFixed_choice2)
 							      	 {
@@ -645,14 +640,14 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 							   		}
 							   		if(HadTop_choice.Pt() > Mtop_largestPt)
 							   		{
-							     		Mtop_largestPt = HadTop_choice.M();
+							     		Mtop_largestPt = HadTop_choice.Pt();
 							     		jetindexWJet1_largestPt = i;
 							     		jetindexWJet2_largestPt = j;
 							     		jetindexHadB_largestPt = k;
 							   		}
 							   		if(HadTop_choice.Pt() < Mtop_smallestPt)
 							   		{
-							     		Mtop_smallestPt = HadTop_choice.M();
+							     		Mtop_smallestPt = HadTop_choice.Pt();
 							     		jetindexWJet1_smallestPt = i;
 							     		jetindexWJet2_smallestPt = j;
 							     		jetindexHadB_smallestPt = k;
@@ -663,16 +658,11 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 							   		{
 							  		   jetindexWJet1_WJetsFixed = 1; //j
 							 		     jetindexWJet2_WJetsFixed = 2; //k
-							      	 if(i==0)
-							      	 {
-							        		Mtop_WJetsFixed_choice1 = HadTop_choice.M();
-													Pttop_WJetsFixed_choice1 = HadTop_choice.Pt();								
-							      	 }
-							      	 else if(i==3)
-							         {
-							            Mtop_WJetsFixed_choice2 = HadTop_choice.M();
-								          Pttop_WJetsFixed_choice2 = HadTop_choice.Pt();
-							         }
+							      	 
+											 Mtop_WJetsFixed_choice1 = (selectedJets[0] + selectedJets[j] + selectedJets[k]).M();
+											 Pttop_WJetsFixed_choice1 = (selectedJets[0] + selectedJets[j] + selectedJets[k]).Pt();								
+							         Mtop_WJetsFixed_choice2 = (selectedJets[3] + selectedJets[j] + selectedJets[k]).M();
+								       Pttop_WJetsFixed_choice2 = (selectedJets[3] + selectedJets[j] + selectedJets[k]).Pt();
 							     
 							      	 if(Mtop_WJetsFixed_choice1 > Mtop_WJetsFixed_choice2)
 							      	 {
