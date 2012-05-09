@@ -86,6 +86,9 @@ class WTree : public TObject
     ,isoMuTriggerBool_()
     ,muonTriggerValue_()
     ,electronTriggerValue_()
+    ,deltaRJetLepton_()
+    ,deltaRMuonJet_()
+    ,deltaRElectronJet_()
     {;}
   
   ~WTree() {;}
@@ -156,6 +159,9 @@ class WTree : public TObject
   int isoMuTriggerBool() const {return isoMuTriggerBool_;}
   int muonTriggerValue() const {return muonTriggerValue_;}
   int electronTriggerValue() const {return electronTriggerValue_;}
+  float deltaRJetLepton() const {return deltaRJetLepton_;}
+  float deltaRMuonJet() const {return deltaRMuonJet_;}
+  float deltaRElectronJet() const {return deltaRElectronJet_;}
   
   void setEventID(unsigned int eventID) { eventID_ = eventID; }
   void setRunID(unsigned int runID) { runID_ = runID; }
@@ -238,6 +244,9 @@ class WTree : public TObject
   void setIsoMuTriggerBool( int isoMuTriggerBool) { isoMuTriggerBool_ = isoMuTriggerBool;}
   void setMuonTriggerValue( int muonTriggerValue) { muonTriggerValue_ = muonTriggerValue;}
   void setElectronTriggerValue( int electronTriggerValue) { electronTriggerValue_ = electronTriggerValue;}
+  void setDeltaRJetLepton( float deltaRJetLepton) { deltaRJetLepton_ = deltaRJetLepton;}
+  void setDeltaRMuonJet( float deltaRMuonJet) { deltaRMuonJet_ = deltaRMuonJet;}
+  void setDeltaRElectronJet( float deltaRElectronJet) { deltaRElectronJet_ = deltaRElectronJet;}
   
  protected:
   
@@ -306,6 +315,9 @@ class WTree : public TObject
   int isoMuTriggerBool_;
   int muonTriggerValue_;
   int electronTriggerValue_;
+  float deltaRJetLepton_;
+  float deltaRMuonJet_;
+  float deltaRElectronJet_;
   
   ClassDef (WTree,2);
 };
