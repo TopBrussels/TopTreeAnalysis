@@ -68,14 +68,14 @@ HEADERSMTOP   = $(wildcard JESMeasurement/interface/MonsterTools.h JESMeasuremen
 OBJECTSMTOP		= $(SOURCESMTOP:.$(SrcSuf)=.$(ObjSuf))
 
 
-all:  libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
-	cp libTopTreeAna42.$(DllSuf) ~/lib/ ; cp libTopTreeAnaContent42.$(DllSuf) ~/lib/
+all:  libTopTreeAna52.$(DllSuf) libTopTreeAnaContent52.$(DllSuf)
+	cp libTopTreeAna52.$(DllSuf) ~/lib/ ; cp libTopTreeAnaContent52.$(DllSuf) ~/lib/
 
-btag: libBtagAnalysis42.$(DllSuf)
-	cp libBtagAnalysis42.$(DllSuf) ~/lib/
+btag: libBtagAnalysis52.$(DllSuf)
+	cp libBtagAnalysis52.$(DllSuf) ~/lib/
 
-mtop: libMtopAnalysis42.$(DllSuf)
-	cp libMtopAnalysis42.$(DllSuf) ~/lib/
+mtop: libMtopAnalysis52.$(DllSuf)
+	cp libMtopAnalysis52.$(DllSuf) ~/lib/
 
 clean:
 	@echo "Cleaning..."
@@ -89,12 +89,12 @@ Dict.$(SrcSuf): $(HEADERSDIC) ./LinkDef.h
 	@echo "Generating dictionary Dict..."
 	@rootcint -f Dict.$(SrcSuf) -c $(DEFINES) $(HEADERSDIC) ./LinkDef.h
 
-libTopTreeAna42.$(DllSuf): $(OBJECTS) libTopTreeAnaContent42.$(DllSuf)
-	@echo "Building libTopTreeAna42..."
-	$(LD) $(LIBS) -lTopTreeAnaContent42 $(SOFLAGS) $(LDFLAGS) $+ -o $@
+libTopTreeAna52.$(DllSuf): $(OBJECTS) libTopTreeAnaContent52.$(DllSuf)
+	@echo "Building libTopTreeAna52..."
+	$(LD) $(LIBS) -lTopTreeAnaContent52 $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
-libTopTreeAnaContent42.$(DllSuf): $(OBJECTSDIC)  Dict.o  
-	@echo "Building libTopTreeAnaContent42..."
+libTopTreeAnaContent52.$(DllSuf): $(OBJECTSDIC)  Dict.o  
+	@echo "Building libTopTreeAnaContent52..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 # specific stuff for btag eff analysis ONLY
@@ -103,7 +103,7 @@ BtagDict.$(SrcSuf): $(HEADERSBTAGDIC) ./BtagLinkDef.h
 	@echo "Generating dictionary BtagDict..."
 	@rootcint -f BtagDict.$(SrcSuf) -c $(DEFINES) $(HEADERSBTAGDIC) ./BtagLinkDef.h
 
-libBtagAnalysis42.$(DllSuf): $(OBJECTSBTAG) BtagDict.o
+libBtagAnalysis52.$(DllSuf): $(OBJECTSBTAG) BtagDict.o
 	@echo "Building libBtagAnalysis..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
@@ -113,15 +113,15 @@ MtopDict.$(SrcSuf): $(HEADERSMTOPDIC) ./MtopLinkDef.h
 	@echo "Generating dictionary MtopDict..."
 	@rootcint -f MtopDict.$(SrcSuf) -c $(DEFINES) $(HEADERSMTOPDIC) ./MtopLinkDef.h
 
-libMtopAnalysis42.$(DllSuf): $(OBJECTSMTOP) MtopDict.o
+libMtopAnalysis52.$(DllSuf): $(OBJECTSMTOP) MtopDict.o
 	@echo "Building libMtopAnalysis..."
 	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 
 ADDLIBS_MACROS = -lMLP -lTreePlayer -lXMLIO
 
-macros/%.exe: macros/%.cc $(HEADERS) libTopTreeAna42.$(DllSuf) libTopTreeAnaContent42.$(DllSuf)
-	$(LD) -lTopTreeAna42 -lTopTreeAnaContent42 $(LIBS) $(ADDLIBS_MACROS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
+macros/%.exe: macros/%.cc $(HEADERS) libTopTreeAna52.$(DllSuf) libTopTreeAnaContent52.$(DllSuf)
+	$(LD) -lTopTreeAna52 -lTopTreeAnaContent52 $(LIBS) $(ADDLIBS_MACROS) -I`root-config --incdir` $< $(LDFLAGS) -o $@
 
 SOURCES_MACROS = $(wildcard macros/*.cc)
 
