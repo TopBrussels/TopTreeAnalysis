@@ -88,26 +88,44 @@ InclFourthGenSearchTools::InclFourthGenSearchTools(bool semiMuon, bool semiElect
 //  MSPlot["MS_MTop_MVAkinfit_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (MVA jet combination + kinfit)", 80, 0, 700, "m_{top} (GeV)");
 //  MSPlot["MS_MTop_MVAkinfit_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (MVA jet combination + kinfit)", 80, 0, 700, "m_{top} (GeV)");
   
-//  MSPlot["MS_MTop_largestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
-//  MSPlot["MS_MTop_smallestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
-//  MSPlot["MS_MTop_largestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
-//  MSPlot["MS_MTop_smallestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  
+  MSPlot["MS_MTop_largestMass_WJetsFixed_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (jet combination with largest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  MSPlot["MS_MTop_smallestMass_WJetsFixed_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (jet combination with smallest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  MSPlot["MS_MTop_largestPt_WJetsFixed_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (jet combination with largest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  MSPlot["MS_MTop_smallestPt_WJetsFixed_1B_2W"] = new MultiSamplePlot(datasets,"MTop_1B_2W (jet combination with smallest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");				
+	
+	MSPlot["MS_MTop_largestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  MSPlot["MS_MTop_smallestMass_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top mass, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  MSPlot["MS_MTop_largestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with largest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
+  MSPlot["MS_MTop_smallestPt_WJetsFixed_2B_2W"] = new MultiSamplePlot(datasets,"MTop_2B_2W (jet combination with smallest Top Pt, W-jets fixed)", 80, 0, 700, "m_{top} (GeV)");
 		
 
   HT_ = -9999.;
   Mtop_ = -9999.;
   Mtop_kinfit_ = -9999.;
   
-  counter_all4JetsMatched_MCdef = 0;
-  counter_hadronictopJetsMatched_MCdef = 0;
-  counter_hadronictopJetsMatched_largestMass = 0;
-  counter_hadronictopJetsMatched_smallestMass = 0;
-  counter_hadronictopJetsMatched_largestPt = 0;
-  counter_hadronictopJetsMatched_smallestPt = 0;
-  counter_hadronictopJetsMatched_largestMass_WJetsFixed = 0;
-  counter_hadronictopJetsMatched_smallestMass_WJetsFixed = 0;
-  counter_hadronictopJetsMatched_largestPt_WJetsFixed = 0;
-  counter_hadronictopJetsMatched_smallestPt_WJetsFixed = 0;
+	counter_all4JetsMatched_MCdef_1B_2W = 0;
+  counter_hadronictopJetsMatched_MCdef_1B_2W = 0;
+  counter_hadronictopJetsMatched_largestMass_1B_2W = 0;
+  counter_hadronictopJetsMatched_smallestMass_1B_2W = 0;
+  counter_hadronictopJetsMatched_largestPt_1B_2W = 0;
+  counter_hadronictopJetsMatched_smallestPt_1B_2W = 0;
+  counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W = 0;
+  counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W = 0;
+  counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W = 0;
+  counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W = 0;
+	 counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W = 0;
+	
+  counter_all4JetsMatched_MCdef_2B_2W = 0;
+  counter_hadronictopJetsMatched_MCdef_2B_2W = 0;
+  counter_hadronictopJetsMatched_largestMass_2B_2W = 0;
+  counter_hadronictopJetsMatched_smallestMass_2B_2W = 0;
+  counter_hadronictopJetsMatched_largestPt_2B_2W = 0;
+  counter_hadronictopJetsMatched_smallestPt_2B_2W = 0;
+  counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W = 0;
+  counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W = 0;
+  counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W = 0;
+  counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W = 0;	
 	
 	//Wjets plots in the different boxes, all with the same range
 	for(int B = 1; B<3; B++)
@@ -335,7 +353,7 @@ void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, bool 
     {
         MultiSamplePlot *temp = it->second;
         string name = it->first;
-        temp->Draw(false, name, true, true, true, true, true,5,false,true,true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal,bool addRatio, bool mergeVV, bool mergeTTV)
+        temp->Draw(false, name, true, true, false, true, true,5,false,true,true);//(bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal,bool addRatio, bool mergeVV, bool mergeTTV)
         temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     
@@ -353,133 +371,74 @@ void InclFourthGenSearchTools::WritePlots(TFile* fout, TDirectory* th1dir, bool 
 
 }
 
-void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, int nbOfWs, TRootGenEvent* genEvt, vector<TRootMCParticle*> mcParticles, vector<TRootJet*> selectedJets_MVAinput, bool TprimeEvaluation, float scaleFactor)
+void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, int nbOfWs, bool isSemiLep, vector<TLorentzVector> mcParticlesForMatching, vector<TLorentzVector> selectedJets, bool TprimeEvaluation, float scaleFactor)
 {     
 	////////////////based on ProcessEvent in JESMeasurement/src/JetCombiner.cc
 	////////////////
 	///block to test 'purity' (aka 'efficiency') of good jet combinations with a 'simple' method (not MVA):
-	//take the b-jet which gives the highest top mass as the hadronic top
+	//e.g. keep the W-jets from the W counting and take the b-jet which gives the highest top mass as the b-jet from the hadronic top, etc
 	//NEED PROTECTION TO EXECUTE ONLY FOR TTBAR (or tprime eventually...)??
 	//BTW: this entire block screws up the kinfitter result (when the kinfitter block comes before), apparently?? --> TO BE IVESTIGATED WHY... e.g. sometimes the afterfitLight1 has before this block normal values, and after this block totally crazy... 
-    
-    if(nbOfBtags==2 && nbOfWs==2) //not tested in 1B_2W case, modifications needed (name of the plots etc)
-    {			
-	////initialize stuff for each event
+   
+	 if( isSemiLep || (TprimeEvaluation || mcParticlesForMatching.size()==4)) //requiring that there are 4 quarks stored means that it is semilep! (see treecreator)
+   { 
+		////initialize stuff for each event
   	//bool all4PartonsMatched = false; // True if the 4 ttbar semi-lep partons are matched to 4 jets (not necessarily the 4 highest pt jets)
   	//bool all4JetsMatched_MCdef_ = false; // True if the 4 highest pt jets are matched to the 4 ttbar semi-lep partons
-  	bool hadronictopJetsMatched_MCdef_ = false;
-	pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second one is the parton  
-  	leptonicBJet_ = pair<unsigned int,unsigned int>(9999,9999);
-  	hadronicBJet_ = pair<unsigned int,unsigned int>(9999,9999);
-  	hadronicWJet1_ = pair<unsigned int,unsigned int>(9999,9999);
-  	hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
-	vector<TRootMCParticle*> mcParticlesMatching_; // MCParticles used for the matching
-	int pdgID_top = 6;
-	if(TprimeEvaluation)
-	   pdgID_top = 8;
-	if( (genEvt && (genEvt->isSemiLeptonic( TRootGenEvent::kMuon ) || genEvt->isSemiLeptonic( TRootGenEvent::kElec )) ) || TprimeEvaluation )
-  	{
-					        vector<TLorentzVector> mcParticlesTLV, selectedJetsTLV;
-						TLorentzVector topQuark, antiTopQuark;    
-   					        bool muPlusFromTop = false, muMinusFromTop = false, elPlusFromTop = false, elMinusFromTop = false;
-   						int nTTbarQuarks = 0;
-						for(unsigned int i=0; i<mcParticles.size(); i++)
-    						{
-//      						cout << i << ":  status: " << mcParticles[i]->status() << "  pdgId: " << mcParticles[i]->type()<< "  motherPdgId: " << mcParticles[i]->motherType() << "  grannyPdgId: " << mcParticles[i]->grannyType() << endl;
-      							if( mcParticles[i]->status() != 3) continue;
+  		bool hadronictopJetsMatched_MCdef_ = false;
+	  	pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second one is the parton  
+  	  leptonicBJet_ = pair<unsigned int,unsigned int>(9999,9999);
+  	  hadronicBJet_ = pair<unsigned int,unsigned int>(9999,9999);
+  	  hadronicWJet1_ = pair<unsigned int,unsigned int>(9999,9999);
+  	  hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
 
-      							if( mcParticles[i]->type() == pdgID_top )
-      							  topQuark = *mcParticles[i];
-      							else if( mcParticles[i]->type() == -pdgID_top )
-      							  antiTopQuark = *mcParticles[i];
-          
-      							if( mcParticles[i]->type() == 13 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -pdgID_top )
-      							  muMinusFromTop = true;
-      							if( mcParticles[i]->type() == -13 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top )
-      							  muPlusFromTop = true;
-      							if( mcParticles[i]->type() == 11 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -pdgID_top )
-      							  elMinusFromTop = true;
-      							if( mcParticles[i]->type() == -11 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top )
-      							  elPlusFromTop = true;
-      
-      							if( abs(mcParticles[i]->type()) < 6 || abs(mcParticles[i]->type()) == 21 ) //light quarks, 6 should stay hardcoded
-      							{
-      							  mcParticlesTLV.push_back(*mcParticles[i]);
-      							  mcParticlesMatching_.push_back(mcParticles[i]);
-            
-      							  if( fabs(mcParticles[i]->motherType()) == pdgID_top || fabs(mcParticles[i]->grannyType()) == pdgID_top )
-       							  {
-      							    nTTbarQuarks++;
-      							  }
-      							}
-    						}
-						// take all the selectedJets_ to study the radiation stuff, selectedJets_ are already ordened in decreasing Pt() 
-						//-> WAIT, not true!!! PROBLEM???
-						for(unsigned int i=0; i<selectedJets_MVAinput.size(); i++)
-      							selectedJetsTLV.push_back(*selectedJets_MVAinput[i]);
-      
-						JetPartonMatching matching = JetPartonMatching(mcParticlesTLV, selectedJetsTLV, 2, true, true, 0.3);
+						TLorentzVector topQuark, antiTopQuark;    
+   				  JetPartonMatching matching = JetPartonMatching(mcParticlesForMatching, selectedJets, 2, true, true, 0.3);
 						if(matching.getNumberOfAvailableCombinations() != 1)
- 						     cerr << "matching.getNumberOfAvailableCombinations() = "<<matching.getNumberOfAvailableCombinations()<<"  This should be equal to 1 !!!"<<endl;
-						vector< pair<unsigned int, unsigned int> > JetPartonPair; // First one is jet number, second one is mcParticle number
-        
-    						for(unsigned int i=0; i<mcParticlesTLV.size(); i++)
-    						{
-    						  int matchedJetNumber = matching.getMatchForParton(i, 0);
-						  //cout<<"matchedJetNumber = "<<matchedJetNumber<<", i = "<<i<<endl;
-				 		  if(matchedJetNumber != -1)
-        			 		    JetPartonPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );
-				 		}
+      				cerr << "matching.getNumberOfAvailableCombinations() = "<<matching.getNumberOfAvailableCombinations()<<"  This should be equal to 1 !!!"<<endl;
+
+    				vector< pair<unsigned int, unsigned int> > JetPartonPair; // First one is jet number, second one is mcParticle number
+      			for(unsigned int i=0; i<mcParticlesForMatching.size(); i++)
+    				{
+    				  int matchedJetNumber = matching.getMatchForParton(i, 0);
+							//cout<<"matchedJetNumber = "<<matchedJetNumber<<endl;
+   				    if(matchedJetNumber != -1)
+							{
+							  //cout<<"mcParticlesForMatching["<<i<<"].Pt() = "<<mcParticlesForMatching[i].Pt()<<endl;
+ 					       JetPartonPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );
+							}
+							else
+							  JetPartonPair.push_back( pair<unsigned int, unsigned int> (9999,9999) ); //a bit different than the other processEvent function	
+ 					  }
 						
-						for(unsigned int i=0; i<JetPartonPair.size(); i++)
-    						{
-    						  unsigned int j = JetPartonPair[i].second;
-    						  if( fabs(mcParticlesMatching_[j]->type()) < 6 ) //light quarks, 6 should stay hardcoded
-    						  {
-    						    if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticlesMatching_[j]->motherType() == -24 && mcParticlesMatching_[j]->grannyType() == -pdgID_top )
-   						       || ( ( muMinusFromTop || elMinusFromTop ) && mcParticlesMatching_[j]->motherType() == 24 && mcParticlesMatching_[j]->grannyType() == pdgID_top ) )
-   						    {
-   						       if(hadronicWJet1_.first == 9999) 
-							   hadronicWJet1_ = JetPartonPair[i];
-    						       else if(hadronicWJet2_.first == 9999) 
-							   hadronicWJet2_ = JetPartonPair[i];
-    						       else cerr<<"Found a third jet coming from a W boson which comes from a top quark..."<<endl;
-  						     }
-  						  }
-    						  if( fabs(mcParticlesMatching_[j]->type()) == 5 )
-    						  {
-  						       if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticlesMatching_[j]->motherType() == -pdgID_top )
-    						      || ( ( muMinusFromTop || elMinusFromTop ) && mcParticlesMatching_[j]->motherType() == pdgID_top ) )
-    						        hadronicBJet_ = JetPartonPair[i];
-    						       else if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticlesMatching_[j]->motherType() == pdgID_top )
-    						      || ( ( muMinusFromTop || elMinusFromTop ) && mcParticlesMatching_[j]->motherType() == -pdgID_top ) )
-    						        leptonicBJet_ = JetPartonPair[i];
-    						  }					  						  
+						//ordering was defined in InclFourthGen_TreeCreator
+						if(JetPartonPair.size() == 4)
+						{ 
+						  hadronicWJet1_ = JetPartonPair[0];
+						  hadronicWJet2_ = JetPartonPair[1];
+   				    hadronicBJet_ = JetPartonPair[2];
+   				    leptonicBJet_ = JetPartonPair[3];
+							//cout<<"hadronicWJet1_.first = "<<hadronicWJet1_.first<<endl;
+							//cout<<"hadronicWJet2_.first = "<<hadronicWJet2_.first<<endl;
+							//cout<<"hadronicBJet_.first = "<<hadronicBJet_.first<<endl;
+						  //cout<<"leptonicBJet_.first = "<<leptonicBJet_.first<<endl;
 						}
-						
-						//if(hadronicWJet1_.first != 9999 && hadronicWJet2_.first != 9999 && hadronicBJet_.first != 9999 && leptonicBJet_.first != 9999)
-    						//{ 
-   						//   all4PartonsMatched = true;
-    						//   if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4 && leptonicBJet_.first < 4)
-    						//     all4JetsMatched_MCdef_ = true;
-    						//}
-					////	cout<<"hadronicWJet1_.first = "<<hadronicWJet1_.first<<", hadronicWJet2_.first = "<<hadronicWJet2_.first<<", hadronicBJet_.first = "<<hadronicBJet_.first<<endl;
-    						if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4)
+						else
+						  cout<<"Problem!! JetPartonPair.size() != 4"<<endl;     
+   
+ 				    //if(hadronicWJet1_.first != 9999 && hadronicWJet2_.first != 9999 && hadronicBJet_.first != 9999 && leptonicBJet_.first != 9999)
+    			  //{  
+    				//	 all4PartonsMatched = true;
+   					//   if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4 && leptonicBJet_.first < 4)
+        		//	 all4JetsMatched_MCdef_ = true;
+    			  //}
+						//cout<<"   ------> according to JetCombiner: hadronicWJet1_.first = "<<hadronicWJet1_.first<<", hadronicWJet2_.first = "<<hadronicWJet2_.first<<", hadronicBJet_.first = "<<hadronicBJet_.first<<endl;
+    				if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4)
 						{
-    						  hadronictopJetsMatched_MCdef_ = true;
-						  counter_hadronictopJetsMatched_MCdef++;//only the jets from the hadronic top should be matched
-					////	  cout<<"   counter_hadronictopJetsMatched_MCdef = "<<counter_hadronictopJetsMatched_MCdef<<endl;
+    				  hadronictopJetsMatched_MCdef_ = true;
+							if(nbOfBtags==2 && nbOfWs==2) counter_hadronictopJetsMatched_MCdef_2B_2W++;//only the jets from the hadronic top should be matched
+						  else if(nbOfBtags==1 && nbOfWs==2) counter_hadronictopJetsMatched_MCdef_1B_2W++;
 						}
-    						
-						//if(all4PartonsMatched)
-    						//{      
-   						//     if(all4JetsMatched_MCdef_)
-   						//     {
-   						//	     // all 4 jets found and matched, now do something with them!
-						//	     //so this means: for this event, "a good jet combination exists": this is the denominator
-						//	     counter_all4JetsMatched_MCdef++;
-      						//     }
-   						//}
 						
 						//in principle, with 4 input jets: 4 * 3 * 2 / 2 = 12 combinations (2 because the W-jets can be interchanged)
 						TLorentzVector HadTop_choice;
@@ -488,129 +447,135 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 						unsigned int jetindexWJet1_smallestMass = 99999,jetindexWJet2_smallestMass = 99999,jetindexHadB_smallestMass = 99999;
 						unsigned int jetindexWJet1_largestPt = 99999,jetindexWJet2_largestPt = 99999,jetindexHadB_largestPt = 99999;
 						unsigned int jetindexWJet1_smallestPt = 99999,jetindexWJet2_smallestPt = 99999,jetindexHadB_smallestPt = 99999;
+						//now for the cases of W-jets fixed
 						float Mtop_largestMass_WJetsFixed = -99999,Mtop_smallestMass_WJetsFixed = 99999,Mtop_largestPt_WJetsFixed = -99999,Mtop_smallestPt_WJetsFixed = 99999;
 						float Mtop_WJetsFixed_choice1 = -99999, Mtop_WJetsFixed_choice2 = -99999; //when WJets are fixed, only 2 choices
 						float Pttop_WJetsFixed_choice1 = -99999, Pttop_WJetsFixed_choice2 = -99999; //when WJets are fixed, only 2 choices
 						unsigned int jetindexWJet1_WJetsFixed = 99999,jetindexWJet2_WJetsFixed = 99999;
 						unsigned int jetindexHadB_largestMass_WJetsFixed = 99999, jetindexHadB_smallestMass_WJetsFixed = 99999,jetindexHadB_largestPt_WJetsFixed = 99999,jetindexHadB_smallestPt_WJetsFixed = 99999;
-						for(unsigned int i=0; i<4; i++)
+						unsigned int jetindexHadB_bjetHadr_WJetsFixed = 99999;
+		
+		
+    if(nbOfBtags==2 && nbOfWs==2) //not tested in 1B_2W case, modifications needed (name of the plots etc)
+    {								 						
+				//in principle, with 4 input jets: 4 * 3 * 2 / 2 = 12 combinations (2 because the W-jets can be interchanged)
+				for(unsigned int i=0; i<4; i++)
+				{
+						for(unsigned int j=i+1; j<4; j++)
 						{
-						   for(unsigned int j=i+1; j<4; j++)
-						   {
 						      for(unsigned int k=j+1; k<4; k++)
 						      {
 							
-							   HadTop_choice = (*selectedJets_MVAinput[i] + *selectedJets_MVAinput[j] + *selectedJets_MVAinput[k]);
-							   if(HadTop_choice.M() > Mtop_largestMass)
-							   {
-							     Mtop_largestMass = HadTop_choice.M();
-							     jetindexWJet1_largestMass = i;
-							     jetindexWJet2_largestMass = j;
-							     jetindexHadB_largestMass = k;
-							   }
-							   if(HadTop_choice.M() < Mtop_smallestMass)
-							   {
-							     Mtop_smallestMass = HadTop_choice.M();
-							     jetindexWJet1_smallestMass = i;
-							     jetindexWJet2_smallestMass = j;
-							     jetindexHadB_smallestMass = k;
-							   }
-							   if(HadTop_choice.Pt() > Mtop_largestPt)
-							   {
-							     Mtop_largestPt = HadTop_choice.M();
-							     jetindexWJet1_largestPt = i;
-							     jetindexWJet2_largestPt = j;
-							     jetindexHadB_largestPt = k;
-							   }
-							   if(HadTop_choice.Pt() < Mtop_smallestPt)
-							   {
-							     Mtop_smallestPt = HadTop_choice.M();
-							     jetindexWJet1_smallestPt = i;
-							     jetindexWJet2_smallestPt = j;
-							     jetindexHadB_smallestPt = k;
-							   }
+							   		HadTop_choice = (selectedJets[i] + selectedJets[j] + selectedJets[k]);
+							   		if(HadTop_choice.M() > Mtop_largestMass)
+							   		{
+							     		Mtop_largestMass = HadTop_choice.M();
+							     		jetindexWJet1_largestMass = i;
+							     		jetindexWJet2_largestMass = j;
+							     		jetindexHadB_largestMass = k;
+							   		}
+							   		if(HadTop_choice.M() < Mtop_smallestMass)
+							   		{
+							     		Mtop_smallestMass = HadTop_choice.M();
+							     		jetindexWJet1_smallestMass = i;
+							     		jetindexWJet2_smallestMass = j;
+							     		jetindexHadB_smallestMass = k;
+							   		}
+							   		if(HadTop_choice.Pt() > Mtop_largestPt)
+							   		{
+							     		Mtop_largestPt = HadTop_choice.M();
+							     		jetindexWJet1_largestPt = i;
+							     		jetindexWJet2_largestPt = j;
+							     		jetindexHadB_largestPt = k;
+							   		}
+							   		if(HadTop_choice.Pt() < Mtop_smallestPt)
+							   		{
+							     		Mtop_smallestPt = HadTop_choice.M();
+							     		jetindexWJet1_smallestPt = i;
+							     		jetindexWJet2_smallestPt = j;
+							     		jetindexHadB_smallestPt = k;
+							   		}
 							   
-							   //now for the case when you take the jets from the W counting as WJets
-							   if(j==2 && k==3) // 2 and 3 are the jets from the W counting of before, only 0 and 1 (the 'b-jets') are left free to choose...
-							   {
-							     jetindexWJet1_WJetsFixed = 2; //j
-							     jetindexWJet2_WJetsFixed = 3; //k
-							     if(i==0)
-							     {
-							        Mtop_WJetsFixed_choice1 = HadTop_choice.M();
-								Pttop_WJetsFixed_choice1 = HadTop_choice.Pt();
-								
-							     }
-							     else if(i==1) // 2 and 3 are the jets from the W counting of before...
-							     {
-							        Mtop_WJetsFixed_choice2 = HadTop_choice.M();
-								Pttop_WJetsFixed_choice2 = HadTop_choice.Pt();
-							     }
+							   		//now for the case when you take the jets from the W counting as WJets
+							   		if(j==2 && k==3) // 2 and 3 are the jets from the W counting of before (in the 2B_2W case!!), only 0 and 1 (the 'b-jets') are left free to choose...
+							   		{
+							  		   jetindexWJet1_WJetsFixed = 2; //j
+							 		     jetindexWJet2_WJetsFixed = 3; //k
+							      	 if(i==0)
+							      	 {
+							        		Mtop_WJetsFixed_choice1 = HadTop_choice.M();
+													Pttop_WJetsFixed_choice1 = HadTop_choice.Pt();								
+							      	 }
+							      	 else if(i==1)
+							         {
+							            Mtop_WJetsFixed_choice2 = HadTop_choice.M();
+								          Pttop_WJetsFixed_choice2 = HadTop_choice.Pt();
+							         }
 							     
-							     if(Mtop_WJetsFixed_choice1 > Mtop_WJetsFixed_choice2)
-							     {
-							       Mtop_largestMass_WJetsFixed = Mtop_WJetsFixed_choice1;
-							       Mtop_smallestMass_WJetsFixed = Mtop_WJetsFixed_choice2;
-							       jetindexHadB_largestMass_WJetsFixed = 0;
-							       jetindexHadB_smallestMass_WJetsFixed = 1;
-							     }
-							     else
-							     {
-							       Mtop_largestMass_WJetsFixed = Mtop_WJetsFixed_choice2;
-							       Mtop_smallestMass_WJetsFixed = Mtop_WJetsFixed_choice1;
-							       jetindexHadB_largestMass_WJetsFixed = 1;
-							       jetindexHadB_smallestMass_WJetsFixed = 0;
-							     }
-							     if(Pttop_WJetsFixed_choice1 > Pttop_WJetsFixed_choice2)
-							     {
-							       Mtop_largestPt_WJetsFixed = Mtop_WJetsFixed_choice1;
-							       Mtop_smallestPt_WJetsFixed = Mtop_WJetsFixed_choice2;
-							       jetindexHadB_largestPt_WJetsFixed = 0;
-							       jetindexHadB_smallestPt_WJetsFixed = 1;
-							     }
-							     else
-							     {
-							       Mtop_largestPt_WJetsFixed = Mtop_WJetsFixed_choice2;
-							       Mtop_smallestPt_WJetsFixed = Mtop_WJetsFixed_choice1;
-							       jetindexHadB_largestPt_WJetsFixed = 1;
-							       jetindexHadB_smallestPt_WJetsFixed = 0;
-							     }
-							   }
-						      }
-						   }
-						}
+							      	 if(Mtop_WJetsFixed_choice1 > Mtop_WJetsFixed_choice2)
+							      	 {
+							    	      Mtop_largestMass_WJetsFixed = Mtop_WJetsFixed_choice1;
+							    		    Mtop_smallestMass_WJetsFixed = Mtop_WJetsFixed_choice2;
+							   		      jetindexHadB_largestMass_WJetsFixed = 0;
+							   		      jetindexHadB_smallestMass_WJetsFixed = 1;
+							   		   } 
+							      	 else
+							         {
+							      		  Mtop_largestMass_WJetsFixed = Mtop_WJetsFixed_choice2;
+							     		    Mtop_smallestMass_WJetsFixed = Mtop_WJetsFixed_choice1;
+							     		    jetindexHadB_largestMass_WJetsFixed = 1;
+							     		    jetindexHadB_smallestMass_WJetsFixed = 0;
+							    	   }
+							  	     if(Pttop_WJetsFixed_choice1 > Pttop_WJetsFixed_choice2)
+							  	     {
+							 		       Mtop_largestPt_WJetsFixed = Mtop_WJetsFixed_choice1;
+							 		       Mtop_smallestPt_WJetsFixed = Mtop_WJetsFixed_choice2;
+							 		       jetindexHadB_largestPt_WJetsFixed = 0;
+							 	         jetindexHadB_smallestPt_WJetsFixed = 1;
+							         }
+							         else
+							         {
+							        	 Mtop_largestPt_WJetsFixed = Mtop_WJetsFixed_choice2;
+							     		   Mtop_smallestPt_WJetsFixed = Mtop_WJetsFixed_choice1;
+							    	     jetindexHadB_largestPt_WJetsFixed = 1;
+							  	       jetindexHadB_smallestPt_WJetsFixed = 0;
+							   	     }
+							    	 }
+						    	}
+					 }
+				}
 						
-						//only the jets from the hadronic top should be matched (minimum...)
-						if(hadronictopJetsMatched_MCdef_) //necessary??
-						{
-      						  if ( ((jetindexWJet1_largestMass == hadronicWJet1_.first && jetindexWJet2_largestMass ==  hadronicWJet2_.first) 
+				//only the jets from the hadronic top should be matched (minimum...)
+				if(hadronictopJetsMatched_MCdef_) //necessary??
+				{
+      				if ( ((jetindexWJet1_largestMass == hadronicWJet1_.first && jetindexWJet2_largestMass ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_largestMass == hadronicWJet2_.first && jetindexWJet2_largestMass == hadronicWJet1_.first)) 
       						    && jetindexHadB_largestMass == hadronicBJet_.first)
 						  {
-							counter_hadronictopJetsMatched_largestMass++;
-							////cout<<"    counter_hadronictopJetsMatched_largestMass = "<<counter_hadronictopJetsMatched_largestMass<<endl;
+								counter_hadronictopJetsMatched_largestMass_2B_2W++;
+								//cout<<"    counter_hadronictopJetsMatched_largestMass_2B_2W = "<<counter_hadronictopJetsMatched_largestMass_2B_2W<<endl;
 						  }						  
 						  if ( ((jetindexWJet1_smallestMass == hadronicWJet1_.first && jetindexWJet2_smallestMass ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_smallestMass == hadronicWJet2_.first && jetindexWJet2_smallestMass == hadronicWJet1_.first)) 
       						    && jetindexHadB_smallestMass == hadronicBJet_.first)
 						  {
-						  	counter_hadronictopJetsMatched_smallestMass++;
-							////cout<<"    counter_hadronictopJetsMatched_smallestMass = "<<counter_hadronictopJetsMatched_smallestMass<<endl;
+						  	counter_hadronictopJetsMatched_smallestMass_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestMass_2B_2W = "<<counter_hadronictopJetsMatched_smallestMass_2B_2W<<endl;
 						  }	  
 						  if ( ((jetindexWJet1_largestPt == hadronicWJet1_.first && jetindexWJet2_largestPt ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_largestPt == hadronicWJet2_.first && jetindexWJet2_largestPt == hadronicWJet1_.first)) 
       						    && jetindexHadB_largestPt == hadronicBJet_.first)
 						  {
-						        counter_hadronictopJetsMatched_largestPt++;
-							////cout<<"    counter_hadronictopJetsMatched_largestPt = "<<counter_hadronictopJetsMatched_largestPt<<endl;
+						        counter_hadronictopJetsMatched_largestPt_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_largestPt_2B_2W = "<<counter_hadronictopJetsMatched_largestPt_2B_2W<<endl;
 						  
 						  }
 						  if ( ((jetindexWJet1_smallestPt == hadronicWJet1_.first && jetindexWJet2_smallestPt ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_smallestPt == hadronicWJet2_.first && jetindexWJet2_smallestPt == hadronicWJet1_.first)) 
       						    && jetindexHadB_smallestPt == hadronicBJet_.first)
 						  {
-						  	counter_hadronictopJetsMatched_smallestPt++;
-							////cout<<"    counter_hadronictopJetsMatched_smallestPt = "<<counter_hadronictopJetsMatched_smallestPt<<endl;
+						  	counter_hadronictopJetsMatched_smallestPt_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestPt_2B_2W = "<<counter_hadronictopJetsMatched_smallestPt_2B_2W<<endl;
 						  }
 						  
 						  //now for the case when you take the jets from the W counting as WJets
@@ -618,46 +583,216 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
       						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
       						    && jetindexHadB_largestMass_WJetsFixed == hadronicBJet_.first)
 						  {
-							counter_hadronictopJetsMatched_largestMass_WJetsFixed++;
-							////cout<<"    counter_hadronictopJetsMatched_largestMass_WJetsFixed = "<<counter_hadronictopJetsMatched_largestMass_WJetsFixed<<endl;
+							counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W = "<<counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W<<endl;
 						  }
-						  ////cout<<"jetindexWJet1_WJetsFixed = "<<jetindexWJet1_WJetsFixed<<", jetindexWJet2_WJetsFixed = "<<jetindexWJet2_WJetsFixed<<", jetindexHadB_smallestMass_WJetsFixed = "<<jetindexHadB_smallestMass_WJetsFixed<<endl;			  
+						  //cout<<"jetindexWJet1_WJetsFixed = "<<jetindexWJet1_WJetsFixed<<", jetindexWJet2_WJetsFixed = "<<jetindexWJet2_WJetsFixed<<", jetindexHadB_smallestMass_WJetsFixed = "<<jetindexHadB_smallestMass_WJetsFixed<<endl;			  
 						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
       						    && jetindexHadB_smallestMass_WJetsFixed == hadronicBJet_.first)
 						  {
-						  	counter_hadronictopJetsMatched_smallestMass_WJetsFixed++;
-							////cout<<"    counter_hadronictopJetsMatched_smallestMass_WJetsFixed = "<<counter_hadronictopJetsMatched_smallestMass_WJetsFixed<<endl;
+						  	counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W = "<<counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W<<endl;
 						  }
 						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
       						    && jetindexHadB_largestPt_WJetsFixed == hadronicBJet_.first)
 						  {
-						        counter_hadronictopJetsMatched_largestPt_WJetsFixed++;
-							////cout<<"    counter_hadronictopJetsMatched_largestPt_WJetsFixed = "<<counter_hadronictopJetsMatched_largestPt_WJetsFixed<<endl;
+						        counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W = "<<counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W<<endl;
 						  
 						  }
 						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
       						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
       						    && jetindexHadB_smallestPt_WJetsFixed == hadronicBJet_.first)
 						  {
-						  	counter_hadronictopJetsMatched_smallestPt_WJetsFixed++;
-							////cout<<"    counter_hadronictopJetsMatched_smallestPt_WJetsFixed = "<<counter_hadronictopJetsMatched_smallestPt_WJetsFixed<<endl;
+						  	counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W = "<<counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W<<endl;
 						  }
-						}
-						//cout<<"Mtop_largestMass_WJetsFixed = "<<Mtop_largestMass_WJetsFixed<<endl;
-						MSPlot["MS_MTop_largestMass_WJetsFixed_2B_2W"]->Fill(Mtop_largestMass_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);
-						MSPlot["MS_MTop_smallestMass_WJetsFixed_2B_2W"]->Fill(Mtop_smallestMass_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);				
-						MSPlot["MS_MTop_largestPt_WJetsFixed_2B_2W"]->Fill(Mtop_largestPt_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);
-						MSPlot["MS_MTop_smallestPt_WJetsFixed_2B_2W"]->Fill(Mtop_smallestPt_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);				
+				}
+				//cout<<"Mtop_largestMass_WJetsFixed = "<<Mtop_largestMass_WJetsFixed<<endl;
+				MSPlot["MS_MTop_largestMass_WJetsFixed_2B_2W"]->Fill(Mtop_largestMass_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);
+				MSPlot["MS_MTop_smallestMass_WJetsFixed_2B_2W"]->Fill(Mtop_smallestMass_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);				
+				MSPlot["MS_MTop_largestPt_WJetsFixed_2B_2W"]->Fill(Mtop_largestPt_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);
+				MSPlot["MS_MTop_smallestPt_WJetsFixed_2B_2W"]->Fill(Mtop_smallestPt_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);				
+   
+	 }
+   else if(nbOfBtags==1 && nbOfWs==2) //the same as for 2B_2W but jet 0 and 3 are now supposed to have the role of the b-jets
+	 {
+		 						
+				//in principle, with 4 input jets: 4 * 3 * 2 / 2 = 12 combinations (2 because the W-jets can be interchanged)
+				for(unsigned int i=0; i<4; i++)
+				{
+						for(unsigned int j=i+1; j<4; j++)
+						{
+						      for(unsigned int k=j+1; k<4; k++)
+						      {
 							
-	}//if Semi mu or semi el ttbar or Tprime...
-   }
-   else
-     cout<<"Modify the InclFourthGenSearchTools::TestPurityGoodCombinations() function first if you want to test for other boxes than 2B_2W !!"<<endl;
-	
-	///end block to test 'purity' of good jet combinations with a 'simple' method (not MVA)
-	////////////////
+							   		HadTop_choice = (selectedJets[i] + selectedJets[j] + selectedJets[k]);
+							   		if(HadTop_choice.M() > Mtop_largestMass)
+							   		{
+							     		Mtop_largestMass = HadTop_choice.M();
+							     		jetindexWJet1_largestMass = i;
+							     		jetindexWJet2_largestMass = j;
+							     		jetindexHadB_largestMass = k;
+							   		}
+							   		if(HadTop_choice.M() < Mtop_smallestMass)
+							   		{
+							     		Mtop_smallestMass = HadTop_choice.M();
+							     		jetindexWJet1_smallestMass = i;
+							     		jetindexWJet2_smallestMass = j;
+							     		jetindexHadB_smallestMass = k;
+							   		}
+							   		if(HadTop_choice.Pt() > Mtop_largestPt)
+							   		{
+							     		Mtop_largestPt = HadTop_choice.M();
+							     		jetindexWJet1_largestPt = i;
+							     		jetindexWJet2_largestPt = j;
+							     		jetindexHadB_largestPt = k;
+							   		}
+							   		if(HadTop_choice.Pt() < Mtop_smallestPt)
+							   		{
+							     		Mtop_smallestPt = HadTop_choice.M();
+							     		jetindexWJet1_smallestPt = i;
+							     		jetindexWJet2_smallestPt = j;
+							     		jetindexHadB_smallestPt = k;
+							   		}
+							   
+							   		//now for the case when you take the jets from the W counting as WJets
+							   		if(j==1 && k==2) // 1 and 2 are the jets from the W counting of before (in the 1B_2W case!!), only 0 and 3 (the 'b-jets', altough the jet 3 is not b-tagged) are left free to choose...
+							   		{
+							  		   jetindexWJet1_WJetsFixed = 1; //j
+							 		     jetindexWJet2_WJetsFixed = 2; //k
+							      	 if(i==0)
+							      	 {
+							        		Mtop_WJetsFixed_choice1 = HadTop_choice.M();
+													Pttop_WJetsFixed_choice1 = HadTop_choice.Pt();								
+							      	 }
+							      	 else if(i==3)
+							         {
+							            Mtop_WJetsFixed_choice2 = HadTop_choice.M();
+								          Pttop_WJetsFixed_choice2 = HadTop_choice.Pt();
+							         }
+							     
+							      	 if(Mtop_WJetsFixed_choice1 > Mtop_WJetsFixed_choice2)
+							      	 {
+							    	      Mtop_largestMass_WJetsFixed = Mtop_WJetsFixed_choice1;
+							    		    Mtop_smallestMass_WJetsFixed = Mtop_WJetsFixed_choice2;
+							   		      jetindexHadB_largestMass_WJetsFixed = 0;
+							   		      jetindexHadB_smallestMass_WJetsFixed = 3;
+							   		   } 
+							      	 else
+							         {
+							      		  Mtop_largestMass_WJetsFixed = Mtop_WJetsFixed_choice2;
+							     		    Mtop_smallestMass_WJetsFixed = Mtop_WJetsFixed_choice1;
+							     		    jetindexHadB_largestMass_WJetsFixed = 3;
+							     		    jetindexHadB_smallestMass_WJetsFixed = 0;
+							    	   }
+							  	     if(Pttop_WJetsFixed_choice1 > Pttop_WJetsFixed_choice2)
+							  	     {
+							 		       Mtop_largestPt_WJetsFixed = Mtop_WJetsFixed_choice1;
+							 		       Mtop_smallestPt_WJetsFixed = Mtop_WJetsFixed_choice2;
+							 		       jetindexHadB_largestPt_WJetsFixed = 0;
+							 	         jetindexHadB_smallestPt_WJetsFixed = 3;
+							         }
+							         else
+							         {
+							        	 Mtop_largestPt_WJetsFixed = Mtop_WJetsFixed_choice2;
+							     		   Mtop_smallestPt_WJetsFixed = Mtop_WJetsFixed_choice1;
+							    	     jetindexHadB_largestPt_WJetsFixed = 3;
+							  	       jetindexHadB_smallestPt_WJetsFixed = 0;
+							   	     }
+
+							    	 }
+						    	}
+					 }
+				}
+				jetindexHadB_bjetHadr_WJetsFixed = 0; //a very simple choice; 'the b-jet is the hadronic top b-jet'
+						
+				//only the jets from the hadronic top should be matched (minimum...)
+				if(hadronictopJetsMatched_MCdef_) //necessary??
+				{
+      				if ( ((jetindexWJet1_largestMass == hadronicWJet1_.first && jetindexWJet2_largestMass ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_largestMass == hadronicWJet2_.first && jetindexWJet2_largestMass == hadronicWJet1_.first)) 
+      						    && jetindexHadB_largestMass == hadronicBJet_.first)
+						  {
+								counter_hadronictopJetsMatched_largestMass_1B_2W++;
+								//cout<<"    counter_hadronictopJetsMatched_largestMass_1B_2W = "<<counter_hadronictopJetsMatched_largestMass_1B_2W<<endl;
+						  }						  
+						  if ( ((jetindexWJet1_smallestMass == hadronicWJet1_.first && jetindexWJet2_smallestMass ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_smallestMass == hadronicWJet2_.first && jetindexWJet2_smallestMass == hadronicWJet1_.first)) 
+      						    && jetindexHadB_smallestMass == hadronicBJet_.first)
+						  {
+						  	counter_hadronictopJetsMatched_smallestMass_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestMass_1B_2W = "<<counter_hadronictopJetsMatched_smallestMass_1B_2W<<endl;
+						  }	  
+						  if ( ((jetindexWJet1_largestPt == hadronicWJet1_.first && jetindexWJet2_largestPt ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_largestPt == hadronicWJet2_.first && jetindexWJet2_largestPt == hadronicWJet1_.first)) 
+      						    && jetindexHadB_largestPt == hadronicBJet_.first)
+						  {
+						        counter_hadronictopJetsMatched_largestPt_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_largestPt_1B_2W = "<<counter_hadronictopJetsMatched_largestPt_1B_2W<<endl;
+						  
+						  }
+						  if ( ((jetindexWJet1_smallestPt == hadronicWJet1_.first && jetindexWJet2_smallestPt ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_smallestPt == hadronicWJet2_.first && jetindexWJet2_smallestPt == hadronicWJet1_.first)) 
+      						    && jetindexHadB_smallestPt == hadronicBJet_.first)
+						  {
+						  	counter_hadronictopJetsMatched_smallestPt_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestPt_1B_2W = "<<counter_hadronictopJetsMatched_smallestPt_1B_2W<<endl;
+						  }
+						  
+						  //now for the case when you take the jets from the W counting as WJets
+						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
+      						    && jetindexHadB_largestMass_WJetsFixed == hadronicBJet_.first)
+						  {
+							counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W = "<<counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W<<endl;
+						  }
+						  //cout<<"jetindexWJet1_WJetsFixed = "<<jetindexWJet1_WJetsFixed<<", jetindexWJet2_WJetsFixed = "<<jetindexWJet2_WJetsFixed<<", jetindexHadB_smallestMass_WJetsFixed = "<<jetindexHadB_smallestMass_WJetsFixed<<endl;			  
+						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
+      						    && jetindexHadB_smallestMass_WJetsFixed == hadronicBJet_.first)
+						  {
+						  	counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W = "<<counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W<<endl;
+						  }
+						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
+      						    && jetindexHadB_largestPt_WJetsFixed == hadronicBJet_.first)
+						  {
+						        counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W = "<<counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W<<endl;
+						  
+						  }
+						  if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
+      						    && jetindexHadB_smallestPt_WJetsFixed == hadronicBJet_.first)
+						  {
+						  	counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W = "<<counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W<<endl;
+						  }
+							
+							if ( ((jetindexWJet1_WJetsFixed == hadronicWJet1_.first && jetindexWJet2_WJetsFixed ==  hadronicWJet2_.first) 
+      						    || (jetindexWJet1_WJetsFixed == hadronicWJet2_.first && jetindexWJet2_WJetsFixed == hadronicWJet1_.first)) 
+      						    && jetindexHadB_bjetHadr_WJetsFixed == hadronicBJet_.first)
+						  {
+						  	counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W++;
+							//cout<<"    counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W = "<<counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W<<endl;
+						  }
+				}
+				//cout<<"Mtop_largestMass_WJetsFixed = "<<Mtop_largestMass_WJetsFixed<<endl;
+				MSPlot["MS_MTop_largestMass_WJetsFixed_1B_2W"]->Fill(Mtop_largestMass_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);
+				MSPlot["MS_MTop_smallestMass_WJetsFixed_1B_2W"]->Fill(Mtop_smallestMass_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);				
+				MSPlot["MS_MTop_largestPt_WJetsFixed_1B_2W"]->Fill(Mtop_largestPt_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);
+				MSPlot["MS_MTop_smallestPt_WJetsFixed_1B_2W"]->Fill(Mtop_smallestPt_WJetsFixed, datasets_[d], true, Luminosity_*scaleFactor);				
+	 
+	 }
+	 else
+     cout<<"InclFourthGenSearchTools::TestPurityGoodCombinations() function only supports the 2W boxes!"<<endl;
+	}//end if SemiLep or Tprime...
+
 }
 
 void InclFourthGenSearchTools::PrintPurityGoodCombinations()
@@ -665,49 +800,101 @@ void InclFourthGenSearchTools::PrintPurityGoodCombinations()
     cout<<endl;
     
     float eff_goodjetcomb = -9999;
+		cout<<"------------------->  1B_2W  <-------------------"<<endl;
     cout<<"**************************  All 4 input jets free  **********************"<<endl;
     cout<<" ----- For simple jet choice largestMass -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestMass<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestMass)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestMass_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestMass_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
     cout<<" ----- For simple jet choice smallestMass -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestMass<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestMass)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestMass_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestMass_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
     cout<<" ----- For simple jet choice largestPt -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestPt<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestPt)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestPt_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestPt_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
     cout<<" ----- For simple jet choice smallestPt -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestPt<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestPt)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestPt_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestPt_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
-    
-    cout<<endl;
-    
     cout<<"**************************  Only 2 input jets free (the 'b-jets') **********************"<<endl;
     cout<<" ----- For simple jet choice largestMass -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestMass_WJetsFixed<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestMass_WJetsFixed)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
     cout<<" ----- For simple jet choice smallestMass -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestMass_WJetsFixed<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestMass_WJetsFixed)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
     cout<<" ----- For simple jet choice largestPt -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestPt_WJetsFixed<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestPt_WJetsFixed)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
     cout<<" ----- For simple jet choice smallestPt -----"<<endl;
-    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef<<endl;
-    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestPt_WJetsFixed<<endl;
-    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestPt_WJetsFixed)/float(counter_hadronictopJetsMatched_MCdef);
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
     cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+		cout<<" ----- For simple jet choice 'b-jet = from hadronic decaying top' -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_1B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W)/float(counter_hadronictopJetsMatched_MCdef_1B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+
+
+		cout<<endl;
+
+		cout<<"------------------->  2B_2W  <-------------------"<<endl;
+    cout<<"**************************  All 4 input jets free  **********************"<<endl;
+    cout<<" ----- For simple jet choice largestMass -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestMass_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestMass_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<" ----- For simple jet choice smallestMass -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestMass_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestMass_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<" ----- For simple jet choice largestPt -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestPt_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestPt_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<" ----- For simple jet choice smallestPt -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestPt_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestPt_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<"**************************  Only 2 input jets free (the 'b-jets') **********************"<<endl;
+    cout<<" ----- For simple jet choice largestMass -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<" ----- For simple jet choice smallestMass -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<" ----- For simple jet choice largestPt -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+    cout<<" ----- For simple jet choice smallestPt -----"<<endl;
+    cout<<"    number of times where a good jet combination exists = "<<counter_hadronictopJetsMatched_MCdef_2B_2W<<endl;
+    cout<<"    number of times the good jet combination is chosen = "<<counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W<<endl;
+    eff_goodjetcomb = float(counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W)/float(counter_hadronictopJetsMatched_MCdef_2B_2W);
+    cout<<"      => 'efficiency' of taking the good jet combination = "<<eff_goodjetcomb<<endl;
+
+
 }

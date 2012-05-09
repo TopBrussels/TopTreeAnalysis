@@ -54,7 +54,7 @@ class InclFourthGenSearchTools
    float GetMtop_kinfit() const {return Mtop_kinfit_;};
    void FillMassPlots(int d, int nbOfBtags, int nbOfWs, float scaleFactor);
    void WritePlots(TFile* fout, TDirectory* th1dir, bool savePNG, string pathPNG);
-   void TestPurityGoodCombinations(int d, int nbOfBtags, int nbOfWs, TRootGenEvent* genEvt, vector<TRootMCParticle*> mcParticles, vector<TRootJet*> selectedJets_MVAinput, bool TprimeEvaluation, float scaleFactor);
+   void TestPurityGoodCombinations(int d, int nbOfBtags, int nbOfWs, bool isSemiLep, vector<TLorentzVector> mcParticlesForMatching, vector<TLorentzVector> selectedJets, bool TprimeEvaluation, float scaleFactor);
    void PrintPurityGoodCombinations();
    
  private:
@@ -74,16 +74,28 @@ class InclFourthGenSearchTools
    float Mtop_;
    float Mtop_kinfit_;
    
-   int counter_all4JetsMatched_MCdef;
-   int counter_hadronictopJetsMatched_MCdef;
-   int counter_hadronictopJetsMatched_largestMass;
-   int counter_hadronictopJetsMatched_smallestMass;
-   int counter_hadronictopJetsMatched_largestPt;
-   int counter_hadronictopJetsMatched_smallestPt;
-   int counter_hadronictopJetsMatched_largestMass_WJetsFixed;
-   int counter_hadronictopJetsMatched_smallestMass_WJetsFixed;
-   int counter_hadronictopJetsMatched_largestPt_WJetsFixed;
-   int counter_hadronictopJetsMatched_smallestPt_WJetsFixed;
+	 int counter_all4JetsMatched_MCdef_1B_2W;
+   int counter_hadronictopJetsMatched_MCdef_1B_2W;
+   int counter_hadronictopJetsMatched_largestMass_1B_2W;
+   int counter_hadronictopJetsMatched_smallestMass_1B_2W;
+   int counter_hadronictopJetsMatched_largestPt_1B_2W;
+   int counter_hadronictopJetsMatched_smallestPt_1B_2W;
+   int counter_hadronictopJetsMatched_largestMass_WJetsFixed_1B_2W;
+   int counter_hadronictopJetsMatched_smallestMass_WJetsFixed_1B_2W;
+   int counter_hadronictopJetsMatched_largestPt_WJetsFixed_1B_2W;
+   int counter_hadronictopJetsMatched_smallestPt_WJetsFixed_1B_2W;
+	  int counter_hadronictopJetsMatched_bjetHadr_WJetsFixed_1B_2W;
+		
+   int counter_all4JetsMatched_MCdef_2B_2W;
+   int counter_hadronictopJetsMatched_MCdef_2B_2W;
+   int counter_hadronictopJetsMatched_largestMass_2B_2W;
+   int counter_hadronictopJetsMatched_smallestMass_2B_2W;
+   int counter_hadronictopJetsMatched_largestPt_2B_2W;
+   int counter_hadronictopJetsMatched_smallestPt_2B_2W;
+   int counter_hadronictopJetsMatched_largestMass_WJetsFixed_2B_2W;
+   int counter_hadronictopJetsMatched_smallestMass_WJetsFixed_2B_2W;
+   int counter_hadronictopJetsMatched_largestPt_WJetsFixed_2B_2W;
+   int counter_hadronictopJetsMatched_smallestPt_WJetsFixed_2B_2W;	 
    
 };
 
