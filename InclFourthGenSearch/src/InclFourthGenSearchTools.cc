@@ -443,6 +443,7 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 						//in principle, with 4 input jets: 4 * 3 * 2 / 2 = 12 combinations (2 because the W-jets can be interchanged)
 						TLorentzVector HadTop_choice;
 						float Mtop_largestMass = -99999,Mtop_smallestMass = 99999,Mtop_largestPt = -99999,Mtop_smallestPt = 99999;
+						float Pttop_largestPt = -99999, Pttop_smallestPt = -99999;
 						unsigned int jetindexWJet1_largestMass = 99999,jetindexWJet2_largestMass = 99999,jetindexHadB_largestMass = 99999;
 						unsigned int jetindexWJet1_smallestMass = 99999,jetindexWJet2_smallestMass = 99999,jetindexHadB_smallestMass = 99999;
 						unsigned int jetindexWJet1_largestPt = 99999,jetindexWJet2_largestPt = 99999,jetindexHadB_largestPt = 99999;
@@ -481,16 +482,18 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 							     		jetindexWJet2_smallestMass = j;
 							     		jetindexHadB_smallestMass = k;
 							   		}
-							   		if(HadTop_choice.Pt() > Mtop_largestPt)
+							   		if(HadTop_choice.Pt() > Pttop_largestPt)
 							   		{
-							     		Mtop_largestPt = HadTop_choice.Pt();
+											Pttop_largestPt = HadTop_choice.Pt();
+							     		Mtop_largestPt = HadTop_choice.M();
 							     		jetindexWJet1_largestPt = i;
 							     		jetindexWJet2_largestPt = j;
 							     		jetindexHadB_largestPt = k;
 							   		}
-							   		if(HadTop_choice.Pt() < Mtop_smallestPt)
+							   		if(HadTop_choice.Pt() < Pttop_smallestPt)
 							   		{
-							     		Mtop_smallestPt = HadTop_choice.Pt();
+											Pttop_smallestPt = HadTop_choice.Pt();
+							     		Mtop_smallestPt = HadTop_choice.M();
 							     		jetindexWJet1_smallestPt = i;
 							     		jetindexWJet2_smallestPt = j;
 							     		jetindexHadB_smallestPt = k;
@@ -638,16 +641,18 @@ void InclFourthGenSearchTools::TestPurityGoodCombinations(int d, int nbOfBtags, 
 							     		jetindexWJet2_smallestMass = j;
 							     		jetindexHadB_smallestMass = k;
 							   		}
-							   		if(HadTop_choice.Pt() > Mtop_largestPt)
+							   		if(HadTop_choice.Pt() > Pttop_largestPt)
 							   		{
-							     		Mtop_largestPt = HadTop_choice.Pt();
+											Pttop_largestPt = HadTop_choice.Pt();
+							     		Mtop_largestPt = HadTop_choice.M();
 							     		jetindexWJet1_largestPt = i;
 							     		jetindexWJet2_largestPt = j;
 							     		jetindexHadB_largestPt = k;
 							   		}
-							   		if(HadTop_choice.Pt() < Mtop_smallestPt)
+							   		if(HadTop_choice.Pt() < Pttop_smallestPt)
 							   		{
-							     		Mtop_smallestPt = HadTop_choice.Pt();
+											Pttop_smallestPt = HadTop_choice.Pt();
+							     		Mtop_smallestPt = HadTop_choice.M();
 							     		jetindexWJet1_smallestPt = i;
 							     		jetindexWJet2_smallestPt = j;
 							     		jetindexHadB_smallestPt = k;
