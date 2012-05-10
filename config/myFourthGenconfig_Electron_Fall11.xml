@@ -159,14 +159,6 @@ for A=0!!!
 <d name="NP_BprimeTprime800" title="b't' 800 GeV" add="0" color="30"  ls="1" lw="2" normf="1" xsection="0.0070" EqLumi="" PreselEff="1" xsectionError="0" mass="800" filenames=""/>
 
 
-<!-- Fall11 TTJets systematics (not available in Fall11). In TreeCreator mode: put dcap://maite.iihe.ac.be/ in front of the path-->
-<d name="TTbar_Scaleup" title="t#bar{t}+jets scale up" add="1" color="8" ls="1" lw="2" normf="1" xsection="158" EqLumi="20566.2" PreselEff="0.0" xsectionError="0.1" filenames="/pnfs/iihe/cms/store/user/dhondt/Skimmed-TopTrees/ElectronSkim_Fall11_42X_TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_20042012_190001_TOPTREE/27042012_143510/*.root"/>
-<d name="TTbar_Scaledown" title="t#bar{t}+jets scale down" add="1" color="8" ls="1" lw="2" normf="1" xsection="158" EqLumi="22608.8" PreselEff="0.0" xsectionError="0.1" filenames="/pnfs/iihe/cms/store/user/dhondt/Skimmed-TopTrees/ElectronSkim_Fall11_42X_TTjets_TuneZ2_scaledown_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v2_20042012_190006_TOPTREE/27042012_144510/*.root"/>
-<d name="TTbar_Matchingup" title="t#bar{t}+jets matching up" add="1" color="8" ls="1" lw="2" normf="1" xsection="158" EqLumi="24881.4" PreselEff="0.0" xsectionError="0.1" filenames="/pnfs/iihe/cms/store/user/dhondt/Skimmed-TopTrees/ElectronSkim_Fall11_42X_TTjets_TuneZ2_matchingup_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v2_20042012_190011_TOPTREE/27042012_145510/*.root"/>
-<d name="TTbar_Matchingdown" title="t#bar{t}+jets matching down" add="1" color="8" ls="1" lw="2" normf="1" xsection="158" EqLumi="1284.1" PreselEff="0.0" xsectionError="0.1" filenames="/pnfs/iihe/cms/store/user/dhondt/Skimmed-TopTrees/ElectronSkim_Fall11_42X_TTjets_TuneZ2_matchingdown_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1/28042012_010521/*.root"/>
-
-
-
 </datasets>
 
 <!-- All parameters needed for the selection and the bkg estimation methods -->
