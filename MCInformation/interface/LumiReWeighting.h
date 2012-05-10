@@ -246,21 +246,25 @@ namespace reweight {
 	  generatedFile_ = new TFile( generatedFileName_.c_str() ) ; //MC distribution
 	  dataFile_      = new TFile( dataFileName_.c_str() );       //Data distribution
 
-	  Data_distr_ = new TH1(  *(static_cast<TH1*>(dataFile_->Get( DataHistName_.c_str() )->Clone() )) );
-	  MC_distr_ = new TH1(  *(static_cast<TH1*>(generatedFile_->Get( GenHistName_.c_str() )->Clone() )) );
+	  //Data_distr_ = new TH1(  *(static_cast<TH1*>(dataFile_->Get( DataHistName_.c_str() )->Clone() )) );
+	  //MC_distr_ = new TH1(  *(static_cast<TH1*>(generatedFile_->Get( GenHistName_.c_str() )->Clone() )) );
+           Data_distr_ = (TH1*) (dataFile_->Get( DataHistName_.c_str() )->Clone());
+	   MC_distr_ = (TH1*) (generatedFile_->Get( GenHistName_.c_str() )->Clone());
 
 	  // normalize both histograms first                                                                            
 
 	  Data_distr_->Scale( 1.0/ Data_distr_->Integral() );
 	  MC_distr_->Scale( 1.0/ MC_distr_->Integral() );
 
-	  weights_ = new TH1( *(Data_distr_)) ;
+	  //weights_ = new TH1( *(Data_distr_)) ;
+           weights_ = (TH1*) Data_distr_->Clone();
 
 	  // MC * data/MC = data, so the weights are data/MC:
 
 	  weights_->SetName("lumiWeights");
 
-	  TH1* den = new TH1(*(MC_distr_));
+	  //TH1* den = new TH1(*(MC_distr_));
+	  TH1* den = (TH1*) MC_distr_->Clone();
 
 	  weights_->Divide( den );  // so now the average weight should be 1.0
 
