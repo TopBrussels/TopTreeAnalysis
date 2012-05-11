@@ -22,7 +22,7 @@ class MinuitFitter{
    double GetF0Result() { return f0result_; }
    double GetF0Error() { return ef0result_; }
    double GetFLResult() { return flresult_; }
-   double GetFlError() { return eflresult_; }
+   double GetFLError() { return eflresult_; }
    double GetFRResult() { return frresult_; }
    double GetFRError() { return efrresult_; }
 
