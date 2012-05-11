@@ -86,7 +86,7 @@ int main(unsigned int argc, char *argv[])
 		cout<<argv[i]<<endl;
 	}
 	
-	bool semiLepton = false; //if true, semiElectron and semiMuon will be combined
+	bool semiLepton = true; //if true, semiElectron and semiMuon will be combined
 	string channelpostfix = "";
 	bool semiElectron = false; // use semiElectron channel?
   bool semiMuon = false; // use semiMuon channel?
@@ -109,6 +109,14 @@ int main(unsigned int argc, char *argv[])
 	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiMu;
 	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiEl;
 	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiLep;
+	
+	
+	vector<vector<float> > QuadUncertSumPlusvec_AllBoxes_semiMu;
+	vector<vector<float> > QuadUncertSumMinusvec_AllBoxes_semiMu;	
+	vector<vector<float> > QuadUncertSumPlusvec_AllBoxes_semiEl;
+	vector<vector<float> > QuadUncertSumMinusvec_AllBoxes_semiEl;
+	vector<vector<float> > QuadUncertSumPlusvec_AllBoxes_semiLep;
+	vector<vector<float> > QuadUncertSumMinusvec_AllBoxes_semiLep;
 	
 	string basedir = "1D_histograms/";
 	const unsigned int nplots = 9;
@@ -254,6 +262,7 @@ while(semiElectron==true || semiMuon==true){
 */
 
 //source: /user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/RooStatsLimit/2012_05_10_combined/CKMA0/mass450/hf_tprime.xml
+	float rel_unc_lumi = 0.022; //2.2%
 	float rel_unc_mu_eff 	= 0.03;
 	float rel_unc_el_eff 	= 0.05;
 	float rel_unc_top = 0.12;
@@ -441,14 +450,15 @@ while(semiElectron==true || semiMuon==true){
 	}
   //distributions_Nonfitted_processes_map["Nominal"] = distributions_Nonfitted_processes;
 	cout << "retrieved histograms for processes for all plots (towards non-fitted plots)" << endl;
-	
+
 	
 	
 	//loop over plots: remake each plot using fitted nuisance parameters
 	for(unsigned int box_i=0; box_i<nplots; box_i++)
 	{
 		cout << "remake the " << boxdistributions[box_i] << " histogram" << endl;
-
+	
+		
 		TH1F ** contribution_lumi = new TH1F*[datasets.size()];
 		TH1F ** contribution_mueff = new TH1F*[datasets.size()];
 		TH1F ** contribution_eleff = new TH1F*[datasets.size()];
@@ -459,6 +469,29 @@ while(semiElectron==true || semiMuon==true){
 		TH1F ** contribution_bTag = new TH1F*[datasets.size()];
 		TH1F ** contribution_PU = new TH1F*[datasets.size()];
 		TH1F ** contribution_All = new TH1F*[datasets.size()];
+		//
+		TH1F ** contributionSigmaPlus_lumi = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_mueff = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_eleff = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_XS = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_JES = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_JER = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_misTag = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_bTag = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_PU = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaPlus_All = new TH1F*[datasets.size()];
+		//
+		TH1F ** contributionSigmaMinus_lumi = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_mueff = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_eleff = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_XS = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_JES = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_JER = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_misTag = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_bTag = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_PU = new TH1F*[datasets.size()];
+		TH1F ** contributionSigmaMinus_All = new TH1F*[datasets.size()];
+		
 		for (unsigned int d = 0; d < datasets.size(); d++) {
         contribution_lumi[d] = new TH1F();
 				contribution_mueff[d] = new TH1F();
@@ -469,7 +502,29 @@ while(semiElectron==true || semiMuon==true){
 				contribution_misTag[d] = new TH1F();
 				contribution_bTag[d] = new TH1F();
 				contribution_PU[d] = new TH1F();
-				contribution_All[d] = new TH1F();								
+				contribution_All[d] = new TH1F();
+				//
+				contributionSigmaPlus_lumi[d] = new TH1F();
+				contributionSigmaPlus_mueff[d] = new TH1F();
+				contributionSigmaPlus_eleff[d] = new TH1F();
+				contributionSigmaPlus_XS[d] = new TH1F();
+				contributionSigmaPlus_JES[d] = new TH1F();
+				contributionSigmaPlus_JER[d] = new TH1F();
+				contributionSigmaPlus_misTag[d] = new TH1F();
+				contributionSigmaPlus_bTag[d] = new TH1F();
+				contributionSigmaPlus_PU[d] = new TH1F();
+				contributionSigmaPlus_All[d] = new TH1F();
+				//
+				contributionSigmaMinus_lumi[d] = new TH1F();
+				contributionSigmaMinus_mueff[d] = new TH1F();
+				contributionSigmaMinus_eleff[d] = new TH1F();
+				contributionSigmaMinus_XS[d] = new TH1F();
+				contributionSigmaMinus_JES[d] = new TH1F();
+				contributionSigmaMinus_JER[d] = new TH1F();
+				contributionSigmaMinus_misTag[d] = new TH1F();
+				contributionSigmaMinus_bTag[d] = new TH1F();
+				contributionSigmaMinus_PU[d] = new TH1F();
+				contributionSigmaMinus_All[d] = new TH1F();							
     }
 		
 		vector<pair<TH1F*,Dataset*> > vec;
@@ -482,6 +537,13 @@ while(semiElectron==true || semiMuon==true){
 		float A;
 		bool firstoverlaysignalA1 = true, firstoverlaysignalA08 = true;
 		datasets_AfterMerging.clear();
+		vector<float> QuadUncertSumPlus,QuadUncertSumMinus; //for each bin of the current plot an entry
+		for(int bini=0; bini<((boxes_processes_map["Nominal"])[box_i][0])->GetNbinsX()+1; bini++)
+		{	
+				QuadUncertSumPlus.push_back(0);
+				QuadUncertSumMinus.push_back(0);
+		}
+		
 		for(unsigned int d = 0; d<datasets.size(); d++)
 		{
 			string dataSetName = datasets[d]->Name();	
@@ -499,11 +561,31 @@ while(semiElectron==true || semiMuon==true){
 			if(dataSetName.find("NP")<=0 && !(dataSetName.find("NP_overlay")<=0))
 				continue; //no use in looping over signal that is not overlayed
 			
-			//cout << "lumi contribution" << endl;
-			TH1F * htemp_Nominal = (boxes_processes_map["Nominal"])[box_i][d];					
+			TH1F * htemp_Nominal = (boxes_processes_map["Nominal"])[box_i][d];		
+			
+			
+			//cout << "lumi contribution" << endl;				
 			//cout<<htemp->GetName()<<endl;
 			contribution_lumi[d] = (TH1F*) htemp_Nominal->Clone();
-			contribution_lumi[d]->Scale(Lumi-1); //if lumi > 1 ===> contribution is positive //else contribution is negative
+			contribution_lumi[d]->Scale(Lumi-1); //if lumi > 1 ===> contribution is positive //else contribution is negative												
+			
+			if(!(dataSetName.find("NP")<=0))
+			{
+				contributionSigmaPlus_lumi[d] = (TH1F*) htemp_Nominal->Clone();
+				contributionSigmaPlus_lumi[d]->Scale(rel_unc_lumi);
+				contributionSigmaMinus_lumi[d] = (TH1F*) htemp_Nominal->Clone();
+				contributionSigmaMinus_lumi[d]->Scale(rel_unc_lumi);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+				  float BinErrorPlus = contributionSigmaPlus_lumi[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_lumi[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}
+
+			
+			
 			
 			//cout << "lepton eff contribution" << endl;
 			contribution_mueff[d] = (TH1F*) htemp_Nominal->Clone();
@@ -513,10 +595,52 @@ while(semiElectron==true || semiMuon==true){
 			
 			if(!(dataSetName.find("NP")<=0))
 			{
+				contributionSigmaPlus_mueff[d] = (TH1F*) htemp_Nominal->Clone();
+				contributionSigmaPlus_mueff[d]->Scale(rel_unc_mu_eff);
+				contributionSigmaMinus_mueff[d] = (TH1F*) htemp_Nominal->Clone();
+				contributionSigmaMinus_mueff[d]->Scale(rel_unc_mu_eff);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+			  	float BinErrorPlus = 0;
+					float BinErrorMinus = 0;
+					if(semiMuon)
+					{
+						BinErrorPlus = contributionSigmaPlus_mueff[d]->GetBinContent(bini);
+						BinErrorMinus = contributionSigmaMinus_mueff[d]->GetBinContent(bini);
+					}
+					if(semiElectron)
+					{
+						BinErrorPlus = contributionSigmaPlus_eleff[d]->GetBinContent(bini);
+						BinErrorMinus = contributionSigmaMinus_eleff[d]->GetBinContent(bini);
+					}
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}
+			
+			
+			
+			if(!(dataSetName.find("NP")<=0))
+			{
 				//cout << "cross section contributions" << endl;
 				contribution_XS[d] = (TH1F*) htemp_Nominal->Clone();
 				contribution_XS[d]->Scale(alpha_XS_systs[dataSetName].first * alpha_XS_systs[dataSetName].second);
+			
+				contributionSigmaPlus_XS[d] = (TH1F*) htemp_Nominal->Clone();
+				contributionSigmaPlus_XS[d]->Scale(alpha_XS_systs[dataSetName].first);
+				contributionSigmaMinus_XS[d] = (TH1F*) htemp_Nominal->Clone();
+				contributionSigmaMinus_XS[d]->Scale(alpha_XS_systs[dataSetName].first);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+			  	float BinErrorPlus = contributionSigmaPlus_XS[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_XS[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			
 			}
+
+
 
 			//cout << "JES contribution" << endl;
 			TH1F* htemp_JES = 0;
@@ -532,6 +656,23 @@ while(semiElectron==true || semiMuon==true){
 			contribution_JES[d]->Add(htemp_Nominal,-1);
 			contribution_JES[d]->Scale(fabs(alpha_jes));
 			
+			if(!(dataSetName.find("NP")<=0))
+			{
+				contributionSigmaPlus_JES[d] = (TH1F*) ((boxes_processes_map["JESPlus"])[box_i][d])->Clone();
+				contributionSigmaPlus_JES[d]->Add(htemp_Nominal,-1);
+				contributionSigmaMinus_JES[d] = (TH1F*) ((boxes_processes_map["JESMinus"])[box_i][d])->Clone();
+				contributionSigmaMinus_JES[d]->Add(htemp_Nominal,-1);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+			  	float BinErrorPlus = contributionSigmaPlus_JES[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_JES[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}
+			
+			
+			
 			//cout << "JER contribution" << endl;
 			TH1F* htemp_JER = 0;
 			if(alpha_jer>0)
@@ -544,7 +685,25 @@ while(semiElectron==true || semiMuon==true){
 			}
 			contribution_JER[d] = (TH1F*) htemp_JER->Clone();	
 			contribution_JER[d]->Add(htemp_Nominal,-1);
-			contribution_JER[d]->Scale(fabs(alpha_jer));			
+			contribution_JER[d]->Scale(fabs(alpha_jer));
+			
+			if(!(dataSetName.find("NP")<=0))
+			{
+				contributionSigmaPlus_JER[d] = (TH1F*) ((boxes_processes_map["JERPlus"])[box_i][d])->Clone();
+				contributionSigmaPlus_JER[d]->Add(htemp_Nominal,-1);
+				contributionSigmaMinus_JER[d] = (TH1F*) ((boxes_processes_map["JERMinus"])[box_i][d])->Clone();
+				contributionSigmaMinus_JER[d]->Add(htemp_Nominal,-1);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+				  float BinErrorPlus = contributionSigmaPlus_JER[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_JER[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}		
+			
+			
+				
 			
 			//cout << "misTag contribution" << endl;
 			TH1F* htemp_misTag = 0;
@@ -560,6 +719,24 @@ while(semiElectron==true || semiMuon==true){
 			contribution_misTag[d]->Add(htemp_Nominal,-1);
 			contribution_misTag[d]->Scale(fabs(alpha_mistag));
 			
+			if(!(dataSetName.find("NP")<=0))
+			{
+				contributionSigmaPlus_misTag[d] = (TH1F*) ((boxes_processes_map["misTagPlus"])[box_i][d])->Clone();
+				contributionSigmaPlus_misTag[d]->Add(htemp_Nominal,-1);
+				contributionSigmaMinus_misTag[d] = (TH1F*) ((boxes_processes_map["misTagMinus"])[box_i][d])->Clone();
+				contributionSigmaMinus_misTag[d]->Add(htemp_Nominal,-1);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+			  	float BinErrorPlus = contributionSigmaPlus_misTag[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_misTag[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}
+			
+			
+			
+			
 			//cout << "bTag contribution" << endl;
 			TH1F* htemp_bTag = 0;
 			if(alpha_btag>0)
@@ -573,6 +750,24 @@ while(semiElectron==true || semiMuon==true){
 			contribution_bTag[d] = (TH1F*) htemp_bTag->Clone();	
 			contribution_bTag[d]->Add(htemp_Nominal,-1);
 			contribution_bTag[d]->Scale(fabs(alpha_btag));
+			
+			if(!(dataSetName.find("NP")<=0))
+			{
+				contributionSigmaPlus_bTag[d] = (TH1F*) ((boxes_processes_map["bTagPlus"])[box_i][d])->Clone();
+				contributionSigmaPlus_bTag[d]->Add(htemp_Nominal,-1);
+				contributionSigmaMinus_bTag[d] = (TH1F*) ((boxes_processes_map["bTagMinus"])[box_i][d])->Clone();
+				contributionSigmaMinus_bTag[d]->Add(htemp_Nominal,-1);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+				  float BinErrorPlus = contributionSigmaPlus_bTag[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_bTag[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}
+			
+			
+			
 			
 			//cout << "PU contribution" << endl;
 			TH1F* htemp_PU = 0;
@@ -588,6 +783,23 @@ while(semiElectron==true || semiMuon==true){
 			contribution_PU[d]->Add(htemp_Nominal,-1);
 			contribution_PU[d]->Scale(fabs(alpha_pu));
 			
+			if(!(dataSetName.find("NP")<=0))
+			{
+				contributionSigmaPlus_PU[d] = (TH1F*) ((boxes_processes_map["PUPlus"])[box_i][d])->Clone();
+				contributionSigmaPlus_PU[d]->Add(htemp_Nominal,-1);
+				contributionSigmaMinus_PU[d] = (TH1F*) ((boxes_processes_map["PUMinus"])[box_i][d])->Clone();
+				contributionSigmaMinus_PU[d]->Add(htemp_Nominal,-1);
+				for(int bini=0; bini<htemp_Nominal->GetNbinsX()+1; bini++)
+				{	
+				  float BinErrorPlus = contributionSigmaPlus_PU[d]->GetBinContent(bini);
+					float BinErrorMinus = contributionSigmaMinus_PU[d]->GetBinContent(bini);
+					QuadUncertSumPlus[bini] = QuadUncertSumPlus[bini] + pow(BinErrorPlus,2);
+					QuadUncertSumMinus[bini] = QuadUncertSumMinus[bini] + pow(BinErrorMinus,2);
+				}
+			}
+
+			
+			
 			//cout << "add the contributions of all systematic effects to the nominal histogram" << endl;
 			contribution_All[d] = (TH1F*) htemp_Nominal->Clone();
 			contribution_All[d]->Add(contribution_lumi[d]);
@@ -599,6 +811,8 @@ while(semiElectron==true || semiMuon==true){
 			contribution_All[d]->Add(contribution_PU[d]);
 			if(channelpostfix == "_semiMu") contribution_All[d]->Add(contribution_mueff[d]);
 			if(channelpostfix == "_semiEl") contribution_All[d]->Add(contribution_eleff[d]);
+			
+			
 			
 			//now put them in a format for the MultiSamplePlot	
 						
@@ -656,7 +870,16 @@ while(semiElectron==true || semiMuon==true){
 				datasets_AfterMerging.push_back(datasets[d]);
 			}
 		
-		}		
+		}
+		
+		for(int bini=0; bini<((boxes_processes_map["Nominal"])[box_i][0])->GetNbinsX()+1; bini++)
+		{
+				QuadUncertSumPlus[bini] = sqrt(QuadUncertSumPlus[bini]);
+				QuadUncertSumMinus[bini] = sqrt(QuadUncertSumMinus[bini]);
+			  
+		}
+		//now, for the current channel and box, and after the dataset loop, we should have two vectors (of the bin errors up en down, the vector entries are for different bins of the current histo) to be turned in the error band...
+	
 		
 		if(mergeSignal)	
 		{
@@ -674,11 +897,36 @@ while(semiElectron==true || semiMuon==true){
 		if(semiLepton)
 		{		
 			if(semiMuon)
+			{
 			  vec_AllBoxes_semiMu.push_back(vec);
+				QuadUncertSumPlusvec_AllBoxes_semiMu.push_back(QuadUncertSumPlus); //as much entries as boxes
+				QuadUncertSumMinusvec_AllBoxes_semiMu.push_back(QuadUncertSumMinus);
+			}
 			else if(semiElectron)
+			{
 			  vec_AllBoxes_semiEl.push_back(vec);
+				QuadUncertSumPlusvec_AllBoxes_semiEl.push_back(QuadUncertSumPlus); //as much entries as boxes
+				QuadUncertSumMinusvec_AllBoxes_semiEl.push_back(QuadUncertSumMinus);
+			}
 		}
-	}	
+	}
+	
+	
+	/*//just to test
+	if(semiMuon)
+	{
+		cout<<"for muon channel:"<<endl;
+		for(int m=0;m<QuadUncertSumPlusvec_AllBoxes_semiMu.size();m++)
+		{
+			cout<<"* Histogram "<<m<<endl;
+			for(int k=0;k<QuadUncertSumPlusvec_AllBoxes_semiMu[m].size();k++)
+			{
+				cout<<"  --> error for bin k = "<<k<<": "<<QuadUncertSumPlusvec_AllBoxes_semiMu[m][k]<<endl;
+			}
+		}
+	}*/	
+	
+		
 	
 	if(!semiLepton)
 	   break;
@@ -696,6 +944,23 @@ while(semiElectron==true || semiMuon==true){
 		}
 	}
 }
+
+	if(semiLepton)
+	{
+		for(int m=0;m<QuadUncertSumPlusvec_AllBoxes_semiMu.size();m++)
+		{
+		  
+		  cout<<"* Histogram "<<m<<endl;
+			vector<float> dummyvect;
+			for(int k=0;k<QuadUncertSumPlusvec_AllBoxes_semiMu[m].size();k++)
+			{
+				dummyvect.push_back(sqrt(pow(QuadUncertSumPlusvec_AllBoxes_semiMu[m][k],2) + pow(QuadUncertSumPlusvec_AllBoxes_semiEl[m][k],2)));
+				cout<<"  --> total systematic error for bin k = "<<k<<": "<<dummyvect[k]<<endl;
+			}
+			QuadUncertSumPlusvec_AllBoxes_semiLep.push_back(dummyvect);
+		}
+		
+	}
 
 
  if(semiLepton)
