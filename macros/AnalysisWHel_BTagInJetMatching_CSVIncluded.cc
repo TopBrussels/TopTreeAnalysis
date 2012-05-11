@@ -291,18 +291,18 @@ int main (int argc, char *argv[])
     else if(semiElectron == true){
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
       nameDataSet.push_back("TTbarJets_SemiMuon");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-20to30_BCtoE_SemiEl.root").c_str());  //Use UsedTrigger string to make sure that sample is only used in correct case
-      nameDataSet.push_back("QCD_Pt-20to30_BCtoE");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-20to30_EMEnriched_SemiEl.root").c_str());
-      nameDataSet.push_back("QCD_Pt-20to30_EMEnriched");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-30to80_BCtoE_SemiEl.root").c_str());
-      nameDataSet.push_back("QCD_Pt-30to80_BCtoE");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-30to80_EMEnriched_SemiEl.root").c_str());
-      nameDataSet.push_back("QCD_Pt-30to80_EMEnriched");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-80to170_BCtoE_SemiEl.root").c_str());
-      nameDataSet.push_back("QCD_Pt-80to170_BCtoE");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-80to170_EMEnriched_SemiEl.root").c_str());
-      nameDataSet.push_back("QCD_Pt-80to170_EMEnriched");
+      //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-20to30_BCtoE_SemiEl.root").c_str());  //Use UsedTrigger string to make sure that sample is only used in correct case
+      // nameDataSet.push_back("QCD_Pt-20to30_BCtoE");
+      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-20to30_EMEnriched_SemiEl.root").c_str());
+      // nameDataSet.push_back("QCD_Pt-20to30_EMEnriched");
+      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-30to80_BCtoE_SemiEl.root").c_str());
+      // nameDataSet.push_back("QCD_Pt-30to80_BCtoE");
+      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-30to80_EMEnriched_SemiEl.root").c_str());
+      // nameDataSet.push_back("QCD_Pt-30to80_EMEnriched");
+      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-80to170_BCtoE_SemiEl.root").c_str());
+      // nameDataSet.push_back("QCD_Pt-80to170_BCtoE");
+      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-80to170_EMEnriched_SemiEl.root").c_str());
+      // nameDataSet.push_back("QCD_Pt-80to170_EMEnriched");
     }
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());
     nameDataSet.push_back("WJets_Nominal");
@@ -1229,8 +1229,8 @@ int main (int argc, char *argv[])
       }
     }
     
-    for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
-    //for(unsigned int iEvt=0; iEvt<3000; iEvt++){
+    //for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
+    for(unsigned int iEvt=0; iEvt<3000; iEvt++){
 
       //    for(unsigned int iEvt=0; iEvt<10000; iEvt++){ nEvent = 10000; //nEvent and end of iEvt loop needs to be the same for correctly performing the Minuit Fitter
 
@@ -2446,57 +2446,57 @@ int main (int argc, char *argv[])
       cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;    
     }
 
-    cout << " " << endl;
-    cout << " oooooooooooOOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOOOOOOOOOOOOOOoooooooooooooooooooooooOOOOOOOOOOOOOOOOOOOOOOOOoooooooooooo " << endl;
-    cout << "                                               Probability matrix Reco vs Gen (Pt 10 To Inf)" << endl;
-    cout << "                                              ----------------------------------- " << endl;
-    cout << "    Gen " << endl;
-    cout << "    1    " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[0][9]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][8]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][7]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][6]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][5]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][4]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][3]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][2]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][1]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][0]/TotalPt10ToInf[0] << endl;
-    cout << "   0.8   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[1][9]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][8]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][7]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][6]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][5]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][4]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][3]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][2]/TotalPt10ToInf[1] << "  " << ProbabilityPt10ToInf[1][1]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][0]/TotalPt10ToInf[1] << endl;
-    cout << "   0.6   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[2][9]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][8]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][7]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][6]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][5]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][4]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][3]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][2]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][1]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][0]/TotalPt10ToInf[2] << endl;
-    cout << "   0.4   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[3][9]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][8]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][7]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][6]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][5]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][4]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][3]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][2]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][1]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][0]/TotalPt10ToInf[3] << endl;
-    cout << "   0.2   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[4][9]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][8]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][7]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][6]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][5]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][4]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][3]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][2]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][1]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][0]/TotalPt10ToInf[4] << endl;
-    cout << "   0.   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[5][9]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][8]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][7]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][6]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][5]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][4]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][3]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][2]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][1]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][0]/TotalPt10ToInf[5] << endl;
-    cout << "   -0.2   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[6][9]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][8]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][7]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][6]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][5]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][4]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][3]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][2]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][1]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][0]/TotalPt10ToInf[6] << endl;
-    cout << "   -0.4   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[7][9]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][8]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][7]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][6]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][5]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][4]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][3]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][2]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][1]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][0]/TotalPt10ToInf[7] << endl;
-    cout << "   -0.6   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[8][9]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][8]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][7]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][6]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][5]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][4]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][3]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][2]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][1]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][0]/TotalPt10ToInf[8] << endl;
-    cout << "   -0.8   " << endl;
-    cout << "         " <<  ProbabilityPt10ToInf[9][9]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][8]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][7]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][6]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][5]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][4]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][3]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][2]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][1]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][0]/TotalPt10ToInf[9] << endl;
-    cout << "   -1.  -1         -0.8         -0.6        -0.4         -0.2       0.        0.2           0.4          0.6           0.8          1      Reco" << endl;
-    cout << " " << endl;
-    cout << "                                               Probability matrix Reco vs Gen (Pt 30 To Inf)" << endl;
-    cout << "                                              ----------------------------------- " << endl;
-    cout << "    Gen " << endl;
-    cout << "    1    " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[0][9]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][8]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][7]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][6]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][5]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][4]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][3]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][2]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][1]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][0]/TotalPt30ToInf[0] << endl;
-    cout << "   0.8   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[1][9]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][8]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][7]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][6]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][5]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][4]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][3]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][2]/TotalPt30ToInf[1] << "  " << ProbabilityPt30ToInf[1][1]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][0]/TotalPt30ToInf[1] << endl;
-    cout << "   0.6   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[2][9]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][8]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][7]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][6]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][5]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][4]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][3]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][2]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][1]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][0]/TotalPt30ToInf[2] << endl;
-    cout << "   0.4   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[3][9]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][8]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][7]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][6]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][5]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][4]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][3]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][2]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][1]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][0]/TotalPt30ToInf[3] << endl;
-    cout << "   0.2   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[4][9]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][8]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][7]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][6]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][5]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][4]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][3]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][2]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][1]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][0]/TotalPt30ToInf[4] << endl;
-    cout << "   0.   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[5][9]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][8]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][7]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][6]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][5]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][4]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][3]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][2]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][1]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][0]/TotalPt30ToInf[5] << endl;
-    cout << "   -0.2   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[6][9]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][8]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][7]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][6]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][5]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][4]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][3]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][2]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][1]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][0]/TotalPt30ToInf[6] << endl;
-    cout << "   -0.4   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[7][9]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][8]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][7]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][6]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][5]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][4]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][3]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][2]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][1]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][0]/TotalPt30ToInf[7] << endl;
-    cout << "   -0.6   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[8][9]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][8]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][7]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][6]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][5]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][4]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][3]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][2]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][1]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][0]/TotalPt30ToInf[8] << endl;
-    cout << "   -0.8   " << endl;
-    cout << "         " <<  ProbabilityPt30ToInf[9][9]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][8]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][7]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][6]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][5]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][4]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][3]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][2]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][1]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][0]/TotalPt30ToInf[9] << endl;
-    cout << "   -1.  -1         -0.8         -0.6        -0.4         -0.2       0.        0.2           0.4          0.6           0.8          1      Reco" << endl;
+    // cout << " " << endl;
+    // cout << " oooooooooooOOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOOOOOOOOOOOOOOoooooooooooooooooooooooOOOOOOOOOOOOOOOOOOOOOOOOoooooooooooo " << endl;
+    // cout << "                                               Probability matrix Reco vs Gen (Pt 10 To Inf)" << endl;
+    // cout << "                                              ----------------------------------- " << endl;
+    // cout << "    Gen " << endl;
+    // cout << "    1    " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[0][9]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][8]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][7]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][6]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][5]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][4]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][3]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][2]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][1]/TotalPt10ToInf[0] << "    " << ProbabilityPt10ToInf[0][0]/TotalPt10ToInf[0] << endl;
+    // cout << "   0.8   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[1][9]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][8]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][7]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][6]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][5]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][4]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][3]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][2]/TotalPt10ToInf[1] << "  " << ProbabilityPt10ToInf[1][1]/TotalPt10ToInf[1] << "    " << ProbabilityPt10ToInf[1][0]/TotalPt10ToInf[1] << endl;
+    // cout << "   0.6   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[2][9]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][8]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][7]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][6]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][5]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][4]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][3]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][2]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][1]/TotalPt10ToInf[2] << "    " << ProbabilityPt10ToInf[2][0]/TotalPt10ToInf[2] << endl;
+    // cout << "   0.4   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[3][9]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][8]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][7]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][6]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][5]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][4]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][3]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][2]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][1]/TotalPt10ToInf[3] << "    " << ProbabilityPt10ToInf[3][0]/TotalPt10ToInf[3] << endl;
+    // cout << "   0.2   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[4][9]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][8]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][7]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][6]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][5]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][4]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][3]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][2]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][1]/TotalPt10ToInf[4] << "    " << ProbabilityPt10ToInf[4][0]/TotalPt10ToInf[4] << endl;
+    // cout << "   0.   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[5][9]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][8]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][7]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][6]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][5]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][4]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][3]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][2]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][1]/TotalPt10ToInf[5] << "    " << ProbabilityPt10ToInf[5][0]/TotalPt10ToInf[5] << endl;
+    // cout << "   -0.2   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[6][9]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][8]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][7]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][6]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][5]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][4]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][3]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][2]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][1]/TotalPt10ToInf[6] << "    " << ProbabilityPt10ToInf[6][0]/TotalPt10ToInf[6] << endl;
+    // cout << "   -0.4   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[7][9]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][8]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][7]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][6]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][5]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][4]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][3]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][2]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][1]/TotalPt10ToInf[7] << "    " << ProbabilityPt10ToInf[7][0]/TotalPt10ToInf[7] << endl;
+    // cout << "   -0.6   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[8][9]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][8]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][7]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][6]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][5]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][4]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][3]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][2]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][1]/TotalPt10ToInf[8] << "    " << ProbabilityPt10ToInf[8][0]/TotalPt10ToInf[8] << endl;
+    // cout << "   -0.8   " << endl;
+    // cout << "         " <<  ProbabilityPt10ToInf[9][9]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][8]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][7]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][6]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][5]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][4]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][3]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][2]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][1]/TotalPt10ToInf[9] << "    " << ProbabilityPt10ToInf[9][0]/TotalPt10ToInf[9] << endl;
+    // cout << "   -1.  -1         -0.8         -0.6        -0.4         -0.2       0.        0.2           0.4          0.6           0.8          1      Reco" << endl;
+    // cout << " " << endl;
+    // cout << "                                               Probability matrix Reco vs Gen (Pt 30 To Inf)" << endl;
+    // cout << "                                              ----------------------------------- " << endl;
+    // cout << "    Gen " << endl;
+    // cout << "    1    " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[0][9]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][8]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][7]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][6]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][5]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][4]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][3]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][2]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][1]/TotalPt30ToInf[0] << "    " << ProbabilityPt30ToInf[0][0]/TotalPt30ToInf[0] << endl;
+    // cout << "   0.8   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[1][9]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][8]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][7]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][6]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][5]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][4]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][3]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][2]/TotalPt30ToInf[1] << "  " << ProbabilityPt30ToInf[1][1]/TotalPt30ToInf[1] << "    " << ProbabilityPt30ToInf[1][0]/TotalPt30ToInf[1] << endl;
+    // cout << "   0.6   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[2][9]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][8]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][7]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][6]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][5]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][4]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][3]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][2]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][1]/TotalPt30ToInf[2] << "    " << ProbabilityPt30ToInf[2][0]/TotalPt30ToInf[2] << endl;
+    // cout << "   0.4   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[3][9]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][8]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][7]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][6]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][5]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][4]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][3]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][2]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][1]/TotalPt30ToInf[3] << "    " << ProbabilityPt30ToInf[3][0]/TotalPt30ToInf[3] << endl;
+    // cout << "   0.2   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[4][9]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][8]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][7]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][6]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][5]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][4]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][3]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][2]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][1]/TotalPt30ToInf[4] << "    " << ProbabilityPt30ToInf[4][0]/TotalPt30ToInf[4] << endl;
+    // cout << "   0.   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[5][9]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][8]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][7]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][6]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][5]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][4]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][3]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][2]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][1]/TotalPt30ToInf[5] << "    " << ProbabilityPt30ToInf[5][0]/TotalPt30ToInf[5] << endl;
+    // cout << "   -0.2   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[6][9]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][8]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][7]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][6]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][5]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][4]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][3]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][2]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][1]/TotalPt30ToInf[6] << "    " << ProbabilityPt30ToInf[6][0]/TotalPt30ToInf[6] << endl;
+    // cout << "   -0.4   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[7][9]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][8]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][7]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][6]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][5]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][4]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][3]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][2]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][1]/TotalPt30ToInf[7] << "    " << ProbabilityPt30ToInf[7][0]/TotalPt30ToInf[7] << endl;
+    // cout << "   -0.6   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[8][9]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][8]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][7]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][6]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][5]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][4]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][3]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][2]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][1]/TotalPt30ToInf[8] << "    " << ProbabilityPt30ToInf[8][0]/TotalPt30ToInf[8] << endl;
+    // cout << "   -0.8   " << endl;
+    // cout << "         " <<  ProbabilityPt30ToInf[9][9]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][8]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][7]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][6]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][5]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][4]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][3]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][2]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][1]/TotalPt30ToInf[9] << "    " << ProbabilityPt30ToInf[9][0]/TotalPt30ToInf[9] << endl;
+    // cout << "   -1.  -1         -0.8         -0.6        -0.4         -0.2       0.        0.2           0.4          0.6           0.8          1      Reco" << endl;
  
     
     int TCHE=0;
@@ -2568,65 +2568,22 @@ int main (int argc, char *argv[])
 	      
 	      if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
 
-		MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
-		
-		MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 		
-
-		TMinuitMinimizer minimizer;
-		minimizer.SetFunction(myChi2);
-		minimizer.SetErrorDef(1.0);   // 1.0 for chi2, 0.5 for -logL
-		minimizer.SetVariable(0, "F0", 0.6671, 1.e-4);
-		minimizer.SetVariable(1, "FL", 0.3325, 1.e-4);
-		if (ndimen==3)  minimizer.SetVariable(2, "Normal", 1., 1.e-4); 
-
-		bool isValid = minimizer.Minimize();
-		double f0result, frresult,flresult;
-		double ef0result, efrresult,eflresult;
-		if (isValid) {
-		  //minimizer.PrintResults();
-		  f0result =minimizer.X()[0]; ef0result= minimizer.Errors()[0];
-		  flresult= minimizer.X()[1]; eflresult= minimizer.Errors()[1];
-		  
-		  PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
-		  for(int ii=0; ii< nameDataSet.size(); ii++){
-		    //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
-		    if(ii < nameDataSet.size()-1){ 
-		      PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-		    }
-		    else if(ii == nameDataSet.size()-1 ){ 
-		      PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
-		      PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-		    }
-		  }		  
-		  if (ndimen==3){
-		    frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-		    double er0=minimizer.Errors()[0];
-		    double er1=minimizer.Errors()[1];
-		    double cov01 = minimizer.CovMatrix(0,1);		  
-		    efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-		    PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-
-		    cout << " frresult with analysis code : " << frresult << " +- " << efrresult << endl;
-		    cout << " frresult with class         : " << minuitFitter.GetFRResult() << " +- " << minuitFitter.GetFRError() << endl;
-
-		  } 
-		  else {
-		    frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-		    double er0=minimizer.Errors()[0];
-		    double er1=minimizer.Errors()[1];
-		    double cov01 = minimizer.CovMatrix(0,1);
-		    
-		    efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-		    PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
+		//Apply minuitFitter (stored in separate class)
+		MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
+		PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
+		for(int ii=0; ii< nameDataSet.size(); ii++){
+		  //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
+		  if(ii < nameDataSet.size()-1){ PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";}
+		  else if(ii == nameDataSet.size()-1 ){ 
+		    PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
+		    PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
 		  }
+		}		  
 
-		} 
+		PresentationTex << minuitFitter.GetFRResult() << " & " << minuitFitter.GetFRResult()-SMfrResult <<" & " << minuitFitter.GetFRError() << " & " << minuitFitter.GetFLResult() << " & " << minuitFitter.GetFLResult()-SMflResult << " & " << minuitFitter.GetFLError() << " & " << minuitFitter.GetF0Result() << " & " << minuitFitter.GetF0Result()-SMf0Result << " & " << minuitFitter.GetF0Error() << " \\\\ " << endl;		
 		PresentationTex << " \\hline " << endl;
 		
 		LengthOfPresentationArray++;
-		for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
-		  delete genttbarhisto[ibinn];
-		}
 	      }//End of Minuit fitter loop
 	      
 	      TCHE++;
@@ -2691,62 +2648,24 @@ int main (int argc, char *argv[])
 		histo1D[CosThetaBckgString]->Fill(CosThetaValues[TCHE+TCHP+SSVHE+SSVHP+CSV][ii],Luminosity*scaleFactor*(LumiWeightVector[TCHE+TCHP+SSVHE+SSVHP+CSV][ii])*NominalNormFactor); 
 	    }
 	    
-	    if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
-	      
-	      MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 
-	      
-	      TMinuitMinimizer minimizer;
-	      minimizer.SetFunction(myChi2);
-	      minimizer.SetErrorDef(1.0);   // 1.0 for chi2, 0.5 for -logL
-	      minimizer.SetVariable(0, "F0", 0.6671, 1.e-4);
-	      minimizer.SetVariable(1, "FL", 0.3325, 1.e-4);
-	      if (ndimen==3)  minimizer.SetVariable(2, "Normal", 1., 1.e-4); 
-	      
-	      bool isValid = minimizer.Minimize();
-	      double f0result, frresult,flresult;
-	      double ef0result, efrresult,eflresult;
-	      if (isValid) {
-		//minimizer.PrintResults();
-		f0result =minimizer.X()[0]; ef0result= minimizer.Errors()[0];
-		flresult= minimizer.X()[1]; eflresult= minimizer.Errors()[1];
-		
-		PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
-		for(int ii=0; ii< nameDataSet.size(); ii++){
-		  if(ii < nameDataSet.size()-1){ 
-		    PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-		  }
-		  else if(ii == nameDataSet.size()-1 ){ 
-		    PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
-		    PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-		  }
-		}
-		
-		if (ndimen==3){
-		  frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-		  double er0=minimizer.Errors()[0];
-		  double er1=minimizer.Errors()[1];
-		  double cov01 = minimizer.CovMatrix(0,1);		  
-		  efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
+	    if(iDataSet==(datasets.size()-1)){	      
+	      MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaDataString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen); 
 
-		  PresentationTex <<frresult<< " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-		} 
-		else {
-		  frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-		  double er0=minimizer.Errors()[0];
-		  double er1=minimizer.Errors()[1];
-		  double cov01 = minimizer.CovMatrix(0,1);		  
-		  efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-
-		  PresentationTex <<frresult<< " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
+	      PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
+	      for(int ii=0; ii< nameDataSet.size(); ii++){
+		//if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
+		if(ii < nameDataSet.size()-1){ PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";}
+		else if(ii == nameDataSet.size()-1 ){ 
+		  PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
+		  PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
 		}
-	      } 
+	      }		  
+	      
+	      PresentationTex << minuitFitter.GetFRResult() << " & " << minuitFitter.GetFRResult()-SMfrResult <<" & " << minuitFitter.GetFRError() << " & " << minuitFitter.GetFLResult() << " & " << minuitFitter.GetFLResult()-SMflResult << " & " << minuitFitter.GetFLError() << " & " << minuitFitter.GetF0Result() << " & " << minuitFitter.GetF0Result()-SMf0Result << " & " << minuitFitter.GetF0Error() << " \\\\ " << endl;		
 	      PresentationTex << " \\hline " << endl;
 	      
-	      for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
-		delete genttbarhisto[ibinn];
-	      }
-
-	    }//End of Minuit fitter loop	      
+	      LengthOfPresentationArray++;
+	    }
 	    
 	    TCHP++;
 	  }
@@ -2804,64 +2723,25 @@ int main (int argc, char *argv[])
 	  }
 	  
 	  if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
-
 	    
-	    MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 
-	    
-	    TMinuitMinimizer minimizer;
-	    minimizer.SetFunction(myChi2);
-	    minimizer.SetErrorDef(1.0);   // 1.0 for chi2, 0.5 for -logL
-	    minimizer.SetVariable(0, "F0", 0.6671, 1.e-4);
-	    minimizer.SetVariable(1, "FL", 0.3325, 1.e-4);
-	    if (ndimen==3)  minimizer.SetVariable(2, "Normal", 1., 1.e-4); 
-	    
-	    bool isValid = minimizer.Minimize();
-	    double f0result, frresult,flresult;
-	    double ef0result, efrresult,eflresult;
-	    if (isValid) {
-	      //minimizer.PrintResults();
-	      f0result =minimizer.X()[0]; ef0result= minimizer.Errors()[0];
-	      flresult= minimizer.X()[1]; eflresult= minimizer.Errors()[1];
-	      
-	      
-	      PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
-	      for(int ii=0; ii< nameDataSet.size(); ii++){
-		if(ii < nameDataSet.size()-1){ 
-		  PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-		}
-		else if(ii == nameDataSet.size()-1 ){ 
-		  PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
-		  PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-		}
+	    //Apply minuitFitter (stored in separate class)
+	    MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+ 
+	    PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
+	    for(int ii=0; ii< nameDataSet.size(); ii++){
+	      //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
+	      if(ii < nameDataSet.size()-1){ PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";}
+	      else if(ii == nameDataSet.size()-1 ){ 
+		PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
+		PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
 	      }
-	      
-	      if (ndimen==3){
-		frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-		double er0=minimizer.Errors()[0];
-		double er1=minimizer.Errors()[1];
-		double cov01 = minimizer.CovMatrix(0,1);		  
-		efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-		
-		PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-	      } 
-	      else {
-		frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-		double er0=minimizer.Errors()[0];
-		double er1=minimizer.Errors()[1];
-		double cov01 = minimizer.CovMatrix(0,1);		
-		efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-
-		PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-	      }
-	    } 
+	    }		  
+	    
+	    PresentationTex << minuitFitter.GetFRResult() << " & " << minuitFitter.GetFRResult()-SMfrResult <<" & " << minuitFitter.GetFRError() << " & " << minuitFitter.GetFLResult() << " & " << minuitFitter.GetFLResult()-SMflResult << " & " << minuitFitter.GetFLError() << " & " << minuitFitter.GetF0Result() << " & " << minuitFitter.GetF0Result()-SMf0Result << " & " << minuitFitter.GetF0Error() << " \\\\ " << endl;		
 	    PresentationTex << " \\hline " << endl;
 	    
-	    for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
-	      delete genttbarhisto[ibinn];
-	    }
-
-	  }//End of Minuit fitter loop	      
-	  
+	    LengthOfPresentationArray++;	    
+	  }	  
 	  SSVHE++;
 	}
 	SSVHE=13;		
@@ -2918,62 +2798,25 @@ int main (int argc, char *argv[])
 	}
 	
 	if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
-	  
-	  MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 
-	  
-	  TMinuitMinimizer minimizer;
-	  minimizer.SetFunction(myChi2);
-	  minimizer.SetErrorDef(1.0);   // 1.0 for chi2, 0.5 for -logL
-	  minimizer.SetVariable(0, "F0", 0.6671, 1.e-4);
-	  minimizer.SetVariable(1, "FL", 0.3325, 1.e-4);
-	  if (ndimen==3)  minimizer.SetVariable(2, "Normal", 1., 1.e-4); 
-	  
-	  bool isValid = minimizer.Minimize();
-	  double f0result, frresult,flresult;
-	  double ef0result, efrresult,eflresult;
-	  if (isValid) {
-	    //minimizer.PrintResults();
-	    f0result =minimizer.X()[0]; ef0result= minimizer.Errors()[0];
-	    flresult= minimizer.X()[1]; eflresult= minimizer.Errors()[1];
-	    
-	    PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
-	    for(int ii=0; ii< nameDataSet.size(); ii++){
-	      if(ii < nameDataSet.size()-1){ 
-		PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-	      }
-	      else if(ii == nameDataSet.size()-1 ){ 
-		PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
-		PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-	      }
+
+	  //Apply minuitFitter (stored in separate class)
+	  MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+
+	  PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
+	  for(int ii=0; ii< nameDataSet.size(); ii++){
+	    //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
+	    if(ii < nameDataSet.size()-1){ PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";}
+	    else if(ii == nameDataSet.size()-1 ){ 
+	      PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
+	      PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
 	    }
-	    
-	    if (ndimen==3){
-	      frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-	      double er0=minimizer.Errors()[0];
-	      double er1=minimizer.Errors()[1];
-	      double cov01 = minimizer.CovMatrix(0,1);		  
-	      efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-	      
-	      PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-	    } 
-	    else {
-	      frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-	      double er0=minimizer.Errors()[0];
-	      double er1=minimizer.Errors()[1];
-	      double cov01 = minimizer.CovMatrix(0,1);	      
-	      efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-	      
-	      PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-	    }
-	  } 
+	  }		  
+	  
+	  PresentationTex << minuitFitter.GetFRResult() << " & " << minuitFitter.GetFRResult()-SMfrResult <<" & " << minuitFitter.GetFRError() << " & " << minuitFitter.GetFLResult() << " & " << minuitFitter.GetFLResult()-SMflResult << " & " << minuitFitter.GetFLError() << " & " << minuitFitter.GetF0Result() << " & " << minuitFitter.GetF0Result()-SMf0Result << " & " << minuitFitter.GetF0Error() << " \\\\ " << endl;		
 	  PresentationTex << " \\hline " << endl;
 	  
-	  for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
-	    delete genttbarhisto[ibinn];
-	  }
-
-	}//End of Minuit fitter loop	
-	
+	  LengthOfPresentationArray++;
+	}		
 	SSVHP++;
       }    
       SSVHP=13;            
@@ -3030,63 +2873,25 @@ int main (int argc, char *argv[])
       }
 	
       if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active
-
-	  
-	MyChi2 myChi2 (histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004); 
-	  
-	TMinuitMinimizer minimizer;
-	minimizer.SetFunction(myChi2);
-	minimizer.SetErrorDef(1.0);   // 1.0 for chi2, 0.5 for -logL
-	minimizer.SetVariable(0, "F0", 0.6671, 1.e-4);
-	minimizer.SetVariable(1, "FL", 0.3325, 1.e-4);
-	if (ndimen==3)  minimizer.SetVariable(2, "Normal", 1., 1.e-4); 
-	  
-	bool isValid = minimizer.Minimize();
-	double f0result, frresult,flresult;
-	double ef0result, efrresult,eflresult;
-	if (isValid) {
-	  //minimizer.PrintResults();
-	  f0result =minimizer.X()[0]; ef0result= minimizer.Errors()[0];
-	  flresult= minimizer.X()[1]; eflresult= minimizer.Errors()[1];
-	    
-	  PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
-	  for(int ii=0; ii< nameDataSet.size(); ii++){
-	    if(ii < nameDataSet.size()-1){ 
-	      PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-	    }
-	    else if(ii == nameDataSet.size()-1 ){ 
-	      PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
-	      PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
-	    }
+	
+	//Apply minuitFitter (stored in separate class)
+	MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+	
+	PresentationTex << PresentationOutput[TCHE+TCHP+SSVHE+SSVHP+CSV] << " & ";
+	for(int ii=0; ii< nameDataSet.size(); ii++){
+	  //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
+	  if(ii < nameDataSet.size()-1){ PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";}
+	  else if(ii == nameDataSet.size()-1 ){ 
+	    PresentationTex << NumberRemainingEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & "; //For presentation this is not the end of the table, helicity values still need to be included !!
+	    PresentationTex << NumberBLeptCorrectEvents[TCHE+TCHP+SSVHE+SSVHP+CSV][ii] << " & ";
 	  }
-	    
-	  if (ndimen==3){
-	    frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-	    double er0=minimizer.Errors()[0];
-	    double er1=minimizer.Errors()[1];
-	    double cov01 = minimizer.CovMatrix(0,1);		  
-	    efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-	      
-	    PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-	  } 
-	  else {
-	    frresult = 1.-minimizer.X()[0]-minimizer.X()[1];
-	    double er0=minimizer.Errors()[0];
-	    double er1=minimizer.Errors()[1];
-	    double cov01 = minimizer.CovMatrix(0,1);	      
-	    efrresult = sqrt( er0*er0 + er1*er1 + 2.*cov01);
-	      
-	    PresentationTex << frresult << " & " << frresult-SMfrResult <<" & " << efrresult << " & " << flresult << " & " << flresult-SMflResult << " & " << eflresult << " & " << f0result << " & " << f0result-SMf0Result << " & " << ef0result << " \\\\ " << endl;
-	  }
-	} 
+	}		  
+	
+	PresentationTex << minuitFitter.GetFRResult() << " & " << minuitFitter.GetFRResult()-SMfrResult <<" & " << minuitFitter.GetFRError() << " & " << minuitFitter.GetFLResult() << " & " << minuitFitter.GetFLResult()-SMflResult << " & " << minuitFitter.GetFLError() << " & " << minuitFitter.GetF0Result() << " & " << minuitFitter.GetF0Result()-SMf0Result << " & " << minuitFitter.GetF0Error() << " \\\\ " << endl;		
 	PresentationTex << " \\hline " << endl;
-	  
-	for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
-	  delete genttbarhisto[ibinn];
-	}
-
-      }//End of Minuit fitter loop	
-      
+	
+	LengthOfPresentationArray++;
+      }//End of Minuit fitter loop	      
       CSV++;
     }
         
