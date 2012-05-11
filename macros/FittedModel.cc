@@ -73,11 +73,11 @@ int main(unsigned int argc, char *argv[])
 	////////////////////////////////////
 	// define and open the inputfiles //
 	////////////////////////////////////
-	string Outputpath = "Plots_FittedModel_PASPlots_27Apr2012_DijetMassFixSignal/";
+	string Outputpath = "Plots_FittedModel_PASPlotsTotalUncert_12May2012/";
 	gSystem->mkdir(Outputpath.c_str());
 	
 	//string inputfiledir = "CalculateLimits/Apr2012_Systematics/INPUT_2012_04_16/";
-	string inputfiledir = "OutputFiles_InclFourthGenTreeAnalyzer_27Apr_PASPlots_DijetMassFixSignal/";
+	string inputfiledir = "/user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/OutputFiles_InclFourthGenTreeAnalyzer_8May_WmassMu/";
 	bool mergeSignal = true;
 	
 	cout<<"The arguments passed to the executable are: "<<endl;
@@ -86,7 +86,7 @@ int main(unsigned int argc, char *argv[])
 		cout<<argv[i]<<endl;
 	}
 	
-	bool semiLepton = true; //if true, semiElectron and semiMuon will be combined
+	bool semiLepton = false; //if true, semiElectron and semiMuon will be combined
 	string channelpostfix = "";
 	bool semiElectron = false; // use semiElectron channel?
   bool semiMuon = false; // use semiMuon channel?
@@ -111,9 +111,9 @@ int main(unsigned int argc, char *argv[])
 	vector<vector<pair<TH1F*,Dataset*> > > vec_AllDistributions_Nonfitted_semiLep;
 	
 	string basedir = "1D_histograms/";
-	const unsigned int nplots = 10;
-	string boxdistributions[nplots] = {"HT_1B_1W","HT_1B_2W","HT_1B_3W","nEvents_1B_4W","HT_2B_1W","HT_2B_2W","HT_2B_3W","nEvents_2B_4W","Mtop_MVA_1B_2W","Mtop_MVA_2B_2W"}; 
-  string boxText[nplots] = {"1B_1W","1B_2W","1B_3W","1B_4W","2B_1W","2B_2W","2B_3W","2B_4W","1B_2W","2B_2W"}; 
+	const unsigned int nplots = 9;
+	string boxdistributions[nplots] = {"HT_1B_2W","HT_1B_3W","nEvents_1B_4W","HT_2B_1W","HT_2B_2W","HT_2B_3W","nEvents_2B_4W","Mtop_MVA_1B_2W","Mtop_MVA_2B_2W"}; 
+  string boxText[nplots] = {"1B_2W","1B_3W","1B_4W","2B_1W","2B_2W","2B_3W","2B_4W","1B_2W","2B_2W"}; 
 	string basedir_Nonfitted = "MultiSamplePlot_allDiJetMasses/";
 	const unsigned int nplots_Nonfitted = 1;
 	string distributions_Nonfitted[nplots_Nonfitted] = {"allDiJetMasses_"};
@@ -121,12 +121,12 @@ int main(unsigned int argc, char *argv[])
 	//make sure the 3 single top processes are the 6 last in the array!!! -> outdated?	
 	//string datasetnamesSM[ndatasetnamesSM] = {TTbarJets_SemiLepton_datasetname,"TTbarJets_Other","WJets_HF","WJets_LF","ZJets","WW","WZ","ZZ","ttW","ttZ","samesignWWjj","ST_tChannel_t","ST_tWChannel_t","ST_sChannel_t","ST_tChannel_tbar","ST_tWChannel_tbar","ST_sChannel_tbar"};
 
-	string axisnames[nplots] = {"S_{T} (GeV)","S_{T} (GeV)","S_{T} (GeV)","","S_{T} (GeV)","S_{T} (GeV)","S_{T} (GeV)","","m_{bW} (GeV)","m_{bW} (GeV)"};
+	string axisnames[nplots] = {"S_{T} (GeV)","S_{T} (GeV)","","S_{T} (GeV)","S_{T} (GeV)","S_{T} (GeV)","","m_{bW} (GeV)","m_{bW} (GeV)"};
 	string axisnames_Nonfitted[nplots_Nonfitted] = {"Dijet mass (GeV)"};
 	
-	const unsigned int nsystfiles = 1; //9
-//	string syst_filespostfix[nsystfiles] = {"Nominal","JESPlus","JESMinus","JERPlus","JERMinus","bTagPlus","bTagMinus","misTagPlus","misTagMinus"}; //"PUPlus","PUMinus"
-	string syst_filespostfix[nsystfiles] = {"Nominal"}; //"PUPlus","PUMinus"
+	const unsigned int nsystfiles = 11; //9
+	string syst_filespostfix[nsystfiles] = {"Nominal","JESPlus","JESMinus","JERPlus","JERMinus","bTagPlus","bTagMinus","misTagPlus","misTagMinus","PUPlus","PUMinus"}; //"PUPlus","PUMinus"
+//	string syst_filespostfix[nsystfiles] = {"Nominal"}; //"PUPlus","PUMinus"
 
 	
 	//string nominal_fileName = inputfiledir+"InclFourthGenSearch_TreeAnalyzer"+channelpostfix+"_Nominal"+".root";
@@ -213,7 +213,7 @@ while(semiElectron==true || semiMuon==true){
 	float norm_w_hf  =  1.0000;//note; W 'floating'!
 	float norm_w_lf =   0.950000;//note; W 'floating'!
 	*/
-//source: /user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/Apr2012_Systematics/RooStatsLimit/2012_04_16_SignalFix_combinedmuonelectron_floating_w/CKMA0/mass550/hf_tprime.xml
+/*//source: /user/gvonsem/CMSSW/CMSSW_4_2_8_patch4/src/42X_CommonCVS/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/Apr2012_Systematics/RooStatsLimit/2012_04_16_SignalFix_combinedmuonelectron_floating_w/CKMA0/mass550/hf_tprime.xml
 	float rel_unc_mu_eff 	= 0.03;
 	float rel_unc_el_eff 	= 0.05;
 	float rel_unc_top = 0.08;
@@ -251,15 +251,55 @@ while(semiElectron==true || semiMuon==true){
   float norm_ttz  =   1.00000;
   float norm_w_hf  =  1.00000;
   float norm_w_lf  =  0.950000;
+*/
 
+//source: /user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/RooStatsLimit/2012_05_10_combined/CKMA0/mass450/hf_tprime.xml
+	float rel_unc_mu_eff 	= 0.03;
+	float rel_unc_el_eff 	= 0.05;
+	float rel_unc_top = 0.12;
+	float rel_unc_w = 0.50;
+	float rel_unc_z = 0.05;
+	float rel_unc_ww = 0.35;
+	float rel_unc_wz = 0.42;
+	float rel_unc_zz = 0.27;
+	float rel_unc_ttw = 0.19;
+	float rel_unc_ttz = 0.28;
+	float rel_unc_ssww = 0.49;
+	float rel_unc_st = 0.30;
+//source: /user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/CalculateLimits/RooStatsLimit/CLs_PBS/logs/combined_CKMA0_mass550_10052012_173351.txt
+	float Lumi  =   1.0045;
+  float alpha_btag  = 0.35;
+  float alpha_jer =  -0.22;
+	float alpha_jes =  0.44 ;
+	float alpha_lepton_eff_el = -0.18;
+	float alpha_lepton_eff_mu = 0.37;
+	float alpha_mistag = -0.85;
+  float alpha_norm_ssww_syst = 0.13;
+  float alpha_norm_st_syst = 2.5;
+  float alpha_norm_top_syst =  -0.33;
+  float alpha_norm_ttw_syst =  0.12;
+  float alpha_norm_ttz_syst = -0.04;
+  float alpha_norm_ww_syst = -0.03;
+  float alpha_norm_wz_syst = 0.03;
+  float alpha_norm_z_syst =  0.003;
+  float alpha_norm_zz_syst =  -0.002;
+  float alpha_unc_ch_e =  0.04;
+  float alpha_unc_fl_e =  0.07;
+  float alpha_unc_fl_mu = 0.02;
+  float alpha_norm_w  =  -0.18; //the level norm factor is actually norm_w: 0.91, so 9% down, so a 0.18sigma effect because the uncertainty is 50%
+	float alpha_pu = 0.79;
 
   map<string,pair<float,float> > alpha_XS_systs;
 	//hardcoded, and correspond to the SM datasetnames in the configs (they don't have to be put on add="1" btw), do not change this without a reason
 	alpha_XS_systs["TTbarJets_SemiMuon"] = make_pair(rel_unc_top,alpha_norm_top_syst);	
 	alpha_XS_systs["TTbarJets_SemiElectron"] = make_pair(rel_unc_top,alpha_norm_top_syst);
 	alpha_XS_systs["TTbarJets_Other"] = make_pair(rel_unc_top,alpha_norm_top_syst);
-	alpha_XS_systs["WJets_HF"] = make_pair(rel_unc_w_hf,norm_w_hf); //note; W 'floating'!
-	alpha_XS_systs["WJets_LF"] = make_pair(rel_unc_w_lf,norm_w_lf); //note; W 'floating'!
+	alpha_XS_systs["WJets1Jet"] = make_pair(rel_unc_w,alpha_norm_w); //note; W 'floating'!
+	alpha_XS_systs["WJets2Jets"] = make_pair(rel_unc_w,alpha_norm_w); //note; W 'floating'!
+	alpha_XS_systs["WJets3Jet"] = make_pair(rel_unc_w,alpha_norm_w); //note; W 'floating'!
+	alpha_XS_systs["WJets4Jets"] = make_pair(rel_unc_w,alpha_norm_w); //note; W 'floating'!
+	//alpha_XS_systs["WJets_HF"] = make_pair(rel_unc_w_hf,norm_w_hf); //note; W 'floating'!
+	//alpha_XS_systs["WJets_LF"] = make_pair(rel_unc_w_lf,norm_w_lf); //note; W 'floating'!
 	alpha_XS_systs["ZJets"] = make_pair(rel_unc_z,alpha_norm_z_syst);
 	alpha_XS_systs["ST_tChannel_t"] = make_pair(rel_unc_st,alpha_norm_st_syst);
 	alpha_XS_systs["ST_tChannel_tbar"] = make_pair(rel_unc_st,alpha_norm_st_syst);
@@ -417,6 +457,7 @@ while(semiElectron==true || semiMuon==true){
 		TH1F ** contribution_JER = new TH1F*[datasets.size()];
 		TH1F ** contribution_misTag = new TH1F*[datasets.size()];
 		TH1F ** contribution_bTag = new TH1F*[datasets.size()];
+		TH1F ** contribution_PU = new TH1F*[datasets.size()];
 		TH1F ** contribution_All = new TH1F*[datasets.size()];
 		for (unsigned int d = 0; d < datasets.size(); d++) {
         contribution_lumi[d] = new TH1F();
@@ -427,6 +468,7 @@ while(semiElectron==true || semiMuon==true){
 				contribution_JER[d] = new TH1F();
 				contribution_misTag[d] = new TH1F();
 				contribution_bTag[d] = new TH1F();
+				contribution_PU[d] = new TH1F();
 				contribution_All[d] = new TH1F();								
     }
 		
@@ -460,7 +502,7 @@ while(semiElectron==true || semiMuon==true){
 			//cout << "lumi contribution" << endl;
 			TH1F * htemp_Nominal = (boxes_processes_map["Nominal"])[box_i][d];					
 			//cout<<htemp->GetName()<<endl;
-		/*	contribution_lumi[d] = (TH1F*) htemp_Nominal->Clone();
+			contribution_lumi[d] = (TH1F*) htemp_Nominal->Clone();
 			contribution_lumi[d]->Scale(Lumi-1); //if lumi > 1 ===> contribution is positive //else contribution is negative
 			
 			//cout << "lepton eff contribution" << endl;
@@ -475,9 +517,7 @@ while(semiElectron==true || semiMuon==true){
 				contribution_XS[d] = (TH1F*) htemp_Nominal->Clone();
 				contribution_XS[d]->Scale(alpha_XS_systs[dataSetName].first * alpha_XS_systs[dataSetName].second);
 			}
-			
-			//cout << "PU contribution" << endl;
-			
+
 			//cout << "JES contribution" << endl;
 			TH1F* htemp_JES = 0;
 			if(alpha_jes>0)
@@ -533,18 +573,33 @@ while(semiElectron==true || semiMuon==true){
 			contribution_bTag[d] = (TH1F*) htemp_bTag->Clone();	
 			contribution_bTag[d]->Add(htemp_Nominal,-1);
 			contribution_bTag[d]->Scale(fabs(alpha_btag));
-		*/	
+			
+			//cout << "PU contribution" << endl;
+			TH1F* htemp_PU = 0;
+			if(alpha_pu>0)
+			{
+				htemp_PU = (boxes_processes_map["PUPlus"])[box_i][d];
+			}
+			else
+			{
+				htemp_PU = (boxes_processes_map["PUMinus"])[box_i][d];
+			}
+			contribution_PU[d] = (TH1F*) htemp_PU->Clone();	
+			contribution_PU[d]->Add(htemp_Nominal,-1);
+			contribution_PU[d]->Scale(fabs(alpha_pu));
+			
 			//cout << "add the contributions of all systematic effects to the nominal histogram" << endl;
 			contribution_All[d] = (TH1F*) htemp_Nominal->Clone();
-		/*	contribution_All[d]->Add(contribution_lumi[d]);
+			contribution_All[d]->Add(contribution_lumi[d]);
 			if(!(dataSetName.find("NP")<=0)) contribution_All[d]->Add(contribution_XS[d]);
 			contribution_All[d]->Add(contribution_JES[d]);
 			contribution_All[d]->Add(contribution_JER[d]);
 			contribution_All[d]->Add(contribution_misTag[d]);
 			contribution_All[d]->Add(contribution_bTag[d]);
+			contribution_All[d]->Add(contribution_PU[d]);
 			if(channelpostfix == "_semiMu") contribution_All[d]->Add(contribution_mueff[d]);
 			if(channelpostfix == "_semiEl") contribution_All[d]->Add(contribution_eleff[d]);
-		*/	
+			
 			//now put them in a format for the MultiSamplePlot	
 						
 			if(dataSetName.find("NP_overlay")==0 && mergeSignal)
