@@ -951,13 +951,15 @@ while(semiElectron==true || semiMuon==true){
 		{
 		  
 		  cout<<"* Histogram "<<m<<endl;
-			vector<float> dummyvect;
+			vector<float> dummyvectPlus, dummyvectMinus;
 			for(int k=0;k<QuadUncertSumPlusvec_AllBoxes_semiMu[m].size();k++)
 			{
-				dummyvect.push_back(sqrt(pow(QuadUncertSumPlusvec_AllBoxes_semiMu[m][k],2) + pow(QuadUncertSumPlusvec_AllBoxes_semiEl[m][k],2)));
-				cout<<"  --> total systematic error for bin k = "<<k<<": "<<dummyvect[k]<<endl;
+				dummyvectPlus.push_back(sqrt(pow(QuadUncertSumPlusvec_AllBoxes_semiMu[m][k],2) + pow(QuadUncertSumPlusvec_AllBoxes_semiEl[m][k],2)));
+				dummyvectMinus.push_back(sqrt(pow(QuadUncertSumMinusvec_AllBoxes_semiMu[m][k],2) + pow(QuadUncertSumMinusvec_AllBoxes_semiEl[m][k],2)));
+				cout<<"  --> total systematic error (+sigma) for bin k = "<<k<<": "<<dummyvectPlus[k]<<endl;
 			}
-			QuadUncertSumPlusvec_AllBoxes_semiLep.push_back(dummyvect);
+			QuadUncertSumPlusvec_AllBoxes_semiLep.push_back(dummyvectPlus);
+			QuadUncertSumPlusvec_AllBoxes_semiLep.push_back(dummyvectMinus);
 		}
 		
 	}
