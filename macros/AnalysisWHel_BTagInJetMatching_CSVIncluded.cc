@@ -1229,8 +1229,8 @@ int main (int argc, char *argv[])
       }
     }
     
-    //for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
-    for(unsigned int iEvt=0; iEvt<3000; iEvt++){
+    for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
+    //for(unsigned int iEvt=0; iEvt<3000; iEvt++){
 
       //    for(unsigned int iEvt=0; iEvt<10000; iEvt++){ nEvent = 10000; //nEvent and end of iEvt loop needs to be the same for correctly performing the Minuit Fitter
 
