@@ -338,81 +338,14 @@ int main (int argc, char *argv[])
   // PileUp Reweighting //
   ////////////////////////
 
-  // OLD 2D REWEIGHING
-
   //cout << Luminosity << endl;
 
   LumiReWeighting LumiWeights;
-  if (systematic == 10 || systematic == 11 || systematic == 12) { // take 1/fb histo for PU syst for now
-    cout << "PU Reweighing, taking 1/fb histogram for PU Syst!!!" << endl;
-    LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_1fb.root", "pileup2", "pileup"); // summer 11 1.1/fb
-  }
-  else if (systematic == 8 || systematic == 9) {
-    cout << "PU Reweighing, taking 4,6/fb histogram for WJETS//TTJETS theory!!!" << endl;
-    LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_4fb.root", "pileup2", "pileup"); // summer 11 4.6/fb
-  }
-  else
-    {
-      cout << "PU Reweighing, taking 4.6/fb histogram!!!" << endl;
-      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_4fb.root", "pileup2", "pileup"); // summer 11 4.6/fb
-     
-      /*if (Luminosity > 4500) {
-      cout << "PU Reweighing, taking 4.6/fb histogram!!!" << endl;
-      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_4fb.root", "pileup2", "pileup"); // summer 11 4.6/fb
-    }
-    else if (Luminosity > 2100) {
-      cout << "PU Reweighing, taking 2.1/fb histogram!!!" << endl;
-      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_2fb.root", "pileup2", "pileup"); // summer 11 2.14/fb
-    }
-    else {
-      cout << "PU Reweighing, taking 1.1/fb histogram!!!" << endl;
-      LumiWeights = LumiReWeighting("ReweightHistos/pileup/WJets-summer11.root", "ReweightHistos/pileup/data_1fb.root", "pileup2", "pileup"); // summer 11 1.1/fb
-      }*/
-    }
+  
+  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun191810.root", "pileup", "pileup");
 
   reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
   reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
-
-  // NEW 3D REWEIGHING
-
-  Lumi3DReWeighting Lumi3DWeights;
-  
-  cout << "3DPU Reweighing, taking 4.6/fb histogram!!!" << endl;
-  Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
-
-  /*if (Luminosity > 4500) {
-      cout << "3DPU Reweighing, taking 4.6/fb histogram!!!" << endl;
-    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
-  }
-  else if (Luminosity > 2100) {
-    cout << "3DPU Reweighing, taking 2.1/fb histogram!!!" << endl;
-    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup"); // 2.1/fb Run2011A
-  } 
-
-  // special histos
-  else if (int(Luminosity) == 1139) {
-    cout << "3DPU Reweighing, taking the SPECIAL first 1/fb histogram for 2011A!!!" << endl;
-    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/tmp/first.root", "pileup", "pileup"); // 2.1/fb Run2011A
-  }
-  else if (int(Luminosity) == 1001) {
-    cout << "3DPU Reweighing, taking the SPECIAL second 1/fb histogram for 2011A!!!" << endl;
-    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/tmp/second.root", "pileup", "pileup"); // 2.1/fb Run2011A
-    }else if (systematic == 8 || systematic == 9) {
-    cout << "3DPU Reweighing, taking 4.6/fb histogram for WJETS/TTJETS theory!!!" << endl;
-    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // 4.6/fb Run2011A+B
-  }
-  else {
-    cout << "3DPU Reweighing, NO HISTOGRAM DEFINED!!!" << endl;
-   }
-  */
-  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup"); // FALL114.6/fb Run2011A+B
-
-  if (systematic == 10)
-    Lumi3DWeights.weight3D_init(1.08);
-  else if (systematic == 11)
-    Lumi3DWeights.weight3D_init(0.92);
-  else
-    Lumi3DWeights.weight3D_init(1.0);
 
   cout << " Initialized LumiReWeighting stuff" << endl;
   
@@ -621,7 +554,19 @@ int main (int argc, char *argv[])
       ////////////////
 
       //TRootEvent* event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-      TRootEvent* event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets_corrected, mets);      
+      TRootEvent* event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets_corrected, mets);  
+
+      // do not use events with true pileup < 6 (not enough MC there)
+
+      /*if(! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
+	if ((int)event->nTruePU() < 6) {
+
+	  //cout << "Skipping event " << ievt << " with # true PU = " << (int)event->nTruePU()  << endl;
+
+	  continue;
+
+	}
+	}*/
 
       if(! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
         genjets = treeLoader.LoadGenJet(ievt,false);
@@ -688,13 +633,15 @@ int main (int argc, char *argv[])
       
       // Apply Jet Corrections on-the-fly
 
-      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) {
+      // FOR NOW THE JET CORRECTIONS ARE OK!!
+      
+      /*if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) {
 	//cout << "pom" << endl;
 	//jetTools->correctJets(init_jets, vertex);
       	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
       } else {
 	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-      }
+	}*/
 
       // after correction
       //for (unsigned int j=0;j<init_jets_corrected.size();j++)
@@ -707,52 +654,23 @@ int main (int argc, char *argv[])
 
       // old method
 
-      double lumiWeightOLD = LumiWeights.ITweight( event->nPu(0) );
-
+      double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
+      double lumiWeightOLD=lumiWeight;
       if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
-	lumiWeightOLD=1;
+	lumiWeight=1;
 
       //if (event->nPu(0) >= 25) cout << "#pu " << event->nPu(0) << " shift +0.6 " << PShiftUp_.ShiftWeight( event->nPu(0) ) << endl;
 
       if (systematic == 10)
-	lumiWeightOLD = lumiWeightOLD*PShiftUp_.ShiftWeight( event->nPu(0) );
+	lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
 	
       else if (systematic == 11) 
-	lumiWeightOLD = lumiWeightOLD*PShiftDown_.ShiftWeight( event->nPu(0) );
-
-      // 3D method
-
-      //double avPU = ((double)event->nPu(-1) + (double)event->nPu(0) + (double)event->nPu(1))/3. ; // average in 3 BX!!!, as recommended
-      //double lumiWeight = LumiWeights.ITweight( (int)avPU );
-
-      double lumiWeight = -999999;//LumiWeights.ITweight( event->nPu(0) );
-
-      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
-	lumiWeight=1;
-      else if(dataSetName.find("Spring11") != string::npos) {
-	lumiWeight=Lumi3DWeights.weight3D(event->nPu(0),event->nPu(0),event->nPu(0));
-	//cout << "lol" << endl;
-	//exit(0);
-      } else
-	lumiWeight=Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
-
-      //cout << lumiWeight << endl;
-      //if (event->nPu(0) >= 25) cout << "#pu " << event->nPu(0) << " shift +0.6 " << PShiftUp_.ShiftWeight( event->nPu(0) ) << endl;
-
-      //if (systematic == 10)
-	//lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
-	//lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( (int)avPU );
-	//lumiWeight=Lumi3DWeights_UP.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
-	
-      //else if (systematic == 11) 
-	//lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
-	//lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( (int)avPU );
-	//lumiWeight=Lumi3DWeights_DOWN.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
+	lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
 
       //cout << "scaleFactor before = " << scaleFactor << " " << lumiWeight <<endl;
       scaleFactor = scaleFactor*lumiWeight;
-      scaleFactorOLDREW = scaleFactorOLDREW*lumiWeightOLD;
-      //cout << "scaleFactor after = " << scaleFactor << " " << scaleFactorOLDREW <<  endl;
+      scaleFactorOLDREW = scaleFactor;
+      //cout << "scaleFacto after = " << scaleFactor << " " << scaleFactorOLDREW <<  endl;
 
       ///////////////////
       // TRIGGER SETUP //
@@ -774,62 +692,16 @@ int main (int argc, char *argv[])
 	if(dataSetName.find("Data_Mu") == 0 || dataSetName.find("data_Mu") == 0 || dataSetName.find("DATA_Mu") == 0) {
 
 	  // the first 1.1/fb part of RUN2011A (may10->promptv4)
-	  if( event->runId() <= 163261 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun, iFile);
-	  else if( event->runId() >= 163270 && event->runId() <= 163869 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v6"), currentRun, iFile);
-	  else if( event->runId() >= 165088 && event->runId() <= 165633 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v8"), currentRun, iFile);
-	  else if( event->runId() == 166346 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v10"), currentRun, iFile);
-	  else if( event->runId() >= 165970 && event->runId() <= 167043 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v9"), currentRun, iFile);
-	  else if( event->runId() >= 167078 && event->runId() <= 167913 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v11"), currentRun, iFile);
-	  
-	  // the other part of RUN2011A (another 1/fb) (aug05,promptv6)
-
-	  else if( event->runId() >= 170249 && event->runId() <= 172619 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
-	  else if( event->runId() >= 172620 && event->runId() <= 173198 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_v8"), currentRun, iFile);
-	  else if (event->runId() >= 173236 && event->runId() <= 173692)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile);
-
-	  // RUN2011B (promptv1)
-
-	  else if( event->runId() ==  176928 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() == 176982 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-
-	  else if( event->runId() >= 175860 && event->runId() <= 176469 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() >=  176548 && event->runId() <=  176702 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() >=  176797 && event->runId() <=  176889 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() >=  176929 && event->runId() <=  176959 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() >=  177053 && event->runId() <=  177452 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile);
-
-	  else if( event->runId() >=  176545 && event->runId() <=  176547 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() >=  176765 && event->runId() <=  176796 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-	  
-	  else if( event->runId() >=  177718 && event->runId() <=  178380 ) // TopTree ID 804
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile);
-	  else if( event->runId() >=  178420 && event->runId() <=  178479 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);                                
-	  else if( event->runId() >=  178703 && event->runId() <=  179889 ) // TopTree ID 816
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile);
-	  else if( event->runId() >=  179959 && event->runId() <=  180252 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile);
-
-	  else
+	  if( event->runId() <= 190738 )
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
+	  else if( event->runId() >= 191057 && event->runId() <= 191411 )
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
+	  else if( event->runId() >= 191695 && event->runId() <= 191810 )
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
+	  else {
 	    cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
+	    exit(1);
+	  }
 
 	  if( itriggerSemiMu == 9999 )
           {
@@ -838,39 +710,19 @@ int main (int argc, char *argv[])
           }
 
 	} else {
-	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun);
-	  if (itriggerSemiMu == 9999)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); // Spring11: HLT_Mu15_v1
-	  if (itriggerSemiMu == 9999)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); // Fall10: HLT_Mu9
-	  if (itriggerSemiMu == 9999)
-	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v14"), currentRun); // Fall11
+	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun);
+	  if (itriggerSemiMu == 9999) 
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun);
 
 	}
 
 	// semi-el
 	// semi-electron
         if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 ) {
-          if( event->runId() <= 161176 )
+          
+	  if( event->runId() <= 161176 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
-          else if( event->runId() >= 161177 && event->runId() <= 163261 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun, iFile);
-          else if( event->runId() >= 163262 && event->runId() <= 163869 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v3"), currentRun, iFile);
-          else if( event->runId() >= 163870 && event->runId() <= 165633 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v3"), currentRun, iFile);
-          else if( event->runId() >= 165970 && event->runId() <= 166967 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v1"), currentRun, iFile);
-          else if( event->runId() >= 167039 && event->runId() <= 167913 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v2"), currentRun, iFile);
-          else if( event->runId() >= 170826 && event->runId() <= 173198 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v4"), currentRun, iFile);
-          else if( event->runId() >= 173236 && event->runId() <= 178380 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun, iFile);
-          else if( event->runId() >= 178381 && event->runId() <= 179889 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v2"), currentRun, iFile);
-	  else if( event->runId() >= 179959 && event->runId() <= 180252 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun, iFile);
+          
           else
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiEl == 9999 )
@@ -881,9 +733,10 @@ int main (int argc, char *argv[])
         }
         else
         {
-          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun);
-      	  if (itriggerSemiEl == 9999)
-      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
+          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun);
+	  if( itriggerSemiEl == 9999 )
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun);
+	  
         }
 	
       }
@@ -948,13 +801,12 @@ int main (int argc, char *argv[])
 
       // new for 2 channels at once
 
-      selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
-      selection.setMuonCuts(35,2.1,0.125,10,0.02,0.3,1,1,1);
+      selection.setJetCuts(35.,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setMuonCuts(26,2.1,0.125,0,0.02,0.3,1,1,5);
+      selection.setElectronCuts(35,2.5,0.1,0.02,0.,1,0.3);
       selection.setLooseMuonCuts(10,2.5,0.2);
-      selection.setElectronCuts(30,2.5,0.1,0.02,1,0.3); // FIXME: RelIso to 0.1
-      selection.setLooseElectronCuts(15,2.5,0.2); // semiMu looseElectron cuts
+      selection.setLooseElectronCuts(20,2.5,0.2,0.); // semiMu looseElectron cuts
 
-      
       /*if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
       {
         // Apply the scraping veto
@@ -988,7 +840,7 @@ int main (int argc, char *argv[])
       vector<TRootElectron*> selectedElectrons;
       vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons();
       vector<TRootElectron*> vetoElectronsSemiMu = selection.GetSelectedLooseElectrons(false);
-      vector<TRootElectron*> vetoElectronsSemiEl = selection.GetSelectedLooseElectrons(20,2.5,0.2,true);
+      vector<TRootElectron*> vetoElectronsSemiEl = selection.GetSelectedLooseElectrons(35,2.5,0.2,true);
       
       if( dataSetName.find("InvIso") != string::npos )  {
         vector<TRootMuon*> overlapMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0]);
@@ -1001,7 +853,7 @@ int main (int argc, char *argv[])
       else { // Normal selection
 	selectedJets = selection.GetSelectedJets(true);
 	selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
-	selectedElectrons = selection.GetSelectedElectrons(vertex[0],selectedJets);
+	selectedElectrons = selection.GetSelectedElectrons();
       }
 
       vector<TRootMCParticle*> mcParticles;
@@ -1041,7 +893,8 @@ int main (int argc, char *argv[])
 	   selecTableSemiEl.Fill(d,3,scaleFactor*lumiWeight);
 	   if( vetoMuons.size() == 0 ) {
 	     selecTableSemiEl.Fill(d,4,scaleFactor*lumiWeight);
-	     if( !selection.foundZCandidate(selectedElectrons[0], vetoElectronsSemiEl) ) {
+	     if (vetoElectronsSemiEl.size() == 1) {
+	       //if( !selection.foundZCandidate(selectedElectrons[0], vetoElectronsSemiEl) ) {
 	       selecTableSemiEl.Fill(d,5,scaleFactor*lumiWeight);
 	       if( selection.passConversionRejection(selectedElectrons[0]) ) {
 		 selecTableSemiEl.Fill(d,6,scaleFactor*lumiWeight);
@@ -1310,6 +1163,7 @@ int main (int argc, char *argv[])
       // now we use the loaded values and do the chi2 jetcombination + fill the trees
       if (useMassesAndResolutions) {
 
+	//cout << "Chi2Topmass -- " << Chi2Topmass << endl;
 	// index convention -> i,j: jets from Hadronic W  k: Hadronic b and l: leptonic b
 	float smallestChi2 = 9999999999.;
 	int Permutation[4];
@@ -2183,7 +2037,8 @@ int main (int argc, char *argv[])
       {
 	MultiSamplePlot *temp = it->second;
 	string name = it->first;
-	temp->Draw(false, name, false, true, true, true, true);
+	temp->Draw(false, name, true, true, true, true, true, 1, false);
+
 	temp->Write(fout, name, true, pathPNG+"MSPlot/");
       }
     
