@@ -266,19 +266,19 @@ public:
 	Double_t   GetPredEb(Int_t wp, Int_t njets) const;
 	Double_t   GetPredEbErr(Int_t wp) const;
 	Double_t   GetPredEbErr(Int_t wp, Int_t njets) const;
-	void     SetPredEb(Int_t wp, Int_t njets, Double_t value) ;
+	void       SetPredEb(Int_t wp, Int_t njets, Double_t value) ;
   
 	Double_t   GetPredEudsc(Int_t wp) const;
 	Double_t   GetPredEudsc(Int_t wp, Int_t njets) const;
 	Double_t   GetPredEudscErr(Int_t wp) const;
 	Double_t   GetPredEudscErr(Int_t wp, Int_t njets) const;
-	void     SetPredEudsc(Int_t wp, Int_t njets, Double_t value) ;
+	void       SetPredEudsc(Int_t wp, Int_t njets, Double_t value) ;
   
 	Double_t   GetPredEuds(Int_t wp) const;
 	Double_t   GetPredEuds(Int_t wp, Int_t njets) const;
 	Double_t   GetPredEudsErr(Int_t wp) const;
 	Double_t   GetPredEudsErr(Int_t wp, Int_t njets) const;
-	void     SetPredEuds(Int_t wp, Int_t njets, Double_t value) ;
+	void       SetPredEuds(Int_t wp, Int_t njets, Double_t value) ;
   
 	Double_t   GetPredNv(Int_t wp) const;
 	Double_t   GetPredNv(Int_t wp, Int_t njets) const;
@@ -311,6 +311,8 @@ public:
 	Double_t   GetPredN(Int_t idx) const;
 	Double_t   GetPredN(Int_t idx, Int_t njets) const;
   
+  Double_t   GetIntLumi() const{return IntLumi_;};
+  void       SetIntLumi(Double_t IntLumi) {IntLumi_ = IntLumi;};
     //////////////////////////////////////
     // Access to the parameter estimated values
     //////////////////////////////////////
@@ -365,13 +367,13 @@ public:
 	Double_t GetEstNtotal(Int_t wp, Int_t njets) const;
 	Double_t GetEstNtotal(Int_t wp, Int_t njets, Int_t nbjets) const;
   
-	Double_t GetTTEff2bq(Int_t njets) const{return e2bq_[njets];}
+	Double_t GetTTEff2bq(Int_t njets) const{return e2bq_[njets];};
 	void   SetTTEff2bq(Int_t njets, Double_t value) const{e2bq_[njets] = value;};
   
-	Double_t GetTTEff1bq(Int_t njets) const{ return e1bq_[njets];}
+	Double_t GetTTEff1bq(Int_t njets) const{ return e1bq_[njets];};
 	void   SetTTEff1bq(Int_t njets, Double_t value) const{e1bq_[njets] = value;};
   
-	Double_t GetTTEff0bq(Int_t njets) const{ return e0bq_[njets];}
+	Double_t GetTTEff0bq(Int_t njets) const{ return e0bq_[njets];};
 	void   SetTTEff0bq(Int_t njets, Double_t value) const{e0bq_[njets] = value;};
   
 	Double_t GetBtagWorkingPoint(Int_t idx)             const{return BtagWorkingPoint_[idx];};
@@ -420,17 +422,6 @@ private:
 	Double_t Nv_3bjets (Double_t Nv,  Double_t euds,  Int_t n) const;
 	Double_t Ntt_err_3bjets(Double_t Ntt, Double_t Ntt_err, Double_t eb,   Double_t eb_err, Double_t eudsc, Double_t eudsc_err, Int_t n) const;
 	Double_t Nv_err_3bjets (Double_t Nv,  Double_t Nv_err,  Double_t euds, Double_t euds_err, Int_t n) const;
-  /*	
-   Double_t eudsc_fromN3bjets(Double_t N3bjets, Double_t Ntt, Double_t Nv, Double_t Nvb, Double_t eb, Double_t eudsc_old, Double_t euds, Int_t n) const;
-   Double_t    eb_fromN2bjets(Double_t N2bjets, Double_t Ntt, Double_t Nv, Double_t Nvb, Double_t eb_old, Double_t eudsc, Double_t euds, Int_t n) const;
-   //Double_t Ntt_fromN2bjets(Double_t N2bjets, Double_t Nv, Double_t eb, Double_t eudsc, Int_t n) const;
-   Double_t   Ntt_fromN1bjet( Double_t N1bjet,  Double_t Nv,  Double_t Nvb, Double_t eb,  Double_t eudsc, Double_t euds,  Int_t n) const;
-   Double_t   Nvb_fromN1bjet( Double_t N1bjet,  Double_t Ntt, Double_t Nv,  Double_t eb,  Double_t eudsc, Double_t euds,  Int_t n) const;
-   Double_t  euds_fromN1bjet( Double_t N1bjet,  Double_t Ntt, Double_t Nv,  Double_t Nvb, Double_t eb,    Double_t eudsc, Double_t euds_old, Int_t n) const;
-   Double_t  euds_fromN0bjet( Double_t N0bjet,  Double_t Ntt, Double_t Nv,  Double_t Nvb, Double_t eb,    Double_t eudsc, Double_t euds_old, Int_t n) const;
-   Double_t    Nv_fromN0bjet( Double_t N0bjet,  Double_t Ntt, Double_t Nvb, Double_t eb,  Double_t eudsc, Double_t euds,  Int_t n) const;
-   */	
-  
   
 private:
 	/** Boolean indicating if running on real data or Monte Carlo simulations. */
@@ -446,6 +437,8 @@ private:
 	/** List of datasets indeces for what is considered as Vb-like events (in case of Monte Carlo simulations). */
 	vector<Int_t> iDatasetsVbLike_;
   
+  /** Integrated luminosity considered (in /pb). */
+  Double_t  IntLumi_; //!
 	/** Number of b-jet multiplicity considered ( == 4 for 0,1,2 and >=3 jets). */
 	UInt_t  NbOfBJetsBins_;
 	/** Number of jet multiplicity considered ( == 3 for 4,5 and >=6 jets). */

@@ -2242,7 +2242,7 @@ void VJetEstimation::UnBinnedMaximumJointWPLikelihoodEst(UInt_t njets, vector<In
   	RooWorkspace *w = new RooWorkspace(name,"workspace") ;
     
       // Import model and all its components into the workspace
-  	w->import(simPdf) ;
+  	w->import(RooArgSet(simPdf,WPCat)) ;
     
       // Import data into the workspace
   	w->import(data) ;
