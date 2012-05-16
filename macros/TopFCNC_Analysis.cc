@@ -11,7 +11,7 @@
 #include "TCanvas.h"
 #include "TF1.h"
 #include "TFile.h"
-#include  "TGraphErrors.h"
+#include "TGraphErrors.h"
 #include "TMath.h"
 #include "TMarker.h"
 #include "TPaveStats.h"
@@ -126,6 +126,8 @@ int main (int argc, char *argv[])
   
   //inputFiles.push_back("TopFCNC_EventSelection_DiMu_TTree_data.root");
   inputFiles.push_back("TopFCNC_EventSelection_DiMu_TTree_ttjets.root");
+  inputFiles.push_back("TopFCNC_EventSelection_DiMu_TTree_ttbar_fcnc.root");
+  inputFiles.push_back("TopFCNC_EventSelection_DiMu_TTree_zjets.root");
   
   for(unsigned int iDataSet=0; iDataSet<inputFiles.size(); iDataSet++)
   {
@@ -151,6 +153,9 @@ int main (int argc, char *argv[])
   TFile      *fout  = new TFile (rootFileName.c_str(), "RECREATE");
   TDirectory *myDir = 0;
 
+  ResolutionFit *resFitLeptons = new ResolutionFit("Muon");
+  resFitLeptons->LoadResolutions("leptonReso_FromZJets.root");
+
   ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
   resFitLightJets->LoadResolutions("lightJetReso.root");
   
@@ -167,7 +172,12 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
 
   MSPlot["KinFit_Prob"] = new MultiSamplePlot(dataSets,"KinFit_Prob",100,0,1,"Prob.");
-  MSPlot["KinFit_Chi2"] = new MultiSamplePlot(dataSets,"KinFit_Chi2",100,0,1,"#chi^{2}");
+  MSPlot["KinFit_Chi2"] = new MultiSamplePlot(dataSets,"KinFit_Chi2",500,0,100,"#chi^{2}");
+  MSPlot["KinFit_ReducedChi2"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2",100,0,1,"#chi^{2}/Ndf");
+
+  MSPlot["KinFit_HadWMass"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass",120,50,110,"Prob.");
+  MSPlot["KinFit_HadTopMass"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass",280,100,240,"Prob.");
+  MSPlot["KinFit_FcncTopMass"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass",280,100,240,"Prob.");
 
   ////////////////////////////////////////////////////////////////////
   ////////////////// 1D histograms  //////////////////////////////////
@@ -213,9 +223,12 @@ int main (int argc, char *argv[])
     
     TopFCNC_Evt* topFCNC_Evt = 0;
     m_br->SetAddress(&topFCNC_Evt);
+    m_br->SetAutoDelete(kTRUE);
     
-    TopFCNC_KinFit *topFCNC_KinFit = new TopFCNC_KinFit(dataSet, resFitLightJets, resFitBJets);
+    TopFCNC_KinFit *topFCNC_KinFit = new TopFCNC_KinFit(dataSet, resFitLeptons, resFitLightJets, resFitBJets);
+    topFCNC_KinFit->SetMaxNbIter(60);
     topFCNC_KinFit->SetVerbosity(false);
+    topFCNC_KinFit->SetFitVerbosity(false);
 
     for(int iEvt=0; iEvt<nEvent; iEvt++)
     {
@@ -226,12 +239,34 @@ int main (int argc, char *argv[])
 
       if(!topFCNC_Evt->isDiLeptonic()) continue;
       
-      topFCNC_KinFit->FitEvent(topFCNC_Evt);//, float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5);
+      topFCNC_KinFit->FitEvent(topFCNC_Evt);//, float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5/173.3 MC vs data);
+
+      topFCNC_Evt->ReconstructEvt();
 
       MSPlot["KinFit_Prob"]->Fill(topFCNC_KinFit->GetProb(), dataSet, true, Luminosity*topFCNC_Evt->eventWeight());
       MSPlot["KinFit_Chi2"]->Fill(topFCNC_KinFit->GetChi2(), dataSet, true, Luminosity*topFCNC_Evt->eventWeight());
+      MSPlot["KinFit_ReducedChi2"]->Fill(topFCNC_KinFit->GetChi2()/topFCNC_KinFit->GetNdof(), dataSet, true, Luminosity*topFCNC_Evt->eventWeight());
+
+      MSPlot["KinFit_HadWMass"]   ->Fill(topFCNC_Evt->W().M(), dataSet, true, Luminosity*topFCNC_Evt->eventWeight());
+      MSPlot["KinFit_HadTopMass"] ->Fill(topFCNC_Evt->smDecayTop().M(), dataSet, true, Luminosity*topFCNC_Evt->eventWeight());
+      MSPlot["KinFit_FcncTopMass"]->Fill(topFCNC_Evt->fcncDecayTop().M(), dataSet, true, Luminosity*topFCNC_Evt->eventWeight());
+
     }
   }
+
+  fout->cd();
+  for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
+  {
+	  MultiSamplePlot *temp = it->second;
+	  //temp->addText("CMS preliminary");
+	  string name = it->first;
+	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
+	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+	  temp->Write(fout, name, true, pathPNG, "pdf");
+  }
+  
+  //delete  
+  delete fout;
 
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
 
