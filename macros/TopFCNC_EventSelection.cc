@@ -1411,7 +1411,7 @@ int main (int argc, char *argv[])
 	  MultiSamplePlot *temp = it->second;
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
-	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
+	  temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	  temp->Write(fout, name, true, pathPNG, "pdf");
   }

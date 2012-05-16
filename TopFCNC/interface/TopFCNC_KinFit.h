@@ -44,7 +44,12 @@ class TopFCNC_KinFit {
     Double_t GetChi2() {return Chi2_;};
     Double_t GetNdof() {return Ndof_;};
     
+    void SetMaxNbIter(Int_t MaxNbIter)    {MaxNbIter_ = MaxNbIter;}
+    void SetMaxDeltaS(Double_t MaxDeltaS) {MaxDeltaS_ = MaxDeltaS;}
+    void SetMaxF(Double_t MaxF)           {MaxF_ = MaxF;}
+
     void SetVerbosity(Bool_t verbose) {verbose_ = verbose;};
+    void SetFitVerbosity(Bool_t fit_verbose) {fit_verbose_ = fit_verbose;};
   
   private:
     map<string, TH1F*> histo1D_;
@@ -57,8 +62,12 @@ class TopFCNC_KinFit {
     Double_t       Prob_;
     Double_t       Chi2_;
     Int_t          Ndof_;
+    Int_t          MaxNbIter_;  // Maximum number of iterations
+    Double_t       MaxDeltaS_;  // Convergence criterium for deltaS
+    Double_t       MaxF_;       // Convergence criterium for F
     
     Bool_t         verbose_;
+    Bool_t         fit_verbose_;
 };
 
 #endif

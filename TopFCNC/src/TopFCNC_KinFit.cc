@@ -11,8 +11,12 @@ TopFCNC_KinFit::TopFCNC_KinFit(Dataset* dataset, ResolutionFit *resFitLeptons, R
   Prob_ = -1.;
   Chi2_ =  0.;
   Ndof_ =  0;
+  MaxNbIter_ = 50;
+  MaxDeltaS_ = 0.00005;
+  MaxF_      = 0.0001;
 
-  verbose_ = false;
+  verbose_     = false;
+  fit_verbose_ = false;
 
   if(dataset_)
   {
@@ -64,6 +68,24 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
     TMatrixD Ml1(3,3), Ml2(3,3); // for leptons
     TMatrixD Mb(3,3),  Mq(3,3), Mj1(3,3), Mj2(3,3); // for jets
 
+    Ml1.Zero();
+    Ml2.Zero();
+    
+    Ml1(0,0) = pow(resFitLeptons_->EtResolution(&lepton1FromZ), 2);
+    Ml1(1,1) = pow(resFitLeptons_->ThetaResolution(&lepton1FromZ), 2);
+    Ml1(2,2) = pow(resFitLeptons_->PhiResolution(&lepton1FromZ), 2);
+		    if(verbose_)
+          Ml1.Print();
+    
+    Ml2(0,0) = pow(resFitLeptons_->EtResolution(&lepton2FromZ), 2);
+    Ml2(1,1) = pow(resFitLeptons_->ThetaResolution(&lepton2FromZ), 2);
+    Ml2(2,2) = pow(resFitLeptons_->PhiResolution(&lepton2FromZ), 2);
+		    if(verbose_)
+          Ml2.Print();
+
+    TFitParticleEtThetaPhiEMomFix *fitLep1   = new TFitParticleEtThetaPhiEMomFix("fitLep1", "fitLep1", &lepton1FromZ, &Ml1);
+    TFitParticleEtThetaPhiEMomFix *fitLep2   = new TFitParticleEtThetaPhiEMomFix("fitLep2", "fitLep2", &lepton2FromZ, &Ml2);
+
     do{
       if(verbose_)
 		    cout<<"-- Jet combination considered : "<<comb[0]<<"/"<<comb[1]<<"/"<<comb[2]<<"/"<<comb[3]<<endl;
@@ -74,8 +96,6 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
 		    if(verbose_)
 		  	  cout<<"--- Permutations : "<<comb[0]<<"/"<<comb[1]<<"/"<<comb[2]<<"/"<<comb[3]<<endl;
   
-        Ml1.Zero();
-        Ml2.Zero();
         Mb.Zero();
         Mq.Zero();
         Mj1.Zero();
@@ -86,37 +106,35 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
         TLorentzVector lightJet1 = jets[comb[2]];
         TLorentzVector lightJet2 = jets[comb[3]];
   
-        Ml1(0,0) = pow(resFitLeptons_->EtResolution(&lepton1FromZ), 2);
-        Ml1(1,1) = pow(resFitLeptons_->ThetaResolution(&lepton1FromZ), 2);
-        Ml1(2,2) = pow(resFitLeptons_->PhiResolution(&lepton1FromZ), 2);
-    
-        Ml2(0,0) = pow(resFitLeptons_->EtResolution(&lepton2FromZ), 2);
-        Ml2(1,1) = pow(resFitLeptons_->ThetaResolution(&lepton2FromZ), 2);
-        Ml2(2,2) = pow(resFitLeptons_->PhiResolution(&lepton2FromZ), 2);
-
         Mb(0,0)  = pow(resFitBJets_->EtResolution(&bJet), 2);
         Mb(1,1)  = pow(resFitBJets_->ThetaResolution(&bJet), 2);
         Mb(2,2)  = pow(resFitBJets_->PhiResolution(&bJet), 2);
- 
+		    if(verbose_)
+          Mb.Print();
+
         Mq(0,0)  = pow(resFitLightJets_->EtResolution(&qJet), 2);
         Mq(1,1)  = pow(resFitLightJets_->ThetaResolution(&qJet), 2);
         Mq(2,2)  = pow(resFitLightJets_->PhiResolution(&qJet), 2);
+		    if(verbose_)
+          Mq.Print();
 
         Mj1(0,0) = pow(resFitLightJets_->EtResolution(&lightJet1), 2);
         Mj1(1,1) = pow(resFitLightJets_->ThetaResolution(&lightJet1), 2);
         Mj1(2,2) = pow(resFitLightJets_->PhiResolution(&lightJet1), 2);
+		    if(verbose_)
+          Mj1.Print();
     
         Mj2(0,0) = pow(resFitLightJets_->EtResolution(&lightJet2), 2);
         Mj2(1,1) = pow(resFitLightJets_->ThetaResolution(&lightJet2), 2);
         Mj2(2,2) = pow(resFitLightJets_->PhiResolution(&lightJet2), 2);
 		    if(verbose_)
+          Mj2.Print();
+
+		    if(verbose_)
 		  	  cout<<"---- Correlation matrices instantiated "<<endl;
 
         TKinFitter *kinfit_    = new TKinFitter("topFCNC_Fit", "topFCNC_Fit");
-        kinfit_->setVerbosity(0);
-
-        TFitParticleEtThetaPhiEMomFix *fitLep1   = new TFitParticleEtThetaPhiEMomFix("fitLep1", "fitLep1", &lepton1FromZ, &Ml1);
-        TFitParticleEtThetaPhiEMomFix *fitLep2   = new TFitParticleEtThetaPhiEMomFix("fitLep2", "fitLep2", &lepton2FromZ, &Ml1);
+        kinfit_->setVerbosity(fit_verbose_);
 
         TFitParticleEtThetaPhiEMomFix *fitB      = new TFitParticleEtThetaPhiEMomFix("bJet", "bJet", &bJet, &Mb);
         TFitParticleEtThetaPhiEMomFix *fitQ      = new TFitParticleEtThetaPhiEMomFix("qJet", "qJet", &qJet, &Mq);
@@ -129,7 +147,7 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
         TFitConstraintM *consLepZ     = new TFitConstraintM("LepZMass",      "MassConstraint", 0, 0,   zMass );
         TFitConstraintM *consHadTop   = new TFitConstraintM("Had_TopMass",   "MassConstraint", 0, 0, topMass );
         TFitConstraintM *consFcncTop  = new TFitConstraintM("FCNC_TopMass",  "MassConstraint", 0, 0, topMass );
-        TFitConstraintM *consEqualTop = new TFitConstraintM("EqualTopMasses","EqualTopMasses", 0, 0,       0.);
+        //TFitConstraintM *consEqualTop = new TFitConstraintM("EqualTopMasses","EqualTopMasses", 0, 0,       0.);
 
         consHadW->addParticles1(fitLight1,fitLight2);
         consLepZ->addParticles1(fitLep1,fitLep2);
@@ -138,17 +156,17 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
 
         consFcncTop->addParticles1(fitQ,fitLep1,fitLep2);
 
-        consEqualTop->addParticles1(fitB,fitLight1,fitLight2);
-        consEqualTop->addParticles2(fitQ,fitLep1,fitLep2);
+        //consEqualTop->addParticles1(fitB,fitLight1,fitLight2);
+        //consEqualTop->addParticles2(fitQ,fitLep1,fitLep2);
                     
         kinfit_->addConstraint(consHadW);
         kinfit_->addConstraint(consLepZ);
         kinfit_->addConstraint(consHadTop);
         kinfit_->addConstraint(consFcncTop);
-        kinfit_->addConstraint(consEqualTop);
-        kinfit_->setMaxNbIter(30);
-        kinfit_->setMaxDeltaS(5e-5);
-        kinfit_->setMaxF(1e-4);
+        //kinfit_->addConstraint(consEqualTop);
+        kinfit_->setMaxNbIter(MaxNbIter_);
+        kinfit_->setMaxDeltaS(MaxDeltaS_);
+        kinfit_->setMaxF(MaxF_);
       
         //do the fit!
         kinfit_->fit();
@@ -166,9 +184,6 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
 
         delete kinfit_;
 
-        delete fitLep1;
-        delete fitLep2;
-
         delete fitB;
         delete fitQ;
         delete fitLight1;
@@ -178,12 +193,15 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
         delete consLepZ;
         delete consHadTop;
         delete consFcncTop;
-        delete consEqualTop;
+        //delete consEqualTop;
 
 			}
 		  while(next_permutation(comb,comb+NofJets));
    	}
     while(next_combination(numbers,numbers+jets.size(),comb,comb+NofJets));
+
+    delete fitLep1;
+    delete fitLep2;
 
     topFCNC_Evt->SetB(TRootJet(jets[Permutation[0]]));
     topFCNC_Evt->SetQ(TRootJet(jets[Permutation[1]]));
