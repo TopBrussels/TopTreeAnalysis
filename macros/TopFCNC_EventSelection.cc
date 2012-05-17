@@ -1346,6 +1346,7 @@ int main (int argc, char *argv[])
     MyTopFCNC_EvtCand->SetnPUBXm1(event->nPu(-1));
     MyTopFCNC_EvtCand->SetnPU(event->nPu(0));
     MyTopFCNC_EvtCand->SetnPUBXp1(event->nPu(1));
+    MyTopFCNC_EvtCand->SetnTruePU(event->nTruePU());
   }
   Tree->Fill();
 

@@ -35,6 +35,7 @@ class TopFCNC_Evt : public TObject
       nPUBXm1_(0),
       nPU_(0),
       nPUBXp1_(0),
+      nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(kNone),
 			wLeptonicChannel_(kNone),
@@ -69,6 +70,7 @@ class TopFCNC_Evt : public TObject
       nPUBXm1_(0),
       nPU_(0),
       nPUBXp1_(0),
+      nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(type),
 			wLeptonicChannel_(kNone),
@@ -103,6 +105,7 @@ class TopFCNC_Evt : public TObject
       nPUBXm1_(0),
       nPU_(0),
       nPUBXp1_(0),
+      nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(type1),
 			wLeptonicChannel_(type2),
@@ -137,6 +140,7 @@ class TopFCNC_Evt : public TObject
       nPUBXm1_(evt.nPUBXm1_),
       nPU_(evt.nPU_),
       nPUBXp1_(evt.nPUBXp1_),
+      nTruePU_(evt.nTruePU_),
       eventWeight_(evt.eventWeight_),
 			zLeptonicChannel_(evt.zLeptonicChannel_),
 			wLeptonicChannel_(evt.wLeptonicChannel_),
@@ -187,10 +191,11 @@ class TopFCNC_Evt : public TObject
     
     const Float_t factorizationScale() const { return factorizationScale_;}
 
-    const UInt_t nPV()     const { return nPV_;}
-    const UInt_t nPUBXm1() const { return nPUBXm1_;}
-    const UInt_t nPU()     const { return nPU_;}
-    const UInt_t nPUBXp1() const { return nPUBXp1_;}
+    const UInt_t  nPV()     const { return nPV_;}
+    const UInt_t  nPUBXm1() const { return nPUBXm1_;}
+    const UInt_t  nPU()     const { return nPU_;}
+    const UInt_t  nPUBXp1() const { return nPUBXp1_;}
+    const Float_t nTruePU() const { return nTruePU_;}
 
     const Float_t eventWeight() const { return eventWeight_;}
 
@@ -252,7 +257,8 @@ class TopFCNC_Evt : public TObject
     void SetnPUBXm1(UInt_t nPUBXm1) { nPUBXm1_ = nPUBXm1; }
     void SetnPU(UInt_t nPU)         { nPU_ = nPU; }
     void SetnPUBXp1(UInt_t nPUBXp1) { nPUBXp1_ = nPUBXp1; }
-    
+    void SetnTruePU(Float_t nTruePU){ nTruePU_ = nTruePU; }
+
 		void SetDiLeptonicChannel(LeptonType type)
 		{
 			isDiLeptonic_ = true;
@@ -615,10 +621,11 @@ class TopFCNC_Evt : public TObject
     Float_t xParton2_;
     Float_t factorizationScale_;
 
-    UInt_t nPV_;
-    UInt_t nPUBXm1_;
-    UInt_t nPU_;
-    UInt_t nPUBXp1_;
+    UInt_t  nPV_;
+    UInt_t  nPUBXm1_;
+    UInt_t  nPU_;
+    UInt_t  nPUBXp1_;
+    Float_t nTruePU_;
 
     Float_t eventWeight_;
 
