@@ -97,6 +97,12 @@ int main (int argc, char *argv[])
   //Probability cut value:
   float KinFitCut = 0.;
 
+  //PU systematics:
+  float PUSyst = 0;
+  string systematic = "";
+  if(PUSyst == 1) systematics = "PUPlus";
+  else if(PUSyst == -1) systematics = "PUMinus";
+
   string decayChannel;
   bool semiMuon = true;
   bool semiElectron = false;
@@ -390,9 +396,9 @@ int main (int argc, char *argv[])
 
   //Zie code Stijn voor alle gebruikte controle plots !
 
-  histo1D["JetCombHadr"] = new TH1F("JetCombHadr","JetCombHadr",12,0,11);
-  histo1D["JetCombHadrAndLeptWOnly"] = new TH1F("JetCombHadrAndLeptWOnly","JetCombHadrAndLeptWOnly",12,0,11);
-  histo1D["JetCombHadrAndLept"] = new TH1F("JetCombHaAndLeptdr","JetCombHadrAndLept",12,0,11);
+  histo1D["JetCombHadr"] = new TH1F("JetCombHadr","JetCombHadr",14,-0.5,13.5);
+  histo1D["JetCombHadrAndLeptWOnly"] = new TH1F("JetCombHadrAndLeptWOnly","JetCombHadrAndLeptWOnly",14,-0.5,13.5);
+  histo1D["JetCombHadrAndLept"] = new TH1F("JetCombHaAndLeptdr","JetCombHadrAndLept",14,-0.5,13.5);
 
   histo1D["LeptWMassHadr"] = new TH1F("LeptWMassHadr","LeptWMassHadr",40,0,150);
   histo1D["LeptTopMassHadr"] = new TH1F("LeptTopMassHadr","LeptTopMassHadr",60,50,350);
@@ -400,219 +406,6 @@ int main (int argc, char *argv[])
   histo1D["LeptTopMassHadrAndLeptWOnly"] = new TH1F("LeptTopMassHadrAndLeptWOnly","LeptTopMassHadrAndLeptWOnly",60,50,350);
   histo1D["LeptWMassHadrAndLept"] = new TH1F("LeptWMassHadrAndLept","LeptWMassHadrAndLept",40,0,150);
   histo1D["LeptTopMassHadrAndLept"] = new TH1F("LeptTopMassHadrAndLept","LeptTopMassHadrAndLept",60,50,350);
-
-  // histo1D["HadronicWMass"] = new TH1F("HadronicWMass","HadronicWMass",50,50,100);
-  // histo1D["HadronicTopMass"] = new TH1F("HadronicTopMass","HadronicTopMass",50,150,200);
-  // histo1D["LeptonicWMass"] = new TH1F("LeptonicWMass","LeptonicWMass",50,50,100);
-  // histo1D["LeptonicTopMass"] = new TH1F("LeptonicTopMass","LeptonicTopMass",50,150,200); 
-
-  // histo1D["KinFitProbCorrectBLept"] = new TH1F("KinFitProbCorrectBLept","KinFitProbCorrectBLept",25,0,1);
-  // histo1D["KinFitProbWrongBLept"] = new TH1F("KinFitProbWrongBLept","KinFitProbWrongBLept",25,0,1);
-
-  // histo1D["KinFitProbCorrectBLeptSSVHEM"] = new TH1F("KinFitProbCorrectBLeptSSVHEM","KinFitProbCorrectBLeptSSVHEM",25,0,1);
-  // histo1D["KinFitProbWrongBLeptSSVHEM"] = new TH1F("KinFitProbWrongBLeptSSVHEM","KinFitProbWrongBLeptSSVHEM",25,0,1);
-
-  // histo1D["CosThetaCorrectBLept"]=new TH1F("CosThetaCorrectBLept","CosThetaCorrectBLept",CosThetaBinNumber,-1,1);
-  // histo1D["CosThetaWrongBLept"]=new TH1F("CosThetaWrongBLept","CosThetaWrongBLept",CosThetaBinNumber,-1,1);
-  // histo1D["CosThetaCorrectBLeptSSVHEM"]=new TH1F("CosThetaCorrectBLeptSSVHEM","CosThetaCorrectBLeptSSVHEM",CosThetaBinNumber,-1,1);
-  // histo1D["CosThetaWrongBLeptSSVHEM"]=new TH1F("CosThetaWrongBLeptSSVHEM","CosThetaWrongBLeptSSVHEM",CosThetaBinNumber,-1,1);
-  
-  // histo1D["CosThetaRes"] = new TH1F("CosThetaRes","CosThetaRes",200,-2,2);
-  // histo1D["CosThetaDistributionSignal"] = new TH1F("CosThetaDistributionSignal","CosThetaDistributionSignal",100,-1,1);
-  // histo1D["CosThetaDistributionSignalRatio"] = new TH1F("CosThetaDistributionSignalRatio","CosThetaDistributionSignalRatio",100,-1,1);
-  // histo1D["CosThetaDistributionSignalGen"] = new TH1F("CosThetaDistributionSignalGen","CosThetaDistributionSignalGen",100,-1,1);
-  // histo1D["MuonPtSignal"] = new TH1F("MuonPtSignal","MuonPtSignal",100,0,200);
-  // TProfile *CosThetaDiffVSRecoSignal = new TProfile("CosThetaDiffVSRecoSignal","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 20 to inf GeV",10,-1,1,-2,2);
-
-  // //Histos to determine optimal muon Pt cut:
-  // histo1D["CosThetaDifferencePt10ToInf"] = new TH1F("CosThetaDifferencePt10ToInf","CosThetaDifferencePt10ToInf",200,-2,2);
-  // histo1D["CosThetaRecoPt10ToInf"] = new TH1F("CosThetaRecoPt10ToInf","CosThetaRecoPt10ToInf",100,-1,1);
-  // histo1D["CosThetaRecoPt10ToInfForRatio"] = new TH1F("CosThetaRecoPt10ToInfForRatio","CosThetaRecoPt10ToInfForRatio",100,-1,1);
-  // histo1D["CosThetaGenPt10ToInf"] = new TH1F("CosThetaGenPt10ToInf","CosThetaGenPt10ToInf",100,-1,1);
-  // TProfile *CosThetaDiffVSRecoPt10ToInf = new TProfile("CosThetaDiffVSRecoPt10ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 10 to inf GeV",10,-1,1,-2,2);
-  // histo2D["CosThetaGenVsRecoPt10ToInf"] = new TH2F("CosThetaGenVsRecoPt10ToInf","CosThetaGenVsRecoPt10ToInf",50,-1,1,20,-1,1);
-  // histo1D["CosThetaDiffPt10ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt10ToInfGenFirstBin","CosThetaDiffPt10ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt10ToInfGenSecondBin","CosThetaDiffPt10ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt10ToInfGenThirdBin","CosThetaDiffPt10ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt10ToInfGenFourthBin","CosThetaDiffPt10ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt10ToInfGenFifthBin","CosThetaDiffPt10ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt10ToInfGenSixthBin","CosThetaDiffPt10ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt10ToInfGenSeventhBin","CosThetaDiffPt10ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt10ToInfGenEighthBin","CosThetaDiffPt10ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt10ToInfGenNinthBin","CosThetaDiffPt10ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt10ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt10ToInfGenTenthBin","CosThetaDiffPt10ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt10ToInfGenFirstBin","CosThetaRecoPt10ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt10ToInfGenSecondBin","CosThetaRecoPt10ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt10ToInfGenThirdBin","CosThetaRecoPt10ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt10ToInfGenFourthBin","CosThetaRecoPt10ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt10ToInfGenFifthBin","CosThetaRecoPt10ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt10ToInfGenSixthBin","CosThetaRecoPt10ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt10ToInfGenSeventhBin","CosThetaRecoPt10ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt10ToInfGenEighthBin","CosThetaRecoPt10ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt10ToInfGenNinthBin","CosThetaRecoPt10ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt10ToInfGenTenthBin","CosThetaRecoPt10ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt10ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt10ToInfGenFirstBin","CosThetaRecoPt10ToInfGenFirstBin",50,-1,1);
-  
-  // histo1D["CosThetaDifferencePt15ToInf"] = new TH1F("CosThetaDifferencePt15ToInf","CosThetaDifferencePt15ToInf",200,-2,2);
-  // histo1D["CosThetaRecoPt15ToInf"] = new TH1F("CosThetaRecoPt15ToInf","CosThetaRecoPt15ToInf",100,-1,1);
-  // histo1D["CosThetaRecoPt15ToInfForRatio"] = new TH1F("CosThetaRecoPt15ToInfForRatio","CosThetaRecoPt15ToInfForRatio",100,-1,1);
-  // histo1D["CosThetaGenPt15ToInf"] = new TH1F("CosThetaGenPt15ToInf","CosThetaGenPt15ToInf",100,-1,1);
-  // TProfile *CosThetaDiffVSRecoPt15ToInf = new TProfile("CosThetaDiffVSRecoPt15ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 15 to inf GeV",10,-1,1,-2,2);
-  // histo2D["CosThetaGenVsRecoPt15ToInf"] = new TH2F("CosThetaGenVsRecoPt15ToInf","CosThetaGenVsRecoPt15ToInf",50,-1,1,20,-1,1);
-  // histo1D["CosThetaDiffPt15ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt15ToInfGenFirstBin","CosThetaDiffPt15ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt15ToInfGenSecondBin","CosThetaDiffPt15ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt15ToInfGenThirdBin","CosThetaDiffPt15ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt15ToInfGenFourthBin","CosThetaDiffPt15ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt15ToInfGenFifthBin","CosThetaDiffPt15ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt15ToInfGenSixthBin","CosThetaDiffPt15ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt15ToInfGenSeventhBin","CosThetaDiffPt15ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt15ToInfGenEighthBin","CosThetaDiffPt15ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt15ToInfGenNinthBin","CosThetaDiffPt15ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt15ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt15ToInfGenTenthBin","CosThetaDiffPt15ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt15ToInfGenFirstBin","CosThetaRecoPt15ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt15ToInfGenSecondBin","CosThetaRecoPt15ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt15ToInfGenThirdBin","CosThetaRecoPt15ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt15ToInfGenFourthBin","CosThetaRecoPt15ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt15ToInfGenFifthBin","CosThetaRecoPt15ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt15ToInfGenSixthBin","CosThetaRecoPt15ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt15ToInfGenSeventhBin","CosThetaRecoPt15ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt15ToInfGenEighthBin","CosThetaRecoPt15ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt15ToInfGenNinthBin","CosThetaRecoPt15ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt15ToInfGenTenthBin","CosThetaRecoPt15ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt15ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt15ToInfGenFirstBin","CosThetaRecoPt15ToInfGenFirstBin",50,-1,1);
-
-  // histo1D["CosThetaDifferencePt20ToInf"] = new TH1F("CosThetaDifferencePt20ToInf","CosThetaDifferencePt20ToInf",200,-2,2);
-  // histo1D["CosThetaRecoPt20ToInf"] = new TH1F("CosThetaRecoPt20ToInf","CosThetaRecoPt20ToInf",100,-1,1);
-  // histo1D["CosThetaRecoPt20ToInfForRatio"] = new TH1F("CosThetaRecoPt20ToInfForRatio","CosThetaRecoPt20ToInfForRatio",100,-1,1);
-  // histo1D["CosThetaGenPt20ToInf"] = new TH1F("CosThetaGenPt20ToInf","CosThetaGenPt20ToInf",100,-1,1);
-  // TProfile *CosThetaDiffVSRecoPt20ToInf = new TProfile("CosThetaDiffVSRecoPt20ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 20 to inf GeV",10,-1,1,-2,2);
-  // histo2D["CosThetaGenVsRecoPt20ToInf"] = new TH2F("CosThetaGenVsRecoPt20ToInf","CosThetaGenVsRecoPt20ToInf",50,-1,1,20,-1,1);
-  // histo1D["CosThetaDiffPt20ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt20ToInfGenFirstBin","CosThetaDiffPt20ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt20ToInfGenSecondBin","CosThetaDiffPt20ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt20ToInfGenThirdBin","CosThetaDiffPt20ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt20ToInfGenFourthBin","CosThetaDiffPt20ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt20ToInfGenFifthBin","CosThetaDiffPt20ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt20ToInfGenSixthBin","CosThetaDiffPt20ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt20ToInfGenSeventhBin","CosThetaDiffPt20ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt20ToInfGenEighthBin","CosThetaDiffPt20ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt20ToInfGenNinthBin","CosThetaDiffPt20ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt20ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt20ToInfGenTenthBin","CosThetaDiffPt20ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt20ToInfGenFirstBin","CosThetaRecoPt20ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt20ToInfGenSecondBin","CosThetaRecoPt20ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt20ToInfGenThirdBin","CosThetaRecoPt20ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt20ToInfGenFourthBin","CosThetaRecoPt20ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt20ToInfGenFifthBin","CosThetaRecoPt20ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt20ToInfGenSixthBin","CosThetaRecoPt20ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt20ToInfGenSeventhBin","CosThetaRecoPt20ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt20ToInfGenEighthBin","CosThetaRecoPt20ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt20ToInfGenNinthBin","CosThetaRecoPt20ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt20ToInfGenTenthBin","CosThetaRecoPt20ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt20ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt20ToInfGenFirstBin","CosThetaRecoPt20ToInfGenFirstBin",50,-1,1);
-
-  // histo1D["CosThetaDifferencePt25ToInf"] = new TH1F("CosThetaDifferencePt25ToInf","CosThetaDifferencePt25ToInf",200,-2,2);
-  // histo1D["CosThetaRecoPt25ToInf"] = new TH1F("CosThetaRecoPt25ToInf","CosThetaRecoPt25ToInf",100,-1,1);
-  // histo1D["CosThetaRecoPt25ToInfForRatio"] = new TH1F("CosThetaRecoPt25ToInfForRatio","CosThetaRecoPt25ToInfForRatio",100,-1,1);
-  // histo1D["CosThetaGenPt25ToInf"] = new TH1F("CosThetaGenPt25ToInf","CosThetaGenPt25ToInf",100,-1,1);
-  // TProfile *CosThetaDiffVSRecoPt25ToInf = new TProfile("CosThetaDiffVSRecoPt25ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 25 to inf GeV",10,-1,1,-2,2);
-  // histo2D["CosThetaGenVsRecoPt25ToInf"] = new TH2F("CosThetaGenVsRecoPt25ToInf","CosThetaGenVsRecoPt25ToInf",50,-1,1,20,-1,1);
-  // histo1D["CosThetaDiffPt25ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt25ToInfGenFirstBin","CosThetaDiffPt25ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt25ToInfGenSecondBin","CosThetaDiffPt25ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt25ToInfGenThirdBin","CosThetaDiffPt25ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt25ToInfGenFourthBin","CosThetaDiffPt25ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt25ToInfGenFifthBin","CosThetaDiffPt25ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt25ToInfGenSixthBin","CosThetaDiffPt25ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt25ToInfGenSeventhBin","CosThetaDiffPt25ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt25ToInfGenEighthBin","CosThetaDiffPt25ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt25ToInfGenNinthBin","CosThetaDiffPt25ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt25ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt25ToInfGenTenthBin","CosThetaDiffPt25ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt25ToInfGenFirstBin","CosThetaRecoPt25ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt25ToInfGenSecondBin","CosThetaRecoPt25ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt25ToInfGenThirdBin","CosThetaRecoPt25ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt25ToInfGenFourthBin","CosThetaRecoPt25ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt25ToInfGenFifthBin","CosThetaRecoPt25ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt25ToInfGenSixthBin","CosThetaRecoPt25ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt25ToInfGenSeventhBin","CosThetaRecoPt25ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt25ToInfGenEighthBin","CosThetaRecoPt25ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt25ToInfGenNinthBin","CosThetaRecoPt25ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt25ToInfGenTenthBin","CosThetaRecoPt25ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt25ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt25ToInfGenFirstBin","CosThetaRecoPt25ToInfGenFirstBin",50,-1,1);
-
-  // histo1D["CosThetaDifferencePt30ToInf"] = new TH1F("CosThetaDifferencePt30ToInf","CosThetaDifferencePt30ToInf",200,-2,2);
-  // histo1D["CosThetaRecoPt30ToInf"] = new TH1F("CosThetaRecoPt30ToInf","CosThetaRecoPt30ToInf",100,-1,1);
-  // histo1D["CosThetaRecoPt30ToInfForRatio"] = new TH1F("CosThetaRecoPt30ToInfForRatio","CosThetaRecoPt30ToInfForRatio",100,-1,1);
-  // histo1D["CosThetaGenPt30ToInf"] = new TH1F("CosThetaGenPt30ToInf","CosThetaGenPt30ToInf",100,-1,1);
-  // TProfile *CosThetaDiffVSRecoPt30ToInf = new TProfile("CosThetaDiffVSRecoPt30ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 30 to inf GeV",10,-1,1,-2,2);
-  // histo2D["CosThetaGenVsRecoPt30ToInf"] = new TH2F("CosThetaGenVsRecoPt30ToInf","CosThetaGenVsRecoPt30ToInf",50,-1,1,20,-1,1);
-  // histo1D["CosThetaDiffPt30ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt30ToInfGenFirstBin","CosThetaDiffPt30ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt30ToInfGenSecondBin","CosThetaDiffPt30ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt30ToInfGenThirdBin","CosThetaDiffPt30ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt30ToInfGenFourthBin","CosThetaDiffPt30ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt30ToInfGenFifthBin","CosThetaDiffPt30ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt30ToInfGenSixthBin","CosThetaDiffPt30ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt30ToInfGenSeventhBin","CosThetaDiffPt30ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt30ToInfGenEighthBin","CosThetaDiffPt30ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt30ToInfGenNinthBin","CosThetaDiffPt30ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt30ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt30ToInfGenTenthBin","CosThetaDiffPt30ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt30ToInfGenFirstBin","CosThetaRecoPt30ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt30ToInfGenSecondBin","CosThetaRecoPt30ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt30ToInfGenThirdBin","CosThetaRecoPt30ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt30ToInfGenFourthBin","CosThetaRecoPt30ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt30ToInfGenFifthBin","CosThetaRecoPt30ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt30ToInfGenSixthBin","CosThetaRecoPt30ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt30ToInfGenSeventhBin","CosThetaRecoPt30ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt30ToInfGenEighthBin","CosThetaRecoPt30ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt30ToInfGenNinthBin","CosThetaRecoPt30ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt30ToInfGenTenthBin","CosThetaRecoPt30ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt30ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt30ToInfGenFirstBin","CosThetaRecoPt30ToInfGenFirstBin",50,-1,1);
-  
-  // histo1D["CosThetaDifferencePt35ToInf"] = new TH1F("CosThetaDifferencePt35ToInf","CosThetaDifferencePt35ToInf",200,-2,2);
-  // histo1D["CosThetaRecoPt35ToInf"] = new TH1F("CosThetaRecoPt35ToInf","CosThetaRecoPt35ToInf",100,-1,1);
-  // histo1D["CosThetaRecoPt35ToInfForRatio"] = new TH1F("CosThetaRecoPt35ToInfForRatio","CosThetaRecoPt35ToInfForRatio",100,-1,1);
-  // histo1D["CosThetaGenPt35ToInf"] = new TH1F("CosThetaGenPt35ToInf","CosThetaGenPt35ToInf",100,-1,1);
-  // TProfile *CosThetaDiffVSRecoPt35ToInf = new TProfile("CosThetaDiffVSRecoPt35ToInf","TProfile of Cos Theta* (reco-gen) vs Cos Theta* (reco) for muon Pt 35 to inf GeV",10,-1,1,-2,2);
-  // histo2D["CosThetaGenVsRecoPt35ToInf"] = new TH2F("CosThetaGenVsRecoPt35ToInf","CosThetaGenVsRecoPt35ToInf",50,-1,1,20,-1,1);
-  // histo1D["CosThetaDiffPt35ToInfGenFirstBin"] = new TH1F("CosThetaDiffPt35ToInfGenFirstBin","CosThetaDiffPt35ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenSecondBin"] = new TH1F("CosThetaDiffPt35ToInfGenSecondBin","CosThetaDiffPt35ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenThirdBin"] = new TH1F("CosThetaDiffPt35ToInfGenThirdBin","CosThetaDiffPt35ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenFourthBin"] = new TH1F("CosThetaDiffPt35ToInfGenFourthBin","CosThetaDiffPt35ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenFifthBin"] = new TH1F("CosThetaDiffPt35ToInfGenFifthBin","CosThetaDiffPt35ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenSixthBin"] = new TH1F("CosThetaDiffPt35ToInfGenSixthBin","CosThetaDiffPt35ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenSeventhBin"] = new TH1F("CosThetaDiffPt35ToInfGenSeventhBin","CosThetaDiffPt35ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenEighthBin"] = new TH1F("CosThetaDiffPt35ToInfGenEighthBin","CosThetaDiffPt35ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenNinthBin"] = new TH1F("CosThetaDiffPt35ToInfGenNinthBin","CosThetaDiffPt35ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaDiffPt35ToInfGenTenthBin"] = new TH1F("CosThetaDiffPt35ToInfGenTenthBin","CosThetaDiffPt35ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt35ToInfGenFirstBin","CosThetaRecoPt35ToInfGenFirstBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenSecondBin"] = new TH1F("CosThetaRecoPt35ToInfGenSecondBin","CosThetaRecoPt35ToInfGenSecondBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenThirdBin"] = new TH1F("CosThetaRecoPt35ToInfGenThirdBin","CosThetaRecoPt35ToInfGenThirdBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenFourthBin"] = new TH1F("CosThetaRecoPt35ToInfGenFourthBin","CosThetaRecoPt35ToInfGenFourthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenFifthBin"] = new TH1F("CosThetaRecoPt35ToInfGenFifthBin","CosThetaRecoPt35ToInfGenFifthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenSixthBin"] = new TH1F("CosThetaRecoPt35ToInfGenSixthBin","CosThetaRecoPt35ToInfGenSixthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenSeventhBin"] = new TH1F("CosThetaRecoPt35ToInfGenSeventhBin","CosThetaRecoPt35ToInfGenSeventhBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenEighthBin"] = new TH1F("CosThetaRecoPt35ToInfGenEighthBin","CosThetaRecoPt35ToInfGenEighthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenNinthBin"] = new TH1F("CosThetaRecoPt35ToInfGenNinthBin","CosThetaRecoPt35ToInfGenNinthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenTenthBin"] = new TH1F("CosThetaRecoPt35ToInfGenTenthBin","CosThetaRecoPt35ToInfGenTenthBin",100,-2,2);
-  // histo1D["CosThetaRecoPt35ToInfGenFirstBin"] = new TH1F("CosThetaRecoPt35ToInfGenFirstBin","CosThetaRecoPt35ToInfGenFirstBin",50,-1,1);
-
-  // histo1D["CosThetaResLastBin"] = new TH1F("CosThetaResLastBin","CosThetaResLastBin",200,-2,2);
-  // histo1D["CosThetaResSecondNegBin"] = new TH1F("CosThetaResSecondNegBin","CosThetaResSecondNegBin",200,-2,2);
-  // histo1D["CosThetaResThirdNegBin"] = new TH1F("CosThetaResThirdNegBin","CosThetaResThirdNegBin",200,-2,2);
-  // histo1D["CosThetaResFourthNegBin"] = new TH1F("CosThetaResFourthNegBin","CosThetaResFourthNegBin",200,-2,2);
-  // histo1D["CosThetaResFifthNegBin"] = new TH1F("CosThetaResFifthNegBin","CosThetaResFifthNegBin",200,-2,2);
-  // histo1D["CosThetaResFifthBin"] = new TH1F("CosThetaResFifthBin","CosThetaResFifthBin",200,-2,2);
-  // histo1D["CosThetaResFourthBin"] = new TH1F("CosThetaResFourthBin","CosThetaResFourthBin",200,-2,2);
-  // histo1D["CosThetaResThirdBin"] = new TH1F("CosThetaResThirdBin","CosThetaResThirdBin",200,-2,2);
-  // histo1D["CosThetaResSecondBin"] = new TH1F("CosThetaResSecondBin","CosThetaResSecondBin",200,-2,2);
-  // histo1D["CosThetaResFirstBin"] = new TH1F("CosThetaResFirstBin","CosThetaResFirstBin",200,-2,2);
-
-  // histo1D["CosThetaResTCHELLept"] = new TH1F("CosThetaResTCHELLept","CosThetaResTCHELLept",200,-2,2);
-  // histo1D["CosThetaResTCHEMLept"] = new TH1F("CosThetaResTCHEMLept","CosThetaResTCHEMLept",200,-2,2);
-  // histo1D["CosThetaResTCHPMLept"] = new TH1F("CosThetaResTCHPMLept","CosThetaResTCHPMLept",200,-2,2);
-  // histo1D["CosThetaResTCHPTLept"] = new TH1F("CosThetaResTCHPTLept","CosThetaResTCHPTLept",200,-2,2);
-  // histo1D["CosThetaResSSVHEMLept"] = new TH1F("CosThetaResSSVHEMLept","CosThetaResSSVHEMLept",200,-2,2);
-  // histo1D["CosThetaResSSVHPTLept"] = new TH1F("CosThetaResSSVHPTLept","CosThetaResSSVHPTLept",200,-2,2);
-  // histo1D["CosThetaResCSVLLept"] = new TH1F("CosThetaResCSVLLept","CosThetaResCSVLLept",200,-2,2);
-  // histo1D["CosThetaResCSVMLept"] = new TH1F("CosThetaResCSVMLept","CosThetaResCSVMLept",200,-2,2);
-  // histo1D["CosThetaResCSVTLept"] = new TH1F("CosThetaResCSVMTLept","CosThetaResCSVMTLept",200,-2,2);
 
   //Histograms to obtain ratio of cos theta* for alternative and SM helicities
   float HelicityWeight[3];
@@ -734,6 +527,13 @@ int main (int argc, char *argv[])
   MSPlot["ChiSqHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLeptWOnly",50,0,50,"ChiSqHadrAndLeptWOnly");
   MSPlot["ChiSqHadrAndLept"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLept",50,0,50,"ChiSqHadrAndLept");
 
+  MSPlot["LeptWMassHadr"] = new MultiSamplePlot("datasets,LeptWMassHadr",40,0,150,"LeptWMassHadr");
+  MSPlot["LeptTopMassHadr"] = new MultiSamplePlot(datasets,"LeptTopMassHadr",60,50,350,"LeptTopMassHadrAndLept");
+  MSPlot["LeptWMassHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"LeptWMassHadrAndLeptWOnly",40,0,150,"LeptWMassHadr");
+  MSPlot["LeptTopMassHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"LeptTopMassHadrAndLeptWOnly",60,50,350,"LeptTopMassHadrAndLept");
+  MSPlot["LeptWMassHadrAndLept"] = new MultiSamplePlot(datasets,"LeptWMassHadrAndLept",40,0,150,"LeptWMassHadr");
+  MSPlot["LeptTopMassHadrAndLept"] = new MultiSamplePlot(datasets,"LeptTopMassHadrAndLept",60,50,350,"LeptTopMassHadrAndLept");
+
   // //MSPlots for mass distributions after Kinematic Fit:
   // MSPlot["HadronicWMass"] = new MultiSamplePlot(datasets,"HadronicWMass",50,50,100,"HadronicWMass");
   // MSPlot["HadronicTopMass"] = new MultiSamplePlot(datasets,"HadronicTopMass",50,150,200,"HadronicTopMass");
@@ -784,18 +584,6 @@ int main (int argc, char *argv[])
   MSPlot["Jet3Pt"] = new MultiSamplePlot(datasets, "Jet3Pt", 100,0,500,"Jet3Pt");
   MSPlot["Jet4Pt"] = new MultiSamplePlot(datasets, "Jet4Pt", 100,0,500,"Jet4Pt");
   
-  MSPlot["MetPhi"]= new MultiSamplePlot(datasets, "MetPhi",100,-3.3,3.3,"MetPhi");
-  // // MSPlot["NeutrinoKinFitPhi"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPhi" ,50,-3.3,3.3,"NeutrinoKinFitPhi");
-  // // //MSPlot["NeutrinoPhiDiff"]= new MultiSamplePlot(datasets, "NeutrinoPhiDiff",100,-7,7,"NeutrinoPhiDiff");
-
-  MSPlot["MetPx"]= new MultiSamplePlot(datasets, "MetPx",200,-400,400,"MetPx");
-  // // MSPlot["NeutrinoKinFitPx"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPx" ,50,-200,200,"NeutrinoKinFitPx");
-  // // //MSPlot["NeutrinoPxDiff"]= new MultiSamplePlot(datasets, "NeutrinoPxDiff",100,-400,400,"NeutrinoPxDiff");
-  
-  MSPlot["MetPy"]= new MultiSamplePlot(datasets, "MetPy",200,-400,400,"MetPy");
-  // // MSPlot["NeutrinoKinFitPy"]= new MultiSamplePlot(datasets,"NeutrinoKinFitPy" ,50,-200,200,"NeutrinoKinFitPy");
-  // // //MSPlot["NeutrinoPyDiff"]= new MultiSamplePlot(datasets, "NeutrinoPyDiff",100,-400,400,"NeutrinoPyDiff");  
-
   // if(UseChangedKinematics == true){
   //   MSPlot["BLeptPtAfterKinFit"]= new MultiSamplePlot(datasets,"BLeptPtAfterKinFit",50,0,250,"BLeptPtAfterKinFit");
   //   MSPlot["MetPtAfterKinFit"] = new MultiSamplePlot(datasets,"MetPtAfterKinFit",50,0,200,"MetPtAfterKinFit");
@@ -969,11 +757,17 @@ int main (int argc, char *argv[])
   //LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
   cout << " Lumi3D Reweighting stuff " << endl;
   Lumi3DReWeighting Lumi3DWeights;
-  if(fullDataSet == true) Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-  else if(fullDataSet == false) Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+  if(fullDataSet == true) 
+    Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  else if(fullDataSet == false) 
+    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
 
   Lumi3DWeights.weight3D_init(1.0);
-
+  if(systematic == "PUMinus")
+    Lumi3DWeights.weight3D_init(0.92);
+  else if(systematic == "PUPlus")
+    Lumi3DWeights.weight3D_init(1.08);
+  
   PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
   PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
 
@@ -1252,19 +1046,18 @@ int main (int argc, char *argv[])
       float avPU = ( (float)wTree->nPUBXm1() + (float)wTree->nPU() + (float)wTree->nPUBXp1() ) / 3.; // average in 3 BX!!!, as recommended
       //float lumiWeight = LumiWeights.ITweight( wTree->nPU() );
       
-      double lumiWeight3D;
-      if(dataSetName.find("Data") != 0){
+      double lumiWeight3D = 1.0;
+      if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
 	lumiWeight3D = Lumi3DWeights.weight3D(wTree->nPUBXm1(),wTree->nPU(),wTree->nPUBXp1());
       }
-
-      //if(dataSetName.find("Data") == 0) lumiWeight = 1;
-      if(dataSetName.find("Data") == 0) lumiWeight3D = 1;
-      //if( dataSetName.find("Fall10") != string::npos ) lumiWeight = 1; //no PU in Fall10!
-      //histo1D["lumiWeights"]->Fill(lumiWeight);
       histo1D["lumiWeights3D"]->Fill(lumiWeight3D);
       
       // scale factor for the event
       float scaleFactor = 1.; 
+
+      ////////////////////////////////////////////////////////////////
+      //    Get variables from wTree needed for Analysis            //
+      ////////////////////////////////////////////////////////////////
 
       //Primary vertices:
       float nPrimaryVertices = wTree->nPV();
@@ -1430,22 +1223,6 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
       }
       
       if(eventSelected == true){
-
-	//Check whether mass constraints applied in Kinematic Fit are recovered in mass distributions:
-	// for(int ii=0;ii<12;ii++){
-	//   if(ChiSqKinFit[ii] != 9999){  //Only study converging events! --> Show for the three KinFit configurations
-	//     if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){
-	//       histo1D["HadronicWMass"]->Fill((light1JetKinFit[ii]+light2JetKinFit[ii]).M());
-	//       histo1D["HadronicTopMass"]->Fill((light1JetKinFit[ii]+light2JetKinFit[ii]+hadrBJetKinFit[ii]).M());
-	//       histo1D["LeptonicWMass"]->Fill((leptonKinFit[ii]+neutrinoKinFit[ii]).M());
-	//       histo1D["LeptonicTopMass"]->Fill((leptonKinFit[ii]+neutrinoKinFit[ii]+leptBJetKinFit[ii]).M());
-	//     }
-	//     MSPlot["HadronicWMass"]->Fill((light1JetKinFit[ii]+light2JetKinFit[ii]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	//     MSPlot["HadronicTopMass"]->Fill((light1JetKinFit[ii]+light2JetKinFit[ii]+hadrBJetKinFit[ii]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	//     MSPlot["LeptonicWMass"]->Fill((leptonKinFit[ii]+neutrinoKinFit[ii]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	//     MSPlot["LeptonicTopMass"]->Fill((leptonKinFit[ii]+neutrinoKinFit[ii]+leptBJetKinFit[ii]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	//   }
-	// }
 
 	if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberSelectedEvents++;
 	if(dataSetName.find("Data") ==0) NumberSelectedDataEvents++;
@@ -1937,174 +1714,8 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
 
   //Obtain TProfile histos for Reco-Gen vs Reco distribution:
   tprofdir->cd();
-  //TCanvas *CosThetaDiffVSRecoCanvasSignal = new TCanvas("CosThetaDiffVSRecoCanvasSignal","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 20 to inf GeV");
-  // TCanvas *CosThetaDiffVSRecoCanvasPt10ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt10ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 10 to inf GeV");
-  // TCanvas *CosThetaDiffVSRecoCanvasPt15ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt15ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 15 to inf GeV");
-  // TCanvas *CosThetaDiffVSRecoCanvasPt20ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt20ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 20 to inf GeV");
-  // TCanvas *CosThetaDiffVSRecoCanvasPt25ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt25ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 25 to inf GeV");
-  // TCanvas *CosThetaDiffVSRecoCanvasPt30ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt30ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 30 to inf GeV");
-  // TCanvas *CosThetaDiffVSRecoCanvasPt35ToInf = new TCanvas("CosThetaDiffVSRecoCanvasPt35ToInf","TProfile distribution of Cos #theta (reco-gen) vs Cos #theta (reco) for muon Pt 35 to inf GeV");
-//   CosThetaDiffVSRecoCanvasSignal->cd();
-//   CosThetaDiffVSRecoSignal->Draw();
-//   CosThetaDiffVSRecoSignal->Write();
-//   CosThetaDiffVSRecoCanvasSignal->Update();
-//   CosThetaDiffVSRecoCanvasSignal->Write();
-//   CosThetaDiffVSRecoCanvasSignal->SaveAs("CosThetaDiffVSRecoSignalProfile.png");
-//   CosThetaDiffVSRecoCanvasSignal->SaveAs("CosThetaDiffVSRecoSignalProfile.root");
-
-  // CosThetaDiffVSRecoCanvasPt10ToInf->cd();
-  // CosThetaDiffVSRecoPt10ToInf->Draw();
-  // CosThetaDiffVSRecoPt10ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt10ToInf->Update();
-  // CosThetaDiffVSRecoCanvasPt10ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt10ToInf->SaveAs("CosThetaDiffVSRecoPt10ToInfProfile.png");
-  // CosThetaDiffVSRecoCanvasPt10ToInf->SaveAs("CosThetaDiffVSRecoPt10ToInfProfile.root");
-
-  // CosThetaDiffVSRecoCanvasPt15ToInf->cd();
-  // CosThetaDiffVSRecoPt15ToInf->Draw();
-  // CosThetaDiffVSRecoPt15ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt15ToInf->Update();
-  // CosThetaDiffVSRecoCanvasPt15ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt15ToInf->SaveAs("CosThetaDiffVSRecoPt15ToInfProfile.png");
-  // CosThetaDiffVSRecoCanvasPt15ToInf->SaveAs("CosThetaDiffVSRecoPt15ToInfProfile.root");
-
-  // CosThetaDiffVSRecoCanvasPt20ToInf->cd();
-  // CosThetaDiffVSRecoPt20ToInf->Draw();
-  // CosThetaDiffVSRecoPt20ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt20ToInf->Update();
-  // CosThetaDiffVSRecoCanvasPt20ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt20ToInf->SaveAs("CosThetaDiffVSRecoPt20ToInfProfile.png");
-  // CosThetaDiffVSRecoCanvasPt20ToInf->SaveAs("CosThetaDiffVSRecoPt20ToInfProfile.root");
-
-  // CosThetaDiffVSRecoCanvasPt25ToInf->cd();
-  // CosThetaDiffVSRecoPt25ToInf->Draw();
-  // CosThetaDiffVSRecoPt25ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt25ToInf->Update();
-  // CosThetaDiffVSRecoCanvasPt25ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt25ToInf->SaveAs("CosThetaDiffVSRecoPt25ToInfProfile.png");
-  // CosThetaDiffVSRecoCanvasPt25ToInf->SaveAs("CosThetaDiffVSRecoPt25ToInfProfile.root");
-
-  // CosThetaDiffVSRecoCanvasPt30ToInf->cd();
-  // CosThetaDiffVSRecoPt30ToInf->Draw();
-  // CosThetaDiffVSRecoPt30ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt30ToInf->Update();
-  // CosThetaDiffVSRecoCanvasPt30ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt30ToInf->SaveAs("CosThetaDiffVSRecoPt30ToInfProfile.png");
-  // CosThetaDiffVSRecoCanvasPt30ToInf->SaveAs("CosThetaDiffVSRecoPt30ToInfProfile.root");
-
-  // CosThetaDiffVSRecoCanvasPt35ToInf->cd();
-  // CosThetaDiffVSRecoPt35ToInf->Draw();
-  // CosThetaDiffVSRecoPt35ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt35ToInf->Update();
-  // CosThetaDiffVSRecoCanvasPt35ToInf->Write();
-  // CosThetaDiffVSRecoCanvasPt35ToInf->SaveAs("CosThetaDiffVSRecoPt35ToInfProfile.png");
-  // CosThetaDiffVSRecoCanvasPt35ToInf->SaveAs("CosThetaDiffVSRecoPt35ToInfProfile.root");
 
   th1dir->cd();
-
-  //Calculate ratio histos for cos theta distribution reco/gen for different muon pt cuts:
-//   histo1D["CosThetaRatioMuon20To30"] = (TH1F*) histo1D["CosThetaDistributionPtSmaller30Ratio"]->Clone();
-//   histo1D["CosThetaRatioMuon20To30"]->Divide(histo1D["CosThetaDistributionPtSmaller30Gen"]);
-//   histo1D["CosThetaRatioMuon20To30"]->SaveAs("CosThetaRatioMuon20To30.root");
-//   histo1D["CosThetaRatioMuon20To30"]->SaveAs("CosThetaRatioMuon20To30.png");
-//   histo1D["CosThetaRatioMuon20To30"]->Write();
-
-  // histo1D["CosThetaRatioMuon10ToInf"] = (TH1F*) histo1D["CosThetaRecoPt10ToInfForRatio"]->Clone();
-  // histo1D["CosThetaRatioMuon10ToInf"]->Divide(histo1D["CosThetaGenPt10ToInf"]);
-  // histo1D["CosThetaRatioMuon10ToInf"]->SaveAs("CosThetaRatioMuon10ToInf.root");
-  // histo1D["CosThetaRatioMuon10ToInf"]->SaveAs("CosThetaRatioMuon10ToInf.png");
-  // histo1D["CosThetaRatioMuon10ToInf"]->Write();
-
-  // histo1D["CosThetaRatioMuon15ToInf"] = (TH1F*) histo1D["CosThetaRecoPt15ToInfForRatio"]->Clone();
-  // histo1D["CosThetaRatioMuon15ToInf"]->Divide(histo1D["CosThetaGenPt15ToInf"]);
-  // histo1D["CosThetaRatioMuon15ToInf"]->SaveAs("CosThetaRatioMuon15ToInf.root");
-  // histo1D["CosThetaRatioMuon15ToInf"]->SaveAs("CosThetaRatioMuon15ToInf.png");
-  // histo1D["CosThetaRatioMuon15ToInf"]->Write();
-
-  // histo1D["CosThetaRatioMuon20ToInf"] = (TH1F*) histo1D["CosThetaRecoPt20ToInfForRatio"]->Clone();
-  // histo1D["CosThetaRatioMuon20ToInf"]->Divide(histo1D["CosThetaGenPt20ToInf"]);
-  // histo1D["CosThetaRatioMuon20ToInf"]->SaveAs("CosThetaRatioMuon20ToInf.root");
-  // histo1D["CosThetaRatioMuon20ToInf"]->SaveAs("CosThetaRatioMuon20ToInf.png");
-  // histo1D["CosThetaRatioMuon20ToInf"]->Write();
-
-  // histo1D["CosThetaRatioMuon25ToInf"] = (TH1F*) histo1D["CosThetaRecoPt25ToInfForRatio"]->Clone();
-  // histo1D["CosThetaRatioMuon25ToInf"]->Divide(histo1D["CosThetaGenPt25ToInf"]);
-  // histo1D["CosThetaRatioMuon25ToInf"]->SaveAs("CosThetaRatioMuon25ToInf.root");
-  // histo1D["CosThetaRatioMuon25ToInf"]->SaveAs("CosThetaRatioMuon25ToInf.png");
-  // histo1D["CosThetaRatioMuon25ToInf"]->Write();
-
-  // histo1D["CosThetaRatioMuon30ToInf"] = (TH1F*) histo1D["CosThetaRecoPt30ToInfForRatio"]->Clone();
-  // histo1D["CosThetaRatioMuon30ToInf"]->Divide(histo1D["CosThetaGenPt30ToInf"]);
-  // histo1D["CosThetaRatioMuon30ToInf"]->SaveAs("CosThetaRatioMuon30ToInf.root");
-  // histo1D["CosThetaRatioMuon30ToInf"]->SaveAs("CosThetaRatioMuon30ToInf.png");
-  // histo1D["CosThetaRatioMuon30ToInf"]->Write();
-
-  // histo1D["CosThetaRatioMuon35ToInf"] = (TH1F*) histo1D["CosThetaRecoPt35ToInfForRatio"]->Clone();
-  // histo1D["CosThetaRatioMuon35ToInf"]->Divide(histo1D["CosThetaGenPt35ToInf"]);
-  // histo1D["CosThetaRatioMuon35ToInf"]->SaveAs("CosThetaRatioMuon35ToInf.root");
-  // histo1D["CosThetaRatioMuon35ToInf"]->SaveAs("CosThetaRatioMuon35ToInf.png");
-  // histo1D["CosThetaRatioMuon35ToInf"]->Write();
-  
-  //Write resolution histos for separate bins in one canvas:
-  // TCanvas *ResolutionBinsNegCanvas = new TCanvas("ResolutionBinsNegCanvas","Resolution histos for separate bins (neg)");
-  // TCanvas *ResolutionBinsCanvas = new TCanvas("ResolutionBinsCanvas","Resolution histos for separate bins");
-  // ResolutionBinsNegCanvas->Divide(2,3);
-  // ResolutionBinsCanvas->Divide(2,3);
-
-  // ResolutionBinsNegCanvas->cd(1);
-  // histo1D["CosThetaResLastBin"]->Draw();
-  // ResolutionBinsNegCanvas->Update();
-  // ResolutionBinsNegCanvas->cd(2);
-  // histo1D["CosThetaResSecondNegBin"]->Draw();
-  // ResolutionBinsNegCanvas->Update();
-  // ResolutionBinsNegCanvas->cd(3);
-  // histo1D["CosThetaResThirdNegBin"]->Draw();
-  // ResolutionBinsNegCanvas->Update();
-  // ResolutionBinsNegCanvas->cd(4);
-  // histo1D["CosThetaResFourthNegBin"]->Draw();
-  // ResolutionBinsNegCanvas->Update();
-  // ResolutionBinsNegCanvas->cd(5);
-  // histo1D["CosThetaResFifthNegBin"]->Draw();
-  // ResolutionBinsNegCanvas->Update();
-  // ResolutionBinsNegCanvas->Write();
-  // ResolutionBinsNegCanvas->SaveAs("ResolutionBinsNegCanvas.png");
-  
-  // ResolutionBinsCanvas->cd(1);
-  // histo1D["CosThetaResFifthBin"]->Draw();
-  // ResolutionBinsCanvas->Update();
-  // ResolutionBinsCanvas->cd(2);
-  // histo1D["CosThetaResFourthBin"]->Draw();
-  // ResolutionBinsCanvas->Update();
-  // ResolutionBinsCanvas->cd(3);
-  // histo1D["CosThetaResThirdBin"]->Draw();
-  // ResolutionBinsCanvas->Update();
-  // ResolutionBinsCanvas->cd(4);
-  // histo1D["CosThetaResSecondBin"]->Draw();
-  // ResolutionBinsCanvas->Update();
-  // ResolutionBinsCanvas->cd(5);
-  // histo1D["CosThetaResFirstBin"]->Draw();
-  // ResolutionBinsCanvas->Update();
-  // ResolutionBinsCanvas->Write();
-  // ResolutionBinsCanvas->SaveAs("ResolutionBinsCanvas.png");
-  
-
-//   //Calculate ratio for cut on probability of Kinematic Fit:
-//   histo1D["CosThetaNobTagProbCut1D"]->Scale(100./(histo1D["CosThetaNobTagProbCut1D"]->Integral()));
-//   histo1D["CosThetaNobTag1D"]->Scale(100./(histo1D["CosThetaNobTag1D"]->Integral()));
-  
-//   histo1D["ratioHisto"] = (TH1F*) histo1D["CosThetaNobTagProbCut1D"]->Clone();
-//   //ratioHisto->SetName("Ratio");
-//   //ratioHisto->Reset();
-//   histo1D["CosThetaNobTagClone"] = (TH1F*) histo1D["CosThetaNobTag1D"]->Clone();
-//   histo1D["ratioHisto"]->Divide(histo1D["CosThetaNobTagClone"]);
-//   histo1D["ratioHisto"]->SaveAs("ratioHisto.root");
-//   histo1D["ratioHisto"]->SaveAs("ratioHisto.png");
-
-//   histo1D["KinFitRatio"] = (TH1F*) histo1D["KinFitProbCorrectBLept"]->Clone();
-//   histo1D["KinFitProbWrongBLeptClone"] = (TH1F*) histo1D["KinFitProbWrongBLept"]->Clone();
-//   histo1D["KinFitRatio"]->Divide(histo1D["KinFitProbWrongBLeptClone"]);
-//   histo1D["KinFitRatio"]->SaveAs("KinFitRatioHisto.root");
-//   histo1D["KinFitRatio"]->SaveAs("KinFitRatioHisto.png"); 
 
   // Write 1D histo's
   for(std::map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++){
