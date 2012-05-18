@@ -13,7 +13,7 @@ class BTagJetSelection{
    BTagJetSelection();
    ~BTagJetSelection();
    
-   int HighestProbSelection(int bTagLoop, int ConsideredBTagger, vector<float> KinFitProb, vector<float> MlbProb, vector<float> btagTCHE, vector<float> btagTCHP, vector<float> btagSSVHE, vector<float> btagSSVHP);
+   int HighestProbSelection(int bTagLoop, int ConsideredBTagger, vector<float> KinFitProb, vector<float> btagTCHE, vector<float> btagTCHP, vector<float> btagSSVHE, vector<float> btagSSVHP, vector<float> btagCSV);
    
    private:
 

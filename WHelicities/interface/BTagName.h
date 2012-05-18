@@ -11,12 +11,12 @@ class BTagName{
    BTagName();
    ~BTagName();
    
-   std::string NameGiving(int TCHEbTagLoop, int NumberTCHEbTags,  int TCHPbTagLoop, int NumberTCHPbTags, int SSVHEbTagLoop, int NumberSSVHEbTags, int SSVHPbTagLoop, int NumberSSVHPbTags);
-   std::string NameGivingPres(int TCHEbTagLoop, int NumberTCHEbTags,  int TCHPbTagLoop, int NumberTCHPbTags, int SSVHEbTagLoop, int NumberSSVHEbTags, int SSVHPbTagLoop, int NumberSSVHPbTags);
+   std::string NameGiving(int TCHEbTagLoop, int NumberTCHEbTags,  int TCHPbTagLoop, int NumberTCHPbTags, int SSVHEbTagLoop, int NumberSSVHEbTags, int SSVHPbTagLoop, int NumberSSVHPbTags, int CSVbTagLoop, int NumberCSVbTags);
+   std::string NameGivingPres(int TCHEbTagLoop, int NumberTCHEbTags,  int TCHPbTagLoop, int NumberTCHPbTags, int SSVHEbTagLoop, int NumberSSVHEbTags, int SSVHPbTagLoop, int NumberSSVHPbTags, int CSVbTagLoop, int NumberCSVbTags);
    
   private:
-   std::string bTagFileOutput[14][14][14][14];
-   std::string PresOutput[14][14][14][14];
+   std::string bTagFileOutput[14+14+14+14+14];
+   std::string PresOutput[14+14+14+14+14];
 };
 
 #endif

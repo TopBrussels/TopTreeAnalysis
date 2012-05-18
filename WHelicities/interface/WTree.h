@@ -28,41 +28,31 @@ class WTree : public TObject
     ,nPUBXm1_(0)
     ,nPU_(0)
     ,nPUBXp1_(0)
-    ,eventWeight_(0)
-    ,chi2KinFit_()
-    ,fittedLepton_()
-    ,fittedNeutrino_()
-    ,fittedLeptB_()
-    ,fittedHadrB_()
-    ,fittedLight1_()
-    ,fittedLight2_()
-    ,chi2FullKinFit_()
-    ,fittedFullLepton_()
-    ,fittedFullNeutrino_()
-    ,fittedFullLeptB_()
-    ,fittedFullHadrB_()
-    ,fittedFullLight1_()
-    ,fittedFullLight2_()
-    ,chi2KinFitMassFit_()
-    ,fittedLeptonMassFit_()
-    ,fittedNeutrinoMassFit_()
-    ,fittedLeptBMassFit_()
-    ,fittedHadrBMassFit_()
-    ,fittedLight1MassFit_()
-    ,fittedLight2MassFit_()
-    ,chi2FullKinFitMassFit_()
-    ,fittedFullLeptonMassFit_()
-    ,fittedFullNeutrinoMassFit_()
-    ,fittedFullLeptBMassFit_()
-    ,fittedFullHadrBMassFit_()
-    ,fittedFullLight1MassFit_()
-    ,fittedFullLight2MassFit_()
+    //    ,eventWeight_(0)
+    ,hadrKinFitChiSq_()
+    ,hadrKinFitHadrB_()
+    ,hadrKinFitLight1_()
+    ,hadrKinFitLight2_()
+    ,hadrAndLeptWOnlyKinFitChiSq_()
+    ,hadrAndLeptWOnlyKinFitLepton_()
+    ,hadrAndLeptWOnlyKinFitNeutrino_()
+    ,hadrAndLeptWOnlyKinFitHadrB_()
+    ,hadrAndLeptWOnlyKinFitLight1_()
+    ,hadrAndLeptWOnlyKinFitLight2_()
+    ,hadrAndLeptKinFitChiSq_()
+    ,hadrAndLeptKinFitLepton_()
+    ,hadrAndLeptKinFitNeutrino_()
+    ,hadrAndLeptKinFitLeptB_()
+    ,hadrAndLeptKinFitHadrB_()
+    ,hadrAndLeptKinFitLight1_()
+    ,hadrAndLeptKinFitLight2_()
     ,hadrBJet_(0)
     ,hadrLJet1_(0)
     ,hadrLJet2_(0)
     ,leptBJet_(0)
     ,MET_()
     ,selectedJets_()
+    ,lepton_()
     ,bTagTCHE_()
     ,bTagTCHP_()
     ,bTagSSVHE_()
@@ -70,7 +60,6 @@ class WTree : public TObject
     ,bTagCSV_()
     ,bTagJP_()
     ,bTagJBP_()
-    ,muon_()
     ,hadrBQuark_()
     ,hadrLQuark1_()
     ,hadrLQuark2_()
@@ -100,42 +89,31 @@ class WTree : public TObject
   unsigned int nPUBXm1() const { return nPUBXm1_; }
   unsigned int nPU() const { return nPU_; }
   unsigned int nPUBXp1() const { return nPUBXp1_; }
-  float eventWeight() const { return eventWeight_; }
-  float chi2KinFit(int iCombi) { return chi2KinFit_[iCombi]; }
-  TLorentzVector fittedLepton(int iCombi) {return fittedLepton_[iCombi];}
-  TLorentzVector fittedNeutrino(int iCombi) {return fittedNeutrino_[iCombi];}
-  TLorentzVector fittedLeptB(int iCombi) {return fittedLeptB_[iCombi];}
-  TLorentzVector fittedHadrB(int iCombi) {return fittedHadrB_[iCombi];}
-  TLorentzVector fittedLight1(int iCombi) {return fittedLight1_[iCombi];}
-  TLorentzVector fittedLight2(int iCombi) {return fittedLight2_[iCombi];}
-  float chi2FullKinFit(int iCombi) {return  chi2FullKinFit_[iCombi];}
-  TLorentzVector fittedFullLepton(int iCombi) {return fittedFullLepton_[iCombi];}
-  TLorentzVector fittedFullNeutrino(int iCombi) {return fittedFullNeutrino_[iCombi];}
-  TLorentzVector fittedFullLeptB(int iCombi) {return fittedFullLeptB_[iCombi];}
-  TLorentzVector fittedFullHadrB(int iCombi) {return fittedFullHadrB_[iCombi];}
-  TLorentzVector fittedFullLight1(int iCombi) {return fittedFullLight1_[iCombi];}
-  TLorentzVector fittedFullLight2(int iCombi) {return fittedFullLight2_[iCombi];}
-  float chi2KinFitMassFit(int iCombi) {return chi2KinFitMassFit_[iCombi];}
-  TLorentzVector fittedLeptonMassFit(int iCombi) {return fittedLeptonMassFit_[iCombi];}
-  TLorentzVector fittedNeutrinoMassFit(int iCombi) {return fittedNeutrinoMassFit_[iCombi];}
-  TLorentzVector fittedLeptBMassFit(int iCombi) {return fittedLeptBMassFit_[iCombi];}
-  TLorentzVector fittedHadrBMassFit(int iCombi) {return fittedHadrBMassFit_[iCombi];}
-  TLorentzVector fittedLight1MassFit(int iCombi) {return fittedLight1MassFit_[iCombi];}
-  TLorentzVector fittedLight2MassFit(int iCombi) {return fittedLight2MassFit_[iCombi];}
-  float chi2FullKinFitMassFit(int iCombi) {return chi2FullKinFitMassFit_[iCombi];}
-  TLorentzVector fittedFullLeptonMassFit(int iCombi) {return fittedFullLeptonMassFit_[iCombi];}
-  TLorentzVector fittedFullNeutrinoMassFit(int iCombi) {return fittedFullNeutrinoMassFit_[iCombi];}
-  TLorentzVector fittedFullLeptBMassFit(int iCombi) {return fittedFullLeptBMassFit_[iCombi];}
-  TLorentzVector fittedFullHadrBMassFit(int iCombi) {return fittedFullHadrBMassFit_[iCombi];}
-  TLorentzVector fittedFullLight1MassFit(int iCombi) {return fittedFullLight1MassFit_[iCombi];}
-  TLorentzVector fittedFullLight2MassFit(int iCombi) {return fittedFullLight2MassFit_[iCombi];}
+  //  float eventWeight() const { return eventWeight_; }
+  float hadrKinFitChiSq(int iCombi) { return hadrKinFitChiSq_[iCombi];}
+  TLorentzVector hadrKinFitHadrB(int iCombi) {return hadrKinFitHadrB_[iCombi];}
+  TLorentzVector hadrKinFitLight1(int iCombi) {return hadrKinFitLight1_[iCombi];}
+  TLorentzVector hadrKinFitLight2(int iCombi) {return hadrKinFitLight2_[iCombi];}
+  float hadrAndLeptWOnlyKinFitChiSq(int iCombi) { return hadrAndLeptWOnlyKinFitChiSq_[iCombi]; }
+  TLorentzVector hadrAndLeptWOnlyKinFitLepton(int iCombi) {return hadrAndLeptWOnlyKinFitLepton_[iCombi];}
+  TLorentzVector hadrAndLeptWOnlyKinFitNeutrino(int iCombi) {return hadrAndLeptWOnlyKinFitNeutrino_[iCombi];}
+  TLorentzVector hadrAndLeptWOnlyKinFitHadrB(int iCombi) {return hadrAndLeptWOnlyKinFitHadrB_[iCombi];}
+  TLorentzVector hadrAndLeptWOnlyKinFitLight1(int iCombi) {return hadrAndLeptWOnlyKinFitLight1_[iCombi];}
+  TLorentzVector hadrAndLeptWOnlyKinFitLight2(int iCombi) {return hadrAndLeptWOnlyKinFitLight2_[iCombi];}
+  float hadrAndLeptKinFitChiSq(int iCombi) { return hadrAndLeptKinFitChiSq_[iCombi]; }
+  TLorentzVector hadrAndLeptKinFitLepton(int iCombi) {return hadrAndLeptKinFitLepton_[iCombi];}
+  TLorentzVector hadrAndLeptKinFitNeutrino(int iCombi) {return hadrAndLeptKinFitNeutrino_[iCombi];}
+  TLorentzVector hadrAndLeptKinFitLeptB(int iCombi) {return hadrAndLeptKinFitLeptB_[iCombi];}
+  TLorentzVector hadrAndLeptKinFitHadrB(int iCombi) {return hadrAndLeptKinFitHadrB_[iCombi];}
+  TLorentzVector hadrAndLeptKinFitLight1(int iCombi) {return hadrAndLeptKinFitLight1_[iCombi];}
+  TLorentzVector hadrAndLeptKinFitLight2(int iCombi) {return hadrAndLeptKinFitLight2_[iCombi];}
   int hadrBJet() const { return hadrBJet_; } // index, according to MC
   int hadrLJet1() const { return hadrLJet1_; } // index, according to MC
   int hadrLJet2() const { return hadrLJet2_; } // index, according to MC
   int leptBJet() const { return leptBJet_; } // index, according to MC
   TLorentzVector met() const { return MET_; }
   vector<TLorentzVector> selectedJets() const { return selectedJets_; }
-  TLorentzVector selectedJet(int i) const { return selectedJets_[i]; }
+  TLorentzVector lepton() const {return lepton_;}
   vector<float> bTagTCHE() const { return bTagTCHE_; }
   vector<float> bTagTCHP() const { return bTagTCHP_; }
   vector<float> bTagSSVHE() const { return bTagSSVHE_; }
@@ -143,7 +121,6 @@ class WTree : public TObject
   vector<float> bTagCSV() const {return bTagCSV_;}
   vector<float> bTagJP() const {return bTagJP_;}
   vector<float> bTagJBP() const {return bTagJBP_;}
-  TLorentzVector muon() const { return muon_; }
   TLorentzVector hadrBQuark() const { return hadrBQuark_; }
   TLorentzVector hadrLQuark1() const { return hadrLQuark1_; }
   TLorentzVector hadrLQuark2() const { return hadrLQuark2_; }
@@ -170,49 +147,34 @@ class WTree : public TObject
   void setNPUBXm1(unsigned int nPUBXm1) { nPUBXm1_ = nPUBXm1; }
   void setNPU(unsigned int nPU) { nPU_ = nPU; }
   void setNPUBXp1(unsigned int nPUBXp1) { nPUBXp1_ = nPUBXp1; }
-  void setEventWeight(float eventWeight) { eventWeight_ = eventWeight; }
-  void setKinFitResults(vector<float> Chi2KinFitResults, vector<TLorentzVector> FittedLepton, vector<TLorentzVector> FittedNeutrino, vector<TLorentzVector> FittedLeptB, vector<TLorentzVector> FittedHadrB, vector<TLorentzVector> FittedLight1, vector<TLorentzVector> FittedLight2){
+  //  void setEventWeight(float eventWeight) { eventWeight_ = eventWeight; }
+  void setKinFitHadr(vector<float> HadrKinFitChiSq, vector<TLorentzVector> HadrKinFitHadrB, vector<TLorentzVector> HadrKinFitLight1, vector<TLorentzVector> HadrKinFitLight2){
     for(unsigned int i=0; i<12; i++){
-      chi2KinFit_[i] = Chi2KinFitResults[i];
-      fittedLepton_[i] = FittedLepton[i];
-      fittedNeutrino_[i] = FittedNeutrino[i];
-      fittedLeptB_[i] = FittedLeptB[i];
-      fittedHadrB_[i] = FittedHadrB[i];
-      fittedLight1_[i] = FittedLight1[i];
-      fittedLight2_[i] = FittedLight2[i];
+      hadrKinFitChiSq_[i] = HadrKinFitChiSq[i];
+     hadrKinFitHadrB_[i] = HadrKinFitHadrB[i];
+      hadrKinFitLight1_[i] = HadrKinFitLight1[i];
+      hadrKinFitLight2_[i] = HadrKinFitLight2[i];
     }
   }
-  void setFullKinFitResults(vector<float> Chi2FullKinFitResults, vector<TLorentzVector> FittedFullLepton, vector<TLorentzVector> FittedFullNeutrino, vector<TLorentzVector> FittedFullLeptB, vector<TLorentzVector> FittedFullHadrB, vector<TLorentzVector> FittedFullLight1, vector<TLorentzVector> FittedFullLight2){
+  void setKinFitHadrAndLeptWOnly(vector<float> HadrAndLeptWOnlyKinFitChiSq, vector<TLorentzVector> HadrAndLeptWOnlyKinFitLepton, vector<TLorentzVector> HadrAndLeptWOnlyKinFitNeutrino, vector<TLorentzVector> HadrAndLeptWOnlyKinFitHadrB, vector<TLorentzVector> HadrAndLeptWOnlyKinFitLight1, vector<TLorentzVector> HadrAndLeptWOnlyKinFitLight2){
     for(unsigned int i=0; i<12; i++){
-      chi2FullKinFit_[i] = Chi2FullKinFitResults[i];
-      fittedFullLepton_[i] = FittedFullLepton[i];
-      fittedFullNeutrino_[i] = FittedFullNeutrino[i];
-      fittedFullLeptB_[i] = FittedFullLeptB[i];
-      fittedFullHadrB_[i] = FittedFullHadrB[i];
-      fittedFullLight1_[i] = FittedFullLight1[i];
-      fittedFullLight2_[i] = FittedFullLight2[i];
+      hadrAndLeptWOnlyKinFitChiSq_[i] = HadrAndLeptWOnlyKinFitChiSq[i];
+      hadrAndLeptWOnlyKinFitLepton_[i] = HadrAndLeptWOnlyKinFitLepton[i];
+      hadrAndLeptWOnlyKinFitNeutrino_[i] = HadrAndLeptWOnlyKinFitNeutrino[i];
+      hadrAndLeptWOnlyKinFitHadrB_[i] = HadrAndLeptWOnlyKinFitHadrB[i];
+      hadrAndLeptWOnlyKinFitLight1_[i] = HadrAndLeptWOnlyKinFitLight1[i];
+      hadrAndLeptWOnlyKinFitLight2_[i] = HadrAndLeptWOnlyKinFitLight2[i];
     }
   }
-  void setKinFitResultsMassFit(vector<float> Chi2KinFitResultsMassFit, vector<TLorentzVector> FittedLeptonMassFit, vector<TLorentzVector> FittedNeutrinoMassFit, vector<TLorentzVector> FittedLeptBMassFit, vector<TLorentzVector> FittedHadrBMassFit, vector<TLorentzVector> FittedLight1MassFit, vector<TLorentzVector> FittedLight2MassFit){
+  void setKinFitHadrAndLept(vector<float> HadrAndLeptKinFitChiSq, vector<TLorentzVector> HadrAndLeptKinFitLepton, vector<TLorentzVector> HadrAndLeptKinFitNeutrino, vector<TLorentzVector> HadrAndLeptKinFitLeptB, vector<TLorentzVector> HadrAndLeptKinFitHadrB, vector<TLorentzVector> HadrAndLeptKinFitLight1, vector<TLorentzVector> HadrAndLeptKinFitLight2){
     for(unsigned int i=0; i<12; i++){
-      chi2KinFitMassFit_[i] = Chi2KinFitResultsMassFit[i];
-      fittedLeptonMassFit_[i] = FittedLeptonMassFit[i];
-      fittedNeutrinoMassFit_[i] = FittedNeutrinoMassFit[i];
-      fittedLeptBMassFit_[i] = FittedLeptBMassFit[i];
-      fittedHadrBMassFit_[i] = FittedHadrBMassFit[i];
-      fittedLight1MassFit_[i] = FittedLight1MassFit[i];
-      fittedLight2MassFit_[i] = FittedLight2MassFit[i];
-    }
-  }
-  void setFullKinFitResultsMassFit(vector<float> Chi2FullKinFitResultsMassFit, vector<TLorentzVector> FittedFullLeptonMassFit, vector<TLorentzVector> FittedFullNeutrinoMassFit, vector<TLorentzVector> FittedFullLeptBMassFit, vector<TLorentzVector> FittedFullHadrBMassFit, vector<TLorentzVector> FittedFullLight1MassFit, vector<TLorentzVector> FittedFullLight2MassFit){
-    for(unsigned int i=0; i<12; i++){
-      chi2FullKinFitMassFit_[i] = Chi2FullKinFitResultsMassFit[i];
-      fittedFullLeptonMassFit_[i] = FittedFullLeptonMassFit[i];
-      fittedFullNeutrinoMassFit_[i] = FittedFullNeutrinoMassFit[i];
-      fittedFullLeptBMassFit_[i] = FittedFullLeptBMassFit[i];
-      fittedFullHadrBMassFit_[i] = FittedFullHadrBMassFit[i];
-      fittedFullLight1MassFit_[i] = FittedFullLight1MassFit[i];
-      fittedFullLight2MassFit_[i] = FittedFullLight2MassFit[i];
+      hadrAndLeptKinFitChiSq_[i] = HadrAndLeptKinFitChiSq[i];
+      hadrAndLeptKinFitLepton_[i] = HadrAndLeptKinFitLepton[i];
+      hadrAndLeptKinFitNeutrino_[i] = HadrAndLeptKinFitNeutrino[i];
+      hadrAndLeptKinFitLeptB_[i] = HadrAndLeptKinFitLeptB[i];
+      hadrAndLeptKinFitHadrB_[i] = HadrAndLeptKinFitHadrB[i];
+      hadrAndLeptKinFitLight1_[i] = HadrAndLeptKinFitLight1[i];
+      hadrAndLeptKinFitLight2_[i] = HadrAndLeptKinFitLight2[i];
     }
   }
   void setHadrBJet(int hadrBJet) { hadrBJet_ = hadrBJet; }
@@ -221,6 +183,7 @@ class WTree : public TObject
   void setLeptBJet(int leptBJet) { leptBJet_ = leptBJet; }
   void setMET(TLorentzVector MET) { MET_ = MET; }
   void setSelectedJets(vector<TLorentzVector> selectedJets) { selectedJets_ = selectedJets; }
+  void setLepton(TLorentzVector lepton) { lepton_ = lepton; }
   void setBTagTCHE(vector<float> bTagTCHE) { bTagTCHE_ = bTagTCHE; }
   void setBTagTCHP(vector<float> bTagTCHP) { bTagTCHP_ = bTagTCHP; }
   void setBTagSSVHE(vector<float> bTagSSVHE) { bTagSSVHE_ = bTagSSVHE; }
@@ -228,7 +191,6 @@ class WTree : public TObject
   void setBTagCSV(vector<float> bTagCSV) {bTagCSV_ = bTagCSV;}
   void setBTagJP(vector<float> bTagJP) {bTagJP_ = bTagJP;}
   void setBTagJBP(vector<float> bTagJBP) {bTagJBP_ = bTagJBP;}
-  void setMuon(TLorentzVector muon) { muon_ = muon; }
   void setHadrBQuark(TLorentzVector hadrBQuark) { hadrBQuark_ = hadrBQuark; }
   void setHadrLQuark1(TLorentzVector hadrLQuark1) { hadrLQuark1_ = hadrLQuark1; }
   void setHadrLQuark2(TLorentzVector hadrLQuark2) { hadrLQuark2_ = hadrLQuark2; }
@@ -257,41 +219,31 @@ class WTree : public TObject
   unsigned int nPUBXm1_;
   unsigned int nPU_;
   unsigned int nPUBXp1_;
-  float eventWeight_;
-  float chi2KinFit_[12];
-  TLorentzVector fittedLepton_[12];
-  TLorentzVector fittedNeutrino_[12];
-  TLorentzVector fittedLeptB_[12];
-  TLorentzVector fittedHadrB_[12];
-  TLorentzVector fittedLight1_[12];
-  TLorentzVector fittedLight2_[12];
-  float chi2FullKinFit_[12];
-  TLorentzVector fittedFullLepton_[12];
-  TLorentzVector fittedFullNeutrino_[12];
-  TLorentzVector fittedFullLeptB_[12];
-  TLorentzVector fittedFullHadrB_[12];
-  TLorentzVector fittedFullLight1_[12];
-  TLorentzVector fittedFullLight2_[12];
-  float chi2KinFitMassFit_[12];
-  TLorentzVector fittedLeptonMassFit_[12];
-  TLorentzVector fittedNeutrinoMassFit_[12];
-  TLorentzVector fittedLeptBMassFit_[12];
-  TLorentzVector fittedHadrBMassFit_[12];
-  TLorentzVector fittedLight1MassFit_[12];
-  TLorentzVector fittedLight2MassFit_[12];  
-  float chi2FullKinFitMassFit_[12];
-  TLorentzVector fittedFullLeptonMassFit_[12];
-  TLorentzVector fittedFullNeutrinoMassFit_[12];
-  TLorentzVector fittedFullLeptBMassFit_[12];
-  TLorentzVector fittedFullHadrBMassFit_[12];
-  TLorentzVector fittedFullLight1MassFit_[12];
-  TLorentzVector fittedFullLight2MassFit_[12];  
+  //  float eventWeight_;
+  float hadrKinFitChiSq_[12];
+  TLorentzVector hadrKinFitHadrB_[12];
+  TLorentzVector hadrKinFitLight1_[12];
+  TLorentzVector hadrKinFitLight2_[12];
+  float hadrAndLeptWOnlyKinFitChiSq_[12];
+  TLorentzVector hadrAndLeptWOnlyKinFitLepton_[12];
+  TLorentzVector hadrAndLeptWOnlyKinFitNeutrino_[12];
+  TLorentzVector hadrAndLeptWOnlyKinFitHadrB_[12];
+  TLorentzVector hadrAndLeptWOnlyKinFitLight1_[12];
+  TLorentzVector hadrAndLeptWOnlyKinFitLight2_[12];
+  float hadrAndLeptKinFitChiSq_[12];
+  TLorentzVector hadrAndLeptKinFitLepton_[12];
+  TLorentzVector hadrAndLeptKinFitNeutrino_[12];
+  TLorentzVector hadrAndLeptKinFitLeptB_[12];
+  TLorentzVector hadrAndLeptKinFitHadrB_[12];
+  TLorentzVector hadrAndLeptKinFitLight1_[12];
+  TLorentzVector hadrAndLeptKinFitLight2_[12];
   int hadrBJet_; //index according to MC
   int hadrLJet1_;
   int hadrLJet2_;
   int leptBJet_;
   TLorentzVector MET_;
   vector<TLorentzVector> selectedJets_; // all selected jets
+  TLorentzVector lepton_;
   vector<float> bTagTCHE_; // indices like selectedJets indices
   vector<float> bTagTCHP_;
   vector<float> bTagSSVHE_;
@@ -299,7 +251,6 @@ class WTree : public TObject
   vector<float> bTagCSV_;
   vector<float> bTagJP_;
   vector<float> bTagJBP_;
-  TLorentzVector muon_;
   TLorentzVector hadrBQuark_;
   TLorentzVector hadrLQuark1_;
   TLorentzVector hadrLQuark2_;
