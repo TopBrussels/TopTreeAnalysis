@@ -504,6 +504,12 @@ int main(int argc, char* argv[]) {
 	 
 	    */
 	 
+	    
+	    //Start selection
+	    Selection selection(init_jets, init_muons, init_electrons, mets);
+	    trackmet = treeLoader.LoadTrackMET(ievt);
+	    
+	   
 	   
 	    // Systematics
 	    //JES and JER
@@ -514,16 +520,9 @@ int main(int argc, char* argv[]) {
 	      else if(JERMinus) jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false);
 	      else jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 	      
-	      
 	      if (JESPlus) jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
 	      else if (JESMinus) jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
 	    }  
-	    
-	    //Start selection
-	    Selection selection(init_jets, init_muons, init_electrons, mets);
-	    trackmet = treeLoader.LoadTrackMET(ievt);
-	    
-	   
 	    
 	    // PV cut (useless)
 	    //bool isGoodPV = isGoodPV = selection.isPVSelected(vertex, 4,24,2.);  

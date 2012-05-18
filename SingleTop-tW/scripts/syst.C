@@ -80,10 +80,10 @@ void syst(){
   
     for (int j = 0; j < 3; j++){
       if (j == 0){
-	sprintf(myRootFile,"outputs/out_%d_tbar_sup.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tw_sup.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/out_%d_tbar_sdo.root", i);
+	sprintf(myRootFile,"outputs/out_%d_tw_sdo.root", i);
 	TFile* _file1 = TFile::Open(myRootFile);
 	hdown[i][j] = (TH1F*) _file1->Get("R");
       } else if (j == 1) {
@@ -104,26 +104,26 @@ void syst(){
     for (int j = 0; j < 3; j++){ 
       if(j < 2){
 	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(2) - average)/average)*100 << "%\t" ;
+        double average = ((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) + (hdown[0][j]->GetBinContent(2) +  hdown[1][j]->GetBinContent(2) + hdown[2][j]->GetBinContent(2)))/2;
+	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j1t]" ;
-    for (int j = 0; j < 3; j++){ 
+     for (int j = 0; j < 3; j++){ 
       if(j < 2){
 	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(7) - average)/average)*100 << "%\t" ;
+        double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
+	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j2t]" ;
-    for (int j = 0; j < 3; j++){ 
+     for (int j = 0; j < 3; j++){ 
       if(j < 2){
 	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(8) - average)/average)*100 << "%\t" ;
+        double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
+	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
@@ -154,26 +154,26 @@ void syst(){
     for (int j = 0; j < 3; j++){ 
       if(j == 1){
 	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(2) - average)/average)*100 << "%    " ;
-	else cout << " -      ";
+        double average = ((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) + (hdown[0][j]->GetBinContent(2) +  hdown[1][j]->GetBinContent(2) + hdown[2][j]->GetBinContent(2)))/2;
+	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) - average)/average)*100 << "%\t" ;
+	else cout << " -\t";
       }
     }
     cout << "\t[2j1t]" ;
-    for (int j = 0; j < 3; j++){ 
+     for (int j = 0; j < 3; j++){ 
       if(j == 1){
 	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(7) + hdown[i][j]->GetBinContent(7))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(7) - average)/average)*100 << "%\t" ;
+        double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
+	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j2t]" ;
-    for (int j = 0; j < 3; j++){ 
+     for (int j = 0; j < 3; j++){ 
       if(j == 1){
 	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(8) + hdown[i][j]->GetBinContent(8))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(8) - average)/average)*100 << "%\t" ;
+        double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
+	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
@@ -193,28 +193,31 @@ void syst(){
   } 
   
   cout << "* DRDS scheme" << endl;
-  for (int i = 0; i < 3; i++){
+   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
+    for (int j = 0; j < 3; j++){ 
       if(j == 0){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << fabs((h[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%\t" ;
+        double average = hnominal[0][j]->GetBinContent(2) +  hnominal[1][j]->GetBinContent(2) + hnominal[2][j]->GetBinContent(2);
+	if (average !=0) cout << fabs(((h[0][j]->GetBinContent(2) + h[1][j]->GetBinContent(2) + h[2][j]->GetBinContent(2)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j1t]" ;
-    for (int j = 0; j <4; j++){ 
+     for (int j = 0; j < 3; j++){ 
       if(j == 0){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(7) !=0) cout << fabs((h[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%\t" ;
+        double average = hnominal[0][j]->GetBinContent(7) +  hnominal[1][j]->GetBinContent(7) + hnominal[2][j]->GetBinContent(7);
+	if (average !=0) cout << fabs(((h[0][j]->GetBinContent(7) + h[1][j]->GetBinContent(7) + h[2][j]->GetBinContent(7)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j2t]" ;
-    for (int j = 0; j <4; j++){ 
+     for (int j = 0; j < 3; j++){ 
       if(j == 0){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(8) !=0) cout << fabs((h[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%\t" ;
+        double average = hnominal[0][j]->GetBinContent(8) +  hnominal[1][j]->GetBinContent(8) + hnominal[2][j]->GetBinContent(8);
+	if (average !=0) cout << fabs(((h[0][j]->GetBinContent(8) + h[1][j]->GetBinContent(8) + h[2][j]->GetBinContent(8)) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
@@ -238,29 +241,25 @@ void syst(){
   cout << "* PU" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
-      if (j == 0){
+       for (int j = 0; j <2; j++){ 
+      if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%\t" ;
-	else cout << " -\t";
+	if (hnominal[i][j]->GetBinContent(2) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 , fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 )<< "%   " ;
+	else cout << " -      ";
       }
-    }
-    cout << "\t[2j1t]" ;
+    }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j == 0){
+      if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(7) !=0) cout << ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%\t" ;
+	if (hnominal[i][j]->GetBinContent(7) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 , fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 )<< "%   " ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j == 0){
+      if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(8) !=0) cout << ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%\t" ;
+	if (hnominal[i][j]->GetBinContent(8) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 , fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 )<< "%   " ;
 	else cout << " -\t";
       }
     }
@@ -269,9 +268,9 @@ void syst(){
   
   cout << "* tt cross-section:" << endl;
   for (int i = 0; i < 3; i++){
-    if (i == 0) cout << "mode:" << i << "      15%" << endl;
-    else if (i == 1) cout << "mode:" << i << "      15%" << endl;
-    else if (i == 2) cout << "mode:" << i << "      15" << endl;
+    if (i == 0) cout << "mode:" << i << "      6%" << endl;
+    else if (i == 1) cout << "mode:" << i << "      6%" << endl;
+    else if (i == 2) cout << "mode:" << i << "      6" << endl;
   }
   
   TString SystName = "JES";
@@ -380,15 +379,14 @@ void syst(){
     for (int j = 0; j <2; j++){ 
       if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
+	if (hnominal[i][j]->GetBinContent(2) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 , fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 )<< "%   " ;
 	else cout << " -      ";
       }
     }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
       if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(7) !=0) cout << ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%\t" ;
+	if (hnominal[i][j]->GetBinContent(7) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 , fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 )<< "%   " ;
 	else cout << " -\t";
       }
     }
@@ -396,8 +394,7 @@ void syst(){
     for (int j = 0; j <4; j++){ 
       if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(8) !=0) cout << ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%\t" ;
+	if (hnominal[i][j]->GetBinContent(8) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 , fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 )<< "%   " ;
 	else cout << " -\t";
       }
     }
@@ -420,27 +417,25 @@ void syst(){
   cout << "* Missing ET (unclustered)" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <2; j++){ 
-      if (j == 0){
+      for (int j = 0; j <2; j++){ 
+      if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
+	if (hnominal[i][j]->GetBinContent(2) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 , fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 )<< "%   " ;
 	else cout << " -      ";
       }
     }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j == 0){
+      if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(7) !=0) cout << ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%\t" ;
+	if (hnominal[i][j]->GetBinContent(7) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 , fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 )<< "%   " ;
 	else cout << " -\t";
       }
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j == 0){
+      if (j < 2){
 	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(8) !=0) cout << ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%/" << 
-	((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%\t" ;
+	if (hnominal[i][j]->GetBinContent(8) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 , fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 )<< "%   " ;
 	else cout << " -\t";
       }
     }
@@ -486,9 +481,9 @@ void syst(){
 
  cout << "* z+jet background normalization:" << endl;
   for (int i = 0; i < 3; i++){
-    if (i == 0) cout << "mode:" << i << "      50%\t[2j1t]: 50%\t[2j2t]: 100%" << endl;
-    else if (i == 1) cout << "mode:" << i << "      50%\t[2j1t]: 50%\t[2j2t]: 100%" << endl;
-    else if (i == 2) cout << "mode:" << i << "      50%\t[2j1t]: 50%\t[2j2t]: 100%" << endl;
+    if (i == 0) cout << "mode:" << i << "      50%\t[2j1t]: 50%\t" << endl;
+    else if (i == 1) cout << "mode:" << i << "      50%\t[2j1t]: 50%\t" << endl;
+    else if (i == 2) cout << "mode:" << i << "      50%\t[2j1t]: 50%\t" << endl;
   } 
    
 }

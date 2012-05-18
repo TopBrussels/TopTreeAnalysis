@@ -8,10 +8,10 @@
 
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_tW_DR/*"/> 
  <d name="atwdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_tW_DR/*"/> 
- 
+ <!---
  <d name="twds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_tW_DS/*"/> 
  <d name="atwds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_tW_DS/*"/> 
-
+---->
  <d name="t" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/T_t/*"/> 
  <d name="at" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_t/*"/> 
  <d name="ats" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_s/*"/> 
@@ -32,7 +32,7 @@
  <d name="data1" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/data/*"/> 
  <d name="data2" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/data/*"/> 
 --->
-
+<!----
  <d name="tt_scaleup" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TT_scaleup/*"/> 
  <d name="tt_scaledown" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/TT_scaledown/*"/> 
  
@@ -50,7 +50,7 @@
  <d name="tbar_sdo_ds" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/Tbar_scaledown_tW_DS/*"/> 
 
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Fall11_1e1mu_v2/data/*"/>
-
+---->
 </datasets>
 
 <analysis>
