@@ -80,9 +80,7 @@ int main (int argc, char *argv[])
   if (argc >= 2)
     xmlFileName=string(argv[1]);
   const char *xmlfile = xmlFileName.c_str();
-    
-  cout << "used config file: " << xmlfile << endl;
-       
+           
   //Configuration output format
   TTree *configTree = new TTree("configTree","configuration Tree");
   TClonesArray* tcdatasets = new TClonesArray("Dataset",1000);
@@ -145,17 +143,12 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
     
   AnalysisEnvironment anaEnv;
-  cout<<"Loading environment ..."<<endl;
-  cout << " looking at xml file : " << xmlfile << endl;
+  cout<<"Loading environment ...   : "<< xmlfile <<endl;
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile);
-  cout << " 1 " << endl;
   new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv);
-  cout << " 2 " << endl;
   int verbose = anaEnv.Verbose;
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
-    
-  cout << "analysis environment luminosity for rescaling "<< oldLuminosity << endl;
-    
+        
   /////////////////////
   // Load Datasets
   /////////////////////
@@ -325,7 +318,7 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
 
-  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
+  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
 
   std::cout << " CalculateResolutions = " << CalculateResolutions << endl;
   
