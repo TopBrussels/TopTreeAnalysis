@@ -100,19 +100,19 @@ int main (int argc, char *argv[])
   bool semiMuon = true; // use semiMuon channel?
   if(semiElectron && semiMuon) cout << "  --> Using semiMuon and semiElectron channel..." << endl;
   else
-  {
-    if(semiMuon) cout << " --> Using the semiMuon channel..." << endl;
-    else{
-      cout << " --> Using the semiElectron channel..." << endl;
-      rootFileName = "MacroOutputElectronChannel.root";
+    {
+      if(semiMuon) cout << " --> Using the semiMuon channel..." << endl;
+      else{
+	cout << " --> Using the semiElectron channel..." << endl;
+	rootFileName = "MacroOutputElectronChannel.root";
+      }
     }
-  }
 
   /////////////////////
   //  Which trigger  //
   /////////////////////
-  bool TriCentralJet30Trigger = true;
-  bool IsoMu172024Trigger = false;
+  bool TriCentralJet30Trigger = false;
+  bool IsoMu172024Trigger = true;
   if(TriCentralJet30Trigger == true){
     rootFileName = "MacroOutputTriCentralJet30Trigger.root";         //Root output file
   }
@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   //  Which systematics //
   ////////////////////////
 
-  int doJESShift = 2; // 0: off 1: minus 2: plus
+  int doJESShift =0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
@@ -146,8 +146,11 @@ int main (int argc, char *argv[])
     
   AnalysisEnvironment anaEnv;
   cout<<"Loading environment ..."<<endl;
+  cout << " looking at xml file : " << xmlfile << endl;
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile);
+  cout << " 1 " << endl;
   new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv);
+  cout << " 2 " << endl;
   int verbose = anaEnv.Verbose;
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
     
@@ -166,6 +169,7 @@ int main (int argc, char *argv[])
     
   float Luminosity = oldLuminosity;
   bool isSemiMu = false;
+  bool isSemiEl = false;
   for (unsigned int d = 0; d < datasets.size (); d++){
     cout << "luminosity of dataset "<< d << " is " << datasets[d]->EquivalentLumi() << endl;
     if(Luminosity > datasets[d]->EquivalentLumi() ) Luminosity = datasets[d]->EquivalentLumi();
@@ -175,9 +179,10 @@ int main (int argc, char *argv[])
       break;
     }
     if(dataSetName.find("TTbarJets_SemiMu") == 0) isSemiMu = true;
+    if(dataSetName.find("TTbarJets_SemiEl") == 0) isSemiEl = true;
   }
   if(Luminosity != oldLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
-    
+  
   //vector of objects
   cout << " - Variable declaration ..." << endl;          //All possible variables that can be used for analysis
   vector < TRootVertex* > vertex; 
@@ -261,6 +266,37 @@ int main (int argc, char *argv[])
   MSPlot["nLooseElectronsSemiEl"] = new MultiSamplePlot(datasets, "nLooseElectronsSemiEl", 5, -0.5, 4.5, "Nr. of Loose Electrons, SemiEl");
   MSPlot["nSelectedJets"] = new MultiSamplePlot(datasets, "nSelectedJets", 10, -0.5, 9.5, "Nr. of Selected Jets");  
 
+  MSPlot["ChiSqHadr"] = new MultiSamplePlot(datasets,"ChiSqHadr",50,0,50,"ChiSqHadr");
+  MSPlot["ChiSqHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLeptWOnly",50,0,50,"ChiSqHadrAndLeptWOnly");
+  MSPlot["ChiSqHadrAndLept"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLept",50,0,50,"ChiSqHadrAndLept");
+
+  MSPlot["LeptWHadr"] = new MultiSamplePlot(datasets,"LeptWHadr",50,0,200,"LeptWHadr");
+  MSPlot["LeptTopHadr"] = new MultiSamplePlot(datasets,"LeptTopHadr",50,50,450,"LeptTopHadr");
+  MSPlot["HadrWHadr"] = new MultiSamplePlot(datasets,"HadrWHadr",50,30,110,"HadrWHadr");
+  MSPlot["HadrTopHadr"] = new MultiSamplePlot(datasets,"HadrTopHadr",50,120,220,"HadrTopHadr");
+  histo1D["LeptWHadr"] = new TH1F("LeptWHadr","LeptWHadr",50,0,200);
+  histo1D["LeptTopHadr"] = new TH1F("LeptTopHadr","LeptTopHadr",50,50,450);
+  histo1D["HadrWHadr"] = new TH1F("HadrWHadr","HadrWHadr",50,30,110);
+  histo1D["HadrTopHadr"] = new TH1F("HadrTopHadr","HadrTopHadr",50,120,220);
+
+  MSPlot["LeptWHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"LeptWHadrAndLeptWOnly",50,30,110,"LeptWHadrAndLeptWOnly");
+  MSPlot["LeptTopHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"LeptTopHadrAndLeptWOnly",50,50,450,"LeptTopHadrAndLeptWOnly");
+  MSPlot["HadrWHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"HadrWHadrAndLeptWOnly",50,30,110,"HadrWHadrAndLeptWOnly");
+  MSPlot["HadrTopHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"HadrTopHadrAndLeptWOnly",50,120,220,"HadrTopHadrAndLeptWOnly");
+  histo1D["LeptWHadrAndLeptWOnly"] = new TH1F("LeptWHadrAndLeptWOnly","LeptWHadrAndLeptWOnly",50,30,110);
+  histo1D["LeptTopHadrAndLeptWOnly"] = new TH1F("LeptTopHadrAndLeptWOnly","LeptTopHadrAndLeptWOnly",50,50,450);
+  histo1D["HadrWHadrAndLeptWOnly"] = new TH1F("HadrWHadrAndLeptWOnly","HadrWHadrAndLeptWOnly",50,30,110);
+  histo1D["HadrTopHadrAndLeptWOnly"] = new TH1F("HadrTopHadrAndLeptWOnly","HadrTopHadrAndLeptWOnly",50,120,220);
+
+  MSPlot["LeptWHadrAndLept"] = new MultiSamplePlot(datasets,"LeptWHadrAndLept",50,30,110,"LeptWHadrAndLept");
+  MSPlot["LeptTopHadrAndLept"] = new MultiSamplePlot(datasets,"LeptTopHadrAndLept",50,120,220,"LeptTopHadrAndLept");
+  MSPlot["HadrWHadrAndLept"] = new MultiSamplePlot(datasets,"HadrWHadrAndLept",50,30,110,"HadrWHadrAndLept");
+  MSPlot["HadrTopHadrAndLept"] = new MultiSamplePlot(datasets,"HadrTopHadrAndLept",50,120,220,"HadrTopHadrAndLept");
+  histo1D["LeptWHadrAndLept"] = new TH1F("LeptWHadrAndLept","LeptWHadrAndLept",50,30,110);
+  histo1D["LeptTopHadrAndLept"] = new TH1F("LeptTopHadrAndLept","LeptTopHadrAndLept",50,120,220);
+  histo1D["HadrWHadrAndLept"] = new TH1F("HadrWHadrAndLept","HadrWHadrAndLept",50,30,110);
+  histo1D["HadrTopHadrAndLept"] = new TH1F("HadrTopHadrAndLept","HadrTopHadrAndLept",50,120,220);
+  
   ///////////////////////////////////////////////////////
   //   Making the theoretical helicity distribution    // -> To know how the distribution should look like!! 
   ///////////////////////////////////////////////////////  --> Only Fit values are used in code!!
@@ -292,9 +328,9 @@ int main (int argc, char *argv[])
   bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
 
   std::cout << " CalculateResolutions = " << CalculateResolutions << endl;
-
+  
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitMuon = 0, *resFitElectron = 0, *resFitNeutrino = 0;
-    
+  
   resFitLightJets = new ResolutionFit("LightJet");
   resFitBJets = new ResolutionFit("BJet");
   resFitMuon = new ResolutionFit("Muon");
@@ -317,7 +353,7 @@ int main (int argc, char *argv[])
 
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
-
+  
   float TopMassKinFit;
   float WMassKinFit = 80.4;
 
@@ -365,7 +401,7 @@ int main (int argc, char *argv[])
   selecTableSemiEl.SetLuminosity(Luminosity);
   if (verbose > 0)
     cout << " - SelectionTable instantiated ..." << endl; 
-    
+  
   ////////////////////////////////////
   //	Loop on datasets
   ////////////////////////////////////
@@ -383,7 +419,7 @@ int main (int argc, char *argv[])
       cout << "   Dataset " << d << ": " << datasets[d]->Name () << "/ title : " << datasets[d]->Title () << endl;
     if (verbose > 1)
       std::cout<<"      -> This sample contains, " << datasets[d]->NofEvtsToRunOver() << " events." << endl;
-      
+    
     //open files and load
     cout<<"LoadEvent"<<endl;
     treeLoader.LoadDataset (datasets[d], anaEnv);
@@ -405,7 +441,7 @@ int main (int argc, char *argv[])
       TopMassKinFit = 172.5;
       SimulationSampleBoolean = true;
     }
-      
+    
     /////////////////////////////////////
     /// Initialize JEC factors
     /////////////////////////////////////
@@ -444,7 +480,7 @@ int main (int argc, char *argv[])
       if(semiMuon) decayChannel = "SemiMu";
       if(semiElectron) decayChannel = "SemiEl";
     }
-
+    
     string UsedTrigger;
     if(TriCentralJet30Trigger == true){ UsedTrigger = "TriCentralJet30Trigger";}
     else if(IsoMu172024Trigger == true){ UsedTrigger = "IsoMu172024Trigger";}
@@ -453,7 +489,7 @@ int main (int argc, char *argv[])
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
-    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
+    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
     if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
     if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
@@ -474,9 +510,9 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined
-    //for(unsigned int ievt = 0; ievt < 5000; ievt++){  
-
+    for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined  
+      //for(unsigned int ievt = 0; ievt < 2000; ievt++){    //Also change fits on line 1551 back on (too few events causes crash!!)
+      
       nEvents[d]++;
       if(ievt%2000 == 0)
 	std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
@@ -489,15 +525,15 @@ int main (int argc, char *argv[])
           genjets = treeLoader.LoadGenJet(ievt);
           sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
         } 
-
+      
       //load mcParticles --> Put here to avoid overwriting of init_jets and mets after second treeLoader.Load !!
       vector<TRootMCParticle*> mcParticles;
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiEl") == 0){
+      if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){
 	mcParticles = treeLoader.LoadMCPart(ievt);
 	sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }         
-
-        
+      
+      
       // scale factor for the event
       float scaleFactor = 1.;
       float lumiWeight = 1;
@@ -660,37 +696,42 @@ int main (int argc, char *argv[])
 	}  //End of triggers for semiMu case 
 	
 	else if(semiElectron == true){
-	  if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA"){
-	    ElectronTriggerValue = 25;
-	    
-	    if( event->runId() <= 161176 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
-	    else if( event->runId() >= 161177 && event->runId() <= 163261 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun, iFile);
-	    else if( event->runId() >= 163262 && event->runId() <= 163869 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v3"), currentRun, iFile);
-	    else if( event->runId() >= 163870 && event->runId() <= 165633 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v3"), currentRun, iFile);
-	    else if( event->runId() >= 165970 && event->runId() <= 166967 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v1"), currentRun, iFile);
-	    else if( event->runId() >= 167039 && event->runId() <= 167913 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v2"), currentRun, iFile);
-	    else if( event->runId() >= 170826 && event->runId() <= 173198 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v4"), currentRun, iFile);
-	    else if( event->runId() >= 173236 && event->runId() <= 178380 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun, iFile);
-	    else if( event->runId() >= 178381 && event->runId() <= 178479 )
-	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v2"), currentRun, iFile);
-	    else
-	      cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
-	    if( itriggerSemiEl == 9999 ){
-	      cout << "itriggerSemiEl == 9999 for SemiEl HLTpath selection: " << event->runId() << endl;
-	      exit(-1);
-	    }
-	  }
-	  else{
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun); ElectronTriggerValue = 25;
-	  }
+        if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 ) {
+          if( event->runId() <= 161176 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
+          else if( event->runId() >= 161177 && event->runId() <= 163261 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun, iFile);
+          else if( event->runId() >= 163262 && event->runId() <= 163869 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v3"), currentRun, iFile);
+          else if( event->runId() >= 163870 && event->runId() <= 165633 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v3"), currentRun, iFile);
+          else if( event->runId() >= 165970 && event->runId() <= 166967 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v1"), currentRun, iFile);
+          else if( event->runId() >= 167039 && event->runId() <= 167913 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v2"), currentRun, iFile);
+          else if( event->runId() >= 170826 && event->runId() <= 173198 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v4"), currentRun, iFile);
+          else if( event->runId() >= 173236 && event->runId() <= 178380 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun, iFile);
+          else if( event->runId() >= 178381 && event->runId() <= 179889 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v2"), currentRun, iFile);
+	  else if( event->runId() >= 179959 && event->runId() <= 180252 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun, iFile);
+          else
+            cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
+          if( itriggerSemiEl == 9999 )
+          {
+            cout << "itriggerSemiEl == 9999 for SemiEl HLTpath selection: " << event->runId() << endl;
+            exit(-1);
+          }
+        }
+        else
+        {
+          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun);
+      	  if (itriggerSemiEl == 9999)
+      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
+        }
+	
 	}//End of triggers for semiEl case
 	else{
 	  cout << " ------------             ----------------                ------------------- " << endl;
@@ -714,67 +755,52 @@ int main (int argc, char *argv[])
       }
             
       //JES CORRECTION
-      // Apply Jet Corrections on-the-fly
-      if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
-      else 
-	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+      // Apply Jet Corrections on-the-fly     --> not if already in toptrees! (our first Fall11 round)
+//       if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+// 	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
+//       else 
+// 	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
       
       //ordering is relevant; most probably 1) Type I MET correction, 2) JER where jet corrections are propagated to MET, 3) JES systematics where jet corrections are propagated to MET
       //----------------------------------------------------------
       // Apply type I MET corrections:  (Only for |eta| <= 4.7 )
       //---------------------------------------------------------
-      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-        jetTools->correctMETTypeOne(init_jets,mets[0],true);
-      else
-        jetTools->correctMETTypeOne(init_jets,mets[0],false);
+      //             --> not if already in toptrees! (our first Fall11 round)
+//       if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
+//         jetTools->correctMETTypeOne(init_jets,mets[0],true);
+//       else
+//         jetTools->correctMETTypeOne(init_jets,mets[0],false);
       
       if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-      {	
-	if(doJERShift == 1)
-	  jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false);   //false means don't use old numbers but newer ones...
-	else if(doJERShift == 2)
-	  jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
-	else
-	  jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
+	{	
+	  if(doJERShift == 1)
+	    jetTools->correctJetJER(init_jets, genjets, mets[0], "minus",false);   //false means don't use old numbers but newer ones...
+	  else if(doJERShift == 2)
+	    jetTools->correctJetJER(init_jets, genjets, mets[0], "plus",false);
+	  else
+	    jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal",false);
 	
-	// JES systematic! 
-	if (doJESShift == 1)
-	  jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-	else if (doJESShift == 2)
-	  jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
-      }      
+	  // JES systematic! 
+	  if (doJESShift == 1)
+	    jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
+	  else if (doJESShift == 2)
+	    jetTools->correctJetJESUnc(init_jets, mets[0], "plus");	       
+	}      
               
       ///////////////////////////////////////////////////////
       ///     Start of program: Defining variables        ///
       ///////////////////////////////////////////////////////  
     	           
-      vector<float> ChiSquared[2];  //Needed for chi squared caclulation      
-      vector<float> ChiSquaredFull[2];
-      
-      //Vectors which contain the particles with kinematics changed due to KinFit:
-      vector<TLorentzVector> fittedLepton[2];
-      vector<TLorentzVector> fittedNeutrino[2];
-      vector<TLorentzVector> fittedBLept[2];
-      vector<TLorentzVector> fittedBHadr[2];
-      vector<TLorentzVector> fittedLight1[2];
-      vector<TLorentzVector> fittedLight2[2];
-      
-      vector<TLorentzVector> fittedFullLepton[2];
-      vector<TLorentzVector> fittedFullNeutrino[2];
-      vector<TLorentzVector> fittedFullBLept[2];
-      vector<TLorentzVector> fittedFullBHadr[2];
-      vector<TLorentzVector> fittedFullLight1[2];
-      vector<TLorentzVector> fittedFullLight2[2];
-
-      float MassW= 83.3924;
-      float MassTop = 172.452;
-      float MassTopLept = 180.349;
+      //Kinematic Fit information:
+      vector<float> chiSqKinFitHadr, chiSqKinFitHadrAndLeptWOnly, chiSqKinFitHadrAndLept;  
+      vector<TLorentzVector> leptonKinFitHadr, neutrinoKinFitHadr, leptBKinFitHadr, hadrBKinFitHadr, light1KinFitHadr, light2KinFitHadr;
+      vector<TLorentzVector> leptonKinFitHadrAndLeptW, neutrinoKinFitHadrAndLeptW, leptBKinFitHadrAndLeptW, hadrBKinFitHadrAndLeptW, light1KinFitHadrAndLeptW, light2KinFitHadrAndLeptW;
+      vector<TLorentzVector> leptonKinFitHadrAndLept, neutrinoKinFitHadrAndLept, leptBKinFitHadrAndLept, hadrBKinFitHadrAndLept, light1KinFitHadrAndLept, light2KinFitHadrAndLept;
            
       float standardCosTheta=0; 
       TRootMCParticle standardNeutrino, standardTop,standardLepton,standardWLeptonic;      
 
-      if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiEl") == 0){     
+      if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true)|| (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){     
 
 	//------------------------------------------//
 	//    Identifying Monte Carlo particles     //
@@ -891,15 +917,14 @@ int main (int argc, char *argv[])
       //Declare selection instance    
     
       Selection selection(init_jets, init_muons, init_electrons, mets);
-      selection.setJetCuts(30.,2.4,0.01,1.,0.98,9999,9999);   //CIEMAT values, not refSel values !!!!
+      selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.,0.);   //CIEMAT values, not refSel values !!!!
       //Do not apply DeltaR cut on jet selection since this should already be applied with PF2PAT matching of lepton!!
-      if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,9999,1,1,1); //Values for TriCentralJet trigger
-      if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,9999,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
+      if(TriCentralJet30Trigger == true) selection.setMuonCuts(20,2.1,0.15,10,0.02,0.,1,1,1); //Values for TriCentralJet trigger
+      if(IsoMu172024Trigger == true) selection.setMuonCuts(25,2.1,0.15,10,0.02,0.,1,1,1); //Values for IsoMu(17/20/24) trigger -- Should be 27, but put on 25 to match CIEMAT constraints
       selection.setLooseMuonCuts(10,2.1,0.15);
-      selection.setElectronCuts(30,2.5,0.15,0.02,1,9999);
+      selection.setElectronCuts(30,2.5,0.15,0.02,1,0.);
       selection.setLooseElectronCuts(15,2.5,0.2); // semiMu looseMuon cuts
-      
-        
+              
       bool triggedSemiMu = false;
       bool triggedSemiEl = false;
       if(semiMuon == true){ triggedSemiMu = treeLoader.EventTrigged (itriggerSemiMu);}
@@ -920,16 +945,18 @@ int main (int argc, char *argv[])
       float minDrElJet = 9999999999.;
       for (unsigned int i=0; i<init_jets.size(); i++) {
 	if(semiMuon == true){
-	  for (unsigned int j=0; j<init_muons.size(); j++) {
-	    TLorentzVector* l = (TLorentzVector*) lepton[j];
+	  for (unsigned int j=0; j<init_muons.size(); j++) {       
+	    TLorentzVector* l = (TLorentzVector*) init_muons[j];
 	    float dr = l->DeltaR(*init_jets[i]);
 	    if ( dr < minDrElJet ) minDrElJet = dr;   //??Verschil met electron jet verschil (init_electrons)
 	  }	
 	}
 	else if(semiElectron == true){
-	  TLorentzVector* l = (TLorentzVector*) lepton[j];
-	  float dr = l->DeltaR(*init_jets[i]);
-	  if ( dr < minDrElJet ) minDrElJet = dr;
+	  for(unsigned int j=0;j<init_electrons.size(); j++){
+	    TLorentzVector* l = (TLorentzVector*) init_electrons[j];
+	    float dr = l->DeltaR(*init_jets[i]);
+	    if ( dr < minDrElJet ) minDrElJet = dr;
+	  }
 	}
       }
       
@@ -946,8 +973,8 @@ int main (int argc, char *argv[])
       float mindRElJet = 999999.;
       for(unsigned int i=0;i<init_electrons.size();i++){
 	TRootJet* jet;
-	for(unsigned int j=0;j<selJets.size();j++) {
-	  jet = selJets.at(j);
+	for(unsigned int j=0;j<selectedJets.size();j++) {
+	  jet = selectedJets.at(j);
 	  float dRElJet = init_electrons[i]->DeltaR(*jet);
 	  if(dRElJet < mindRElJet) mindRElJet = dRElJet;
 	}
@@ -976,57 +1003,57 @@ int main (int argc, char *argv[])
       selecTableSemiMu.Fill(d,0,scaleFactor*lumiWeight);
       if( triggedSemiMu && semiMuon )
 	{
-        MSPlot["nEventsAfterCutsSemiMu"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
-        selecTableSemiMu.Fill(d,1,scaleFactor*lumiWeight);
-        if( isGoodPV )
-	  {
-	    MSPlot["nEventsAfterCutsSemiMu"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
-	    selecTableSemiMu.Fill(d,2,scaleFactor*lumiWeight);
-	    if( selectedMuons.size() == 1 )
-	      {
-		MSPlot["nEventsAfterCutsSemiMu"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
-		selecTableSemiMu.Fill(d,3,scaleFactor*lumiWeight);
-		if( vetoMuons.size() == 1 ) 
-		  {
-		    MSPlot["nEventsAfterCutsSemiMu"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
-		    selecTableSemiMu.Fill(d,4,scaleFactor*lumiWeight);
-		    if( vetoElectronsSemiMu.size() == 0 )
-		      {
-			MSPlot["nEventsAfterCutsSemiMu"]->Fill(5, datasets[d], true, Luminosity*scaleFactor);
-			selecTableSemiMu.Fill(d,5,scaleFactor*lumiWeight);
-			if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-3)
-			  {
-			    MSPlot["nEventsAfterCutsSemiMu"]->Fill(6, datasets[d], true, Luminosity*scaleFactor);
-			    selecTableSemiMu.Fill(d,6,scaleFactor*lumiWeight);
-			    if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-2)
-			      {
-				MSPlot["nEventsAfterCutsSemiMu"]->Fill(7, datasets[d], true, Luminosity*scaleFactor);
-				selecTableSemiMu.Fill(d,7,scaleFactor*lumiWeight);
-				if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-1)
-				  {
-				    MSPlot["nEventsAfterCutsSemiMu"]->Fill(8, datasets[d], true, Luminosity*scaleFactor);
-				    selecTableSemiMu.Fill(d,8,scaleFactor*lumiWeight);
-				    if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
-				      {
-					MSPlot["nEventsAfterCutsSemiMu"]->Fill(9, datasets[d], true, Luminosity*scaleFactor);
-					selecTableSemiMu.Fill(d,9,scaleFactor*lumiWeight);
-					eventSelectedSemiMu = true;
-					reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
-					MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);         
+	  MSPlot["nEventsAfterCutsSemiMu"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
+	  selecTableSemiMu.Fill(d,1,scaleFactor*lumiWeight);
+	  if( isGoodPV )
+	    {
+	      MSPlot["nEventsAfterCutsSemiMu"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
+	      selecTableSemiMu.Fill(d,2,scaleFactor*lumiWeight);
+	      if( selectedMuons.size() == 1 )
+		{
+		  MSPlot["nEventsAfterCutsSemiMu"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
+		  selecTableSemiMu.Fill(d,3,scaleFactor*lumiWeight);
+		  if( vetoMuons.size() == 1 ) 
+		    {
+		      MSPlot["nEventsAfterCutsSemiMu"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
+		      selecTableSemiMu.Fill(d,4,scaleFactor*lumiWeight);
+		      if( vetoElectronsSemiMu.size() == 0 )
+			{
+			  MSPlot["nEventsAfterCutsSemiMu"]->Fill(5, datasets[d], true, Luminosity*scaleFactor);
+			  selecTableSemiMu.Fill(d,5,scaleFactor*lumiWeight);
+			  if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-3)
+			    {
+			      MSPlot["nEventsAfterCutsSemiMu"]->Fill(6, datasets[d], true, Luminosity*scaleFactor);
+			      selecTableSemiMu.Fill(d,6,scaleFactor*lumiWeight);
+			      if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-2)
+				{
+				  MSPlot["nEventsAfterCutsSemiMu"]->Fill(7, datasets[d], true, Luminosity*scaleFactor);
+				  selecTableSemiMu.Fill(d,7,scaleFactor*lumiWeight);
+				  if(selectedJets.size()>=(unsigned int)anaEnv.NofJets-1)
+				    {
+				      MSPlot["nEventsAfterCutsSemiMu"]->Fill(8, datasets[d], true, Luminosity*scaleFactor);
+				      selecTableSemiMu.Fill(d,8,scaleFactor*lumiWeight);
+				      if(selectedJets.size()>=(unsigned int)anaEnv.NofJets)
+					{
+					  MSPlot["nEventsAfterCutsSemiMu"]->Fill(9, datasets[d], true, Luminosity*scaleFactor);
+					  selecTableSemiMu.Fill(d,9,scaleFactor*lumiWeight);
+					  eventSelectedSemiMu = true;
+					  reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
+					  MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);         
 
-					//if(dataSetName.find("TTbarJets_SemiMu") ==0 && selectedJets[3]->Pt() >30. && selectedJets[3]->Pt() <30.5)
-					//cout << " Event with nominal pt jet between 30. and 30.5 : " << ievt << " Exact pt = " <<selectedJets[3]->Pt() << endl;      	
-// 					if(ievt == 285 || ievt == 392 || ievt == 493 || ievt == 554 || ievt == 573 || ievt == 726 || ievt == 745 || ievt == 760 || ievt == 821 || ievt == 978 || ievt == 986  || ievt == 1067)
-// 					  cout << " Pt of fourth jet is equal to : " << selectedJets[3]->Pt() <<  " for event : " << ievt << " , for JESShift = " << doJESShift << endl;
+					  //if(dataSetName.find("TTbarJets_SemiMu") ==0 && selectedJets[3]->Pt() >30. && selectedJets[3]->Pt() <30.5)
+					  //cout << " Event with nominal pt jet between 30. and 30.5 : " << ievt << " Exact pt = " <<selectedJets[3]->Pt() << endl;      	
+					  // 					if(ievt == 285 || ievt == 392 || ievt == 493 || ievt == 554 || ievt == 573 || ievt == 726 || ievt == 745 || ievt == 760 || ievt == 821 || ievt == 978 || ievt == 986  || ievt == 1067)
+					  // 					  cout << " Pt of fourth jet is equal to : " << selectedJets[3]->Pt() <<  " for event : " << ievt << " , for JESShift = " << doJESShift << endl;
  
-				      }
-				  }
-			      }
-			  }
-		      }
-		  }
-	      }
-	  }
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
 	}
       
       MSPlot["nEventsAfterCutsSemiEl"]->Fill(0, datasets[d], true, Luminosity*scaleFactor);
@@ -1096,7 +1123,7 @@ int main (int argc, char *argv[])
 	TLorentzVector hadrBQuark,hadrLQuark1,hadrLQuark2,leptBQuark;
 	pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second the parton
 
-	if(dataSetName.find("TTbarJets_SemiMu") == 0 || dataSetName.find("TTbarJets_SemiEl") == 0){
+	if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true)|| (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){
 	  
 	  leptonicBJet_ = hadronicBJet_ = hadronicWJet1_ = hadronicWJet2_ = pair<unsigned int, unsigned int>(9999,9999);
 	  
@@ -1185,9 +1212,9 @@ int main (int argc, char *argv[])
 	    
 	    all4PartonsMatched = true;
 	    if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4 && leptonicBJet_.first < 4)
-	      all4JetsMatched_MCdef_ = true;
-	  }
-	  if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4)
+	    all4JetsMatched_MCdef_ = true;
+	    }
+	    if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4)
 	    hadronictopJetsMatched_MCdef_ = true;
 	  */
 
@@ -1195,35 +1222,35 @@ int main (int argc, char *argv[])
 	    float binCenter = histo1D_["PtJetCut_nEventsBefore"]->GetBinCenter(i);
 	    histo1D_["PtJetCut_nEventsBefore"]->Fill(binCenter);
 	    if(selectedJets_.size() > 3 && selectedJets_[3]->Pt() > binCenter){
-	      histo1D_["PtJetCut_nEventsAfter"]->Fill(binCenter);
-	      if( hadronicWJet1_.first > 3 || hadronicWJet2_.first > 3 || hadronicBJet_.first > 3 || leptonicBJet_.first > 3 ){
-		bool foundISR = false;
-		for(unsigned int j=0; j<ISRJetPartonPair.size(); j++)
-		  if(ISRJetPartonPair[j].first < 4)
-		    foundISR = true;
+	    histo1D_["PtJetCut_nEventsAfter"]->Fill(binCenter);
+	    if( hadronicWJet1_.first > 3 || hadronicWJet2_.first > 3 || hadronicBJet_.first > 3 || leptonicBJet_.first > 3 ){
+	    bool foundISR = false;
+	    for(unsigned int j=0; j<ISRJetPartonPair.size(); j++)
+	    if(ISRJetPartonPair[j].first < 4)
+	    foundISR = true;
 		
-	      }
+	    }
 	    }
 	    }*/
 	  
 	  /*if(all4PartonsMatched){
 	    for(int i=1; i<=histo1D_["PtJetCut_nEventsBefore"]->GetNbinsX(); i++){
-	      float binCenter = histo1D_["PtJetCut_nEventsBefore"]->GetBinCenter(i);
-	      histo1D_["PtJetCut_nEvents4PartonsMatchedBefore"]->Fill(binCenter);
-	      if(selectedJets_.size() > 3 && selectedJets_[leptonicBJet_.first]->Pt() > binCenter && selectedJets_[hadronicBJet_.first]->Pt() > binCenter &&
-		 selectedJets_[hadronicWJet1_.first]->Pt() > binCenter && selectedJets_[hadronicWJet2_.first]->Pt() > binCenter)
-		histo1D_["PtJetCut_nEvents4PartonsMatchedAfter"]->Fill(binCenter);
+	    float binCenter = histo1D_["PtJetCut_nEventsBefore"]->GetBinCenter(i);
+	    histo1D_["PtJetCut_nEvents4PartonsMatchedBefore"]->Fill(binCenter);
+	    if(selectedJets_.size() > 3 && selectedJets_[leptonicBJet_.first]->Pt() > binCenter && selectedJets_[hadronicBJet_.first]->Pt() > binCenter &&
+	    selectedJets_[hadronicWJet1_.first]->Pt() > binCenter && selectedJets_[hadronicWJet2_.first]->Pt() > binCenter)
+	    histo1D_["PtJetCut_nEvents4PartonsMatchedAfter"]->Fill(binCenter);
 	    }
 	    
 	    if(all4JetsMatched_MCdef_){
-	      // all 4 jets found and matched, now do something with them!
+	    // all 4 jets found and matched, now do something with them!
 	      
-	      for(int i=1; i<=histo1D_["PtJetCut_nEventsBefore"]->GetNbinsX(); i++){
-		float binCenter = histo1D_["PtJetCut_nEventsBefore"]->GetBinCenter(i);
-		histo1D_["PtJetCut_nEvents4JetsMatchedBefore"]->Fill(binCenter);
-		if(selectedJets_.size() > 3 && selectedJets_[3]->Pt() > binCenter)
-		  histo1D_["PtJetCut_nEvents4JetsMatchedAfter"]->Fill(binCenter);
-	      }
+	    for(int i=1; i<=histo1D_["PtJetCut_nEventsBefore"]->GetNbinsX(); i++){
+	    float binCenter = histo1D_["PtJetCut_nEventsBefore"]->GetBinCenter(i);
+	    histo1D_["PtJetCut_nEvents4JetsMatchedBefore"]->Fill(binCenter);
+	    if(selectedJets_.size() > 3 && selectedJets_[3]->Pt() > binCenter)
+	    histo1D_["PtJetCut_nEvents4JetsMatchedAfter"]->Fill(binCenter);
+	    }
 	    }
 	    }*/
 
@@ -1340,105 +1367,165 @@ int main (int argc, char *argv[])
 		  Mne(1,1) = pow(9999.,2);
 		  Mne(2,2) = pow(resFitNeutrino->PhiResolution(&neutrinoKinFit),2);
 
-		  float WMassConstraintFit;
-		  float TopMassConstraintFit;
-		  float LeptTopMassConstraintFit;
-		  for(int ii = 0; ii<2; ii++){
-		    if(ii == 0){
-		      WMassConstraintFit = WMassKinFit;
-		      TopMassConstraintFit = TopMassKinFit; //Different mass for MC and Data!!
-		    }
-		    else{
-		      WMassConstraintFit = MassW;
-		      TopMassConstraintFit = MassTop;
-		    }		    
-            		
-		    TKinFitter *theFitter = new TKinFitter("hadtopFit", "hadtopFit");
-		    TKinFitter *theFullFitter = new TKinFitter("hadAndLepTopFit", "hadAndLepTopFit");
-		    theFitter->setVerbosity(0);
-		    theFullFitter->setVerbosity(0);
-		
-		    TFitParticleEtThetaPhiEMomFix *fitLight1 = new TFitParticleEtThetaPhiEMomFix("lightJet1", "lightJet1", &lightJet1, &Ml1);
-		    TFitParticleEtThetaPhiEMomFix *fitLight2 = new TFitParticleEtThetaPhiEMomFix("lightJet2", "lightJet2", &lightJet2, &Ml2);
-		    TFitParticleEtThetaPhiEMomFix *fitBHadr = new TFitParticleEtThetaPhiEMomFix("bHadrJet", "bHadrJet", &bHadrJet, &Mbh);
-		    TFitParticleEtThetaPhiEMomFix *fitBLept = new TFitParticleEtThetaPhiEMomFix("bLeptJet", "bLeptJet", &bLeptJet, &Mbl);
-		    TFitParticleEtThetaPhiEMomFix *fitLepton = new TFitParticleEtThetaPhiEMomFix("leptonKinFit", "leptonKinFit", &leptonKinFit, &Mlep);
-		    TFitParticleEtThetaPhi *fitNeutrino = new TFitParticleEtThetaPhi("neutrinoKinFit", "neutrinoKinFit", &neutrinoKinFit, &Mne);
-		    theFitter->addMeasParticles(fitLight1,fitLight2,fitBHadr);
-		    theFullFitter->addMeasParticles(fitLight1,fitLight2,fitBHadr,fitBLept,fitLepton,fitNeutrino);
+		  //Only looking at theoretical masses since fitted and theoretical masses had only very small differences!!
+		  float WMassConstraintFit = WMassKinFit;
+		  float TopMassConstraintFit = TopMassKinFit;  //Different mass for MC and Data!!
 		  
-		    TFitConstraintM *consWHadr = new TFitConstraintM("WBosonMassHadr", "MassConstraintHadr", 0, 0, WMassConstraintFit);
-		    TFitConstraintM *consTopHadr = new TFitConstraintM("TopQuarkMassHadr", "MassConstraintHadr", 0, 0, TopMassConstraintFit );
-		    TFitConstraintM *consWLept = new TFitConstraintM("WBosonMassLept", "MassConstraintLept", 0, 0, WMassConstraintFit);
-		    TFitConstraintM *consTopLept = new TFitConstraintM("TopQuarkMassLept", "MassConstraintLept", 0, 0, TopMassConstraintFit );
-		    consWHadr->addParticles1(fitLight1,fitLight2);
-		    consTopHadr->addParticles1(fitBHadr,fitLight1,fitLight2);
-		    consWLept->addParticles1(fitLepton,fitNeutrino);
-		    consTopLept->addParticles1(fitBLept,fitLepton,fitNeutrino);	
-		
-		    theFitter->addConstraint(consWHadr);
-		    theFitter->addConstraint(consTopHadr);
-		    theFullFitter->addConstraint(consWHadr);
-		    theFullFitter->addConstraint(consTopHadr);
-		    theFullFitter->addConstraint(consWLept);
-		    //Only apply leptonic top mass constraint in the theoretical value case!!!
-		    if(ii==0){theFullFitter->addConstraint(consTopLept);}
-		    
-		    theFitter->setMaxNbIter(200);
-		    theFitter->setMaxDeltaS(5e-5);
-		    theFitter->setMaxF(1e-4);
-		    theFullFitter->setMaxNbIter(200);
-		    theFullFitter->setMaxDeltaS(5e-5);
-		    theFullFitter->setMaxF(1e-4);
-		
-		    //-----------------------------------
-		    // Execution of hadronic fitter:
-		    //-----------------------------------
-		    theFitter->fit();
-		    if(theFitter->getStatus() == 0){ChiSquared[ii].push_back(theFitter->getS());}// if the fitter converged
-		    else{ChiSquared[ii].push_back(9999);}	//Need to push_back 9999 in stead of -9999 to avoid that this configuration is selected as the one with the lowest ChiSquare value
+		  TKinFitter *HadronicFitter = new TKinFitter("hadronicFit", "hadronicFit");
+		  TKinFitter *HadronicAndLeptonicWOnlyFitter = new TKinFitter("hadrAndLeptWOnlyFit", "hadrAndLeptWOnlyFit");
+		  TKinFitter *HadronicAndLeptonicFitter = new TKinFitter("hadrAndLeptFit", "hadrAndLeptFit");
+		  HadronicFitter->setVerbosity(0);
+		  HadronicAndLeptonicWOnlyFitter->setVerbosity(0);
+		  HadronicAndLeptonicFitter->setVerbosity(0);
+		  
+		  TFitParticleEtThetaPhiEMomFix *fitLight1 = new TFitParticleEtThetaPhiEMomFix("lightJet1", "lightJet1", &lightJet1, &Ml1);
+		  TFitParticleEtThetaPhiEMomFix *fitLight2 = new TFitParticleEtThetaPhiEMomFix("lightJet2", "lightJet2", &lightJet2, &Ml2);
+		  TFitParticleEtThetaPhiEMomFix *fitBHadr = new TFitParticleEtThetaPhiEMomFix("bHadrJet", "bHadrJet", &bHadrJet, &Mbh);
+		  TFitParticleEtThetaPhiEMomFix *fitBLept = new TFitParticleEtThetaPhiEMomFix("bLeptJet", "bLeptJet", &bLeptJet, &Mbl);
+		  TFitParticleEtThetaPhiEMomFix *fitLepton = new TFitParticleEtThetaPhiEMomFix("leptonKinFit", "leptonKinFit", &leptonKinFit, &Mlep);
+		  TFitParticleEtThetaPhi *fitNeutrino = new TFitParticleEtThetaPhi("neutrinoKinFit", "neutrinoKinFit", &neutrinoKinFit, &Mne);
+		  HadronicFitter->addMeasParticles(fitLight1,fitLight2,fitBHadr);
+		  HadronicAndLeptonicWOnlyFitter->addMeasParticles(fitLight1,fitLight2,fitBHadr,fitLepton,fitNeutrino);
+		  HadronicAndLeptonicFitter->addMeasParticles(fitLight1,fitLight2,fitBHadr,fitLepton,fitNeutrino,fitBLept);
+		  
+		  TFitConstraintM *consWHadr = new TFitConstraintM("WBosonMassHadr", "MassConstraintHadr", 0, 0, WMassConstraintFit);
+		  TFitConstraintM *consTopHadr = new TFitConstraintM("TopQuarkMassHadr", "MassConstraintHadr", 0, 0, TopMassConstraintFit );
+		  TFitConstraintM *consWLept = new TFitConstraintM("WBosonMassLept", "MassConstraintLept", 0, 0, WMassConstraintFit);
+		  TFitConstraintM *consTopLept = new TFitConstraintM("TopQuarkMassLept", "MassConstraintLept", 0, 0, TopMassConstraintFit );
+		  consWHadr->addParticles1(fitLight1,fitLight2);
+		  consTopHadr->addParticles1(fitBHadr,fitLight1,fitLight2);
+		  consWLept->addParticles1(fitLepton,fitNeutrino);
+		  consTopLept->addParticles1(fitBLept,fitLepton,fitNeutrino);	
+		  
+		  HadronicFitter->addConstraint(consWHadr);
+		  HadronicFitter->addConstraint(consTopHadr);
+		  HadronicFitter->setMaxNbIter(200);
+		  HadronicFitter->setMaxDeltaS(5e-5);
+		  HadronicFitter->setMaxF(1e-4);		    
+		  
+		  HadronicAndLeptonicWOnlyFitter->addConstraint(consWHadr);
+		  HadronicAndLeptonicWOnlyFitter->addConstraint(consTopHadr);
+		  HadronicAndLeptonicWOnlyFitter->addConstraint(consWLept);
+		  HadronicAndLeptonicWOnlyFitter->setMaxNbIter(200);
+		  HadronicAndLeptonicWOnlyFitter->setMaxDeltaS(5e-5);
+		  HadronicAndLeptonicWOnlyFitter->setMaxF(1e-4);
+		  
+		  HadronicAndLeptonicFitter->addConstraint(consWHadr);
+		  HadronicAndLeptonicFitter->addConstraint(consTopHadr);
+		  HadronicAndLeptonicFitter->addConstraint(consWLept);
+		  HadronicAndLeptonicFitter->addConstraint(consTopLept);	
+		  HadronicAndLeptonicFitter->setMaxNbIter(200);
+		  HadronicAndLeptonicFitter->setMaxDeltaS(5e-5);
+		  HadronicAndLeptonicFitter->setMaxF(1e-4);
+		  
+		  //-----------------------------------
+		  // Execution of hadronic fitter:
+		  //-----------------------------------
+		  HadronicFitter->fit();
+		  if(HadronicFitter->getStatus() == 0){chiSqKinFitHadr.push_back(HadronicFitter->getS());}// if the fitter converged
+		  else{chiSqKinFitHadr.push_back(9999);} //Need to push_back 9999 in stead of -9999 to avoid that this configuration is selected as the one with the lowest ChiSquare value
+		  // cout << " chi sq for hadronic kinFit : " << HadronicFitter->getS() << endl;
+		  // cout << "                              " << chiSqKinFitHadr[NumberCombinations] << endl;
 
-		    fittedLepton[ii].push_back( *(fitLepton->getCurr4Vec()) );
-		    fittedNeutrino[ii].push_back( *(fitNeutrino->getCurr4Vec()) );
-		    fittedBLept[ii].push_back( *(fitBLept->getCurr4Vec()) );
-		    fittedBHadr[ii].push_back( *(fitBHadr->getCurr4Vec()) );
-		    fittedLight1[ii].push_back( *(fitLight1->getCurr4Vec()) );
-		    fittedLight2[ii].push_back( *(fitLight2->getCurr4Vec()) );		    
+		  light1KinFitHadr.push_back( *(fitLight1->getCurr4Vec()) );
+		  light2KinFitHadr.push_back( *(fitLight2->getCurr4Vec()) );
+		  hadrBKinFitHadr.push_back( *(fitBHadr->getCurr4Vec()) );
+		  
+		  MSPlot["ChiSqHadr"]->Fill(chiSqKinFitHadr[NumberCombinations], datasets[d], true, Luminosity*scaleFactor);
+		  if(HadronicFitter->getStatus() == 0){
+		    MSPlot["LeptWHadr"]->Fill((leptonKinFit+neutrinoKinFit).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["LeptTopHadr"]->Fill((leptonKinFit+neutrinoKinFit+bLeptJet).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["HadrWHadr"]->Fill((light1KinFitHadr[NumberCombinations]+light2KinFitHadr[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["HadrTopHadr"]->Fill((light1KinFitHadr[NumberCombinations]+light2KinFitHadr[NumberCombinations]+hadrBKinFitHadr[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    if( (dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_semiEl") == 0 && semiElectron == true)){
+		      histo1D["LeptWHadr"]->Fill((leptonKinFit+neutrinoKinFit).M());
+		      histo1D["LeptTopHadr"]->Fill((leptonKinFit+neutrinoKinFit+bLeptJet).M());
+		      histo1D["HadrWHadr"]->Fill((light1KinFitHadr[NumberCombinations]+light2KinFitHadr[NumberCombinations]).M());
+		      histo1D["HadrTopHadr"]->Fill((light1KinFitHadr[NumberCombinations]+light2KinFitHadr[NumberCombinations]+hadrBKinFitHadr[NumberCombinations]).M());
+		    }
+		  }
+		  
+		  //-------------------------------------------
+		  // Execution of hadronic+leptonicWOnly fitter:
+		  //-------------------------------------------
+		  HadronicAndLeptonicWOnlyFitter->fit();
+		  if(HadronicAndLeptonicWOnlyFitter->getStatus() == 0){chiSqKinFitHadrAndLeptWOnly.push_back(HadronicAndLeptonicWOnlyFitter->getS());}		 
+		  else{chiSqKinFitHadrAndLeptWOnly.push_back(9999);}
+		  // cout << " Chi sq of hadronic and leptonic W Only KinFit : " << HadronicAndLeptonicWOnlyFitter->getS() << endl;
+		  // cout << "                                                 " << chiSqKinFitHadrAndLeptWOnly[NumberCombinations] << endl;
 		    
-		    //-------------------------------------------
-		    // Execution of hadronic+leptonic fitter:
-		    //-------------------------------------------
-		    theFullFitter->fit();
-		    if( theFullFitter->getStatus() == 0){ChiSquaredFull[ii].push_back(theFitter->getS());}
-		    else{ChiSquaredFull[ii].push_back(9999);}
-		    
-		    fittedFullLepton[ii].push_back( *(fitLepton->getCurr4Vec()) );
-		    fittedFullNeutrino[ii].push_back( *(fitNeutrino->getCurr4Vec()) );
-		    fittedFullBLept[ii].push_back( *(fitBLept->getCurr4Vec()) );
-		    fittedFullBHadr[ii].push_back( *(fitBHadr->getCurr4Vec()) );
-		    fittedFullLight1[ii].push_back( *(fitLight1->getCurr4Vec()) );
-		    fittedFullLight2[ii].push_back( *(fitLight2->getCurr4Vec()) );
+		  leptonKinFitHadrAndLeptW.push_back( *(fitLepton->getCurr4Vec()) );
+		  neutrinoKinFitHadrAndLeptW.push_back( *(fitNeutrino->getCurr4Vec()) );
+		  hadrBKinFitHadrAndLeptW.push_back( *(fitBHadr->getCurr4Vec()) );
+		  light1KinFitHadrAndLeptW.push_back( *(fitLight1->getCurr4Vec()) );
+		  light2KinFitHadrAndLeptW.push_back( *(fitLight2->getCurr4Vec()) );
+
+		  MSPlot["ChiSqHadrAndLeptWOnly"]->Fill(chiSqKinFitHadrAndLeptWOnly[NumberCombinations], datasets[d], true, Luminosity*scaleFactor);
+		  if(HadronicAndLeptonicWOnlyFitter->getStatus() == 0){
+		    MSPlot["LeptWHadrAndLeptWOnly"]->Fill((leptonKinFitHadrAndLeptW[NumberCombinations]+neutrinoKinFitHadrAndLeptW[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["LeptTopHadrAndLeptWOnly"]->Fill((leptonKinFitHadrAndLeptW[NumberCombinations]+neutrinoKinFitHadrAndLeptW[NumberCombinations]+bLeptJet).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["HadrWHadrAndLeptWOnly"]->Fill((light1KinFitHadrAndLeptW[NumberCombinations]+light2KinFitHadrAndLeptW[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["HadrTopHadrAndLeptWOnly"]->Fill((light1KinFitHadrAndLeptW[NumberCombinations]+light2KinFitHadrAndLeptW[NumberCombinations]+hadrBKinFitHadrAndLeptW[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    if( (dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_semiEl") == 0 && semiElectron == true)){
+		      histo1D["LeptWHadrAndLeptWOnly"]->Fill((leptonKinFitHadrAndLeptW[NumberCombinations]+neutrinoKinFitHadrAndLeptW[NumberCombinations]).M());
+		      histo1D["LeptTopHadrAndLeptWOnly"]->Fill((leptonKinFitHadrAndLeptW[NumberCombinations]+neutrinoKinFitHadrAndLeptW[NumberCombinations]+bLeptJet).M());
+		      histo1D["HadrWHadrAndLeptWOnly"]->Fill((light1KinFitHadrAndLeptW[NumberCombinations]+light2KinFitHadrAndLeptW[NumberCombinations]).M());
+		      histo1D["HadrTopHadrAndLeptWOnly"]->Fill((light1KinFitHadrAndLeptW[NumberCombinations]+light2KinFitHadrAndLeptW[NumberCombinations]+hadrBKinFitHadrAndLeptW[NumberCombinations]).M());
+		    }
+		  }
+
+		  //-------------------------------------------
+		  // Execution of hadronic+leptonic fitter:
+		  //-------------------------------------------
+		  HadronicAndLeptonicFitter->fit();
+		  if(HadronicAndLeptonicFitter->getStatus() == 0){chiSqKinFitHadrAndLept.push_back(HadronicAndLeptonicFitter->getS());}
+		  else{chiSqKinFitHadrAndLept.push_back(9999);}
+		  // cout << " Chi sq of hadronic and leptonic KinFit : " << HadronicAndLeptonicFitter->getS() << " with status : " << HadronicAndLeptonicFitter->getStatus() << endl;
+		  // cout << "                                          " << chiSqKinFitHadrAndLept[NumberCombinations] << endl;
+	    
+		  leptonKinFitHadrAndLept.push_back( *(fitLepton->getCurr4Vec()) );
+		  neutrinoKinFitHadrAndLept.push_back( *(fitNeutrino->getCurr4Vec()) );
+		  leptBKinFitHadrAndLept.push_back( *(fitBLept->getCurr4Vec()) );
+		  hadrBKinFitHadrAndLept.push_back( *(fitBHadr->getCurr4Vec()) );
+		  light1KinFitHadrAndLept.push_back( *(fitLight1->getCurr4Vec()) );
+		  light2KinFitHadrAndLept.push_back( *(fitLight2->getCurr4Vec()) );
+
+		  MSPlot["ChiSqHadrAndLept"]->Fill(chiSqKinFitHadrAndLept[NumberCombinations], datasets[d], true, Luminosity*scaleFactor);
+		  if(HadronicAndLeptonicFitter->getStatus() == 0){
+		    MSPlot["LeptWHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["LeptTopHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]+leptBKinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["HadrWHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    MSPlot["HadrTopHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]+hadrBKinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
+		    if( (dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_semiEl") == 0 && semiElectron == true)){
+		      histo1D["LeptWHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]).M());
+		      histo1D["LeptTopHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]+leptBKinFitHadrAndLept[NumberCombinations]).M());
+		      histo1D["HadrWHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]).M());
+		      histo1D["HadrTopHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]+hadrBKinFitHadrAndLept[NumberCombinations]).M());
+		    }
+		  }
 		    		    		
-		    delete theFitter;
-		    delete theFullFitter;
-		    delete fitLight1;
-		    delete fitLight2;
-		    delete fitBHadr;
-		    delete fitBLept;
-		    delete fitLepton;
-		    delete fitNeutrino;
-		    delete consWHadr;
-		    delete consTopHadr;
-		    delete consWLept;
-		    delete consTopLept;
+		  delete HadronicFitter;
+		  delete HadronicAndLeptonicWOnlyFitter;
+		  delete HadronicAndLeptonicFitter;
 
-		  }//end of loop for mass constraint fit for two different mass options (fixed value or value obtained from fit)
-		
+		  delete fitLight1;
+		  delete fitLight2;
+		  delete fitBHadr;
+		  delete fitBLept;
+		  delete fitLepton;
+		  delete fitNeutrino;
+		  delete consWHadr;
+		  delete consTopHadr;
+		  delete consWLept;
+		  delete consTopLept;
+		  
 		  NumberCombinations++;
-	        }
+		}
 	      }//end of k loop for jet combination selection
 	    }//end of j loop for jet combination selection
-	  }//end of i loop for jet combination selection		
+	  }//end of i loop for jet combination selection
+	  // cout << " Size of chi squared vectors : " << chiSqKinFitHadr.size() << " , " << chiSqKinFitHadrAndLeptWOnly.size() << " & " << chiSqKinFitHadrAndLept.size() << endl;
+	  // cout << " " << endl;
 	  
 	  //oooooooooOOOOOOOOOOOOOOOooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOOOOOO
 	  //           Initialize and define all variables necessary for WTree
@@ -1461,7 +1548,7 @@ int main (int argc, char *argv[])
 	  }
 
 	  //Initialize jetCombi values for not SemiMu sample:
-	  if(dataSetName.find("TTbarJets_SemiMu") != 0){
+	  if((dataSetName.find("TTbarJets_SemiMu") != 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") != 0 && semiElectron == true)){
 	    jetCombi.push_back(-9999);
 	    jetCombi.push_back(-9999);
 	    jetCombi.push_back(-9999);
@@ -1479,11 +1566,10 @@ int main (int argc, char *argv[])
 	  wTree->setNPUBXp1(event->nPu(1));
 
 	  //Store KinFit results:
-	  wTree->setKinFitResults(ChiSquared[0],fittedLepton[0],fittedNeutrino[0],fittedBLept[0],fittedBHadr[0],fittedLight1[0],fittedLight2[0]);
-	  wTree->setFullKinFitResults(ChiSquaredFull[0],fittedFullLepton[0],fittedFullNeutrino[0],fittedFullBLept[0],fittedFullBHadr[0],fittedFullLight1[0],fittedFullLight2[0]);
-	  wTree->setKinFitResultsMassFit(ChiSquared[1],fittedLepton[1],fittedNeutrino[1],fittedBLept[1],fittedBHadr[1],fittedLight1[1],fittedLight2[1]);
-	  wTree->setFullKinFitResultsMassFit(ChiSquaredFull[1],fittedFullLepton[1],fittedFullNeutrino[1],fittedFullBLept[1],fittedFullBHadr[1],fittedFullLight1[1],fittedFullLight2[1]);
-	  
+	  wTree->setKinFitHadr(chiSqKinFitHadr, hadrBKinFitHadr, light1KinFitHadr, light2KinFitHadr);
+	  wTree->setKinFitHadrAndLeptWOnly(chiSqKinFitHadrAndLeptWOnly, leptonKinFitHadrAndLeptW, neutrinoKinFitHadrAndLeptW, hadrBKinFitHadrAndLeptW, light1KinFitHadrAndLeptW, light2KinFitHadrAndLeptW);
+	  wTree->setKinFitHadrAndLept(chiSqKinFitHadrAndLept, leptonKinFitHadrAndLept, neutrinoKinFitHadrAndLept, leptBKinFitHadrAndLept, hadrBKinFitHadrAndLept, light1KinFitHadrAndLept, light2KinFitHadrAndLept);
+
 	  //Store the correct jet combinations:
 	  wTree->setHadrBJet( jetCombi[2] );
 	  wTree->setHadrLJet1( jetCombi[0] );
@@ -1493,7 +1579,8 @@ int main (int argc, char *argv[])
 	  //Store the selected particles:
 	  wTree->setMET( *mets[0] );
 	  wTree->setSelectedJets( SelectedJets );
-	  wTree->setMuon( *selectedMuons[0] );
+	  if(semiMuon == true) wTree->setLepton( *selectedMuons[0] );
+	  else if(semiElectron == true) wTree->setLepton( *selectedElectrons[0] );
 
 	  //Store bTag values:
 	  wTree->setBTagTCHE(TCHEbTagValues);  
@@ -1544,27 +1631,27 @@ int main (int argc, char *argv[])
     //  Executing fits          //
     //////////////////////////////
 
-    if(dataSetName.find("TTbarJets_SemiMu") == 0 && !CalculateResolutions){
-      histo1D["WMass"]->Fit("gaus","Q");     
-      histo1D["TopMass"]->Fit("gaus","Q");
-      histo1D["WMassLept"]->Fit("gaus","Q");     
-      histo1D["TopMassLept"]->Fit("gaus","Q");
-      histo1D["WMass"]->Fit("gaus","Q","",histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMass"]->GetFunction("gaus")->GetParameter(2),histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMass"]->GetFunction("gaus")->GetParameter(2));
-      histo1D["TopMass"]->Fit("gaus","Q","",histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2));
-      histo1D["WMassLept"]->Fit("gaus","Q","",histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2));
-      histo1D["TopMassLept"]->Fit("gaus","Q","",histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2));
+    // if(((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true) )&& !CalculateResolutions){
+    //   histo1D["WMass"]->Fit("gaus","Q");     
+    //   histo1D["TopMass"]->Fit("gaus","Q");
+    //   histo1D["WMassLept"]->Fit("gaus","Q");     
+    //   histo1D["TopMassLept"]->Fit("gaus","Q");
+    //   histo1D["WMass"]->Fit("gaus","Q","",histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMass"]->GetFunction("gaus")->GetParameter(2),histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMass"]->GetFunction("gaus")->GetParameter(2));
+    //   histo1D["TopMass"]->Fit("gaus","Q","",histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2));
+    //   histo1D["WMassLept"]->Fit("gaus","Q","",histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2));
+    //   histo1D["TopMassLept"]->Fit("gaus","Q","",histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2));
       
-      std::cout << " sigma values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(2) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2) << " Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2) << std::endl;
-      std::cout << " mass values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(1) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1) << " , Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1) << std::endl;
+    //   std::cout << " sigma values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(2) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2) << " Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2) << std::endl;
+    //   std::cout << " mass values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(1) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1) << " , Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1) << std::endl;
       
-      histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
-      histo1D["StandardCosThetaFit"]->SetMinimum(0);
-      histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
-      TF1 *helicityFit = new TF1("helicityFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
-      histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
-      std::cout << " fit values (before event selection) : " << helicityFit->GetParameter(0) << " " << helicityFit->GetParameter(1) << " " << helicityFit->GetParameter(2) << std::endl;
-      std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
-    }
+    //   histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
+    //   histo1D["StandardCosThetaFit"]->SetMinimum(0);
+    //   histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
+    //   TF1 *helicityFit = new TF1("helicityFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+    //   histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
+    //   std::cout << " fit values (before event selection) : " << helicityFit->GetParameter(0) << " " << helicityFit->GetParameter(1) << " " << helicityFit->GetParameter(2) << std::endl;
+    //   std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
+    // }
     
     WTreeFile->cd();
       
@@ -1615,7 +1702,7 @@ int main (int argc, char *argv[])
   if (verbose > 1)
     cout << " - Writing outputs on files ..." << endl;  
     
-  string pathPNG = "PlotsMacro";
+  string pathPNG = "PlotsMacroTree";
   if (argc >= 3){
     string sample=string(argv[2]);
     pathPNG = pathPNG+"_"+sample;
