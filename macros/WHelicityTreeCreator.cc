@@ -679,7 +679,9 @@ int main (int argc, char *argv[])
 	      //  HLT_IsoMu17_v11       167281-167913                         222.84(/pb)   222.84(/pb)
 	    } 
 	    else {
-	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun); MuonTriggerValue = 17;
+	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun); MuonTriggerValue = 24;
+	      if(itriggerSemiMu == 9999){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun); MuonTriggerValue = 17;}
 	      if (itriggerSemiMu == 9999){
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); MuonTriggerValue = 17;}// Spring11: HLT_Mu15_v1
 	      if (itriggerSemiMu == 9999){
@@ -1631,27 +1633,27 @@ int main (int argc, char *argv[])
     //  Executing fits          //
     //////////////////////////////
 
-    // if(((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true) )&& !CalculateResolutions){
-    //   histo1D["WMass"]->Fit("gaus","Q");     
-    //   histo1D["TopMass"]->Fit("gaus","Q");
-    //   histo1D["WMassLept"]->Fit("gaus","Q");     
-    //   histo1D["TopMassLept"]->Fit("gaus","Q");
-    //   histo1D["WMass"]->Fit("gaus","Q","",histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMass"]->GetFunction("gaus")->GetParameter(2),histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMass"]->GetFunction("gaus")->GetParameter(2));
-    //   histo1D["TopMass"]->Fit("gaus","Q","",histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2));
-    //   histo1D["WMassLept"]->Fit("gaus","Q","",histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2));
-    //   histo1D["TopMassLept"]->Fit("gaus","Q","",histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2));
+    if(((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true) )&& !CalculateResolutions){
+      histo1D["WMass"]->Fit("gaus","Q");     
+      histo1D["TopMass"]->Fit("gaus","Q");
+      histo1D["WMassLept"]->Fit("gaus","Q");     
+      histo1D["TopMassLept"]->Fit("gaus","Q");
+      histo1D["WMass"]->Fit("gaus","Q","",histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMass"]->GetFunction("gaus")->GetParameter(2),histo1D["WMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMass"]->GetFunction("gaus")->GetParameter(2));
+      histo1D["TopMass"]->Fit("gaus","Q","",histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2));
+      histo1D["WMassLept"]->Fit("gaus","Q","",histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2));
+      histo1D["TopMassLept"]->Fit("gaus","Q","",histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)-histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2),histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1)+histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2));
       
-    //   std::cout << " sigma values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(2) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2) << " Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2) << std::endl;
-    //   std::cout << " mass values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(1) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1) << " , Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1) << std::endl;
+      std::cout << " sigma values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(2) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(2) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(2) << " Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(2) << std::endl;
+      std::cout << " mass values : W = " << histo1D["WMass"]->GetFunction("gaus")->GetParameter(1) << " , Top = " << histo1D["TopMass"]->GetFunction("gaus")->GetParameter(1) << " W lept = " << histo1D["WMassLept"]->GetFunction("gaus")->GetParameter(1) << " , Top lept = " << histo1D["TopMassLept"]->GetFunction("gaus")->GetParameter(1) << std::endl;
       
-    //   histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
-    //   histo1D["StandardCosThetaFit"]->SetMinimum(0);
-    //   histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
-    //   TF1 *helicityFit = new TF1("helicityFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
-    //   histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
-    //   std::cout << " fit values (before event selection) : " << helicityFit->GetParameter(0) << " " << helicityFit->GetParameter(1) << " " << helicityFit->GetParameter(2) << std::endl;
-    //   std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
-    // }
+      histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
+      histo1D["StandardCosThetaFit"]->SetMinimum(0);
+      histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
+      TF1 *helicityFit = new TF1("helicityFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
+      std::cout << " fit values (before event selection) : " << helicityFit->GetParameter(0) << " " << helicityFit->GetParameter(1) << " " << helicityFit->GetParameter(2) << std::endl;
+      std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
+    }
     
     WTreeFile->cd();
       
