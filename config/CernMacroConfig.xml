@@ -47,13 +47,13 @@ beta_QCD = 2.09
 <!--
 <d name="WJets" title="WJets" add="1" color="2" ls="1" lw="2" normf="1" xsection="31314" EqLumi="2483.6457" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131351_TOPTREE/TopTree_Skimmed_*.root"/>
 
-<d name="W1Jets" title="W1Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="" EqLumi="" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W1Jet_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_03042012_171930_TOPTREE/TopTree_Skimmed_*.root"/>
+<d name="W1Jets" title="W1Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="5014.6" EqLumi="13354.9" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W1Jet_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_03042012_171930_TOPTREE/TopTree_Skimmed_*.root"/>
 
-<d name="W2Jets" title="W2Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="" EqLumi="" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W2Jets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_09032012_154231_TOPTREE/TopTree_Skimmed_*.root"/>
+<d name="W2Jets" title="W2Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="1610.3" EqLumi="15614.0" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W2Jets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_09032012_154231_TOPTREE/TopTree_Skimmed_*.root"/>
 
-<d name="W3Jets" title="W3Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="" EqLumi="" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W3Jets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_09032012_154236_TOPTREE/TopTree_Skimmed_*.root"/>
+<d name="W3Jets" title="W3Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="342.6" EqLumi="19394.9" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W3Jets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_09032012_154236_TOPTREE/TopTree_Skimmed_*.root"/>
 
-<d name="W4Jets" title="WJ4ets" add="1" color="2" ls="1" lw="2" normf="1" xsection="" EqLumi="" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W4Jets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_09032012_154241_TOPTREE/TopTree_Skimmed_*.root"/>
+<d name="W4Jets" title="WJ4ets" add="1" color="2" ls="1" lw="2" normf="1" xsection="193.6" EqLumi="66684.3" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_W4Jets_TuneZ2_7TeV-madgraph-tauola_Fall11-PU_S6_START42_V14B-v1_09032012_154241_TOPTREE/TopTree_Skimmed_*.root"/>
 
 <d name="ST_SingleTop_tChannel_tbar" title="SingleTop_t_Channel_tbar" add="1" color="7" ls="1" lw="2" normf="1" xsection="22.65" EqLumi="85862.3400" filenames="/user/aolbrech/Samples/CMSSW_4_2_8_patch7/Fall11/HLTPlus4Jets20_Tbar_TuneZ2_t-channel_7TeV-powheg-tauola_Fall11-PU_S6_START42_V14B-v1_22012012_131407_TOPTREE/TopTree_Skimmed_*.root"/>
 
