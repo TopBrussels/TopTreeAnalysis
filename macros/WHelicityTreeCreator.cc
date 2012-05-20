@@ -318,7 +318,7 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
 
-  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
+  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
 
   std::cout << " CalculateResolutions = " << CalculateResolutions << endl;
   
@@ -452,11 +452,11 @@ int main (int argc, char *argv[])
     vCorrParam.push_back(*L2JetPar);
     vCorrParam.push_back(*L3JetPar);
 
-    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
-      {
-	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
-	vCorrParam.push_back(*ResJetCorPar);
-      }
+    // if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
+    //   {
+    // 	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
+    // 	vCorrParam.push_back(*ResJetCorPar);
+    //   }
 
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
     
@@ -673,7 +673,7 @@ int main (int argc, char *argv[])
 	    } 
 	    else {
 	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun); MuonTriggerValue = 24;
-	      if(itriggerSemiMu == 9999){
+	      if (itriggerSemiMu == 999){
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun); MuonTriggerValue = 17;}
 	      if (itriggerSemiMu == 9999){
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); MuonTriggerValue = 17;}// Spring11: HLT_Mu15_v1
@@ -691,7 +691,8 @@ int main (int argc, char *argv[])
 	}  //End of triggers for semiMu case 
 	
 	else if(semiElectron == true){
-        if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 ) {
+
+        if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) {
           if( event->runId() <= 161176 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
           else if( event->runId() >= 161177 && event->runId() <= 163261 )
