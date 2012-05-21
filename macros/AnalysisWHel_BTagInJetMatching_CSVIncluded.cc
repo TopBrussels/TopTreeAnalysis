@@ -99,7 +99,7 @@ int main (int argc, char *argv[])
 
   //PU systematics:
   float PUSyst = 0;
-  string systematic = "";
+  string systematics = "";
   if(PUSyst == 1) systematics = "PUPlus";
   else if(PUSyst == -1) systematics = "PUMinus";
 
@@ -109,31 +109,33 @@ int main (int argc, char *argv[])
   if(semiMuon == true){decayChannel = "SemiMu";}
   else if(semiElectron == true){decayChannel = "SemiEl";}
 
-  string dataSet;
-  bool fullDataSet = true;
-  if(fullDataSet == true) dataSet = "Full2011_";
-  else dataSet ="";
+  //  string dataSet;
+  //  bool fullDataSet = true;
+  //  if(fullDataSet == true) dataSet = "Full2011_";
+  //  else dataSet ="";
 
   string UsedTrigger;
-  bool IsoMu172024Trigger = false;
-  bool TriCentralJet30Trigger = true;
+  bool IsoMu172024Trigger = true;
+  bool TriCentralJet30Trigger = false;
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
-    if(fullDataSet == true){ 
-      Luminosity = 4568.6810;
-      UsedTrigger = UsedTrigger+"_Full2011";
-    }
-    else Luminosity = 2141.961; 
+    //    if(fullDataSet == true){ 
+    Luminosity = 4568.6810;
+    UsedTrigger = UsedTrigger;
+    //    }
+    //    else Luminosity = 2141.961; 
   }
   else if(TriCentralJet30Trigger == true){
     UsedTrigger = "TriCentralJet30Trigger";
     if(semiMuon == true){
-      if(fullDataSet == true) Luminosity = 4656.959;
-      else Luminosity = 2145.959; 
+      //      if(fullDataSet == true) 
+      Luminosity = 4656.959;
+      //      else Luminosity = 2145.959; 
     }
     else if(semiElectron == true){
-      if(fullDataSet == true) Luminosity = 4665.744;
-      else Luminosity = 2161.744;
+      //      if(fullDataSet == true) 
+      Luminosity = 4665.744;
+      //      else Luminosity = 2161.744;
     }
   }
   else if(TriCentralJet30Trigger == false && IsoMu172024Trigger == false){
@@ -143,8 +145,8 @@ int main (int argc, char *argv[])
   cout << "Executing the W Helicities analysis for an integrated luminosity of " << Luminosity << " pb^-1" << endl;
 
   //Booleans to load in different root files
-  bool SignalOnly = true;
-  bool DataResults = false;
+  bool SignalOnly = false;
+  bool DataResults = true;
   bool JESMinusResults = false;
   bool JESPlusResults = false;
   bool WSystResults = false;
@@ -180,13 +182,13 @@ int main (int argc, char *argv[])
       if(IsoMu172024Trigger == true)
 	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
       else if(TriCentralJet30Trigger == true)
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSet+"Data_"+decayChannel+".root").c_str());
+	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
       nameDataSet.push_back("Data");
     }
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
     nameDataSet.push_back("ST_SingleTop_tChannel_tbar");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tChannel_t");
+    //    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+    //    nameDataSet.push_back("ST_SingleTop_tChannel_t");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
     nameDataSet.push_back("ST_SingleTop_tWChannel_tbar");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
@@ -196,8 +198,8 @@ int main (int argc, char *argv[])
     if(semiMuon == true){
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  //In muon channel case SemiEl is considered as background
       nameDataSet.push_back("TTbarJets_SemiEl");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Mu15_SemiMu.root").c_str());
-      nameDataSet.push_back("QCD_Mu15");
+      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Mu15_SemiMu.root").c_str());
+      //      nameDataSet.push_back("QCD_Mu15");
     }
     else if(semiElectron == true){
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
@@ -270,8 +272,7 @@ int main (int argc, char *argv[])
   //TTbarJets_SemiMuon sample should always be put as latest sample to avoid crash of TMinuitMinimizer !!
   if(semiMuon == true){
     //inputWTree.push_back(("WTree/KinFit_WTree_SHORTTEST_DRLep03_TriCentralJet30Trigger_TTbarJets_SemiMuon_SemiMu.root").c_str());
-    cout << " Using file : " << ("WTree/KinFit_WTree_SHORTTEST_DRLep03_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str() << endl;
-    inputWTree.push_back(("WTree/KinFit_WTree_SHORTTEST_DRLep03_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
     nameDataSet.push_back("TTbarJets_SemiMuon");
   }
   else if(semiElectron == true){
@@ -297,12 +298,12 @@ int main (int argc, char *argv[])
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
 
   string PresentationTexTitle;
-  PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+".tex").c_str();
-  if(DataResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+".tex").c_str();
-  if(JESMinusResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+"_JESMin.tex").c_str();
-  if(JESPlusResults == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+"_JESPlus.tex").c_str();
-  if(WSystResults == true && WSystPositive == false) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+"_WMin.tex").c_str();
-  if(WSystResults == true && WSystPositive == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+dataSet+decayChannel+AppliedCuts+"_WPlus.tex").c_str();
+  PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+".tex").c_str();
+  if(DataResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+".tex").c_str();
+  if(JESMinusResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_JESMin.tex").c_str();
+  if(JESPlusResults == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_JESPlus.tex").c_str();
+  if(WSystResults == true && WSystPositive == false) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_WMin.tex").c_str();
+  if(WSystResults == true && WSystPositive == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_WPlus.tex").c_str();
  
   ofstream PresentationTexHadr(("HadrKinFit/"+PresentationTexTitle).c_str());
   ofstream PresentationTexHadrAndLeptWOnly(("HadrAndLeptWOnlyKinFit/"+PresentationTexTitle).c_str());
@@ -527,7 +528,7 @@ int main (int argc, char *argv[])
   MSPlot["ChiSqHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLeptWOnly",50,0,50,"ChiSqHadrAndLeptWOnly");
   MSPlot["ChiSqHadrAndLept"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLept",50,0,50,"ChiSqHadrAndLept");
 
-  MSPlot["LeptWMassHadr"] = new MultiSamplePlot("datasets,LeptWMassHadr",40,0,150,"LeptWMassHadr");
+  MSPlot["LeptWMassHadr"] = new MultiSamplePlot(datasets,"LeptWMassHadr",40,0,150,"LeptWMassHadr");
   MSPlot["LeptTopMassHadr"] = new MultiSamplePlot(datasets,"LeptTopMassHadr",60,50,350,"LeptTopMassHadrAndLept");
   MSPlot["LeptWMassHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"LeptWMassHadrAndLeptWOnly",40,0,150,"LeptWMassHadr");
   MSPlot["LeptTopMassHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"LeptTopMassHadrAndLeptWOnly",60,50,350,"LeptTopMassHadrAndLept");
@@ -755,17 +756,16 @@ int main (int argc, char *argv[])
   //  LumiReWeighting LumiWeightsSpring11 = LumiReWeighting(Spring11MClumi, TrueDist2011);
   //  LumiReWeighting LumiWeights = LumiReWeighting(MClumi, TopDBDist2011Data);
   //LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
-  cout << " Lumi3D Reweighting stuff " << endl;
   Lumi3DReWeighting Lumi3DWeights;
-  if(fullDataSet == true) 
-    Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-  else if(fullDataSet == false) 
-    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+  //  if(fullDataSet == true) 
+  Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+    //  else if(fullDataSet == false) 
+    //    Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
 
   Lumi3DWeights.weight3D_init(1.0);
-  if(systematic == "PUMinus")
+  if(systematics == "PUMinus")
     Lumi3DWeights.weight3D_init(0.92);
-  else if(systematic == "PUPlus")
+  else if(systematics == "PUPlus")
     Lumi3DWeights.weight3D_init(1.08);
   
   PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
