@@ -118,6 +118,8 @@ int main (int argc, char *argv[])
     rootFileName = "MacroOutputIsoMu172024Trigger.root";
   }
 
+  //Discard last IsoMuTrigger part of 30 GeV (only 
+
   ////////////////////////
   //  Which systematics //
   ////////////////////////
@@ -629,36 +631,44 @@ int main (int argc, char *argv[])
 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_v9"), currentRun, iFile); MuonTriggerValue = 24;}
 
 	      // RUN2011B (promptv1)
+
+	      else if(event->runId() >= 175832 && event->runId() <= 178380){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+	      else if(event->runId() >= 178420 && event->runId() <= 179889){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 24;}
+	      else if(event->runId() >= 179959 && event->runId() <= 180252){
+		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v7"), currentRun, iFile); MuonTriggerValue = 24;}
+
 	      
-	      else if( event->runId() ==  176928 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
-	      else if( event->runId() == 176982 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() ==  176928 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() == 176982 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
 	      
-	      else if( event->runId() >= 175860 && event->runId() <= 176469 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
-	      else if( event->runId() >=  176548 && event->runId() <=  176702 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
-	      else if( event->runId() >=  176797 && event->runId() <=  176889 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
-	      else if( event->runId() >=  176929 && event->runId() <=  176959 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
-	      else if( event->runId() >=  177053 && event->runId() <=  177452 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+// 	      else if( event->runId() >= 175860 && event->runId() <= 176469 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+// 	      else if( event->runId() >=  176548 && event->runId() <=  176702 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+// 	      else if( event->runId() >=  176797 && event->runId() <=  176889 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+// 	      else if( event->runId() >=  176929 && event->runId() <=  176959 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
+// 	      else if( event->runId() >=  177053 && event->runId() <=  177452 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 24;}
 	      
-	      else if( event->runId() >=  176545 && event->runId() <=  176547 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
-	      else if( event->runId() >=  176765 && event->runId() <=  176796 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() >=  176545 && event->runId() <=  176547 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() >=  176765 && event->runId() <=  176796 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
 	      
-	      else if( event->runId() >=  177718 && event->runId() <=  178380 ){ // TopTree ID 804
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
-	      else if( event->runId() >=  178420 && event->runId() <=  178479 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;}
-	      else if( event->runId() >=  178703 && event->runId() <=  179889 ){ // TopTree ID 816
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;}
-	      else if( event->runId() >=  179959 && event->runId() <=  180252 ){
-		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() >=  177718 && event->runId() <=  178380 ){ // TopTree ID 804
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v3"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() >=  178420 && event->runId() <=  178479 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() >=  178703 && event->runId() <=  179889 ){ // TopTree ID 816
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v6"), currentRun, iFile); MuonTriggerValue = 30;}
+// 	      else if( event->runId() >=  179959 && event->runId() <=  180252 ){
+// 		itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu30_eta2p1_v7"), currentRun, iFile); MuonTriggerValue = 30;}
 	      
 	      else
 		cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
