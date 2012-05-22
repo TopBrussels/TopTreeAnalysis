@@ -120,7 +120,7 @@ int main (int argc, char *argv[])
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
     //    if(fullDataSet == true){ 
-    Luminosity = 4568.6810;
+    Luminosity = 4938.985;
     UsedTrigger = UsedTrigger;
     //    }
     //    else Luminosity = 2141.961; 
@@ -524,6 +524,11 @@ int main (int argc, char *argv[])
 
   cout << " colors defined " << endl;  
 
+  MSPlot["MetPhi"] = new MultiSamplePlot(datasets,"MetPhi",50,-4,4,"MetPhi");
+  MSPlot["NeutrinoHadrPhi"] = new MultiSamplePlot(datasets,"NeutrinoHadrPhi",50,-4,4,"NeutrinoHadrPhi");
+  MSPlot["NeutrinoHadrAndLeptWOnlyPhi"] = new MultiSamplePlot(datasets,"NeutrinoHadrAndLeptWOnlyPhi",50,-4,4,"NeutrinoHadrAndLeptWOnlyPhi");
+  MSPlot["NeutrinoHadrAndLeptPhi"] = new MultiSamplePlot(datasets,"NeutrinoHadrAndLeptPhi",50,-4,4,"NeutrinoHadrAndLeptPhi");
+
   MSPlot["ChiSqHadr"] = new MultiSamplePlot(datasets,"ChiSqHadr",50,0,50,"ChiSqHadr");
   MSPlot["ChiSqHadrAndLeptWOnly"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLeptWOnly",50,0,50,"ChiSqHadrAndLeptWOnly");
   MSPlot["ChiSqHadrAndLept"] = new MultiSamplePlot(datasets,"ChiSqHadrAndLept",50,0,50,"ChiSqHadrAndLept");
@@ -566,7 +571,7 @@ int main (int argc, char *argv[])
   MSPlot["TransverseMassBeforeCut"]=new MultiSamplePlot(datasets,"TransverseMassBeforeCut",50,0,200,"TransverseMassBeforeCut");
   MSPlot["TransverseMassAfterCut"]=new MultiSamplePlot(datasets,"TransverseMassAfterCut",50,0,200,"TransverseMassAfterCut"); 
   
-  MSPlot["RelIsoLepton"]=new MultiSamplePlot(datasets,"RelIsoLepton",50,0,200,"RelIsoLepton");
+  MSPlot["RelIsoLepton"]=new MultiSamplePlot(datasets,"RelIsoLepton",50,0,10,"RelIsoLepton");
   
   MSPlot["KinFitProbabilityHadr"]=new MultiSamplePlot(datasets,"KinFitProbabilityHadr",50,-1,1,"KinFitProbabilityHadr");  
   MSPlot["KinFitProbabilityHadrAndLeptWOnly"]=new MultiSamplePlot(datasets,"KinFitProbabilityHadrAndLeptWOnly",50,-1,1,"KinFitProbabilityHadrAndLeptWOnly");
@@ -604,6 +609,11 @@ int main (int argc, char *argv[])
   MSPlot["LeptonPx"]=new MultiSamplePlot(datasets,"LeptonPx",60,-20,20,"LeptonPx");
   MSPlot["LeptonPy"]=new MultiSamplePlot(datasets,"LeptonPy",60,-20,20,"LeptonPy");
   MSPlot["LeptonPz"]=new MultiSamplePlot(datasets,"LeptonPz",60,-20,20,"LeptonPz");
+
+  MSPlot["DeltaRJetLepton"] =new MultiSamplePlot(datasets,"DeltaRJetLepton",50,0,4,"DeltaRJetLepton");
+  MSPlot["DeltaRMuonJet"] =new MultiSamplePlot(datasets,"DeltaRMuonJet",50,0,4,"DeltaRMuonJet");
+  MSPlot["DeltaRElectronJet"] =new MultiSamplePlot(datasets,"DeltaRElectronJet",50,0,10,"DeltaRElectronJet");
+
     
   // Zie Code Stijn voor alle gebruikte controle plots
 
@@ -794,7 +804,6 @@ int main (int argc, char *argv[])
   int TotalNumberbTags = NumberTCHEbTags + 1 + NumberTCHPbTags+1 + NumberSSVHEbTags + 1 + NumberSSVHPbTags + 1 + NumberCSVbTags + 1;
   
   std::string bTagFileOutput[TotalNumberbTags];
-  int bTagBoolean[TotalNumberbTags];
   map<int, int[5]> ProcessedbTags;
   std::string PresentationOutput[TotalNumberbTags];
   int NumberRemainingEventsKinFitHadr[TotalNumberbTags][inputWTree.size()];
@@ -814,7 +823,6 @@ int main (int argc, char *argv[])
 	for(int ll=0;ll<14;ll++){
 	  for(int nn=0;nn<14;nn++){
 	    bTagFileOutput[ii+jj+kk+ll+nn]=" Wrong entry chosen";
-	    bTagBoolean[ii+jj+kk+ll+nn]=0;
 	    PresentationOutput[ii+jj+kk+ll+nn]=" Wrong entry chosen";
 	    for(int mm=0;mm<inputWTree.size();mm++){
 	      NumberRemainingEventsKinFitHadr[ii+jj+kk+ll+nn][mm]=0;
@@ -955,48 +963,40 @@ int main (int argc, char *argv[])
     int UsedSSVHE[TotalNumberbTags];
     int UsedSSVHP[TotalNumberbTags];
     int UsedCSV[TotalNumberbTags];
-    if(iDataSet==0){
-      while(CSVLoop<=NumberCSVbTags){
-	while(SSVHPLoop<=NumberSSVHPbTags){  
-	  while(SSVHELoop<=NumberSSVHEbTags){
-	    while(TCHPLoop<=NumberTCHPbTags){
-	      while(TCHELoop<=NumberTCHEbTags){
+    while(CSVLoop<=NumberCSVbTags){
+      while(SSVHPLoop<=NumberSSVHPbTags){  
+	while(SSVHELoop<=NumberSSVHEbTags){
+	  while(TCHPLoop<=NumberTCHPbTags){
+	    while(TCHELoop<=NumberTCHEbTags){
+	      if(iDataSet==0){
 		bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-		bTagBoolean[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = 1;
-		UsedTCHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHELoop;
-		UsedTCHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHPLoop;
-		UsedSSVHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHELoop;
-		UsedSSVHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHPLoop;
-		UsedCSV[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = CSVLoop;
-		
 		PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-		TCHELoop++;
-		if(TCHELoop == 14){TCHPLoop=2;SSVHELoop=2;SSVHPLoop=2;CSVLoop=2;}
 	      }
-	      bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	      bTagBoolean[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = 1;
 	      UsedTCHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHELoop;
 	      UsedTCHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHPLoop;
 	      UsedSSVHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHELoop;
 	      UsedSSVHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHPLoop;
 	      UsedCSV[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = CSVLoop;
 	      
-	      PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	      TCHPLoop++;
+	      TCHELoop++;
+	      if(TCHELoop == 14){TCHPLoop=2;SSVHELoop=2;SSVHPLoop=2;CSVLoop=2;}
 	    }
-	    bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	    bTagBoolean[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = 1;
+	    if(iDataSet==0){
+	      bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
+	      PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
+	    }
 	    UsedTCHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHELoop;
 	    UsedTCHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHPLoop;
 	    UsedSSVHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHELoop;
 	    UsedSSVHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHPLoop;
 	    UsedCSV[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = CSVLoop;
-
-	    PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	    SSVHELoop++;
+	    
+	    TCHPLoop++;
 	  }
-	  bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	  bTagBoolean[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = 1;
+	  if(iDataSet==0){
+	    bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
+	    PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
+	  }
 	  UsedTCHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHELoop;
 	  UsedTCHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHPLoop;
 	  UsedSSVHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHELoop;
@@ -1004,19 +1004,33 @@ int main (int argc, char *argv[])
 	  UsedCSV[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = CSVLoop;
 	  
 	  PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	  SSVHPLoop++;		
-	}	
-	bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	bTagBoolean[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = 1;
+	  SSVHELoop++;
+	}
+	if(iDataSet==0){
+	  bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
+	  PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
+	}
+
 	UsedTCHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHELoop;
 	UsedTCHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHPLoop;
 	UsedSSVHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHELoop;
 	UsedSSVHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHPLoop;
 	UsedCSV[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = CSVLoop;
 	
+	SSVHPLoop++;		
+      }	
+      if(iDataSet==0){
+	bTagFileOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGiving(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
 	PresentationOutput[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = bTagName.NameGivingPres(TCHELoop,NumberTCHEbTags,TCHPLoop,NumberTCHPbTags,SSVHELoop,NumberSSVHEbTags,SSVHPLoop,NumberSSVHPbTags,CSVLoop,NumberCSVbTags);
-	CSVLoop++;
       }
+      
+      UsedTCHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHELoop;
+      UsedTCHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = TCHPLoop;
+      UsedSSVHE[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHELoop;
+      UsedSSVHP[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = SSVHPLoop;
+      UsedCSV[TCHELoop-1+TCHPLoop-1+SSVHELoop-1+SSVHPLoop-1+CSVLoop-1] = CSVLoop;
+      
+      CSVLoop++;
     }
     
     /////////////////////////////////////////
@@ -1058,7 +1072,6 @@ int main (int argc, char *argv[])
       ////////////////////////////////////////////////////////////////
       //    Get variables from wTree needed for Analysis            //
       ////////////////////////////////////////////////////////////////
-
       //Primary vertices:
       float nPrimaryVertices = wTree->nPV();
           
@@ -1097,10 +1110,27 @@ int main (int argc, char *argv[])
 	histo1D["StandardCosThetaFit"]->Fill(CosThetaGenerator);  // Histogram with fit   	  
 	histo1D["StandardCosTheta"]->Fill(CosThetaGenerator);  // Histogram without fit   	  
       }
-                 
+
+      //Trigger variables:
+      int IsoMuTrigger = wTree->isoMuTriggerBool();
+      int MuonTriggerCut = wTree->muonTriggerValue();
+      int ElectronTriggerCut = wTree->electronTriggerValue();
+      //histo2D["IsoMuTrigger"]->Fill(wTree->eventID(),IsoMuTrigger);
+      //histo2D["MuonTriggerCut"]->Fill(wTree->eventID(),MuonTriggerCut);
+      //histo2D["ElectronTriggerCut"]->Fill(wTree->eventID(),ElectronTriggerCut);
+      
+      //Delta R variables:
+      float DeltaRJetLepton = wTree->deltaRJetLepton();
+      float DeltaRMuonJet = wTree->deltaRMuonJet();
+      float DeltaRElectronJet = wTree->deltaRElectronJet();
+      MSPlot["DeltaRJetLepton"]->Fill(DeltaRJetLepton,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+      MSPlot["DeltaRMuonJet"]->Fill(DeltaRMuonJet,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+      MSPlot["DeltaRElectronJet"]->Fill(DeltaRElectronJet, datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+                      
       vector<TLorentzVector> selectedJets = wTree->selectedJets();
       TLorentzVector lepton = wTree->lepton(); 
       TLorentzVector MET = wTree->met();
+      MSPlot["MetPhi"]->Fill(MET.Phi(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 
       //if(dataSetName.find("QCD") !=0){
       MSPlot["LeptonMass"]->Fill(lepton.M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
@@ -1117,7 +1147,7 @@ int main (int argc, char *argv[])
       vector<float> ChiSqKinFitHadrAndLept;
       vector<float> KinFitProbHadrAndLept;
       
-      //Original kinematics initializing:
+      //Original kinematics initializing:1
       vector<TLorentzVector> leptBJetOrigKins, hadrBJetOrigKins, light1JetOrigKins, light2JetOrigKins, leptonOrigKins, neutrinoOrigKins;  //Get this with different method??
       //Original kinematics should not change when different KinFit configuration is used to determine ChiSquared value !! 
       //  --> Only ChiSquared value should change !!
@@ -1135,7 +1165,7 @@ int main (int argc, char *argv[])
 	ChiSqKinFitHadr.push_back(wTree->hadrKinFitChiSq(iCombi)); 
 	MSPlot["ChiSqHadr"]->Fill(ChiSqKinFitHadr[iCombi], datasets[iDataSet], true, Luminosity*scaleFactor);
 	
-if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKinFitHadr[iCombi],2));
+	if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKinFitHadr[iCombi],2));
 	else KinFitProbHadr.push_back(-1.);
 	MSPlot["KinFitProbabilityHadr"]->Fill(KinFitProbHadr[iCombi], datasets[iDataSet], true, Luminosity);
 	// hadrBChangedHadr.push_back(wTree->hadrKinFitHadrB(iCombi));
@@ -1230,31 +1260,12 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
 	MSPlot["nPrimaryVert"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);    
 	
 	//if(dataSetName.find("QCD") != 0){
-	  MSPlot["Jet1Pt"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);    
-	  MSPlot["Jet2Pt"]->Fill(selectedJets[1].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
-	  MSPlot["Jet3Pt"]->Fill(selectedJets[2].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
-	  MSPlot["Jet4Pt"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	  
-	  //}
-	  
-	//-----------------------------------------------------
-	//    Reconstruction of correct jet distribution
-	//-----------------------------------------------------	  	
-	//if(dataSetName.find("QCD") != 0){
-	MSPlot["MetPhi"]->Fill(MET.Phi(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
-	//MSPlot["NeutrinoKinFitPhi"]->Fill(neutrinoKinFit[HighestProbComb].Phi(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
-	// //MSPlot["NeutrinoPhiDiff"]->Fill((genNeutrino.Phi()-neutrinoKinFit[HighestProbComb].Phi()),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
-	
-	MSPlot["MetPx"]->Fill(MET.Px(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);         
-	//MSPlot["NeutrinoKinFitPx"]->Fill(neutrinoKinFit[HighestProbComb].Px(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
-	// //MSPlot["NeutrinoPxDiff"]->Fill((genNeutrino.Px()-neutrinoKinFit[HighestProbComb].Px()),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
-	
-	MSPlot["MetPy"]->Fill(MET.Py(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
-	// MSPlot["NeutrinoKinFitPy"]->Fill(neutrinoKinFit[HighestProbComb].Py(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
-	// //MSPlot["NeutrinoPyDiff"]->Fill((genNeutrino.Py()-neutrinoKinFit[HighestProbComb].Py()),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
-	
-	// MSPlot["NeutrinoKinFitPz"]->Fill(neutrinoKinFit[HighestProbComb].Pz(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);  
+	MSPlot["Jet1Pt"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);    
+	MSPlot["Jet2Pt"]->Fill(selectedJets[1].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
+	MSPlot["Jet3Pt"]->Fill(selectedJets[2].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
+	MSPlot["Jet4Pt"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	  
 	//}
-	
+	  	
 	//-------------------------------------------------------------------------------
 	//Create some alternative helicites weights to obtain different ratios:
 	//-------------------------------------------------------------------------------
@@ -1365,6 +1376,8 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
 		  }
 		  else{
 		    cout << " Looking at wrong bTagging combination in calculation loops " << endl;
+		    cout << " Looking at : TCHE = " << TCHEbTagLoop << " TCHP = " << TCHPbTagLoop << " SSVHE = " << SSVHEbTagLoop << " SSVHP = " << SSVHPbTagLoop << " CSV = " << CSVbTagLoop << endl;
+		    cout << " Correct combination : TCHE = "<< UsedTCHE[SumBTag] << " TCHP = " << UsedTCHP[SumBTag] << " SSVHE = " << UsedSSVHE[SumBTag] << " SSVHP = " << UsedSSVHP[SumBTag] << " CSV = " << UsedCSV[SumBTag] << endl;
 		  }
 		  
 		  if(TCHEbTagLoop == NumberTCHEbTags){
@@ -1393,6 +1406,12 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
     std::cout << "            - Hadronic KinFit and leptonic W only : " << CosThetaValuesKinFitHadrAndLeptWOnly[0].size() << endl;
     std::cout << "            - Hadronic KinFit and leptonic W      : " << CosThetaValuesKinFitHadrAndLept[0].size() << endl;
     std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
+    std::cout << "  " << endl;
+    std::cout << " size of generator cos theta :   -->Should not be doubled when looking at JES semiMu of semiEl" << endl;
+    std::cout << "            - Hadronic KinFit only                : " << CosThGenKinFitHadr[0].size() << endl;
+    std::cout << "            - Hadronic KinFit and leptonic W only : " << CosThGenKinFitHadrAndLeptWOnly[0].size() << endl;
+    std::cout << "            - Hadronic KinFit and leptonic W      : " << CosThGenKinFitHadrAndLept[0].size() << endl;
+    std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
 
     if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){
       cout << " " << endl;
@@ -1416,6 +1435,7 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
 
     //Execute MinuitFitter:
     int SumbTag, ConsideredTagger, CSV, SSVHP, SSVHE, TCHP, TCHE;
+    ConsideredTagger = 0;
     for(CSV =0;CSV< NumberCSVbTags; CSV++){
       for(SSVHP=0;SSVHP <=NumberSSVHPbTags; SSVHP++){
 	if(ConsideredTagger == 4) SSVHP =13;   //--> Do not run over all possible TCHE bTag values!	    
@@ -1618,7 +1638,11 @@ if(ChiSqKinFitHadr[iCombi] != 9999) KinFitProbHadr.push_back(TMath::Prob(ChiSqKi
 		}//End of minuitFitter
 		
 	      }//end of wrong entry chosen failed requirement!
-	      else cout << " Looking at wrong bTagging combination in fitting minuit !! " << endl;
+	      else{
+		cout << " Looking at wrong bTagging combination in fitting minuit !! " << endl;
+		cout << " Looking at : TCHE = " << TCHE+1<< " TCHP = " << TCHP+1 << " SSVHE = " << SSVHE+1 << " SSVHP = " << SSVHP+1 << " CSV = " << CSV+1 << endl;
+		cout << " Correct combination : TCHE = "<< UsedTCHE[SumbTag] << " TCHP = " << UsedTCHP[SumbTag] << " SSVHE = " << UsedSSVHE[SumbTag] << " SSVHP = " << UsedSSVHP[SumbTag] << " CSV = " << UsedCSV[SumbTag] << endl;
+	      }
 	      
 	      if(TCHE==NumberTCHEbTags-1) {
 		ConsideredTagger =1;
