@@ -104,8 +104,8 @@ int main (int argc, char *argv[])
   else if(PUSyst == -1) systematics = "PUMinus";
 
   string decayChannel;
-  bool semiMuon = true;
-  bool semiElectron = false;
+  bool semiMuon = false;
+  bool semiElectron = true;
   if(semiMuon == true){decayChannel = "SemiMu";}
   else if(semiElectron == true){decayChannel = "SemiEl";}
 
@@ -115,74 +115,60 @@ int main (int argc, char *argv[])
   //  else dataSet ="";
 
   string UsedTrigger;
-  bool IsoMu172024Trigger = true;
-  bool TriCentralJet30Trigger = false;
+  bool IsoMu172024Trigger = false;
+  bool TriCentralJet30Trigger = true;
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
-    //    if(fullDataSet == true){ 
     Luminosity = 4938.985;
     UsedTrigger = UsedTrigger;
-    //    }
-    //    else Luminosity = 2141.961; 
   }
   else if(TriCentralJet30Trigger == true){
     UsedTrigger = "TriCentralJet30Trigger";
     if(semiMuon == true){
-      //      if(fullDataSet == true) 
       Luminosity = 4656.959;
-      //      else Luminosity = 2145.959; 
     }
     else if(semiElectron == true){
-      //      if(fullDataSet == true) 
       Luminosity = 4665.744;
-      //      else Luminosity = 2161.744;
     }
   }
   else if(TriCentralJet30Trigger == false && IsoMu172024Trigger == false){
     UsedTrigger = "NoTrigger";
   }
-
+  
   cout << "Executing the W Helicities analysis for an integrated luminosity of " << Luminosity << " pb^-1" << endl;
 
   //Booleans to load in different root files
   bool SignalOnly = false;
   bool DataResults = true;
-  bool JESMinusResults = false;
-  bool JESPlusResults = false;
-  bool WSystResults = false;
-  bool WSystPositive = false;
-  string JESDirection;
-  if(JESMinusResults == true)
-    JESDirection = "JESMinus";
-  else if(JESPlusResults == true)
-    JESDirection = "JESPlus";
-  
-  cout << " Obtaining results for : Data = " << DataResults << " , JESMinus = " << JESMinusResults << " , JESPlus = " << JESPlusResults << " , WSyst = " << WSystResults << " for positive scaling = " << WSystPositive << endl;
+  bool JESResults = true;
+  bool JERResults = false;
+  bool WSystResults = true;
+  bool TTScalingResults = false;
+  bool TTMatchingResults = false;
 
-  //Booleans for event selection cuts
-  bool SSVHEbTag = false;
-  bool MTCut = false;
-  bool MuonPtCut = false;  //Require a muon Pt larger than 27 (to avoid turn-over of IsoMu17/20/24 triggers)  -- Ciemat uses 25
+  cout << " Obtaining results for : Data = " << DataResults << " , JESs = " << JESResults << " , JER = " << JERResults << " , WSyst = " << WSystResults << endl;
+
+  // //Booleans for event selection cuts
+  // bool SSVHEbTag = false;
+  // bool MTCut = false;
+  // bool MuonPtCut = false;  //Require a muon Pt larger than 27 (to avoid turn-over of IsoMu17/20/24 triggers)  -- Ciemat uses 25
   string AppliedCuts = "";
-  if(SSVHEbTag == true)
-    AppliedCuts = AppliedCuts+"_MSSVHEbTag";
-  if(MTCut == true)
-    AppliedCuts = AppliedCuts+"_MTCut";
-  if(MuonPtCut == true)
-    AppliedCuts = AppliedCuts+"_MuonPtCut";
+  // if(SSVHEbTag == true)
+  //   AppliedCuts = AppliedCuts+"_MSSVHEbTag";
+  // if(MTCut == true)
+  //   AppliedCuts = AppliedCuts+"_MTCut";
+  // if(MuonPtCut == true)
+  //   AppliedCuts = AppliedCuts+"_MuonPtCut";
 
   //Booleans for KinFit options
-  bool UseChangedKinematics = true;  //Boolean to differentiate between changed kinematics and original kinematics of fitted particles
-  bool LeptTopMassConstrained = true;  //Boolean to differentiate between lept top mass constrained to world average and lept tom mass left free in KinFit
-  bool LeptonicFit = true; //Boolean to differentiate between KinFit on hadronic side only and KinFit on hadronic+leptonic side
+  // bool UseChangedKinematics = true;  //Boolean to differentiate between changed kinematics and original kinematics of fitted particles
+  // bool LeptTopMassConstrained = true;  //Boolean to differentiate between lept top mass constrained to world average and lept tom mass left free in KinFit
+  // bool LeptonicFit = true; //Boolean to differentiate between KinFit on hadronic side only and KinFit on hadronic+leptonic side
   
   //1) Nominal samples:
   if(SignalOnly == false){
     if(DataResults == true){
-      if(IsoMu172024Trigger == true)
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
-      else if(TriCentralJet30Trigger == true)
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
       nameDataSet.push_back("Data");
     }
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
@@ -198,24 +184,10 @@ int main (int argc, char *argv[])
     if(semiMuon == true){
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  //In muon channel case SemiEl is considered as background
       nameDataSet.push_back("TTbarJets_SemiEl");
-      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Mu15_SemiMu.root").c_str());
-      //      nameDataSet.push_back("QCD_Mu15");
     }
     else if(semiElectron == true){
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
       nameDataSet.push_back("TTbarJets_SemiMuon");
-      //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-20to30_BCtoE_SemiEl.root").c_str());  //Use UsedTrigger string to make sure that sample is only used in correct case
-      // nameDataSet.push_back("QCD_Pt-20to30_BCtoE");
-      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-20to30_EMEnriched_SemiEl.root").c_str());
-      // nameDataSet.push_back("QCD_Pt-20to30_EMEnriched");
-      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-30to80_BCtoE_SemiEl.root").c_str());
-      // nameDataSet.push_back("QCD_Pt-30to80_BCtoE");
-      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-30to80_EMEnriched_SemiEl.root").c_str());
-      // nameDataSet.push_back("QCD_Pt-30to80_EMEnriched");
-      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-80to170_BCtoE_SemiEl.root").c_str());
-      // nameDataSet.push_back("QCD_Pt-80to170_BCtoE");
-      // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_QCD_Pt-80to170_EMEnriched_SemiEl.root").c_str());
-      // nameDataSet.push_back("QCD_Pt-80to170_EMEnriched");
     }
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());
     nameDataSet.push_back("WJets_Nominal");
@@ -223,55 +195,134 @@ int main (int argc, char *argv[])
     nameDataSet.push_back("ZJets");  
 
     //2) JES Plus/Min samples:
-    if(JESMinusResults == true || JESPlusResults == true){
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_ST_SingleTop_tChannel_tbar");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_ST_SingleTop_tWChannel_tbar");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_ST_SingleTop_tWChannel_t");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_TTbarJets_Other");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_TTbarJets_SemiEl");
-      if(semiElectron == true){
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Pt-20to30_BCtoE_SemiEl.root").c_str());  //Use UsedTrigger string to make sure that sample is only used in correct case
-	nameDataSet.push_back("QCD_Pt-20to30_BCtoE");
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Pt-20to30_EMEnriched_SemiEl.root").c_str());
-	nameDataSet.push_back("QCD_Pt-20to30_EMEnriched");
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Pt-30to80_BCtoE_SemiEl.root").c_str());
-	nameDataSet.push_back("QCD_Pt-30to80_BCtoE");
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Pt-30to80_EMEnriched_SemiEl.root").c_str());
-	nameDataSet.push_back("QCD_Pt-30to80_EMEnriched");
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Pt-80to170_BCtoE_SemiEl.root").c_str());
-	nameDataSet.push_back("QCD_Pt-80to170_BCtoE");
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Pt-80to170_EMEnriched_SemiEl.root").c_str());
-	nameDataSet.push_back("QCD_Pt-80to170_EMEnriched");
-      }
-      else if(semiMuon ==true){
-	inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_QCD_Mu15_"+decayChannel+".root").c_str());
-	nameDataSet.push_back("JES_QCD_Mu15");
-      }
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_WJets_"+decayChannel+".root").c_str());    
-      nameDataSet.push_back("JES_WJets");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_ZJets_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_ZJets");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+JESDirection+"_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("JES_TTbarJets_SemiMuon");
+    if(JESResults == true ){
+      //Consider JESPlus samples:
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_ST_SingleTop_tChannel_tbar");
+      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //      nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_ST_SingleTop_tWChannel_tbar");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_ST_SingleTop_tWChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_TTbarJets_Other");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_TTbarJets_SemiEl");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_WJets_"+decayChannel+".root").c_str());    
+      nameDataSet.push_back("JESPlus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_ZJets_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_ZJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESPlus_TTbarJets_SemiMuon");
+
+      //Consider JESMinus samples:
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_ST_SingleTop_tChannel_tbar");
+      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //      nameDataSet.push_back("JES_ST_SingleTop_tChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_ST_SingleTop_tWChannel_tbar");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_ST_SingleTop_tWChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_TTbarJets_Other");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_TTbarJets_SemiEl");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_WJets_"+decayChannel+".root").c_str());    
+      nameDataSet.push_back("JESMinus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_ZJets_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_ZJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JESMinus_TTbarJets_SemiMuon");
     }
     
-    //3) WJets systematics:  
+    //3) JER Plus/Min samples:
+    if(JERResults == true){
+      //Consider JERPlus samples:
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_ST_SingleTop_tChannel_tbar");
+      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //      nameDataSet.push_back("JER_ST_SingleTop_tChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_ST_SingleTop_tWChannel_tbar");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_ST_SingleTop_tWChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_TTbarJets_Other");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_TTbarJets_SemiEl");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_WJets_"+decayChannel+".root").c_str());    
+      nameDataSet.push_back("JERPlus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_ZJets_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_ZJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERPlus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERPlus_TTbarJets_SemiMuon");
+
+      //Consider JERMinus samples:
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_ST_SingleTop_tChannel_tbar");
+      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //      nameDataSet.push_back("JER_ST_SingleTop_tChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_ST_SingleTop_tWChannel_tbar");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_ST_SingleTop_tWChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_TTbarJets_Other_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_TTbarJets_Other");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_TTbarJets_SemiEl");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_WJets_"+decayChannel+".root").c_str());    
+      nameDataSet.push_back("JERMinus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_ZJets_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_ZJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_JERMinus_1Sig_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("JERMinus_TTbarJets_SemiMuon");
+    }
+    
+    //4) WJets systematics:  
     if(WSystResults == true){
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
-      nameDataSet.push_back("Syst_WJets");
+      nameDataSet.push_back("WSystPlus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
+      nameDataSet.push_back("WSystMinus_WJets");
+    }
+
+    //5) TT scaling systematics:
+    if(TTScalingResults == true){
+      if(semiMuon == true){
+	inputWTree.push_back("WTree/KinFit_WTree_IsoMu172024Trigger_TTbarJets_ScalingUp_SemiMu.root");
+	nameDataSet.push_back("TTScalingUp");
+	inputWTree.push_back("WTree/KinFit_WTree_IsoMu172024Trigger_TTbarJets_ScalingDown_SemiMu.root");
+	nameDataSet.push_back("TTScalingDown");
+      }
+      else if(semiElectron == true){
+	inputWTree.push_back("WTree/KinFit_WTree_TriCentralJet30Trigger_TTbarJets_ScalingUp_SemiEl.root");
+	nameDataSet.push_back("TTScalingUp");
+	inputWTree.push_back("WTree/KinFit_WTree_TriCentralJet30Trigger_TTbarJets_ScalingDown_SemiEl.root");
+	nameDataSet.push_back("TTScalingDown");
+      }
+    }
+    
+    //6) TT matching systematics:
+    if(TTMatchingResults == true){
+      if(semiMuon == true){
+	inputWTree.push_back("WTree/KinFit_WTree_IsoMu172024Trigger_TTbarJets_MatchingUp_SemiMu.root");
+	nameDataSet.push_back("TTMatchingUp");
+	inputWTree.push_back("WTree/KinFit_WTree_IsoMu172024Trigger_TTbarJets_MatchingDown_SemiMu.root");
+	nameDataSet.push_back("TTMatchingDown");
+      }
+      else if(semiElectron == true){
+	inputWTree.push_back("WTree/KinFit_WTree_TriCentralJet30Trigger_TTbarJets_MatchingUp_SemiEl.root");
+	nameDataSet.push_back("TTMatchingUp");
+	inputWTree.push_back("WTree/KinFit_WTree_TriCentralJet30Trigger_TTbarJets_MatchingDown_SemiEl.root");
+	nameDataSet.push_back("TTMatchingDown");
+      }
     }
   }//End of signalOnly = false loop
   
   //TTbarJets_SemiMuon sample should always be put as latest sample to avoid crash of TMinuitMinimizer !!
   if(semiMuon == true){
-    //inputWTree.push_back(("WTree/KinFit_WTree_SHORTTEST_DRLep03_TriCentralJet30Trigger_TTbarJets_SemiMuon_SemiMu.root").c_str());
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
     nameDataSet.push_back("TTbarJets_SemiMuon");
   }
@@ -299,15 +350,17 @@ int main (int argc, char *argv[])
 
   string PresentationTexTitle;
   PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+".tex").c_str();
-  if(DataResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+".tex").c_str();
-  if(JESMinusResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_JESMin.tex").c_str();
-  if(JESPlusResults == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_JESPlus.tex").c_str();
-  if(WSystResults == true && WSystPositive == false) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_WMin.tex").c_str();
-  if(WSystResults == true && WSystPositive == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_WPlus.tex").c_str();
+  // if(DataResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+".tex").c_str();
+  // if(JESResults == true) PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_JESMin.tex").c_str();
+  // if(JESPlusResults == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_JESPlus.tex").c_str();
+  // if(WSystResults == true && WSystPositive == false) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_WMin.tex").c_str();
+  // if(WSystResults == true && WSystPositive == true) PresentationTexTitle = ("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+AppliedCuts+"_WPlus.tex").c_str();
  
   ofstream PresentationTexHadr(("HadrKinFit/"+PresentationTexTitle).c_str());
   ofstream PresentationTexHadrAndLeptWOnly(("HadrAndLeptWOnlyKinFit/"+PresentationTexTitle).c_str());
   ofstream PresentationTexHadrAndLept(("HadrAndLeptKinFit/"+PresentationTexTitle).c_str());
+
+  ofstream FMinusTexHadr("HadrKinFit/FMinus.tex");
 
   //ofstream PresentationTex(("BTagPerformanceStudy/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedMonteCarlo.tex").c_str());
@@ -562,7 +615,6 @@ int main (int argc, char *argv[])
   MSPlot["nPVAfterSSVHEMbTag"] = new MultiSamplePlot(datasets,"nPVAfterSSVHEMbTag" , 20, 0, 20, "nPVAfterSSVHEMbTag");
   MSPlot["nPVAfterMuon27Cut"] = new MultiSamplePlot(datasets,"nPVAfterMuon27Cut" , 20, 0, 20, "nPVAfterMuon27Cut");
   MSPlot["nPVAfterTransverseMassCut"] = new MultiSamplePlot(datasets,"nPVAfterTransverseMassCut" , 20, 0, 20, "nPVAfterTransverseMassCut");
-  MSPlot["nPVBeforeFoundJetComb"] = new MultiSamplePlot(datasets, "nPVBeforeFoundJetComb", 20, 0, 20,"nPVBeforeFoundJetComb");
   // MSPlot["nPVAfterFoundJetComb"] = new MultiSamplePlot(datasets, "nPVAfterFoundJetComb", 20, 0, 20,"nPVAfterFoundJetComb");
   // MSPlot["nPVAfterFoundJetCombbTag"] = new MultiSamplePlot(datasets, "nPVAfterFoundJetCombbTab", 20, 0, 20,"nPVAfterFoundJetCombbTag");
   // MSPlot["nPVAfterFoundCosTheta"] = new MultiSamplePlot(datasets, "nPVAfterFoundCosTheta", 20, 0, 20,"nPVAfterFoundCosTheta");
@@ -861,9 +913,7 @@ int main (int argc, char *argv[])
   /////////////////////////////////////////
   
   for(unsigned int iDataSet=0; iDataSet<inputWTree.size(); iDataSet++){
-    cout << " " << endl;
 
-    // string dataSetName = datasets[iDataSet]->Name();
     string dataSetName = nameDataSet[iDataSet];
     std::cout << " dataSetName : " << dataSetName << endl;
     
@@ -886,14 +936,15 @@ int main (int argc, char *argv[])
     inConfigTree->GetEvent(0);
     Dataset* dataSet = (Dataset*) tc_dataset->At(0);
     cout << "Processing DataSet " << iDataSet << " : " << dataSetName << "  containing " << nEvent << " events" << endl;
-
     cout << " ***************************************** " << endl;
     cout << "Before changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
     float NominalNormFactor = dataSet->NormFactor();
-    if( dataSetName.find("Syst_WJets") == 0 && WSystResults == true){
-      if(WSystPositive == false) dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
+    if( dataSetName.find("WSystMinus_WJets") == 0 && WSystResults == true){
+      dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
-      if(WSystPositive == true) dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (1.3) ); //WJets Plus 30 %
+    }
+    if(dataSetName.find("WSystDown_WJets") == 0 && WSystResults == true){
+      dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (1.3) ); //WJets Plus 30 %
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (2.) ); //WJets Plus 100 %
       //Normfactor value changes without having to change XSection value !!
     }
@@ -925,44 +976,28 @@ int main (int argc, char *argv[])
     int Quark1Index[12]={0,0,0,0,0,0,1,1,1,1,2,2};
     int Quark2Index[12]={1,1,2,2,3,3,2,2,3,3,3,3};
 
-    outFile << " Kinematic Fit ordering arrays initialized " << endl;
-
     //Integer needed to represent the first event since iEvt = 0 does not pass the DCoefficient requirement for ttbar Other
     int FirstProcessedEvent=0;
-
     outFile << " FirstProcessedEvent initialized " << endl;
 
-    vector<float> CosThetaValuesKinFitHadr[TotalNumberbTags];
-    vector<float> CosThetaValuesKinFitHadrAndLeptWOnly[TotalNumberbTags];
-    vector<float> CosThetaValuesKinFitHadrAndLept[TotalNumberbTags];
-    vector<float> LumiWeightVectorKinFitHadr[TotalNumberbTags];
-    vector<float> LumiWeightVectorKinFitHadrAndLeptWOnly[TotalNumberbTags];
-    vector<float> LumiWeightVectorKinFitHadrAndLept[TotalNumberbTags];
+    vector<float> CosThetaValuesKinFitHadr[TotalNumberbTags],CosThetaValuesKinFitHadrAndLeptWOnly[TotalNumberbTags],CosThetaValuesKinFitHadrAndLept[TotalNumberbTags],LumiWeightVectorKinFitHadr[TotalNumberbTags],LumiWeightVectorKinFitHadrAndLeptWOnly[TotalNumberbTags],LumiWeightVectorKinFitHadrAndLept[TotalNumberbTags];
     int FilledEntries = 0;
-    vector<double> CosThGenKinFitHadr[TotalNumberbTags];
-    vector<double> CosThGenKinFitHadrAndLeptWOnly[TotalNumberbTags];
-    vector<double> CosThGenKinFitHadrAndLept[TotalNumberbTags];
-    vector<double> EventCorrectionWeightKinFitHadr[TotalNumberbTags];
-    vector<double> EventCorrectionWeightKinFitHadrAndLeptWOnly[TotalNumberbTags];
-    vector<double> EventCorrectionWeightKinFitHadrAndLept[TotalNumberbTags];
+    vector<double> CosThGenKinFitHadr[TotalNumberbTags],CosThGenKinFitHadrAndLeptWOnly[TotalNumberbTags],CosThGenKinFitHadrAndLept[TotalNumberbTags],EventCorrectionWeightKinFitHadr[TotalNumberbTags],EventCorrectionWeightKinFitHadrAndLeptWOnly[TotalNumberbTags],EventCorrectionWeightKinFitHadrAndLept[TotalNumberbTags];
     float binEdge[CosThetaBinNumber+1];
-    float binSize = (1.-(-1.))/15.;
+    float binSize = (1.-(-1.))/CosThetaBinNumber;
     for(int ii=0; ii<=CosThetaBinNumber;ii++){
       binEdge[ii] = -1 + binSize*ii;
     }
 
     //Initialize naming of different bTag options:
-    int TCHELoop=1;
-    int TCHPLoop=1;
-    int SSVHELoop=1;
-    int SSVHPLoop=1;
-    int CSVLoop=1;
+    int TCHELoop,TCHPLoop,SSVHELoop,SSVHPLoop,CSVLoop;
+    TCHELoop = 1;
+    TCHPLoop = 1;
+    SSVHELoop = 1;
+    SSVHPLoop = 1;
+    CSVLoop =1;
        
-    int UsedTCHE[TotalNumberbTags];
-    int UsedTCHP[TotalNumberbTags];
-    int UsedSSVHE[TotalNumberbTags];
-    int UsedSSVHP[TotalNumberbTags];
-    int UsedCSV[TotalNumberbTags];
+    int UsedTCHE[TotalNumberbTags],UsedTCHP[TotalNumberbTags],UsedSSVHE[TotalNumberbTags],UsedSSVHP[TotalNumberbTags],UsedCSV[TotalNumberbTags];
     while(CSVLoop<=NumberCSVbTags){
       while(SSVHPLoop<=NumberSSVHPbTags){  
 	while(SSVHELoop<=NumberSSVHEbTags){
@@ -1035,20 +1070,7 @@ int main (int argc, char *argv[])
     
     /////////////////////////////////////////
     // Loop on events
-    /////////////////////////////////////////
-    float ProbabilityPt10ToInf[10][10];
-    float ProbabilityPt30ToInf[10][10];
-    float TotalPt10ToInf[10];			    
-    float TotalPt30ToInf[10];			    
-    for(int ii=0;ii<10;ii++){
-      TotalPt10ToInf[ii] = 0;
-      TotalPt30ToInf[ii] = 0;
-      for(int jj=0;jj<10;jj++){
-	ProbabilityPt10ToInf[ii][jj]=0;
-	ProbabilityPt30ToInf[ii][jj]=0;
-      }
-    }
-    
+    /////////////////////////////////////////  
     for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
       //for(unsigned int iEvt=0; iEvt<3000; iEvt++){
 
@@ -1058,7 +1080,6 @@ int main (int argc, char *argv[])
       
       // PU reweighting???
       float avPU = ( (float)wTree->nPUBXm1() + (float)wTree->nPU() + (float)wTree->nPUBXp1() ) / 3.; // average in 3 BX!!!, as recommended
-      //float lumiWeight = LumiWeights.ITweight( wTree->nPU() );
       
       double lumiWeight3D = 1.0;
       if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
@@ -1106,10 +1127,10 @@ int main (int argc, char *argv[])
       
       //Cos theta value on generator level:
       float CosThetaGenerator = wTree->standardCosTheta();
-      if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){
-	histo1D["StandardCosThetaFit"]->Fill(CosThetaGenerator);  // Histogram with fit   	  
+      //if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){
+      //histo1D["StandardCosThetaFit"]->Fill(CosThetaGenerator);  // Histogram with fit   	  
 	histo1D["StandardCosTheta"]->Fill(CosThetaGenerator);  // Histogram without fit   	  
-      }
+	//}
 
       //Trigger variables:
       int IsoMuTrigger = wTree->isoMuTriggerBool();
@@ -1221,71 +1242,38 @@ int main (int argc, char *argv[])
       MSPlot["nPVBeforeCuts"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
       selecTableMacro.Fill(iDataSet,0,scaleFactor*lumiWeight3D);
 
-      if(SSVHEbTag == false && MTCut == false && MuonPtCut == false){
-	eventSelected = true;   //No Cuts applied
-      }
-      else{
-	if( (SSVHEbTag == true &&  (btagSSVHE[0] > 1.74 || btagSSVHE[1] > 1.74 || btagSSVHE[2] > 1.74 || btagSSVHE[3] > 1.74))){  //Medium SSVHE bTag
-	  selecTableMacro.Fill(iDataSet,1,scaleFactor*lumiWeight3D);
-	  
-	  if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberEventsAfterbTag++;
-	  
-	  MSPlot["nPVAfterSSVHEMbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	  eventSelected = true;
-	}
-	//Require offline muon cut of 27 (to avoid turn-on of IsoMu17/20/24 triggers)  -- Use 25 for CIEMAT comparison (value applied in tree)!
-	//No extra offline muon cut for IsoMu17_TriCentralJet30 trigger --> Cut of 20 GeV is already applied
-	if((MuonPtCut == true && lepton.Pt() >=27)){
-	  selecTableMacro.Fill(iDataSet,2,scaleFactor*lumiWeight3D);
-	  
-	  MSPlot["nPVAfterMuon27Cut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	  eventSelected = true;
-	}
-	if((MTCut == true && TransverseMass > 30)){
-	  
-	  selecTableMacro.Fill(iDataSet,3,scaleFactor*lumiWeight3D);	  
-	  if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberEventsAfterTransverseMass++;
-	  
-	  MSPlot["TransverseMassAfterCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);	      	  
-	  MSPlot["nPVAfterTransverseMassCut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);	  
-	  eventSelected = true;
-	}
-      }
-      
-      if(eventSelected == true){
-
+      //Apply extra event selections:
+      if(TransverseMass > 30 && DeltaRJetLepton > 0.3 && ((DeltaRMuonJet > 0.3 && semiMuon == true) || (DeltaRElectronJet > 0.3 && semiElectron == true))){
 	if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberSelectedEvents++;
 	if(dataSetName.find("Data") ==0) NumberSelectedDataEvents++;
 	
-	MSPlot["nPrimaryVert"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);    
-	
-	//if(dataSetName.find("QCD") != 0){
+	MSPlot["TransverseMassAfterCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	MSPlot["nPVAfterTransverseMassCut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	MSPlot["nPrimaryVert"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);    	
 	MSPlot["Jet1Pt"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);    
 	MSPlot["Jet2Pt"]->Fill(selectedJets[1].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
 	MSPlot["Jet3Pt"]->Fill(selectedJets[2].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
 	MSPlot["Jet4Pt"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	  
-	//}
 	  	
-	//-------------------------------------------------------------------------------
-	//Create some alternative helicites weights to obtain different ratios:
-	//-------------------------------------------------------------------------------
-	float LongitudinalFraction = 0.645167;
-	float LeftHandedFraction = 0.321369;
-	float RightHandedFraction = 0.033464;
-	float TheoreticalDistributionValue = (LongitudinalFraction*6*(1-CosThetaGenerator*CosThetaGenerator) + (1-CosThetaGenerator)*(1-CosThetaGenerator)*3*LeftHandedFraction + RightHandedFraction*3*(1+CosThetaGenerator)*(1+CosThetaGenerator))/8;
-	for(int helicityNumbers=0;helicityNumbers<SizeArray;helicityNumbers++){
-	  if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){ 
-	    UsedDistributionValue[helicityNumbers]=(HelicityFraction[helicityNumbers][0]*6*(1-CosThetaGenerator*CosThetaGenerator) + (1-CosThetaGenerator)*(1-CosThetaGenerator)*3*HelicityFraction[helicityNumbers][2] + HelicityFraction[helicityNumbers][1]*3*(1+CosThetaGenerator)*(1+CosThetaGenerator))/8;
-	    HelicityWeight[helicityNumbers]=UsedDistributionValue[helicityNumbers]/TheoreticalDistributionValue;
-	  }
-	}
+	// //-------------------------------------------------------------------------------
+	// //Create some alternative helicites weights to obtain different ratios:
+	// //-------------------------------------------------------------------------------
+	// float LongitudinalFraction = 0.645167;
+	// float LeftHandedFraction = 0.321369;
+	// float RightHandedFraction = 0.033464;
+	// float TheoreticalDistributionValue = (LongitudinalFraction*6*(1-CosThetaGenerator*CosThetaGenerator) + (1-CosThetaGenerator)*(1-CosThetaGenerator)*3*LeftHandedFraction + RightHandedFraction*3*(1+CosThetaGenerator)*(1+CosThetaGenerator))/8;
+	// for(int helicityNumbers=0;helicityNumbers<SizeArray;helicityNumbers++){
+	//   if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){ 
+	//     UsedDistributionValue[helicityNumbers]=(HelicityFraction[helicityNumbers][0]*6*(1-CosThetaGenerator*CosThetaGenerator) + (1-CosThetaGenerator)*(1-CosThetaGenerator)*3*HelicityFraction[helicityNumbers][2] + HelicityFraction[helicityNumbers][1]*3*(1+CosThetaGenerator)*(1+CosThetaGenerator))/8;
+	//     HelicityWeight[helicityNumbers]=UsedDistributionValue[helicityNumbers]/TheoreticalDistributionValue;
+	//   }
+	// }
 
 	//-------------------------------------------------------------
 	//Obtain jet combination for the different b-tag constraints:
 	//------------------------------------------------------------  		
 	//Initialize bTag loop variables:
 	int TCHEbTagLoop, TCHPbTagLoop, SSVHEbTagLoop, SSVHPbTagLoop, CSVbTagLoop,ConsideredBTagger=0; //0=tche, 1 = tchp, 2 = ssvhe, 3 = ssvhp & 4 = csv	
-	MSPlot["nPVBeforeFoundJetComb"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	
 	for(CSVbTagLoop =1;CSVbTagLoop< (NumberCSVbTags+1); CSVbTagLoop++){	  
 	  for(SSVHPbTagLoop=1;SSVHPbTagLoop <=(NumberSSVHPbTags+1); SSVHPbTagLoop++){
@@ -1335,8 +1323,9 @@ int main (int argc, char *argv[])
 			    NumberBLeptCorrectEventsKinFitHadr[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1][iDataSet]++;
 			  }
 			  CosThGenKinFitHadr[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
+			  cout << " Pushing back generator value = " << CosThetaGenerator << endl;
 			  EventCorrectionWeightKinFitHadr[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
-			}//End of semiMu sample
+			}//End of signal sample
 		      }
 		    }
 
@@ -1353,7 +1342,7 @@ int main (int argc, char *argv[])
 			  }
 			  CosThGenKinFitHadrAndLeptWOnly[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
 			  EventCorrectionWeightKinFitHadrAndLeptWOnly[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
-			}//End of semiMu sample
+			}//End of signal sample
 		      }
 		    }
 		    
@@ -1370,13 +1359,13 @@ int main (int argc, char *argv[])
 			  }
 			  CosThGenKinFitHadrAndLept[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(CosThetaGenerator);
 			  EventCorrectionWeightKinFitHadrAndLept[TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
-			}//End of semiMu sample
+			}//End of signal sample
 		      }
 		    }
 		  }
 		  else{
 		    cout << " Looking at wrong bTagging combination in calculation loops " << endl;
-		    cout << " Looking at : TCHE = " << TCHEbTagLoop << " TCHP = " << TCHPbTagLoop << " SSVHE = " << SSVHEbTagLoop << " SSVHP = " << SSVHPbTagLoop << " CSV = " << CSVbTagLoop << endl;
+		    cout << " Looking at : TCHE = "<<TCHEbTagLoop <<" TCHP = "<<TCHPbTagLoop<<" SSVHE = "<<SSVHEbTagLoop<<" SSVHP = "<<SSVHPbTagLoop<<" CSV = "<<CSVbTagLoop<<endl;
 		    cout << " Correct combination : TCHE = "<< UsedTCHE[SumBTag] << " TCHP = " << UsedTCHP[SumBTag] << " SSVHE = " << UsedSSVHE[SumBTag] << " SSVHP = " << UsedSSVHP[SumBTag] << " CSV = " << UsedCSV[SumBTag] << endl;
 		  }
 		  
@@ -1396,8 +1385,7 @@ int main (int argc, char *argv[])
 	  }//end of SSVHP
 	}//end of CSV
 	      		
-      }// End of loop over selected events
-      
+      }// End of loop over selected events      
     } // end loop over events in wTrees    
     
     std::cout << "  " << endl;
@@ -1413,25 +1401,25 @@ int main (int argc, char *argv[])
     std::cout << "            - Hadronic KinFit and leptonic W      : " << CosThGenKinFitHadrAndLept[0].size() << endl;
     std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
 
-    if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){
-      cout << " " << endl;
-      cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;
-      cout << " Performing helicity Generator fit : " << endl;
-      cout << " ------------------------------------" << endl;
-      TF1 *helicityFit = new TF1("helicityFit","[0]*((((1-[1]-[2])*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
-      histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
-      std::cout << " fit values (before event selection) : Norm =" <<helicityFit->GetParameter(0) << " , Left = " << helicityFit->GetParameter(1) << " Long = " << helicityFit->GetParameter(2) << " ==> Right = " << 1-(helicityFit->GetParameter(1))-(helicityFit->GetParameter(2))<< std::endl;
-      std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
-      cout << "                      ------------------------------------" << endl;
-      histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
-      histo1D["StandardCosThetaFit"]->SetMinimum(0);
-      histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
-      TF1 *helicityFit2 = new TF1("helicityFit2","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
-      histo1D["StandardCosThetaFit"]->Fit("helicityFit2","Q");
-      std::cout << " fit values 2 (before event selection) : " << helicityFit2->GetParameter(0) << " " << helicityFit2->GetParameter(1) << " " << helicityFit2->GetParameter(2) << std::endl;
-      std::cout << " fit values error 2 (before event selection) : " << helicityFit2->GetParError(0) << " " << helicityFit2->GetParError(1) << " " << helicityFit2->GetParError(2) << std::endl;
-      cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;    
-    }
+    // if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){
+    //   cout << " " << endl;
+    //   cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;
+    //   cout << " Performing helicity Generator fit : " << endl;
+    //   cout << " ------------------------------------" << endl;
+    //   TF1 *helicityFit = new TF1("helicityFit","[0]*((((1-[1]-[2])*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+    //   histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
+    //   std::cout << " fit values (before event selection) : Norm =" <<helicityFit->GetParameter(0) << " , Left = " << helicityFit->GetParameter(1) << " Long = " << helicityFit->GetParameter(2) << " ==> Right = " << 1-(helicityFit->GetParameter(1))-(helicityFit->GetParameter(2))<< std::endl;
+    //   std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
+    //   cout << "                      ------------------------------------" << endl;
+    //   histo1D["StandardCosThetaFit"]->Scale(100./(histo1D["StandardCosThetaFit"]->Integral()));
+    //   histo1D["StandardCosThetaFit"]->SetMinimum(0);
+    //   histo1D["StandardCosThetaFit"]->SetMaximum(0.8);
+    //   TF1 *helicityFit2 = new TF1("helicityFit2","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+    //   histo1D["StandardCosThetaFit"]->Fit("helicityFit2","Q");
+    //   std::cout << " fit values 2 (before event selection) : " << helicityFit2->GetParameter(0) << " " << helicityFit2->GetParameter(1) << " " << helicityFit2->GetParameter(2) << std::endl;
+    //   std::cout << " fit values error 2 (before event selection) : " << helicityFit2->GetParError(0) << " " << helicityFit2->GetParError(1) << " " << helicityFit2->GetParError(2) << std::endl;
+    //   cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;    
+    // }
 
     //Execute MinuitFitter:
     int SumbTag, ConsideredTagger, CSV, SSVHP, SSVHE, TCHP, TCHE;
@@ -1448,28 +1436,153 @@ int main (int argc, char *argv[])
 	      SumbTag = TCHE+TCHP+SSVHE+SSVHP+CSV;
 	      if(UsedTCHE[SumbTag]==(TCHE+1) && UsedTCHP[SumbTag]==(TCHP+1) && UsedSSVHE[SumbTag]==(SSVHE+1) && UsedSSVHP[SumbTag]==(SSVHP+1) && UsedCSV[SumbTag]==(CSV+1) ){		
 		
+		//Data:
 		std::string CosThetaDataStringHadr = "CosThetaDataHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JES Plus:
+		std::string CosThetaJESPlusStringHadr = "CosThetaJESPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JES Minus:
+		std::string CosThetaJESMinusStringHadr = "CosThetaJESMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JER Plus:
+		std::string CosThetaJERPlusStringHadr = "CosThetaJERPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JER Minus:
+		std::string CosThetaJERMinusStringHadr = "CosThetaJERMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//WSyst Plus:
+		std::string CosThetaWPlusStringHadr = "CosThetaWPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//WSyst Minus:
+		std::string CosThetaWMinusStringHadr = "CosThetaWMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTScaling Plus:
+		std::string CosThetaTTScalingUpStringHadr = "CosThetaTTScalingUpHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTScaling Minus:
+		std::string CosThetaTTScalingDownStringHadr = "CosThetaTTScalingDownHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTMatching Plus:
+		std::string CosThetaTTMatchingUpStringHadr = "CosThetaTTMatchingUpHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTMatching Minus:
+		std::string CosThetaTTMatchingDownStringHadr = "CosThetaTTMatchingDownHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		std::string CosThetaSignalStringHadr = "CosThetaSignalHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		std::string CosThetaBckgStringHadr = "CosThetaBckgHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		
+		//Data:       
 		std::string CosThetaDataStringHadrAndLeptW = "CosThetaDataHadrAndLeptWOnly_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JES Plus:
+		std::string CosThetaJESPlusStringHadrAndLeptW = "CosThetaJESPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JES Minus:
+		std::string CosThetaJESMinusStringHadrAndLeptW="CosThetaJESMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JER Plus:
+		std::string CosThetaJERPlusStringHadrAndLeptW = "CosThetaJERPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JER Minus:
+		std::string CosThetaJERMinusStringHadrAndLeptW="CosThetaJERMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//WSyst Plus:
+		std::string CosThetaWPlusStringHadrAndLeptW = "CosThetaWPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//WSyst Minus:
+		std::string CosThetaWMinusStringHadrAndLeptW = "CosThetaWMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTScaling Plus:
+		std::string CosThetaTTScalingUpStringHadrAndLeptW = "CosThetaTTScalingUpHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTScaling Minus:
+		std::string CosThetaTTScalingDownStringHadrAndLeptW = "CosThetaTTScalingDownHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTMatching Plus:
+		std::string CosThetaTTMatchingUpStringHadrAndLeptW = "CosThetaTTMatchingUpHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTMatching Minus:
+		std::string CosThetaTTMatchingDownStringHadrAndLeptW = "CosThetaTTMatchingDownHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		std::string CosThetaSignalStringHadrAndLeptW="CosThetaSignalHadrAndLeptWOnly_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		std::string CosThetaBckgStringHadrAndLeptW = "CosThetaBckgHadrAndLeptWOnly_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		
+		//Data:
 		std::string CosThetaDataStringHadrAndLept = "CosThetaDataHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JES Plus:
+		std::string CosThetaJESPlusStringHadrAndLept = "CosThetaJESPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JES Minus:
+		std::string CosThetaJESMinusStringHadrAndLept="CosThetaJESMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JER Plus:
+		std::string CosThetaJERPlusStringHadrAndLept = "CosThetaJERPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//JER Minus:
+		std::string CosThetaJERMinusStringHadrAndLept="CosThetaJERMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//WSyst Plus:
+		std::string CosThetaWPlusStringHadrAndLept = "CosThetaWPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//WSyst Minus:
+		std::string CosThetaWMinusStringHadrAndLept = "CosThetaWMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTScaling Plus:
+		std::string CosThetaTTScalingUpStringHadrAndLept="CosThetaTTScalingUpHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTScaling Minus:
+		std::string CosThetaTTScalingDownStringHadrAndLept = "CosThetaTTScalingDownHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTMatching Plus:
+		std::string CosThetaTTMatchingUpStringHadrAndLept = "CosThetaTTMatchingUpHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
+		//TTMatching Minus:
+		std::string CosThetaTTMatchingDownStringHadrAndLept = "CosThetaTTMatchingDownHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		std::string CosThetaSignalStringHadrAndLept = "CosThetaSignalHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 		std::string CosThetaBckgStringHadrAndLept = "CosThetaBckgHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV];
 	      
 		if(iDataSet == 0){
+		  //Data:
 		  histo1D[CosThetaDataStringHadr]=new TH1F(CosThetaDataStringHadr.c_str(),CosThetaDataStringHadr.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaDataStringHadr]->SetDirectory(0);
+		  //JESPlus:
+		  histo1D[CosThetaJESPlusStringHadr]=new TH1F(CosThetaJESPlusStringHadr.c_str(),CosThetaJESPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJESPlusStringHadr]->SetDirectory(0);
+		  //JESMinus:
+		  histo1D[CosThetaJESMinusStringHadr]=new TH1F(CosThetaJESMinusStringHadr.c_str(),CosThetaJESMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJESMinusStringHadr]->SetDirectory(0);
+		  //JERPlus:
+		  histo1D[CosThetaJERPlusStringHadr]=new TH1F(CosThetaJERPlusStringHadr.c_str(),CosThetaJERPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJERPlusStringHadr]->SetDirectory(0);
+		  //JERMinus:
+		  histo1D[CosThetaJERMinusStringHadr]=new TH1F(CosThetaJERMinusStringHadr.c_str(),CosThetaJERMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJERMinusStringHadr]->SetDirectory(0);
+		  //WJets Plus:
+		  histo1D[CosThetaWPlusStringHadr]=new TH1F(CosThetaWPlusStringHadr.c_str(),CosThetaWPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaWPlusStringHadr]->SetDirectory(0);
+		  //WJets Minus:
+		  histo1D[CosThetaWMinusStringHadr]=new TH1F(CosThetaWMinusStringHadr.c_str(),CosThetaWMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaWMinusStringHadr]->SetDirectory(0);
+		  //TTScaling Up:
+		  histo1D[CosThetaTTScalingUpStringHadr]=new TH1F(CosThetaTTScalingUpStringHadr.c_str(),CosThetaTTScalingUpStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTScalingUpStringHadr]->SetDirectory(0);
+		  //TTScaling Down:
+		  histo1D[CosThetaTTScalingDownStringHadr]=new TH1F(CosThetaTTScalingDownStringHadr.c_str(),CosThetaTTScalingDownStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTScalingDownStringHadr]->SetDirectory(0);
+		  //TTMatching Up:
+		  histo1D[CosThetaTTMatchingUpStringHadr]=new TH1F(CosThetaTTMatchingUpStringHadr.c_str(),CosThetaTTMatchingUpStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTMatchingUpStringHadr]->SetDirectory(0);
+		  //TTMatching Down:
+		  histo1D[CosThetaTTMatchingDownStringHadr]=new TH1F(CosThetaTTMatchingDownStringHadr.c_str(),CosThetaTTMatchingDownStringHadr.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTMatchingDownStringHadr]->SetDirectory(0);
 		  histo1D[CosThetaSignalStringHadr]=new TH1F(CosThetaSignalStringHadr.c_str(),CosThetaSignalStringHadr.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaSignalStringHadr]->SetDirectory(0);
 		  histo1D[CosThetaBckgStringHadr]=new TH1F(CosThetaBckgStringHadr.c_str(),CosThetaBckgStringHadr.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaBckgStringHadr]->SetDirectory(0);
 
+		  //Data:
 		  histo1D[CosThetaDataStringHadrAndLeptW]=new TH1F(CosThetaDataStringHadrAndLeptW.c_str(),CosThetaDataStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaDataStringHadrAndLeptW]->SetDirectory(0);
+		  //JESPlus:
+		  histo1D[CosThetaJESPlusStringHadrAndLeptW]=new TH1F(CosThetaJESPlusStringHadrAndLeptW.c_str(),CosThetaJESPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJESPlusStringHadrAndLeptW]->SetDirectory(0);
+		  //JESMinus:
+		  histo1D[CosThetaJESMinusStringHadrAndLeptW]=new TH1F(CosThetaJESMinusStringHadrAndLeptW.c_str(),CosThetaJESMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJESMinusStringHadrAndLeptW]->SetDirectory(0);
+		  //JERPlus:
+		  histo1D[CosThetaJERPlusStringHadrAndLeptW]=new TH1F(CosThetaJERPlusStringHadrAndLeptW.c_str(),CosThetaJERPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJERPlusStringHadrAndLeptW]->SetDirectory(0);
+		  //JERMinus:
+		  histo1D[CosThetaJERMinusStringHadrAndLeptW]=new TH1F(CosThetaJERMinusStringHadrAndLeptW.c_str(),CosThetaJERMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJERMinusStringHadrAndLeptW]->SetDirectory(0);
+		  //WJets Plus:
+		  histo1D[CosThetaWPlusStringHadrAndLeptW]=new TH1F(CosThetaWPlusStringHadrAndLeptW.c_str(),CosThetaWPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaWPlusStringHadrAndLeptW]->SetDirectory(0);
+		  //WJets Minus:
+		  histo1D[CosThetaWMinusStringHadrAndLeptW]=new TH1F(CosThetaWMinusStringHadrAndLeptW.c_str(),CosThetaWMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaWMinusStringHadrAndLeptW]->SetDirectory(0);
+		  //TTScaling Up:
+		  histo1D[CosThetaTTScalingUpStringHadrAndLeptW]=new TH1F(CosThetaTTScalingUpStringHadrAndLeptW.c_str(),CosThetaTTScalingUpStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTScalingUpStringHadrAndLeptW]->SetDirectory(0);
+		  //TTScaling Down:
+		  histo1D[CosThetaTTScalingDownStringHadrAndLeptW]=new TH1F(CosThetaTTScalingDownStringHadrAndLeptW.c_str(),CosThetaTTScalingDownStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTScalingDownStringHadrAndLeptW]->SetDirectory(0);
+		  //TTMatching Up:
+		  histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]=new TH1F(CosThetaTTMatchingUpStringHadrAndLeptW.c_str(),CosThetaTTMatchingUpStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]->SetDirectory(0);
+		  //TTMatching Down:
+		  histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]=new TH1F(CosThetaTTMatchingDownStringHadrAndLeptW.c_str(),CosThetaTTMatchingDownStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]->SetDirectory(0);
 		  histo1D[CosThetaSignalStringHadrAndLeptW]=new TH1F(CosThetaSignalStringHadrAndLeptW.c_str(),CosThetaSignalStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaSignalStringHadrAndLeptW]->SetDirectory(0);
 		  histo1D[CosThetaBckgStringHadrAndLeptW]=new TH1F(CosThetaBckgStringHadrAndLeptW.c_str(),CosThetaBckgStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
@@ -1477,6 +1590,36 @@ int main (int argc, char *argv[])
 
 		  histo1D[CosThetaDataStringHadrAndLept]=new TH1F(CosThetaDataStringHadrAndLept.c_str(),CosThetaDataStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaDataStringHadrAndLept]->SetDirectory(0);
+		  //JESPlus:
+		  histo1D[CosThetaJESPlusStringHadrAndLept]=new TH1F(CosThetaJESPlusStringHadrAndLept.c_str(),CosThetaJESPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJESPlusStringHadrAndLept]->SetDirectory(0);
+		  //JESMinus:
+		  histo1D[CosThetaJESMinusStringHadrAndLept]=new TH1F(CosThetaJESMinusStringHadrAndLept.c_str(),CosThetaJESMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJESMinusStringHadrAndLept]->SetDirectory(0);
+		  //JERPlus:
+		  histo1D[CosThetaJERPlusStringHadrAndLept]=new TH1F(CosThetaJERPlusStringHadrAndLept.c_str(),CosThetaJERPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJERPlusStringHadrAndLept]->SetDirectory(0);
+		  //JERMinus:
+		  histo1D[CosThetaJERMinusStringHadrAndLept]=new TH1F(CosThetaJERMinusStringHadrAndLept.c_str(),CosThetaJERMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaJERMinusStringHadrAndLept]->SetDirectory(0);
+		  //WJets Plus:
+		  histo1D[CosThetaWPlusStringHadrAndLept]=new TH1F(CosThetaWPlusStringHadrAndLept.c_str(),CosThetaWPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaWPlusStringHadrAndLept]->SetDirectory(0);
+		  //WJets Minus:
+		  histo1D[CosThetaWMinusStringHadrAndLept]=new TH1F(CosThetaWMinusStringHadrAndLept.c_str(),CosThetaWMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaWMinusStringHadrAndLept]->SetDirectory(0);
+		  //TTScaling Up:
+		  histo1D[CosThetaTTScalingUpStringHadrAndLept]=new TH1F(CosThetaTTScalingUpStringHadrAndLept.c_str(),CosThetaTTScalingUpStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTScalingUpStringHadrAndLept]->SetDirectory(0);
+		  //TTScaling Down:
+		  histo1D[CosThetaTTScalingDownStringHadrAndLept]=new TH1F(CosThetaTTScalingDownStringHadrAndLept.c_str(),CosThetaTTScalingDownStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTScalingDownStringHadrAndLept]->SetDirectory(0);
+		  //TTMatching Up:
+		  histo1D[CosThetaTTMatchingUpStringHadrAndLept]=new TH1F(CosThetaTTMatchingUpStringHadrAndLept.c_str(),CosThetaTTMatchingUpStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTMatchingUpStringHadrAndLept]->SetDirectory(0);
+		  //TTMatching Down:
+		  histo1D[CosThetaTTMatchingDownStringHadrAndLept]=new TH1F(CosThetaTTMatchingDownStringHadrAndLept.c_str(),CosThetaTTMatchingDownStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+		  histo1D[CosThetaTTMatchingDownStringHadrAndLept]->SetDirectory(0);
 		  histo1D[CosThetaSignalStringHadrAndLept]=new TH1F(CosThetaSignalStringHadrAndLept.c_str(),CosThetaSignalStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 		  histo1D[CosThetaSignalStringHadrAndLept]->SetDirectory(0);
 		  histo1D[CosThetaBckgStringHadrAndLept]=new TH1F(CosThetaBckgStringHadrAndLept.c_str(),CosThetaBckgStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
@@ -1516,18 +1659,149 @@ int main (int argc, char *argv[])
 		    }
 		  }
 		  
-		  //Change data to systematics since then nominal values will be reweighted!!
-		  if(WSystResults == true && dataSetName.find("WJets_Nominal") != 0)  //WJets syst
+		  ///////////////////////////////////////////////////////////////////////////////
+ 		  // Change data to systematics since then nominal values will be reweighted!! //
+		  ///////////////////////////////////////////////////////////////////////////////
+
+		  int FirstData=0;
+		  int FirstJESPlus=0;
+		  int FirstJESMinus=0;
+		  int FirstJERPlus=0;
+		  int FirstJERMinus=0;
+		  int FirstWPlus =0;
+		  int FirstWMinus=0;
+		  int FirstTTScaleUp=0;
+		  int FirstTTScaleDown=0;
+		  int FirstTTMatchUp=0;
+		  int FirstTTMatchDown=0;
+		  int FirstSignal=0;
+		  int FirstBckg=0;
+
+		  //Data result:
+		  if(dataSetName.find("Data") == 0){
 		    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  if(WSystResults == false && (dataSetName.find("Data") == 0 || dataSetName.find("JES") == 0)) //Nominal and JES systematics
+		    if(FirstData==0){
+		      cout << " Filling data histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstDataEvent++;
+		    }
+		  }
+		  //JES Plus:
+		  if(dataSetName.find("JESPlus") == 0){
+		    histo1D[CosThetaJESPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstJESPlus==0){
+		      cout << " filling JES Plus histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstJESPlusEvent++;
+		    }
+		  }
+		  //JES Minus:
+		  if(dataSetName.find("JESMinus") == 0){
+		    histo1D[CosThetaJESMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstJESMinus==0){
+		    cout << " filling JES Minus histogram with : " << endl;
+		     cout << "         " << dataSetName << endl;
+		  }	    
+		  //JER Plus:
+		  if(dataSetName.find("JERPlus") == 0){
+		    histo1D[CosThetaJERPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstJERPlus ==0){
+		      cout << " filling JER Plus histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstJERPlus++;
+		    }
+		  }	    
+		  //JER Minus:
+		  if(dataSetName.find("JERMinus") == 0){
+		    histo1D[CosThetaJERMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstJERMinus==0){
+		      cout << " filling JER Minus histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstJERMinus++;
+		    }
+		  }	    
+		  //WJets Plus:
+		  if(dataSetName.find("WSystPlus") == 0 ||( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ))){
+		    histo1D[CosThetaWPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstWPlus == 0){
+		      cout << " filling WSyst Plus histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstWPlus++;
+		    }
+		  }	    
+		  //WJets Minus:
+		  if(dataSetName.find("WSystMinus") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)) )){
+		    histo1D[CosThetaWMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstWMinus==0){
+		      cout << " filling WSyst Minus histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstWMinus++;
+		    }
+		  }	    
+		  //TTScaling Up:
+		  if(dataSetName.find("TTScalingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0)){
+		    histo1D[CosThetaTTScalingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstTTScaleUp==0){
+		      cout << " filling TT Scaling Up histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstTTScaleUp++;
+		    }
+		  }	    
+		  //TTScaling Up:
+		  if(dataSetName.find("TTScalingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 )){
+		    histo1D[CosThetaTTScalingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstTTScaleDown==0){
+		      cout << " filling TT Scaling Down histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstTTScaleDown++;
+		    }
+		  }	    
+		  //TTMatching Up:
+		  if(dataSetName.find("TTMatchingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 )){
+		    histo1D[CosThetaTTMatchingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		    if(FirstTTMatchUp==0){
+		       cout << " filling TT Matching Up histogram with : " << endl;
+		       cout << "         " << dataSetName << endl;
+		       FirstTTMatchUp++;
+		    }
+		  }	    
+		  //TTMatching Up:
+		  if(dataSetName.find("TTMatchingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 )){
+		    histo1D[CosThetaTTMatchingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
+		    if(FirstTTMatchDown == 0){
+		      cout << " filling TT Matching Down histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstTTMatchDown++;
+		    }
+		  }	    
+
+		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true))){	    
 		    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  if(SignalOnly == true && (dataSetName.find("TTbarJets_SemiMu") == 0))
-		    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());  
-		  
-		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0)
+		    if(FirstSignal==0){
+		      cout << " filling signal histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstSignal++;
+		    }
+		  }	    
+		      
+
+		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
 		    histo1D[CosThetaSignalStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
-		  else if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("Syst") != 0) 
+		    if(FirstSignal==0){
+		      cout << " filling signal histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstSignal++;
+		    }
+		  }	    
+
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )){ 
 		    histo1D[CosThetaBckgStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
+		    if(FirstBckg==0){
+		      cout << " filling background histogram with : " << endl;
+		      cout << "         " << dataSetName << endl;
+		      FirstBckg++;
+		    }
+		  }	    
 		}
 
 		//Hadronic and Leptonic W Only KinFit Configuration: Filling of histograms
@@ -1544,18 +1818,53 @@ int main (int argc, char *argv[])
 		    }
 		  }
 		  
-		  //Change data to systematics since then nominal values will be reweighted!!
-		  if(WSystResults == true && dataSetName.find("WJets_Nominal") != 0)  //WJets syst
+		  ///////////////////////////////////////////////////////////////////////////////
+ 		  // Change data to systematics since then nominal values will be reweighted!! //
+		  ///////////////////////////////////////////////////////////////////////////////
+
+		  //Data result:
+		  if(dataSetName.find("Data") == 0)
 		    histo1D[CosThetaDataStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  if(WSystResults == false && (dataSetName.find("Data") == 0 || dataSetName.find("JES") == 0)) //Nominal and JES systematics
+		  //JES Plus:
+		  if(dataSetName.find("JESPlus") == 0)
+		    histo1D[CosThetaJESPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JES Minus:
+		  if(dataSetName.find("JESMinus") == 0)
+		    histo1D[CosThetaJESMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JER Plus:
+		  if(dataSetName.find("JERPlus") == 0)
+		    histo1D[CosThetaJERPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JER Minus:
+		  if(dataSetName.find("JERMinus") == 0)
+		    histo1D[CosThetaJERMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //WJets Plus:  --> Fill with WsystPlus sample and all other MC
+		  if(dataSetName.find("WSystPlus") == 0 ||( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )))
+		    histo1D[CosThetaWPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //WJets Minus:  --> Fill with WsystMinus sample and all other MC
+		  if(dataSetName.find("WSystMinus") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)) ))
+		    histo1D[CosThetaWMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTScaling Up:
+		  if(dataSetName.find("TTScalingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTScalingUpStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTScaling Up:
+		  if(dataSetName.find("TTScalingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTScalingDownStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTMatching Up:
+		  if(dataSetName.find("TTMatchingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTMatching Up:
+		  if(dataSetName.find("TTMatchingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
+
+		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))
 		    histo1D[CosThetaDataStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  if(SignalOnly == true && (dataSetName.find("TTbarJets_SemiMu") == 0))
-		    histo1D[CosThetaDataStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());  
-		  
-		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0)
+
+		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaSignalStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*NominalNormFactor);
-		  else if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("Syst") != 0) 
+
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )) 
 		    histo1D[CosThetaBckgStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*NominalNormFactor);
+	  
 		}
 
 		//Hadronic and Leptonic KinFit Configuration: Filling of histograms
@@ -1571,26 +1880,92 @@ int main (int argc, char *argv[])
 		      }	      	   
 		    }
 		  }
-		  
-		  //Change data to systematics since then nominal values will be reweighted!!
-		  if(WSystResults == true && dataSetName.find("WJets_Nominal") != 0)  //WJets syst
-		    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  if(WSystResults == false && (dataSetName.find("Data") == 0 || dataSetName.find("JES") == 0)) //Nominal and JES systematics
-		    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  if(SignalOnly == true && (dataSetName.find("TTbarJets_SemiMu") == 0))
-		    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());  
-		  
-		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0)
-		    histo1D[CosThetaSignalStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*NominalNormFactor);
-		  else if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("Syst") != 0) 
-		    histo1D[CosThetaBckgStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*NominalNormFactor);
-		}
+		  ///////////////////////////////////////////////////////////////////////////////
+ 		  // Change data to systematics since then nominal values will be reweighted!! //
+		  ///////////////////////////////////////////////////////////////////////////////
 
+		  //Data result:
+		  if(dataSetName.find("Data") == 0)
+		    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JES Plus:
+		  if(dataSetName.find("JESPlus") == 0)
+		    histo1D[CosThetaJESPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JES Minus:
+		  if(dataSetName.find("JESMinus") == 0)
+		    histo1D[CosThetaJESMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JER Plus:
+		  if(dataSetName.find("JERPlus") == 0)
+		    histo1D[CosThetaJERPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //JER Minus:
+		  if(dataSetName.find("JERMinus") == 0)
+		    histo1D[CosThetaJERMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //WJets Plus:  --> Fill with WsystPlus sample and all other MC
+		  if(dataSetName.find("WSystPlus") == 0 ||( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )))
+		    histo1D[CosThetaWPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //WJets Minus:  --> Fill with WsystMinus sample and all other MC
+		  if(dataSetName.find("WSystMinus") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)) ))
+		    histo1D[CosThetaWMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTScaling Up:
+		  if(dataSetName.find("TTScalingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0))
+		    histo1D[CosThetaTTScalingUpStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTScaling Up:
+		  if(dataSetName.find("TTScalingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTScalingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTMatching Up:
+		  if(dataSetName.find("TTMatchingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTMatchingUpStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+		  //TTMatching Up:
+		  if(dataSetName.find("TTMatchingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		    histo1D[CosThetaTTMatchingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
+
+		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))
+		    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
+
+		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
+		    histo1D[CosThetaSignalStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*NominalNormFactor);
+
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )) 
+		    histo1D[CosThetaBckgStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*NominalNormFactor);
+		  
+		}
 
 		if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active to perform MinuitFitter
 		  
-		  //Hadronic KinFit configuration: MinuitFitter		  		
-		  MinuitFitter minuitFitterHadr = MinuitFitter(histo1D[CosThetaDataStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  //////////////////////////////////////////////////
+		  //  Hadronic KinFit configuration: MinuitFitter //
+		  //////////////////////////////////////////////////	
+		  //Data:
+		  cout << " Entries of Data : " << histo1D[CosThetaDataStringHadr]->GetEntries() << endl;
+		  cout << " Entries of Signal : " << histo1D[CosThetaSignalStringHadr]->GetEntries() << endl;
+		  cout << " Entries of Bckg : " << histo1D[CosThetaBckgStringHadr]->GetEntries() << endl;
+		  MinuitFitter minuitFitterHadr = MinuitFitter(histo1D[CosThetaDataStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
+		  //JESPlus
+		  MinuitFitter minuitFitterHadrJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  //JES Minus
+		  MinuitFitter minuitFitterHadrJESMinus = MinuitFitter(histo1D[CosThetaJESMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  //JERPlus
+		  // MinuitFitter minuitFitterHadrJERPlus;
+		  // if(JERResults == true) minuitFitterHadrJERPlus = MinuitFitter(histo1D[CosThetaJERPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  // //JER Minus
+		  // MinuitFitter minuitFitterHadrJERMinus;
+		  // if(JERResults == true) minuitFitterHadrJERMinus = MinuitFitter(histo1D[CosThetaJERMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  //W Plus
+		  MinuitFitter minuitFitterHadrWPlus = MinuitFitter(histo1D[CosThetaWPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  //W Minus
+		  MinuitFitter minuitFitterHadrWMinus = MinuitFitter(histo1D[CosThetaWMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
+		  // //TTScaling Up
+		  // MinuitFitter minuitFitterHadrTTScalingUp;
+		  // if(TTScalingResults == true) minuitFitterHadrTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  // //TTScaling Down
+		  // MinuitFitter minuitFitterHadrTTScalingDown;
+		  // if(TTScalingResults == true) minuitFitterHadrTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
+		  // //TTMatching Up
+		  // MinuitFitter minuitFitterHadrTTMatchingUp;
+		  // if( TTMatchingResults == true) minuitFitterHadrTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+		  // //TTMatching Down
+		  // MinuitFitter minuitFitterHadrTTMatchingDown;
+		  // if( TTMatchingResults == true) minuitFitterHadrTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
+			  
 		  PresentationTexHadr << PresentationOutput[SumbTag] << " & ";
 		  cout << " Inside minuitFitter loop : " << PresentationOutput[SumbTag] << " & " << endl;
 		  for(int ii=0; ii< nameDataSet.size(); ii++){
@@ -1600,8 +1975,20 @@ int main (int argc, char *argv[])
 		      PresentationTexHadr << NumberRemainingEventsKinFitHadr[SumbTag][ii] << " & ";//For presentation helicity values still need to be included !!
 		      PresentationTexHadr << NumberBLeptCorrectEventsKinFitHadr[SumbTag][ii] << " & ";
 		    }
-		  }		  
-		  
+		  }	
+
+		  float FLJESSyst = abs(minuitFitterHadrJESPlus.GetFLResult()-minuitFitterHadrJESMinus.GetFLResult())/2;
+		  float FLJERSyst = 0;
+		  //		  if(JERResults == true) FLJERSyst = abs(minuitFitterHadrJERPlus.GetFLResult()-minuitFitterHadrJERMinus.GetFLResult())/2;
+		  float FLWSyst = 0;
+		  if(WSystResults == true) FLWSyst = abs(minuitFitterHadrWPlus.GetFLResult()-minuitFitterHadrWMinus.GetFLResult())/2;
+		  float FLTTScaling = 0;
+		  //		  if(TTScalingResults == true) FLTTScaling = abs(minuitFitterHadrTTScalingUp.GetFLResult()-minuitFitterHadrTTScalingDown.GetFLResult())/2;
+		  float FLTTMatching = 0;
+		  //		  if(TTMatchingResults == true) FLTTMatching = abs(minuitFitterHadrTTMatchingUp.GetFLResult()-minuitFitterHadrTTMatchingDown.GetFLResult())/2;
+
+		  FMinusTexHadr << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMfrResult <<" & " << minuitFitterHadr.GetFLError() << " & " << FLJESSyst << " & " << FLJERSyst << " & " << FLWSyst << " & " << FLTTScaling << " & " << FLTTMatching << endl;
+
 		  PresentationTexHadr << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMflResult << " & " << minuitFitterHadr.GetFLError() << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMf0Result << " & " << minuitFitterHadr.GetF0Error() << " \\\\ " << endl;		
 		  PresentationTexHadr << " \\hline " << endl;
 
@@ -1719,6 +2106,8 @@ int main (int argc, char *argv[])
   PresentationTexHadrAndLept << " \\end{tiny} " << endl;
   PresentationTexHadrAndLept << " \\end{table} " << endl;
   PresentationTexHadrAndLept.close();
+
+  FMinusTexHadr.close();
 
   cout << "Finished running over all datasets..." << endl;
   fout->cd();
