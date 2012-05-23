@@ -268,13 +268,17 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	nTTbarBeforeChiSq = 0;
 	nTTbarAfterChiSq = 0;
 	
-	nTTbarBeforeRefSel = 3701936; // summer11 pt 30
+	//nTTbarBeforeRefSel = 3701936; // summer11 pt 30
     
     //nTTbarBeforeRefSel = 3698723; // fall11 pt 35
 	
 	//nTTbarBeforeRefSel = 2947570;
 	
-	nTTbarAfterRefSel = 0;
+    //nTTbarBeforeRefSel = 1203372; // summer12 temp sample
+    
+    nTTbarBeforeRefSel = 6442045; // summer12 final sample
+	
+    nTTbarAfterRefSel = 0;
     
     for (unsigned int i=0; i<100; i++) nTTbarAfterRefSel_nPV[i]=0;
 	
@@ -289,7 +293,7 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	//}
 	
     nTaggers=7;
-    nTaggers=1;
+    //nTaggers=1;
 	
 	if (doPseudoExp) nTaggers=1;
 	
@@ -691,6 +695,27 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     int nBinsCSVfix=15;
     
     int i=-1;
+    
+    
+    // NOMINAL SET OF SAMPLES
+    //nTaggers=1;
+    //nWP=3;
+    
+    nRunSamples_=7;
+    inRootFile[0] = "BtagTree_TTbarJets";
+    inRootFile[1] = "BtagTree_ST_tW_t";
+    inRootFile[2] = "BtagTree_ST_tW_tbar";
+    inRootFile[3] = "BtagTree_ST_t_t";
+    inRootFile[4] = "BtagTree_ST_t_tbar";
+    inRootFile[5] = "BtagTree_ZJets";
+    inRootFile[6] = "BtagTree_WJets";
+
+    //inRootFile[0] = "BtagTree_WJets_JESMinus";
+        
+    if (decay==1) {
+        inRootFile[7] = "BtagTree_Data"+data_postfix+"_InvIso";
+        nRunSamples_++;
+    }
 
 	switch (nSystematic) {
 		case -2:
@@ -700,26 +725,6 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			//inRootFile[0] = "BtagTree_Data1fb";
             doCorrectForBias=false;
             doBtagSFonData=false;
-			break;
-        case -7:
-			sampleType="Data-fixbins";
-			nRunSamples_=1;
-            doVarBins=false;
-			inRootFile[0] = "BtagTree_Data";
-            nBinsBtag[6]=nBinsCSVfix; /* for CSV plot in PAS */
-			break;
-		case -4:
-			sampleType="zeroPU-ttbarsemimuonly";
-			nRunSamples_=1;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_ZeroPUevents";
-			break;
-		case -1:
-			sampleType="nominal-ttbaronly";
-			//doVarBins=false;
-			nRunSamples_=1;
-			//desiredIntLum_=6000;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
 			break;
 		case -3:
 			doOnlyMSPlot=true;
@@ -732,12 +737,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 nRunSamples_++;
 			}
             
-            i++;inRootFile[i] = "BtagTree_ZJets";
+            nRunSamples_=8;
+            i=0;
+			inRootFile[i] = "BtagTree_ZJets";
 			i++;inRootFile[i] = "BtagTree_WJets";
-			i++;inRootFile[i] = "BtagTree_ST_SingleTop_tChannel_t";
-			i++;inRootFile[i] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			i++;inRootFile[i] = "BtagTree_ST_SingleTop_tWChannel_t";
-			i++;inRootFile[i] = "BtagTree_ST_SingleTop_tWChannel_tbar";
+            i++;inRootFile[i] = "BtagTree_ST_t_t";
+            i++;inRootFile[i] = "BtagTree_ST_t_tbar";
+            i++;inRootFile[i] = "BtagTree_ST_tW_t";
+            i++;inRootFile[i] = "BtagTree_ST_tW_tbar";
 			i++;inRootFile[i] = "BtagTree_TTbarJets";
 			i++;inRootFile[i] = "BtagTree_Data"+data_postfix;
 			
@@ -772,51 +779,17 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			datasets_title.push_back("Data");
 			
 			break;
-		case -5:
-			sampleType="nominal-noWJETS";
-			nRunSamples_=7;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_QCD";
-			break;
-		case -6:
-			sampleType="nominal-fixbins";
-            //reweigh_to_data=true;
-			nRunSamples_=7;
-			doVarBins=false;
-            //nBinsBtag[6]=nBinsCSVfix; /* for CSV plot in PAS */
-			inRootFile[0] = "BtagTree_TTbarJets";
-			inRootFile[1] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[5] = "BtagTree_ZJets";
-			inRootFile[6] = "BtagTree_WJets";
-            if (decay==1) {
-                inRootFile[7] = "BtagTree_Data"+data_postfix+"_InvIso";
-                nRunSamples_++;
-            }
-			break;
             
 		case 0:
 			sampleType="nominal";
-			nRunSamples_=7;
+			/*nRunSamples_=7;
 			inRootFile[0] = "BtagTree_TTbarJets";
 			inRootFile[1] = "BtagTree_ST_SingleTop_tChannel_t";
 			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_tbar";
 			inRootFile[3] = "BtagTree_ST_SingleTop_tWChannel_t";
 			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_tbar";
 			inRootFile[5] = "BtagTree_ZJets";
-			inRootFile[6] = "BtagTree_WJets";
-			if (decay==1) {
-                inRootFile[7] = "BtagTree_Data"+data_postfix+"_InvIso";
-                nRunSamples_++;
-            }
+			inRootFile[6] = "BtagTree_WJets";*/
             
 			if (nPDFWeight != -1) {
 				stringstream s; s<<nPDFWeight;
@@ -833,6 +806,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             //doCorrectForBias=true;
 			
 			break;
+  
         case -8: // apply pt-rew to data
 			sampleType="nominal-datarew";
             reweigh_to_data=true;
@@ -852,99 +826,43 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			break;
 
 		case 1:
-			nRunSamples_=8;
 			sampleType="JES-";
 //doVarBins=false;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_JESMinus";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_JESMinus";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_JESMinus";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_JESMinus";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_JESMinus";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_JESMinus";
-			inRootFile[6] = "BtagTree_ZJets_JESMinus";
-			inRootFile[7] = "BtagTree_WJets_JESMinus";
-			inRootFile[8] = "BtagTree_QCD_JESMinus";
-			break;
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                inRootFile[i] = inRootFile[i]+"_JESMinus";
+            }
+            break;
 		case 2:
-			nRunSamples_=8;
 			sampleType="JES+";
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_JESPlus";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_JESPlus";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_JESPlus";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_JESPlus";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_JESPlus";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_JESMinus";			
-			inRootFile[6] = "BtagTree_ZJets_JESPlus";
-			inRootFile[7] = "BtagTree_WJets_JESPlus";
-			inRootFile[8] = "BtagTree_QCD_JESPlus";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                inRootFile[i] = inRootFile[i]+"_JESPlus";
+            }
 			break;
 
 		case 3:
-			nRunSamples_=8;
 			sampleType="JER-";
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_JERMinus";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_JERMinus";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_JERMinus";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_JERMinus";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_JERMinus";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_JERMinus";
-			inRootFile[6] = "BtagTree_ZJets_JERMinus";
-			inRootFile[7] = "BtagTree_WJets_JERMinus";
-			inRootFile[8] = "BtagTree_QCD_JERMinus";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                inRootFile[i] = inRootFile[i]+"_JERMinus";
+            }
 			break;
 		case 4:
-			nRunSamples_=8;
 			sampleType="JER+";
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_JERPlus";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_JERPlus";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_JERPlus";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_JERPlus";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_JERPlus";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_JERPlus";
-			inRootFile[6] = "BtagTree_ZJets_JERPlus";
-			inRootFile[7] = "BtagTree_WJets_JERPlus";
-			inRootFile[8] = "BtagTree_QCD_JERPlus";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                inRootFile[i] = inRootFile[i]+"_JERPlus";
+            }
 			break;
             
-        case 99:
-			nRunSamples_=8;
-			sampleType="PileUp-1fbrew-nominal";
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_NomPU";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_NomPU";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_NomPU";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_NomPU";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_NomPU";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_NomPU";
-			inRootFile[6] = "BtagTree_ZJets_NomPU";
-			inRootFile[7] = "BtagTree_WJets_NomPU";
-			inRootFile[8] = "BtagTree_QCD_NomPU";
-			break;
-		
 		case 5:
-			nRunSamples_=8;
 			sampleType="PileUp-";
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_LessPU";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_LessPU";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_LessPU";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_LessPU";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_LessPU";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_LessPU";
-			inRootFile[6] = "BtagTree_ZJets_LessPU";
-			inRootFile[7] = "BtagTree_WJets_LessPU";
-			inRootFile[8] = "BtagTree_QCD_LessPU";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                inRootFile[i] = inRootFile[i]+"_LessPU";
+            }
 			break;
 		case 6:
-			nRunSamples_=8;
 			sampleType="PileUp+";
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon_MorePU";
-			inRootFile[1] = "BtagTree_TTbarJets_Other_MorePU";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t_MorePU";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar_MorePU";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t_MorePU";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar_MorePU";
-			inRootFile[6] = "BtagTree_ZJets_MorePU";
-			inRootFile[7] = "BtagTree_WJets_MorePU";
-			inRootFile[8] = "BtagTree_QCD_MorePU";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                inRootFile[i] = inRootFile[i]+"_MorePU";
+            }
 			break;
 			
 		case 7:
@@ -1120,122 +1038,53 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		case 17:
 			sampleType="WJetsXSDown-50perc";
             sampleSel="WJets";
-			nRunSamples_=7;
 			WJets_scale=0.5;	
-			inRootFile[0] = "BtagTree_TTbarJets";
-			inRootFile[1] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[5] = "BtagTree_ZJets";
-			inRootFile[6] = "BtagTree_WJets";
-			inRootFile[7] = "BtagTree_QCD";		
-			break;			
+            break;
 			
 		case 18:
 			sampleType="WJetsXSUp-50perc";
             sampleSel="WJets";
-			nRunSamples_=8;
 			WJets_scale=1.5;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";			
+        
 			break;
 
 		case 19:
 			sampleType="ZJetsXSDown-50perc";
             sampleSel="ZJets";
-			nRunSamples_=8;
 			ZJets_scale=0.5;	
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";			
+				
 			break;			
 		case 20:
 			sampleType="ZJetsXSUp-50perc";
             sampleSel="ZJets";
-			nRunSamples_=8;
 			ZJets_scale=1.5;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";
+			
 			break;
 			
 		case 21:
 			sampleType="RightReg-nominal";
-			nRunSamples_=8;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";
-			inRootFile[9] = "BtagTree_Data";
 			
-			leftlimit=80;
-			centerleftlimit=150;
-			rightlimit=250;
+			leftlimit=50;
+			centerleftlimit=140;
+			rightlimit=240;
 			
 			break;
 		
 		case 22:
 			sampleType="RightReg-smaller";
-			nRunSamples_=8;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";
-			inRootFile[9] = "BtagTree_Data";
-			
-			leftlimit=80;
-			centerleftlimit=150;
-			rightlimit=200;
+						
+			leftlimit=50;
+			centerleftlimit=140;
+			rightlimit=190;
 			
 			break;
 			
 		case 23:
 			sampleType="RightReg-bigger";
-			nRunSamples_=8;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";
-			inRootFile[9] = "BtagTree_Data";
-			
-			leftlimit=80;
-			centerleftlimit=150;
-			rightlimit=300;
+						
+			leftlimit=50;
+			centerleftlimit=140;
+			rightlimit=290;
 			
 			break;
 			
@@ -1523,11 +1372,12 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             
             //if (NTuple->ptMuon() <= 35) continue; // for TOP-11-003
               
+            //if (NTuple->nPV() > 10) continue;
             //if (NTuple->nJets() != 4) continue;
             
             //cout << NTuple->scalefactor() << " " << NTuple->scalefactor3D() << endl;
             
-            NTuple->setScaleFactor(NTuple->scalefactor3D()); // enable 3D reweighing
+            //NTuple->setScaleFactor(NTuple->scalefactor3D()); // enable 3D reweighing
             
             //NTuple->setScaleFactor(1); // disable PU reweighing
         
@@ -1637,12 +1487,15 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				weight = (1/origLumi)*desiredIntLum_*weightfactor*NTuple->scalefactor();
             
             
-            //if (doOnlyMSPlot && NTuple->dataSetName().find("TTbar") == 0) {
-                //cout << weight << endl;
+            //if (doOnlyMSPlot && NTuple->dataSetName().find("WJets") == 0) {
+                //cout << weight << " " << NTuple->scalefactor() <<  endl;
                 //weight = weight * (172.2/157.5);
                 //cout << weight << endl << endl;
                 //exit(1);
             //}
+            
+            //cout << NTuple->dataSetName() << " " << weight << " " << NTuple->scalefactor() <<  endl;
+
             //cout << weightfactor << endl; exit(1);
             
             //cout << ptWeight << endl;
@@ -2075,6 +1928,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		std::map<string,TH1D*> hist_PU;
 		
 		MSPlot["nPV"] = new MultiSamplePlot(datasets, "nPV", 36, -0.5, 35.5, "#PV");
+		MSPlot["nPV_nonRew"] = new MultiSamplePlot(datasets, "nPV_nonRew", 36, -0.5, 35.5, "#PV");
         
 		MSPlot["selectedEventsJetsEta"] = new MultiSamplePlot(datasets, "selectedEventsJetsEta", 13, -2.6, 2.6, "Jet #eta");
         
@@ -2403,6 +2257,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 MLB_VS_PUWeight->Fill(v_var[n],v_scaleFactor[n],v_weight[n]/v_scaleFactor[n]);
 
             MSPlot["nPV"]->Fill(v_npv[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
+            MSPlot["nPV_nonRew"]->Fill(v_npv[n], datasets[d], true, dataLum_);
             
 			MSPlot["selectedEventsJetsEta"]->Fill(v_eta[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             
@@ -2456,7 +2311,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				MSPlot["MLB_ControlSample_q2"]->Fill(v_controlVar2[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 			}
 			
-			if (v_bTag[n][0] > 3.3) {
+			//if (v_bTag[n][0] > 3.3) {
+            if (v_bTag[n][6] > 0.679) {
 				MSPlot["MLB_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 				MSPlot["MLB_BTV_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 				MSPlot["M3_BTV_btag"]->Fill(v_varb[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
@@ -2919,7 +2775,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 	if (doVarBins) {		
 		
 		if (sampleType.find("nominal") != string::npos && !doPseudoExp_) {
-			for (unsigned int nt=0; nt < nTaggers; nt++) {
+		//if  (doVarBins) {
+            
+            for (unsigned int nt=0; nt < nTaggers; nt++) {
 				
 				double max = upRangeBtag[nt];
 				double min = lowRangeBtag[nt];
@@ -2928,7 +2786,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				
                 // OLD METHOD 
                 
-				std::vector<float> bTagVals;
+				/*std::vector<float> bTagVals;
 				
 				for (unsigned int s=0; s< v_bTag.size(); s++) 
 					if (v_bTag[s][nt] > min && v_bTag[s][nt] <= max)
@@ -2967,11 +2825,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						rangesbTag[nt].push_back(local_min);
 					
 					
-				}
+				}*/
                 
                 // NEW METHOD
                 
-                /*float binSize = (max-min)/nBinsBtag[nt];
+                float binSize = (max-min)/nBinsBtag[nt];
                 
                 cout << binSize << endl;
                 
@@ -2981,7 +2839,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         rangesbTag[nt].push_back(min+(i*binSize));
                     else
                         rangesbTag[nt].push_back(max);
-                }*/
+                }
                 
                 // PUT IN WPS
 				
@@ -3617,8 +3475,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			
 		}
         
-        if (decay == 1 && sampleType.find("Data") != string::npos)
-            refSelEff=refSelEff*0.9341*1.004;
+        //if (decay == 1 && sampleType.find("Data") != string::npos)
+        //    refSelEff=refSelEff*0.9341*1.004;
 		
 		if (!doPseudoExp_) {
 			
@@ -4652,7 +4510,6 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         csv	<< infoForPDF[niwp][2] << " " << infoForPDF[niwp][3] << " 0 0 " << infoForPDF[niwp][4]/infoForPDF[niwp][16] << " 0 \n";
                     }
                     csv.close();
-                    
                 }
 				
 			} else {
@@ -4686,7 +4543,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     float diffEb = biasEpsF.first-nomEb;
                     float udiffEb = sqrt(pow(nomuEb,2)+pow(biasEpsF.second,2));
                     
-                    ofstream csv; csv.open(("systematics/systematics_results_WP"+p.str()+".csv").c_str(), ios::out | ios::app );
+                    ofstream csv; csv.open(("systematics/systematics_results_WP"+p.str()+"_channel"+data_postfix+".csv").c_str(), ios::out | ios::app );
                     
                     if (nWP > 1) {
                         csv << sampleType << " " << sampleSel << " " << infoForPDF[niwp][6] << " " << infoForPDF[niwp][7] << " " << diffF << " " << udiffF << " ";

@@ -107,6 +107,8 @@ void printAssymSystematics(std::string type, std::map<std::string, std::vector<d
     	
 	for (std::map<std::string, std::vector<double> >::iterator it = systematics.begin(); it != systematics.end(); ++it) {
 		
+        if (it->second[0] == 0 && it->second[1] == 0) continue;
+        
 		if (it->second.size() > 2)
 			cout << "Error, " << it->first << " has more than two values. This is unexpected!" << endl;
 		
@@ -643,9 +645,11 @@ int main (int argc, char* argv[]) {
     //systematics_xs["PDF Uncertainties"].push_back(2.1);
     //systematics_xs_ass["PDF Uncertainties"].push_back(1.9);
     //systematics_xs_ass["PDF Uncertainties"].push_back(2.1);
-    systematics_xs["UE"].push_back(1.7);
-    systematics_xs_ass["UE"].push_back(1.7);
-    systematics_xs_ass["UE"].push_back(-1.7);
+    
+    //systematics_xs["UE"].push_back(1.7);
+    //systematics_xs_ass["UE"].push_back(1.7);
+    //systematics_xs_ass["UE"].push_back(-1.7);
+    
     //systematics_xs["Luminosity"].push_back(159.5*0.04);
     //systematics_xs_ass["Luminosity"].push_back(159.5*0.04);
     //systematics_xs_ass["Luminosity"].push_back(-159.5*0.04);
@@ -704,7 +708,7 @@ int main (int argc, char* argv[]) {
         systematics_xs_ass_perc[it->first].push_back((it->second[1]/nomxs)*100);
     }
     
-    systematics_xs_ass_perc["Lepton ID/eff"].push_back(1.0);
+    /*systematics_xs_ass_perc["Lepton ID/eff"].push_back(1.0);
     systematics_xs_ass_perc["Lepton ID/eff"].push_back(-1.0);
     systematics_xs_ass_perc["Lepton Trigger eff"].push_back(1.0);
     systematics_xs_ass_perc["Lepton Trigger eff"].push_back(-1.0);
@@ -713,7 +717,7 @@ int main (int argc, char* argv[]) {
     systematics_xs_ass["Lepton ID/eff"].push_back(0.01*nomxs);
     systematics_xs_ass["Lepton ID/eff"].push_back(-0.01*nomxs);
     systematics_xs_ass["Lepton Trigger eff"].push_back(0.01*nomxs);
-    systematics_xs_ass["Lepton Trigger eff"].push_back(-0.01*nomxs);
+    systematics_xs_ass["Lepton Trigger eff"].push_back(-0.01*nomxs);*/
 
     cout << nomxs << endl;
 
@@ -740,7 +744,7 @@ int main (int argc, char* argv[]) {
 
     }
     
-    cout << sqrt(sup) << " " << sqrt(sdown) << endl;
+    //cout << sqrt(sup) << " " << sqrt(sdown) << endl;
     	
 	return 0;
 	

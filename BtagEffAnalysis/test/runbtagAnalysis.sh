@@ -77,7 +77,7 @@ iFbias=-1 # only MC
     #echo g++ -m64 -L../../ -L../../TMVA/lib/ -lTopTreeAnaContent -lTopTreeAna -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
     #echo g++ -m64 -L../../ -lBtagAnalysis -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
 
-    g++ -m64 -I../../../ -I../../ -I.. -L/Users/michael/lib -lBtagAnalysis42 -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement
+    g++ -m64 -I../../../ -I../../ -I.. -L/Users/michael/lib -lBtagAnalysis52 -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement
     #The value on the 4th position will tell you how much of the background you will remove (exact value from a list in mybTagMeasurement)
 
     ### For testing Fbias=true

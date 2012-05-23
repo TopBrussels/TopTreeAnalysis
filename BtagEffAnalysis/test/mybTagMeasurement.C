@@ -23,10 +23,10 @@ int verbosity=0; //default
 
 int nSystematic=0; //default (nominal samples) 
 
-int leftlimit = 80;
-int centerleftlimit = 150;
-int centerrightlimit = 150;
-int rightlimit = 250;
+int leftlimit = 50;
+int centerleftlimit = 140;
+int centerrightlimit = 140;
+int rightlimit = 240;
 
 //good for e+jets
 //int leftlimit = 80;
@@ -120,7 +120,7 @@ int nRunSamples=6;
 int doJESsample=6;
 */
 
-float desiredIntLum=2500; 
+float desiredIntLum=400; 
 
 //float desiredIntLum=4568.68; 
 
@@ -391,7 +391,7 @@ int main(int argc, char* argv[]){
   //myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF);
 
     //int decay=1;
-    int fitMode=2; // choose fit variable -> 0: m_lj 1: M3 2: 2D fit of (m_lj,M3)
+    int fitMode=0; // choose fit variable -> 0: m_lj 1: M3 2: 2D fit of (m_lj,M3)
 
     /*if (decay==1) {
         
@@ -416,7 +416,7 @@ int main(int argc, char* argv[]){
     rightlimit = 220;
 
     //e+jets
-    myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
+   // myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
   
   //  myAnalyzer.getPercentiles(percentiles);
   //cout << percentiles[0] << " " << percentiles[1] << " " << percentiles [2]<< endl;

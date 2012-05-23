@@ -2913,7 +2913,7 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
     lum << lumi_;
     
     lum.close();
-    
+    //exit(1);
 }
 
 vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_postfix) {
@@ -3381,6 +3381,10 @@ void PtEtaBin::EffCalculation(bool doSCreweigh, TH1D * THLeft, TH1D * THRight, T
 	for(int i=0; i<=THEff->GetXaxis()->GetNbins()+1; i++){
 		
 		THBtag->SetBinContent(i,THLeft->GetBinContent(i)-Fused*THRight->GetBinContent(i));
+
+        //if (THLeft->GetBinContent(i)-Fused*THRight->GetBinContent(i) < 0)
+          //cd   THBtag->SetBinContent(i,0);
+
 		THBtag->SetBinError(i,
 							sqrt(
 								 THLeft->GetBinContent(i)+
