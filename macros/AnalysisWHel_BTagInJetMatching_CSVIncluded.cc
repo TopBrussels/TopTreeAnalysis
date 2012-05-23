@@ -943,7 +943,7 @@ int main (int argc, char *argv[])
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
     }
-    if(dataSetName.find("WSystDown_WJets") == 0 && WSystResults == true){
+    if(dataSetName.find("WSystPlus_WJets") == 0 && WSystResults == true){
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (1.3) ); //WJets Plus 30 %
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (2.) ); //WJets Plus 100 %
       //Normfactor value changes without having to change XSection value !!
@@ -1725,7 +1725,7 @@ int main (int argc, char *argv[])
 		    }
 		  }	    
 		  //WJets Plus:
-		  if(dataSetName.find("WSystPlus") == 0 ||( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ))){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
 		    histo1D[CosThetaWPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		    if(FirstWPlus == 0){
 		      cout << " filling WSyst Plus histogram with : " << endl;
@@ -1734,7 +1734,7 @@ int main (int argc, char *argv[])
 		    }
 		  }	    
 		  //WJets Minus:
-		  if(dataSetName.find("WSystMinus") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)) )){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
 		    histo1D[CosThetaWMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		    if(FirstWMinus==0){
 		      cout << " filling WSyst Minus histogram with : " << endl;
@@ -1743,7 +1743,7 @@ int main (int argc, char *argv[])
 		    }
 		  }	    
 		  //TTScaling Up:
-		  if(dataSetName.find("TTScalingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0)){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0&& dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0){
 		    histo1D[CosThetaTTScalingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		    if(FirstTTScaleUp==0){
 		      cout << " filling TT Scaling Up histogram with : " << endl;
@@ -1751,8 +1751,8 @@ int main (int argc, char *argv[])
 		      FirstTTScaleUp++;
 		    }
 		  }	    
-		  //TTScaling Up:
-		  if(dataSetName.find("TTScalingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 )){
+		  //TTScaling Down:
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ){
 		    histo1D[CosThetaTTScalingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		    if(FirstTTScaleDown==0){
 		      cout << " filling TT Scaling Down histogram with : " << endl;
@@ -1761,7 +1761,7 @@ int main (int argc, char *argv[])
 		    }
 		  }	    
 		  //TTMatching Up:
-		  if(dataSetName.find("TTMatchingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 )){
+		  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 ){
 		    histo1D[CosThetaTTMatchingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		    if(FirstTTMatchUp==0){
 		       cout << " filling TT Matching Up histogram with : " << endl;
@@ -1769,8 +1769,8 @@ int main (int argc, char *argv[])
 		       FirstTTMatchUp++;
 		    }
 		  }	    
-		  //TTMatching Up:
-		  if(dataSetName.find("TTMatchingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 )){
+		  //TTMatching Down:
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 ){
 		    histo1D[CosThetaTTMatchingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
 		    if(FirstTTMatchDown == 0){
 		      cout << " filling TT Matching Down histogram with : " << endl;
@@ -1788,7 +1788,6 @@ int main (int argc, char *argv[])
 		    }
 		  }	    
 		      
-
 		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
 		    histo1D[CosThetaSignalStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
 		    if(FirstSignal==0){
@@ -1798,7 +1797,7 @@ int main (int argc, char *argv[])
 		    }
 		  }	    
 
-		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )){ 
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) )){ 
 		    histo1D[CosThetaBckgStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
 		    if(FirstBckg==0){
 		      cout << " filling background histogram with : " << endl;
@@ -1842,22 +1841,22 @@ int main (int argc, char *argv[])
 		  if(dataSetName.find("JERMinus") == 0)
 		    histo1D[CosThetaJERMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //WJets Plus:  --> Fill with WsystPlus sample and all other MC
-		  if(dataSetName.find("WSystPlus") == 0 ||( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )))
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaWPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //WJets Minus:  --> Fill with WsystMinus sample and all other MC
-		  if(dataSetName.find("WSystMinus") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)) ))
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaWMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //TTScaling Up:
-		  if(dataSetName.find("TTScalingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0)
 		    histo1D[CosThetaTTScalingUpStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  //TTScaling Up:
-		  if(dataSetName.find("TTScalingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  //TTScaling Down:
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTScalingDownStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //TTMatching Up:
-		  if(dataSetName.find("TTMatchingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  //TTMatching Up:
-		  if(dataSetName.find("TTMatchingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  //TTMatching Down:
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
 
 		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))
@@ -1866,7 +1865,7 @@ int main (int argc, char *argv[])
 		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaSignalStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*NominalNormFactor);
 
-		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )) 
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) )) 
 		    histo1D[CosThetaBckgStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLeptWOnly[SumbTag][ii])*NominalNormFactor);
 	  
 		}
@@ -1904,22 +1903,22 @@ int main (int argc, char *argv[])
 		  if(dataSetName.find("JERMinus") == 0)
 		    histo1D[CosThetaJERMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //WJets Plus:  --> Fill with WsystPlus sample and all other MC
-		  if(dataSetName.find("WSystPlus") == 0 ||( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )))
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaWPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //WJets Minus:  --> Fill with WsystMinus sample and all other MC
-		  if(dataSetName.find("WSystMinus") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)) ))
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaWMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //TTScaling Up:
-		  if(dataSetName.find("TTScalingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0))
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0)
 		    histo1D[CosThetaTTScalingUpStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  //TTScaling Up:
-		  if(dataSetName.find("TTScalingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  //TTScaling Down:
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTScalingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
 		  //TTMatching Up:
-		  if(dataSetName.find("TTMatchingUp") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTMatchingUpStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		  //TTMatching Up:
-		  if(dataSetName.find("TTMatchingDown") == 0 || ( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 ))
+		  //TTMatching Down:
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTMatchingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
 
 		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))
@@ -1928,13 +1927,15 @@ int main (int argc, char *argv[])
 		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaSignalStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*NominalNormFactor);
 
-		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) )) 
+		  if (dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) ))
 		    histo1D[CosThetaBckgStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadrAndLept[SumbTag][ii])*NominalNormFactor);
 		  
 		}
 
 		if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active to perform MinuitFitter
 		  
+		  FMinusTexHadr << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+
 		  //////////////////////////////////////////////////
 		  //  Hadronic KinFit configuration: MinuitFitter //
 		  //////////////////////////////////////////////////	
@@ -1979,19 +1980,19 @@ int main (int argc, char *argv[])
 		    }
 		  }	
 
-		  float FLJESSyst = abs(minuitFitterHadrJESPlus.GetFLResult()-minuitFitterHadrJESMinus.GetFLResult())/2;
-		  float FLJERSyst = 0;
-		  if(JERResults == true) FLJERSyst = abs(minuitFitterHadrJERPlus.GetFLResult()-minuitFitterHadrJERMinus.GetFLResult())/2;
-		  float FLWSyst = 0;
-		  if(WSystResults == true) FLWSyst = abs(minuitFitterHadrWPlus.GetFLResult()-minuitFitterHadrWMinus.GetFLResult())/2;
-		  float FLTTScaling = 0;
-		  //		  if(TTScalingResults == true) FLTTScaling = abs(minuitFitterHadrTTScalingUp.GetFLResult()-minuitFitterHadrTTScalingDown.GetFLResult())/2;
-		  float FLTTMatching = 0;
-		  //		  if(TTMatchingResults == true) FLTTMatching = abs(minuitFitterHadrTTMatchingUp.GetFLResult()-minuitFitterHadrTTMatchingDown.GetFLResult())/2;
+		  float FLJESSystHadr = abs(minuitFitterHadrJESPlus.GetFLResult()-minuitFitterHadrJESMinus.GetFLResult())/2;
+		  float FLJERSystHadr = 0;
+		  if(JERResults == true) FLJERSystHadr = abs(minuitFitterHadrJERPlus.GetFLResult()-minuitFitterHadrJERMinus.GetFLResult())/2;
+		  float FLWSystHadr = 0;
+		  if(WSystResults == true) FLWSystHadr = abs(minuitFitterHadrWPlus.GetFLResult()-minuitFitterHadrWMinus.GetFLResult())/2;
+		  float FLTTScalingHadr = 0;
+		  //		  if(TTScalingResults == true) FLTTScalingHadr = abs(minuitFitterHadrTTScalingUp.GetFLResult()-minuitFitterHadrTTScalingDown.GetFLResult())/2;
+		  float FLTTMatchingHadr = 0;
+		  //		  if(TTMatchingResults == true) FLTTMatchingHadr = abs(minuitFitterHadrTTMatchingUp.GetFLResult()-minuitFitterHadrTTMatchingDown.GetFLResult())/2;
 
-		  FMinusTexHadr << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMfrResult <<" & " << minuitFitterHadr.GetFLError() << " & " << FLJESSyst << " & " << FLJERSyst << " & " << FLWSyst << " & " << FLTTScaling << " & " << FLTTMatching << endl;
+		  FMinusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMfrResult <<" & " << minuitFitterHadr.GetFLError() << " & " << FLJESSystHadr << " & " << FLJERSystHadr << " & " << FLWSystHadr << " & " << FLTTScalingHadr << " & " << FLTTMatchingHadr << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr) << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr+ (minuitFitterHadr.GetFLError())*(minuitFitterHadr.GetFLError())) << endl;
 
-		  PresentationTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMflResult << " & " << minuitFitterHadr.GetFLError() << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMf0Result << " & " << minuitFitterHadr.GetF0Error() << " \\\\ " << endl;		
+		  PresentationTexHadr << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMflResult << " & " << minuitFitterHadr.GetFLError() << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMf0Result << " & " << minuitFitterHadr.GetF0Error() << " \\\\ " << endl;		
 		  PresentationTexHadr << " \\hline " << endl;
 
 		  //Hadronic and Leptonic W Only KinFit configuration: MinuitFitter		  		
