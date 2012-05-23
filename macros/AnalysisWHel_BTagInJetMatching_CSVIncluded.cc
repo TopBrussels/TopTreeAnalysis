@@ -361,6 +361,16 @@ int main (int argc, char *argv[])
   ofstream PresentationTexHadrAndLept(("HadrAndLeptKinFit/"+PresentationTexTitle).c_str());
 
   ofstream FMinusTexHadr("HadrKinFit/FMinus.tex");
+  ofstream FPlusTexHadr("HadrKinFit/FPlus.tex");
+  ofstream FZeroTexHadr("HadrKinFit/FZero.tex");
+
+  ofstream FMinusTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/FMinus.tex");
+  ofstream FPlusTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/FPlus.tex");
+  ofstream FZeroTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/FZero.tex");
+
+  ofstream FMinusTexHadrAndLept("HadrAndLeptKinFit/FMinus.tex");
+  ofstream FPlusTexHadrAndLept("HadrAndLeptKinFit/FPlus.tex");
+  ofstream FZeroTexHadrAndLept("HadrAndLeptKinFit/FZero.tex");
 
   //ofstream PresentationTex(("BTagPerformanceStudy/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedProbCut.tex").c_str());
   //ofstream PresentationTex(("BTagPerformanceStudy/WorkshopPresentation"+UsedTrigger+"NoBTagEvtSelTopFittedMonteCarlo.tex").c_str());
@@ -1422,22 +1432,21 @@ int main (int argc, char *argv[])
     //   std::cout << " fit values error 2 (before event selection) : " << helicityFit2->GetParError(0) << " " << helicityFit2->GetParError(1) << " " << helicityFit2->GetParError(2) << std::endl;
     //   cout << " -----------------------------------------------------------------------------------------------------------------------" << endl;    
     // }
+    
+    if(iDataSet==(datasets.size()-1)){
+      FMinusTexHadr << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FPlusTexHadr << " bTagger  &  FR result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FZeroTexHadr << " bTagger  &  F0 result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
 
-    int FirstData=0;
-    int FirstJESPlus=0;
-    int FirstJESMinus=0;
-    int FirstJERPlus=0;
-    int FirstJERMinus=0;
-    int FirstWPlus =0;
-    int FirstWMinus=0;
-    int FirstTTScaleUp=0;
-    int FirstTTScaleDown=0;
-    int FirstTTMatchUp=0;
-    int FirstTTMatchDown=0;
-    int FirstSignal=0;
-    int FirstBckg=0;
+      FMinusTexHadrAndLeptWOnly << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FPlusTexHadrAndLeptWOnly << " bTagger  &  FR result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FZeroTexHadrAndLeptWOnly << " bTagger  &  F0 result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
 
-    //Execute MinuitFitter:
+      FMinusTexHadrAndLept << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FPlusTexHadrAndLept << " bTagger  &  FR result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FZeroTexHadrAndLept << " bTagger  &  F0 result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+    }
+      //Execute MinuitFitter:
     int SumbTag, ConsideredTagger, CSV, SSVHP, SSVHE, TCHP, TCHE;
     ConsideredTagger = 0;
     for(CSV =0;CSV< NumberCSVbTags; CSV++){
@@ -1680,131 +1689,47 @@ int main (int argc, char *argv[])
 		  ///////////////////////////////////////////////////////////////////////////////
 
 		  //Data result:
-		  if(dataSetName.find("Data") == 0){
+		  if(dataSetName.find("Data") == 0)
 		    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstData==0){
-		      cout << " Filling data histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstData++;
-		    }
-		  }
 		  //JES Plus:
-		  if(dataSetName.find("JESPlus") == 0){
+		  if(dataSetName.find("JESPlus") == 0)
 		    histo1D[CosThetaJESPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstJESPlus==0){
-		      cout << " filling JES Plus histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstJESPlus++;
-		    }
-		  }
 		  //JES Minus:
-		  if(dataSetName.find("JESMinus") == 0){
+		  if(dataSetName.find("JESMinus") == 0)
 		    histo1D[CosThetaJESMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstJESMinus==0){
-		      cout << " filling JES Minus histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstJESMinus++;
-		    }
-		  }	    
 		  //JER Plus:
-		  if(dataSetName.find("JERPlus") == 0){
+		  if(dataSetName.find("JERPlus") == 0)
 		    histo1D[CosThetaJERPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstJERPlus ==0){
-		      cout << " filling JER Plus histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstJERPlus++;
-		    }
-		  }	    
 		  //JER Minus:
-		  if(dataSetName.find("JERMinus") == 0){
+		  if(dataSetName.find("JERMinus") == 0)
 		    histo1D[CosThetaJERMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstJERMinus==0){
-		      cout << " filling JER Minus histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstJERMinus++;
-		    }
-		  }	    
 		  //WJets Plus:
-		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaWPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstWPlus == 0){
-		      cout << " filling WSyst Plus histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstWPlus++;
-		    }
-		  }	    
 		  //WJets Minus:
-		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaWMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstWMinus==0){
-		      cout << " filling WSyst Minus histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstWMinus++;
-		    }
-		  }	    
 		  //TTScaling Up:
-		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0&& dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0&& dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0)
 		    histo1D[CosThetaTTScalingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstTTScaleUp==0){
-		      cout << " filling TT Scaling Up histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstTTScaleUp++;
-		    }
-		  }	    
 		  //TTScaling Down:
-		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 ){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTScalingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstTTScaleDown==0){
-		      cout << " filling TT Scaling Down histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstTTScaleDown++;
-		    }
-		  }	    
 		  //TTMatching Up:
-		  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 ){
+		  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTMatchingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstTTMatchUp==0){
-		       cout << " filling TT Matching Up histogram with : " << endl;
-		       cout << "         " << dataSetName << endl;
-		       FirstTTMatchUp++;
-		    }
-		  }	    
 		  //TTMatching Down:
-		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 ){
+		  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("TTbarJets") !=0 )
 		    histo1D[CosThetaTTMatchingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());		  
-		    if(FirstTTMatchDown == 0){
-		      cout << " filling TT Matching Down histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstTTMatchDown++;
-		    }
-		  }	    
 
-		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true))){	    
+		  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))	    
 		    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*Luminosity*dataSet->NormFactor());
-		    if(FirstSignal==0){
-		      cout << " filling signal histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstSignal++;
-		    }
-		  }	    
 		      
-		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0){
+		  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0)
 		    histo1D[CosThetaSignalStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
-		    if(FirstSignal==0){
-		      cout << " filling signal histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstSignal++;
-		    }
-		  }	    
 
-		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) )){ 
+		  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) )) 
 		    histo1D[CosThetaBckgStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
-		    if(FirstBckg==0){
-		      cout << " filling background histogram with : " << endl;
-		      cout << "         " << dataSetName << endl;
-		      FirstBckg++;
-		    }
-		  }	    
 		}
 
 		//Hadronic and Leptonic W Only KinFit Configuration: Filling of histograms
@@ -1934,15 +1859,13 @@ int main (int argc, char *argv[])
 
 		if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active to perform MinuitFitter
 		  
-		  FMinusTexHadr << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & Total Syst uncert & Total stat + syst uncert " << endl;
-
 		  //////////////////////////////////////////////////
 		  //  Hadronic KinFit configuration: MinuitFitter //
 		  //////////////////////////////////////////////////	
+// 		  cout << " Entries of Data : " << histo1D[CosThetaDataStringHadr]->GetEntries() << endl;
+// 		  cout << " Entries of Signal : " << histo1D[CosThetaSignalStringHadr]->GetEntries() << endl;
+// 		  cout << " Entries of Bckg : " << histo1D[CosThetaBckgStringHadr]->GetEntries() << endl;
 		  //Data:
-		  cout << " Entries of Data : " << histo1D[CosThetaDataStringHadr]->GetEntries() << endl;
-		  cout << " Entries of Signal : " << histo1D[CosThetaSignalStringHadr]->GetEntries() << endl;
-		  cout << " Entries of Bckg : " << histo1D[CosThetaBckgStringHadr]->GetEntries() << endl;
 		  MinuitFitter minuitFitterHadr = MinuitFitter(histo1D[CosThetaDataStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
 		  //JESPlus
 		  MinuitFitter minuitFitterHadrJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
@@ -1979,7 +1902,8 @@ int main (int argc, char *argv[])
 		      PresentationTexHadr << NumberBLeptCorrectEventsKinFitHadr[SumbTag][ii] << " & ";
 		    }
 		  }	
-
+		  
+		  //FL results:
 		  float FLJESSystHadr = abs(minuitFitterHadrJESPlus.GetFLResult()-minuitFitterHadrJESMinus.GetFLResult())/2;
 		  float FLJERSystHadr = 0;
 		  if(JERResults == true) FLJERSystHadr = abs(minuitFitterHadrJERPlus.GetFLResult()-minuitFitterHadrJERMinus.GetFLResult())/2;
@@ -1988,15 +1912,67 @@ int main (int argc, char *argv[])
 		  float FLTTScalingHadr = 0;
 		  //		  if(TTScalingResults == true) FLTTScalingHadr = abs(minuitFitterHadrTTScalingUp.GetFLResult()-minuitFitterHadrTTScalingDown.GetFLResult())/2;
 		  float FLTTMatchingHadr = 0;
-		  //		  if(TTMatchingResults == true) FLTTMatchingHadr = abs(minuitFitterHadrTTMatchingUp.GetFLResult()-minuitFitterHadrTTMatchingDown.GetFLResult())/2;
-
+		  //		  if(TTMatchingResults == true) FLTTMatchingHadr = abs(minuitFitterHadrTTMatchingUp.GetFLResult()-minuitFitterHadrTTMatchingDown.GetFLResult())/2;		  
 		  FMinusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMfrResult <<" & " << minuitFitterHadr.GetFLError() << " & " << FLJESSystHadr << " & " << FLJERSystHadr << " & " << FLWSystHadr << " & " << FLTTScalingHadr << " & " << FLTTMatchingHadr << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr) << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr+ (minuitFitterHadr.GetFLError())*(minuitFitterHadr.GetFLError())) << endl;
+		  
+		  //FR results:
+		  float FRJESSystHadr = abs(minuitFitterHadrJESPlus.GetFRResult()-minuitFitterHadrJESMinus.GetFRResult())/2;
+		  float FRJERSystHadr = 0;
+		  if(JERResults == true) FRJERSystHadr = abs(minuitFitterHadrJERPlus.GetFRResult()-minuitFitterHadrJERMinus.GetFRResult())/2;
+		  float FRWSystHadr = 0;
+		  if(WSystResults == true) FRWSystHadr = abs(minuitFitterHadrWPlus.GetFRResult()-minuitFitterHadrWMinus.GetFRResult())/2;
+		  float FRTTScalingHadr = 0;
+		  //		  if(TTScalingResults == true) FRTTScalingHadr = abs(minuitFitterHadrTTScalingUp.GetFRResult()-minuitFitterHadrTTScalingDown.GetFRResult())/2;
+		  float FRTTMatchingHadr = 0;
+		  //		  if(TTMatchingResults == true) FRTTMatchingHadr = abs(minuitFitterHadrTTMatchingUp.GetFRResult()-minuitFitterHadrTTMatchingDown.GetFRResult())/2;
+		  FPlusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << FRJESSystHadr << " & " << FRJERSystHadr << " & " << FRWSystHadr << " & " << FRTTScalingHadr << " & " << FRTTMatchingHadr << " & " << sqrt(FRJESSystHadr*FRJESSystHadr + FRJERSystHadr*FRJERSystHadr + FRWSystHadr*FRWSystHadr + FRTTScalingHadr*FRTTScalingHadr + FRTTMatchingHadr*FRTTMatchingHadr) << " & " << sqrt(FRJESSystHadr*FRJESSystHadr + FRJERSystHadr*FRJERSystHadr + FRWSystHadr*FRWSystHadr + FRTTScalingHadr*FRTTScalingHadr + FRTTMatchingHadr*FRTTMatchingHadr+ (minuitFitterHadr.GetFRError())*(minuitFitterHadr.GetFRError())) << endl;
 
+		  //F0 results:
+		  float F0JESSystHadr = abs(minuitFitterHadrJESPlus.GetF0Result()-minuitFitterHadrJESMinus.GetF0Result())/2;
+		  float F0JERSystHadr = 0;
+		  if(JERResults == true) F0JERSystHadr = abs(minuitFitterHadrJERPlus.GetF0Result()-minuitFitterHadrJERMinus.GetF0Result())/2;
+		  float F0WSystHadr = 0;
+		  if(WSystResults == true) F0WSystHadr = abs(minuitFitterHadrWPlus.GetF0Result()-minuitFitterHadrWMinus.GetF0Result())/2;
+		  float F0TTScalingHadr = 0;
+		  //		  if(TTScalingResults == true) F0TTScalingHadr = abs(minuitFitterHadrTTScalingUp.GetF0Result()-minuitFitterHadrTTScalingDown.GetF0Result())/2;
+		  float F0TTMatchingHadr = 0;
+		  //		  if(TTMatchingResults == true) F0TTMatchingHadr = abs(minuitFitterHadrTTMatchingUp.GetF0Result()-minuitFitterHadrTTMatchingDown.GetF0Result())/2;
+		  FZeroTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMfrResult <<" & " << minuitFitterHadr.GetF0Error() << " & " << F0JESSystHadr << " & " << F0JERSystHadr << " & " << F0WSystHadr << " & " << F0TTScalingHadr << " & " << F0TTMatchingHadr << " & " << sqrt(F0JESSystHadr*F0JESSystHadr + F0JERSystHadr*F0JERSystHadr + F0WSystHadr*F0WSystHadr + F0TTScalingHadr*F0TTScalingHadr + F0TTMatchingHadr*F0TTMatchingHadr) << " & " << sqrt(F0JESSystHadr*F0JESSystHadr + F0JERSystHadr*F0JERSystHadr + F0WSystHadr*F0WSystHadr + F0TTScalingHadr*F0TTScalingHadr + F0TTMatchingHadr*F0TTMatchingHadr+ (minuitFitterHadr.GetF0Error())*(minuitFitterHadr.GetF0Error())) << endl;
+
+		  //Statistical results and number of events:
 		  PresentationTexHadr << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMflResult << " & " << minuitFitterHadr.GetFLError() << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMf0Result << " & " << minuitFitterHadr.GetF0Error() << " \\\\ " << endl;		
 		  PresentationTexHadr << " \\hline " << endl;
 
-		  //Hadronic and Leptonic W Only KinFit configuration: MinuitFitter		  		
-		  MinuitFitter minuitFitterHadrAndLeptWOnly = MinuitFitter(histo1D[CosThetaDataStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
+		  ////////////////////////////////////////////////////////////////////////
+		  //   Hadronic and Leptonic W Only KinFit configuration: MinuitFitter	//
+		  ////////////////////////////////////////////////////////////////////////
+		  //Data:
+		  MinuitFitter minuitFitterHadrAndLeptWOnly = MinuitFitter(histo1D[CosThetaDataStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  //JESPlus
+		  MinuitFitter minuitFitterHadrAndLeptWOnlyJESPlus=MinuitFitter(histo1D[CosThetaJESPlusStringHadrAndLeptW],histo1D[CosThetaSignalStringHadrAndLeptW],histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  //JES Minus
+		  MinuitFitter minuitFitterHadrAndLeptWOnlyJESMinus =MinuitFitter(histo1D[CosThetaJESMinusStringHadrAndLeptW],histo1D[CosThetaSignalStringHadrAndLeptW],histo1D[CosThetaBckgStringHadrAndLeptW],0.6671,0.3325,0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  //JERPlus
+		  MinuitFitter minuitFitterHadrAndLeptWOnlyJERPlus=MinuitFitter(histo1D[CosThetaJERPlusStringHadrAndLeptW],histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325,0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+ 		  //JER Minus
+ 		  MinuitFitter minuitFitterHadrAndLeptWOnlyJERMinus =MinuitFitter(histo1D[CosThetaJERMinusStringHadrAndLeptW],histo1D[CosThetaSignalStringHadrAndLeptW],histo1D[CosThetaBckgStringHadrAndLeptW],0.6671,0.3325,0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  //W Plus
+		  MinuitFitter minuitFitterHadrAndLeptWOnlyWPlus =MinuitFitter(histo1D[CosThetaWPlusStringHadrAndLeptW],histo1D[CosThetaSignalStringHadrAndLeptW],histo1D[CosThetaBckgStringHadrAndLeptW],0.6671,0.3325,0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  //W Minus
+		  MinuitFitter minuitFitterHadrAndLeptWOnlyWMinus =MinuitFitter(histo1D[CosThetaWMinusStringHadrAndLeptW],histo1D[CosThetaSignalStringHadrAndLeptW],histo1D[CosThetaBckgStringHadrAndLeptW],0.6671,0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  // //TTScaling Up
+		  // MinuitFitter minuitFitterHadrAndLeptWOnlyTTScalingUp;
+		  // if(TTScalingResults == true) minuitFitterHadrAndLeptWOnlyTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  // //TTScaling Down
+		  // MinuitFitter minuitFitterHadrAndLeptWOnlyTTScalingDown;
+		  // if(TTScalingResults == true) minuitFitterHadrAndLeptWOnlyTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  // //TTMatching Up
+		  // MinuitFitter minuitFitterHadrAndLeptWOnlyTTMatchingUp;
+		  // if( TTMatchingResults == true) minuitFitterHadrAndLeptWOnlyTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+		  // //TTMatching Down
+		  // MinuitFitter minuitFitterHadrAndLeptWOnlyTTMatchingDown;
+		  // if( TTMatchingResults == true) minuitFitterHadrAndLeptWOnlyTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+
 		  PresentationTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & ";
 		  for(int ii=0; ii< nameDataSet.size(); ii++){
 		    //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
@@ -2005,13 +1981,77 @@ int main (int argc, char *argv[])
 		      PresentationTexHadrAndLeptWOnly << NumberRemainingEventsKinFitHadrAndLeptWOnly[SumbTag][ii] << " & ";//For presentation helicity values still need to be included !!
 		      PresentationTexHadrAndLeptWOnly << NumberBLeptCorrectEventsKinFitHadrAndLeptWOnly[SumbTag][ii] << " & ";
 		    }
-		  }		  
+		  }
+		  
+		  //FL results:
+		  float FLJESSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyJESPlus.GetFLResult()-minuitFitterHadrAndLeptWOnlyJESMinus.GetFLResult())/2;
+		  float FLJERSystHadrAndLeptWOnly = 0;
+		  if(JERResults == true) FLJERSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyJERPlus.GetFLResult()-minuitFitterHadrAndLeptWOnlyJERMinus.GetFLResult())/2;
+		  float FLWSystHadrAndLeptWOnly = 0;
+		  if(WSystResults == true) FLWSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyWPlus.GetFLResult()-minuitFitterHadrAndLeptWOnlyWMinus.GetFLResult())/2;
+		  float FLTTScalingHadrAndLeptWOnly = 0;
+		  //		  if(TTScalingResults == true) FLTTScalingHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyTTScalingUp.GetFLResult()-minuitFitterHadrAndLeptWOnlyTTScalingDown.GetFLResult())/2;
+		  float FLTTMatchingHadrAndLeptWOnly = 0;
+		  //		  if(TTMatchingResults == true) FLTTMatchingHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyTTMatchingUp.GetFLResult()-minuitFitterHadrAndLeptWOnlyTTMatchingDown.GetFLResult())/2;		  
+		  FMinusTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetFLError() << " & " << FLJESSystHadrAndLeptWOnly << " & " << FLJERSystHadrAndLeptWOnly << " & " << FLWSystHadrAndLeptWOnly << " & " << FLTTScalingHadrAndLeptWOnly << " & " << FLTTMatchingHadrAndLeptWOnly << " & " << sqrt(FLJESSystHadrAndLeptWOnly*FLJESSystHadrAndLeptWOnly + FLJERSystHadrAndLeptWOnly*FLJERSystHadrAndLeptWOnly + FLWSystHadrAndLeptWOnly*FLWSystHadrAndLeptWOnly + FLTTScalingHadrAndLeptWOnly*FLTTScalingHadrAndLeptWOnly + FLTTMatchingHadrAndLeptWOnly*FLTTMatchingHadrAndLeptWOnly) << " & " << sqrt(FLJESSystHadrAndLeptWOnly*FLJESSystHadrAndLeptWOnly + FLJERSystHadrAndLeptWOnly*FLJERSystHadrAndLeptWOnly + FLWSystHadrAndLeptWOnly*FLWSystHadrAndLeptWOnly + FLTTScalingHadrAndLeptWOnly*FLTTScalingHadrAndLeptWOnly + FLTTMatchingHadrAndLeptWOnly*FLTTMatchingHadrAndLeptWOnly+ (minuitFitterHadrAndLeptWOnly.GetFLError())*(minuitFitterHadrAndLeptWOnly.GetFLError())) << endl;
+		  
+		  //FR results:
+		  float FRJESSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyJESPlus.GetFRResult()-minuitFitterHadrAndLeptWOnlyJESMinus.GetFRResult())/2;
+		  float FRJERSystHadrAndLeptWOnly = 0;
+		  if(JERResults == true) FRJERSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyJERPlus.GetFRResult()-minuitFitterHadrAndLeptWOnlyJERMinus.GetFRResult())/2;
+		  float FRWSystHadrAndLeptWOnly = 0;
+		  if(WSystResults == true) FRWSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyWPlus.GetFRResult()-minuitFitterHadrAndLeptWOnlyWMinus.GetFRResult())/2;
+		  float FRTTScalingHadrAndLeptWOnly = 0;
+		  //		  if(TTScalingResults == true) FRTTScalingHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyTTScalingUp.GetFRResult()-minuitFitterHadrAndLeptWOnlyTTScalingDown.GetFRResult())/2;
+		  float FRTTMatchingHadrAndLeptWOnly = 0;
+		  //		  if(TTMatchingResults == true) FRTTMatchingHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyTTMatchingUp.GetFRResult()-minuitFitterHadrAndLeptWOnlyTTMatchingDown.GetFRResult())/2;
+		  FPlusTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetFRError() << " & " << FRJESSystHadrAndLeptWOnly << " & " << FRJERSystHadrAndLeptWOnly << " & " << FRWSystHadrAndLeptWOnly << " & " << FRTTScalingHadrAndLeptWOnly << " & " << FRTTMatchingHadrAndLeptWOnly << " & " << sqrt(FRJESSystHadrAndLeptWOnly*FRJESSystHadrAndLeptWOnly + FRJERSystHadrAndLeptWOnly*FRJERSystHadrAndLeptWOnly + FRWSystHadrAndLeptWOnly*FRWSystHadrAndLeptWOnly + FRTTScalingHadrAndLeptWOnly*FRTTScalingHadrAndLeptWOnly + FRTTMatchingHadrAndLeptWOnly*FRTTMatchingHadrAndLeptWOnly) << " & " << sqrt(FRJESSystHadrAndLeptWOnly*FRJESSystHadrAndLeptWOnly + FRJERSystHadrAndLeptWOnly*FRJERSystHadrAndLeptWOnly + FRWSystHadrAndLeptWOnly*FRWSystHadrAndLeptWOnly + FRTTScalingHadrAndLeptWOnly*FRTTScalingHadrAndLeptWOnly + FRTTMatchingHadrAndLeptWOnly*FRTTMatchingHadrAndLeptWOnly+ (minuitFitterHadrAndLeptWOnly.GetFRError())*(minuitFitterHadrAndLeptWOnly.GetFRError())) << endl;
+
+		  //F0 results:
+		  float F0JESSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyJESPlus.GetF0Result()-minuitFitterHadrAndLeptWOnlyJESMinus.GetF0Result())/2;
+		  float F0JERSystHadrAndLeptWOnly = 0;
+		  if(JERResults == true) F0JERSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyJERPlus.GetF0Result()-minuitFitterHadrAndLeptWOnlyJERMinus.GetF0Result())/2;
+		  float F0WSystHadrAndLeptWOnly = 0;
+		  if(WSystResults == true) F0WSystHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyWPlus.GetF0Result()-minuitFitterHadrAndLeptWOnlyWMinus.GetF0Result())/2;
+		  float F0TTScalingHadrAndLeptWOnly = 0;
+		  //		  if(TTScalingResults == true) F0TTScalingHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyTTScalingUp.GetF0Result()-minuitFitterHadrAndLeptWOnlyTTScalingDown.GetF0Result())/2;
+		  float F0TTMatchingHadrAndLeptWOnly = 0;
+		  //		  if(TTMatchingResults == true) F0TTMatchingHadrAndLeptWOnly = abs(minuitFitterHadrAndLeptWOnlyTTMatchingUp.GetF0Result()-minuitFitterHadrAndLeptWOnlyTTMatchingDown.GetF0Result())/2;
+		  FZeroTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetF0Error() << " & " << F0JESSystHadrAndLeptWOnly << " & " << F0JERSystHadrAndLeptWOnly << " & " << F0WSystHadrAndLeptWOnly << " & " << F0TTScalingHadrAndLeptWOnly << " & " << F0TTMatchingHadrAndLeptWOnly << " & " << sqrt(F0JESSystHadrAndLeptWOnly*F0JESSystHadrAndLeptWOnly + F0JERSystHadrAndLeptWOnly*F0JERSystHadrAndLeptWOnly + F0WSystHadrAndLeptWOnly*F0WSystHadrAndLeptWOnly + F0TTScalingHadrAndLeptWOnly*F0TTScalingHadrAndLeptWOnly + F0TTMatchingHadrAndLeptWOnly*F0TTMatchingHadrAndLeptWOnly) << " & " << sqrt(F0JESSystHadrAndLeptWOnly*F0JESSystHadrAndLeptWOnly + F0JERSystHadrAndLeptWOnly*F0JERSystHadrAndLeptWOnly + F0WSystHadrAndLeptWOnly*F0WSystHadrAndLeptWOnly + F0TTScalingHadrAndLeptWOnly*F0TTScalingHadrAndLeptWOnly + F0TTMatchingHadrAndLeptWOnly*F0TTMatchingHadrAndLeptWOnly+ (minuitFitterHadrAndLeptWOnly.GetF0Error())*(minuitFitterHadrAndLeptWOnly.GetF0Error())) << endl;
 		  
 		  PresentationTexHadrAndLeptWOnly << minuitFitterHadrAndLeptWOnly.GetFRResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetFRError() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult()-SMflResult << " & " << minuitFitterHadrAndLeptWOnly.GetFLError() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result()-SMf0Result << " & " << minuitFitterHadrAndLeptWOnly.GetF0Error() << " \\\\ " << endl;		
 		  PresentationTexHadrAndLeptWOnly << " \\hline " << endl;
 
-		  //Hadronic and Leptonic KinFit configuration: MinuitFitter		  		
-		  MinuitFitter minuitFitterHadrAndLept = MinuitFitter(histo1D[CosThetaDataStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
+		  /////////////////////////////////////////////////////////////////
+		  //  Hadronic and Leptonic KinFit configuration: MinuitFitter	 //
+		  /////////////////////////////////////////////////////////////////
+		  //Data:
+		  MinuitFitter minuitFitterHadrAndLept = MinuitFitter(histo1D[CosThetaDataStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  //JESPlus
+		  MinuitFitter minuitFitterHadrAndLeptJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  //JES Minus
+		  MinuitFitter minuitFitterHadrAndLeptJESMinus = MinuitFitter(histo1D[CosThetaJESMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  //JERPlus
+		  MinuitFitter minuitFitterHadrAndLeptJERPlus = MinuitFitter(histo1D[CosThetaJERPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+ 		  //JER Minus
+ 		  MinuitFitter minuitFitterHadrAndLeptJERMinus = MinuitFitter(histo1D[CosThetaJERMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  //W Plus
+		  MinuitFitter minuitFitterHadrAndLeptWPlus = MinuitFitter(histo1D[CosThetaWPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  //W Minus
+		  MinuitFitter minuitFitterHadrAndLeptWMinus = MinuitFitter(histo1D[CosThetaWMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  // //TTScaling Up
+		  // MinuitFitter minuitFitterHadrAndLeptTTScalingUp;
+		  // if(TTScalingResults == true) minuitFitterHadrAndLeptTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  // //TTScaling Down
+		  // MinuitFitter minuitFitterHadrAndLeptTTScalingDown;
+		  // if(TTScalingResults == true) minuitFitterHadrAndLeptTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  // //TTMatching Up
+		  // MinuitFitter minuitFitterHadrAndLeptTTMatchingUp;
+		  // if( TTMatchingResults == true) minuitFitterHadrAndLeptTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+		  // //TTMatching Down
+		  // MinuitFitter minuitFitterHadrAndLeptTTMatchingDown;
+		  // if( TTMatchingResults == true) minuitFitterHadrAndLeptTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+
 		  PresentationTexHadrAndLept << PresentationOutput[SumbTag] << " & ";
 		  for(int ii=0; ii< nameDataSet.size(); ii++){
 		    //if(nameDataSet[ii].find("JES") != 0 && nameDataSet[ii].find("Syst") != 0 && ii < nameDataSet.size()-1){ //Only output for samples with no systematics
@@ -2020,7 +2060,43 @@ int main (int argc, char *argv[])
 		      PresentationTexHadrAndLept << NumberRemainingEventsKinFitHadrAndLept[SumbTag][ii] << " & ";//For presentation helicity values still need to be included !!
 		      PresentationTexHadrAndLept << NumberBLeptCorrectEventsKinFitHadrAndLept[SumbTag][ii] << " & ";
 		    }
-		  }		  
+		  }		 
+		  
+		  //FL results:
+		  float FLJESSystHadrAndLept = abs(minuitFitterHadrAndLeptJESPlus.GetFLResult()-minuitFitterHadrAndLeptJESMinus.GetFLResult())/2;
+		  float FLJERSystHadrAndLept = 0;
+		  if(JERResults == true) FLJERSystHadrAndLept = abs(minuitFitterHadrAndLeptJERPlus.GetFLResult()-minuitFitterHadrAndLeptJERMinus.GetFLResult())/2;
+		  float FLWSystHadrAndLept = 0;
+		  if(WSystResults == true) FLWSystHadrAndLept = abs(minuitFitterHadrAndLeptWPlus.GetFLResult()-minuitFitterHadrAndLeptWMinus.GetFLResult())/2;
+		  float FLTTScalingHadrAndLept = 0;
+		  //		  if(TTScalingResults == true) FLTTScalingHadrAndLept = abs(minuitFitterHadrAndLeptTTScalingUp.GetFLResult()-minuitFitterHadrAndLeptTTScalingDown.GetFLResult())/2;
+		  float FLTTMatchingHadrAndLept = 0;
+		  //		  if(TTMatchingResults == true) FLTTMatchingHadrAndLept = abs(minuitFitterHadrAndLeptTTMatchingUp.GetFLResult()-minuitFitterHadrAndLeptTTMatchingDown.GetFLResult())/2;		  
+		  FMinusTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLept.GetFLResult() << " & " << minuitFitterHadrAndLept.GetFLResult()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetFLError() << " & " << FLJESSystHadrAndLept << " & " << FLJERSystHadrAndLept << " & " << FLWSystHadrAndLept << " & " << FLTTScalingHadrAndLept << " & " << FLTTMatchingHadrAndLept << " & " << sqrt(FLJESSystHadrAndLept*FLJESSystHadrAndLept + FLJERSystHadrAndLept*FLJERSystHadrAndLept + FLWSystHadrAndLept*FLWSystHadrAndLept + FLTTScalingHadrAndLept*FLTTScalingHadrAndLept + FLTTMatchingHadrAndLept*FLTTMatchingHadrAndLept) << " & " << sqrt(FLJESSystHadrAndLept*FLJESSystHadrAndLept + FLJERSystHadrAndLept*FLJERSystHadrAndLept + FLWSystHadrAndLept*FLWSystHadrAndLept + FLTTScalingHadrAndLept*FLTTScalingHadrAndLept + FLTTMatchingHadrAndLept*FLTTMatchingHadrAndLept+ (minuitFitterHadrAndLept.GetFLError())*(minuitFitterHadrAndLept.GetFLError())) << endl;
+		  
+		  //FR results:
+		  float FRJESSystHadrAndLept = abs(minuitFitterHadrAndLeptJESPlus.GetFRResult()-minuitFitterHadrAndLeptJESMinus.GetFRResult())/2;
+		  float FRJERSystHadrAndLept = 0;
+		  if(JERResults == true) FRJERSystHadrAndLept = abs(minuitFitterHadrAndLeptJERPlus.GetFRResult()-minuitFitterHadrAndLeptJERMinus.GetFRResult())/2;
+		  float FRWSystHadrAndLept = 0;
+		  if(WSystResults == true) FRWSystHadrAndLept = abs(minuitFitterHadrAndLeptWPlus.GetFRResult()-minuitFitterHadrAndLeptWMinus.GetFRResult())/2;
+		  float FRTTScalingHadrAndLept = 0;
+		  //		  if(TTScalingResults == true) FRTTScalingHadrAndLept = abs(minuitFitterHadrAndLeptTTScalingUp.GetFRResult()-minuitFitterHadrAndLeptTTScalingDown.GetFRResult())/2;
+		  float FRTTMatchingHadrAndLept = 0;
+		  //		  if(TTMatchingResults == true) FRTTMatchingHadrAndLept = abs(minuitFitterHadrAndLeptTTMatchingUp.GetFRResult()-minuitFitterHadrAndLeptTTMatchingDown.GetFRResult())/2;
+		  FPlusTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLept.GetFRResult() << " & " << minuitFitterHadrAndLept.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetFRError() << " & " << FRJESSystHadrAndLept << " & " << FRJERSystHadrAndLept << " & " << FRWSystHadrAndLept << " & " << FRTTScalingHadrAndLept << " & " << FRTTMatchingHadrAndLept << " & " << sqrt(FRJESSystHadrAndLept*FRJESSystHadrAndLept + FRJERSystHadrAndLept*FRJERSystHadrAndLept + FRWSystHadrAndLept*FRWSystHadrAndLept + FRTTScalingHadrAndLept*FRTTScalingHadrAndLept + FRTTMatchingHadrAndLept*FRTTMatchingHadrAndLept) << " & " << sqrt(FRJESSystHadrAndLept*FRJESSystHadrAndLept + FRJERSystHadrAndLept*FRJERSystHadrAndLept + FRWSystHadrAndLept*FRWSystHadrAndLept + FRTTScalingHadrAndLept*FRTTScalingHadrAndLept + FRTTMatchingHadrAndLept*FRTTMatchingHadrAndLept+ (minuitFitterHadrAndLept.GetFRError())*(minuitFitterHadrAndLept.GetFRError())) << endl;
+
+		  //F0 results:
+		  float F0JESSystHadrAndLept = abs(minuitFitterHadrAndLeptJESPlus.GetF0Result()-minuitFitterHadrAndLeptJESMinus.GetF0Result())/2;
+		  float F0JERSystHadrAndLept = 0;
+		  if(JERResults == true) F0JERSystHadrAndLept = abs(minuitFitterHadrAndLeptJERPlus.GetF0Result()-minuitFitterHadrAndLeptJERMinus.GetF0Result())/2;
+		  float F0WSystHadrAndLept = 0;
+		  if(WSystResults == true) F0WSystHadrAndLept = abs(minuitFitterHadrAndLeptWPlus.GetF0Result()-minuitFitterHadrAndLeptWMinus.GetF0Result())/2;
+		  float F0TTScalingHadrAndLept = 0;
+		  //		  if(TTScalingResults == true) F0TTScalingHadrAndLept = abs(minuitFitterHadrAndLeptTTScalingUp.GetF0Result()-minuitFitterHadrAndLeptTTScalingDown.GetF0Result())/2;
+		  float F0TTMatchingHadrAndLept = 0;
+		  //		  if(TTMatchingResults == true) F0TTMatchingHadrAndLept = abs(minuitFitterHadrAndLeptTTMatchingUp.GetF0Result()-minuitFitterHadrAndLeptTTMatchingDown.GetF0Result())/2;
+		  FZeroTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLept.GetF0Result() << " & " << minuitFitterHadrAndLept.GetF0Result()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetF0Error() << " & " << F0JESSystHadrAndLept << " & " << F0JERSystHadrAndLept << " & " << F0WSystHadrAndLept << " & " << F0TTScalingHadrAndLept << " & " << F0TTMatchingHadrAndLept << " & " << sqrt(F0JESSystHadrAndLept*F0JESSystHadrAndLept + F0JERSystHadrAndLept*F0JERSystHadrAndLept + F0WSystHadrAndLept*F0WSystHadrAndLept + F0TTScalingHadrAndLept*F0TTScalingHadrAndLept + F0TTMatchingHadrAndLept*F0TTMatchingHadrAndLept) << " & " << sqrt(F0JESSystHadrAndLept*F0JESSystHadrAndLept + F0JERSystHadrAndLept*F0JERSystHadrAndLept + F0WSystHadrAndLept*F0WSystHadrAndLept + F0TTScalingHadrAndLept*F0TTScalingHadrAndLept + F0TTMatchingHadrAndLept*F0TTMatchingHadrAndLept+ (minuitFitterHadrAndLept.GetF0Error())*(minuitFitterHadrAndLept.GetF0Error())) << endl;
 		  
 		  PresentationTexHadrAndLept << minuitFitterHadrAndLept.GetFRResult() << " & " << minuitFitterHadrAndLept.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetFRError() << " & " << minuitFitterHadrAndLept.GetFLResult() << " & " << minuitFitterHadrAndLept.GetFLResult()-SMflResult << " & " << minuitFitterHadrAndLept.GetFLError() << " & " << minuitFitterHadrAndLept.GetF0Result() << " & " << minuitFitterHadrAndLept.GetF0Result()-SMf0Result << " & " << minuitFitterHadrAndLept.GetF0Error() << " \\\\ " << endl;		
 		  PresentationTexHadrAndLept << " \\hline " << endl;
@@ -2094,6 +2170,10 @@ int main (int argc, char *argv[])
   PresentationTexHadr << " \\end{table} " << endl;
   PresentationTexHadr.close();
 
+  FMinusTexHadr.close();
+  FPlusTexHadr.close();
+  FZeroTexHadr.close();
+
   //Hadronic and leptonic W only:
   PresentationTexHadrAndLeptWOnly << " \\end{tabular} " << endl;
   PresentationTexHadrAndLeptWOnly << " \\end{center} " << endl;
@@ -2101,6 +2181,10 @@ int main (int argc, char *argv[])
   PresentationTexHadrAndLeptWOnly << " \\end{tiny} " << endl;
   PresentationTexHadrAndLeptWOnly << " \\end{table} " << endl;
   PresentationTexHadrAndLeptWOnly.close();
+
+  FMinusTexHadrAndLeptWOnly.close();
+  FPlusTexHadrAndLeptWOnly.close();
+  FZeroTexHadrAndLeptWOnly.close();
   
   //Hadronic and leptonic:
   PresentationTexHadrAndLept << " \\end{tabular} " << endl;
@@ -2110,7 +2194,9 @@ int main (int argc, char *argv[])
   PresentationTexHadrAndLept << " \\end{table} " << endl;
   PresentationTexHadrAndLept.close();
 
-  FMinusTexHadr.close();
+  FMinusTexHadrAndLept.close();
+  FPlusTexHadrAndLept.close();
+  FZeroTexHadrAndLept.close();
 
   cout << "Finished running over all datasets..." << endl;
   fout->cd();
