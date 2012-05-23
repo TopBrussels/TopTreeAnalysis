@@ -217,33 +217,7 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
     Chi2_ = 0;
     Ndof_ = 0;
   }
-/*
-  if(writePNG)
-  {
-    stringstream s1; s1 << event->runId();
-    stringstream s2; s2 << event->lumiBlockId();
-    stringstream s3; s3 << event->eventId();
-    stringstream s4; s4 << jetCombi;
-    string monsterName = "Monster_Data_" + s1.str() + "_" + s2.str() + "_" + s3.str() + "_" + s4.str();
-    
-    mkdir("PlotsJES",0777);
-    string path = "PlotsJES/Monsters/";
-    mkdir(path.c_str(),0777);
-    
-    if(measureTopMassDiff_)
-    {
-      TH1F* histo1D = (TH1F*) histo->ProjectionY(monsterName.c_str());
-      TCanvas* tempCanvas = TCanvasCreator(histo1D, monsterName);
-//      tempCanvas->SaveAs( (path + monsterName + ".root").c_str() );
-      tempCanvas->SaveAs( (path + monsterName + ".png").c_str() );
-      delete histo1D;
-    }
-    else
-    {
-      TCanvas* tempCanvas = TCanvasCreator(histo, monsterName);
-//      tempCanvas->SaveAs( (path + monsterName + ".root").c_str() );
-      tempCanvas->SaveAs( (path + monsterName + ".png").c_str() );
-    }
-  }
-*/
+}
+void TopFCNC_KinFit::Write(TFile* fout, bool savePNG, string pathPNG){
+
 }
