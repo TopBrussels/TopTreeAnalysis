@@ -879,8 +879,8 @@ int main (int argc, char *argv[])
 	    if(fabs(mcParticles[i]->type()) == 11 && fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == 6 && mcParticles[i]->status()==3){ //status: 1:stable; 2:shower; 3:hard scattering(coming from the studied hard proces)
 	      EventParticleNumber[4]++;
 	      standardLepton=*mcParticles[i];
-	      if(mcParticles[i]->type()==13){EventChargeLepNeg=-1;}
-	      else if(mcParticles[i]->type()==-13){EventChargeLepPos=1;}
+	      if(mcParticles[i]->type()==11){EventChargeLepNeg=-1;}
+	      else if(mcParticles[i]->type()==-11){EventChargeLepPos=1;}
 	    }	  	  
 	  }
 	  
