@@ -33,9 +33,15 @@
 #include "../Content/interface/Dataset.h"
 #include "../JESMeasurement/interface/LightMonster.h"
 #include "../JESMeasurement/interface/MonsterTools.h"
+#include "../JESMeasurement/IdeogramTools/interface/MassFitInfoFiller.h"
 #include "../MCInformation/interface/LumiReWeighting.h"
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../MCInformation/interface/ResolutionFit.h"
+
+#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassFitInfoHeader.h"
+#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassFitInfoEvent.h"
+#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodTool.h"
+#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodWriter.h"
 
 #include "Style.C"
 
@@ -69,8 +75,10 @@ int main (int argc, char *argv[])
   mkdir(pathPNG.c_str(),0777);
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
   
-  float LuminosityMu = 4656, LuminosityEl = 4666;
-//  float LuminosityMu = 2145.959, LuminosityEl = 2161.744;
+//  float LuminosityMu = 4656, LuminosityEl = 4666;
+  float LuminosityMu = 4953, LuminosityEl = 4961;
+  
+  bool doAllMSPlots = false;
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
@@ -79,7 +87,7 @@ int main (int argc, char *argv[])
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
   
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
   
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
@@ -100,43 +108,57 @@ int main (int argc, char *argv[])
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_EMEnriched_Nominal_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_EMEnriched_Nominal_SemiLep.root");
   
-/*  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");*/
+  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignMinus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignMinus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignMinus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignMinus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignMinus_SemiLep.root"); broken file
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignMinus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERPlus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESMinus_SemiLep.root");
 //  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESPlus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignMinus_SemiLep.root");
+//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignPlus_SemiLep.root");
   
 /*  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingdown_Nominal_SemiLep.root");
   inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingup_Nominal_SemiLep.root");
@@ -257,7 +279,11 @@ int main (int argc, char *argv[])
       }
     }
     if( dataSet->Name().find("QCD") == 0 ) color = kYellow;
-    if( dataSet->Name().find("TT") == 0 ) color = kRed+1;
+    if( dataSet->Name().find("TT") == 0 )
+    {
+      color = kRed+1;
+      dataSet->SetTitle("t#bar{t}");
+    }
     if( dataSet->Name().find("TTbarJets_Other") == 0 ) color = kRed-7;
     if( dataSet->Name().find("Chamonix") == 0 )
     {
@@ -298,163 +324,39 @@ int main (int argc, char *argv[])
   MSPlot["RelPFISo_mu"] = new MultiSamplePlot(datasetsSemiMu,"RelPFIso_mu",100,0,1,"RelPFIso","Nr. of events");
   MSPlot["RelPFISo_el"] = new MultiSamplePlot(datasetsSemiMu,"RelPFIso_el",100,0,1,"RelPFIso","Nr. of events");
   
-  MSPlot["AllJets_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonPlus",50,30,530,"All jets p_{T} (GeV)","Nr. of jets / 10 GeV");
+  MSPlot["M3"] = new MultiSamplePlot(datasetsSemiMu,"M3",160,0,800,"M3","Nr. of events");
+  MSPlot["M3_PtTop300"] = new MultiSamplePlot(datasetsSemiMu,"M3_PtTop300",80,0,800,"M3_PtTop300","Nr. of events");  
+  MSPlot["M3_PtTTbar200"] = new MultiSamplePlot(datasetsSemiMu,"M3_PtTTbar200",80,0,800,"M3_PtTTbar200","Nr. of events");  
+  MSPlot["PtTop"] = new MultiSamplePlot(datasetsSemiMu,"PtTop",150,0,450,"PtTop","Nr. of events");
+  MSPlot["PtTTbar"] = new MultiSamplePlot(datasetsSemiMu,"PtTTbar",150,0,450,"PtTTbar","Nr. of events");
+  
+  MSPlot["AllJets_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonPlus",50,30,530,"Jet p_{T} (GeV)","Jets / 10 GeV");
   MSPlot["AllJets_pt_leptonPlus"]->setMaxY(70000.);
-  MSPlot["AllJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonMinus",50,30,530,"All jets p_{T} (GeV)","Nr. of jets / 10 GeV");
+  MSPlot["AllJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonMinus",50,30,530,"Jet p_{T} (GeV)","Jets / 10 GeV");
   MSPlot["AllJets_pt_leptonMinus"]->setMaxY(70000.);
-  MSPlot["4LeadJets_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4LeadJets_pt_leptonPlus",50,30,530,"4 Leading jets p_{T} (GeV)","Nr. of jets / 10 GeV");
-  MSPlot["4LeadJets_pt_leptonPlus"]->setMaxY(70000.);
-  MSPlot["4LeadJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4LeadJets_pt_leptonMinus",50,30,530,"4 Leading jets p_{T} (GeV)","Nr. of jets / 10 GeV");
-  MSPlot["4LeadJets_pt_leptonMinus"]->setMaxY(70000.);
-  MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
+  MSPlot["Leading_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+  MSPlot["Leading_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+  MSPlot["4th_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+  MSPlot["4th_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+  MSPlot["MET_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonPlus",100,0,250,"MET (GeV)","Nr. of events");
+  MSPlot["MET_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonMinus",100,0,250,"MET (GeV)","Nr. of events");
+  MSPlot["Nr_of_jets"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets",5,3.5,8.5,"Nr. of jets","Nr. of events");
+  MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"No. of jets","Events");
   MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
-  MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
+  MSPlot["Nr_of_jets_leptonPlus"]->setNdivisionsX(505);
+  MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"No. of jets","Events");
   MSPlot["Nr_of_jets_leptonMinus"]->setMaxY(50000.);
-  MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["Nr_of_jets_leptonMinus"]->setNdivisionsX(505);
+  MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}","Events");
   MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMaxY(18000.);
   MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMinY(20.);
-  MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}","Events");
   MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(28000.);
   MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMinY(20.);
-  MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 20 GeV");
+  MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
   MSPlot["mTop_Fit_leptonPlus"]->setMaxY(6000.);
-  MSPlot["mTop_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonMinus",50,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 20 GeV");
+  MSPlot["mTop_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonMinus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
   MSPlot["mTop_Fit_leptonMinus"]->setMaxY(6000.);
-  
-  MSPlot["Lepton_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muPlus",50,0,250,"Positive Muon p_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muMinus",50,0,250,"Negative Muon p_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_pt_elPlus",50,0,250,"Positive Electron p_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_pt_elMinus",50,0,250,"Negative Electron p_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_et_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_et_muPlus",50,0,250,"Positive Muon E_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_et_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_et_muMinus",50,0,250,"Negative Muon E_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_et_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_et_elPlus",50,0,250,"Positive Electron E_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_et_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_et_elMinus",50,0,250,"Negative Electron E_{T} (GeV)","Nr. of events / 5 GeV");
-  MSPlot["Lepton_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_eta_muPlus",50,-2.5,2.5,"Positive Muon #eta","Nr. of events");
-  MSPlot["Lepton_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_eta_muMinus",50,-2.5,2.5,"Negative Muon #eta","Nr. of events");
-  MSPlot["Lepton_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_eta_elPlus",50,-2.5,2.5,"Positive Electron #eta","Nr. of events");
-  MSPlot["Lepton_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_eta_elMinus",50,-2.5,2.5,"Negative Electron #eta","Nr. of events");
-  MSPlot["Lepton_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_phi_muPlus",35,-3.5,3.5,"Positive Muon #phi","Nr. of events");
-  MSPlot["Lepton_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_phi_muMinus",35,-3.5,3.5,"Negative Muon #phi","Nr. of events");
-  MSPlot["Lepton_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_phi_elPlus",35,-3.5,3.5,"Positive Electron #phi","Nr. of events");
-  MSPlot["Lepton_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_phi_elMinus",35,-3.5,3.5,"Negative Electron #phi","Nr. of events");
-  MSPlot["AllJets_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_pt_muPlus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
-//  MSPlot["AllJets_pt_muPlus"]->setMaxY(3900.);
-  MSPlot["AllJets_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_pt_muMinus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
-//  MSPlot["AllJets_pt_muMinus"]->setMaxY(3900.);
-  MSPlot["AllJets_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_pt_elPlus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
-//  MSPlot["AllJets_pt_elPlus"]->setMaxY(3900.);
-  MSPlot["AllJets_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_pt_elMinus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
-//  MSPlot["AllJets_pt_elMinus"]->setMaxY(3900.);
-  MSPlot["AllJets_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_eta_muPlus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
-  MSPlot["AllJets_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_eta_muMinus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
-  MSPlot["AllJets_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_eta_elPlus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
-  MSPlot["AllJets_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_eta_elMinus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
-  MSPlot["AllJets_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_phi_muPlus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
-  MSPlot["AllJets_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_phi_muMinus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
-  MSPlot["AllJets_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_phi_elPlus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
-  MSPlot["AllJets_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_phi_elMinus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
-	MSPlot["Leading_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_pt_muPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
-	MSPlot["Leading_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_pt_muMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
-	MSPlot["Leading_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_pt_elPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
-	MSPlot["Leading_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_pt_elMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
-	MSPlot["Leading_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_eta_muPlus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
-	MSPlot["Leading_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_eta_muMinus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
-	MSPlot["Leading_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_eta_elPlus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
-	MSPlot["Leading_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_eta_elMinus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
-	MSPlot["Leading_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_phi_muPlus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
-	MSPlot["Leading_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_phi_muMinus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
-	MSPlot["Leading_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_phi_elPlus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
-	MSPlot["Leading_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_phi_elMinus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
-	MSPlot["2nd_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_pt_muPlus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
-	MSPlot["2nd_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_pt_muMinus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
-	MSPlot["2nd_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_pt_elPlus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
-	MSPlot["2nd_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_pt_elMinus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
-	MSPlot["2nd_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_eta_muPlus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
-	MSPlot["2nd_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_eta_muMinus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
-	MSPlot["2nd_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_eta_elPlus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
-	MSPlot["2nd_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_eta_elMinus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
-	MSPlot["2nd_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_phi_muPlus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
-	MSPlot["2nd_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_phi_muMinus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
-	MSPlot["2nd_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_phi_elPlus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
-	MSPlot["2nd_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_phi_elMinus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
-	MSPlot["3rd_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_pt_muPlus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
-	MSPlot["3rd_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_pt_muMinus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
-	MSPlot["3rd_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_pt_elPlus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
-	MSPlot["3rd_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_pt_elMinus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
-	MSPlot["3rd_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_eta_muPlus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
-	MSPlot["3rd_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_eta_muMinus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
-	MSPlot["3rd_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_eta_elPlus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
-	MSPlot["3rd_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_eta_elMinus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
-	MSPlot["3rd_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_phi_muPlus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
-	MSPlot["3rd_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_phi_muMinus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
-	MSPlot["3rd_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_phi_elPlus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
-	MSPlot["3rd_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_phi_elMinus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
-	MSPlot["4th_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_pt_muPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
-	MSPlot["4th_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_pt_muMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
-	MSPlot["4th_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_pt_elPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
-	MSPlot["4th_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_pt_elMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
-	MSPlot["4th_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_eta_muPlus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
-	MSPlot["4th_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_eta_muMinus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
-	MSPlot["4th_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_eta_elPlus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
-	MSPlot["4th_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_eta_elMinus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
-	MSPlot["4th_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_phi_muPlus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
-  MSPlot["4th_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_phi_muMinus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
- 	MSPlot["4th_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_phi_elPlus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
-  MSPlot["4th_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_phi_elMinus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
- 
-  MSPlot["Nr_of_jets_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Nr_of_jets_muPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
-  MSPlot["Nr_of_jets_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Nr_of_jets_muMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
-  MSPlot["Nr_of_jets_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets_elPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
-  MSPlot["Nr_of_jets_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets_elMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
-  MSPlot["nBtags_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["nBtags_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["nBtags_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["nBtags_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["M3_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"M3_muPlus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
-  MSPlot["M3_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"M3_muMinus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
-  MSPlot["M3_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"M3_elPlus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
-  MSPlot["M3_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"M3_elMinus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
-  MSPlot["Angle_1stjet_2ndjet_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_2ndjet_muPlus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_2ndjet_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_2ndjet_muMinus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_2ndjet_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_2ndjet_elPlus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_2ndjet_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_2ndjet_elMinus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_3rdjet_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_3rdjet_muPlus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_3rdjet_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_3rdjet_muMinus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_3rdjet_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_3rdjet_elPlus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
-  MSPlot["Angle_1stjet_3rdjet_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_3rdjet_elMinus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
-  MSPlot["MET_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muPlus",100,0,250,"MET (GeV)","Nr. of events");
-  MSPlot["MET_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muMinus",100,0,250,"MET (GeV)","Nr. of events");
-  MSPlot["MET_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elPlus",100,0,250,"MET (GeV)","Nr. of events");
-  MSPlot["MET_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elMinus",100,0,250,"MET (GeV)","Nr. of events");
-  
-  MSPlot["mW_UnFitted_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mW_UnFitted_muPlus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
-  MSPlot["mW_UnFitted_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mW_UnFitted_muMinus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
-  MSPlot["mW_UnFitted_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"mW_UnFitted_elPlus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
-  MSPlot["mW_UnFitted_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"mW_UnFitted_elMinus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
-  MSPlot["mTop_UnFitted_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_UnFitted_muPlus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_UnFitted_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_UnFitted_muMinus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_UnFitted_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_UnFitted_elPlus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_UnFitted_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_UnFitted_elMinus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_muPlus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_muMinus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_Fit_elPlus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["mTop_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_Fit_elMinus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
-  MSPlot["sigmaMtop_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_muPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["sigmaMtop_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_muMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["sigmaMtop_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_elPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["sigmaMtop_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_elMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["MinChi2ndf_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["Prob_MinChi2_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Prob_MinChi2_Fit_muPlus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
-  MSPlot["Prob_MinChi2_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Prob_MinChi2_Fit_muMinus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
-  MSPlot["Prob_MinChi2_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Prob_MinChi2_Fit_elPlus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
-  MSPlot["Prob_MinChi2_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Prob_MinChi2_Fit_elMinus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
-  MSPlot["nUsedCombis_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nUsedCombis_muPlus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
-  MSPlot["nUsedCombis_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nUsedCombis_muMinus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
-  MSPlot["nUsedCombis_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nUsedCombis_elPlus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
-  MSPlot["nUsedCombis_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nUsedCombis_elMinus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
   
   MSPlot["mTop_Fit_AllCombi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_AllCombi_muPlus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
   MSPlot["mTop_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_AllCombi_muMinus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
@@ -469,6 +371,149 @@ int main (int argc, char *argv[])
   MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   
+  if(doAllMSPlots)
+  {
+    MSPlot["Lepton_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muPlus",50,0,250,"Positive Muon p_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muMinus",50,0,250,"Negative Muon p_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_pt_elPlus",50,0,250,"Positive Electron p_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_pt_elMinus",50,0,250,"Negative Electron p_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_et_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_et_muPlus",50,0,250,"Positive Muon E_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_et_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_et_muMinus",50,0,250,"Negative Muon E_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_et_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_et_elPlus",50,0,250,"Positive Electron E_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_et_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_et_elMinus",50,0,250,"Negative Electron E_{T} (GeV)","Nr. of events / 5 GeV");
+    MSPlot["Lepton_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_eta_muPlus",50,-2.5,2.5,"Positive Muon #eta","Nr. of events");
+    MSPlot["Lepton_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_eta_muMinus",50,-2.5,2.5,"Negative Muon #eta","Nr. of events");
+    MSPlot["Lepton_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_eta_elPlus",50,-2.5,2.5,"Positive Electron #eta","Nr. of events");
+    MSPlot["Lepton_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_eta_elMinus",50,-2.5,2.5,"Negative Electron #eta","Nr. of events");
+    MSPlot["Lepton_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_phi_muPlus",35,-3.5,3.5,"Positive Muon #phi","Nr. of events");
+    MSPlot["Lepton_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_phi_muMinus",35,-3.5,3.5,"Negative Muon #phi","Nr. of events");
+    MSPlot["Lepton_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_phi_elPlus",35,-3.5,3.5,"Positive Electron #phi","Nr. of events");
+    MSPlot["Lepton_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_phi_elMinus",35,-3.5,3.5,"Negative Electron #phi","Nr. of events");
+    MSPlot["AllJets_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_pt_muPlus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
+    MSPlot["AllJets_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_pt_muMinus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
+    MSPlot["AllJets_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_pt_elPlus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
+    MSPlot["AllJets_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_pt_elMinus",60,20,320,"All jets p_{T} (GeV)","Nr. of jets / 5 GeV");
+    MSPlot["AllJets_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_eta_muPlus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
+    MSPlot["AllJets_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_eta_muMinus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
+    MSPlot["AllJets_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_eta_elPlus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
+    MSPlot["AllJets_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_eta_elMinus",50,-2.5,2.5,"All jets #eta","Nr. of jets");
+    MSPlot["AllJets_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_phi_muPlus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
+    MSPlot["AllJets_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"AllJets_phi_muMinus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
+    MSPlot["AllJets_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_phi_elPlus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
+    MSPlot["AllJets_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"AllJets_phi_elMinus",35,-3.5,3.5,"All jets #phi","Nr. of jets");
+	  MSPlot["Leading_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_pt_muPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+	  MSPlot["Leading_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_pt_muMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+	  MSPlot["Leading_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_pt_elPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+	  MSPlot["Leading_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_pt_elMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+	  MSPlot["Leading_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_eta_muPlus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
+	  MSPlot["Leading_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_eta_muMinus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
+	  MSPlot["Leading_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_eta_elPlus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
+	  MSPlot["Leading_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_eta_elMinus",50,-2.5,2.5,"Leading Jet #eta","Nr. of events");
+	  MSPlot["Leading_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_phi_muPlus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
+	  MSPlot["Leading_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Leading_jet_phi_muMinus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
+	  MSPlot["Leading_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_phi_elPlus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
+	  MSPlot["Leading_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Leading_jet_phi_elMinus",35,-3.5,3.5,"Leading Jet #phi","Nr. of events");
+	  MSPlot["2nd_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_pt_muPlus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
+	  MSPlot["2nd_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_pt_muMinus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
+	  MSPlot["2nd_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_pt_elPlus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
+	  MSPlot["2nd_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_pt_elMinus",60,20,320,"2nd Jet p_{T} (GeV)","Nr. of events / 5 GeV");
+	  MSPlot["2nd_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_eta_muPlus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
+	  MSPlot["2nd_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_eta_muMinus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
+	  MSPlot["2nd_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_eta_elPlus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
+	  MSPlot["2nd_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_eta_elMinus",50,-2.5,2.5,"2nd Jet #eta","Nr. of events");
+	  MSPlot["2nd_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_phi_muPlus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
+	  MSPlot["2nd_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"2nd_jet_phi_muMinus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
+	  MSPlot["2nd_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_phi_elPlus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
+	  MSPlot["2nd_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"2nd_jet_phi_elMinus",35,-3.5,3.5,"2nd Jet #phi","Nr. of events");
+	  MSPlot["3rd_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_pt_muPlus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
+	  MSPlot["3rd_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_pt_muMinus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
+	  MSPlot["3rd_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_pt_elPlus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
+	  MSPlot["3rd_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_pt_elMinus",50,20,220,"3rd Jet p_{T} (GeV)","Nr. of events / 4 GeV");
+	  MSPlot["3rd_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_eta_muPlus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
+	  MSPlot["3rd_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_eta_muMinus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
+	  MSPlot["3rd_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_eta_elPlus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
+	  MSPlot["3rd_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_eta_elMinus",50,-2.5,2.5,"3rd Jet #eta","Nr. of events");
+	  MSPlot["3rd_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_phi_muPlus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
+	  MSPlot["3rd_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"3rd_jet_phi_muMinus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
+	  MSPlot["3rd_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_phi_elPlus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
+	  MSPlot["3rd_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"3rd_jet_phi_elMinus",35,-3.5,3.5,"3rd Jet #phi","Nr. of events");
+	  MSPlot["4th_jet_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_pt_muPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+	  MSPlot["4th_jet_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_pt_muMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+	  MSPlot["4th_jet_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_pt_elPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+	  MSPlot["4th_jet_pt_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_pt_elMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+	  MSPlot["4th_jet_eta_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_eta_muPlus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
+	  MSPlot["4th_jet_eta_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_eta_muMinus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
+	  MSPlot["4th_jet_eta_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_eta_elPlus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
+	  MSPlot["4th_jet_eta_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_eta_elMinus",50,-2.5,2.5,"4th Jet #eta","Nr. of events");
+	  MSPlot["4th_jet_phi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_phi_muPlus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
+    MSPlot["4th_jet_phi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"4th_jet_phi_muMinus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
+   	MSPlot["4th_jet_phi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_phi_elPlus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
+    MSPlot["4th_jet_phi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"4th_jet_phi_elMinus",35,-3.5,3.5,"4th Jet #phi","Nr. of events");
+   
+    MSPlot["Nr_of_jets_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Nr_of_jets_muPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
+    MSPlot["Nr_of_jets_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Nr_of_jets_muMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
+    MSPlot["Nr_of_jets_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets_elPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
+    MSPlot["Nr_of_jets_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets_elMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
+    MSPlot["nBtags_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["nBtags_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["nBtags_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["nBtags_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["M3_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"M3_muPlus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
+    MSPlot["M3_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"M3_muMinus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
+    MSPlot["M3_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"M3_elPlus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
+    MSPlot["M3_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"M3_elMinus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
+    MSPlot["Angle_1stjet_2ndjet_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_2ndjet_muPlus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_2ndjet_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_2ndjet_muMinus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_2ndjet_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_2ndjet_elPlus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_2ndjet_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_2ndjet_elMinus",32,0,3.2,"Angle(leading jet, 2nd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_3rdjet_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_3rdjet_muPlus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_3rdjet_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_3rdjet_muMinus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_3rdjet_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_3rdjet_elPlus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
+    MSPlot["Angle_1stjet_3rdjet_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_3rdjet_elMinus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
+    MSPlot["MET_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muPlus",100,0,250,"MET (GeV)","Nr. of events");
+    MSPlot["MET_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muMinus",100,0,250,"MET (GeV)","Nr. of events");
+    MSPlot["MET_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elPlus",100,0,250,"MET (GeV)","Nr. of events");
+    MSPlot["MET_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elMinus",100,0,250,"MET (GeV)","Nr. of events");
+    
+    MSPlot["mW_UnFitted_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mW_UnFitted_muPlus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
+    MSPlot["mW_UnFitted_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mW_UnFitted_muMinus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
+    MSPlot["mW_UnFitted_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"mW_UnFitted_elPlus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
+    MSPlot["mW_UnFitted_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"mW_UnFitted_elMinus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
+    MSPlot["mTop_UnFitted_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_UnFitted_muPlus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_UnFitted_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_UnFitted_muMinus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_UnFitted_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_UnFitted_elPlus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_UnFitted_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_UnFitted_elMinus",100,0,1000,"Unfitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_muPlus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_muMinus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_Fit_elPlus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["mTop_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"mTop_Fit_elMinus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
+    MSPlot["sigmaMtop_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_muPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
+    MSPlot["sigmaMtop_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_muMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
+    MSPlot["sigmaMtop_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_elPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
+    MSPlot["sigmaMtop_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_elMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
+    MSPlot["MinChi2ndf_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+    MSPlot["MinChi2ndf_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_muMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+    MSPlot["MinChi2ndf_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+    MSPlot["MinChi2ndf_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+    MSPlot["Prob_MinChi2_Fit_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Prob_MinChi2_Fit_muPlus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
+    MSPlot["Prob_MinChi2_Fit_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Prob_MinChi2_Fit_muMinus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
+    MSPlot["Prob_MinChi2_Fit_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Prob_MinChi2_Fit_elPlus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
+    MSPlot["Prob_MinChi2_Fit_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Prob_MinChi2_Fit_elMinus",110,0,1,"Prob(Min #chi^{2})","Nr. of events");
+    MSPlot["nUsedCombis_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nUsedCombis_muPlus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
+    MSPlot["nUsedCombis_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nUsedCombis_muMinus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
+    MSPlot["nUsedCombis_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nUsedCombis_elPlus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
+    MSPlot["nUsedCombis_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nUsedCombis_elMinus",13,-0.5,12.5,"Nr. of used jet combinations","Nr. of events");
+  }
+  
+  //setLumi off the plots (then scaling to lumi is done at the end, for proper error calculation)
+  for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
+  {
+    string name = it->first;
+    if(name.find("mu") < name.size()) it->second->setDataLumi( LuminosityMu );
+    else if(name.find("el") < name.size()) it->second->setDataLumi( LuminosityEl );
+    else it->second->setDataLumi( ( LuminosityMu + LuminosityEl ) / 2. );
+  }
+  
   // initialize LumiReWeighting stuff
   cout << "Initializing LumiReWeighting stuff" << endl;
 //  LumiReWeighting LumiWeightsMu = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
@@ -481,6 +526,10 @@ int main (int argc, char *argv[])
   Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
 //  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.);
+  Lumi3DReWeighting Lumi3DWeightsUp = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DWeightsUp.weight3D_init(1.08);
+  Lumi3DReWeighting Lumi3DWeightsDown = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DWeightsDown.weight3D_init(0.92);
   
   cout << " Initialized LumiReWeighting stuff" << endl;
   
@@ -489,6 +538,20 @@ int main (int argc, char *argv[])
   resFitLightJets->LoadResolutions("/home/stijn/JES+MTop/Presentatie/2011/11_07_2011_L7Corrections/Summer11/lightJetReso.root");
   ResolutionFit* resFitBJets = new ResolutionFit("BJet");
   resFitBJets->LoadResolutions("/home/stijn/JES+MTop/Presentatie/2011/11_07_2011_L7Corrections/Summer11/bJetReso.root");
+  
+  // load ideogram cfg stuff
+  string ideogramParameterFilename("../config/ideogramConfig");
+  ideogram::MassLikelihoodWriter writer(ideogramParameterFilename);
+  Double_t maxChi2 = writer.initialParameter->GetValue("maxChi2",(Double_t) -1.0);
+  Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
+  Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
+  Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
+  
+  cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
+  cout << " --> maxChi2 : " << maxChi2 << endl;
+  cout << " --> bTagCut : " << bTagCut << endl;
+  cout << " --> bTagEff : " << bTagEff << endl;
+  cout << " --> misTagRate : " << misTagRate << endl;
   
   for(unsigned int iDataSet=0; iDataSet<inputMonsters.size(); iDataSet++)
   {
@@ -504,7 +567,13 @@ int main (int argc, char *argv[])
     string dataSetName = dataSet->Name();
     cout << "Processing DataSet: " << dataSetName << "  containing " << nEvent << " events" << endl;
     cout << "Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << "  NormFactor = " << dataSet->NormFactor() << endl;
-
+    
+    ideogram::MassFitInfoHeader headerEl, headerMu;
+    ideogram::MassFitInfoEvent eventEl, eventMu;
+    
+    fillMassFitInfoHeader(dataSet, headerEl, true, false);
+    fillMassFitInfoHeader(dataSet, headerMu, true, false);
+    
     // output ascii file stuff
     mkdir("FitResults_ASCII/",0777);
     string outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_SemiMu.txt";
@@ -513,22 +582,42 @@ int main (int argc, char *argv[])
     ofstream outFileSemiEl(outFileNameSemiEl.c_str());
     
     outFileSemiMu << "Output of MTopDiff_Analysis.cc" << endl;
-    outFileSemiMu << "Decay channel: semi-muon" << endl;
+    outFileSemiMu << "BeginHeader" << endl;
+    outFileSemiMu << "channel: 1" << endl;
+    if( dataSetName.find("Data") == 0 || dataSetName.find("DAtaDriven") != string::npos ) outFileSemiMu << "isMC: 0" << endl;
+    else outFileSemiMu << "isMC: 1" << endl;
     outFileSemiMu << "First some dataSet info: " << endl;
-    outFileSemiMu << "dataSet Name: " << dataSetName << endl;
-    outFileSemiMu << "dataSet Title: " << dataSet->Title() << endl;
-    outFileSemiMu << "dataSet cross-section: " << dataSet->Xsection() << endl;
-    outFileSemiMu << "dataSet integrated lumi: " << dataSet->EquivalentLumi() << endl << endl;
+    outFileSemiMu << "datasetName: " << dataSetName << endl;
+    outFileSemiMu << "datasetTitle: " << dataSet->Title() << endl;
+    outFileSemiMu << "datasetCrossSection: " << dataSet->Xsection() << endl;
+    outFileSemiMu << "datasetIntegratedLuminosity: " << dataSet->EquivalentLumi() << endl;
+    outFileSemiMu << "EndHeader" << endl << endl;
     outFileSemiMu << "Start of event-by-event info " << endl << endl;
     
     outFileSemiEl << "Output of MTopDiff_Analysis.cc" << endl;
-    outFileSemiEl << "Decay channel: semi-electron" << endl;
+    outFileSemiEl << "BeginHeader" << endl;
+    outFileSemiEl << "channel: 0" << endl;
+    if( dataSetName.find("Data") == 0 || dataSetName.find("DAtaDriven") != string::npos ) outFileSemiEl << "isMC: 0" << endl;
+    else outFileSemiEl << "isMC: 1" << endl;
     outFileSemiEl << "First some dataSet info: " << endl;
-    outFileSemiEl << "dataSet Name: " << dataSetName << endl;
-    outFileSemiEl << "dataSet Title: " << dataSet->Title() << endl;
-    outFileSemiEl << "dataSet cross-section: " << dataSet->Xsection() << endl;
-    outFileSemiEl << "dataSet integrated lumi: " << dataSet->EquivalentLumi() << endl << endl;
+    outFileSemiEl << "datasetName: " << dataSetName << endl;
+    outFileSemiEl << "datasetTitle: " << dataSet->Title() << endl;
+    outFileSemiEl << "datasetCrossSection: " << dataSet->Xsection() << endl;
+    outFileSemiEl << "datasetIntegratedLuminosity: " << dataSet->EquivalentLumi() << endl;
+    outFileSemiEl << "EndHeader" << endl << endl;
     outFileSemiEl << "Start of event-by-event info " << endl << endl;
+    
+    // output ascii file after likelihood calculation
+    mkdir("LikelihoodResults_ASCII/",0777);
+    string outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiMu.txt";
+    string outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiEl.txt";
+    ofstream outFileLikelihoodSemiMu(outFileNameLikelihoodSemiMu.c_str());
+    ofstream outFileLikelihoodSemiEl(outFileNameLikelihoodSemiEl.c_str());
+    
+    outFileLikelihoodSemiMu << headerMu << endl;
+    outFileLikelihoodSemiMu << "Start of event-by-event info " << endl << endl;
+    outFileLikelihoodSemiEl << headerEl << endl;
+    outFileLikelihoodSemiEl << "Start of event-by-event info " << endl << endl;
     
     int nSemiMu = 0, nSemiEl = 0;
     int nSemiMu_TTSemiMu = 0, nSemiEl_TTSemiEl = 0;
@@ -537,7 +626,7 @@ int main (int argc, char *argv[])
     int nRealBjets = 0, nRealBjetsBtag = 0;
     
     for(unsigned int iEvt=0; iEvt<nEvent; iEvt++)
-//    for(unsigned int iEvt=0; iEvt<10000; iEvt++)
+//    for(unsigned int iEvt=0; iEvt<1000; iEvt++)
     {
       inMonstersTree->GetEvent(iEvt);
 //      cout << "event: " << iEvt << endl;
@@ -548,13 +637,18 @@ int main (int argc, char *argv[])
       
       // PU reweighting???
 //      float avPU = ( (float)monster->nPUBXm1() + (float)monster->nPU() + (float)monster->nPUBXp1() ) / 3.; // average in 3 BX!!!, as recommended
-      float lumiWeight = LumiWeights.ITweight( (float) monster->nPU() );
+//      float lumiWeight = LumiWeights.ITweight( (float) monster->nPU() );
 //      lumiWeight = 1;
-//      float lumiWeight = 1;
-//      if( dataSetName.find("DAtaDriven") == string::npos &&  dataSetName.find("Data") != 0 )
+      float lumiWeight = 1., lumiWeightUp = 1., lumiWeightDown = 1.;
+      if( ! (dataSetName.find("Data") == 0 || dataSetName.find("DAtaDriven") != string::npos) )
+      {
 //        lumiWeight = Lumi3DWeights.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
-      float lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) monster->nPU() );
-      float lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) monster->nPU() );
+//        lumiWeightUp = Lumi3DWeightsUp.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
+//        lumiWeightDown = Lumi3DWeightsDown.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
+        lumiWeight = LumiWeights.ITweight( (float) monster->nPU() );
+        lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) monster->nPU() );
+        lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) monster->nPU() );
+      }
       
       // muoncharge-string
       string leptonCharge, leptonDecay, leptonChargeIncl;
@@ -630,7 +724,7 @@ int main (int argc, char *argv[])
       
       int nBtags = 0;
       for(unsigned int i=0; i<selectedJets.size(); i++)
-        if(btagSSVHE[i] > 1.74) nBtags++;
+        if(btagSSVHE[i] > bTagCut) nBtags++;
       
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
       {
@@ -650,8 +744,8 @@ int main (int argc, char *argv[])
         }
       }
 //      cout << "Luminosity: " << Luminosity << "  monster->eventWeight(): " << monster->eventWeight() << "  lumiWeight: " << lumiWeight << endl;
-      MSPlot["nPV_beforechi2"+leptonDecay]->Fill(monster->nPV(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-      MSPlot["RelPFISo"+leptonDecay]->Fill(monster->leptonPFRelIso(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
+      MSPlot["nPV_beforechi2"+leptonDecay]->Fill(monster->nPV(), dataSet, true, monster->eventWeight()*lumiWeight);
+      MSPlot["RelPFISo"+leptonDecay]->Fill(monster->leptonPFRelIso(), dataSet, true, monster->eventWeight()*lumiWeight);
       
       // Extra mTop and sigma(mTop) from fitresults
       vector<float> mTop, sigmaMtop, minChi2, hadrBindex, light1index, light2index;
@@ -670,7 +764,7 @@ int main (int argc, char *argv[])
         float chi2MTopFit = monster->chi2MTopFit(iCombi);
         
 //        if( chi2MTopFit < 99999 ) // 99999 means no mTopFit value was calculated, see FullKinFit.cc
-        if( chi2MTopFit < 10 )
+        if( chi2MTopFit < maxChi2 )
         {
           nFinalCombis++;
           light1index.push_back(combi[0]);
@@ -722,20 +816,20 @@ int main (int argc, char *argv[])
     	  histo1D["nUsedCombis_TTJets"]->Fill(mTop.size());
     	else if( dataSet->Name().find("WJets") == 0 )
     	  histo1D["nUsedCombis_WJets"]->Fill(mTop.size());
-      MSPlot["nUsedCombis"+leptonCharge]->Fill(mTop.size(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
+      if(doAllMSPlots) MSPlot["nUsedCombis"+leptonCharge]->Fill(mTop.size(), dataSet, true, monster->eventWeight()*lumiWeight);
       
       if( mTop.size() > 0 ) // event still has at least one good kinFitted jet-combi
       {
         if(monster->hadrBJet() < 9999)
         {
           nRealBjets++;
-          if(btagSSVHE[monster->hadrBJet()] > 1.74) nRealBjetsBtag++;
+          if(btagSSVHE[monster->hadrBJet()] > bTagCut) nRealBjetsBtag++;
         }
         
         if(monster->leptBJet() < 9999)
         {
           nRealBjets++;
-          if(btagSSVHE[monster->leptBJet()] > 1.74) nRealBjetsBtag++;
+          if(btagSSVHE[monster->leptBJet()] > bTagCut) nRealBjetsBtag++;
         }
         
         if(leptonCharge == "_muPlus") nMuPlus += (monster->eventWeight()*lumiWeight);
@@ -744,60 +838,65 @@ int main (int argc, char *argv[])
         else if(leptonCharge == "_elMinus") nElMinus += (monster->eventWeight()*lumiWeight);
         else cout << "unknown leptonCharge:  " << leptonCharge << endl;
         
-        MSPlot["nPV"+leptonDecay]->Fill(monster->nPV(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-//        MSPlot["nPV"+leptonDecay]->Fill(monster->nPV(), dataSet, true, 1/(dataSet->NormFactor()) );
-        
-        MSPlot["Nr_of_jets"+leptonChargeIncl]->Fill(selectedJets.size(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["MinChi2ndf_Fit"+leptonChargeIncl]->Fill(minChi2[bestCombiIndex], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["mTop_Fit"+leptonChargeIncl]->Fill(mTop[bestCombiIndex], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        
-        MSPlot["Lepton_pt"+leptonCharge]->Fill(lepton.Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Lepton_et"+leptonCharge]->Fill(lepton.Et(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Lepton_eta"+leptonCharge]->Fill(lepton.Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Lepton_phi"+leptonCharge]->Fill(lepton.Phi(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Leading_jet_pt"+leptonCharge]->Fill(selectedJets[0].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["Leading_jet_eta"+leptonCharge]->Fill(selectedJets[0].Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["Leading_jet_phi"+leptonCharge]->Fill(selectedJets[0].Phi(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["2nd_jet_pt"+leptonCharge]->Fill(selectedJets[1].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["2nd_jet_eta"+leptonCharge]->Fill(selectedJets[1].Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["2nd_jet_phi"+leptonCharge]->Fill(selectedJets[1].Phi(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["3rd_jet_pt"+leptonCharge]->Fill(selectedJets[2].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["3rd_jet_eta"+leptonCharge]->Fill(selectedJets[2].Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["3rd_jet_phi"+leptonCharge]->Fill(selectedJets[2].Phi(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["4th_jet_pt"+leptonCharge]->Fill(selectedJets[3].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["4th_jet_eta"+leptonCharge]->Fill(selectedJets[3].Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-	      MSPlot["4th_jet_phi"+leptonCharge]->Fill(selectedJets[3].Phi(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Nr_of_jets"+leptonCharge]->Fill(selectedJets.size(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["nBtags"+leptonCharge]->Fill(nBtags, dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Angle_1stjet_2ndjet"+leptonCharge]->Fill(selectedJets[0].Angle(selectedJets[1].Vect()), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Angle_1stjet_3rdjet"+leptonCharge]->Fill(selectedJets[0].Angle(selectedJets[2].Vect()), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["MET"+leptonCharge]->Fill(MET.Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        
-        float mTopUnfitted = (selectedJets[light1index[bestCombiIndex]] + selectedJets[light2index[bestCombiIndex]] + selectedJets[hadrBindex[bestCombiIndex]]).M();
-        float mWUnfitted = (selectedJets[light1index[bestCombiIndex]] + selectedJets[light2index[bestCombiIndex]]).M();
-        MSPlot["mW_UnFitted"+leptonCharge]->Fill(mWUnfitted, dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["mTop_UnFitted"+leptonCharge]->Fill(mTopUnfitted, dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["mTop_Fit"+leptonCharge]->Fill(mTop[bestCombiIndex], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["sigmaMtop_Fit"+leptonCharge]->Fill(sigmaMtop[bestCombiIndex], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["MinChi2ndf_Fit"+leptonCharge]->Fill(minChi2[bestCombiIndex], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        MSPlot["Prob_MinChi2_Fit"+leptonCharge]->Fill(TMath::Prob(minChi2[bestCombiIndex], 1), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-        
+        MSPlot["nPV"+leptonDecay]->Fill(monster->nPV(), dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["Nr_of_jets"]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["Nr_of_jets"+leptonChargeIncl]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["MinChi2ndf_Fit"+leptonChargeIncl]->Fill(minChi2[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["mTop_Fit"+leptonChargeIncl]->Fill(mTop[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["Leading_jet_pt"+leptonChargeIncl]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["4th_jet_pt"+leptonChargeIncl]->Fill(selectedJets[3].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["MET"+leptonChargeIncl]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
         for(int i=0; i<mTop.size(); i++)
         {
-          MSPlot["mTop_Fit_AllCombi"+leptonCharge]->Fill(mTop[i], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          MSPlot["sigmaMtop_Fit_AllCombi"+leptonCharge]->Fill(sigmaMtop[i], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          MSPlot["MinChi2ndf_Fit_AllCombi"+leptonCharge]->Fill(minChi2[i], dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
+          MSPlot["mTop_Fit_AllCombi"+leptonCharge]->Fill(mTop[i], dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["sigmaMtop_Fit_AllCombi"+leptonCharge]->Fill(sigmaMtop[i], dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["MinChi2ndf_Fit_AllCombi"+leptonCharge]->Fill(minChi2[i], dataSet, true, monster->eventWeight()*lumiWeight);
         }
         
-        float M3 = -1, maxPt = -1;
+        if(doAllMSPlots)
+        {
+          MSPlot["Lepton_pt"+leptonCharge]->Fill(lepton.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Lepton_et"+leptonCharge]->Fill(lepton.Et(), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Lepton_eta"+leptonCharge]->Fill(lepton.Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Lepton_phi"+leptonCharge]->Fill(lepton.Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Leading_jet_pt"+leptonCharge]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["Leading_jet_eta"+leptonCharge]->Fill(selectedJets[0].Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["Leading_jet_phi"+leptonCharge]->Fill(selectedJets[0].Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["2nd_jet_pt"+leptonCharge]->Fill(selectedJets[1].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["2nd_jet_eta"+leptonCharge]->Fill(selectedJets[1].Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["2nd_jet_phi"+leptonCharge]->Fill(selectedJets[1].Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["3rd_jet_pt"+leptonCharge]->Fill(selectedJets[2].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["3rd_jet_eta"+leptonCharge]->Fill(selectedJets[2].Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["3rd_jet_phi"+leptonCharge]->Fill(selectedJets[2].Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["4th_jet_pt"+leptonCharge]->Fill(selectedJets[3].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["4th_jet_eta"+leptonCharge]->Fill(selectedJets[3].Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
+	        MSPlot["4th_jet_phi"+leptonCharge]->Fill(selectedJets[3].Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Nr_of_jets"+leptonCharge]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["nBtags"+leptonCharge]->Fill(nBtags, dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Angle_1stjet_2ndjet"+leptonCharge]->Fill(selectedJets[0].Angle(selectedJets[1].Vect()), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Angle_1stjet_3rdjet"+leptonCharge]->Fill(selectedJets[0].Angle(selectedJets[2].Vect()), dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["MET"+leptonCharge]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+          
+          float mTopUnfitted = (selectedJets[light1index[bestCombiIndex]]+selectedJets[light2index[bestCombiIndex]]+selectedJets[hadrBindex[bestCombiIndex]]).M();
+          float mWUnfitted = (selectedJets[light1index[bestCombiIndex]] + selectedJets[light2index[bestCombiIndex]]).M();
+          MSPlot["mW_UnFitted"+leptonCharge]->Fill(mWUnfitted, dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["mTop_UnFitted"+leptonCharge]->Fill(mTopUnfitted, dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["mTop_Fit"+leptonCharge]->Fill(mTop[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["sigmaMtop_Fit"+leptonCharge]->Fill(sigmaMtop[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["MinChi2ndf_Fit"+leptonCharge]->Fill(minChi2[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
+          MSPlot["Prob_MinChi2_Fit"+leptonCharge]->Fill(TMath::Prob(minChi2[bestCombiIndex], 1), dataSet, true, monster->eventWeight()*lumiWeight);
+        }
+        
+        float M3 = -1, maxPt = -1, PtTTbar = 0;
         for(int i=0;i<selectedJets.size();i++)
         {
-          if(i<4) MSPlot["4LeadJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          MSPlot["AllJets_pt"+leptonCharge]->Fill(selectedJets[i].Pt(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          MSPlot["AllJets_eta"+leptonCharge]->Fill(selectedJets[i].Eta(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          MSPlot["AllJets_phi"+leptonCharge]->Fill(selectedJets[i].Phi(), dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
-          
+          MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+          if(doAllMSPlots)
+          {
+            MSPlot["AllJets_pt"+leptonCharge]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+            MSPlot["AllJets_eta"+leptonCharge]->Fill(selectedJets[i].Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
+            MSPlot["AllJets_phi"+leptonCharge]->Fill(selectedJets[i].Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
+          }  
           for(int j=0;j<i;j++)
           {
             for(int k=0;k<j;k++)
@@ -807,15 +906,29 @@ int main (int argc, char *argv[])
               {
                 maxPt = combinedPt;
                 M3 = (selectedJets[i]+selectedJets[j]+selectedJets[k]).M();
+                PtTTbar = (selectedJets[i]+selectedJets[j]+selectedJets[k]+MET+lepton).Pt();
               }
             }
           }
         }
-        MSPlot["M3"+leptonCharge]->Fill(M3, dataSet, true, Luminosity*monster->eventWeight()*lumiWeight);
+        MSPlot["M3"]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["PtTop"]->Fill(maxPt, dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["PtTTbar"]->Fill(PtTTbar, dataSet, true, monster->eventWeight()*lumiWeight);
+        if(PtTTbar>200) MSPlot["M3_PtTTbar200"]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
+        if(maxPt>300) MSPlot["M3_PtTop300"]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
+        if(doAllMSPlots) MSPlot["M3"+leptonCharge]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
         
         // Write everything out to the ASCII file
         if(monster->selectedSemiMu())
         {
+          fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown);
+          if(applyChi2Cut(eventMu, maxChi2))
+          {
+            setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
+//            cout << eventMu << endl;
+            writer(outFileLikelihoodSemiMu,eventMu);
+          }
+          
           nSemiMuInASCII++;
           outFileSemiMu << "------------------------------------------" << endl;
           outFileSemiMu << "BeginEvent" << endl;
@@ -837,6 +950,14 @@ int main (int argc, char *argv[])
         }
         else // selected semiEl
         {
+          fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown);
+          if(applyChi2Cut(eventEl, maxChi2))
+          {
+            setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
+//            cout << eventEl << endl;
+            writer(outFileLikelihoodSemiEl,eventEl);
+          }
+          
           nSemiElInASCII++;
           outFileSemiEl << "------------------------------------------" << endl;
           outFileSemiEl << "BeginEvent" << endl;
@@ -863,7 +984,7 @@ int main (int argc, char *argv[])
         // shape study
         for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++)
         {
-//          if( minChi2[iCombi] < 10 )
+//          if( minChi2[iCombi] < maxChi2 )
           {
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]));
             if( dataSetName.find("WJets") == 0 )
@@ -889,6 +1010,11 @@ int main (int argc, char *argv[])
     outFileSemiMu.close();
     outFileSemiEl << endl << "Finished event-by-event info, end of file!" << endl;
     outFileSemiEl.close();
+    
+    outFileLikelihoodSemiMu << endl << "Finished event-by-event info, end of file!" << endl;
+    outFileLikelihoodSemiMu.close();
+    outFileLikelihoodSemiEl << endl << "Finished event-by-event info, end of file!" << endl;
+    outFileLikelihoodSemiEl.close();
     
     cout << dataSetName << " nSemiMuInASCII = " << nSemiMuInASCII << "  nSemiElInASCII = " << nSemiElInASCII << endl;
     
@@ -1122,10 +1248,10 @@ int main (int argc, char *argv[])
     else if(name.find("elMinus") < name.size()) temp->addText("e^{-}+jets");
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
-    temp->Draw(false, name, true, true, true, true, true, 1, true);
+    temp->Draw(false, name, false, true, true, true, true, 1, true);
 //    temp->Draw(false, name, false, false, false, false, false);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
-    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
+//    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
 	
 	// 2D

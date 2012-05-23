@@ -307,6 +307,9 @@ int main (int argc, char *argv[])
     string previousFilename = "";
     int iFile = -1;
     
+    histo1D["mTop_LeptonPlus_"+dataSetName] = new TH1F(("mTop_LeptonPlus_"+dataSetName).c_str(),("mTop_LeptonPlus_"+dataSetName).c_str(),150,100,250);
+    histo1D["mTop_LeptonMinus_"+dataSetName] = new TH1F(("mTop_LeptonMinus_"+dataSetName).c_str(),("mTop_LeptonMinus_"+dataSetName).c_str(),150,100,250);
+    
     /////////////////////////////////////
    	/// Initialize JEC factors
    	/////////////////////////////////////
@@ -371,7 +374,7 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
 
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 20000; ievt++)
+//    for (unsigned int ievt = 0; ievt < 30000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -405,6 +408,53 @@ int main (int argc, char *argv[])
 			  else if( genEvt->isFullLeptonic() )
   		    scaleFactor *= (0.108*9.)*(0.108*9.);
   		  scaleFactor = 1.;
+/*  		  if(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ) || genEvt->isSemiLeptonic( TRootGenEvent::kElec ) )
+  		  {
+          vector<TRootMCParticle*> mcParticles = treeLoader.LoadMCPart(ievt);
+          bool leptonPlus = false;
+          for(unsigned int i=0; i<mcParticles.size(); i++)
+          {
+            if( mcParticles[i]->status() != 3) continue;
+            
+            if( mcParticles[i]->type() == 13 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6 )
+              leptonPlus = false;
+            else if( mcParticles[i]->type() == -13 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6 )
+              leptonPlus = true;
+            else if( mcParticles[i]->type() == 11 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6 )
+              leptonPlus = false;
+            else if( mcParticles[i]->type() == -11 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6 )
+              leptonPlus = true;
+          }
+          TLorentzVector hadrB = genEvt->hadronicDecayB();
+          TLorentzVector hadrQ1 = genEvt->hadronicDecayQuark();
+          TLorentzVector hadrQ2 = genEvt->hadronicDecayQuarkBar();
+          TLorentzVector hadrBGenJet, hadrQ1GenJet, hadrQ2GenJet;
+          float minDRhadrB = 9999, minDRhadrQ1 = 9999, minDRhadrQ2 = 9999;
+          for(unsigned int i=0; i<genjets.size(); i++)
+          {
+            if(hadrB.DeltaR(*genjets[i]) < minDRhadrB)
+            {
+              minDRhadrB = hadrB.DeltaR(*genjets[i]);
+              hadrBGenJet = *genjets[i];
+            }
+            if(hadrQ1.DeltaR(*genjets[i]) < minDRhadrQ1)
+            {
+              minDRhadrQ1 = hadrQ1.DeltaR(*genjets[i]);
+              hadrQ1GenJet = *genjets[i];
+            }
+            if(hadrQ2.DeltaR(*genjets[i]) < minDRhadrQ2)
+            {
+              minDRhadrQ2 = hadrQ2.DeltaR(*genjets[i]);
+              hadrQ2GenJet = *genjets[i];
+            }
+          }
+          if(hadrBGenJet.Pt() > 20. && hadrQ1GenJet.Pt() > 20. && hadrQ2GenJet.Pt() > 20. && ( hadrBGenJet.Pt() != hadrQ1GenJet.Pt() ) && ( hadrBGenJet.Pt() != hadrQ2GenJet.Pt() ) && ( hadrQ1GenJet.Pt() != hadrQ2GenJet.Pt() ))
+          { // fill the plots!!
+            float mTop = (hadrBGenJet+hadrQ1GenJet+hadrQ2GenJet).M();
+            if(leptonPlus) histo1D["mTop_LeptonPlus_"+dataSetName]->Fill( mTop );
+            else histo1D["mTop_LeptonMinus_"+dataSetName]->Fill( mTop );
+          }
+  		  }*/
       }
       
       // Clone the init_jets vector, otherwise the corrections will be removed
@@ -737,6 +787,8 @@ int main (int argc, char *argv[])
       
       if( eventSelectedSemiEl && eventSelectedSemiMu )
         cout << "Event selected in semiEl and semiMu channel???" << endl;
+      
+      continue;
         
       vector<TRootMCParticle*> mcParticles;
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
@@ -928,6 +980,16 @@ int main (int argc, char *argv[])
     if(jetTools) delete jetTools;
     
     treeLoader.UnLoadDataset(); //important: free memory
+    
+    histo1D["mTop_LeptonPlus_"+dataSetName]->Fit("gaus", "QR","",160,180);
+    histo1D["mTop_LeptonMinus_"+dataSetName]->Fit("gaus", "QR","",160,180);
+    
+    TF1* funcPlus = histo1D["mTop_LeptonPlus_"+dataSetName]->GetFunction("gaus");
+    TF1* funcMinus = histo1D["mTop_LeptonMinus_"+dataSetName]->GetFunction("gaus");
+    cout << "mTop:\nleptonPlus: " << funcPlus->GetParameter(1) << " +/- " <<  funcPlus->GetParError(1);
+    cout << "  leptonMinus: " << funcMinus->GetParameter(1) << " +/- " <<  funcMinus->GetParError(1) << endl;
+    float error = sqrt(funcPlus->GetParError(1)*funcPlus->GetParError(1) + funcMinus->GetParError(1)*funcMinus->GetParError(1));
+    cout << "mTopDiff:  " << funcPlus->GetParameter(1) - funcMinus->GetParameter(1) << " +/- " << error << endl;
   }				//loop on datasets
   
   //Once everything is filled ...

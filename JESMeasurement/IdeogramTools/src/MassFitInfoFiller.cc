@@ -57,52 +57,34 @@ void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHead
   event.lumiWeight = PUweight;
   event.PUdown = PUdown;
   event.PUup = PUup;
+  fillMassFitResult(monster, event);
 }
 
-void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event, float chi2cut)
+void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event)
 {
+  // remove what is already stored in the event
+  event.fitInfo.clear();
+  event.fitSortedChi2Index.clear();
   size_t nFit(0);
-
-  // Calculate total weight, for normalization
-  double sumChi2Weight(0.0);
-  double sumBTagWeight(0.0);
-  double sumChi2BTagWeight(0.0);
-
+  
   for(unsigned int iCombi=0; iCombi<12; iCombi++)
   {
     unsigned int* combi = monster->mvaResult(iCombi);
-    if( monster->chi2MTopFit(iCombi) < 10 )
-    {
-      // fill the stuff!
-      event.fittedTopMass[nFit] = monster->mTopFit(iCombi);
-      event.fittedTopMassSigma[nFit] = monster->sigmaMTopFit(iCombi);
-      event.fitChi2[nFit] = monster->chi2MTopFit(iCombi);
-      for (size_t j = 0 ; j!= 4 ; ++j) event.fitJetType[nFit*(ideogram::MassFitInfoEvent::kNJET)+j] = combi[j];
-      event.fitChi2Weight[nFit] = exp(-0.5*event.fitChi2[nFit]);
-      event.fitBTagWeight[nFit] = 1.0; // No weight for the moment
-      event.fitWeight[nFit] = event.fitChi2Weight[nFit]; // No account is taken for BTagWeight for now
-      event.fitConverge[nFit] = true;
-      sumChi2Weight += event.fitChi2Weight[nFit];
-      sumBTagWeight += event.fitBTagWeight[nFit];
-      sumChi2BTagWeight += event.fitWeight[nFit];
-      nFit++;
-    }
+    vector<Int_t> jetType;
+    for (size_t j = 0 ; j!= 4 ; ++j) jetType.push_back(combi[j]);
+    
+    event.fitInfo.push_back( ideogram::MassFitInfo(jetType, monster->chi2MTopFit(iCombi), exp(-0.5*monster->chi2MTopFit(iCombi)), 1., true, monster->mTopFit(iCombi), monster->sigmaMTopFit(iCombi)) );
+    nFit++;
   }
-
   event.nFit = nFit;
   event.nFitConverge = nFit; // Implement ad-hoc calculation of fit convergence criteria here
+  ideogram::normalizeFitWeights(event);
   
-  // normalize the weight
-  for (size_t f = 0 ; f != nFit ; ++f)
-  {
-      event.fitChi2Weight[f] = event.fitChi2Weight[f]/sumChi2Weight;
-      event.fitBTagWeight[f] = event.fitBTagWeight[f]/sumBTagWeight;
-      event.fitWeight[f] = event.fitWeight[f]/sumChi2BTagWeight;
-  }
-
   // fill the sorted chi-squared index
   std::vector< std::pair<size_t, double> > Chi2Index;
-  for (size_t f = 0 ; f != nFit ; ++f) Chi2Index.push_back(std::pair<size_t,double>(f,event.fitChi2[f]));
+  for (size_t f = 0 ; f != nFit ; ++f)
+    Chi2Index.push_back(std::pair<size_t,double>(f,event.fitInfo[f].fitChi2));
   std::sort(Chi2Index.begin(),Chi2Index.end(),ideogram::IndexedQuantityAbsLessThan<double>);
-  for (size_t f = 0 ; f != nFit ; ++f) event.fitSortedChi2Index[f] = Chi2Index[f].first;
+  for (size_t f = 0 ; f != nFit ; ++f)
+    event.fitSortedChi2Index.push_back(Chi2Index[f].first);
 }
