@@ -12,17 +12,17 @@
 #include "../../Content/interface/AnalysisEnvironment.h"
 #include "../../Content/interface/Dataset.h"
 #include "../../Tools/interface/JetTools.h"
-#include "../../Tools/interface/PlottingTools.h"
+//#include "../../Tools/interface/PlottingTools.h"
 #include "../../Tools/interface/MultiSamplePlot.h"
 #include "../../Tools/interface/TTreeLoader.h"
 #include "../../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../../Reconstruction/interface/JetCorrectorParameters.h"
-#include "../../Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "../../Reconstruction/interface/MakeBinning.h"
+//#include "../../Reconstruction/interface/JetCorrectorParameters.h"
+//#include "../../Reconstruction/interface/JetCorrectionUncertainty.h"
+//#include "../../Reconstruction/interface/MakeBinning.h"
 #include "../../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../interface/TopFCNC_Evt.h"
 
-#include "Style.C"
+#include "../../macros/Style.C"
 
 using namespace std;
 using namespace TopTree;
@@ -209,7 +209,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
 
   MSPlot["RhoCorrection"]              = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
-  MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 20, 0, 20, "Nb. of vertices");
+  MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
 
   MSPlot["1stLeadingLeptonPt"]           = new MultiSamplePlot(datasets, "1stLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
   MSPlot["2ndLeadingLeptonPt"]           = new MultiSamplePlot(datasets, "2ndLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
@@ -217,11 +217,11 @@ int main (int argc, char *argv[])
   MSPlot["3rdLeadingMuonPt"]             = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 300, 0, 150, "p_{T} [GeV/c]");
   MSPlot["3rdLeadingElectronPt"]         = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 300, 0, 150, "p_{T} [GeV/c]");
 
-  MSPlot["1stLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 500, 0, 0.5, "RelIso");
-  MSPlot["2ndLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["1stLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["2ndLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
 
-  MSPlot["3rdLeadingMuonRelIsolation"]     = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 500, 0, 0.5, "RelIso");
-  MSPlot["3rdLeadingElectronRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 500, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingMuonRelIsolation"]     = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingElectronRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 100, 0, 0.5, "RelIso");
 
   MSPlot["NbOfIsolatedMuons"]          = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]      = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -246,46 +246,46 @@ int main (int argc, char *argv[])
   MSPlot["FourthLeadingJetPt_mm_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_mm_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
   MSPlot["FourthLeadingJetPt_ee_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_ee_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
 
-  MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_mm_ch_TCHE"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscBJetCand_ee_ch_TCHE"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_mm_ch_TCHE"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_TCHE", 50, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_ee_ch_TCHE"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_TCHE", 50, 0, 50, "TCHE b-disc.");
 
-  MSPlot["BdiscBJetCand_mme_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_eee_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_mme_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscBJetCand_eee_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_mme_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_eee_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_mme_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_TCHE", 50, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_eee_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_TCHE", 50, 0, 50, "TCHE b-disc.");
 
-  MSPlot["BdiscBJetCand_mmm_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_eem_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_mmm_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
-  MSPlot["BdiscBJetCand_eem_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_TCHE", 100, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_mmm_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_eem_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["BdiscBJetCand_mmm_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_TCHE", 50, 0, 50, "TCHE b-disc.");
+  MSPlot["BdiscBJetCand_eem_ch_TCHE"]         = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_TCHE", 50, 0, 50, "TCHE b-disc.");
 
-  MSPlot["HighestBdisc_mm_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_ee_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_CVS", 100, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_mm_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_TCHE",100, 0, 50, "TCHE b-disc.");
-  MSPlot["HighestBdisc_ee_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_TCHE",100, 0, 50, "TCHE b-disc.");
+  MSPlot["HighestBdisc_mm_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_ee_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_mm_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_TCHE",50, 0, 50, "TCHE b-disc.");
+  MSPlot["HighestBdisc_ee_ch_TCHE"]           = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_TCHE",50, 0, 50, "TCHE b-disc.");
   
-  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  100, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  100, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 100, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
 
-  MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_ee_ch"]                         = new MultiSamplePlot(datasets, "Mtt_ee_ch",  100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_eee_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eee_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_eem_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eem_ch", 100, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_ee_ch"]                         = new MultiSamplePlot(datasets, "Mtt_ee_ch",  50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_eee_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eee_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
+  MSPlot["Mtt_eem_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eem_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
 
-  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  100, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_ee_ch"]                         = new MultiSamplePlot(datasets, "Mzq_ee_ch",  100, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 100, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  50, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_ee_ch"]                         = new MultiSamplePlot(datasets, "Mzq_ee_ch",  50, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
+  MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
 
   MSPlot["MassChi2_mm_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_mm_ch",  20, 0, 20, "\\chi^{2}");
   MSPlot["MassChi2_mmm_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mmm_ch", 20, 0, 20, "\\chi^{2}");
@@ -319,11 +319,11 @@ int main (int argc, char *argv[])
   ////////////////// 1D histograms  //////////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
-  histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
+  histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",50,0,4);
   for (unsigned int d = 0; d < datasets.size(); d++){
-	histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
-	histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
-	histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",100,0,200,100,80,300);
+	histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
+	histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
+	histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
   }
   cout << " - Declared histograms ..." <<  endl;
 	
@@ -1333,6 +1333,7 @@ int main (int argc, char *argv[])
     MyTopFCNC_EvtCand->SetnPU(event->nPu(0));
     MyTopFCNC_EvtCand->SetnPUBXp1(event->nPu(1));
     MyTopFCNC_EvtCand->SetnTruePU(event->nTruePU());
+    MyTopFCNC_EvtCand->SetEventWeight(scaleFactor);
   }
   Tree->Fill();
 
@@ -1398,7 +1399,7 @@ int main (int argc, char *argv[])
 	  MultiSamplePlot *temp = it->second;
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
-	  temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
+	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	  temp->Write(fout, name, true, pathPNG, "pdf");
   }
