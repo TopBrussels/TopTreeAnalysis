@@ -1,10 +1,10 @@
 #ifdef __CINT__
 
 #include "TopFCNC/interface/TopFCNC_Evt.h"
-#include "TopFCNC/interface/TopFCNC_KinFit.h"
+//#include "TopFCNC/interface/TopFCNC_KinFit.h"
 #include "Content/interface/AnalysisEnvironment.h"
 #include "Content/interface/Dataset.h"
-#include "KinFitter/interface/TKinFitter.h"
+//#include "KinFitter/interface/TKinFitter.h"
 //#include "Reconstruction/interface/Observables.h"
 #include "../TopTreeProducer/interface/TRootEvent.h"
 #include "../TopTreeProducer/interface/TRootHLTInfo.h"
@@ -24,10 +24,10 @@
 #else
 
 #include "TopFCNC/interface/TopFCNC_Evt.h"
-#include "TopFCNC/interface/TopFCNC_KinFit.h"
+//#include "TopFCNC/interface/TopFCNC_KinFit.h"
 #include "Content/interface/AnalysisEnvironment.h"
 #include "Content/interface/Dataset.h"
-#include "KinFitter/interface/TKinFitter.h"
+//#include "KinFitter/interface/TKinFitter.h"
 //#include "Reconstruction/interface/Observables.h"
 #include "../TopTreeProducer/interface/TRootEvent.h"
 #include "../TopTreeProducer/interface/TRootHLTInfo.h"
@@ -52,9 +52,9 @@
 #pragma link off all functions;
 
 #pragma link C++ class TopFCNC_Evt;
-#pragma link C++ class TopFCNC_KinFit;
+//#pragma link C++ class TopFCNC_KinFit;
 #pragma link C++ class Dataset;
-#pragma link C++ class TKinFitter;
+//#pragma link C++ class TKinFitter;
 #pragma link C++ class TRootEvent;
 #pragma link C++ class TRootHLTInfo;
 #pragma link C++ class TRootRun;
