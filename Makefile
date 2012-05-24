@@ -12,9 +12,10 @@ endif
 OutPutOpt     = -o
 HeadSuf       = h
 
-ROOTCFLAGS    = $(shell root-config --cflags)
-ROOTLIBS      = $(shell root-config --libs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
-ROOTGLIBS     = $(shell root-config --glibs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
+ROOTCFLAGS      = $(shell root-config --cflags)
+ROOTLIBS        = $(shell root-config --libs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
+ROOTLIBS_NoTMVA = $(shell root-config --libs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam
+ROOTGLIBS       = $(shell root-config --glibs) -lMinuit -lMathMore -lMinuit2 -lRooFitCore -lRooFit -lRooStats -lFoam -lTMVA
 
 # Linux with egcs
 DEFINES       = -DNO_ORCA_CLASSES -I..
@@ -32,10 +33,11 @@ ifeq ($(UNAME), Linux)
 SOFLAGS         = -shared
 endif
 
-CXXFLAGS	+= $(ROOTCFLAGS)
-LIBS		= -I./TMVA/include -L./TMVA/lib $(ROOTLIBS) -lEG -I.. -L. -L../TopTreeProducer/src 
+CXXFLAGS	     += $(ROOTCFLAGS)
+LIBS		        = -I./TMVA/include -L./TMVA/lib $(ROOTLIBS) -lEG -I.. -L. -L../TopTreeProducer/src 
+LIBS_NoTMVA     = $(ROOTLIBS_NoTMVA) -lEG -I.. -L. -L../TopTreeProducer/src 
 ifeq ($(UNAME), Darwin)
-LIBS            += -I/opt/local/include
+LIBS           += -I/opt/local/include
 endif
 GLIBS		= $(ROOTGLIBS)
 #------------------------------------------------------------------------------
@@ -136,7 +138,7 @@ TopFcncDict.$(SrcSuf): $(HEADERSTOPFCNCDIC) ./TopFcncLinkDef.h
 
 libTopFcncAnalysis42.$(DllSuf): $(OBJECTSTOPFCNC) TopFcncDict.o
 	@echo "Building libTopFcncAnalysis..."
-	$(LD) $(LIBS) $(SOFLAGS) $(LDFLAGS) $+ -o $@
+	$(LD) $(LIBS_NoTMVA) $(SOFLAGS) $(LDFLAGS) $+ -o $@
 
 ADDLIBS_MACROS = -lMLP -lTreePlayer -lXMLIO
 
