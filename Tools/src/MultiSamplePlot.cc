@@ -22,6 +22,8 @@ vector<Dataset*> datasets, string PlotName, int Nbins, float Min, float Max, str
 	histoTitle = "Pseudo-data";
 	hRandomPseudoData_ = new TH1F(histoName.c_str(),histoTitle.c_str(),Nbins,Min,Max);
 	hData_ = 0;
+  hErrorPlus_ = 0;
+  hErrorMinus_ = 0;
 	hCanvas_ = 0;
 	hCanvasStack_ = 0;
 	hCanvasStackLogY_ = 0;
@@ -55,6 +57,8 @@ MultiSamplePlot::MultiSamplePlot(vector<Dataset*> datasets, string PlotName, int
 	histoTitle = "Pseudo-data";
 	hRandomPseudoData_ = new TH1F(histoName.c_str(),histoTitle.c_str(),Nbins,binsX);
 	hData_ = 0;
+  hErrorPlus_ = 0;
+  hErrorMinus_ = 0;
 	hCanvas_ = 0;
 	hCanvasStack_ = 0;
 	hCanvasStackLogY_ = 0;
@@ -74,6 +78,8 @@ MultiSamplePlot::MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec, string Xaxis
 	string histoTitle = "";
 	hRandomPseudoData_ = 0;
 	hData_ = 0;
+  hErrorPlus_ = 0;
+  hErrorMinus_ = 0;
 	hCanvas_ = 0;
 	hCanvasStack_ = 0;
 	hCanvasStackLogY_ = 0;
@@ -103,6 +109,8 @@ MultiSamplePlot::~MultiSamplePlot(){
 	if(hCanvasStackAreaNormLogY_)     delete hCanvasStackAreaNormLogY_;
 	if(hRandomPseudoData_) delete hRandomPseudoData_;
 	if(hData_) delete hData_;
+  if(hErrorPlus_)  delete hErrorPlus_;
+  if(hErrorMinus_) delete hErrorMinus_;
 }
 
 void MultiSamplePlot::AddDataHisto(TH1F* histo){
