@@ -259,6 +259,8 @@ class TopFCNC_Evt : public TObject
     void SetnPUBXp1(UInt_t nPUBXp1) { nPUBXp1_ = nPUBXp1; }
     void SetnTruePU(Float_t nTruePU){ nTruePU_ = nTruePU; }
 
+    void SetEventWeight(Float_t eventWeight) { eventWeight_ = eventWeight;}
+
 		void SetDiLeptonicChannel(LeptonType type)
 		{
 			isDiLeptonic_ = true;
