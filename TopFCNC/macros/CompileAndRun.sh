@@ -1,7 +1,8 @@
 #!/bin/bash   
 if [ "${1}" != "" ]; then
 
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.:${HOME}/lib:../../TMVA/lib
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
+  #:${HOME}/lib
 
   #echo ${LD_LIBRARY_PATH}
   LDFLAGS=`root-config --ldflags`
@@ -12,7 +13,7 @@ if [ "${1}" != "" ]; then
     
   echo "Will compile macro ${MACRO}"
 
-  #g++ -m32 -I../../../ -I../../ -I.. -L${HOME}/lib -lTopTreeAnaContent42 -lTopTreeAna42 -I `root-config --incdir` `root-config --libs` ${MACRO} -o ${EXECUTABLE}
+  #g++ ${LDFLAGS} -I../../../ -I../../ -I.. -L${HOME}/lib -lTopTreeAnaContent42 -lTopTreeAna42 -I `root-config --incdir` `root-config --libs` ${MACRO} -o ${EXECUTABLE}
   g++ ${LDFLAGS} -I../../../ -I../../ -I.. -L${HOME}/lib -lTopFcncAnalysis42 -I `root-config --incdir` `root-config --libs` ${MACRO} -o ${EXECUTABLE}
 
   if [ -e ${EXECUTABLE} ]; then
