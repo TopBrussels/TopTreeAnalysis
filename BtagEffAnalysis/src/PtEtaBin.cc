@@ -5332,21 +5332,26 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 		
 		string MCPlot = "MCTemplate_"+(string)PrefixPlot;
 
-        TH1* result = fit->GetPlot();
+        //TH1* result = fit->GetPlot();
+        
+        ttbar->Scale((data->Integral()*fttb)/ttbar->Integral());
+        vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
 
+        TH1D* result = (TH1D*) ttbar->Clone();
+        result->Add(vvmc,1);
+        
         TCanvas* pom = new TCanvas(MCPlot.c_str(),MCPlot.c_str());
         
-        pom->cd();    
+        pom->cd();
+        
+        //gPad->SetLogy();
         
         data->SetLineColor(kBlack);
         data->SetMarkerColor(kBlack);    
         data->Draw("E");
         result->SetLineColor(kBlue);
-        result->Draw("same");
-        
-        ttbar->Scale((data->Integral()*fttb)/ttbar->Integral());
-        vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
-                             
+        result->Draw("same hist");
+                                     
         ttbar->SetLineColor(kGreen);
         ttbar->SetLineStyle(kDashed);
         ttbar->Draw("same hist");

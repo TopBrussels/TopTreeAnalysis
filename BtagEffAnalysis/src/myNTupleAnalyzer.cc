@@ -713,7 +713,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     //inRootFile[0] = "BtagTree_WJets_JESMinus";
         
     if (decay==1) {
-        inRootFile[7] = "BtagTree_Data"+data_postfix+"_InvIso";
+        inRootFile[nRunSamples_] = "BtagTree_Data"+data_postfix+"_InvIso";
         nRunSamples_++;
     }
 
@@ -737,8 +737,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 nRunSamples_++;
 			}
             
-            nRunSamples_=8;
-            i=0;
+            //nRunSamples_=8;
+            //i=0;
+            i++;
 			inRootFile[i] = "BtagTree_ZJets";
 			i++;inRootFile[i] = "BtagTree_WJets";
             i++;inRootFile[i] = "BtagTree_ST_t_t";
@@ -760,7 +761,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			/*datasets_color.push_back(kMagenta+2); // ST t
 			datasets_color.push_back(kMagenta+2); // ST t
 			datasets_color.push_back(kMagenta); // ST tW
-			datasets_color.push_back(kMagenta); // ST tW*/
+			datasets_color.push_back(kMagenta); // ST tW
+             */
 			
 			datasets_color.push_back(kRed-7); // TT
 			datasets_color.push_back(kRed+1); // TT
@@ -1442,7 +1444,13 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				//nSelected_[NTuple->dataSetName()].push_back(3140); // data lumi
 				//nSelected_[NTuple->dataSetName()].push_back(2140); // data lumi
 				//nSelected_[NTuple->dataSetName()].push_back(4568.68); // data lumi
-				nSelected_[NTuple->dataSetName()].push_back(4917.61687); // NEW pixel data lumi
+				//nSelected_[NTuple->dataSetName()].push_back(4917.61687); // NEW pixel data lumi
+				
+                if (decay == 0)
+                    nSelected_[NTuple->dataSetName()].push_back(905.5); // 2012 lumi mu
+                else 
+                    nSelected_[NTuple->dataSetName()].push_back(891.415); // 2012 lumi el
+
                 nSelected_[NTuple->dataSetName()].push_back(1/NTuple->weight()); // mc lumi
 				nSelected_[NTuple->dataSetName()].push_back(0); // after refsel
 				nSelected_[NTuple->dataSetName()].push_back(0); // after refsel + btag TCHEM
@@ -1559,12 +1567,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                 weight=1;
                 
-                if (NTuple->runId() <= 165633) // noniso triggers
+                /*if (NTuple->runId() <= 165633) // noniso triggers
                     weight=0.98*0.126; // trigger bin scale factor * mc yield factor
                 else if (NTuple->runId() >= 165970 && NTuple->runId() < 175860 ) // iso trigger
                     weight=3.73*0.126;
                 else if (NTuple->runId() >= 175860) // 2011B -> high PU
-                    weight=3.38*0.126;  
+                    weight=3.38*0.126;  */
+                
+                weight=4;
                 
                 if (doOnlyMSPlot) {
                     NTuple->setScaleFactor(weight);
@@ -1637,7 +1647,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			nSelected_[NTuple->dataSetName()][2]+=NTuple->scalefactor();
 			nSelected_[NTuple->dataSetName()][4]++;
 			
-			if (NTuple->Btag(0) > 3.3) {
+			if (NTuple->Btag(4) > 0.679) {
 				nSelected_[NTuple->dataSetName()][3]+=NTuple->scalefactor();
 				nSelected_[NTuple->dataSetName()][5]++;
 			}
@@ -1932,8 +1942,13 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         
 		MSPlot["selectedEventsJetsEta"] = new MultiSamplePlot(datasets, "selectedEventsJetsEta", 13, -2.6, 2.6, "Jet #eta");
         
-		MSPlot["MLB_BTV"] = new MultiSamplePlot(datasets, "MLB_BTV", 25, 0, 500, "m_{#muj} (GeV/c^{2})","Events / 20 GeV/c^{2}");
-        MSPlot["MLB_BTV_btag"] = new MultiSamplePlot(datasets, "MLB_BTV_btag", 25, 0, 500, "m_{#muj} (GeV/c^{2})","Events / 20 GeV/c^{2}");
+        if (decay==0) {
+            MSPlot["MLB_BTV"] = new MultiSamplePlot(datasets, "MLB_BTV", 25, 0, 500, "m_{#muj} (GeV/c^{2})","Events / 20 GeV/c^{2}");
+            MSPlot["MLB_BTV_btag"] = new MultiSamplePlot(datasets, "MLB_BTV_btag", 25, 0, 500, "m_{#muj} (GeV/c^{2})","Events / 20 GeV/c^{2}");
+        } else {
+            MSPlot["MLB_BTV"] = new MultiSamplePlot(datasets, "MLB_BTV", 25, 0, 500, "m_{ej} (GeV/c^{2})","Events / 20 GeV/c^{2}");
+            MSPlot["MLB_BTV_btag"] = new MultiSamplePlot(datasets, "MLB_BTV_btag", 25, 0, 500, "m_{ej} (GeV/c^{2})","Events / 20 GeV/c^{2}");        
+        }
         
         MSPlot["M3_BTV"] = new MultiSamplePlot(datasets, "M3_BTV", 25, 0, 500, "m3 (GeV/c^{2})","Events / 20 GeV/c^{2}");
         MSPlot["M3_BTV_btag"] = new MultiSamplePlot(datasets, "M3_BTV_btag", 25, 0, 500, "m3 (GeV/c^{2})","Events / 20 GeV/c^{2}");
@@ -2175,8 +2190,21 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         hist_PU["MLBRCS_NoPURew"]->Fill(v_controlVar2[n],w);
                     }
                 }
+                if (hist_PU.find("MLB_WJets") == hist_PU.end()) {
+                    hist_PU["MLB_WJets"]=new TH1D("MLB_WJets","MLB_WJets;MLB",50,0,500);
+                    hist_PU["MLB_WJets_CSVM"]=new TH1D("MLB_WJets_CSVM","MLB_WJets_CSVM;MLB",50,0,500);
+                    hist_PU["MLB_WJets_NonRew"]=new TH1D("MLB_WJets_NonRew","MLB_WJets_NonRew;MLB",50,0,500);
+                    hist_PU["MLB_WJets_CSVM_NonRew"]=new TH1D("MLB_WJets_CSVM_NonRew","MLB_WJets_CSVM_NonRew;MLB",50,0,500);
+                }
+                if (v_dataSetName[n] == "WJets") {
+                    hist_PU["MLB_WJets"]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
+                    hist_PU["MLB_WJets_NonRew"]->Fill(v_controlVar[n],w);
+                    if (v_bTag[n][6] > 0.679) {
+                        hist_PU["MLB_WJets_CSVM"]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
+                        hist_PU["MLB_WJets_CSVM_NonRew"]->Fill(v_controlVar[n],w);
+                    }
+                }
             }
-
             if (v_dataSetName[n] != "data" && v_dataSetName[n] != "Data" && v_dataSetName[n] != "DATA") {
                 MCWeight = (dataLum_/datasets[d]->EquivalentLumi())*v_scaleFactor[n];
                 
@@ -5293,9 +5321,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		cout << it->first << " - # events after refsel: " << it->second[2] << endl;
 		cout << it->first << " - # events after refsel (no SF): " << it->second[4] << endl;
 		cout << it->first << " - (L="<<it->second[0]<<")# events after refsel: " << it->second[2]*(it->second[0]/it->second[1]) << endl;
-		cout << it->first << " - # events after refsel+btag TCHEM: " << it->second[3] << endl;
-		cout << it->first << " - # events after refsel+btag TCHEM (no SF): " << it->second[5] << endl;
-		cout << it->first << " - (L="<<it->second[0]<<")# events after refsel+btag TCHEM: " << it->second[3]*(it->second[0]/it->second[1]) << endl;
+		cout << it->first << " - # events after refsel+btag CSVM: " << it->second[3] << endl;
+		cout << it->first << " - # events after refsel+btag CSVM (no SF): " << it->second[5] << endl;
+		cout << it->first << " - (L="<<it->second[0]<<")# events after refsel+btag CSVM: " << it->second[3]*(it->second[0]/it->second[1]) << endl;
 		
 		yields << it->first << " - " << it->second[4] << " - " << it->second[2]*(it->second[0]/it->second[1]) << " ";
 		yields << it->second[5] << " - " << it->second[3]*(it->second[0]/it->second[1]) << "\n";

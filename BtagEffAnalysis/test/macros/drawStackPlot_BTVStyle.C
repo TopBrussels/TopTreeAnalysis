@@ -7,11 +7,11 @@
     double ttbar_error = 0.15;
     double other_error = 0.30;
     
-    ttbar_error = 0;
-    other_error = 0;    
+    //ttbar_error = 0;
+    //other_error = 0;    
 
     TString fileName="../StackPlots_Mu.root";
-    string plotName = "MLB_BTV_btag";
+    string plotName = "MLB_BTV";
     
     //plotName="nPV";
     //fileName = "BtaggingOutput.root";
@@ -175,18 +175,18 @@
     
     TH1D* h1 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_TTbarJets_Signal").c_str());
     TH1D* h2 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_TTbarJets_Other").c_str());
-    //TH1D* h3 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_SingleTop_tChannel_t").c_str());
-    //TH1D* h4 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_SingleTop_tChannel_tbar").c_str());
-    TH1D* h5 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_SingleTop_tWChannel_t").c_str());
-    TH1D* h6 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_SingleTop_tWChannel_tbar").c_str());
+    TH1D* h3 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_t_t").c_str());
+    TH1D* h4 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_t_tbar").c_str());   
+    TH1D* h5 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_tW_t").c_str());
+    TH1D* h6 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_tW_tbar").c_str());
     TH1D* h7 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_WJets").c_str());
     TH1D* h8 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ZJets").c_str());
     //TH1D* h9 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_multijet").c_str());
     
     h1->SetBinContent(h1->GetNbinsX(),h1->GetBinContent(h1->GetNbinsX())+h1->GetBinContent(h1->GetNbinsX()+1));
     h2->SetBinContent(h1->GetNbinsX(),h2->GetBinContent(h1->GetNbinsX())+h2->GetBinContent(h2->GetNbinsX()+1));
-    //h3->SetBinContent(h1->GetNbinsX(),h3->GetBinContent(h1->GetNbinsX())+h3->GetBinContent(h3->GetNbinsX()+1));
-    //h4->SetBinContent(h1->GetNbinsX(),h4->GetBinContent(h1->GetNbinsX())+h4->GetBinContent(h4->GetNbinsX()+1));
+    h3->SetBinContent(h1->GetNbinsX(),h3->GetBinContent(h1->GetNbinsX())+h3->GetBinContent(h3->GetNbinsX()+1));
+    h4->SetBinContent(h1->GetNbinsX(),h4->GetBinContent(h1->GetNbinsX())+h4->GetBinContent(h4->GetNbinsX()+1));
     h5->SetBinContent(h1->GetNbinsX(),h5->GetBinContent(h1->GetNbinsX())+h5->GetBinContent(h5->GetNbinsX()+1));
     h6->SetBinContent(h1->GetNbinsX(),h6->GetBinContent(h1->GetNbinsX())+h6->GetBinContent(h6->GetNbinsX()+1));
     h7->SetBinContent(h1->GetNbinsX(),h7->GetBinContent(h1->GetNbinsX())+h7->GetBinContent(h7->GetNbinsX()+1));
@@ -195,8 +195,8 @@
 
     h1->SetBinContent(h1->GetNbinsX()+1,0);
     h2->SetBinContent(h2->GetNbinsX()+1,0);
-    //h3->SetBinContent(h3->GetNbinsX()+1,0);
-    //h4->SetBinContent(h4->GetNbinsX()+1,0);
+    h3->SetBinContent(h3->GetNbinsX()+1,0);
+    h4->SetBinContent(h4->GetNbinsX()+1,0);
     h5->SetBinContent(h5->GetNbinsX()+1,0);
     h6->SetBinContent(h6->GetNbinsX()+1,0);
     h7->SetBinContent(h7->GetNbinsX()+1,0);
@@ -206,8 +206,8 @@
     TH1D* added = (TH1D*) h1->Clone();
     added->Sumw2();
     added->Add(h2);
-    //added->Add(h3);
-    //added->Add(h4);
+    added->Add(h3);
+    added->Add(h4);
     added->Add(h5);
     added->Add(h6);
     added->Add(h7);
@@ -216,8 +216,8 @@
     
     TH1D* hmc = (TH1D*) h1->Clone();
     hmc->Add(hmc,h2,1.,1.);
-    //hmc->Add(hmc,h3,1.,1.);
-    //hmc->Add(hmc,h4,1.,1.);
+    hmc->Add(hmc,h3,1.,1.);
+    hmc->Add(hmc,h4,1.,1.);
     hmc->Add(hmc,h5,1.,1.);
     hmc->Add(hmc,h6,1.,1.);
     hmc->Add(hmc,h7,1.,1.);

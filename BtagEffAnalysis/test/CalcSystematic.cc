@@ -182,6 +182,10 @@ int main (int argc, char* argv[]) {
     std::map<std::string, std::vector<double> > systematics_xs_ass;
     
 	if (argc < 2) exit(1);
+    
+    string chan="";
+    
+    if (argc > 2) chan=argv[2];
 	
 	string fileName = (string)argv[1];
 	
@@ -646,10 +650,40 @@ int main (int argc, char* argv[]) {
     //systematics_xs_ass["PDF Uncertainties"].push_back(1.9);
     //systematics_xs_ass["PDF Uncertainties"].push_back(2.1);
     
-    //systematics_xs["UE"].push_back(1.7);
-    //systematics_xs_ass["UE"].push_back(1.7);
-    //systematics_xs_ass["UE"].push_back(-1.7);
+    // use 2011 values!!!
     
+    if (chan == "Mu") {
+    systematics_xs["UE"].push_back(nomxs*(1.7/161.4));
+    systematics_xs_ass["UE"].push_back(nomxs*(1.7/161.4));
+    systematics_xs_ass["UE"].push_back(-nomxs*(1.7/161.4));
+    
+    systematics_xs_ass["PDF Uncertainties"].clear();
+    systematics_xs_ass["PDF Uncertainties"].push_back(nomxs*(2.2/161.4));
+    systematics_xs_ass["PDF Uncertainties"].push_back(nomxs*(2.7/161.4));
+
+    systematics_xs_ass["ME-PS Matching Threshold"].clear();
+    systematics_xs_ass["ME-PS Matching Threshold"].push_back(nomxs*(0.03));
+    systematics_xs_ass["ME-PS Matching Threshold"].push_back(nomxs*(0.019));
+    
+    systematics_xs_ass["Factorisation Scale"].clear();
+    systematics_xs_ass["Factorisation Scale"].push_back(nomxs*(0.046));
+    systematics_xs_ass["Factorisation Scale"].push_back(nomxs*(0.007));
+    
+    systematics_xs_ass["Top Quark Mass"].clear();
+    systematics_xs_ass["Top Quark Mass"].push_back(nomxs*(0.0003));
+    systematics_xs_ass["Top Quark Mass"].push_back(nomxs*(0.008));
+        
+        systematics_SF["Top Quark Mass"].clear();
+        systematics_SF["Top Quark Mass"].push_back(0.6);
+        
+        systematics_SF["Method bias"].clear();
+        systematics_SF["Method bias"].push_back(4.6);
+    
+    //systematics_xs_ass["Background Composition"].clear();
+    //systematics_xs_ass["Background Composition"].push_back(nomxs*(1.9/161.4));
+    //systematics_xs_ass["Background Composition"].push_back(nomxs*(1.8/161.4));
+
+    }
     //systematics_xs["Luminosity"].push_back(159.5*0.04);
     //systematics_xs_ass["Luminosity"].push_back(159.5*0.04);
     //systematics_xs_ass["Luminosity"].push_back(-159.5*0.04);

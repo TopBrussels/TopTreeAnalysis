@@ -410,13 +410,13 @@ int main(int argc, char* argv[]){
     
     cout << "Warning: E+jets selected, changing left and right defs" << endl;
 
-    leftlimit = 80;
-    centerleftlimit = 160;
-    centerrightlimit = 160;
-    rightlimit = 220;
-
+    /*leftlimit = 50;
+    centerleftlimit = 140;
+    centerrightlimit = 140;
+    rightlimit = 240;
+*/
     //e+jets
-   // myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
+    myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
   
   //  myAnalyzer.getPercentiles(percentiles);
   //cout << percentiles[0] << " " << percentiles[1] << " " << percentiles [2]<< endl;
