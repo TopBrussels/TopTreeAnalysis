@@ -137,12 +137,12 @@ int main (int argc, char *argv[])
   if(diMuon){
 	cout << " --> Using the diMuon channel..." << endl;
 	channelpostfix = "_DiMuTrigger";
-	xmlFileName = "../../config/myTopFCNCconfig_Muon.xml";
+	xmlFileName = "../config/myTopFCNCconfig_Muon.xml";
   }
   else if(diElectron){
 	cout << " --> Using the diElectron channel..." << endl;
 	channelpostfix = "_DiElTrigger";
-	xmlFileName = "../../config/myTopFCNCconfig_Electron.xml";
+	xmlFileName = "../config/myTopFCNCconfig_Electron.xml";
   }
 
   const char *xmlfile = xmlFileName.c_str();
@@ -487,7 +487,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../../macros/PileUpReweighting/pileup_MC_Fall11.root","../../macros/PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunAB.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
 
   if(doPUShift == 1)
@@ -646,56 +646,56 @@ int main (int argc, char *argv[])
               itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v3"), currentRun, iFile);
             else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 226.454(/pb)
               itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v4"), currentRun, iFile);
-				/*--------------------------------------------------------------------
-				Sub-Total integrated luminosity =  849,887(/pb)
-				    Total integrated luminosity = 1050,922(/pb)
-				------------------------------------------------------------------*/
+				    /*--------------------------------------------------------------------
+				    Sub-Total integrated luminosity =  849,887(/pb)
+				        Total integrated luminosity = 1050,922(/pb)
+				    ------------------------------------------------------------------*/
 
-				/*------------------------------------------------------------------
-				Dataset : DoubleMu/Run2011A-05Aug2011-v1
-				--------------------------------------------------------------------
-				Trigger HLT_Mu13_Mu8_v6 available for runs 170826-172619
-				Trigger HLT_Mu17_Mu8_v6 available for runs 170826-172619
-				------------------------------------------------------------------*/
-				else if (event->runId() >= 170249 && event->runId() <= 172619)  // IntLumi = //Aug05ReReco equivalent to PromptReco_v5
-				  itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
-				/*------------------------------------------------------------------
-				Sub-Total integrated luminosity =  XXXX(/pb)
-				    Total integrated luminosity = XXXX(/pb)
-				------------------------------------------------------------------*/
+				    /*------------------------------------------------------------------
+				    Dataset : DoubleMu/Run2011A-05Aug2011-v1
+				    --------------------------------------------------------------------
+				    Trigger HLT_Mu13_Mu8_v6 available for runs 170826-172619
+				    Trigger HLT_Mu17_Mu8_v6 available for runs 170826-172619
+				    ------------------------------------------------------------------*/
+				    else if (event->runId() >= 170249 && event->runId() <= 172619)  // IntLumi = //Aug05ReReco equivalent to PromptReco_v5
+				      itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
+				    /*------------------------------------------------------------------
+				    Sub-Total integrated luminosity =  XXXX(/pb)
+				        Total integrated luminosity = XXXX(/pb)
+				    ------------------------------------------------------------------*/
 
-				/*------------------------------------------------------------------
-				Dataset : DoubleMu/Run2011A-PromptReco-v6
-				--------------------------------------------------------------------
-				Trigger HLT_Mu17_Mu8_v6 available for runs 172620-173198
-				Trigger HLT_Mu17_Mu8_v7 available for runs 173236-173692
-				------------------------------------------------------------------*/
-				else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = (/pb)
-          itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
-				else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = (/pb)
-				  itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
-				/*------------------------------------------------------------------
-				Sub-Total integrated luminosity =  XXXX(/pb)
-				    Total integrated luminosity = XXXX(/pb)
-				------------------------------------------------------------------*/
+            /*------------------------------------------------------------------
+				    Dataset : DoubleMu/Run2011A-PromptReco-v6
+				    --------------------------------------------------------------------
+				    Trigger HLT_Mu17_Mu8_v6 available for runs 172620-173198
+				    Trigger HLT_Mu17_Mu8_v7 available for runs 173236-173692
+				    ------------------------------------------------------------------*/
+				    else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = (/pb)
+              itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
+				    else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = (/pb)
+				      itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
+				    /*------------------------------------------------------------------
+				    Sub-Total integrated luminosity =  XXXX(/pb)
+				        Total integrated luminosity = XXXX(/pb)
+				    ------------------------------------------------------------------*/
 
-				/*------------------------------------------------------------------
-				Dataset : DoubleMu/Run2011B-PromptReco-v1
-				--------------------------------------------------------------------
-				Trigger HLT_Mu17_Mu8_v7  available for runs 175860-178380
-				Trigger HLT_Mu17_Mu8_v10 available for runs 178420-179889
-				Trigger HLT_Mu17_Mu8_v11 available for runs 179959-180252
-				------------------------------------------------------------------*/
-        else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = (/pb)
-   			  itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
-        else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi = (/pb)
-					itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v10"),currentRun, iFile);
-        else if( event->runId() >=  179959 && event->runId() <=  180252 ) // IntLumi = (/pb)
-					itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v11"),currentRun, iFile); 
-				/*------------------------------------------------------------------
-				Sub-Total integrated luminosity =  XXXX(/pb)
-				    Total integrated luminosity = XXXX(/pb)
-				------------------------------------------------------------------*/
+				    /*------------------------------------------------------------------
+				    Dataset : DoubleMu/Run2011B-PromptReco-v1
+				    --------------------------------------------------------------------
+				    Trigger HLT_Mu17_Mu8_v7  available for runs 175860-178380
+				    Trigger HLT_Mu17_Mu8_v10 available for runs 178420-179889
+				    Trigger HLT_Mu17_Mu8_v11 available for runs 179959-180252
+				    ------------------------------------------------------------------*/
+            else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = (/pb)
+   			      itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
+            else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi = (/pb)
+				    	itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v10"),currentRun, iFile);
+            else if( event->runId() >=  179959 && event->runId() <=  180252 ) // IntLumi = (/pb)
+				    	itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v11"),currentRun, iFile); 
+				    /*------------------------------------------------------------------
+				    Sub-Total integrated luminosity =  XXXX(/pb)
+				        Total integrated luminosity = XXXX(/pb)
+				    ------------------------------------------------------------------*/
 									   
   		  if(itrigger == 9999)
 				{
