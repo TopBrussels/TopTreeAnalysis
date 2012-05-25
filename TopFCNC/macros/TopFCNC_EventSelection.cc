@@ -331,8 +331,7 @@ int main (int argc, char *argv[])
   ////////////////// Plots  //////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
-  string pathPNG = "TopFCNC"+postfix+channelpostfix;
-  pathPNG += "_MSPlots/"; 	
+  string pathPNG = "TopFCNC"+postfix+channelpostfix+comments+"_MSPlots/"; 	
 //  pathPNG = pathPNG +"/"; 	
   mkdir(pathPNG.c_str(),0777);
 
@@ -487,7 +486,9 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunAB.root", "pileup", "pileup");
+  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunA.root", "pileup", "pileup");
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunB.root", "pileup", "pileup");
+  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunAB.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
 
   if(doPUShift == 1)
@@ -697,41 +698,40 @@ int main (int argc, char *argv[])
 				        Total integrated luminosity = XXXX(/pb)
 				    ------------------------------------------------------------------*/
 									   
-  		  if(itrigger == 9999)
-				{
-    		  cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
-    		  exit(1);
- 	 			}
-				//trigged = treeLoader.EventTrigged (itrigger);			
-
-	   		}
-	   		else 
-	   		{
-				if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
-				else itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
+  		      if(itrigger == 9999)
+				    {
+    		      cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
+    		      exit(1);
+ 	 			    }
+				    //trigged = treeLoader.EventTrigged (itrigger);
+	   		  }
+	   		  else 
+	   		  {
+				    if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
+				    else itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
     
-  				if(itrigger == 9999)
-				{
-    			  		cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
-    			  		exit(1);
-				}
-				cout<<"Trigger bit nr : "<<itrigger<<endl;
-			}
-		} //end if diMuon
-		else if(diElectron)
-		{
-			if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-			{
-				/*------------------------------------------------------------------
-				Dataset : DoubleElectron/Run2011A-May10ReReco-v1
-				--------------------------------------------------------------------
-				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1 available for runs 160431-161016
-				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2 available for runs 162762-163261
-				Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3 available for runs 163270-163869
-				Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v2
-				->	available for runs 162762-163261
-				Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v3
-				->	available for runs 163270-163869
+  				  if(itrigger == 9999)
+				    {
+    			    cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
+              exit(1);
+            }
+            cout<<"Trigger bit nr : "<<itrigger<<endl;
+          }
+		    } //end if diMuon
+		    else if(diElectron)
+		    {
+			    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+			    {
+				    /*------------------------------------------------------------------
+				    Dataset : DoubleElectron/Run2011A-May10ReReco-v1
+				    --------------------------------------------------------------------
+				    Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1 available for runs 160431-161016
+				    Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2 available for runs 162762-163261
+				    Trigger HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3 available for runs 163270-163869
+				    Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v2
+				    ->	available for runs 162762-163261
+				    Trigger HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v3
+				    ->	available for runs 163270-163869
 				------------------------------------------------------------------*/
 				if(currentRun >= 150000 && currentRun <= 161176)      // IntLumi = 5.281(/pb)
 					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
@@ -953,10 +953,10 @@ int main (int argc, char *argv[])
 	// Define object selection cuts
 	selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
 
-	selection.setDiElectronCuts(20,2.5,0.17,0.02,1); //Et,Eta,RelIso,d0,DistVzPVz
+	selection.setDiElectronCuts(20,2.5,0.15,0.02,1); //Et,Eta,RelIso,d0,DistVzPVz
 	//selection.setLooseElectronCuts(15,2.5,0.2);
 
-	selection.setDiMuonCuts(20,2.4,0.125,10,0.02); //Et,Eta,RelIso,NValidHits,d0
+	selection.setDiMuonCuts(20,2.4,0.20,10,0.02); //Et,Eta,RelIso,NValidHits,d0
 	//selection.setLooseMuonCuts(15,2.4,0.2);
 	  
 	//Select objects 
@@ -1399,6 +1399,7 @@ int main (int argc, char *argv[])
 	  MultiSamplePlot *temp = it->second;
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
+	  name += comments;
 	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	  temp->Write(fout, name, true, pathPNG, "pdf");
