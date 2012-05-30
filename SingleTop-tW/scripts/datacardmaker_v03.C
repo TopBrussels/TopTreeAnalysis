@@ -444,7 +444,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hdown[mode][j] = (TH1F*) _file1->Get("R");
@@ -501,7 +501,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -557,7 +557,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -615,7 +615,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     int mode = 0;
     if (i < 2) mode = i+1;
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[mode][j] = (TH1F*) _file1->Get("R");
@@ -719,6 +719,7 @@ void datacardmaker_v03(){
   datacard << "ttxs      lnN\t -\t 1.06\t -\t -\t1.06\t -\t -\t 1.06\t -\t -\t 1.06\t -\t -\t 1.06\t -\t -\t 1.06\t - \t -\t 1.06 \t - \t -\t 1.06 \t - \t- \t1.06 \t -" << endl;
   datacard << "dyxs      lnN\t -\t -\t 1.05\t  -\t -\t1.05\t -\t -\t 1.05\t -\t -\t 1.05\t -\t -\t 1.05\t -\t -\t 1.05\t - \t -\t 1.05 \t - \t -\t 1.05 \t - \t- \t1.05 " << endl;
   
+  
   datacard << setprecision(3) << "# mc statistics for signal:" << endl;
   datacard << setprecision(3) << "mcstatst1 lnN\t";
   for (int i = 0; i < 3; i++){
@@ -778,7 +779,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==0 && j == 0){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -807,7 +808,7 @@ void datacardmaker_v03(){
     }
   }
   datacard << setprecision(3) << endl;
-  
+   
   datacard << setprecision(3) << "mcstatst5 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -817,7 +818,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==1 && j == 0){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -829,7 +830,7 @@ void datacardmaker_v03(){
     }
   }
   datacard << setprecision(3) << endl;
-  
+   
   datacard << setprecision(3) << "mcstatst6 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -844,15 +845,15 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==1 && j == 0){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
     }
   }
   datacard << setprecision(3) << endl;
-  
-  
+   
+   
   datacard << setprecision(3) << "mcstatst7 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -874,8 +875,8 @@ void datacardmaker_v03(){
     }
   }
   datacard << setprecision(3) << endl;
-  
-  
+   
+   
   datacard << setprecision(3) << "mcstatst8 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -885,7 +886,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==2 && j == 0){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -897,8 +898,8 @@ void datacardmaker_v03(){
     }
   }
   datacard << setprecision(3) << endl;
-  
-  
+   
+   
   datacard << setprecision(3) << "mcstatst9 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -913,14 +914,14 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==2 && j == 0){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
     }
   }
   datacard << setprecision(3) << endl;
-  
+   
   datacard << setprecision(3) << "# mc statitics for background" << endl;
   datacard << setprecision(3) << "mcstatot1 lnN\t";
   for (int i = 0; i < 3; i++){
@@ -943,7 +944,7 @@ void datacardmaker_v03(){
     }
   }
   datacard << setprecision(3) << endl;
-  
+   
   datacard << setprecision(3) << "mcstatot2 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
@@ -953,7 +954,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 1){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -980,7 +981,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 1){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1019,7 +1020,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 1 && j == 1){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1046,7 +1047,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 1 && j == 1){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1085,7 +1086,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 1){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1112,7 +1113,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 1){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(9)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1151,7 +1152,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 2){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1178,7 +1179,7 @@ void datacardmaker_v03(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 2){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1187,73 +1188,73 @@ void datacardmaker_v03(){
   datacard << setprecision(3) << endl;
   
   datacard << setprecision(3) << "mcstatot13 lnN\t";
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       if(i == 1 && j == 2){
-	 if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
-	 else datacard << setprecision(3) << "-\t ";
-       }
-       else datacard << setprecision(3) << "-\t ";
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      if(i == 1 && j == 2){
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	else datacard << setprecision(3) << "-\t ";
+      }
+      else datacard << setprecision(3) << "-\t ";
     }
-   }
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       datacard << setprecision(3) << "-\t ";
-     }
   }
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       datacard << setprecision(3) << "-\t ";
-     }
-   }
-   datacard << setprecision(3) << endl;
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      datacard << setprecision(3) << "-\t ";
+    }
+  }
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      datacard << setprecision(3) << "-\t ";
+    }
+  }
+  datacard << setprecision(3) << endl;
   
   datacard << setprecision(3) << "mcstatot14 lnN\t";
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       datacard << setprecision(3) << "-\t ";
-     }
-  }
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       if(i == 1 && j == 2){
-	 if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
-	 else datacard << setprecision(3) << "-\t ";
-       }
-       else datacard << setprecision(3) << "-\t ";
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      datacard << setprecision(3) << "-\t ";
     }
-   }
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       datacard << setprecision(3) << "-\t ";
-     }
-   }
-   datacard << setprecision(3) << endl;
+  }
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      if(i == 1 && j == 2){
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	else datacard << setprecision(3) << "-\t ";
+      }
+      else datacard << setprecision(3) << "-\t ";
+    }
+  }
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      datacard << setprecision(3) << "-\t ";
+    }
+  }
+  datacard << setprecision(3) << endl;
   
   datacard << setprecision(3) << "mcstatot15 lnN\t";
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       datacard << setprecision(3) << "-\t ";
-     }
-  }
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       datacard << setprecision(3) << "-\t ";
-     }
-   }
-   for (int i = 0; i < 3; i++){
-     for (int j = 0; j <3; j++){ 
-       if(i == 1 && j == 2){
-	 if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
-	 else datacard << setprecision(3) << "-\t ";
-       }
-       else datacard << setprecision(3) << "-\t ";
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      datacard << setprecision(3) << "-\t ";
     }
-   }
-   datacard << setprecision(3) << endl;
+  }
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      datacard << setprecision(3) << "-\t ";
+    }
+  }
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      if(i == 1 && j == 2){
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	else datacard << setprecision(3) << "-\t ";
+      }
+      else datacard << setprecision(3) << "-\t ";
+    }
+  }
+  datacard << setprecision(3) << endl;
    
-   datacard << setprecision(3) << "mcstatot16 lnN\t";
-   for (int i = 0; i < 3; i++){
+  datacard << setprecision(3) << "mcstatot16 lnN\t";
+  for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 2){
 	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
@@ -1261,7 +1262,7 @@ void datacardmaker_v03(){
       }
       else datacard << setprecision(3) << "-\t ";
     }
-   }
+  }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       datacard << setprecision(3) << "-\t ";
@@ -1274,21 +1275,21 @@ void datacardmaker_v03(){
   }
   datacard << setprecision(3) << endl;
    
-   datacard << setprecision(3) << "mcstatot17 lnN\t";
+  datacard << setprecision(3) << "mcstatot17 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       datacard << setprecision(3) << "-\t ";
     }
   }
-   for (int i = 0; i < 3; i++){
+  for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 2){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
     }
-   }
+  }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       datacard << setprecision(3) << "-\t ";
@@ -1296,7 +1297,7 @@ void datacardmaker_v03(){
   }
   datacard << setprecision(3) << endl;
    
-   datacard << setprecision(3) << "mcstatot18 lnN\t";
+  datacard << setprecision(3) << "mcstatot18 lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       datacard << setprecision(3) << "-\t ";
@@ -1307,15 +1308,15 @@ void datacardmaker_v03(){
       datacard << setprecision(3) << "-\t ";
     }
   }
-   for (int i = 0; i < 3; i++){
+  for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 2){
-	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(2) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
     }
-   }
+  }
   datacard << setprecision(3) << endl;
 }
 
