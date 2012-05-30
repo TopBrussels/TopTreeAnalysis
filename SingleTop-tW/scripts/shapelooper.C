@@ -252,20 +252,20 @@ void shapelooper::myLoop(int nsel, int mode, int syst, bool up, bool silent)
 		    else if (metPt <= 60) xlWeight*=1.86129;
 		    else  xlWeight*= 1.68509;
 		  }else if (nsel == 2){
-		    if (metPt <= 5) xlWeight*=0.8;
-		    else if (metPt <= 10) xlWeight*=0.88;
+		    if (metPt <= 5) xlWeight*=0.80;
+		    else if (metPt <= 10) xlWeight*=0.82;
 		    else if (metPt <= 15) xlWeight*=0.88;
-		    else if (metPt <= 20) xlWeight*=0.95;
-		    else if (metPt <= 25) xlWeight*=1.05;
-		    else if (metPt <= 30) xlWeight*=1.15;
+		    else if (metPt <= 20) xlWeight*=0.96;
+		    else if (metPt <= 25) xlWeight*=1.06;
+		    else if (metPt <= 30) xlWeight*=1.16;
 		    else if (metPt <= 35) xlWeight*=1.27;
 		    else if (metPt <= 40) xlWeight*=1.41;
 		    else if (metPt <= 45) xlWeight*=1.50;
 		    else if (metPt <= 50) xlWeight*=1.70;
-		    else if (metPt <= 60) xlWeight*=1.80;
-		    else  xlWeight*= 1.5;
+		    else if (metPt <= 60) xlWeight*=1.82;
+		    else  xlWeight*= 1.54;
 		  }
-		  
+      
 		  //Histos by channel
 		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_1j1t->Fill(1.5, xlWeight);
 		  if (nJets == 2 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 )histo_2j1t->Fill(1.5, xlWeight);
