@@ -55,7 +55,7 @@ void shapelooper::myLoop(int nsel, int mode, int syst, bool up, bool silent)
   else if ( mode == 1)   lumi = 4919.924;
   else if ( mode == 2)   lumi = 4895.249;
   else if ( mode == 3)   lumi = 4.9;
-  sprintf(newRootFile,"results/Histos_cutbased_CR.root");
+  sprintf(newRootFile,"results/Histos_cutbased_full.root");
   
   TFile f_var(newRootFile, "UPDATE");
   
@@ -268,13 +268,13 @@ void shapelooper::myLoop(int nsel, int mode, int syst, bool up, bool silent)
       
 		  //Histos by channel
 		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_1j1t->Fill(1.5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 )histo_2j1t->Fill(1.5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 2 && bTagged && nJetsBT == 2 )histo_2j2t->Fill(1.5, xlWeight);
+		  if (nJets == 2 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_2j1t->Fill(1.5, xlWeight);
+		  if (nJets == 2 && nTightJetsBT == 2 && bTagged && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_2j2t->Fill(1.5, xlWeight);
 		  
 		  //Global histo
 		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_all->Fill(1.5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 )histo_all->Fill(2.5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 2 && bTagged && nJetsBT == 2 )histo_all->Fill(3.5, xlWeight);
+		  if (nJets == 2 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_all->Fill(2.5, xlWeight);
+		  if (nJets == 2 && nTightJetsBT == 2 && bTagged && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_all->Fill(3.5, xlWeight);
 		  
 		  //All possible regions
 		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_R->Fill(1, xlWeight); //signal
@@ -297,9 +297,12 @@ void shapelooper::myLoop(int nsel, int mode, int syst, bool up, bool silent)
 		  if (nJets == 2 && nTightJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(18, xlWeight); //CR 2 regular
 		  if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(19, xlWeight);
 		  if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(20, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(21, xlWeight); //CR1 no ht no ptsys tighter
-		  if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(22, xlWeight); //CR2 no ht no ptsys tighter
-		  
+		  if (nJets == 2 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(21, xlWeight); //CR 1 another way
+		  if (nJets == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(22, xlWeight); //CR 2 another way
+		  if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(23, xlWeight); //CR1 no ht no ptsys tighter
+		  if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(24, xlWeight); //CR2 no ht no ptsys tighter
+		  if (nJets == 2 && nJetsBT == 1)  histo_R->Fill(25, xlWeight); //CR1 no ht no ptsys another flavor
+		  if (nJets == 2 && nJetsBT == 2)  histo_R->Fill(26, xlWeight); //CR2 no ht no ptsys another flavor
 		  
 		}
 	      }
@@ -314,7 +317,7 @@ void shapelooper::myLoop(int nsel, int mode, int syst, bool up, bool silent)
   
   if (!silent){ 
     cout << "------------------------------------------" << endl;
-    cout << "[1j1t:] " << histo_R->GetBinContent(2) << "\t\t[2j1t:] " << histo_R->GetBinContent(18) << "\t[2j2t:] " << histo_R->GetBinContent(19) << endl;
+    cout << "[1j1t:] " << histo_R->GetBinContent(2) << "\t\t\t[2j1t:] " << histo_R->GetBinContent(18) << "\t[2j2t:] " << histo_R->GetBinContent(19) << endl;
     cout << "Removing Ht and Pt sys\t" << "\t[2j1t:] " << histo_R->GetBinContent(7) << "\t[2j2t:] " << histo_R->GetBinContent(8) << endl;
     cout << "------------------------------------------" << endl; 
   }
