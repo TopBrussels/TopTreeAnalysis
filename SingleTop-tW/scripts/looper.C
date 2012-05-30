@@ -50,7 +50,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   else if ( mode == 1)   lumi = 4919.924;
   else if ( mode == 2)   lumi = 4895.249;
   else if ( mode == 3)   lumi = 4.9;
-  sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(newRootFile,"results/sf_an_%dpb_%d.root", (int)lumi, mode);
  
   TFile f_var(newRootFile, "UPDATE");
   
@@ -446,6 +446,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
       }
       */
       
+      
       //dilepton
       if (nsel == 2 && mode == 1){
 	if (metPt <= 5) xlWeight*=0.800093;
@@ -473,6 +474,19 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	else if (metPt <= 50) xlWeight*=1.80464;
 	else if (metPt <= 60) xlWeight*=1.86129;
 	else  xlWeight*= 1.68509;
+      }else if (nsel == 2){
+	if (metPt <= 5) xlWeight*=0.80;
+	else if (metPt <= 10) xlWeight*=0.82;
+	else if (metPt <= 15) xlWeight*=0.88;
+	else if (metPt <= 20) xlWeight*=0.96;
+	else if (metPt <= 25) xlWeight*=1.06;
+	else if (metPt <= 30) xlWeight*=1.16;
+	else if (metPt <= 35) xlWeight*=1.27;
+	else if (metPt <= 40) xlWeight*=1.41;
+	else if (metPt <= 45) xlWeight*=1.50;
+	else if (metPt <= 50) xlWeight*=1.70;
+	else if (metPt <= 60) xlWeight*=1.82;
+	else  xlWeight*= 1.54;
       }
       
       histo->Fill(0.,xlWeight);

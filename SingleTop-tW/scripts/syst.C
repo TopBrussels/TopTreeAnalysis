@@ -15,7 +15,7 @@
 using namespace std;
 void syst(){
 
-  TString processName[4] =  { "twdr", "tt","others", "zjets"};
+  TString processName[4] =  { "twdr", "tt", "zjets","others"};
   char myRootFile[300]; 
   TH1F*  hnominal [3][4];
   for (int mode = 0; mode < 3; mode++){
@@ -23,7 +23,7 @@ void syst(){
      sprintf(myRootFile,"outputs/out_%d_", mode);
      TFile *_file1 = TFile::Open(myRootFile + processName[j] + ".root");
      hnominal[mode][j] = (TH1F*) _file1->Get("R");
-     
+     /*
      if (j == 2 && mode == 0){
        hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 21.5);
        hnominal[mode][j]->SetBinContent(7,  hnominal[mode][j]->GetBinContent(7) + 2.5);
@@ -37,7 +37,7 @@ void syst(){
        hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 26);
        hnominal[mode][j]->SetBinContent(7,  hnominal[mode][j]->GetBinContent(7) + 13.3);
        hnominal[mode][j]->SetBinContent(8,  hnominal[mode][j]->GetBinContent(8) + 3);
-      }
+      }*/
      
    }
  } 
@@ -241,15 +241,17 @@ void syst(){
   cout << "* PU" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-       for (int j = 0; j <2; j++){ 
-      if (j < 2){
+       for (int j = 0; j <3; j++){ 
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 , fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 )<< "%   " ;
 	else cout << " -      ";
+	
+	//if (j == 2) cout << hup[i][j]->GetBinContent(2) << ", " << hnominal[i][j]->GetBinContent(2) << ", " <<hdown[i][j]->GetBinContent(2) << endl;
       }
     }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(7) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 , fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 )<< "%   " ;
 	else cout << " -\t";
@@ -257,7 +259,7 @@ void syst(){
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(8) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 , fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 )<< "%   " ;
 	else cout << " -\t";
@@ -277,7 +279,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -289,8 +291,8 @@ void syst(){
   cout << "* JES" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <2; j++){ 
-      if (j < 2){
+    for (int j = 0; j <3; j++){ 
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
 	else cout << " -      ";
@@ -298,7 +300,7 @@ void syst(){
     }
     cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(7) !=0) cout << ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%/" << 
 	((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%\t" ;
@@ -307,7 +309,7 @@ void syst(){
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(8) !=0) cout << ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%/" << 
 	((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%\t" ;
@@ -321,7 +323,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -333,15 +335,15 @@ void syst(){
   cout << "* B-tagging" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <2; j++){ 
-      if (j < 2){
+    for (int j = 0; j <3; j++){ 
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
 	else cout << " -      ";
       }
     }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(7) !=0) cout << ((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%/" << 
 	((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 << "%\t" ;
@@ -350,7 +352,7 @@ void syst(){
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(8) !=0) cout << ((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%/" << 
 	((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 << "%\t" ;
@@ -364,7 +366,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -376,15 +378,15 @@ void syst(){
   cout << "* JER" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <2; j++){ 
-      if (j < 2){
+    for (int j = 0; j <3; j++){ 
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 , fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 )<< "%   " ;
 	else cout << " -      ";
       }
     }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(7) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 , fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 )<< "%   " ;
 	else cout << " -\t";
@@ -392,7 +394,7 @@ void syst(){
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(8) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 , fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 )<< "%   " ;
 	else cout << " -\t";
@@ -405,7 +407,7 @@ void syst(){
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 2; j++){
+    for (int j = 0; j < 3; j++){
       sprintf(myRootFile,"_%d_", i);
       TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
       hup[i][j] = (TH1F*) _file1->Get("R");
@@ -417,15 +419,15 @@ void syst(){
   cout << "* Missing ET (unclustered)" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-      for (int j = 0; j <2; j++){ 
-      if (j < 2){
+      for (int j = 0; j <3; j++){ 
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(2) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 , fabs((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 )<< "%   " ;
 	else cout << " -      ";
       }
     }cout << "\t[2j1t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(7) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 , fabs((hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7))*100 )<< "%   " ;
 	else cout << " -\t";
@@ -433,7 +435,7 @@ void syst(){
     }
     cout << "\t[2j2t]" ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
+      if (j < 3){
 	cout << processName[j] << ":" ;
 	if (hnominal[i][j]->GetBinContent(8) !=0) cout << TMath::Max(fabs((hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 , fabs((hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8))*100 )<< "%   " ;
 	else cout << " -\t";
@@ -454,7 +456,7 @@ void syst(){
  for (int i = 0; i < 3; i++){
    cout << "mode:" << i << "      " ;
    for (int j = 0; j <4; j++){ 
-     if(j == 0 || j == 2){
+     if(j < 3){
        cout << processName[j] << ":" ;
        if (hnominal[i][j]->GetBinContent(2) !=0) cout << (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2))*100 << "%\t" ;
        else cout << "-\t";
