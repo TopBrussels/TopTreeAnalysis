@@ -14,7 +14,7 @@
 using namespace std;
 void datacardmaker_evolution(){
 
-  ofstream datacard("singletop_tW_5fb_ultimate_cr.txt"); 
+  ofstream datacard("singletop_tW_5fb_ultimate.txt"); 
  
   char myRootFile[300];
   sprintf(myRootFile,"results/Histos_cutbased_CR.root");
@@ -64,10 +64,10 @@ void datacardmaker_evolution(){
     datacard << setprecision(3) << "\t " << hdata[i]->GetBinContent(2) ;
   }
   for (int i = 0; i < 3; i++){
-    datacard << setprecision(3) << "\t " << hdata[i]->GetBinContent(7) ;
+    datacard << setprecision(3) << "\t " << hdata[i]->GetBinContent(18) ;
   }
   for (int i = 0; i < 3; i++){
-    datacard << setprecision(3) << "\t " << hdata[i]->GetBinContent(8) ;
+    datacard << setprecision(3) << "\t " << hdata[i]->GetBinContent(19) ;
   }
   
   datacard << setprecision(3) << endl;
@@ -84,12 +84,12 @@ void datacardmaker_evolution(){
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      datacard << setprecision(3) << hnominal[i][j]->GetBinContent(7) << "\t ";
+      datacard << setprecision(3) << hnominal[i][j]->GetBinContent(18) << "\t ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      datacard << setprecision(3) << hnominal[i][j]->GetBinContent(8) << "\t ";
+      datacard << setprecision(3) << hnominal[i][j]->GetBinContent(19) << "\t ";
     }
   }
   datacard << setprecision(3) << endl;
@@ -143,8 +143,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
-	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average << "\t ";
+	double average = ((hup[0][j]->GetBinContent(18) + hup[1][j]->GetBinContent(18) + hup[2][j]->GetBinContent(18)) + (hdown[0][j]->GetBinContent(18) +  hdown[1][j]->GetBinContent(18) + hdown[2][j]->GetBinContent(18)))/2;
+	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(18) + hup[1][j]->GetBinContent(18) + hup[2][j]->GetBinContent(18)) - average)/average << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -153,8 +153,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
-	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average << "\t ";
+	double average = ((hup[0][j]->GetBinContent(19) + hup[1][j]->GetBinContent(19) + hup[2][j]->GetBinContent(19)) + (hdown[0][j]->GetBinContent(19) +  hdown[1][j]->GetBinContent(19) + hdown[2][j]->GetBinContent(19)))/2;
+	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(19) + hup[1][j]->GetBinContent(19) + hup[2][j]->GetBinContent(19)) - average)/average << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -176,8 +176,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
-	double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
-	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average << "\t ";
+	double average = ((hup[0][j]->GetBinContent(18) + hup[1][j]->GetBinContent(18) + hup[2][j]->GetBinContent(18)) + (hdown[0][j]->GetBinContent(18) +  hdown[1][j]->GetBinContent(18) + hdown[2][j]->GetBinContent(18)))/2;
+	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(18) + hup[1][j]->GetBinContent(18) + hup[2][j]->GetBinContent(18)) - average)/average << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -186,8 +186,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
-	double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
-	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average << "\t ";
+	double average = ((hup[0][j]->GetBinContent(19) + hup[1][j]->GetBinContent(19) + hup[2][j]->GetBinContent(19)) + (hdown[0][j]->GetBinContent(19) +  hdown[1][j]->GetBinContent(19) + hdown[2][j]->GetBinContent(19)))/2;
+	if (average !=0) datacard << setprecision(3) << 1 + ((hup[0][j]->GetBinContent(19) + hup[1][j]->GetBinContent(19) + hup[2][j]->GetBinContent(19)) - average)/average << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -232,8 +232,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
-	if (average !=0) datacard << setprecision(4) << 1 + ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average << "\t ";
+	double average = ((hup[0][j]->GetBinContent(18) + hup[1][j]->GetBinContent(18) + hup[2][j]->GetBinContent(18)) + (hdown[0][j]->GetBinContent(18) +  hdown[1][j]->GetBinContent(18) + hdown[2][j]->GetBinContent(18)))/2;
+	if (average !=0) datacard << setprecision(4) << 1 + ((hup[0][j]->GetBinContent(18) + hup[1][j]->GetBinContent(18) + hup[2][j]->GetBinContent(18)) - average)/average << "\t ";
 	else datacard << setprecision(4) << "-\t ";
       }
       else datacard << setprecision(4) << "-\t ";
@@ -242,8 +242,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
-	if (average !=0) datacard << setprecision(4) << 1 + ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average << "\t ";
+	double average = ((hup[0][j]->GetBinContent(19) + hup[1][j]->GetBinContent(19) + hup[2][j]->GetBinContent(19)) + (hdown[0][j]->GetBinContent(19) +  hdown[1][j]->GetBinContent(19) + hdown[2][j]->GetBinContent(19)))/2;
+	if (average !=0) datacard << setprecision(4) << 1 + ((hup[0][j]->GetBinContent(19) + hup[1][j]->GetBinContent(19) + hup[2][j]->GetBinContent(19)) - average)/average << "\t ";
 	else datacard << setprecision(4) << "-\t ";
       }
       else datacard << setprecision(4) << "-\t ";
@@ -285,8 +285,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
-	double average = hnominal[0][j]->GetBinContent(7) + hnominal[1][j]->GetBinContent(7) + hnominal[2][j]->GetBinContent(7);
-	if (average !=0) datacard << setprecision(4) << 1 + ((h[0][j]->GetBinContent(7) + h[1][j]->GetBinContent(7) + h[2][j]->GetBinContent(7)) - average)/average << "\t ";
+	double average = hnominal[0][j]->GetBinContent(18) + hnominal[1][j]->GetBinContent(18) + hnominal[2][j]->GetBinContent(18);
+	if (average !=0) datacard << setprecision(4) << 1 + ((h[0][j]->GetBinContent(18) + h[1][j]->GetBinContent(18) + h[2][j]->GetBinContent(18)) - average)/average << "\t ";
 	else datacard << setprecision(4) << "-\t ";
       }
       else datacard << setprecision(4) << "-\t ";
@@ -295,8 +295,8 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
-	double average = hnominal[0][j]->GetBinContent(8) + hnominal[1][j]->GetBinContent(8) + hnominal[2][j]->GetBinContent(8);
-	if (average !=0) datacard << setprecision(4) << 1 + ((h[0][j]->GetBinContent(8) + h[1][j]->GetBinContent(8) + h[2][j]->GetBinContent(8)) - average)/average << "\t ";
+	double average = hnominal[0][j]->GetBinContent(19) + hnominal[1][j]->GetBinContent(19) + hnominal[2][j]->GetBinContent(19);
+	if (average !=0) datacard << setprecision(4) << 1 + ((h[0][j]->GetBinContent(19) + h[1][j]->GetBinContent(19) + h[2][j]->GetBinContent(19)) - average)/average << "\t ";
 	else datacard << setprecision(4) << "-\t ";
       }
       else datacard << setprecision(4) << "-\t ";
@@ -353,9 +353,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(7) !=0){
-	  double upv = (hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
-	  double downv =  (hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
+	if (hnominal[i][j]->GetBinContent(18) !=0){
+	  double upv = (hup[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
+	  double downv =  (hdown[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	 
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -370,9 +370,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(8) !=0){
-	  double upv = (hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
-	  double downv =  (hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
+	if (hnominal[i][j]->GetBinContent(19) !=0){
+	  double upv = (hup[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
+	  double downv =  (hdown[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	 
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -434,9 +434,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(7) !=0){
-	  double upv = (hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
-          double downv =  (hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
+	if (hnominal[i][j]->GetBinContent(18) !=0){
+	  double upv = (hup[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
+          double downv =  (hdown[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
           double maxv = TMath::Max(fabs(upv), fabs(downv));
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
 	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(4) << 1+ downv<< "\t ";
@@ -450,9 +450,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(8) !=0){
-	  double upv = (hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
-	  double downv =  (hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
+	if (hnominal[i][j]->GetBinContent(19) !=0){
+	  double upv = (hup[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
+	  double downv =  (hdown[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	  
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -511,9 +511,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(7) !=0){
-	  double upv = (hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
-          double downv =  (hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
+	if (hnominal[i][j]->GetBinContent(18) !=0){
+	  double upv = (hup[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
+          double downv =  (hdown[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
           double maxv = TMath::Max(fabs(upv), fabs(downv));
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
 	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(4) << 1+ downv<< "\t ";
@@ -527,9 +527,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(8) !=0){
-	  double upv = (hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
-	  double downv =  (hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
+	if (hnominal[i][j]->GetBinContent(19) !=0){
+	  double upv = (hup[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
+	  double downv =  (hdown[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	 
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -589,9 +589,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(7) !=0){
-	  double upv = (hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
-	  double downv =  (hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
+	if (hnominal[i][j]->GetBinContent(18) !=0){
+	  double upv = (hup[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
+	  double downv =  (hdown[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	  
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -606,9 +606,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(8) !=0){
-	  double upv = (hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
-	  double downv =  (hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
+	if (hnominal[i][j]->GetBinContent(19) !=0){
+	  double upv = (hup[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
+	  double downv =  (hdown[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	 
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -671,9 +671,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-	if (hnominal[i][j]->GetBinContent(7) !=0){
-	  double upv = (hup[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
-	  double downv =  (hdown[i][j]->GetBinContent(7) - hnominal[i][j]->GetBinContent(7))/hnominal[i][j]->GetBinContent(7);
+	if (hnominal[i][j]->GetBinContent(18) !=0){
+	  double upv = (hup[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
+	  double downv =  (hdown[i][j]->GetBinContent(18) - hnominal[i][j]->GetBinContent(18))/hnominal[i][j]->GetBinContent(18);
 	  double maxv = TMath::Max(fabs(upv), fabs(downv));
 	
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
@@ -688,9 +688,9 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j < 3){
-      	if (hnominal[i][j]->GetBinContent(8) !=0){
-	  double upv = (hup[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
-          double downv =  (hdown[i][j]->GetBinContent(8) - hnominal[i][j]->GetBinContent(8))/hnominal[i][j]->GetBinContent(8);
+      	if (hnominal[i][j]->GetBinContent(19) !=0){
+	  double upv = (hup[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
+          double downv =  (hdown[i][j]->GetBinContent(19) - hnominal[i][j]->GetBinContent(19))/hnominal[i][j]->GetBinContent(19);
           double maxv = TMath::Max(fabs(upv), fabs(downv));
 	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(4) << 1 + upv << "/" << 1+ downv<< "\t ";
 	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(4) << 1+ downv<< "\t ";
@@ -764,7 +764,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==0 && j == 0){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -791,7 +791,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==0 && j == 0){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -830,7 +830,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==1 && j == 0){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -857,7 +857,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==1 && j == 0){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -898,7 +898,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==2 && j == 0){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -926,7 +926,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i ==2 && j == 0){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -966,7 +966,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 1){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -993,7 +993,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 1){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1032,7 +1032,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 1 && j == 1){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1059,7 +1059,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 1 && j == 1){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1098,7 +1098,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 1){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1125,7 +1125,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 1){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1164,7 +1164,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 2){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1191,7 +1191,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 0 && j == 2){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1230,7 +1230,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 1 && j == 2){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1257,7 +1257,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 1 && j == 2){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1296,7 +1296,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 2){
-	if (hnominal[i][j]->GetBinContent(7) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(7)/hnominal[i][j]->GetBinContent(7)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(18) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(18)/hnominal[i][j]->GetBinContent(18)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
@@ -1323,7 +1323,7 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(i == 2 && j == 2){
-	if (hnominal[i][j]->GetBinContent(8) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(8)/hnominal[i][j]->GetBinContent(8)) << "\t ";
+	if (hnominal[i][j]->GetBinContent(19) !=0) datacard << setprecision(3) << 1 + (hnominal[i][j]->GetBinError(19)/hnominal[i][j]->GetBinContent(19)) << "\t ";
 	else datacard << setprecision(3) << "-\t ";
       }
       else datacard << setprecision(3) << "-\t ";
