@@ -392,7 +392,7 @@ int main(int argc, char* argv[]){
 
     //int decay=1;
     int fitMode=0; // choose fit variable -> 0: m_lj 1: M3 2: 2D fit of (m_lj,M3)
-
+ 
     /*if (decay==1) {
         
         cout << "Warning: E+jets selected, changing left and right defs" << endl;
@@ -411,11 +411,12 @@ int main(int argc, char* argv[]){
     cout << "Warning: E+jets selected, changing left and right defs" << endl;
 
     /*leftlimit = 50;
-    centerleftlimit = 140;
-    centerrightlimit = 140;
-    rightlimit = 240;
-*/
+    centerleftlimit = 160;
+    centerrightlimit = 160;
+    rightlimit = 260;*/
+
     //e+jets
+    
     myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
   
   //  myAnalyzer.getPercentiles(percentiles);

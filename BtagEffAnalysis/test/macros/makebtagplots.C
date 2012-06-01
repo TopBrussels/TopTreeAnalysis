@@ -12,7 +12,7 @@
 	
 	sob->SetTitle("");
 	sob->GetYaxis()->SetRangeUser(0,0.8);
-	sob->GetXaxis()->SetTitle("m_{#mu j} (GeV/c^{2})");
+	sob->GetXaxis()->SetTitle("m_{lj} (GeV/c^{2})");
 	sob->GetYaxis()->SetTitle("b purity");
 	
 	sob->Draw();

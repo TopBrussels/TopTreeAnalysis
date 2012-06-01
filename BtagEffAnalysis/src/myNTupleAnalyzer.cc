@@ -524,7 +524,7 @@ int taggerArray[24]={0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7};
 
 int nBinsBtag[8]={25,25,25,25,25,25,25,25};
 double lowRangeBtag[8]={-10,-10,0,0,0,0,0,0};
-double upRangeBtag[8]={30,30,8,8,8,8,1,1};
+double upRangeBtag[8]={30,30,3,8,8,8,1,1};
 
 double wpArray[24]={1.7,3.3,10.2,1.19,1.93,3.41,0.275,0.545,0.790,1.33,2.55,3.74,0.00,1.74,3.05,0.00,0.00,2.0,0.244,0.679,0.898,0.00,0.00,0.00}; // old ordering
 int taggerArray[24]={0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7};
@@ -698,8 +698,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     
     
     // NOMINAL SET OF SAMPLES
-    //nTaggers=1;
-    //nWP=3;
+    nTaggers=1;
+    nWP=3;
     
     nRunSamples_=7;
     inRootFile[0] = "BtagTree_TTbarJets";
@@ -709,7 +709,12 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     inRootFile[4] = "BtagTree_ST_t_tbar";
     inRootFile[5] = "BtagTree_ZJets";
     inRootFile[6] = "BtagTree_WJets";
-
+    
+    /*nRunSamples_=3;
+    inRootFile[0] = "BtagTree_TTbarJets";
+    inRootFile[1] = "BtagTree_ZJets";
+    inRootFile[2] = "BtagTree_WJets";
+*/
     //inRootFile[0] = "BtagTree_WJets_JESMinus";
         
     if (decay==1) {
@@ -831,39 +836,40 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			sampleType="JES-";
 //doVarBins=false;
 			for (unsigned int i=0; i<nRunSamples_; i++) {
-                inRootFile[i] = inRootFile[i]+"_JESMinus";
+                if (((string)inRootFile[i]).find("InvIso") == -1)
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_JESMinus";
             }
             break;
 		case 2:
 			sampleType="JES+";
 			for (unsigned int i=0; i<nRunSamples_; i++) {
-                inRootFile[i] = inRootFile[i]+"_JESPlus";
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_JESPlus";
             }
 			break;
 
 		case 3:
 			sampleType="JER-";
 			for (unsigned int i=0; i<nRunSamples_; i++) {
-                inRootFile[i] = inRootFile[i]+"_JERMinus";
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_JERMinus";
             }
 			break;
 		case 4:
 			sampleType="JER+";
 			for (unsigned int i=0; i<nRunSamples_; i++) {
-                inRootFile[i] = inRootFile[i]+"_JERPlus";
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_JERPlus";
             }
 			break;
             
 		case 5:
 			sampleType="PileUp-";
 			for (unsigned int i=0; i<nRunSamples_; i++) {
-                inRootFile[i] = inRootFile[i]+"_LessPU";
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_LessPU";
             }
 			break;
 		case 6:
 			sampleType="PileUp+";
 			for (unsigned int i=0; i<nRunSamples_; i++) {
-                inRootFile[i] = inRootFile[i]+"_MorePU";
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_MorePU";
             }
 			break;
 			
@@ -1679,8 +1685,15 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			//extra cut on mlb to remove overflow bin from XS templates
 			
 			//if (!doOnlyMSPlot && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
-			if (!doOnlyMSPlot && (NTuple->mlj() > upRangeVar0)) continue;
 			
+            if (!doOnlyMSPlot) {
+            
+                if (fitMode == 0 && NTuple->mlj() > upRangeVar0) continue;
+                else if (fitMode == 1 && NTuple->m3() > 800) continue;
+                //else if (fitMode == 2 && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
+                
+            }
+            
 			if (NTuple->dataSetName().find("TTbar") == 0) {
 								
 				nTTbarAfterMLBCUT+=weight_nonrew;	
@@ -1940,6 +1953,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		MSPlot["nPV"] = new MultiSamplePlot(datasets, "nPV", 36, -0.5, 35.5, "#PV");
 		MSPlot["nPV_nonRew"] = new MultiSamplePlot(datasets, "nPV_nonRew", 36, -0.5, 35.5, "#PV");
         
+        MSPlot["BestJetCombChi2"] = new MultiSamplePlot(datasets, "BestJetCombChi2", 50, 0, 1000, "#chi^{2}");
+        
 		MSPlot["selectedEventsJetsEta"] = new MultiSamplePlot(datasets, "selectedEventsJetsEta", 13, -2.6, 2.6, "Jet #eta");
         
         if (decay==0) {
@@ -2190,20 +2205,43 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         hist_PU["MLBRCS_NoPURew"]->Fill(v_controlVar2[n],w);
                     }
                 }
-                if (hist_PU.find("MLB_WJets") == hist_PU.end()) {
-                    hist_PU["MLB_WJets"]=new TH1D("MLB_WJets","MLB_WJets;MLB",50,0,500);
-                    hist_PU["MLB_WJets_CSVM"]=new TH1D("MLB_WJets_CSVM","MLB_WJets_CSVM;MLB",50,0,500);
-                    hist_PU["MLB_WJets_NonRew"]=new TH1D("MLB_WJets_NonRew","MLB_WJets_NonRew;MLB",50,0,500);
-                    hist_PU["MLB_WJets_CSVM_NonRew"]=new TH1D("MLB_WJets_CSVM_NonRew","MLB_WJets_CSVM_NonRew;MLB",50,0,500);
-                }
-                if (v_dataSetName[n] == "WJets") {
-                    hist_PU["MLB_WJets"]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
-                    hist_PU["MLB_WJets_NonRew"]->Fill(v_controlVar[n],w);
-                    if (v_bTag[n][6] > 0.679) {
-                        hist_PU["MLB_WJets_CSVM"]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
-                        hist_PU["MLB_WJets_CSVM_NonRew"]->Fill(v_controlVar[n],w);
+                
+                //if (v_dataSetName[n].find("TTbarJets") == -1) {
+                    
+                    string title="MLB_Template_"+v_dataSetName[n];
+                    string title2="MLB_Template_BackGround";
+                
+                if (v_dataSetName[n].find("TTbarJets") == 0) title="MLB_Template_TTbar";
+                if (v_dataSetName[n].find("ST") == 0) title="MLB_Template_ST";
+                    
+                    if (hist_PU.find(title) == hist_PU.end()) {
+                        hist_PU[title]=new TH1D(title.c_str(),(title+";MLB").c_str(),50,0,500);
+                        hist_PU[title+"_CSVM"]=new TH1D((title+"_CSVM").c_str(),(title+"_CSVM;MLB").c_str(),50,0,500);
+                        hist_PU[title+"_NonRew"]=new TH1D((title+"_NonRew").c_str(),(title+"_NonRew;MLB").c_str(),50,0,500);
+                        hist_PU[title+"_CSVM_NonRew"]=new TH1D((title+"_CSVM_NonRew").c_str(),(title+"_CSVM_NonRew;MLB").c_str(),50,0,500);
                     }
-                }
+                    if (hist_PU.find(title2) == hist_PU.end()) {
+                        hist_PU[title2]=new TH1D(title2.c_str(),(title2+";MLB").c_str(),50,0,500);
+                        hist_PU[title2+"_CSVM"]=new TH1D((title2+"_CSVM").c_str(),(title2+"_CSVM;MLB").c_str(),50,0,500);
+                        hist_PU[title2+"_NonRew"]=new TH1D((title2+"_NonRew").c_str(),(title2+"_NonRew;MLB").c_str(),50,0,500);
+                        hist_PU[title2+"_CSVM_NonRew"]=new TH1D((title2+"_CSVM_NonRew").c_str(),(title2+"_CSVM_NonRew;MLB").c_str(),50,0,500);
+                    }
+                    //if (v_dataSetName[n] == "WJets") {
+                    
+                    
+                    hist_PU[title]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
+                    hist_PU[title+"_NonRew"]->Fill(v_controlVar[n],w);
+                    
+                    hist_PU[title2]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
+                    hist_PU[title2+"_NonRew"]->Fill(v_controlVar[n],w);
+                    
+                    if (v_bTag[n][6] > 0.679) {
+                        hist_PU[title+"_CSVM"]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
+                        hist_PU[title+"_CSVM_NonRew"]->Fill(v_controlVar[n],w);
+                        hist_PU[title2+"_CSVM"]->Fill(v_controlVar[n],w*v_scaleFactor[n]);
+                        hist_PU[title2+"_CSVM_NonRew"]->Fill(v_controlVar[n],w);
+                    }
+                //}
             }
             if (v_dataSetName[n] != "data" && v_dataSetName[n] != "Data" && v_dataSetName[n] != "DATA") {
                 MCWeight = (dataLum_/datasets[d]->EquivalentLumi())*v_scaleFactor[n];
@@ -2286,6 +2324,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 
             MSPlot["nPV"]->Fill(v_npv[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             MSPlot["nPV_nonRew"]->Fill(v_npv[n], datasets[d], true, dataLum_);
+            
+            MSPlot["BestJetCombChi2"]->Fill(v_matchChiSquare[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             
 			MSPlot["selectedEventsJetsEta"]->Fill(v_eta[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             
@@ -3543,7 +3583,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     setNomVal(data_postfix,"eff_meas_fdata",iwp,results[8]);
                     setNomVal(data_postfix,"ueff_meas_fdata",iwp,results[9]);
                     
-                } else if (( nSystematic > 6 && nSystematic < 21 ) || nSystematic > 100) {
+                    //} else if (( nSystematic > 6 && nSystematic < 21 ) || nSystematic > 100) {
+                } else if (nSystematic > 0) {
                 
                     results[0] = getNomVal(data_postfix,"eff_true",iwp);
                     results[1] = getNomVal(data_postfix,"ueff_true",iwp);
@@ -3557,6 +3598,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                 } else if (datasetName == "Data" && doBtagSFonData) {
                     
+                    cout << "Never set doBtagSFonData to true" << endl;
+                    exit(1);
                     double sf = results[8]/getNomVal(data_postfix,"eff_meas_fdata",iwp);
                     
                     setNomVal(data_postfix,"sf_for_data",iwp,sf);

@@ -2,8 +2,8 @@
     TFile* f = new TFile("../store/data.root");
     TFile* g = new TFile("../store/mc.root");
     
-    TH1F* effMC = (TH1F*) g->Get("Variable_1_0/Discriminator_6/nDisc_6_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffAll");
-    TH1F* eff = (TH1F*) f->Get("Variable_1_0/Discriminator_6/nDisc_6_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR");
+    TH1F* effMC = (TH1F*) g->Get("Variable_1_0/Discriminator_2/nDisc_2_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffAll");
+    TH1F* eff = (TH1F*) f->Get("Variable_1_0/Discriminator_2/nDisc_2_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR");
 
     Int_t nBin = eff->GetNbinsX();
     Float_t low = eff->GetBinLowEdge(1); 
@@ -34,10 +34,12 @@
         gr_ey[i] = eff->GetBinError(i+1);
         
         gr_MC[i] = effMC->GetBinContent(i+1);
+
+	if (gr_MC[i] == 0) gr_y[i]=0;
         
         gr_ratio_x[i] = eff->GetBinCenter(i+1);
         gr_ratio_y[i] = gr_y[i]/gr_MC[i];
-        ///cout << gr_ratio_y[i] << endl;
+        cout << gr_y[i]<< " " << gr_MC[i] << " " << gr_ratio_y[i] << endl;
         
         float a = eff->GetBinCenter(i+1);
         float b = effMC->GetBinCenter(i+1);
@@ -45,8 +47,8 @@
         float ub = effMC->GetBinError(i+1);
         
         float uSF = sqrt((pow(ua,2)/pow(b,2))+((pow(a,2)*pow(ub,2))/pow(b,4)));
-        gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(0.048,2)+pow(uSF,2));
-        gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(0.048,2)+pow(uSF,2));
+        gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(0.0,2)+pow(uSF,2));
+        gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(0.0,2)+pow(uSF,2));
         
         //cout << sqrt(pow(0.048,2)+pow(uSF,2)) << endl;
         
@@ -112,7 +114,7 @@
     latex2->SetNDC();
     latex2->SetTextSize(0.05);
     latex2->SetTextAlign(30); // align right
-    latex2->DrawLatex(0.87, 0.86, "2.18 fb^{-1} at #sqrt{s} = 7 TeV");
+    latex2->DrawLatex(0.87, 0.86, "0.9 fb^{-1} at #sqrt{s} = 8 TeV");
     
     TPad* pad = new TPad("pad", "pad", 0.0, 0.0, 1.0, 1.0);
     pad->SetTopMargin(0.7);

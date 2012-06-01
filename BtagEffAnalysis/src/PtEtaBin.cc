@@ -385,6 +385,8 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
   
   //+if(debug_>2) cout << "PtEtaBin::DefineSignalSamplePlots " << *genericName << endl;
 
+    int nFitBins = 50;
+
   GiveName(&titleSng_); titleSng_+="TH2Sng"; 
   GiveName(&titleBkg_); titleBkg_+="TH2Bkg";
   GiveName(&titleData_); titleData_+="TH2Data"; 
@@ -502,7 +504,7 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
   TH1Bkg_W_Var0 = new TH1D(titleBkg_W_Var0_,titleBkg_W_Var0_,nBinsVar0,lowRangeVar0,upRangeVar0);
   TH1Bkg_R_Var0 = new TH1D(titleBkg_R_Var0_,titleBkg_R_Var0_,nBinsVar0,lowRangeVar0,upRangeVar0);
     TH1Data_Var0 = new TH1D(titleData_Var0_,titleData_Var0_,nBinsVar0,lowRangeVar0,upRangeVar0);
-    TH1Data_Var0_XS = new TH1D(titleData_Var0_XS_,titleData_Var0_XS_,nBinsVar0,lowRangeVar0,upRangeVar0);
+    TH1Data_Var0_XS = new TH1D(titleData_Var0_XS_,titleData_Var0_XS_,nFitBins,lowRangeVar0,upRangeVar0);
 		
   GiveName(&titleSoverSB_Var0_); titleSoverSB_Var0_+="TH1SoverSB_Var0"; 
   TH1SoverSB_Var0 = new TH1D(titleSoverSB_Var0_,titleSoverSB_Var0_,nBinsVar0,lowRangeVar0,upRangeVar0);
@@ -645,153 +647,193 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
     
     /* data */
 	TString name = ""; GiveName(&name); name+="TH1Data_Var0_bTagL"; 
-	histo1D["TH1Data_Var0_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_bTagL"; 
-	histo1D["TH1Sng_Var0_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_bTagL"; 
-	histo1D["TH1Bkg_Var0_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_bTagM"; 
-	histo1D["TH1Data_Var0_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_bTagM"; 
-	histo1D["TH1Sng_Var0_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_bTagM"; 
-	histo1D["TH1Bkg_Var0_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_bTagT"; 
-	histo1D["TH1Data_Var0_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_bTagT"; 
-	histo1D["TH1Sng_Var0_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_bTagT"; 
-	histo1D["TH1Bkg_Var0_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
     /* background */
 	name = ""; GiveName(&name); name+="TH1Data_Var0_VVMC"; 
-	histo1D["TH1Data_Var0_VVMC"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_VVMC"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_VVMC"; 
-	histo1D["TH1Sng_Var0_VVMC"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_VVMC"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_VVMC"; 
-	histo1D["TH1Bkg_Var0_VVMC"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_VVMC"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_VVMC_bTagL"; 
-	histo1D["TH1Data_Var0_VVMC_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Data_Var0_VVMC_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_VVMC_bTagL"; 
-	histo1D["TH1Sng_Var0_VVMC_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Sng_Var0_VVMC_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_VVMC_bTagL"; 
-	histo1D["TH1Bkg_Var0_VVMC_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_VVMC_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_VVMC_bTagM"; 
-	histo1D["TH1Data_Var0_VVMC_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Data_Var0_VVMC_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_VVMC_bTagM"; 
-	histo1D["TH1Sng_Var0_VVMC_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Sng_Var0_VVMC_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_VVMC_bTagM"; 
-	histo1D["TH1Bkg_Var0_VVMC_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Bkg_Var0_VVMC_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_VVMC_bTagT"; 
-	histo1D["TH1Data_Var0_VVMC_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Data_Var0_VVMC_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_VVMC_bTagT"; 
-	histo1D["TH1Sng_Var0_VVMC_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Sng_Var0_VVMC_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_VVMC_bTagT"; 
-	histo1D["TH1Bkg_Var0_VVMC_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_VVMC_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
     
     /* ttbar */
 	name = ""; GiveName(&name); name+="TH1Data_Var0_TTbar"; 
-	histo1D["TH1Data_Var0_TTbar"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Data_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_TTbar"; 
-	histo1D["TH1Sng_Var0_TTbar"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_TTbar"; 
-	histo1D["TH1Bkg_Var0_TTbar"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Bkg_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_TTbar_bTagL"; 
-	histo1D["TH1Data_Var0_TTbar_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_TTbar_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_TTbar_bTagL"; 
-	histo1D["TH1Sng_Var0_TTbar_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_TTbar_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_TTbar_bTagL"; 
-	histo1D["TH1Bkg_Var0_TTbar_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Bkg_Var0_TTbar_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
     
 	name = ""; GiveName(&name); name+="TH1Data_Var0_TTbar_bTagM"; 
-	histo1D["TH1Data_Var0_TTbar_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_TTbar_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_TTbar_bTagM"; 
-	histo1D["TH1Sng_Var0_TTbar_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_TTbar_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_TTbar_bTagM"; 
-	histo1D["TH1Bkg_Var0_TTbar_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Bkg_Var0_TTbar_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_TTbar_bTagT"; 
-	histo1D["TH1Data_Var0_TTbar_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Data_Var0_TTbar_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Sng_Var0_TTbar_bTagT"; 
-	histo1D["TH1Sng_Var0_TTbar_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);
+	histo1D["TH1Sng_Var0_TTbar_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_TTbar_bTagT"; 
-	histo1D["TH1Bkg_Var0_TTbar_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,upRangeVar0);	
+	histo1D["TH1Bkg_Var0_TTbar_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
 		
+    /* W+jets */
+    
+    name = ""; GiveName(&name); name+="TH1Data_Var0_WJets"; 
+	histo1D["TH1Data_Var0_WJets"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);	
+	
+	name = ""; GiveName(&name); name+="TH1Data_Var0_WJets_bTagL"; 
+	histo1D["TH1Data_Var0_WJets_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
+	
+	name = ""; GiveName(&name); name+="TH1Data_Var0_WJets_bTagM"; 
+	histo1D["TH1Data_Var0_WJets_bTagM"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
+	
+	name = ""; GiveName(&name); name+="TH1Data_Var0_WJets_bTagT"; 
+	histo1D["TH1Data_Var0_WJets_bTagT"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
+	
+    
     //for (std::map<TString,TH1D*>::iterator it=histo1D.begin(); it != histo1D.end(); it++)
     //    it->second->Sumw2();
     
     // 1D templates (m3)
     
+    int nBinsM3=80;
+    int minM3=0;
+    int maxM3=800;
+    
     /* data */
     name = ""; GiveName(&name); name+="TH1Data_M3"; 
-	histo1D["TH1Data_M3"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
     name = ""; GiveName(&name); name+="TH1Data_M3_bTagL"; 
-	histo1D["TH1Data_M3_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_bTagL"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 	name = ""; GiveName(&name); name+="TH1Data_M3_bTagM"; 
-	histo1D["TH1Data_M3_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_bTagM"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
     name = ""; GiveName(&name); name+="TH1Data_M3_bTagT"; 
-	histo1D["TH1Data_M3_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_bTagT"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
     
     /* ttbar */
     name = ""; GiveName(&name); name+="TH1Data_M3_TTbar"; 
-	histo1D["TH1Data_M3_TTbar"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_TTbar"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 	name = ""; GiveName(&name); name+="TH1Data_M3_TTbar_bTagL"; 
-	histo1D["TH1Data_M3_TTbar_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_TTbar_bTagL"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 	name = ""; GiveName(&name); name+="TH1Data_M3_TTbar_bTagM"; 
-	histo1D["TH1Data_M3_TTbar_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_TTbar_bTagM"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
     name = ""; GiveName(&name); name+="TH1Data_M3_TTbar_bTagT"; 
-	histo1D["TH1Data_M3_TTbar_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_TTbar_bTagT"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+    
+    /* WJets */
+    name = ""; GiveName(&name); name+="TH1Data_M3_WJets"; 
+	histo1D["TH1Data_M3_WJets"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+	name = ""; GiveName(&name); name+="TH1Data_M3_WJets_bTagL"; 
+	histo1D["TH1Data_M3_WJets_bTagL"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+	name = ""; GiveName(&name); name+="TH1Data_M3_WJets_bTagM"; 
+	histo1D["TH1Data_M3_WJets_bTagM"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+    name = ""; GiveName(&name); name+="TH1Data_M3_WJets_bTagT"; 
+	histo1D["TH1Data_M3_WJets_bTagT"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 
     /* background */
     name = ""; GiveName(&name); name+="TH1Data_M3_VVMC"; 
-	histo1D["TH1Data_M3_VVMC"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_VVMC"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 	name = ""; GiveName(&name); name+="TH1Data_M3_VVMC_bTagL"; 
-	histo1D["TH1Data_M3_VVMC_bTagL"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_VVMC_bTagL"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 	name = ""; GiveName(&name); name+="TH1Data_M3_VVMC_bTagM"; 
-	histo1D["TH1Data_M3_VVMC_bTagM"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_VVMC_bTagM"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
     name = ""; GiveName(&name); name+="TH1Data_M3_VVMC_bTagT"; 
-	histo1D["TH1Data_M3_VVMC_bTagT"] = new TH1D(name,name,nBinsVar0,lowRangeVar0,1200);
+	histo1D["TH1Data_M3_VVMC_bTagT"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 
     // 2D templates (m_lb vs m3)
     
     /* data */
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3"; 
-	histo2D["TH2Data_MLB_M3"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagL"; 
-	histo2D["TH2Data_MLB_M3_bTagL"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagM"; 
-	histo2D["TH2Data_MLB_M3_bTagM"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagT"; 
-	histo2D["TH2Data_MLB_M3_bTagT"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
     
     // ttbar
-
+    
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar"; 
-	histo2D["TH2Data_MLB_M3_TTbar"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_TTbar"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagL"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagL"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagM"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagM"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagT"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagT"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+
+    // WJets
+    
+    name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets"; 
+	histo2D["TH2Data_MLB_M3_WJets"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+    name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagL"; 
+	histo2D["TH2Data_MLB_M3_WJets_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagM"; 
+	histo2D["TH2Data_MLB_M3_WJets_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagT"; 
+	histo2D["TH2Data_MLB_M3_WJets_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 
     
     // bkg
 	
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC"; 
-	histo2D["TH2Data_MLB_M3_VVMC"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_VVMC"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagL"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagL"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagM"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagM"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagT"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagT"] = new TH2D(name,name,15,lowRangeVar0,upRangeVar0,15,lowRangeVar0,1200);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 
     
 }
@@ -1055,6 +1097,8 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 			TH1Data_BtagAll->Fill(bTag,weight);
 			
             //if (var0>=60 && var0<=200) {
+            
+            //weight_nonrew=2;
 
             TH1Data_Var0_XS->Fill(var0,weight_nonrew); 
             
@@ -1247,6 +1291,31 @@ void PtEtaBin::FillXStemplates(double weight, string dataSetName, int partonFlav
 		//else if(dataSetName.find("multijet") != string::npos) {
             
         //}
+        
+        else if (dataSetName.find("WJets") != string::npos) {
+			            
+			//cout << "pom " << controlVar0 << " " << weight << endl;
+			histo1D["TH1Data_Var0_WJets"]->Fill(controlVar0,weight);
+            histo2D["TH2Data_MLB_M3_WJets"]->Fill(controlVar0,m3,weight);
+            histo1D["TH1Data_M3_WJets"]->Fill(m3,weight);
+            if (btag > btagCuts[0]) {
+                histo1D["TH1Data_Var0_WJets_bTagL"]->Fill(controlVar0,weight);
+                histo2D["TH2Data_MLB_M3_WJets_bTagL"]->Fill(controlVar0,m3,weight);
+                histo1D["TH1Data_M3_WJets_bTagL"]->Fill(m3,weight);
+            }
+            if (btag > btagCuts[1]) {
+                histo1D["TH1Data_Var0_WJets_bTagM"]->Fill(controlVar0,weight);
+                histo2D["TH2Data_MLB_M3_WJets_bTagM"]->Fill(controlVar0,m3,weight);
+                histo1D["TH1Data_M3_WJets_bTagM"]->Fill(m3,weight);
+	
+            }
+            if (btag > btagCuts[2]) {
+                histo1D["TH1Data_Var0_WJets_bTagT"]->Fill(controlVar0,weight);
+                histo2D["TH2Data_MLB_M3_WJets_bTagT"]->Fill(controlVar0,m3,weight);
+                histo1D["TH1Data_M3_WJets_bTagT"]->Fill(m3,weight);
+            }
+		}
+
         
         else {
 
@@ -2793,6 +2862,8 @@ void PtEtaBin::loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi
 	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".root";
 	filename2="FitTemplates/"+filename2+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".txt";
 	
+    //filename="7TeV_FitTemplates/nDisc_6_ptbinlow_0_etabinlow_-9990__Chi2Cut_90_XSFitTemplates_channel_Mu.root";
+
 	//filename="FitTemplates/"+filename+"_MLJTemplates.root";
 	
 	if (debug_ > 0) cout << "doMLJTemplateFit:: Loading Mlj templates from " << filename << endl;
@@ -2820,6 +2891,90 @@ void PtEtaBin::loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi
     lumi = (double)atof(line.c_str());
     
     lum.close();
+    
+    bool load7TeV = true;
+    
+    if (load7TeV) {
+        ///////////////////////
+        // LOAD 7TeV templates
+        ///////////////////////+
+        
+        std::map<string,TH1D*> h_7TeV;
+        
+        // load ttbar and vv templates from MC
+        
+        TString filename3=""; 
+        GiveName(&filename3); 
+        TString filename4=""; 
+        GiveName(&filename4); 
+        
+        stringstream fitm; fitm<<fitMode;
+        
+        filename3="7TeV_FitTemplates_fitMode_"+fitm.str()+"/"+filename3+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".root";
+        filename4="7TeV_FitTemplates_fitMode_"+fitm.str()+"/"+filename4+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".txt";
+        
+        //filename3="7TeV_FitTemplates/nDisc_0_ptbinlow_0_etabinlow_-9990__Chi2Cut_90_XSFitTemplates_channel"+data_postfix+".root";
+        
+        //filename="FitTemplates/"+filename+"_MLJTemplates.root";
+        
+        if (debug_ > 0) cout << "doMLJTemplateFit:: Loading 7TeV Mlj templates from " << filename3 << endl;
+        
+        fstream lum2(filename4, ios::in );
+        
+        string line2;
+        
+        while (! lum2.eof())
+            lum2 >> line2;
+        
+        double lumi7Tev = (double)atof(line2.c_str());
+        
+        lum2.close();
+        
+        TFile* ftmp2 = new TFile(filename3,"READ");
+        
+        TDirectory *dir2 = ftmp2->GetDirectory("");
+        TList *keys1 = dir2->GetListOfKeys();    
+        for(int i0=0; i0<keys1->GetEntries(); i0++){
+            TString name = keys1->At(i0)->GetName();
+            h_7TeV[(string)name] = (TH1D*) ftmp2->Get(name)->Clone();
+            //cout << name << " " << h[(string)name]->GetBinContent(8) << " scale " << lumi/lumi7Tev << endl;
+            
+            h_7TeV[(string)name]->Scale(lumi/lumi7Tev);
+            //h_7TeV[(string)name]->Scale(10);
+            
+            h_7TeV[(string)name]->SetDirectory(0);
+            
+        }
+        
+        ftmp2->Close();
+        
+        cout << "before integral " << h["TH1Data_WJets_bTagM"]->Integral() << endl;
+        // change W+jets 8TeV templates with 7TeV ones
+        
+        h["TH1Data_WJets"] = (TH1D*) h_7TeV["TH1Data_WJets"]->Clone(); 
+        h["TH1Data_WJets_bTagL"] = (TH1D*) h_7TeV["TH1Data_WJets_bTagL"]->Clone(); 
+        h["TH1Data_WJets_bTagM"] = (TH1D*) h_7TeV["TH1Data_WJets_bTagM"]->Clone(); 
+        h["TH1Data_WJets_bTagT"] = (TH1D*) h_7TeV["TH1Data_WJets_bTagT"]->Clone(); 
+        
+        cout << "after integral " << h["TH1Data_WJets_bTagM"]->Integral() << endl;
+        
+        //h["TH1Data_VVMC"] = (TH1D*) h_7TeV["TH1Data_VVMC"]->Clone(); 
+        //h["TH1Data_VVMC_bTagL"] = (TH1D*) h_7TeV["TH1Data_VVMC_bTagL"]->Clone(); 
+        //h["TH1Data_VVMC_bTagM"] = (TH1D*) h_7TeV["TH1Data_VVMC_bTagM"]->Clone(); 
+        //h["TH1Data_VVMC_bTagT"] = (TH1D*) h_7TeV["TH1Data_VVMC_bTagT"]->Clone(); 
+        
+    }
+    
+    // add wjets to background template
+    
+    h["TH1Data_VVMC"]->Add(h["TH1Data_WJets"]);
+    h["TH1Data_VVMC_bTagL"]->Add(h["TH1Data_WJets_bTagL"]);
+    h["TH1Data_VVMC_bTagM"]->Add(h["TH1Data_WJets_bTagM"]);
+    h["TH1Data_VVMC_bTagT"]->Add(h["TH1Data_WJets_bTagT"]);
+    
+    //cout << "still here " << endl;
+    
+    //exit(1);
 
 }
 
@@ -2856,27 +3011,80 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
 
     if (fitMode == 0) {  // MLJ TEMPLATES      
     
+        // test smoothing -> simple smoothing by taking the shape before btagging and scaling it to the rate after btagging
+        
+        /*double scale=histo1D["TH1Data_Var0_VVMC"]->Integral();
+        double scale_btagL=histo1D["TH1Data_Var0_VVMC_bTagL"]->Integral();
+        double scale_btagM=histo1D["TH1Data_Var0_VVMC_bTagM"]->Integral();
+        double scale_btagT=histo1D["TH1Data_Var0_VVMC_bTagT"]->Integral();
+        
+        for (int b=0; b<histo1D["TH1Data_Var0_VVMC"]->GetNbinsX(); b++) {
+            histo1D["TH1Data_Var0_VVMC_bTagL"]->SetBinContent(b,histo1D["TH1Data_Var0_VVMC"]->GetBinContent(b));
+            histo1D["TH1Data_Var0_VVMC_bTagL"]->SetBinError(b,histo1D["TH1Data_Var0_VVMC"]->GetBinError(b));
+            histo1D["TH1Data_Var0_VVMC_bTagM"]->SetBinContent(b,histo1D["TH1Data_Var0_VVMC"]->GetBinContent(b));
+            histo1D["TH1Data_Var0_VVMC_bTagM"]->SetBinError(b,histo1D["TH1Data_Var0_VVMC"]->GetBinError(b));
+            histo1D["TH1Data_Var0_VVMC_bTagT"]->SetBinContent(b,histo1D["TH1Data_Var0_VVMC"]->GetBinContent(b));
+            histo1D["TH1Data_Var0_VVMC_bTagT"]->SetBinError(b,histo1D["TH1Data_Var0_VVMC"]->GetBinError(b));
+
+        }
+        
+        histo1D["TH1Data_Var0_VVMC_bTagL"]->Scale(scale_btagL/scale);
+        histo1D["TH1Data_Var0_VVMC_bTagM"]->Scale(scale_btagM/scale);
+        histo1D["TH1Data_Var0_VVMC_bTagT"]->Scale(scale_btagT/scale);*/
+        
         // ttbar
         a="TH1Data_TTbar"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_TTbar"],a);
         a="TH1Data_TTbar_bTagL"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_TTbar_bTagL"],a);
         a="TH1Data_TTbar_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_TTbar_bTagM"],a);
         a="TH1Data_TTbar_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_TTbar_bTagT"],a);
+        
+        // WJets
+        a="TH1Data_WJets"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_WJets"],a);
+        a="TH1Data_WJets_bTagL"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_WJets_bTagL"],a);
+        a="TH1Data_WJets_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_WJets_bTagM"],a);
+        a="TH1Data_WJets_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_WJets_bTagT"],a);
 
         // bkg 
         
         a="TH1Data_VVMC"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_VVMC"],a);
         a="TH1Data_VVMC_bTagL"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_VVMC_bTagL"],a);
         a="TH1Data_VVMC_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_VVMC_bTagM"],a);
-        a="TH1Data_VVMC_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_VVMC_bTagT"],a);
-
+        a="TH1Data_VVMC_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_Var0_VVMC_bTagT"],a);        
+        
+        
     }
     else if (fitMode == 1) {  // M3 TEMPLATES      
         
+        /*double scale=histo1D["TH1Data_M3_VVMC"]->Integral();
+        double scale_btagL=histo1D["TH1Data_M3_VVMC_bTagL"]->Integral();
+        double scale_btagM=histo1D["TH1Data_M3_VVMC_bTagM"]->Integral();
+        double scale_btagT=histo1D["TH1Data_M3_VVMC_bTagT"]->Integral();
+        
+        for (int b=0; b<histo1D["TH1Data_M3_VVMC"]->GetNbinsX(); b++) {
+            histo1D["TH1Data_M3_VVMC_bTagL"]->SetBinContent(b,histo1D["TH1Data_M3_VVMC"]->GetBinContent(b));
+            histo1D["TH1Data_M3_VVMC_bTagL"]->SetBinError(b,histo1D["TH1Data_M3_VVMC"]->GetBinError(b));
+            histo1D["TH1Data_M3_VVMC_bTagM"]->SetBinContent(b,histo1D["TH1Data_M3_VVMC"]->GetBinContent(b));
+            histo1D["TH1Data_M3_VVMC_bTagM"]->SetBinError(b,histo1D["TH1Data_M3_VVMC"]->GetBinError(b));
+            histo1D["TH1Data_M3_VVMC_bTagT"]->SetBinContent(b,histo1D["TH1Data_M3_VVMC"]->GetBinContent(b));
+            histo1D["TH1Data_M3_VVMC_bTagT"]->SetBinError(b,histo1D["TH1Data_M3_VVMC"]->GetBinError(b));
+            
+        }
+        
+        histo1D["TH1Data_M3_VVMC_bTagL"]->Scale(scale_btagL/scale);
+        histo1D["TH1Data_M3_VVMC_bTagM"]->Scale(scale_btagM/scale);
+        histo1D["TH1Data_M3_VVMC_bTagT"]->Scale(scale_btagT/scale);*/
+
         // ttbar
         a="TH1Data_TTbar"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_TTbar"],a);
         a="TH1Data_TTbar_bTagL"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_TTbar_bTagL"],a);        
         a="TH1Data_TTbar_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_TTbar_bTagM"],a);        
         a="TH1Data_TTbar_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_TTbar_bTagT"],a);
+        
+        // WJets
+        a="TH1Data_WJets"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_WJets"],a);
+        a="TH1Data_WJets_bTagL"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_WJets_bTagL"],a);        
+        a="TH1Data_WJets_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_WJets_bTagM"],a);        
+        a="TH1Data_WJets_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_WJets_bTagT"],a);
         
         // bkg 
         
@@ -2894,12 +3102,38 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
         a="TH1Data_TTbar_bTagM"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_TTbar_bTagM"],a);        
         a="TH1Data_TTbar_bTagT"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_TTbar_bTagT"],a);
         
+        // WJets
+        a="TH1Data_WJets"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_WJets"],a);
+        a="TH1Data_WJets_bTagL"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_WJets_bTagL"],a);        
+        a="TH1Data_WJets_bTagM"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_WJets_bTagM"],a);        
+        a="TH1Data_WJets_bTagT"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_WJets_bTagT"],a);
+        
         // bkg 
         
         a="TH1Data_VVMC"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_VVMC"],a);
         a="TH1Data_VVMC_bTagL"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_VVMC_bTagL"],a);
         a="TH1Data_VVMC_bTagM"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_VVMC_bTagM"],a);
         a="TH1Data_VVMC_bTagT"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_VVMC_bTagT"],a);
+        
+        /*double scale=histContainer["TH1Data_VVMC"]->Integral();
+        double scale_btagL=histContainer["TH1Data_VVMC_bTagL"]->Integral();
+        double scale_btagM=histContainer["TH1Data_VVMC_bTagM"]->Integral();
+        double scale_btagT=histContainer["TH1Data_VVMC_bTagT"]->Integral();
+        
+        for (int b=0; b<histContainer["TH1Data_VVMC"]->GetNbinsX(); b++) {
+            histContainer["TH1Data_VVMC_bTagL"]->SetBinContent(b,histContainer["TH1Data_VVMC"]->GetBinContent(b));
+            histContainer["TH1Data_VVMC_bTagL"]->SetBinError(b,histContainer["TH1Data_VVMC"]->GetBinError(b));
+            histContainer["TH1Data_VVMC_bTagM"]->SetBinContent(b,histContainer["TH1Data_VVMC"]->GetBinContent(b));
+            histContainer["TH1Data_VVMC_bTagM"]->SetBinError(b,histContainer["TH1Data_VVMC"]->GetBinError(b));
+            histContainer["TH1Data_VVMC_bTagT"]->SetBinContent(b,histContainer["TH1Data_VVMC"]->GetBinContent(b));
+            histContainer["TH1Data_VVMC_bTagT"]->SetBinError(b,histContainer["TH1Data_VVMC"]->GetBinError(b));
+            
+        }
+        
+        histContainer["TH1Data_VVMC_bTagL"]->Scale(scale_btagL/scale);
+        histContainer["TH1Data_VVMC_bTagM"]->Scale(scale_btagM/scale);
+        histContainer["TH1Data_VVMC_bTagT"]->Scale(scale_btagT/scale);*/
+
         
     }
     
@@ -3013,7 +3247,7 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	
 	if (debug_ > 0) cout << "#ttbar " << fitHistos["TH1Data_TTbar_bTagL"]->Integral() << " #non-ttbar " << fitHistos["TH1Data_VVMC_bTagL"]->Integral() << " data " << fitHistos["TH1Data_bTagL"]->Integral() << endl;
 	
-	tmp.clear();tmp = doTemplateFit(fitHistos["TH1Data_TTbar_bTagL"],fitHistos["TH1Data_VVMC_bTagL"],fitHistos["TH1Data_VVMC"],fitHistos["TH1Data_bTagL"],(TString)"Fit_bTagLCut");
+	tmp.clear();tmp = doTemplateFit(fitHistos["TH1Data_TTbar_bTagL"],fitHistos["TH1Data_VVMC_bTagL"],fitHistos["TH1Data_WJets_bTagL"],fitHistos["TH1Data_bTagL"],(TString)"Fit_bTagLCut");
 	for (unsigned int t=0;t<tmp.size();t++) fitResults.push_back(tmp[t]);
 	
 	fitResults.push_back(misTagRateL);
@@ -3026,7 +3260,7 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 
 	if (debug_ > 0) cout << "#ttbar " << fitHistos["TH1Data_TTbar_bTagM"]->Integral() << " #non-ttbar " << fitHistos["TH1Data_VVMC_bTagM"]->Integral() << " data " << fitHistos["TH1Data_bTagM"]->Integral() << endl;
 	
-	tmp.clear();tmp = doTemplateFit(fitHistos["TH1Data_TTbar_bTagM"],fitHistos["TH1Data_VVMC_bTagM"],fitHistos["TH1Data_VVMC"],fitHistos["TH1Data_bTagM"],(TString)"Fit_bTagMCut");
+	tmp.clear();tmp = doTemplateFit(fitHistos["TH1Data_TTbar_bTagM"],fitHistos["TH1Data_VVMC_bTagM"],fitHistos["TH1Data_WJets_bTagM"],fitHistos["TH1Data_bTagM"],(TString)"Fit_bTagMCut");
 	for (unsigned int t=0;t<tmp.size();t++) fitResults.push_back(tmp[t]);
 	
 	fitResults.push_back(misTagRateM);
@@ -3037,7 +3271,7 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 
 	if (debug_ > 0) cout << "#ttbar " << fitHistos["TH1Data_TTbar_bTagT"]->Integral() << " #non-ttbar " << fitHistos["TH1Data_VVMC_bTagT"]->Integral() << " data " << fitHistos["TH1Data_bTagT"]->Integral() << endl;
 	
-	tmp.clear();tmp = doTemplateFit(fitHistos["TH1Data_TTbar_bTagT"],fitHistos["TH1Data_VVMC_bTagT"],fitHistos["TH1Data_VVMC"],fitHistos["TH1Data_bTagT"],(TString)"Fit_bTagTCut");
+	tmp.clear();tmp = doTemplateFit(fitHistos["TH1Data_TTbar_bTagT"],fitHistos["TH1Data_VVMC_bTagT"],fitHistos["TH1Data_WJets_bTagT"],fitHistos["TH1Data_bTagT"],(TString)"Fit_bTagTCut");
 
 	for (unsigned int t=0;t<tmp.size();t++) fitResults.push_back(tmp[t]);
 
@@ -5223,13 +5457,34 @@ double PtEtaBin::getmlj_R_SigmanoRWVal(){return TH1Bkg_R_ControlVar->GetRMS();}
 double PtEtaBin::getmlj_R_SigmaMCVal(){return TH1Bkg_R_Var0->GetRMS();}
 
 vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1D* data,TString PrefixPlot) {
-        
-    //debug_=5;
+    
     vector<float> results;
 
+    /*results.push_back(5000);
+    results.push_back(1000);	
+    results.push_back(2500);
+    results.push_back(1250);
+    
+    return results;
+    *///ttbar->Rebin(2);
+    //vvmc->Rebin(2);
+    //data->Rebin(2);
+    
+    //debug_=5;
+
+    TString test = ""; GiveName(&test);
+    
+    /*if (((string)test).find("nDisc_6") == -1) {
+        results.push_back(5000);
+        results.push_back(1000);	
+        results.push_back(2500);
+        results.push_back(1250);
+        
+        return results;
+
+    }*/
     
     if (fitMode != 0 && ((string)PrefixPlot).find("NOCUT") != string::npos) {
-        
         cout << "Skipping this for now " << PrefixPlot << endl;
         
         results.push_back(5000);
@@ -5243,13 +5498,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     double fttb=0; double efttb=0;
     double fbkg=0; double efbkg=0;
-    
-    /*results.push_back(5000);
-    results.push_back(5000);
-    results.push_back(5000);
-    results.push_back(5000);
-    return results;
-    */
+    //double fwjets=0; double efwjets=0;
     
     Int_t status = -1;
     
@@ -5258,14 +5507,21 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     TObjArray *mc = new TObjArray(2);        // MC histograms are put in this array
     mc->Add(ttbar);
     mc->Add(vvmc);
+    //mc->Add(vvdata);
     
     TFractionFitter* fit = new TFractionFitter(data, mc); // initialise
-    fit->Constrain(1,0.0,2.0);               // constrain fraction 1 to be between 0 and 1
-    fit->Constrain(2,0.0,2.0);               // constrain fraction 2 to be between 0 and 1
+    fit->Constrain(0,0.,2.0);               // constrain fraction 1 to be between 0 and 1
+    fit->Constrain(1,0.,2.0);               // constrain fraction 2 to be between 0 and 1
+    //fit->Constrain(2,0.,2.0);               // constrain fraction 2 to be between 0 and 1
     //if (data->GetNbinsX() < 100) // temp fix to disable this limit for the unrolled case
-    if (fitMode == 0)  
-        fit->SetRangeX(3,49);                    // use only the first X bins in the fit
-
+    
+    //if (fitMode == 0)  
+    //fit->SetRangeX(10,30);                    // use only the first X bins in the fit
+    
+    //for (int i=0; i<vvmc->GetNbinsX(); i++) {
+    //    cout << "bin " << i << " " << vvmc->GetBinCenter(i) << " " << vvmc->GetBinContent(i) << endl;
+    //}
+    
     cout << data->GetNbinsX() << endl;
     //cout << "performing fit "<< PrefixPlot << endl;
     status = fit->Fit();               // perform the fit
@@ -5273,8 +5529,8 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 
     if (status != 0) {
         cout << "performing fit again "<< PrefixPlot << endl;
-        fit->Constrain(1,0.0,1.0);               // constrain fraction 1 to be between 0 and 1
-        fit->Constrain(2,0.0,1.0);               // constrain fraction 2 to be between 0 and 1
+        fit->Constrain(0,0.0,1.0);               // constrain fraction 1 to be between 0 and 1
+        fit->Constrain(1,0.0,1.0);               // constrain fraction 2 to be between 0 and 1
         status = fit->Fit();               // perform the fit
         //cout << "fit performed" << endl;  
         //exit(1);
@@ -5284,6 +5540,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     fit->GetResult(0,fttb,efttb);
     fit->GetResult(1,fbkg,efbkg);
+    //fit->GetResult(2,fwjets,efwjets);
    
     // cout << fttb << " " << efttb << endl;
     //efttb=efttb*0.7;
@@ -5308,6 +5565,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     if (debug_>1) cout << "Doing template fit for L=" << lumi_ << ", the templates where created with L=" << templateLumi_ << " (ttbar: " << ttbar->Integral() << ", VV: " << vvmc->Integral() << ", Data: " << data->Integral() << ")" << endl;
     if (debug_>1) cout << "nTTbar fitted: " << fttb*data->Integral() << " +- " << efttb*data->Integral() << endl;
     if (debug_>1) cout << "nBKG fitted: " << fbkg*data->Integral() << " +- " << efbkg*data->Integral() << endl;
+    //if (debug_>1) cout << "nW fitted: " << fwjets*data->Integral() << " +- " << efwjets*data->Integral() << endl;
     //exit(1);
 	results.push_back(fttb*data->Integral());
 	results.push_back(efttb*data->Integral());	
@@ -5316,11 +5574,30 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     if (debug_ > 0 && status == 0) {
         
-		TString dir = ""; GiveName(&dir);
+        TString dir = ""; GiveName(&dir);
 		
 		mkdir("FitOutput",0777);
 		mkdir(("FitOutput/"+(string)dir).c_str(),0777);
-		
+        
+        // temp crosscheck
+        
+        
+        TString crosscheck=""; 
+        GiveName(&crosscheck); 
+        
+        crosscheck="FitOutput/"+crosscheck+"_actual_fithistos_channel"+data_postfix_+"_"+PrefixPlot+".root";
+        
+        TFile* fcross = new TFile(crosscheck,"RECREATE");
+        
+        fcross->cd();
+        
+        ttbar->Write();
+        vvmc->Write();
+        //vvdata->Write();
+		data->Write();
+        
+        fcross->Close();
+        
 		string savePath = ("FitOutput/"+(string)dir+"/");
 		
 		// give the plot a name
@@ -5336,6 +5613,10 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         
         ttbar->Scale((data->Integral()*fttb)/ttbar->Integral());
         vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
+        //vvdata->Scale((data->Integral()*fwjets)/vvdata->Integral());
+        
+        //ttbar->Scale(ttbar->Integral()-150/ttbar->Integral());
+        //vvmc->Scale(150);
 
         TH1D* result = (TH1D*) ttbar->Clone();
         result->Add(vvmc,1);
@@ -5345,6 +5626,36 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         pom->cd();
         
         //gPad->SetLogy();
+        
+        data->GetXaxis()->SetTitle("m_{#mu j} (GeV/c2)");
+        ttbar->GetXaxis()->SetTitle("m_{#mu j} (GeV/c2)");
+        vvmc->GetXaxis()->SetTitle("m_{#mu j} (GeV/c2)");
+        result->GetXaxis()->SetTitle("m_{#mu j} (GeV/c2)");
+        //cout << data_postfix_ << endl; exit(1);
+        if (fitMode == 0 && data_postfix_ == "_El") {
+            data->GetXaxis()->SetTitle("m_{ej} (GeV/c2)");
+            ttbar->GetXaxis()->SetTitle("m_{ej} (GeV/c2)");
+            vvmc->GetXaxis()->SetTitle("m_{ej} (GeV/c2)");
+            result->GetXaxis()->SetTitle("m_{ej} (GeV/c2)");
+        }
+        else if (fitMode == 1) {
+            data->GetXaxis()->SetTitle("M3 (GeV/c2)");
+            ttbar->GetXaxis()->SetTitle("M3 (GeV/c2)");
+            vvmc->GetXaxis()->SetTitle("M3 (GeV/c2)");
+            result->GetXaxis()->SetTitle("M3 (GeV/c2)");
+        }
+        else if (fitMode == 2) {
+            data->GetXaxis()->SetTitle("(m_{#mu j},M3)");
+            ttbar->GetXaxis()->SetTitle("(m_{#mu j},M3)");
+            vvmc->GetXaxis()->SetTitle("(m_{#mu j},M3)");
+            result->GetXaxis()->SetTitle("(m_{#mu j},M3)");
+        }
+        
+        
+        data->GetYaxis()->SetTitle("# Events");
+        ttbar->GetYaxis()->SetTitle("# Events");
+        vvmc->GetYaxis()->SetTitle("# Events");
+        result->GetYaxis()->SetTitle("# Events");
         
         data->SetLineColor(kBlack);
         data->SetMarkerColor(kBlack);    
@@ -5358,12 +5669,16 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         vvmc->SetLineColor(kRed);
         vvmc->SetLineStyle(kDashed);
         vvmc->Draw("same hist");
+        //vvdata->SetLineColor(kOrange);
+        //vvdata->SetLineStyle(kDashed);
+        //vvdata->Draw("same hist");
         
         TLegend *leg1 = new TLegend(0.65,0.73,0.998,0.99);
         
         leg1->AddEntry(data,"Data", "P"); 
         leg1->AddEntry(result,"t#bar{t} + Background","L"); 
         leg1->AddEntry(ttbar,"t#bar{t}", "L"); 
+        //leg1->AddEntry(vvdata,"Wjets", "L"); 
         leg1->AddEntry(vvmc,"Background", "L"); 
 
         stringstream f; f<<fit->GetChisquare()/fit->GetNDF();
@@ -5374,16 +5689,29 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 
         leg1->Draw();
         
-        TLatex* text = new TLatex(0.13,0.955,"CMS Simulation");
+        if (templateLumi_ == lumi_) {
+            TLatex* text = new TLatex(0.13,0.955,"CMS Simulation");
 		
-		text->SetTextSize(0.05);
+            text->SetTextSize(0.05);
 
-		text->SetNDC();
+            text->SetNDC();
 		
-		text->Draw();        
+            text->Draw();      
+            
+        } else {
+            
+            TLatex* text = new TLatex(0.10,0.955,"CMS Preliminary 0.9 fb^{-1} at #sqrt{s}=8TeV");
+            
+            text->SetTextSize(0.05);
+            
+            text->SetNDC();
+            
+            text->Draw();   
+            
+        }
         
         pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".png").c_str());
-        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".C").c_str());
+        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".root").c_str());
         FitPlotPaths.push_back(savePath+MCPlot+"_channel"+data_postfix_+".png");
         
         delete dummy;
@@ -5596,8 +5924,8 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 		//text1->AddText("CMS Preliminary");
 		//text1->Draw();	
 		
-		cFit->SaveAs((savePath+MCPlot+".png").c_str());
-		cFit->SaveAs((savePath+MCPlot+".C").c_str());
+		cFit->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".png").c_str());
+		cFit->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".root").c_str());
 		
 		TLatex* text = new TLatex(0.13,0.955,"CMS Simulation");
 		
@@ -5607,7 +5935,10 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 		
 		text->Draw();
 
-		cFit->SaveAs((savePath+MCPlot+"_RESTYLED_.png").c_str());
+        cFit->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".png").c_str());
+		cFit->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".root").c_str());
+		
+		//cFit->SaveAs((savePath+MCPlot+"_RESTYLED_.png").c_str());
 		//cFit->Write();
 		
 		delete plot;
@@ -5618,7 +5949,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 		delete dummy3;
 		delete dummy4;
 		
-		FitPlotPaths.push_back(savePath+MCPlot+".png");
+		FitPlotPaths.push_back((savePath+MCPlot+"_channel"+data_postfix_+".png").c_str());
 		
 		// save the MC plot
 		

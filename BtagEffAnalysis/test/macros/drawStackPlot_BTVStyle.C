@@ -11,7 +11,8 @@
     //other_error = 0;    
 
     TString fileName="../StackPlots_Mu.root";
-    string plotName = "MLB_BTV";
+    
+    string plotName = "BestJetCombChi2";
     
     //plotName="nPV";
     //fileName = "BtaggingOutput.root";
@@ -324,7 +325,7 @@
     latex2->SetNDC();
     latex2->SetTextSize(0.04);
     latex2->SetTextAlign(31); // align right
-    latex2->DrawLatex(0.87, 0.95, (lumiPlot + " fb^{-1} at #sqrt{s} = 7 TeV").c_str());
+    latex2->DrawLatex(0.87, 0.95, (lumiPlot + " fb^{-1} at #sqrt{s} = 8 TeV").c_str());
 
     
     // SAVE PLOT
