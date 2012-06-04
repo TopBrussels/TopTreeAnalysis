@@ -206,8 +206,8 @@ void syst(){
     for (int j = 0; j < 3; j++){ 
       if(j == 0){
 	cout << processName[j] << ":" ;
-        double average = hnominal[0][j]->GetBinContent(2) +  hnominal[1][j]->GetBinContent(2) + hnominal[2][j]->GetBinContent(2);
-	if (average !=0) cout << fabs(((h[0][j]->GetBinContent(2) + h[1][j]->GetBinContent(2) + h[2][j]->GetBinContent(2)) - average)/average)*100 << "%\t" ;
+        double average = hnominal[i][j]->GetBinContent(2);
+	if (average !=0) cout << ((h[i][j]->GetBinContent(2) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
@@ -215,8 +215,8 @@ void syst(){
      for (int j = 0; j < 3; j++){ 
       if(j == 0){
 	cout << processName[j] << ":" ;
-        double average = hnominal[0][j]->GetBinContent(7) +  hnominal[1][j]->GetBinContent(7) + hnominal[2][j]->GetBinContent(7);
-	if (average !=0) cout << fabs(((h[0][j]->GetBinContent(7) + h[1][j]->GetBinContent(7) + h[2][j]->GetBinContent(7)) - average)/average)*100 << "%\t" ;
+        double average = hnominal[i][j]->GetBinContent(7);
+	if (average !=0) cout << ((h[i][j]->GetBinContent(7) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
@@ -224,8 +224,8 @@ void syst(){
      for (int j = 0; j < 3; j++){ 
       if(j == 0){
 	cout << processName[j] << ":" ;
-        double average = hnominal[0][j]->GetBinContent(8) +  hnominal[1][j]->GetBinContent(8) + hnominal[2][j]->GetBinContent(8);
-	if (average !=0) cout << fabs(((h[0][j]->GetBinContent(8) + h[1][j]->GetBinContent(8) + h[2][j]->GetBinContent(8)) - average)/average)*100 << "%\t" ;
+        double average = hnominal[i][j]->GetBinContent(8);
+	if (average !=0) cout << ((h[0][j]->GetBinContent(8) - average)/average)*100 << "%\t" ;
 	else cout << " -\t";
       }
     }
