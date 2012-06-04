@@ -303,6 +303,10 @@ void shapelooper::myLoop(int nsel, int mode, int syst, bool up, bool silent)
 		  if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(24, xlWeight); //CR2 no ht no ptsys tighter
 		  if (nJets == 2 && nJetsBT == 1)  histo_R->Fill(25, xlWeight); //CR1 no ht no ptsys another flavor
 		  if (nJets == 2 && nJetsBT == 2)  histo_R->Fill(26, xlWeight); //CR2 no ht no ptsys another flavor
+		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && (ht > htMin || mode !=0))histo_R->Fill(27, xlWeight); //signal no ptsys
+		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut)histo_R->Fill(28, xlWeight); //signal no ht
+		  if (nJets == 2 && nTightJetsBT == 1 &&  (ht > htMin || mode !=0))  histo_R->Fill(29, xlWeight); //CR 1 regular
+		  if (nJets == 2 && nTightJetsBT == 2 &&  (ht > htMin || mode !=0))  histo_R->Fill(30, xlWeight); //CR 2 regular
 		  
 		}
 	      }

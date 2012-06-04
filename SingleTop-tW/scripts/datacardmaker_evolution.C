@@ -18,14 +18,14 @@ void datacardmaker_evolution(){
   bool verbose = false;
   
   //choose regions
-  const int SRbin = 2;
-  const int CR1bin = 18;
-  const int CR2bin = 19;
+  const int SRbin = 29;
+  const int CR1bin = 7;
+  const int CR2bin = 8;
   
   //choosing precision
   int pre = 4;
   
-  ofstream datacard("singletop_tW_5fb_regular.txt"); 
+  ofstream datacard("singletop_tW_5fb_7.txt"); 
  
   char myRootFile[300];
   sprintf(myRootFile,"results/Histos_cutbased_full.root");
@@ -150,19 +150,18 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(SRbin) + hup[1][j]->GetBinContent(SRbin) + hup[2][j]->GetBinContent(SRbin)) + (hdown[0][j]->GetBinContent(SRbin) +  hdown[1][j]->GetBinContent(SRbin) + hdown[2][j]->GetBinContent(SRbin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(SRbin) + hup[1][j]->GetBinContent(SRbin) + hup[2][j]->GetBinContent(SRbin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
-      } 
-      else datacard << setprecision(pre) << "-\t ";
-    }
-  }
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(CR1bin) + hup[1][j]->GetBinContent(CR1bin) + hup[2][j]->GetBinContent(CR1bin)) + (hdown[0][j]->GetBinContent(CR1bin) +  hdown[1][j]->GetBinContent(CR1bin) + hdown[2][j]->GetBinContent(CR1bin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(CR1bin) + hup[1][j]->GetBinContent(CR1bin) + hup[2][j]->GetBinContent(CR1bin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
+        double avn = (hnom[0][j]->GetBinContent(SRbin)+hnom[1][j]->GetBinContent(SRbin)+hnom[2][j]->GetBinContent(SRbin));
+        double avup = (hup[0][j]->GetBinContent(SRbin)+hup[1][j]->GetBinContent(SRbin)+hup[2][j]->GetBinContent(SRbin));
+	double avdown = (hdown[0][j]->GetBinContent(SRbin)+hdown[1][j]->GetBinContent(SRbin)+hdown[2][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
       }
       else datacard << setprecision(pre) << "-\t ";
     }
@@ -170,32 +169,60 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(CR2bin) + hup[1][j]->GetBinContent(CR2bin) + hup[2][j]->GetBinContent(CR2bin)) + (hdown[0][j]->GetBinContent(CR2bin) +  hdown[1][j]->GetBinContent(CR2bin) + hdown[2][j]->GetBinContent(CR2bin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(CR2bin) + hup[1][j]->GetBinContent(CR2bin) + hup[2][j]->GetBinContent(CR2bin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
+        double avn = (hnom[0][j]->GetBinContent(CR1bin)+hnom[1][j]->GetBinContent(CR1bin)+hnom[2][j]->GetBinContent(CR1bin));
+        double avup = (hup[0][j]->GetBinContent(CR1bin)+hup[1][j]->GetBinContent(CR1bin)+hup[2][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR1bin)+hdown[1][j]->GetBinContent(CR1bin)+hdown[2][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
+      }
+      else datacard << setprecision(pre) << "-\t ";
+    }
+  } 
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      if(j == 1){
+        double avn = (hnom[0][j]->GetBinContent(CR2bin)+hnom[1][j]->GetBinContent(CR2bin)+hnom[2][j]->GetBinContent(CR2bin));
+        double avup = (hup[0][j]->GetBinContent(CR2bin)+hup[1][j]->GetBinContent(CR2bin)+hup[2][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR2bin)+hdown[1][j]->GetBinContent(CR2bin)+hdown[2][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
       }
       else datacard << setprecision(pre) << "-\t ";
     }
   }
   datacard << setprecision(pre) << endl;
+   
   
   datacard << setprecision(pre) << "twscale   lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
-	double average = ((hup[0][j]->GetBinContent(SRbin) + hup[1][j]->GetBinContent(SRbin) + hup[2][j]->GetBinContent(SRbin)) + (hdown[0][j]->GetBinContent(SRbin) +  hdown[1][j]->GetBinContent(SRbin) + hdown[2][j]->GetBinContent(SRbin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(SRbin) + hup[1][j]->GetBinContent(SRbin) + hup[2][j]->GetBinContent(SRbin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
-      } 
-      else datacard << setprecision(pre) << "-\t ";
-    }
-  }
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 0){
-	double average = ((hup[0][j]->GetBinContent(CR1bin) + hup[1][j]->GetBinContent(CR1bin) + hup[2][j]->GetBinContent(CR1bin)) + (hdown[0][j]->GetBinContent(CR1bin) +  hdown[1][j]->GetBinContent(CR1bin) + hdown[2][j]->GetBinContent(CR1bin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(CR1bin) + hup[1][j]->GetBinContent(CR1bin) + hup[2][j]->GetBinContent(CR1bin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
+	double avn = (hnom[0][j]->GetBinContent(SRbin)+hnom[1][j]->GetBinContent(SRbin)+hnom[2][j]->GetBinContent(SRbin));
+        double avup = (hup[0][j]->GetBinContent(SRbin)+hup[1][j]->GetBinContent(SRbin)+hup[2][j]->GetBinContent(SRbin));
+	double avdown = (hdown[0][j]->GetBinContent(SRbin)+hdown[1][j]->GetBinContent(SRbin)+hdown[2][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv)); 
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
       }
       else datacard << setprecision(pre) << "-\t ";
     }
@@ -203,9 +230,37 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 0){
-	double average = ((hup[0][j]->GetBinContent(CR2bin) + hup[1][j]->GetBinContent(CR2bin) + hup[2][j]->GetBinContent(CR2bin)) + (hdown[0][j]->GetBinContent(CR2bin) +  hdown[1][j]->GetBinContent(CR2bin) + hdown[2][j]->GetBinContent(CR2bin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(CR2bin) + hup[1][j]->GetBinContent(CR2bin) + hup[2][j]->GetBinContent(CR2bin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
+        double avn = (hnom[0][j]->GetBinContent(CR1bin)+hnom[1][j]->GetBinContent(CR1bin)+hnom[2][j]->GetBinContent(CR1bin));
+        double avup = (hup[0][j]->GetBinContent(CR1bin)+hup[1][j]->GetBinContent(CR1bin)+hup[2][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR1bin)+hdown[1][j]->GetBinContent(CR1bin)+hdown[2][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
+      }
+      else datacard << setprecision(pre) << "-\t ";
+    }
+  } 
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      if(j == 0){
+        double avn = (hnom[0][j]->GetBinContent(CR2bin)+hnom[1][j]->GetBinContent(CR2bin)+hnom[2][j]->GetBinContent(CR2bin));
+        double avup = (hup[0][j]->GetBinContent(CR2bin)+hup[1][j]->GetBinContent(CR2bin)+hup[2][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR2bin)+hdown[1][j]->GetBinContent(CR2bin)+hdown[2][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
       }
       else datacard << setprecision(pre) << "-\t ";
     }
@@ -242,19 +297,18 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(SRbin) + hup[1][j]->GetBinContent(SRbin) + hup[2][j]->GetBinContent(SRbin)) + (hdown[0][j]->GetBinContent(SRbin) +  hdown[1][j]->GetBinContent(SRbin) + hdown[2][j]->GetBinContent(SRbin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(SRbin) + hup[1][j]->GetBinContent(SRbin) + hup[2][j]->GetBinContent(SRbin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
-      } 
-      else datacard << setprecision(pre) << "-\t ";
-    }
-  }
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j <3; j++){ 
-      if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(CR1bin) + hup[1][j]->GetBinContent(CR1bin) + hup[2][j]->GetBinContent(CR1bin)) + (hdown[0][j]->GetBinContent(CR1bin) +  hdown[1][j]->GetBinContent(CR1bin) + hdown[2][j]->GetBinContent(CR1bin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(CR1bin) + hup[1][j]->GetBinContent(CR1bin) + hup[2][j]->GetBinContent(CR1bin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
+        double avn = (hnom[0][j]->GetBinContent(SRbin)+hnom[1][j]->GetBinContent(SRbin)+hnom[2][j]->GetBinContent(SRbin));
+        double avup = (hup[0][j]->GetBinContent(SRbin)+hup[1][j]->GetBinContent(SRbin)+hup[2][j]->GetBinContent(SRbin));
+	double avdown = (hdown[0][j]->GetBinContent(SRbin)+hdown[1][j]->GetBinContent(SRbin)+hdown[2][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
       }
       else datacard << setprecision(pre) << "-\t ";
     }
@@ -262,15 +316,43 @@ void datacardmaker_evolution(){
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
       if(j == 1){
-	double average = ((hup[0][j]->GetBinContent(CR2bin) + hup[1][j]->GetBinContent(CR2bin) + hup[2][j]->GetBinContent(CR2bin)) + (hdown[0][j]->GetBinContent(CR2bin) +  hdown[1][j]->GetBinContent(CR2bin) + hdown[2][j]->GetBinContent(CR2bin)))/2;
-	if (average !=0) datacard << setprecision(pre) << 1 + ((hup[0][j]->GetBinContent(CR2bin) + hup[1][j]->GetBinContent(CR2bin) + hup[2][j]->GetBinContent(CR2bin)) - average)/average << "\t ";
-	else datacard << setprecision(pre) << "-\t ";
+        double avn = (hnom[0][j]->GetBinContent(CR1bin)+hnom[1][j]->GetBinContent(CR1bin)+hnom[2][j]->GetBinContent(CR1bin));
+        double avup = (hup[0][j]->GetBinContent(CR1bin)+hup[1][j]->GetBinContent(CR1bin)+hup[2][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR1bin)+hdown[1][j]->GetBinContent(CR1bin)+hdown[2][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
+      }
+      else datacard << setprecision(pre) << "-\t ";
+    }
+  } 
+  for (int i = 0; i < 3; i++){
+    for (int j = 0; j <3; j++){ 
+      if(j == 1){
+        double avn = (hnom[0][j]->GetBinContent(CR2bin)+hnom[1][j]->GetBinContent(CR2bin)+hnom[2][j]->GetBinContent(CR2bin));
+        double avup = (hup[0][j]->GetBinContent(CR2bin)+hup[1][j]->GetBinContent(CR2bin)+hup[2][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR2bin)+hdown[1][j]->GetBinContent(CR2bin)+hdown[2][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  double maxv = TMath::Max(fabs(upv), fabs(downv));
+	  if (fabs(upv) >= 0.001 && fabs(downv) >= 0.001)datacard << setprecision(pre) << 1 + upv << "/" << 1+ downv<< "\t ";
+	  else if (fabs(upv) < 0.001 && fabs(downv) >= 0.001 && downv > -1)datacard << setprecision(pre) << 1+ downv<< "\t ";
+	  else if (fabs(downv) < 0.001 && fabs(upv) >= 0.001 && upv > -1)datacard << setprecision(pre) << 1+ upv<< "\t ";
+	  else datacard << setprecision(pre) << "-\t ";
+	} else datacard << setprecision(pre) << "-\t ";
       }
       else datacard << setprecision(pre) << "-\t ";
     }
   }
-  
   datacard << setprecision(pre) << endl;
+   
   
   TH1F*  h [3][3];
   for (int i = 0; i < 3; i++){

@@ -241,7 +241,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_nvertex_1j = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_nvertex_1j->Sumw2();
   
-   // 1 jet level
+  // 1 jet level
   /// Classic plotmaker plots
   sprintf(title,"met_1j1t_%s",plotName);
   TH1F* histo_met_1j1t = new TH1F( title, " ", 100,  0, 200 );
@@ -386,7 +386,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_R = new TH1F( title, " ", 40,  0, 40 );
   histo_R->Sumw2();
   
-   // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
+  // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
   sprintf(title,"R_dy_%s",plotName);
   TH1F* histo_R_dy = new TH1F( title, " ", 40,  0, 40 );
   histo_R_dy->Sumw2();
@@ -416,33 +416,33 @@ void looper::myLoop(int nsel, int mode, bool silent)
     } else {
       
       /*
-     //1 jet
+      //1 jet
       if (nsel == 2 && mode == 1){
-	if (metPt <= 5) xlWeight*=0.917087;
-	else if (metPt <= 10) xlWeight*=0.94228;
-	else if (metPt <= 15) xlWeight*=1.02343;
-	else if (metPt <= 20) xlWeight*=1.11051;
-	else if (metPt <= 25) xlWeight*=1.20101;
-	else if (metPt <= 30) xlWeight*=1.26738;
-	else if (metPt <= 35) xlWeight*=1.46525;
-	else if (metPt <= 40) xlWeight*=1.47895;
-	else if (metPt <= 45) xlWeight*=1.46037;
-	else if (metPt <= 50) xlWeight*=1.28589;
-	else if (metPt <= 60) xlWeight*=1.15589;
-	else  xlWeight*=0.689844;
+      if (metPt <= 5) xlWeight*=0.917087;
+      else if (metPt <= 10) xlWeight*=0.94228;
+      else if (metPt <= 15) xlWeight*=1.02343;
+      else if (metPt <= 20) xlWeight*=1.11051;
+      else if (metPt <= 25) xlWeight*=1.20101;
+      else if (metPt <= 30) xlWeight*=1.26738;
+      else if (metPt <= 35) xlWeight*=1.46525;
+      else if (metPt <= 40) xlWeight*=1.47895;
+      else if (metPt <= 45) xlWeight*=1.46037;
+      else if (metPt <= 50) xlWeight*=1.28589;
+      else if (metPt <= 60) xlWeight*=1.15589;
+      else  xlWeight*=0.689844;
       } else if (nsel == 2 && mode == 2){
-	if (metPt <= 5) xlWeight*=0.917655;
-	else if (metPt <= 10) xlWeight*=1.04012;
-	else if (metPt <= 15) xlWeight*=0.986518;
-	else if (metPt <= 20) xlWeight*=1.11664;
-	else if (metPt <= 25) xlWeight*=1.16103;
-	else if (metPt <= 30) xlWeight*=1.22194;
-	else if (metPt <= 35) xlWeight*=1.43669;
-	else if (metPt <= 40) xlWeight*=1.79543;
-	else if (metPt <= 45) xlWeight*=1.23258;
-	else if (metPt <= 50) xlWeight*=1.69726;
-	else if (metPt <= 60) xlWeight*=1.89196;
-	else  xlWeight*= 0.743117;
+      if (metPt <= 5) xlWeight*=0.917655;
+      else if (metPt <= 10) xlWeight*=1.04012;
+      else if (metPt <= 15) xlWeight*=0.986518;
+      else if (metPt <= 20) xlWeight*=1.11664;
+      else if (metPt <= 25) xlWeight*=1.16103;
+      else if (metPt <= 30) xlWeight*=1.22194;
+      else if (metPt <= 35) xlWeight*=1.43669;
+      else if (metPt <= 40) xlWeight*=1.79543;
+      else if (metPt <= 45) xlWeight*=1.23258;
+      else if (metPt <= 50) xlWeight*=1.69726;
+      else if (metPt <= 60) xlWeight*=1.89196;
+      else  xlWeight*= 0.743117;
       }
       */
       
@@ -586,7 +586,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
 	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
 	  histo_ht_bf->Fill(ht1, xlWeight);
-	 }
+	}
 	bool invMass = false;
 	if      (mode == 0) invMass = true;
 	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
@@ -630,7 +630,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  histo_mll_after->Fill(pair.M(),  xlWeight);
 	  histo_met_cut->Fill(metPt,  xlWeight);
 	  if (TMath::Min(metPt, tmetPt) >= metCut || mode ==0){
-	  //if (metPt >= metCut || mode ==0){
+	    //if (metPt >= metCut || mode ==0){
 	    //if (promet >= metCut || mode ==0){
 	    histo->Fill(3, xlWeight);
 	    histo_njets_cut->Fill(nJets, xlWeight);
@@ -726,28 +726,38 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      }
 	      
 	      
-	      
-	      if (ptSystem <= ptsysCut){
-		
-		if (ht > htMin || mode !=0){
+	   
 		  
-		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)histo_R->Fill(1, xlWeight);
-		  if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
-		  if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
-		  if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(6, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(7, xlWeight);
-		  if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
-		  if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
-		  if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
-		  if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
-		  if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
-		}
-	      }
+	      //All possible regions
+	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_R->Fill(1, xlWeight); //signal
+	      if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
+	      if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
+	      if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight); //CR1 no ht no ptsys
+	      if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight); //CR2 no ht no ptsys
+	      if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
+	      if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
+	      if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
+	      if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
+	      if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
+	      if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
+	      if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
+	      if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
+	      if (nJets == 1 && nTightJetsBT ==1 && bTagged && nJetsBT == 1)  histo_R->Fill(16, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(17, xlWeight); //CR 1 regular
+	      if (nJets == 2 && nTightJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(18, xlWeight); //CR 2 regular
+	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(19, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(20, xlWeight);
+	      if (nJets == 2 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(21, xlWeight); //CR 1 another way
+	      if (nJets == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(22, xlWeight); //CR 2 another way
+	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(23, xlWeight); //CR1 no ht no ptsys tighter
+	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(24, xlWeight); //CR2 no ht no ptsys tighter
+	      if (nJets == 2 && nJetsBT == 1)  histo_R->Fill(25, xlWeight); //CR1 no ht no ptsys another flavor
+	      if (nJets == 2 && nJetsBT == 2)  histo_R->Fill(26, xlWeight); //CR2 no ht no ptsys another flavor
+	
+		
+	      
 	    }
 	  } //tt CR
 	} // mll

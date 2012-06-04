@@ -1,4 +1,4 @@
-rm outputs/*zjetsall.root;
+rm outputs/PUsysUp_*_zjetsall.root;
 hadd -f outputs/PUsysUp_0_zjetsall.root outputs/PUsysUp_0_zjets*;
 hadd -f outputs/PUsysUp_1_zjetsall.root outputs/PUsysUp_1_zjets*;
 hadd -f outputs/PUsysUp_2_zjetsall.root outputs/PUsysUp_2_zjets*;
@@ -14,3 +14,11 @@ hadd -f outputs/PUsysUp_2_others.root outputs/PUsysUp_2_ww.root outputs/PUsysUp_
 hadd -f outputs/PUsysUp_0_others_2.root outputs/PUsysUp_0_others.root outputs/PUsysUp_0_zjetsall.root
 hadd -f outputs/PUsysUp_1_others_2.root outputs/PUsysUp_1_others.root outputs/PUsysUp_1_zjetsall.root
 hadd -f outputs/PUsysUp_2_others_2.root outputs/PUsysUp_2_others.root outputs/PUsysUp_2_zjetsall.root
+
+hadd -f outputs/out_0_tw_sup.root outputs/out_0_t_sup.root outputs/out_0_tbar_sup.root 
+hadd -f outputs/out_1_tw_sup.root outputs/out_1_t_sup.root outputs/out_1_tbar_sup.root 
+hadd -f outputs/out_2_tw_sup.root outputs/out_2_t_sup.root outputs/out_2_tbar_sup.root 
+
+hadd -f outputs/out_0_tw_sdo.root outputs/out_0_t_sdo.root outputs/out_0_tbar_sdo.root 
+hadd -f outputs/out_1_tw_sdo.root outputs/out_1_t_sdo.root outputs/out_1_tbar_sdo.root 
+hadd -f outputs/out_2_tw_sdo.root outputs/out_2_t_sdo.root outputs/out_2_tbar_sdo.root 

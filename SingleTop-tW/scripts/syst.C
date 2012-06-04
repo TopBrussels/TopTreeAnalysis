@@ -101,34 +101,38 @@ void syst(){
   cout << "* Factorization/Normalization Scale " << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 3; j++){ 
-      if(j < 2){
+    for (int j = 0; j <3; j++){ 
+      if (j < 2){
+        double avn = (hnominal[0][j]->GetBinContent(2)+hnominal[1][j]->GetBinContent(2)+hnominal[2][j]->GetBinContent(2));
+        double avup = (hup[0][j]->GetBinContent(2)+hup[1][j]->GetBinContent(2)+hup[2][j]->GetBinContent(2));
+	double avdown = (hdown[0][j]->GetBinContent(2)+hdown[1][j]->GetBinContent(2)+hdown[2][j]->GetBinContent(2));
 	cout << processName[j] << ":" ;
-        double average = ((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) + (hdown[0][j]->GetBinContent(2) +  hdown[1][j]->GetBinContent(2) + hdown[2][j]->GetBinContent(2)))/2;
-	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) - average)/average)*100 << "%\t" ;
-	else cout << " -\t";
+	if (avn !=0) cout << ((avup - avn)/avn)*100 << "%/" << ((avdown - avn)/avn)*100 << "%   " ;
+	else cout << " -      ";
       }
-    }
-    cout << "\t[2j1t]" ;
-     for (int j = 0; j < 3; j++){ 
-      if(j < 2){
+    }cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if (j < 2){
+	 double avn = (hnominal[0][j]->GetBinContent(7)+hnominal[1][j]->GetBinContent(7)+hnominal[2][j]->GetBinContent(7));
+        double avup = (hup[0][j]->GetBinContent(7)+hup[1][j]->GetBinContent(7)+hup[2][j]->GetBinContent(7));
+	double avdown = (hdown[0][j]->GetBinContent(7)+hdown[1][j]->GetBinContent(7)+hdown[2][j]->GetBinContent(7));
 	cout << processName[j] << ":" ;
-        double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
-	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average)*100 << "%\t" ;
-	else cout << " -\t";
-      }
+	if (avn !=0) cout << ((avup - avn)/avn)*100 << "%/" << ((avdown - avn)/avn)*100 << "%   " ;
+	else cout << " -      ";
+	}
     }
     cout << "\t[2j2t]" ;
-     for (int j = 0; j < 3; j++){ 
-      if(j < 2){
+    for (int j = 0; j <4; j++){ 
+      if (j < 2){ 
+      double avn = (hnominal[0][j]->GetBinContent(8)+hnominal[1][j]->GetBinContent(8)+hnominal[2][j]->GetBinContent(8));
+        double avup = (hup[0][j]->GetBinContent(8)+hup[1][j]->GetBinContent(8)+hup[2][j]->GetBinContent(8));
+	double avdown = (hdown[0][j]->GetBinContent(8)+hdown[1][j]->GetBinContent(8)+hdown[2][j]->GetBinContent(8));
 	cout << processName[j] << ":" ;
-        double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
-	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average)*100 << "%\t" ;
-	else cout << " -\t";
+	if (avn !=0) cout << ((avup - avn)/avn)*100 << "%/" << ((avdown - avn)/avn)*100 << "%   " ;
+	else cout << " -      ";
       }
     }
     cout << endl;
-    
   }
   
   TH1F*  hup [3][3];
@@ -151,35 +155,39 @@ void syst(){
   cout << "* ME/PS matching thresholds" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 3; j++){ 
-      if(j == 1){
+    for (int j = 0; j <3; j++){ 
+      if (j == 1){
+        double avn = (hnominal[0][j]->GetBinContent(2)+hnominal[1][j]->GetBinContent(2)+hnominal[2][j]->GetBinContent(2));
+        double avup = (hup[0][j]->GetBinContent(2)+hup[1][j]->GetBinContent(2)+hup[2][j]->GetBinContent(2));
+	double avdown = (hdown[0][j]->GetBinContent(2)+hdown[1][j]->GetBinContent(2)+hdown[2][j]->GetBinContent(2));
 	cout << processName[j] << ":" ;
-        double average = ((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) + (hdown[0][j]->GetBinContent(2) +  hdown[1][j]->GetBinContent(2) + hdown[2][j]->GetBinContent(2)))/2;
-	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(2) + hup[1][j]->GetBinContent(2) + hup[2][j]->GetBinContent(2)) - average)/average)*100 << "%\t" ;
-	else cout << " -\t";
+	if (avn !=0) cout << ((avup - avn)/avn)*100 << "%/" << ((avdown - avn)/avn)*100 << "%   " ;
+	else cout << " -      ";
       }
-    }
-    cout << "\t[2j1t]" ;
-     for (int j = 0; j < 3; j++){ 
-      if(j == 1){
+    }cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if (j == 1){
+	 double avn = (hnominal[0][j]->GetBinContent(7)+hnominal[1][j]->GetBinContent(7)+hnominal[2][j]->GetBinContent(7));
+        double avup = (hup[0][j]->GetBinContent(7)+hup[1][j]->GetBinContent(7)+hup[2][j]->GetBinContent(7));
+	double avdown = (hdown[0][j]->GetBinContent(7)+hdown[1][j]->GetBinContent(7)+hdown[2][j]->GetBinContent(7));
 	cout << processName[j] << ":" ;
-        double average = ((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) + (hdown[0][j]->GetBinContent(7) +  hdown[1][j]->GetBinContent(7) + hdown[2][j]->GetBinContent(7)))/2;
-	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(7) + hup[1][j]->GetBinContent(7) + hup[2][j]->GetBinContent(7)) - average)/average)*100 << "%\t" ;
-	else cout << " -\t";
-      }
+	if (avn !=0) cout << ((avup - avn)/avn)*100 << "%/" << ((avdown - avn)/avn)*100 << "%   " ;
+	else cout << " -      ";
+	}
     }
     cout << "\t[2j2t]" ;
-     for (int j = 0; j < 3; j++){ 
-      if(j == 1){
+    for (int j = 0; j <4; j++){ 
+      if (j == 1){ 
+      double avn = (hnominal[0][j]->GetBinContent(8)+hnominal[1][j]->GetBinContent(8)+hnominal[2][j]->GetBinContent(8));
+        double avup = (hup[0][j]->GetBinContent(8)+hup[1][j]->GetBinContent(8)+hup[2][j]->GetBinContent(8));
+	double avdown = (hdown[0][j]->GetBinContent(8)+hdown[1][j]->GetBinContent(8)+hdown[2][j]->GetBinContent(8));
 	cout << processName[j] << ":" ;
-        double average = ((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) + (hdown[0][j]->GetBinContent(8) +  hdown[1][j]->GetBinContent(8) + hdown[2][j]->GetBinContent(8)))/2;
-	if (average !=0) cout << fabs(((hup[0][j]->GetBinContent(8) + hup[1][j]->GetBinContent(8) + hup[2][j]->GetBinContent(8)) - average)/average)*100 << "%\t" ;
-	else cout << " -\t";
+	if (avn !=0) cout << ((avup - avn)/avn)*100 << "%/" << ((avdown - avn)/avn)*100 << "%   " ;
+	else cout << " -      ";
       }
     }
     cout << endl;
   }
- 
   
   TH1F*  h [3][4];
   for (int i = 0; i < 3; i++){

@@ -195,21 +195,15 @@ int main(int argc, char* argv[]) {
       else if (dataSetName == "qcd_mu"){    	sprintf(name, "qcd_mu");	xlweight = lumi*84679.3/24787499; 	if (mode == 0) xlweight = lumi*84679.3/24186153;if (mode == 2) xlweight = lumi*84679.3/24785478; } 
       
       //special files
-      else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/436624;}
-      else if (dataSetName == "tbar_sup"){      	sprintf(name, "tbar_sup");		xlweight = lumi*7.87/436710;}
-      else if (dataSetName == "t_sdo"){      		sprintf(name, "t_sdo");			xlweight = lumi*7.87/436971;}
-      else if (dataSetName == "tbar_sdo"){      	sprintf(name, "tbar_sdo");		xlweight = lumi*7.87/436991;}
+      else if (dataSetName == "t_sup"){      		sprintf(name, "t_sup");		        xlweight = lumi*7.87/436311;}
+      else if (dataSetName == "tbar_sup"){      	sprintf(name, "tbar_sup");		xlweight = lumi*7.87/436434;}
+      else if (dataSetName == "t_sdo"){      		sprintf(name, "t_sdo");			xlweight = lumi*7.87/436635;}
+      else if (dataSetName == "tbar_sdo"){      	sprintf(name, "tbar_sdo");		xlweight = lumi*7.87/436709;}
       
-      else if (dataSetName == "t_sup_ds"){      	sprintf(name, "t_sup_ds");		xlweight = lumi*7.87/436283;}
-      else if (dataSetName == "tbar_sup_ds"){      	sprintf(name, "tbar_sup_ds");		xlweight = lumi*7.87/436378;}
-      else if (dataSetName == "t_sdo_ds"){      	sprintf(name, "t_sdo_ds");		xlweight = lumi*7.87/436603;}
-      else if (dataSetName == "tbar_sdo_ds"){      	sprintf(name, "tbar_sdo_ds");		xlweight = lumi*7.87/436751;} 
-     
-      
-      else if (dataSetName == "tt_matchingup"){   	sprintf(name, "tt_matchingup");   	xlweight = lumi*163/1001708; isTop = true;}
-      else if (dataSetName == "tt_matchingdown"){   	sprintf(name, "tt_matchingdown");   	xlweight = lumi*163/1043769; isTop = true;}
-      else if (dataSetName == "tt_scaleup"){   		sprintf(name, "tt_scaleup");   		xlweight = lumi*163/911039; isTop = true;}
-      else if (dataSetName == "tt_scaledown"){   	sprintf(name, "tt_scaledown");   	xlweight = lumi*163/926575; isTop = true;}
+      else if (dataSetName == "tt_matchingup"){   	sprintf(name, "tt_matchingup");   	xlweight = lumi*163/3941035; isTop = true;}
+      else if (dataSetName == "tt_matchingdown"){   	sprintf(name, "tt_matchingdown");   	xlweight = lumi*163/202884; isTop = true;}
+      else if (dataSetName == "tt_scaleup"){   		sprintf(name, "tt_scaleup");   		xlweight = lumi*163/3621850; isTop = true;}
+      else if (dataSetName == "tt_scaledown"){   	sprintf(name, "tt_scaledown");   	xlweight = lumi*163/3925041; isTop = true;}
       
       
       else if (dataSetName == "data1"){		sprintf(name, "data1");  	xlweight = 1; isData = true; RunA = true;}
