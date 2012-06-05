@@ -684,11 +684,11 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		}
 		
 		if (ht > htMin || mode !=0){
-	        //if (ptSystem <= ptsysCut){
+		  //if (ptSystem <= ptsysCut){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
 		  if (ptSystem <= ptsysCut){
-		//  if (ht > htMin || mode !=0){
+		    //  if (ht > htMin || mode !=0){
 		    histo->Fill(7, xlWeight);
 		  }
 		}
@@ -757,8 +757,11 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(24, xlWeight); //CR2 no ht no ptsys tighter
 	      if (nJets == 2 && nJetsBT == 1)  histo_R->Fill(25, xlWeight); //CR1 no ht no ptsys another flavor
 	      if (nJets == 2 && nJetsBT == 2)  histo_R->Fill(26, xlWeight); //CR2 no ht no ptsys another flavor
-	
-		
+	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && (ht > htMin || mode !=0))histo_R->Fill(27, xlWeight); //signal no ptsys
+	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut)histo_R->Fill(28, xlWeight); //signal no ht
+	      if (nJets == 2 && nTightJetsBT == 1 &&  (ht > htMin || mode !=0))  histo_R->Fill(29, xlWeight); //CR 1 
+	      if (nJets == 2 && nTightJetsBT == 2 &&  (ht > htMin || mode !=0))  histo_R->Fill(30, xlWeight); //CR 2 
+				
 	      
 	    }
 	  } //tt CR
@@ -779,7 +782,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
       if (i == 4) cout << " met: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 5) cout << " jet: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 6) cout << " jet_bt: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
-     // if (i == 7) cout << " pt system: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
+      // if (i == 7) cout << " pt system: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
     cout << "------------------------------------------" << endl; 

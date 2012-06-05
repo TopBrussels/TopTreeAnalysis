@@ -50,6 +50,12 @@ void plotmaker(int mode = 0){
   gStyle->SetTitleXOffset(1.2);//1.5
   gStyle->SetTitleYOffset(1.2);//1.7
   
+  labelKStest = new TPaveText(0.12,0.80,0.6,0.84,"NDCBR");
+  labelKStest->SetTextAlign(12);
+  labelKStest->SetTextSize(0.035);
+  labelKStest->SetFillColor(kWhite);
+  labelKStest->SetBorderSize(0);
+
   
   char myRootFile[300];
   double lumi = 1000;
@@ -58,20 +64,20 @@ void plotmaker(int mode = 0){
   else if ( mode == 1)   lumi = 4919.924;
   else if ( mode == 2)   lumi = 4895.249;
   
-  sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
+  sprintf(myRootFile,"results/sf_an_%dpb_%d.root", lumi, mode);
   
   TFile *_file0 = TFile::Open(myRootFile);
   cout << myRootFile << endl;
   
   const int nProcess = 8;
-  const int nPlots = 9;
+  const int nPlots = 11;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex"};
-  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys_2j2t", "ht", "pt_leading", "nvertex", "tmet", "min_met"};
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 4, 4};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex", "Tracker E_{T}^{miss}", "Min E_{T}^{miss}"};
   TString modeString[3] = {"0", "1", "2"};
   
   TH1F*  h [nPlots][nProcess];
@@ -79,7 +85,7 @@ void plotmaker(int mode = 0){
   THStack* hStack[nPlots];
   TGraphAsymmErrors *GE[nPlots];
   
-  for (const int iVariable = 0; iVariable < nProcess; iVariable++){
+  for (const int iVariable = 0; iVariable < nPlots; iVariable++){
     leg = new TLegend(0.7,0.7,0.94,0.94);
     leg ->SetFillStyle(1001);
     leg ->SetFillColor(kWhite);
@@ -91,6 +97,19 @@ void plotmaker(int mode = 0){
       h[iVariable][iProcess]->SetFillColor(color[iProcess]);
       h[iVariable][iProcess]->SetLineColor(kBlack);
       h[iVariable][iProcess]->SetLineWidth(1);
+      
+      /*
+      if (iProcess == 4 && mode == 0) h[iVariable][iProcess]->Scale(1.77*0.79);
+      if (iProcess == 4 && mode == 1) h[iVariable][iProcess]->Scale(1.59*0.78);
+      if (iProcess == 4 && mode == 2) h[iVariable][iProcess]->Scale(1.95*0.78);
+      if (iProcess == 0 && mode == 0) h[iVariable][iProcess]->Scale(0.72);
+      if (iProcess == 0 && mode == 1) h[iVariable][iProcess]->Scale(0.69);
+      if (iProcess == 0 && mode == 2) h[iVariable][iProcess]->Scale(0.72);
+      if (iProcess == 2 && mode == 0) h[iVariable][iProcess]->Scale(1.05);
+      if (iProcess == 2 && mode == 1) h[iVariable][iProcess]->Scale(1.01);
+      if (iProcess == 2 && mode == 2) h[iVariable][iProcess]->Scale(1.16);
+     */
+      
     }
     
     h[iVariable][5]->Add(h[iVariable][1]);
@@ -135,24 +154,34 @@ void plotmaker(int mode = 0){
       hStack[iVariable]->GetXaxis()->SetBinLabel(4,"E_{T}^{miss}");
       hStack[iVariable]->GetXaxis()->SetBinLabel(5,"1 jet");
       hStack[iVariable]->GetXaxis()->SetBinLabel(6,"b-tag");
-      hStack[iVariable]->GetXaxis()->SetBinLabel(7,"P_{T}Sys");
-      hStack[iVariable]->GetXaxis()->SetBinLabel(8,"H_{T}");
-      hStack[iVariable]->GetXaxis()->SetRangeUser(1,7);
+      hStack[iVariable]->GetXaxis()->SetBinLabel(7,"H_{T}");
+      hStack[iVariable]->GetXaxis()->SetRangeUser(1,6);
     }
     
     if (iVariable == 5) hStack[iVariable]->GetYaxis()->SetRangeUser(1,100);
     h[iVariable][7]->Draw("e, sames");
+   /*
+    TH1F* temp[iVariable] = (TH1F*) h[iVariable][0]->Clone();
+    temp[iVariable]->Add(h[iVariable][2]);
+    temp[iVariable]->Add(h[iVariable][4]);
+    temp[iVariable]->Add(h[iVariable][5]);
+    double KSresult = h[iVariable][7]->KolmogorovTest(temp[iVariable]);
+    char KStest[100];
+    sprintf(KStest,"KS test: %f", KSresult);
+    labelKStest->Clear();
+    labelKStest->AddText(KStest);
+    labelKStest->Draw();*/
     leg->Draw();
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
-    c1->SaveAs("plots/pdf/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("plots/sf_plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/pdf/sf_plot_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
     
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
-    c1->SaveAs("plots/pdf/plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("plots/sf_plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/pdf/sf_plot_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
     
     
     c1->SetLogy(0);
@@ -177,13 +206,13 @@ void plotmaker(int mode = 0){
     setex1->Draw();
     h[iVariable][7]->Draw("e, sames");
     
-    c1->SaveAs("plots/error_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
-    c1->SaveAs("plots/pdf/error_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("plots/sf_error_" + modeString[mode] + "_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/pdf/sf_error_" + modeString[mode] + "_" + cutLabel[iVariable] + ".pdf");
      
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/error_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
-    c1->SaveAs("plots/pdf/error_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("plots/sf_error_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/pdf/sf_error_" + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
     
     
   }
