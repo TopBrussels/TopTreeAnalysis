@@ -86,6 +86,8 @@ int main (int argc, char *argv[])
   float btagcut     = 0.679;
 	float Zmass       = 91.2;
 	float Zwindowsize = 30.;
+	bool applyAsymmJetPtCut = true;
+	float JetPtCuts[4]={50.,30.,20.,20.};
 
   clock_t start = clock();
 
@@ -245,6 +247,13 @@ int main (int argc, char *argv[])
   MSPlot["ThirdLeadingJetPt_ee_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_ee_ch",  60, 0, 300, "Jet p_{T} [GeV/c]");
   MSPlot["FourthLeadingJetPt_mm_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_mm_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
   MSPlot["FourthLeadingJetPt_ee_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_ee_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
+
+  MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]= new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]= new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
 
   MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
@@ -486,8 +495,8 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunA.root", "pileup", "pileup");
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunB.root", "pileup", "pileup");
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunA.root", "pileup", "pileup");
+  //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunB.root", "pileup", "pileup");
   //Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("../pileup/MC_Fall11.root","../pileup/RunAB.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.0);
 
@@ -497,6 +506,18 @@ int main (int argc, char *argv[])
   	Lumi3DWeights.weight3D_init(1.08);
   else
   	Lumi3DWeights.weight3D_init(1.0);
+
+/*
+  LumiReWeighting LumiWeights_160404_163869 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_160404-163869_7TeV_May10ReReco_Collisions11_JSON_v3.pileupTruth_v2_finebin.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_165088_167913 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_165088-167913_7TeV_PromptReco_JSON.pileupTruth_v2_finebin.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_170249_172619 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_170249-172619_7TeV_ReReco5Aug_Collisions11_JSON_v2.pileupTruth_v2_finebin.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_172620_173692 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_172620-173692_PromptReco_JSON.pileupTruth_v2_finebin.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_175832_177515 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_175832-177515_PromptReco_JSON.pileupTruth_v2_finebin.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_177718_178078 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_177718_178078_7TeV_PromptReco_Collisons11_JSON.pileupTruth_v2_finebin.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_178098_180252 = LumiReWeighting("../pileup/MC_Fall11.root", "../pileup/Cert_178098-180252_7TeV_PromptReco_Collisions11_JSON.pileupTruth_v2_finebin.root", "pileup", "pileup");
+*/
+  //reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
+  //reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
 
   cout << " - Initialized LumiReWeighting stuff" << endl;
   
@@ -622,13 +643,13 @@ int main (int argc, char *argv[])
 				    Trigger HLT_DoubleMu7_v1 available for runs 160431-163261
 				    Trigger HLT_DoubleMu7_v2 available for runs 163270-163869
 				    ------------------------------------------------------------------*/
-				    if(event->runId() >= 160404 && event->runId() <= 163261) // IntLumi = 33.601(/pb)
+				    if(event->runId() >= 160431 && event->runId() <= 163261) // IntLumi = 33.185(/pb)
 					    itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v1"), currentRun, iFile);
-  			    else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 167.434(/pb)
+  			    else if (event->runId() >= 163270 && event->runId() <= 163869) // IntLumi = 165.027(/pb)
     			    itrigger = treeLoader.iTrigger (string ("HLT_DoubleMu7_v2"), currentRun, iFile);
 				    /*--------------------------------------------------------------------
-				    Sub-Total integrated luminosity = 201,035(/pb)
-				        Total integrated luminosity = 201,035(/pb)
+				    Sub-Total integrated luminosity = 198,212(/pb)
+				        Total integrated luminosity = 198,212(/pb)
 				    ------------------------------------------------------------------*/
 
 				    /*------------------------------------------------------------------
@@ -641,15 +662,15 @@ int main (int argc, char *argv[])
             Trigger HLT_Mu17_Mu8_v3 available for runs 166346-166346
             Trigger HLT_Mu17_Mu8_v4 available for runs 167078-167913
 				    ------------------------------------------------------------------*/
-  		      else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 619,142(/pb)
+  		      else if (event->runId() >= 165088 && event->runId() <= 167043 && event->runId() != 166346) // IntLumi = 697.040(/pb)
               itrigger = treeLoader.iTrigger (string ("HLT_Mu13_Mu8_v2"), currentRun, iFile);
-  		      else if (event->runId() == 166346) // IntLumi = 4.291(/pb)
+  		      else if (event->runId() == 166346) // IntLumi = 4.415(/pb)
               itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v3"), currentRun, iFile);
-            else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 226.454(/pb)
+            else if (event->runId() >= 167078 && event->runId() <= 167913) // IntLumi = 253.757(/pb)
               itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v4"), currentRun, iFile);
 				    /*--------------------------------------------------------------------
-				    Sub-Total integrated luminosity =  849,887(/pb)
-				        Total integrated luminosity = 1050,922(/pb)
+				    Sub-Total integrated luminosity =  955,212(/pb)
+				        Total integrated luminosity = 1153,424(/pb)
 				    ------------------------------------------------------------------*/
 
 				    /*------------------------------------------------------------------
@@ -658,11 +679,11 @@ int main (int argc, char *argv[])
 				    Trigger HLT_Mu13_Mu8_v6 available for runs 170826-172619
 				    Trigger HLT_Mu17_Mu8_v6 available for runs 170826-172619
 				    ------------------------------------------------------------------*/
-				    else if (event->runId() >= 170249 && event->runId() <= 172619)  // IntLumi = //Aug05ReReco equivalent to PromptReco_v5
+				    else if (event->runId() >= 170249 && event->runId() <= 172619)  // IntLumi = 356.670 (/pb)
 				      itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
 				    /*------------------------------------------------------------------
-				    Sub-Total integrated luminosity =  XXXX(/pb)
-				        Total integrated luminosity = XXXX(/pb)
+				    Sub-Total integrated luminosity =  356.670(/pb)
+				        Total integrated luminosity = 1510,094(/pb)
 				    ------------------------------------------------------------------*/
 
             /*------------------------------------------------------------------
@@ -671,13 +692,13 @@ int main (int argc, char *argv[])
 				    Trigger HLT_Mu17_Mu8_v6 available for runs 172620-173198
 				    Trigger HLT_Mu17_Mu8_v7 available for runs 173236-173692
 				    ------------------------------------------------------------------*/
-				    else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = (/pb)
+				    else if (event->runId() >= 172620 && event->runId() <= 173198) // IntLumi = 441.387 (/pb)
               itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v6"), currentRun, iFile);
-				    else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = (/pb)
+				    else if (event->runId() >= 173236 && event->runId() <= 173692) // IntLumi = 265.313(/pb)
 				      itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
 				    /*------------------------------------------------------------------
-				    Sub-Total integrated luminosity =  XXXX(/pb)
-				        Total integrated luminosity = XXXX(/pb)
+				    Sub-Total integrated luminosity =  706,700(/pb)
+				        Total integrated luminosity = 2216,794(/pb)
 				    ------------------------------------------------------------------*/
 
 				    /*------------------------------------------------------------------
@@ -687,15 +708,15 @@ int main (int argc, char *argv[])
 				    Trigger HLT_Mu17_Mu8_v10 available for runs 178420-179889
 				    Trigger HLT_Mu17_Mu8_v11 available for runs 179959-180252
 				    ------------------------------------------------------------------*/
-            else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = (/pb)
+            else if( event->runId() >=  175860 && event->runId() <= 178380 ) // IntLumi = 1825.547(/pb)
    			      itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v7"), currentRun, iFile);
-            else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi = (/pb)
+            else if( event->runId() >=  178420 && event->runId() <= 179889 ) // IntLumi =  756.508(/pb)
 				    	itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v10"),currentRun, iFile);
-            else if( event->runId() >=  179959 && event->runId() <=  180252 ) // IntLumi = (/pb)
+            else if( event->runId() >=  179959 && event->runId() <=  180252 )// IntLumi =  128.945(/pb)
 				    	itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v11"),currentRun, iFile); 
 				    /*------------------------------------------------------------------
-				    Sub-Total integrated luminosity =  XXXX(/pb)
-				        Total integrated luminosity = XXXX(/pb)
+				    Sub-Total integrated luminosity =  2711.000(/pb)
+				        Total integrated luminosity =  4927,794(/pb)
 				    ------------------------------------------------------------------*/
 									   
   		      if(itrigger == 9999)
@@ -905,9 +926,11 @@ int main (int argc, char *argv[])
 	}
 	else{
 		// Apply pile-up reweighting
-		double lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
-	 	scaleFactor *= lumiWeight3D;
+    //double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
+  	double lumiWeight = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
+   	scaleFactor *= lumiWeight;
 	}
+
 	histo1D["lumiWeights"]->Fill(scaleFactor);	
 	MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
 			
@@ -1119,17 +1142,18 @@ int main (int argc, char *argv[])
 		MSPlot["NbOfSelectedJets_mm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
 		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		  if(selectedJets[0]->Pt()<50) continue;
+		  if(applyAsymmJetPtCut && selectedJets[0]->Pt()<JetPtCuts[0]) continue;
 			selecTableDiMu.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		    if(selectedJets[1]->Pt()<30) continue;
+		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
 				selecTableDiMu.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2){ //at least 3 jets
    		    MSPlot["ThirdLeadingJetPt_mm_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 					selecTableDiMu.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
      		    MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+     		    MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiMu.Fill(d,10,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
@@ -1159,11 +1183,12 @@ int main (int argc, char *argv[])
 		MSPlot["NbOfSelectedJets_mme_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
 		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		  if(selectedJets[0]->Pt()<50) continue;
+		  if(applyAsymmJetPtCut && selectedJets[0]->Pt()<JetPtCuts[0]) continue;
 			selecTableDiMuEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		    if(selectedJets[1]->Pt()<30) continue;
+		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
+        MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableDiMuEl.Fill(d,8,scaleFactor);
   			if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor); //at least 3 jets
   			//{
@@ -1190,11 +1215,12 @@ int main (int argc, char *argv[])
 		MSPlot["NbOfSelectedJets_mmm_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
 		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		  if(selectedJets[0]->Pt()<50) continue;
+		  if(applyAsymmJetPtCut && selectedJets[0]->Pt()<JetPtCuts[0]) continue;
 			selecTableTriMu.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		    if(selectedJets[1]->Pt()<30) continue;
+		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
+		    MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableTriMu.Fill(d,8,scaleFactor);
   			if(selectedJets.size()>2) selecTableTriMu.Fill(d,9,scaleFactor); //at least 3 jets
   			//{	
@@ -1221,17 +1247,18 @@ int main (int argc, char *argv[])
 		MSPlot["NbOfSelectedJets_ee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
 		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		  if(selectedJets[0]->Pt()<50) continue;
+		  if(applyAsymmJetPtCut && selectedJets[0]->Pt()<JetPtCuts[0]) continue;
 			selecTableDiEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		    if(selectedJets[1]->Pt()<30) continue;
+		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
 				selecTableDiEl.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2){ //at least 3 jets
 		      MSPlot["ThirdLeadingJetPt_ee_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 					selecTableDiEl.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
 		        MSPlot["FourthLeadingJetPt_ee_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+     		    MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiEl.Fill(d,10,scaleFactor);
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
@@ -1260,12 +1287,13 @@ int main (int argc, char *argv[])
 		selecTableDiElMu.Fill(d,6,scaleFactor);
 		MSPlot["NbOfSelectedJets_eem_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
-		  if(selectedJets[0]->Pt()<50) continue;
+		  if(applyAsymmJetPtCut && selectedJets[0]->Pt()<JetPtCuts[0]) continue;
 		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 			selecTableDiElMu.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		    if(selectedJets[1]->Pt()<30) continue;
+		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
+		    MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableDiElMu.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2) selecTableDiElMu.Fill(d,9,scaleFactor); //at least 3 jets
 				//{
@@ -1292,11 +1320,12 @@ int main (int argc, char *argv[])
 		MSPlot["NbOfSelectedJets_eee_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		if(selectedJets.size()>0){ //at least 1 jet
 		  MSPlot["FirstLeadingJetPt"]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		  if(selectedJets[0]->Pt()<50) continue;
+		  if(applyAsymmJetPtCut && selectedJets[0]->Pt()<JetPtCuts[0]) continue;
 			selecTableTriEl.Fill(d,7,scaleFactor); 
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-		    if(selectedJets[1]->Pt()<30) continue;
+		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
+		    MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableTriEl.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2) selecTableTriEl.Fill(d,9,scaleFactor); //at least 3 jets
 				//{
