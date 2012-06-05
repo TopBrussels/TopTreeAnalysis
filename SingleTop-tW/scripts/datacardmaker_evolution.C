@@ -18,14 +18,14 @@ void datacardmaker_evolution(){
   bool verbose = false;
   
   //choose regions
-  const int SRbin = 29;
-  const int CR1bin = 7;
-  const int CR2bin = 8;
+  const int SRbin = 28;
+  const int CR1bin = 30;
+  const int CR2bin = 31;
   
   //choosing precision
   int pre = 4;
   
-  ofstream datacard("singletop_tW_5fb_7.txt"); 
+  ofstream datacard("singletop_tW_5fb_4.txt"); 
  
   char myRootFile[300];
   sprintf(myRootFile,"results/Histos_cutbased_full.root");
@@ -831,21 +831,25 @@ void datacardmaker_evolution(){
   datacard << setprecision(pre) << "dynorm    lnN\t";
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(i ==0 && j == 2)datacard << setprecision(pre) << "1.33\t ";
-      if(i ==1 && j == 2)datacard << setprecision(pre) << "1.30\t ";
+      if(i ==0 && j == 2)datacard << setprecision(pre) << "1.34\t ";
+      if(i ==1 && j == 2)datacard << setprecision(pre) << "1.28\t ";
       if(i ==2 && j == 2)datacard << setprecision(pre) << "1.27\t ";
       else datacard << setprecision(pre) << "-\t ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j == 2)datacard << setprecision(pre) << "1.3\t ";
+      if(i ==0 && j == 2)datacard << setprecision(pre) << "1.32\t ";
+      if(i ==1 && j == 2)datacard << setprecision(pre) << "1.30\t ";
+      if(i ==2 && j == 2)datacard << setprecision(pre) << "1.28\t ";
       else datacard << setprecision(pre) << "-\t ";
     }
   }
   for (int i = 0; i < 3; i++){
     for (int j = 0; j <3; j++){ 
-      if(j == 2)datacard << setprecision(pre) << "-\t ";
+      if(i ==0 && j == 2)datacard << setprecision(pre) << "1.27\t ";
+      if(i ==1 && j == 2)datacard << setprecision(pre) << "1.28\t ";
+      if(i ==2 && j == 2)datacard << setprecision(pre) << "1.33\t ";
       else datacard << setprecision(pre) << "-\t ";
     }
   }

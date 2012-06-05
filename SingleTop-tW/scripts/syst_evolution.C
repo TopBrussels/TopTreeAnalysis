@@ -652,6 +652,31 @@ void syst_evolution(){
     else if (i == 2) cout << "mode:" << i << "      -2.2/2.0%" << endl;
   }
   
+  
+  cout << "*DY re-weighted/non re-weighted" << endl;
+  for (int i = 0; i < 3; i++){
+   
+    cout << "mode:" << i << " ";
+    if(i ==2)cout <<  "34%\t ";
+    if(i ==0)cout <<  "28%\t ";
+    if(i ==1)cout <<  "27%\t ";
+  
+    cout << "\t[2j1t]" ;
+
+    if(i ==2)cout <<"32%\t";
+    if(i ==0)cout <<"30%\t";
+    if(i ==1)cout <<"28%\t";
+   
+    cout << "\t[2j2t]" ;
+   
+    if(i ==2)cout <<  "27%\t ";
+    if(i ==0)cout <<  "28%\t ";
+    if(i ==1)cout <<  "33%\t ";
+    cout << endl;
+  }
+  cout << endl;
+  
+  
   cout << "* MC statistics:" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
