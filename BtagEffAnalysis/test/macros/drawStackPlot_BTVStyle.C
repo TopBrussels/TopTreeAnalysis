@@ -1,18 +1,23 @@
 {
     string lumiPlot="2.18";
     
-    lumiPlot = "0.9";
+    lumiPlot = "2.3";
     
-    double lumi_error = 0.04;
+    double lumi_error = 0.045;
     double ttbar_error = 0.15;
     double other_error = 0.30;
     
-    //ttbar_error = 0;
-    //other_error = 0;    
+    ttbar_error = 0;
+    other_error = 0;    
 
     TString fileName="../StackPlots_Mu.root";
     
-    string plotName = "BestJetCombChi2";
+    double btagSF=0.947; // el JPM
+    ttbar_error=0.041;
+    
+    btagSF=1.014; // mu JPM
+    ttbar_error=0.041;
+    string plotName = "MLB_BTV_btag";
     
     //plotName="nPV";
     //fileName = "BtaggingOutput.root";
@@ -182,7 +187,7 @@
     TH1D* h6 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_tW_tbar").c_str());
     TH1D* h7 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_WJets").c_str());
     TH1D* h8 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ZJets").c_str());
-    //TH1D* h9 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_multijet").c_str());
+    TH1D* h9 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_multijet").c_str());
     
     h1->SetBinContent(h1->GetNbinsX(),h1->GetBinContent(h1->GetNbinsX())+h1->GetBinContent(h1->GetNbinsX()+1));
     h2->SetBinContent(h1->GetNbinsX(),h2->GetBinContent(h1->GetNbinsX())+h2->GetBinContent(h2->GetNbinsX()+1));
@@ -192,7 +197,7 @@
     h6->SetBinContent(h1->GetNbinsX(),h6->GetBinContent(h1->GetNbinsX())+h6->GetBinContent(h6->GetNbinsX()+1));
     h7->SetBinContent(h1->GetNbinsX(),h7->GetBinContent(h1->GetNbinsX())+h7->GetBinContent(h7->GetNbinsX()+1));
     h8->SetBinContent(h1->GetNbinsX(),h8->GetBinContent(h1->GetNbinsX())+h8->GetBinContent(h8->GetNbinsX()+1));
-    //h9->SetBinContent(h1->GetNbinsX(),h9->GetBinContent(h1->GetNbinsX())+h9->GetBinContent(h9->GetNbinsX()+1));
+    if (h9) h9->SetBinContent(h1->GetNbinsX(),h9->GetBinContent(h1->GetNbinsX())+h9->GetBinContent(h9->GetNbinsX()+1));
 
     h1->SetBinContent(h1->GetNbinsX()+1,0);
     h2->SetBinContent(h2->GetNbinsX()+1,0);
@@ -202,7 +207,7 @@
     h6->SetBinContent(h6->GetNbinsX()+1,0);
     h7->SetBinContent(h7->GetNbinsX()+1,0);
     h8->SetBinContent(h8->GetNbinsX()+1,0);
-    //h9->SetBinContent(h9->GetNbinsX()+1,0);
+    if (h9) h9->SetBinContent(h9->GetNbinsX()+1,0);
 
     TH1D* added = (TH1D*) h1->Clone();
     added->Sumw2();
@@ -213,7 +218,7 @@
     added->Add(h6);
     added->Add(h7);
     added->Add(h8);
-    //added->Add(h9);
+    if (h9) added->Add(h9);
     
     TH1D* hmc = (TH1D*) h1->Clone();
     hmc->Add(hmc,h2,1.,1.);
@@ -223,12 +228,14 @@
     hmc->Add(hmc,h6,1.,1.);
     hmc->Add(hmc,h7,1.,1.);
     hmc->Add(hmc,h8,1.,1.);
-    //hmc->Add(hmc,h9,1.,1.);
+    if (h9) hmc->Add(hmc,h9,1.,1.);
     hmc->SetName("hmc");
     
     // GET THE DATA TH1
     
     TH1D* data = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Data").c_str());
+        
+    data->Scale(data->Integral()/(data->Integral()*btagSF));
     
     // GET THE LEGEND
     

@@ -698,8 +698,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     
     
     // NOMINAL SET OF SAMPLES
-    nTaggers=1;
-    nWP=3;
+    //nTaggers=1;
+    //nWP=3;
     
     nRunSamples_=7;
     inRootFile[0] = "BtagTree_TTbarJets";
@@ -1230,6 +1230,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 	vector<double> v_var;
 	vector<double> v_varb;
 	vector<double> v_partonFlavour;
+    
+    vector<double> v_ptMuon;
+
 	
 	vector<double> v_ptControl;
 	vector<double> v_etaControl;
@@ -1452,11 +1455,12 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				//nSelected_[NTuple->dataSetName()].push_back(4568.68); // data lumi
 				//nSelected_[NTuple->dataSetName()].push_back(4917.61687); // NEW pixel data lumi
 				
-                if (decay == 0)
+                /*if (decay == 0)
                     nSelected_[NTuple->dataSetName()].push_back(905.5); // 2012 lumi mu
                 else 
-                    nSelected_[NTuple->dataSetName()].push_back(891.415); // 2012 lumi el
-
+                    nSelected_[NTuple->dataSetName()].push_back(891.415); // 2012 lumi el*/
+                nSelected_[NTuple->dataSetName()].push_back(2300.0);
+                
                 nSelected_[NTuple->dataSetName()].push_back(1/NTuple->weight()); // mc lumi
 				nSelected_[NTuple->dataSetName()].push_back(0); // after refsel
 				nSelected_[NTuple->dataSetName()].push_back(0); // after refsel + btag TCHEM
@@ -1856,6 +1860,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			v_varb.push_back(NTuple->m3());
 			v_pt.push_back(NTuple->pt());
 			v_eta.push_back(fabs(NTuple->eta()));
+            
+            if (doOnlyMSPlot) v_ptMuon.push_back(NTuple->ptMuon());
 			
 			v_etaControl.push_back(fabs(NTuple->etaControl()));
 			v_ptControl.push_back(NTuple->ptControl());
@@ -1953,6 +1959,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		MSPlot["nPV"] = new MultiSamplePlot(datasets, "nPV", 36, -0.5, 35.5, "#PV");
 		MSPlot["nPV_nonRew"] = new MultiSamplePlot(datasets, "nPV_nonRew", 36, -0.5, 35.5, "#PV");
         
+        MSPlot["pTlep"] = new MultiSamplePlot(datasets, "pTlep", 100, 0, 500, "p_{T}^{l}");
+
         MSPlot["BestJetCombChi2"] = new MultiSamplePlot(datasets, "BestJetCombChi2", 50, 0, 1000, "#chi^{2}");
         
 		MSPlot["selectedEventsJetsEta"] = new MultiSamplePlot(datasets, "selectedEventsJetsEta", 13, -2.6, 2.6, "Jet #eta");
@@ -2325,6 +2333,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             MSPlot["nPV"]->Fill(v_npv[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             MSPlot["nPV_nonRew"]->Fill(v_npv[n], datasets[d], true, dataLum_);
             
+            MSPlot["pTlep"]->Fill(v_ptMuon[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
+            
             MSPlot["BestJetCombChi2"]->Fill(v_matchChiSquare[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             
 			MSPlot["selectedEventsJetsEta"]->Fill(v_eta[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
@@ -2379,8 +2389,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				MSPlot["MLB_ControlSample_q2"]->Fill(v_controlVar2[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 			}
 			
-			//if (v_bTag[n][0] > 3.3) {
-            if (v_bTag[n][6] > 0.679) {
+			//if (v_bTag[n][0] > 3.3) { // TCHEM
+            //if (v_bTag[n][6] > 0.679) { // CSVM
+            if (v_bTag[n][2] > 0.545) { // JPM
 				MSPlot["MLB_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 				MSPlot["MLB_BTV_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 				MSPlot["M3_BTV_btag"]->Fill(v_varb[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
@@ -3572,6 +3583,21 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                 /* SINCE BTAG IS DATA_DRIVEN we want to fix the beff for theory systematics to the nominal value */
                 
+                /*if (sampleType.find("Data") != string::npos) {
+                
+                    setNomVal(data_postfix,"DATA_eff_meas_fdata",iwp,results[8]);
+                    setNomVal(data_postfix,"DATA_ueff_meas_fdata",iwp,results[9]);
+                    
+                    if (data_postfix=="_El") {
+                        results[8] = getNomVal("_Mu","DATA_eff_meas_fdata",iwp);
+                        results[9] = getNomVal("_Mu","DATA_ueff_meas_fdata",iwp);
+                    }
+                    
+                    //results[8] = getNomVal(data_postfix,"eff_true",iwp);
+                    //results[9] = getNomVal(data_postfix,"ueff_true",iwp);
+                
+                }*/
+                
                 if (sampleType.find("nominal") != string::npos) {
                  
                     setNomVal(data_postfix,"eff_true",iwp,results[0]);
@@ -3583,8 +3609,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     setNomVal(data_postfix,"eff_meas_fdata",iwp,results[8]);
                     setNomVal(data_postfix,"ueff_meas_fdata",iwp,results[9]);
                     
-                    //} else if (( nSystematic > 6 && nSystematic < 21 ) || nSystematic > 100) {
-                } else if (nSystematic > 0) {
+                } else if (( nSystematic > 6 && nSystematic < 21 ) || nSystematic > 100) {
+                //} else if (nSystematic > 0) {
                 
                     results[0] = getNomVal(data_postfix,"eff_true",iwp);
                     results[1] = getNomVal(data_postfix,"ueff_true",iwp);

@@ -1,13 +1,68 @@
 {
+
+  string lumi="2.3";
+
+  int nDisc=2;
+  //SETTINGS
+
+  Float_t line_x1_L = 0.;
+  Float_t line_x1_M = 0.;
+  Float_t line_x1_T = 0.;
+
+  switch (nDisc) {
+  
+  case 0: // FOR TCHE
+    line_x1_L = 1.7;
+    line_x1_M = 3.3;
+    line_x1_T = 10.2;
+    break;
+
+  case 1: // FOR TCHP
+    line_x1_L = 1.19;
+    line_x1_M = 1.93;
+    line_x1_T = 3.41;
+    break;
+
+  case 2: // FOR JP
+    line_x1_L = 0.275;
+    line_x1_M = 0.545;
+    line_x1_T = 0.790;
+    break;
+
+  case 3: // FOR JBP
+    line_x1_L = 1.3;
+    line_x1_M = 2.55;
+    line_x1_T = 3.74;
+    break;
+
+  case 6: //for CSV        
+    line_x1_L = 0.24;
+    line_x1_M = 0.68;
+    line_x1_T = 0.9;
+    break;
+
+  default:
+    break;
+  }
+    
     TFile* f = new TFile("../store/data.root");
     TFile* g = new TFile("../store/mc.root");
     
-    TH1F* effMC = (TH1F*) g->Get("Variable_1_0/Discriminator_2/nDisc_2_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffAll");
-    TH1F* eff = (TH1F*) f->Get("Variable_1_0/Discriminator_2/nDisc_2_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR");
+    stringstream disc; disc << nDisc;
+    TH1F* effMC = (TH1F*) g->Get(("Variable_1_0/Discriminator_"+disc.str()+"/nDisc_"+disc.str()+"_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffAll").c_str());
+    TH1F* eff = (TH1F*) f->Get(("Variable_1_0/Discriminator_"+disc.str()+"/nDisc_"+disc.str()+"_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR").c_str());
 
     Int_t nBin = eff->GetNbinsX();
+
+    cout << "# bins in eff histogram: " << nBin << endl;
+
+    //nBin=10;
+
     Float_t low = eff->GetBinLowEdge(1); 
-    Float_t high = eff->GetBinLowEdge(eff->GetNbinsX()+1);
+    //Float_t low = eff->GetBinCenter(1); 
+
+    Float_t high = eff->GetBinLowEdge(nBin+1);
+    //Float_t high = eff->GetBinLowEdge(eff->GetNbinsX()+1);
         
     double gr_MC[10000];
     double gr_x[10000];
@@ -27,6 +82,11 @@
     
     for (unsigned int i=0; i<nBin; i++) {
         
+      if (eff->GetBinCenter(i+1) > line_x1_T) {
+	nBin=i+1;
+	//continue;
+      }
+        
         gr_x[i] = eff->GetBinCenter(i+1);
         gr_y[i] = eff->GetBinContent(i+1);
         
@@ -39,7 +99,7 @@
         
         gr_ratio_x[i] = eff->GetBinCenter(i+1);
         gr_ratio_y[i] = gr_y[i]/gr_MC[i];
-        cout << gr_y[i]<< " " << gr_MC[i] << " " << gr_ratio_y[i] << endl;
+        //cout << gr_y[i]<< " " << gr_MC[i] << " " << gr_ratio_y[i] << endl;
         
         float a = eff->GetBinCenter(i+1);
         float b = effMC->GetBinCenter(i+1);
@@ -47,15 +107,26 @@
         float ub = effMC->GetBinError(i+1);
         
         float uSF = sqrt((pow(ua,2)/pow(b,2))+((pow(a,2)*pow(ub,2))/pow(b,4)));
-        gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(0.0,2)+pow(uSF,2));
-        gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(0.0,2)+pow(uSF,2));
+        gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(0.00,2)+pow(uSF,2));
+        gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(0.00,2)+pow(uSF,2));
+
+	/*if (gr_ratio_y_err_up[i] == gr_ratio_y[i] && i < 2) {
+
+	  gr_ratio_y_err_up[i]=gr_ratio_y[i]+1;
+	  gr_ratio_y_err_down[i]=gr_ratio_y[i]-1;
+
+	  }*/
         
         //cout << sqrt(pow(0.048,2)+pow(uSF,2)) << endl;
-        
+
+	cout << "bin " << i << " cut " << gr_ratio_x[i] << " SF " << gr_ratio_y[i] << " up " << gr_ratio_y_err_up[i] << " down " << gr_ratio_y_err_down[i] << endl;
+
         if (gr_ratio_y_err_up[i] > maxup) maxup=gr_ratio_y_err_up[i];
         if (gr_ratio_y_err_down[i] < maxdown) maxdown=gr_ratio_y_err_down[i];
         
     }
+
+    cout << "# bins in eff histogram: " << nBin << endl;
     
     cout << maxup << " " << maxdown << endl;
     
@@ -114,7 +185,7 @@
     latex2->SetNDC();
     latex2->SetTextSize(0.05);
     latex2->SetTextAlign(30); // align right
-    latex2->DrawLatex(0.87, 0.86, "0.9 fb^{-1} at #sqrt{s} = 8 TeV");
+    latex2->DrawLatex(0.87, 0.86, (lumi+"fb^{-1} at #sqrt{s} = 8 TeV").c_str());
     
     TPad* pad = new TPad("pad", "pad", 0.0, 0.0, 1.0, 1.0);
     pad->SetTopMargin(0.7);
@@ -146,11 +217,19 @@
     
     
     multi_graph_ratio->Add(graph_ratio, "p");  
+    //multi_graph_ratio->Add(graph_ratio_up, "p");  
+    //multi_graph_ratio->Add(graph_ratio_down, "p");  
     multi_graph_ratio->Draw("A");
     
     multi_graph_ratio->SetMaximum( 1.02*maxup);
     multi_graph_ratio->SetMinimum( 0.9*maxdown);
+
+    TH1F* tmp = multi_graph_ratio->GetHistogram();
     
+    TLine* line = new TLine(tmp->GetBinLowEdge(1),1,tmp->GetBinLowEdge(tmp->GetNbinsX()+1),1);
+    line->SetLineColor(kRed);
+    line->Draw();
+
     multi_graph_ratio.GetXaxis()->SetTitle("Discriminator Value");
     multi_graph_ratio.GetYaxis()->SetTitle("SF_{b}");
     multi_graph_ratio.GetYaxis()->SetTitleOffset(0.85);
@@ -160,10 +239,6 @@
     myfit_quad->Draw("SAME");
     myfit_quad2->Draw("SAME");
     
-    //for CSV        
-    Float_t line_x1_L = 0.24;
-    Float_t line_x1_M = 0.68;
-    Float_t line_x1_T = 0.9;
     Float_t line_y1 = 0.9*maxdown;
     Float_t line_y2 = (0.9*maxdown)+0.1;
     
