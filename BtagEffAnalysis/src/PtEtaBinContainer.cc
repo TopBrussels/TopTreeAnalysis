@@ -878,7 +878,7 @@ void PtEtaBinContainer::MeasureEffLR(bool doSCreweigh){
   }
 }
 
-std::map<int,vector<double> > PtEtaBinContainer::doMLJTemplateFit(string chi2cut,int mode, string data_postfix) {
+std::map<int,vector<double> > PtEtaBinContainer::doMLJTemplateFit(string chi2cut,int mode, string data_postfix,int nSystematic) {
 
 	std::map<int,vector<double> > results;
 	
@@ -888,7 +888,7 @@ std::map<int,vector<double> > PtEtaBinContainer::doMLJTemplateFit(string chi2cut
 		if (debug_ > 0) cout << "PtEtaBinContainer::doMLJTemplateFit **************** TAGGER " << k << " *******************" << endl;
 		if (debug_ > 0) cout << "*********************************************************************************************" << endl << endl;
 		
-		vector<double> tmp = binGlobal_[k]->doMLJTemplateFit(chi2cut,mode,data_postfix);
+		vector<double> tmp = binGlobal_[k]->doMLJTemplateFit(chi2cut,mode,data_postfix,nSystematic);
 		
 		for (unsigned int i=0; i<tmp.size(); i++) results[k].push_back(tmp[i]);
 		

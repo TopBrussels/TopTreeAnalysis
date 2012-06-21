@@ -1,8 +1,13 @@
 {
+    
     string lumiPlot="2.18";
     
-    lumiPlot = "2.3";
+    string plotName = "MLB_BTV";
     
+    string filetmp="";
+    
+    string toSave = "";
+        
     double lumi_error = 0.045;
     double ttbar_error = 0.15;
     double other_error = 0.30;
@@ -10,14 +15,24 @@
     ttbar_error = 0;
     other_error = 0;    
 
-    TString fileName="../StackPlots_Mu.root";
+    double btagSF=1;
+    double ubtagSF=1;
     
-    double btagSF=0.947; // el JPM
-    ttbar_error=0.041;
+    ifstream t(".plotopts",ios::in);
     
-    btagSF=1.014; // mu JPM
-    ttbar_error=0.041;
-    string plotName = "MLB_BTV_btag";
+    while (!t.eof()) {
+        
+// << t.readline() << endl;
+
+        t >> filetmp >> lumiPlot >> btagSF >> ubtagSF >> plotName >> toSave;
+        
+    }
+    
+    cout << filetmp << " " << lumiPlot << " " << btagSF << " " << ubtagSF << " " << plotName << endl;
+    
+    TString fileName = filetmp.c_str();
+
+    ttbar_error=sqrt((ttbar_error*ttbar_error)+(ubtagSF*ubtagSF));
     
     //plotName="nPV";
     //fileName = "BtaggingOutput.root";
@@ -179,6 +194,8 @@
     
     // GET AND ADD SEPERATE MC PLOTS
     
+    cout << "TH1D* h1 = (TH1D*) f->Get((\"MultiSamplePlot_"+plotName+"/"+plotName+"_TTbarJets_Signal));" << endl;
+    
     TH1D* h1 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_TTbarJets_Signal").c_str());
     TH1D* h2 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_TTbarJets_Other").c_str());
     TH1D* h3 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_t_t").c_str());
@@ -315,6 +332,8 @@
     data->Draw("SAME:E1");
     
     legend->Draw();
+    
+    if (plotName.find("BestJetCombChi2") != string::npos) gPad->SetLogy();
 
     pad->Draw();
     pad->cd(0);
@@ -339,6 +358,10 @@
     
     c->Draw();
     
+    if (toSave != "NONE") {
+        c->SaveAs(toSave.c_str());
+        gApplication->Terminate();
+    }
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.png").c_str());
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.pdf").c_str());
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.root").c_str());

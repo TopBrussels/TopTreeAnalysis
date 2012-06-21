@@ -1,6 +1,6 @@
 {
 
-  string lumi="2.3";
+  string lumi="2.7";
 
   int nDisc=2;
   //SETTINGS

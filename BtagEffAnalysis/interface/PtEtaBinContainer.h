@@ -80,7 +80,7 @@ class PtEtaBinContainer{
 	
 	std::vector<string> GetFitPlotPaths(int tagger);
 
-	std::map<int,vector<double> > doMLJTemplateFit(string chi2cut,int mode, string data_postfix="");
+	std::map<int,vector<double> > doMLJTemplateFit(string chi2cut,int mode, string data_postfix="",int nSystematic=0);
 
   double getmljMeanVal();
   double getmljMeannoRWVal();

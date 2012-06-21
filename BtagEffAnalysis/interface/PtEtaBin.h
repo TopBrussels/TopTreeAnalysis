@@ -22,6 +22,7 @@
 #include "TLatex.h"
 #include "TLegend.h"
 #include "TPaveText.h"
+#include "TPaveStats.h"
 #include "TRandom3.h"
 #include "TFractionFitter.h"
 
@@ -118,7 +119,7 @@ void GetLeftRightPars(double*, double*, double*);
   void GetWPEff(bool, bool, double, double*, bool, bool, double);
   void CoutWPEff(bool, bool, double, double*, bool, bool, int, int, double);
 
-  vector<double> doMLJTemplateFit(string chi2cut,int mode, string data_postfix);
+  vector<double> doMLJTemplateFit(string chi2cut,int mode, string data_postfi,int nSystematic);
 	
 	std::map<std::string,float> GetEffCalcDetails() const { return EffCalcDetails_; }
 	
@@ -148,12 +149,13 @@ void GetLeftRightPars(double*, double*, double*);
 	float nTTbar () const { return nTTbar_;}
     
     void setLumi(double l) { lumi_ = l; }
-
-private:
-	vector<float> doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1D* data, TString PrefixPlot);
     
     bool findTemplates(string chi2cut,int mode, string data_postfix);
     void loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi2cut,int mode, string data_postfix);
+	vector<float> doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1D* data, TString PrefixPlot);
+
+private:
+    
     void writeTemplates(string chi2cut,int mode, string data_postfix);
     
     void FillTemplates(string process,double weight, int partonflavour, double btag, double *btagCuts, double controlVar0, double m3);
@@ -619,6 +621,8 @@ private:
     int fitMode; // template fit variable 0: mlj 1: M3 2: 2D (mlj,m3)
 
 	string data_postfix_;
+    
+    int nSystematic_;
 };
 
 
