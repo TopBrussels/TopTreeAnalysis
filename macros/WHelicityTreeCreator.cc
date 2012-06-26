@@ -16,6 +16,12 @@
 #include "TString.h"
 #include <stdio.h>
 #include "TMath.h"
+#include "Math/Vector3D.h"
+//#include "Math/GenVector.h"
+#include "Math/GenVector/LorentzVector.h"
+//#include "TMath/XYZVector.h"
+#include <boost/shared_ptr.hpp>
+//#include "CLHEP/Vector/LorentzVector.h"
 
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
@@ -118,7 +124,6 @@ int main (int argc, char *argv[])
     rootFileName = "MacroOutputIsoMu172024Trigger.root";
   }
 
-  //Discard last IsoMuTrigger part of 30 GeV (only 
 
   ////////////////////////
   //  Which systematics //
@@ -484,7 +489,7 @@ int main (int argc, char *argv[])
     // Files for Nominal & JES up/down
     //------------------------------------
     string wTreeFileTitle;
-    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
+    if(doJESShift == 0) wTreeFileTitle = "WTree/KinFit_WTree_CiematBoostDefinition_"+UsedTrigger+"_"+dataSetName+"_"+decayChannel+".root";
     if(doJESShift == 1) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESMinus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
     if(doJESShift == 2) wTreeFileTitle = "WTree/KinFit_WTree_"+UsedTrigger+"_JESPlus_1Sig_"+dataSetName+"_"+decayChannel+".root";  //JES systematics
         
@@ -505,8 +510,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined  
-      //for(unsigned int ievt = 0; ievt < 2000; ievt++){    //Also change fits on line 1551 back on (too few events causes crash!!)
+    //for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined  
+      for(unsigned int ievt = 0; ievt < 20000; ievt++){    //Also change fits on line 1551 back on (too few events causes crash!!)
       
       nEvents[d]++;
       if(ievt%2000 == 0)
@@ -804,7 +809,7 @@ int main (int argc, char *argv[])
       vector<TLorentzVector> leptonKinFitHadrAndLept, neutrinoKinFitHadrAndLept, leptBKinFitHadrAndLept, hadrBKinFitHadrAndLept, light1KinFitHadrAndLept, light2KinFitHadrAndLept;
            
       float standardCosTheta=0; 
-      TRootMCParticle standardNeutrino, standardTop,standardLepton,standardWLeptonic;      
+      TRootMCParticle standardNeutrino, standardTop,standardLepton,standardWLeptonic,standardbLept;      
 
       if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true)|| (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){     
 
@@ -819,7 +824,9 @@ int main (int argc, char *argv[])
 	int EventChargeWNeg=0;
 	int EventChargeLepPos=0; //1 for mu/el+, -1 for mu/el-
 	int EventChargeLepNeg =0;
-	TRootMCParticle Top,AntiTop,WPos,WNeg;
+	int EventChargebLept=0;  //-1 for b, 1 for anti-b
+	int EventChargeAntibLept=0;
+	TRootMCParticle Top,AntiTop,WPos,WNeg,bLept,AntibLept;
 	TLorentzVector standardLeptonWZMF, standardWLeptonicTZMF;
 
 	for(unsigned int i=0; i<mcParticles.size(); i++){
@@ -839,6 +846,14 @@ int main (int argc, char *argv[])
 
 	  if(fabs(mcParticles[i]->type()) == 5 && fabs(mcParticles[i]->motherType()) == 6){//Identifying bottom quarks
 	    EventParticleNumber[1]++;
+	    if(mcParticles[i]->type()==-5){
+	      bLept=*mcParticles[i];
+	      EventChargebLept=-1;
+	    }
+	    else if(mcParticles[i]->type()==5){
+	      AntibLept=*mcParticles[i];
+	      EventChargeAntibLept=1;
+	    }
 	  } 
 
 	  if(fabs(mcParticles[i]->type()) <= 4 && fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == 6){
@@ -892,24 +907,125 @@ int main (int argc, char *argv[])
 	if(EventParticleNumber[0]==2 && EventParticleNumber[1]==2 && EventParticleNumber[2]==2 && EventParticleNumber[3]==2 && EventParticleNumber[4]==2){
 	    
 	  //-----   Differentiating between proces from top and anti-top (choose leptonic):   -----
-	  if(EventChargeTop==1 && EventChargeWPos==1 && EventChargeLepPos==1){  // Proces: t -> b W+ -> mu/el+ nu
+	  if(EventChargeTop==1 && EventChargeWPos==1 && EventChargeLepPos==1){  // Proces: t(2/3) -> b(-1/3) W+ -> mu/el+ nu
 	    standardWLeptonicTZMF=WPos;
 	    standardWLeptonic=WPos;
 	    standardTop=Top;
+	    standardbLept=bLept;
 	  }
-	  else if(EventChargeAntiTop==-1 && EventChargeWNeg==-1 && EventChargeLepNeg==-1){ //proces: anti-t -> anti-b W- -> mu/el- anti-nu	
+	  else if(EventChargeAntiTop==-1 && EventChargeWNeg==-1 && EventChargeLepNeg==-1){ //proces: anti-t(-2/3) -> anti-b(1/3) W- -> mu/el- anti-nu	
 	    standardWLeptonicTZMF=WNeg;
 	    standardWLeptonic=WNeg;
 	    standardTop=AntiTop;
+	    standardbLept=AntibLept;
 	  }
+
+	  ////////////////////////////////////
+	  //Boostcode received from Ciemat: //
+	  ////////////////////////////////////
+	  // 1) Boost all particles to top rest frame 
+	  TLorentzVector leptTopRF;
+	  TLorentzVector TopTopRF;
+	  TLorentzVector WLeptTopRF;
+	  TLorentzVector bLeptTopRF;
+
+	  TopTopRF=standardTop;
+	  //TLorentzVector topBoost = TopTopRF.findBoostToCM();
+	  //TLorentzVector rest4Vec = TopTopRF.rest4Vector();
+	  //cout << " rest4Vector is = " << rest4Vec << endl;
+	  //cout << " The appropriate boost to take " << standardTop << endl
+	  //     << " to its rest frame is " << topBoost << endl;
+
+	  TopTopRF.Boost(-standardTop.BoostVector());
+// 	  cout << " TopTopRF Px = " << TopTopRF.Px() << endl;
+// 	  cout << " TopTopRF Py = " << TopTopRF.Py() << endl;
+// 	  cout << " TopTopRF Pz = " << TopTopRF.Pz() << endl;
+// 	  cout << " TopTopRF E = " << TopTopRF.E() << endl;
+
+	  leptTopRF = standardLepton;
+	  leptTopRF.Boost(-TopTopRF.BoostVector());
+// 	  cout << " leptTopRF Px = " << leptTopRF.Px() << endl;
+// 	  cout << " leptTopRF Py = " << leptTopRF.Py() << endl;
+// 	  cout << " leptTopRF Pz = " << leptTopRF.Pz() << endl;
+// 	  cout << " leptTopRF E = " << leptTopRF.E() << endl;
+
+	  WLeptTopRF = standardWLeptonic;
+	  WLeptTopRF.Boost(-TopTopRF.BoostVector());
+//  	  cout << " WLeptTopRF Px = " << WLeptTopRF.Px() << endl;
+//  	  cout << " WLeptTopRF Py = " << WLeptTopRF.Py() << endl;
+//  	  cout << " WLeptTopRF Pz = " << WLeptTopRF.Pz() << endl;
+//  	  cout << " WLeptTopRF E = " << WLeptTopRF.E() << endl;
+	  
+	  bLeptTopRF = standardbLept;
+	  bLeptTopRF.Boost(-TopTopRF.BoostVector());
+// 	  cout << " bLeptTopRF Px = " << bLeptTopRF.Px() << endl;
+// 	  cout << " bLeptTopRF Py = " << bLeptTopRF.Py() << endl;
+// 	  cout << " bLeptTopRF Pz = " << bLeptTopRF.Pz() << endl;
+// 	  cout << " bLeptTopRF E = " << bLeptTopRF.E() << endl;
+
+	  //2) Boost lepton and b quark to W-boson restframe
+	  TLorentzVector leptWRF = leptTopRF;
+	  TLorentzVector bLeptWRF = bLeptTopRF;
+	  TLorentzVector WLeptWRF = WLeptTopRF;
+
+// 	  cout << " WLeptWRF Px = " << WLeptWRF.Px() << endl;
+// 	  cout << " WLeptWRF Py = " << WLeptWRF.Py() << endl;
+// 	  cout << " WLeptWRF Pz = " << WLeptWRF.Pz() << endl;
+// 	  cout << " WLeptWRF E = " << WLeptWRF.E() << endl;
+
+	  WLeptWRF.Boost(-WLeptTopRF.BoostVector());
+// 	  cout << " WLeptWRF Px = " << WLeptWRF.Px() << endl;
+// 	  cout << " WLeptWRF Py = " << WLeptWRF.Py() << endl;
+// 	  cout << " WLeptWRF Pz = " << WLeptWRF.Pz() << endl;
+// 	  cout << " WLeptWRF E = " << WLeptWRF.E() << endl;
+
+	  leptWRF.Boost(-WLeptWRF.BoostVector());
+//  	  cout << " leptWRF Px = " << leptWRF.Px() << endl;
+//  	  cout << " leptWRF Py = " << leptWRF.Py() << endl;
+//  	  cout << " leptWRF Pz = " << leptWRF.Pz() << endl;
+//  	  cout << " leptWRF E = " << leptWRF.E() << endl;
+
+	  bLeptWRF.Boost(-WLeptWRF.BoostVector());
+// 	  cout << " bLeptWRF Px = " << bLeptWRF.Px() << endl;
+// 	  cout << " bLeptWRF Py = " << bLeptWRF.Py() << endl;
+// 	  cout << " bLeptWRF Pz = " << bLeptWRF.Pz() << endl;
+// 	  cout << " bLeptWRF E = " << bLeptWRF.E() << endl;	  
+	  	 
+// 	  // 3) Angle between b and boosted lepton in top rest frame
+// 	  double theta1 = ROOT::Math::VectorUtil::Angle( muWRF, bWRF ) ;
+// 	  double theta  = ROOT::Math::VectorUtil::Angle( muWRF, wTopRF );
+
+// 	  cout << " Theta1 value (angle between muon and negative b) = " << theta1 << endl;
+// 	  cout << " Theta value (angle between muon and w) = " << theta << endl;
+
+// 	  int bugg = 0 ;
+// 	  if ( fabs( theta1 - theta ) > 1.e-04 ) {
+// 	    bugg = 1;
+// 	  }
 
 	  //-----   Applying boost on muon and W:   -----
 	  standardLeptonWZMF=standardLepton;
 	  standardLeptonWZMF.Boost(-standardWLeptonicTZMF.BoostVector());
+// 	  cout << " standardLeptonWZMF Px = " << standardLeptonWZMF.Px() << endl;
+// 	  cout << " standardLeptonWZMF Py = " << standardLeptonWZMF.Py() << endl;
+// 	  cout << " standardLeptonWZMF Pz = " << standardLeptonWZMF.Pz() << endl;
+// 	  cout << " standardLeptonWZMF E = " << standardLeptonWZMF.E() << endl;
+
 	  standardWLeptonicTZMF.Boost(-standardTop.BoostVector());
+// 	  cout << " standardWLeptonicTZMF Px = " << standardWLeptonicTZMF.Px() << endl;
+// 	  cout << " standardWLeptonicTZMF Py = " << standardWLeptonicTZMF.Py() << endl;
+// 	  cout << " standardWLeptonicTZMF Pz = " << standardWLeptonicTZMF.Pz() << endl;
+// 	  cout << " standardWLeptonicTZMF E = " << standardWLeptonicTZMF.E() << endl;
+	  
 
 	  //-----   Calculating cos theta:   -----
-	  standardCosTheta = ((standardWLeptonicTZMF.Vect()).Dot(standardLeptonWZMF.Vect()))/(((standardWLeptonicTZMF.Vect()).Mag())*((standardLeptonWZMF.Vect()).Mag()));
+// 	  standardCosTheta = ((standardWLeptonicTZMF.Vect()).Dot(standardLeptonWZMF.Vect()))/(((standardWLeptonicTZMF.Vect()).Mag())*((standardLeptonWZMF.Vect()).Mag()));
+// 	  cout << " standard Cos Theta : " << standardCosTheta << endl;
+	  
+	  standardCosTheta = ((WLeptTopRF.Vect()).Dot(leptWRF.Vect()))/(((WLeptTopRF.Vect()).Mag())*((leptWRF.Vect()).Mag()));
+  
+// 	  float CosTheta = ((WLeptTopRF.Vect()).Dot(leptWRF.Vect()))/(((WLeptTopRF.Vect()).Mag())*((leptWRF.Vect()).Mag()));
+// 	  cout << " CosTheta with double boost method : " << CosTheta << endl;
     	  
 	  histo1D["StandardCosTheta"]->Fill(standardCosTheta);  // Histogram without fit
 	  histo1D["StandardCosThetaFit"]->Fill(standardCosTheta);  // Histogram with fit   	  
