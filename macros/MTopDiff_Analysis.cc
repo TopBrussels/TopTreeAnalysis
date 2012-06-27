@@ -83,91 +83,96 @@ int main (int argc, char *argv[])
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
   vector<string> inputMonsters;
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
+  if (argc >= 2)
+		inputMonsters.puch_back( string(argv[1]) );
+  else
+  {
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
   
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
   
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
   
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
   
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_BCtoE_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_BCtoE_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_EMEnriched_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_EMEnriched_Nominal_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_EMEnriched_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_BCtoE_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_BCtoE_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_EMEnriched_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_EMEnriched_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_EMEnriched_Nominal_SemiLep.root");
   
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignMinus_SemiLep.root"); broken file
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESPlus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignMinus_SemiLep.root");
-//  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignPlus_SemiLep.root");
-  
-/*  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingdown_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingup_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaledown_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaleup_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_matchingdown_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_matchingup_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_scaledown_Nominal_SemiLep.root");
-  inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_scaleup_Nominal_SemiLep.root");*/
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignMinus_SemiLep.root"); broken file
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignPlus_SemiLep.root");
+    
+/*    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingdown_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingup_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaledown_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaleup_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_matchingdown_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_matchingup_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_scaledown_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_scaleup_Nominal_SemiLep.root");*/
+  }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
   fout->cd();
