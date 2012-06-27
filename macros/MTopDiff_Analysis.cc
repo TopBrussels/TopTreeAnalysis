@@ -84,7 +84,7 @@ int main (int argc, char *argv[])
   
   vector<string> inputMonsters;
   if (argc >= 2)
-		inputMonsters.puch_back( string(argv[1]) );
+		inputMonsters.push_back( string(argv[1]) );
   else
   {
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
@@ -348,16 +348,12 @@ int main (int argc, char *argv[])
   MSPlot["Nr_of_jets"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"No. of jets","Events");
   MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
-  MSPlot["Nr_of_jets_leptonPlus"]->setNdivisionsX(505);
   MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"No. of jets","Events");
   MSPlot["Nr_of_jets_leptonMinus"]->setMaxY(50000.);
-  MSPlot["Nr_of_jets_leptonMinus"]->setNdivisionsX(505);
   MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}","Events");
   MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMaxY(18000.);
-  MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMinY(20.);
   MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}","Events");
   MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(28000.);
-  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMinY(20.);
   MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
   MSPlot["mTop_Fit_leptonPlus"]->setMaxY(6000.);
   MSPlot["mTop_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonMinus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
@@ -647,12 +643,12 @@ int main (int argc, char *argv[])
       float lumiWeight = 1., lumiWeightUp = 1., lumiWeightDown = 1.;
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("DAtaDriven") != string::npos) )
       {
-//        lumiWeight = Lumi3DWeights.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
-//        lumiWeightUp = Lumi3DWeightsUp.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
-//        lumiWeightDown = Lumi3DWeightsDown.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
-        lumiWeight = LumiWeights.ITweight( (float) monster->nPU() );
-        lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) monster->nPU() );
-        lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) monster->nPU() );
+        lumiWeight = Lumi3DWeights.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
+        lumiWeightUp = Lumi3DWeightsUp.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
+        lumiWeightDown = Lumi3DWeightsDown.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
+//        lumiWeight = LumiWeights.ITweight( monster->nPU() );
+//        lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) monster->nPU() );
+//        lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) monster->nPU() );
       }
       
       // muoncharge-string
@@ -753,7 +749,8 @@ int main (int argc, char *argv[])
       MSPlot["RelPFISo"+leptonDecay]->Fill(monster->leptonPFRelIso(), dataSet, true, monster->eventWeight()*lumiWeight);
       
       // Extra mTop and sigma(mTop) from fitresults
-      vector<float> mTop, sigmaMtop, minChi2, hadrBindex, light1index, light2index;
+      vector<float> mTop, sigmaMtop, minChi2;
+      vector<int> hadrBindex, light1index, light2index;
       int nFinalCombis=0; // final means after chi2<10 cut
       int mcCombiIndex = -1;
       for(unsigned int iCombi=0; iCombi<12; iCombi++)
@@ -1039,7 +1036,7 @@ int main (int argc, char *argv[])
       cout << " nSemiMu = " << nSemiMu << "  selEff = " << (float) nSemiMu / ( dataSet->Xsection() * dataSet->EquivalentLumi() * 23/27 ) << endl;
       cout << " nSemiEl = " << nSemiEl << "  selEff = " << (float) nSemiEl / ( dataSet->Xsection() * dataSet->EquivalentLumi() * 23/27 ) << endl;
       
-      cout << " b-tag eff = " <<  ( (float) nRealBjetsBtag ) / ( (float) nRealBjets ) *100 << " +- " << sqrt( (nRealBjetsBtag/pow(nRealBjets,2)) + (pow(nRealBjetsBtag,2)/pow(nRealBjets,3)) ) *100 << " %" << endl;
+      cout << " b-tag eff = " <<  ( (float) nRealBjetsBtag ) / ( (float) nRealBjets ) *100 << " +- " << sqrt( (nRealBjetsBtag/pow((float)nRealBjets,2)) + (pow((float)nRealBjetsBtag,2)/pow((float)nRealBjets,3)) ) *100 << " %" << endl;
     }
     else
     {
@@ -1304,3 +1301,4 @@ int main (int argc, char *argv[])
   
   return 0;
 }
+
