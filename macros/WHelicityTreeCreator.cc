@@ -17,11 +17,6 @@
 #include <stdio.h>
 #include "TMath.h"
 #include "Math/Vector3D.h"
-//#include "Math/GenVector.h"
-#include "Math/GenVector/LorentzVector.h"
-//#include "TMath/XYZVector.h"
-#include <boost/shared_ptr.hpp>
-//#include "CLHEP/Vector/LorentzVector.h"
 
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
@@ -223,18 +218,30 @@ int main (int argc, char *argv[])
   // Give the theoretical distribution for SM values
   //  --> Always stay the same 
   //
-  //histo1D["HelicityDistribution"] = new TH1F("HelicityDistribution","HelicityDistribution",200,-1,1);
-  //histo1D["HelicityDistributionLong"] = new TH1F("HelicityDistributionLong","HelicityDistributionLong",200,-1,1);
-  //histo1D["HelicityDistributionLeft"] = new TH1F("HelicityDistributionLeft","HelicityDistributionLeft",200,-1,1);
-  //histo1D["HelicityDistributionRight"] = new TH1F("HelicityDistributionRight","HelicityDistributionRight",200,-1,1);  
+  histo1D["HelicityDistribution"] = new TH1F("HelicityDistribution","HelicityDistribution",200,-1,1);
+  histo1D["HelicityDistributionLong"] = new TH1F("HelicityDistributionLong","HelicityDistributionLong",200,-1,1);
+  histo1D["HelicityDistributionLeft"] = new TH1F("HelicityDistributionLeft","HelicityDistributionLeft",200,-1,1);
+  histo1D["HelicityDistributionRight"] = new TH1F("HelicityDistributionRight","HelicityDistributionRight",200,-1,1);  
     
   // Give the Cos theta distribution for Semi Mu sample before event selection
   // Fit histograms gives the helicity values that should be used as SM values from CMS data
   // --> Always stay the same 
   //
-  histo1D["StandardCosTheta"]=new TH1F("StCosTheta","StCosTheta",200,-1,1);
-  histo1D["StandardCosThetaFit"]=new TH1F("StCosThetaFit","StCosThetaFit",200,-1,1);   
+   histo1D["StandardCosTheta"]=new TH1F("StCosTheta","StCosTheta",200,-1,1);
+   histo1D["StandardCosThetaFit"]=new TH1F("StCosThetaFit","StCosThetaFit",200,-1,1);   
 
+  histo1D["CosThetaBrussels"]=new TH1F("CosThetaBrussels","CosThetaBrussels",200,-1,1);
+  histo1D["CosThetaBrusselsFit"]=new TH1F("CosThetaBrusselsFit","CosThetaBrusselsFit",200,-1,1);   
+  
+  histo1D["CosThetaCiemat"]=new TH1F("CosThetaCiemat","CosThetaCiemat",200,-1,1);
+  histo1D["CosThetaCiematFit"]=new TH1F("CosThetaCiematFit","CosThetaCiematFit",200,-1,1);   
+  
+  histo1D["CosThetaAtlas"]=new TH1F("CosThetaAtlas","CosThetaAtlas",200,-1,1);
+  histo1D["CosThetaAtlasFit"]=new TH1F("CosThetaAtlasFit","CosThetaAtlasFit",200,-1,1);   
+  
+  histo1D["CosThetaTevatron"]=new TH1F("CosThetaTevatron","CosThetaTevatron",200,-1,1);
+  histo1D["CosThetaTevatronFit"]=new TH1F("CosThetaTevatronFit","CosThetaTevatronFit",200,-1,1);   
+  
   histo1D["ElectronPt"]=new TH1F("ElectronPt","ElectronPt",200,0,250);
   histo1D["ElectronEta"]=new TH1F("ElectronEta","ElectronEta",200,-5,5);
 
@@ -301,14 +308,14 @@ int main (int argc, char *argv[])
   //   Making the theoretical helicity distribution    // -> To know how the distribution should look like!! 
   ///////////////////////////////////////////////////////  --> Only Fit values are used in code!!
   //------   Standard Model   -----
-  float LongitudinalFraction = 0.64491; // values obtained from fit (December 2011 -- RunA2011 result)
-  float RightHandedFraction = 0.0334506;
-  float LeftHandedFraction = 1 - LongitudinalFraction - RightHandedFraction;
-  float SMDiffDistribution[3]; //0:Longitudinal; 1: Righthanded; 2: Lefthanded
+  float LongitudinalFraction = 0.697606; // values obtained from fit (July 2012 -- Updated boost method and cos Theta* definition!!)
+  float RightHandedFraction =-0.000529082;
+  float LeftHandedFraction = 0.302511;
+  float SMDiffDistribution[3]; //0:Longitudinal; 1: Righthanded; 2: Lefthanded    -0.000529082 0.302511 0.697606
   float XVariable;
   std::cout << " Used SM helicity variables: Longitudinal (f0) = " << LongitudinalFraction << " Righthanded (f+) = " << RightHandedFraction << " Lefthanded (f-) = " << LeftHandedFraction << std::endl;    
 
-  /*for(unsigned int jj=0;jj<200;jj++){
+  for(unsigned int jj=0;jj<200;jj++){
     XVariable=-1+0.01*jj;
       
     SMDiffDistribution[0] = (LongitudinalFraction*6*(1-pow(XVariable,2)))/8;
@@ -319,7 +326,7 @@ int main (int argc, char *argv[])
     histo1D["HelicityDistributionLong"]->SetBinContent(jj+1,SMDiffDistribution[0]);
     histo1D["HelicityDistributionLeft"]->SetBinContent(jj+1,SMDiffDistribution[2]);
     histo1D["HelicityDistributionRight"]->SetBinContent(jj+1,SMDiffDistribution[1]);
-    }*/
+  }
 
   /////////////////////////////
   /// ResolutionFit Stuff
@@ -510,8 +517,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    //for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined  
-      for(unsigned int ievt = 0; ievt < 20000; ievt++){    //Also change fits on line 1551 back on (too few events causes crash!!)
+    for(unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++){     //In this loop plots before selection can be defined  
+      //for(unsigned int ievt = 0; ievt < 8000; ievt++){    //Also change fits on line 1551 back on (too few events causes crash!!)
       
       nEvents[d]++;
       if(ievt%2000 == 0)
@@ -809,6 +816,7 @@ int main (int argc, char *argv[])
       vector<TLorentzVector> leptonKinFitHadrAndLept, neutrinoKinFitHadrAndLept, leptBKinFitHadrAndLept, hadrBKinFitHadrAndLept, light1KinFitHadrAndLept, light2KinFitHadrAndLept;
            
       float standardCosTheta=0; 
+      int bugg=0;
       TRootMCParticle standardNeutrino, standardTop,standardLepton,standardWLeptonic,standardbLept;      
 
       if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true)|| (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){     
@@ -846,11 +854,11 @@ int main (int argc, char *argv[])
 
 	  if(fabs(mcParticles[i]->type()) == 5 && fabs(mcParticles[i]->motherType()) == 6){//Identifying bottom quarks
 	    EventParticleNumber[1]++;
-	    if(mcParticles[i]->type()==-5){
+	    if(mcParticles[i]->type()==5){
 	      bLept=*mcParticles[i];
 	      EventChargebLept=-1;
 	    }
-	    else if(mcParticles[i]->type()==5){
+	    else if(mcParticles[i]->type()==-5){
 	      AntibLept=*mcParticles[i];
 	      EventChargeAntibLept=1;
 	    }
@@ -894,8 +902,8 @@ int main (int argc, char *argv[])
 	    if(fabs(mcParticles[i]->type()) == 11 && fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == 6 && mcParticles[i]->status()==3){ //status: 1:stable; 2:shower; 3:hard scattering(coming from the studied hard proces)
 	      EventParticleNumber[4]++;
 	      standardLepton=*mcParticles[i];
-	      if(mcParticles[i]->type()==11){EventChargeLepNeg=-1;}
-	      else if(mcParticles[i]->type()==-11){EventChargeLepPos=1;}
+	      if(mcParticles[i]->type()==13){EventChargeLepNeg=-1;}
+	      else if(mcParticles[i]->type()==-13){EventChargeLepPos=1;}
 	    }	  	  
 	  }
 	  
@@ -924,111 +932,75 @@ int main (int argc, char *argv[])
 	  //Boostcode received from Ciemat: //
 	  ////////////////////////////////////
 	  // 1) Boost all particles to top rest frame 
-	  TLorentzVector leptTopRF;
-	  TLorentzVector TopTopRF;
-	  TLorentzVector WLeptTopRF;
-	  TLorentzVector bLeptTopRF;
+	  TLorentzVector leptTopRF = standardLepton;
+	  TLorentzVector TopTopRF = standardTop;
+	  TLorentzVector WLeptTopRF = standardWLeptonic;
+	  TLorentzVector bLeptTopRF = standardbLept;
+	  TLorentzVector neutrinoTopRF = standardNeutrino;
 
-	  TopTopRF=standardTop;
-	  //TLorentzVector topBoost = TopTopRF.findBoostToCM();
-	  //TLorentzVector rest4Vec = TopTopRF.rest4Vector();
-	  //cout << " rest4Vector is = " << rest4Vec << endl;
-	  //cout << " The appropriate boost to take " << standardTop << endl
-	  //     << " to its rest frame is " << topBoost << endl;
+	  TLorentzVector leptWRF = standardLepton;
+	  TLorentzVector TopWRF = standardTop;
+	  TLorentzVector WLeptWRF = standardWLeptonic;
+	  TLorentzVector bLeptWRF = standardbLept;
+	  TLorentzVector neutrinoWRF = standardNeutrino;
 
+	  //Performing boost to Top Rest-frame:
 	  TopTopRF.Boost(-standardTop.BoostVector());
-// 	  cout << " TopTopRF Px = " << TopTopRF.Px() << endl;
-// 	  cout << " TopTopRF Py = " << TopTopRF.Py() << endl;
-// 	  cout << " TopTopRF Pz = " << TopTopRF.Pz() << endl;
-// 	  cout << " TopTopRF E = " << TopTopRF.E() << endl;
+	  leptTopRF.Boost(-standardTop.BoostVector());
+	  WLeptTopRF.Boost(-standardTop.BoostVector());	 
+	  bLeptTopRF.Boost(-standardTop.BoostVector());
+	  neutrinoTopRF.Boost(-standardTop.BoostVector());
 
-	  leptTopRF = standardLepton;
-	  leptTopRF.Boost(-TopTopRF.BoostVector());
-// 	  cout << " leptTopRF Px = " << leptTopRF.Px() << endl;
-// 	  cout << " leptTopRF Py = " << leptTopRF.Py() << endl;
-// 	  cout << " leptTopRF Pz = " << leptTopRF.Pz() << endl;
-// 	  cout << " leptTopRF E = " << leptTopRF.E() << endl;
+	  //Performing boost to W-boson Rest-frame (original particles):
+	  WLeptWRF.Boost(-standardWLeptonic.BoostVector());
+	  TopWRF.Boost(-standardWLeptonic.BoostVector());
+	  leptWRF.Boost(-standardWLeptonic.BoostVector());
+	  bLeptWRF.Boost(-standardWLeptonic.BoostVector());	  
+	  neutrinoWRF.Boost(-standardWLeptonic.BoostVector());
 
-	  WLeptTopRF = standardWLeptonic;
-	  WLeptTopRF.Boost(-TopTopRF.BoostVector());
-//  	  cout << " WLeptTopRF Px = " << WLeptTopRF.Px() << endl;
-//  	  cout << " WLeptTopRF Py = " << WLeptTopRF.Py() << endl;
-//  	  cout << " WLeptTopRF Pz = " << WLeptTopRF.Pz() << endl;
-//  	  cout << " WLeptTopRF E = " << WLeptTopRF.E() << endl;
-	  
-	  bLeptTopRF = standardbLept;
-	  bLeptTopRF.Boost(-TopTopRF.BoostVector());
-// 	  cout << " bLeptTopRF Px = " << bLeptTopRF.Px() << endl;
-// 	  cout << " bLeptTopRF Py = " << bLeptTopRF.Py() << endl;
-// 	  cout << " bLeptTopRF Pz = " << bLeptTopRF.Pz() << endl;
-// 	  cout << " bLeptTopRF E = " << bLeptTopRF.E() << endl;
+	  //2) Boost lepton and b quark to W-boson restframe (after boost performed to Top Rest-frame):
+	  TLorentzVector leptTopWRF = leptTopRF;
+	  TLorentzVector bLeptTopWRF = bLeptTopRF;
+	  TLorentzVector WLeptTopWRF = WLeptTopRF;
+	  TLorentzVector neutrinoTopWRF = neutrinoTopRF;
+	  TLorentzVector topTopWRF = TopTopRF;
+	  TRootMCParticle WAfterTopBoost = WLeptTopRF;
 
-	  //2) Boost lepton and b quark to W-boson restframe
-	  TLorentzVector leptWRF = leptTopRF;
-	  TLorentzVector bLeptWRF = bLeptTopRF;
-	  TLorentzVector WLeptWRF = WLeptTopRF;
+	  WLeptTopWRF.Boost(-WAfterTopBoost.BoostVector());
+	  leptTopWRF.Boost(-WAfterTopBoost.BoostVector());
+	  bLeptTopWRF.Boost(-WAfterTopBoost.BoostVector());
+	  neutrinoTopWRF.Boost(-WAfterTopBoost.BoostVector());
+	  topTopWRF.Boost(-WAfterTopBoost.BoostVector());
 
-// 	  cout << " WLeptWRF Px = " << WLeptWRF.Px() << endl;
-// 	  cout << " WLeptWRF Py = " << WLeptWRF.Py() << endl;
-// 	  cout << " WLeptWRF Pz = " << WLeptWRF.Pz() << endl;
-// 	  cout << " WLeptWRF E = " << WLeptWRF.E() << endl;
+	  //Different methods for calculating theta angle:
+	  float ThetaCiemat = ROOT::Math::VectorUtil::Angle( leptTopWRF, WLeptTopRF );
+	  float CosThetaCiemat = TMath::Cos(ThetaCiemat);
+	  histo1D["CosThetaCiemat"]->Fill(CosThetaCiemat);
+	  histo1D["CosThetaCiematFit"]->Fill(CosThetaCiemat);
 
-	  WLeptWRF.Boost(-WLeptTopRF.BoostVector());
-// 	  cout << " WLeptWRF Px = " << WLeptWRF.Px() << endl;
-// 	  cout << " WLeptWRF Py = " << WLeptWRF.Py() << endl;
-// 	  cout << " WLeptWRF Pz = " << WLeptWRF.Pz() << endl;
-// 	  cout << " WLeptWRF E = " << WLeptWRF.E() << endl;
+	  float ThetaAtlas = ROOT::Math::VectorUtil::Angle( leptWRF, bLeptWRF );
+	  float CosThetaAtlas = -(TMath::Cos(ThetaAtlas));
+	  histo1D["CosThetaAtlas"]->Fill(CosThetaAtlas);
+	  histo1D["CosThetaAtlasFit"]->Fill(CosThetaAtlas);
 
-	  leptWRF.Boost(-WLeptWRF.BoostVector());
-//  	  cout << " leptWRF Px = " << leptWRF.Px() << endl;
-//  	  cout << " leptWRF Py = " << leptWRF.Py() << endl;
-//  	  cout << " leptWRF Pz = " << leptWRF.Pz() << endl;
-//  	  cout << " leptWRF E = " << leptWRF.E() << endl;
+	  float ThetaTevatron = ROOT::Math::VectorUtil::Angle( TopWRF, leptWRF );
+	  float CosThetaTevatron = -(TMath::Cos(ThetaTevatron));
+	  histo1D["CosThetaTevatron"]->Fill(CosThetaTevatron);
+	  histo1D["CosThetaTevatronFit"]->Fill(CosThetaTevatron);
 
-	  bLeptWRF.Boost(-WLeptWRF.BoostVector());
-// 	  cout << " bLeptWRF Px = " << bLeptWRF.Px() << endl;
-// 	  cout << " bLeptWRF Py = " << bLeptWRF.Py() << endl;
-// 	  cout << " bLeptWRF Pz = " << bLeptWRF.Pz() << endl;
-// 	  cout << " bLeptWRF E = " << bLeptWRF.E() << endl;	  
-	  	 
-// 	  // 3) Angle between b and boosted lepton in top rest frame
-// 	  double theta1 = ROOT::Math::VectorUtil::Angle( muWRF, bWRF ) ;
-// 	  double theta  = ROOT::Math::VectorUtil::Angle( muWRF, wTopRF );
+ 	  // 3) Angle between b and boosted lepton in top rest frame
+  	  double theta1 = -TMath::Cos(ROOT::Math::VectorUtil::Angle( leptTopWRF, bLeptTopRF )) ;
+  	  double theta  = TMath::Cos(ROOT::Math::VectorUtil::Angle( leptTopWRF, WLeptTopRF ));
 
-// 	  cout << " Theta1 value (angle between muon and negative b) = " << theta1 << endl;
-// 	  cout << " Theta value (angle between muon and w) = " << theta << endl;
+	  int bugg = 0 ;
+	  if ( fabs( theta1 - theta ) > 1.e-04 ) {
+	    bugg = 1;
+	  }
+	  if(bugg == 1) cout << " Event found with difference in cosine : " << theta1 << " vs " << theta << endl;
 
-// 	  int bugg = 0 ;
-// 	  if ( fabs( theta1 - theta ) > 1.e-04 ) {
-// 	    bugg = 1;
-// 	  }
-
-	  //-----   Applying boost on muon and W:   -----
-	  standardLeptonWZMF=standardLepton;
-	  standardLeptonWZMF.Boost(-standardWLeptonicTZMF.BoostVector());
-// 	  cout << " standardLeptonWZMF Px = " << standardLeptonWZMF.Px() << endl;
-// 	  cout << " standardLeptonWZMF Py = " << standardLeptonWZMF.Py() << endl;
-// 	  cout << " standardLeptonWZMF Pz = " << standardLeptonWZMF.Pz() << endl;
-// 	  cout << " standardLeptonWZMF E = " << standardLeptonWZMF.E() << endl;
-
-	  standardWLeptonicTZMF.Boost(-standardTop.BoostVector());
-// 	  cout << " standardWLeptonicTZMF Px = " << standardWLeptonicTZMF.Px() << endl;
-// 	  cout << " standardWLeptonicTZMF Py = " << standardWLeptonicTZMF.Py() << endl;
-// 	  cout << " standardWLeptonicTZMF Pz = " << standardWLeptonicTZMF.Pz() << endl;
-// 	  cout << " standardWLeptonicTZMF E = " << standardWLeptonicTZMF.E() << endl;
-	  
-
-	  //-----   Calculating cos theta:   -----
-// 	  standardCosTheta = ((standardWLeptonicTZMF.Vect()).Dot(standardLeptonWZMF.Vect()))/(((standardWLeptonicTZMF.Vect()).Mag())*((standardLeptonWZMF.Vect()).Mag()));
-// 	  cout << " standard Cos Theta : " << standardCosTheta << endl;
-	  
-	  standardCosTheta = ((WLeptTopRF.Vect()).Dot(leptWRF.Vect()))/(((WLeptTopRF.Vect()).Mag())*((leptWRF.Vect()).Mag()));
-  
-// 	  float CosTheta = ((WLeptTopRF.Vect()).Dot(leptWRF.Vect()))/(((WLeptTopRF.Vect()).Mag())*((leptWRF.Vect()).Mag()));
-// 	  cout << " CosTheta with double boost method : " << CosTheta << endl;
-    	  
-	  histo1D["StandardCosTheta"]->Fill(standardCosTheta);  // Histogram without fit
-	  histo1D["StandardCosThetaFit"]->Fill(standardCosTheta);  // Histogram with fit   	  
+  	  standardCosTheta = theta;
+ 	  histo1D["StandardCosTheta"]->Fill(standardCosTheta);  // Histogram without fit
+ 	  histo1D["StandardCosThetaFit"]->Fill(standardCosTheta);  // Histogram with fit   	  
 
 	}
       }//if dataset Semi mu ttbar  
@@ -1235,7 +1207,8 @@ int main (int argc, char *argv[])
 	    }
 	}
       
-      if(eventSelectedSemiEl==true || eventSelectedSemiMu==true){  
+
+      if((eventSelectedSemiEl==true || eventSelectedSemiMu==true) && bugg!=1){  
 	
 	float CorrectRecMassW=0;
 	float CorrectRecMassTop=0;
@@ -1773,6 +1746,39 @@ int main (int argc, char *argv[])
       histo1D["StandardCosThetaFit"]->Fit("helicityFit","Q");
       std::cout << " fit values (before event selection) : " << helicityFit->GetParameter(0) << " " << helicityFit->GetParameter(1) << " " << helicityFit->GetParameter(2) << std::endl;
       std::cout << " fit values error (before event selection) : " << helicityFit->GetParError(0) << " " << helicityFit->GetParError(1) << " " << helicityFit->GetParError(2) << std::endl;
+
+      histo1D["CosThetaBrusselsFit"]->Scale(100./(histo1D["CosThetaBrusselsFit"]->Integral()));
+      histo1D["CosThetaBrusselsFit"]->SetMinimum(0);
+      histo1D["CosThetaBrusselsFit"]->SetMaximum(0.8);
+      TF1 *BrusselsFit = new TF1("BrusselsFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["CosThetaBrusselsFit"]->Fit("BrusselsFit","Q");
+      std::cout << " Brussels fit values (before event selection) : " << BrusselsFit->GetParameter(0) << " " << BrusselsFit->GetParameter(1) << " " << BrusselsFit->GetParameter(2) << std::endl;
+      std::cout << " Brussels fit values error (before event selection) : " << BrusselsFit->GetParError(0) << " " << BrusselsFit->GetParError(1) << " " << BrusselsFit->GetParError(2) << std::endl;
+
+      histo1D["CosThetaCiematFit"]->Scale(100./(histo1D["CosThetaCiematFit"]->Integral()));
+      histo1D["CosThetaCiematFit"]->SetMinimum(0);
+      histo1D["CosThetaCiematFit"]->SetMaximum(0.8);
+      TF1 *CiematFit = new TF1("CiematFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["CosThetaCiematFit"]->Fit("CiematFit","Q");
+      std::cout << " Ciemat fit values (before event selection) : " << CiematFit->GetParameter(0) << " " << CiematFit->GetParameter(1) << " " << CiematFit->GetParameter(2) << std::endl;
+      std::cout << " Ciemat fit values error (before event selection) : " << CiematFit->GetParError(0) << " " << CiematFit->GetParError(1) << " " << CiematFit->GetParError(2) << std::endl;
+
+      histo1D["CosThetaAtlasFit"]->Scale(100./(histo1D["CosThetaAtlasFit"]->Integral()));
+      histo1D["CosThetaAtlasFit"]->SetMinimum(0);
+      histo1D["CosThetaAtlasFit"]->SetMaximum(0.8);
+      TF1 *AtlasFit = new TF1("AtlasFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["CosThetaAtlasFit"]->Fit("AtlasFit","Q");
+      std::cout << " Atlat fit values (before event selection) : " << AtlasFit->GetParameter(0) << " " << AtlasFit->GetParameter(1) << " " << AtlasFit->GetParameter(2) << std::endl;
+      std::cout << " Atlas fit values error (before event selection) : " << AtlasFit->GetParError(0) << " " << AtlasFit->GetParError(1) << " " << AtlasFit->GetParError(2) << std::endl;
+
+      histo1D["CosThetaTevatronFit"]->Scale(100./(histo1D["CosThetaTevatronFit"]->Integral()));
+      histo1D["CosThetaTevatronFit"]->SetMinimum(0);
+      histo1D["CosThetaTevatronFit"]->SetMaximum(0.8);
+      TF1 *TevatronFit = new TF1("TevatronFit","((([0]*3*(1+x)*(1+x))+([1]*3*(1-x)*(1-x))+([2]*6*(1-x*x)))/8)",-1,1);
+      histo1D["CosThetaTevatronFit"]->Fit("TevatronFit","Q");
+      std::cout << " Tevatron fit values (before event selection) : " << TevatronFit->GetParameter(0) << " " << TevatronFit->GetParameter(1) << " " << TevatronFit->GetParameter(2) << std::endl;
+      std::cout << " Tevatron fit values error (before event selection) : " << TevatronFit->GetParError(0) << " " << TevatronFit->GetParError(1) << " " << TevatronFit->GetParError(2) << std::endl;
+
     }
     
     WTreeFile->cd();
