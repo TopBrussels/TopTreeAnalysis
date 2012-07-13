@@ -74,6 +74,8 @@ int main(int argc, char* argv[]) {
   // Naked option
   bool isRAW = false;
   
+  cout << "[Info:] start of the 2012 Data analysis with Summer12 Monte Carlo " << endl;
+  
   // Arguments
   for(int iarg = 0; iarg < argc && argc>1 ; iarg++){
     std::string argval=argv[iarg];
@@ -154,8 +156,12 @@ int main(int argc, char* argv[]) {
       
       // cross sections and weights
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*163/3628285; 		isTop = true;} //
+      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
+      else if (dataSetName == "twdr"){         	sprintf(name, "twdr");         	xlweight = lumi*11.1/497657; 		} 
       else if (dataSetName == "atwdr"){         sprintf(name, "atwdr");         xlweight = lumi*11.1/493460; 		} 
+      else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} 
+      else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} 
+      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
           
       //Test file
       else{    	                                sprintf(name, "test");	        xlweight = 1;} 
