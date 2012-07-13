@@ -8,15 +8,18 @@
 using namespace std;
 
 class BTagJetSelection{
+  
+ public:
+  BTagJetSelection();
+  ~BTagJetSelection();
+  
+  int HighestProbSelection(int bTagLoop, int ConsideredBTagger, vector<float> KinFitProb, vector<float> btagTCHE, vector<float> btagTCHP, vector<float> btagSSVHE, vector<float> btagSSVHP, vector<float> btagCSV, vector<float> btagJP, vector<float> btagJBP);
+  
+  float GetProbability() {return MaximumProbability;}
 
-  public:
-   BTagJetSelection();
-   ~BTagJetSelection();
-   
-   int HighestProbSelection(int bTagLoop, int ConsideredBTagger, vector<float> KinFitProb, vector<float> btagTCHE, vector<float> btagTCHP, vector<float> btagSSVHE, vector<float> btagSSVHP, vector<float> btagCSV);
-   
-   private:
-
+ private:
+  float MaximumProbability;
+  
 };
 
 #endif

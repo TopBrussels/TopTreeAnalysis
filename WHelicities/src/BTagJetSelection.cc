@@ -10,16 +10,16 @@ BTagJetSelection::~BTagJetSelection(){
 
 }
 
-int BTagJetSelection::HighestProbSelection(int bTagLoop, int ConsideredBTagger, vector<float> KinFitProb, vector<float> btagTCHE, vector<float> btagTCHP, vector<float> btagSSVHE, vector<float> btagSSVHP, vector<float> btagCSV){
+int BTagJetSelection::HighestProbSelection(int bTagLoop, int ConsideredBTagger, vector<float> KinFitProb, vector<float> btagTCHE, vector<float> btagTCHP, vector<float> btagSSVHE, vector<float> btagSSVHP, vector<float> btagCSV, vector<float> btagJP, vector<float> btagJBP){
 
-  float ProbBTag[5][4][4];
+  float ProbBTag[7][4][4];
   int BLeptIndex[12];
   int BHadrIndex[12];
   
-   //Fist index represents used btagger (0 = tche, 1 = tchp, 2 = ssvhe, 3 = ssvhp & 4 = csv)
+   //Fist index represents used btagger (0 = tche, 1 = tchp, 2 = ssvhe, 3 = ssvhp, 4 = csv, 5 = jp & 6 = jbp)
   //Second index represents working point (0 = no btag, 1 = loose, 2 = medium & 3 = tight)
   //Third index represents jet numbering
-  for(int ii=0; ii<5; ii++){
+  for(int ii=0; ii<7; ii++){
     for(int jj=0;jj<4;jj++){
       for(int kk=0;kk<4;kk++){
 	ProbBTag[ii][jj][kk]=1.;
@@ -69,42 +69,60 @@ int BTagJetSelection::HighestProbSelection(int bTagLoop, int ConsideredBTagger, 
     if(btagCSV[ii]<0.244){ProbBTag[4][1][ii]=0.;}
     if(btagCSV[ii]<0.679){ProbBTag[4][2][ii]=0.;}
     if(btagCSV[ii]<0.898){ProbBTag[4][3][ii]=0.;}
+    if(btagJP[ii]<0.275){ProbBTag[5][1][ii]=0.;}
+    if(btagJP[ii]<0.545){ProbBTag[5][2][ii]=0.;}
+    if(btagJP[ii]<0.790){ProbBTag[5][3][ii]=0.;}
+    if(btagJBP[ii]<1.33){ProbBTag[6][1][ii]=0.;}
+    if(btagJBP[ii]<2.55){ProbBTag[6][2][ii]=0.;}
+    if(btagJBP[ii]<3.74){ProbBTag[6][3][ii]=0.;}
   }
 
+//   for(int ii = 0; ii<12; ii++){
+//     if(KinFitProb[ii] == -1.){
+//       KinFitProb[ii] = 0.;
+//     }
+//   }
   
   float MaximumProbability=0;
   int WorkingPointNumber=0;
   int SelectedJetCombination = 999;
   int RejectEventCombination = 999;
   float TotalProbability[12];
+
   if(bTagLoop >1 && bTagLoop <= 5){WorkingPointNumber=1;}
   else if (bTagLoop >=6 && bTagLoop <= 9){WorkingPointNumber=2;}
   else if(bTagLoop >=10 && bTagLoop <=13){WorkingPointNumber=3;}
     
   if(bTagLoop == 1){  //No btag applied
-    for(int ii=0;ii<12;ii++){
-      TotalProbability[ii] = KinFitProb[ii];
-      if(MaximumProbability<TotalProbability[ii]){
-	MaximumProbability=TotalProbability[ii];
-	SelectedJetCombination=ii;
+    for(int ii=0;ii<12;ii++){      
+      if(KinFitProb[ii]>=0){
+	TotalProbability[ii] = KinFitProb[ii];
+	if(MaximumProbability<TotalProbability[ii]){
+	  MaximumProbability=TotalProbability[ii];
+	  SelectedJetCombination=ii;
+	}
       }
     }
   }
   else if(bTagLoop == 2 || bTagLoop == 6 || bTagLoop == 10){  //1 btag on hadr jet
     for(int ii=0;ii<12;ii++){
-      TotalProbability[ii] = KinFitProb[ii]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BHadrIndex[ii]];
-      if(MaximumProbability<TotalProbability[ii]){
-	MaximumProbability=TotalProbability[ii];
-	SelectedJetCombination=ii;
+      if(KinFitProb[ii]>=0){
+	TotalProbability[ii] = KinFitProb[ii]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BHadrIndex[ii]];
+	if(MaximumProbability<TotalProbability[ii]){
+	  MaximumProbability=TotalProbability[ii];
+	  SelectedJetCombination=ii;
+	}
       }
     }
   }
   else if(bTagLoop == 3 || bTagLoop == 7 || bTagLoop == 11){  //1 btag on lept jet
     for(int ii=0;ii<12;ii++){
-      TotalProbability[ii] = KinFitProb[ii]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BLeptIndex[ii]];
-      if(MaximumProbability<TotalProbability[ii]){
-	MaximumProbability=TotalProbability[ii];
-	SelectedJetCombination=ii;
+      if(KinFitProb[ii]>=0){
+	TotalProbability[ii] = KinFitProb[ii]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BLeptIndex[ii]];
+	if(MaximumProbability<TotalProbability[ii]){
+	  MaximumProbability=TotalProbability[ii];
+	  SelectedJetCombination=ii;
+	}
       }
     }
   }
@@ -113,23 +131,29 @@ int BTagJetSelection::HighestProbSelection(int bTagLoop, int ConsideredBTagger, 
       float bTagProb=0.;
       if(ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BHadrIndex[ii]] == 1 || ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BLeptIndex[ii]] ==1)
 	bTagProb = 1;
-      TotalProbability[ii] = KinFitProb[ii]*bTagProb;
-      if(MaximumProbability<TotalProbability[ii]){
-	MaximumProbability=TotalProbability[ii];
-	SelectedJetCombination=ii;
+      if(KinFitProb[ii]>=0){
+	TotalProbability[ii] = KinFitProb[ii]*bTagProb;
+	if(MaximumProbability<TotalProbability[ii]){
+	  MaximumProbability=TotalProbability[ii];
+	  SelectedJetCombination=ii;
+	}
       }
     }
   }
   else if(bTagLoop == 5 || bTagLoop == 9 || bTagLoop == 13){  //2 btags
     for(int ii=0;ii<12;ii++){
-      TotalProbability[ii] = KinFitProb[ii]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BHadrIndex[ii]]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BLeptIndex[ii]];
-      if(MaximumProbability<TotalProbability[ii]){
-	MaximumProbability=TotalProbability[ii];
-	SelectedJetCombination=ii;
+      if(KinFitProb[ii]>=0){
+	TotalProbability[ii] = KinFitProb[ii]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BHadrIndex[ii]]*ProbBTag[ConsideredBTagger-1][WorkingPointNumber][BLeptIndex[ii]];
+	if(MaximumProbability<TotalProbability[ii]){
+	  MaximumProbability=TotalProbability[ii];
+	  SelectedJetCombination=ii;
+	}
       }
     }
   }
     
+  //cout << " MaximumProbability from BTagJetSelection class : " << MaximumProbability << endl;
+  //cout << " Combination from BTagJetSelection class : " << SelectedJetCombination << " | RejectedCombiantion : " << RejectEventCombination << endl;
   if(MaximumProbability != 0) return SelectedJetCombination;
   else return RejectEventCombination;
 }

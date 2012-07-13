@@ -1,4 +1,3 @@
-
 #include "../interface/BTagCosThetaCalculation.h"
 
 BTagCosThetaCalculation::BTagCosThetaCalculation(){
@@ -12,22 +11,28 @@ BTagCosThetaCalculation::~BTagCosThetaCalculation(){
 float BTagCosThetaCalculation::Calculation(TLorentzVector lepton, TLorentzVector Neutrino, TLorentzVector leptonicBJet){
 
   float CosTheta = 999;	  
+  
   //----------------------------------------------
   //  Calculating cos theta value
   //----------------------------------------------
   
-  TLorentzVector WLeptonic = (Neutrino+lepton);
-  TLorentzVector TopLeptonic = (Neutrino+lepton+leptonicBJet);
+  //TLorentzVector WLeptonic = (Neutrino+lepton);
+  TRootMCParticle WLeptonic = (Neutrino+lepton);
   
-  //Reboost the particles to rest frames
-  TLorentzVector MuonWZMF = lepton; // In W Zero Mass Frame (WZMF)
-  TLorentzVector WLeptonicTZMF = WLeptonic;  // In Top Zero Mass Frame (TZMF)	  
-  
-  MuonWZMF.Boost(-WLeptonic.BoostVector());
-  WLeptonicTZMF.Boost(-TopLeptonic.BoostVector());
-  
+  TLorentzVector TopWRF = (Neutrino+lepton+leptonicBJet);
+  TLorentzVector leptWRF = lepton;
+
+  //Angle between Top in WRF and lepton in WRF
+  TopWRF.Boost(-WLeptonic.BoostVector());
+  leptWRF.Boost (-WLeptonic.BoostVector());
+
   //Calculating cos:	      
-  CosTheta = ((WLeptonicTZMF.Vect()).Dot(MuonWZMF.Vect()))/(((WLeptonicTZMF.Vect()).Mag())*((MuonWZMF.Vect()).Mag()));       	
+  float ThetaTevatron = ROOT::Math::VectorUtil::Angle( TopWRF, leptWRF );
+  CosTheta = -(TMath::Cos(ThetaTevatron));
+
+  if(WLeptonic.E() < 0.){
+    cout << " Event with negative WLept energy!!! (BTagCosThetaCalculation class) Cos theta = " << CosTheta << endl;
+  }
   
   return CosTheta;	
 }        
@@ -83,24 +88,19 @@ float BTagCosThetaCalculation::CalcOrigKins(int BLeptonicIndex, int BHadronicInd
     //----------------------------------------------
     //  Calculating cos theta value
     //----------------------------------------------
-	
+
     TLorentzVector WLeptonic = (Neutrino+muon);
-    TLorentzVector TopLeptonic = (Neutrino+muon+selectedJets[BLeptonicIndex]);
+  
+    TLorentzVector TopWRF = (Neutrino+muon+selectedJets[BLeptonicIndex]);
+    TLorentzVector leptWRF = muon;
 
-    //histo1D["TopMassLeptReco"]->Fill(TopLeptonic.M());
-    //histo1D["WMassLeptReco"]->Fill(WLeptonic.M());
-	
-    //Reboost the particles to rest frames 
-    //
-    TLorentzVector MuonWZMF = muon; // In W Zero Mass Frame (WZMF)
-    TLorentzVector WLeptonicTZMF = WLeptonic;  // In Top Zero Mass Frame (TZMF)	  
-	
-    MuonWZMF.Boost(-WLeptonic.BoostVector());
-    WLeptonicTZMF.Boost(-TopLeptonic.BoostVector());
-	
+    TopWRF.Boost(-WLeptonic.BoostVector());
+    leptWRF.Boost (-WLeptonic.BoostVector());
+  
     //Calculating cos:	      
-    CosThetaOrigKins = ((WLeptonicTZMF.Vect()).Dot(MuonWZMF.Vect()))/(((WLeptonicTZMF.Vect()).Mag())*((MuonWZMF.Vect()).Mag()));       	
-
+    float ThetaTevatron = ROOT::Math::VectorUtil::Angle( TopWRF, leptWRF );
+    CosThetaOrigKins = -(TMath::Cos(ThetaTevatron));;       	
+ 
   }  //end of D>=0 loop   
 	
   return CosThetaOrigKins;
