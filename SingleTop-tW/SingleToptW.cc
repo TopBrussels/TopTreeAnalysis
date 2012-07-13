@@ -1,6 +1,7 @@
 // rebeca@cern.ch
 //
-// Fall11 round
+// Summer12 round
+// 8 Tev
 
 #include "TStyle.h"
 #include <cmath>
