@@ -792,19 +792,21 @@ int main (int argc, char *argv[])
 
 	  if(doUnclEnergyShift != 0){
 	    //Use all jets stored in the event, with no additional pt (>10 GeV standard) or eta or Id requirement
+	    double met_x = mets[0]->Px();
+	    double met_y = mets[0]->Py();
 	    for (unsigned int i=0; i<init_jets.size(); i++){
-	      if(init_jets[i].Pt() > 10.){
-		mets[0].Px() += init_jets[i].Px();
-		mets[0].Py() += init_jets[i].Py();
+	      if(init_jets[i]->Pt() > 10.){
+		met_x += init_jets[i]->Px();
+		met_y += init_jets[i]->Py();
 	      }
 	    }
 	    for(unsigned int i=0; i<init_muons.size(); i++){
-	      mets[0].Px() += init_muons[i].Px();
-	      mets[0].Py() += init_muons[i].Py();
+	      met_x += init_muons[i]->Px();
+	      met_y += init_muons[i]->Py();
 	    }
 	    for(unsigned int i=0; i<init_electrons.size(); i++){
-	      mets[0].Px() += init_electrons[i].Px();
-	      mets[0].Py() += init_electrons[i].Py();
+	      met_x += init_electrons[i]->Px();
+	      met_y += init_electrons[i]->Py();
 	    }
 	    
 	    float factor;
@@ -813,24 +815,26 @@ int main (int argc, char *argv[])
 	    else if(doUnclEnergyShift == 2)
 	      factor = 1.1;
 	    
-	    mets[0].Px() *= factor;
-	    mets[0].Py() *= factor;
+	    met_x *= factor;
+	    met_y *= factor;
 	    
 	    //Go back to original MET, but with unclustered energy scaled up and down:
 	    for (unsigned int i=0; i<init_jets.size(); i++){
-	      if(init_jets[i].Pt() > 10.){
-		mets[0].Px() -= init_jets[i].Px();
-		mets[0].Py() -= init_jets[i].Py();
+	      if(init_jets[i]->Pt() > 10.){
+		met_x -= init_jets[i]->Px();
+		met_y -= init_jets[i]->Py();
 	      }
 	    }
 	    for(unsigned int i=0; i<init_muons.size(); i++){
-	      mets[0].Px() -= init_muons[i].Px();
-	      mets[0].Py() -= init_muons[i].Py();
+	      met_x -= init_muons[i]->Px();
+	      met_y -= init_muons[i]->Py();
 	    }
 	    for(unsigned int i=0; i<init_electrons.size(); i++){
-	      mets[0].Px() -= init_electrons[i].Px();
-	      mets[0].Py() -= init_electrons[i].Py();
-	    }	    
+	      met_x -= init_electrons[i]->Px();
+	      met_y -= init_electrons[i]->Py();
+	    }
+	    mets[0]->SetPx(met_x);
+	    mets[0]->SetPy(met_y);
 	  }      
 	}
       
@@ -1555,7 +1559,7 @@ int main (int argc, char *argv[])
 		    MSPlot["LeptTopHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]+leptBKinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
 		    MSPlot["HadrWHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
 		    MSPlot["HadrTopHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]+hadrBKinFitHadrAndLept[NumberCombinations]).M(), datasets[d], true, Luminosity*scaleFactor);
-		    if( ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_semiEl") == 0 && semiElectron == true)) && && doJESShift == 0 && doJERShift == 0 && doUnclEnergyShift == 0 && dobTagEffShift == 0 && domisTagEffShift == 0 ){
+		    if( ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_semiEl") == 0 && semiElectron == true)) && doJESShift == 0 && doJERShift == 0 && doUnclEnergyShift == 0 && dobTagEffShift == 0 && domisTagEffShift == 0 ){
 		      histo1D["LeptWHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]).M());
 		      histo1D["LeptTopHadrAndLept"]->Fill((leptonKinFitHadrAndLept[NumberCombinations]+neutrinoKinFitHadrAndLept[NumberCombinations]+leptBKinFitHadrAndLept[NumberCombinations]).M());
 		      histo1D["HadrWHadrAndLept"]->Fill((light1KinFitHadrAndLept[NumberCombinations]+light2KinFitHadrAndLept[NumberCombinations]).M());
