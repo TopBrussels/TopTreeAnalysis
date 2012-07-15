@@ -119,7 +119,6 @@ int main (int argc, char *argv[])
     rootFileName = "MacroOutputIsoMu172024Trigger.root";
   }
 
-
   ////////////////////////
   //  Which systematics //  --> Add new ones in exclusion of generator stuff!!
   ////////////////////////
@@ -130,7 +129,7 @@ int main (int argc, char *argv[])
   int doJERShift = 0; // 0: off (except nominal scalefactor for jer) 1: minus 2: plus
   cout << "doJERShift: " << doJERShift << endl;
 
-  int doUnclEnergyShift = 0; //0: off 1: minus 2: plus
+  int doUnclEnergyShift = 1; //0: off 1: minus 2: plus
   cout << " doUnclEnergyShift : " << doUnclEnergyShift << endl;
 
   int dobTagEffShift = 0; //0: off (except nominal scalefactor for btag eff) 1: minus 2: plus
@@ -817,7 +816,7 @@ int main (int argc, char *argv[])
 	    
 	    met_x *= factor;
 	    met_y *= factor;
-	    
+
 	    //Go back to original MET, but with unclustered energy scaled up and down:
 	    for (unsigned int i=0; i<init_jets.size(); i++){
 	      if(init_jets[i]->Pt() > 10.){
@@ -1611,7 +1610,7 @@ int main (int argc, char *argv[])
 	  }
 
 	  //Initialize jetCombi values for not SemiMu sample:
-	  if((dataSetName.find("TTbarJets_SemiMu") != 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") != 0 && semiElectron == true)){
+	  if(((dataSetName.find("TTbarJets_SemiMu") != 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") != 0 && semiElectron == true)) || (doJESShift != 0 || doJERShift != 0 || doUnclEnergyShift != 0 || dobTagEffShift != 0 || domisTagEffShift != 0) ){
 	    jetCombi.push_back(-9999);
 	    jetCombi.push_back(-9999);
 	    jetCombi.push_back(-9999);
