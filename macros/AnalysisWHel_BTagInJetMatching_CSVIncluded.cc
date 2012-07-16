@@ -174,28 +174,28 @@ int main (int argc, char *argv[])
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
       nameDataSet.push_back("Data");
     }
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tChannel_tbar");
-    //    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-    //    nameDataSet.push_back("ST_SingleTop_tChannel_t");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tWChannel_tbar");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tWChannel_t");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_Other_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("TTbarJets_Other");
-    if(semiMuon == true){
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  //In muon channel case SemiEl is considered as background
-      nameDataSet.push_back("TTbarJets_SemiEl");
-    }
-    else if(semiElectron == true){
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
-      nameDataSet.push_back("TTbarJets_SemiMuon");
-    }
-    //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());
-    //nameDataSet.push_back("WJets_Nominal");
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ZJets");  
+    // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+    // nameDataSet.push_back("ST_SingleTop_tChannel_tbar");
+    // //    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+    // //    nameDataSet.push_back("ST_SingleTop_tChannel_t");
+    // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+    // nameDataSet.push_back("ST_SingleTop_tWChannel_tbar");
+    // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+    // nameDataSet.push_back("ST_SingleTop_tWChannel_t");
+    // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_Other_"+decayChannel+".root").c_str());
+    // nameDataSet.push_back("TTbarJets_Other");
+    // if(semiMuon == true){
+    //   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  //In muon channel case SemiEl is considered as background
+    //   nameDataSet.push_back("TTbarJets_SemiEl");
+    // }
+    // else if(semiElectron == true){
+    //   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
+    //   nameDataSet.push_back("TTbarJets_SemiMuon");
+    // }
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("WJets_Nominal");
+    // inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
+    // nameDataSet.push_back("ZJets");  
 
     //2) JES Plus/Min samples:
     if(JESResults == true ){
@@ -285,8 +285,8 @@ int main (int argc, char *argv[])
     
     //4) WJets systematics:  
     if(WSystResults == true){
-      //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
-      //nameDataSet.push_back("WSystPlus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
+      nameDataSet.push_back("WSystPlus_WJets");
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());  
       nameDataSet.push_back("WSystMinus_WJets");
     }
@@ -325,14 +325,14 @@ int main (int argc, char *argv[])
   }//End of signalOnly = false loop
   
   //TTbarJets_SemiMuon sample should always be put as latest sample to avoid crash of TMinuitMinimizer !!
-  if(semiMuon == true){
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("TTbarJets_SemiMuon");
-  }
-  else if(semiElectron == true){
-    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("TTbarJets_SemiEl");
-  }
+  // if(semiMuon == true){
+  //   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+  //   nameDataSet.push_back("TTbarJets_SemiMuon");
+  // }
+  // else if(semiElectron == true){
+  //   inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+  //   nameDataSet.push_back("TTbarJets_SemiEl");
+  // }
   
   TFile *fout = new TFile (("WHelicities_Analysis_"+UsedTrigger+".root").c_str(), "RECREATE");
   fout->cd();
@@ -526,7 +526,10 @@ int main (int argc, char *argv[])
     EqLumi = dataSet->EquivalentLumi();    
     NominalNormFactor = dataSet->NormFactor();
     dataSetName = nameDataSet[iDataSet];
-
+ 
+    cout << "Processing DataSet " << dataSet << " : " << dataSetName << endl; //"  containing " << dataSet->GetEntries()  << " events" << endl;
+    cout << " ***************************************** " << endl;
+    cout << "Before changing (Line 532)--> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
     if( dataSetName.find("WSystMinus_WJets") == 0 && WSystResults == true){
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
@@ -535,7 +538,10 @@ int main (int argc, char *argv[])
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (1.3) ); //WJets Plus 30 %
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (2.) ); //WJets Plus 100 %
     }
-    
+    //datasets[iDataSet]->SetEquivalentLuminosity( dataSet->EquivalentLumi());
+    cout << "After changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
+    cout << " ************************************** " << endl;
+   
     //Nominal samples:
     if( dataSet->Name().find("TTbarJets_SemiMuon") == 0 && dataSet->Name().find("JES") != 0) color = kRed+1;
     if( dataSet->Name().find("TTbarJets_SemiEl") == 0 && dataSet->Name().find("JES") != 0) color = kRed-4;
@@ -590,12 +596,16 @@ int main (int argc, char *argv[])
 	color = kGreen-3;
       }    
 
-    Dataset* tmpDS = new Dataset(dataSet->Name(), dataSet->Title(), dataSet->DoIt(), color, dataSet->LineStyle(), dataSet->LineWidth(), dataSet->NormFactor(), XSection);
-    tmpDS->SetEquivalentLuminosity( EqLumi );
+    Dataset* tmpDS = new Dataset(dataSet->Name(), dataSet->Title(), dataSet->DoIt(), color, dataSet->LineStyle(), dataSet->LineWidth(), dataSet->NormFactor(), dataSet->Xsection());
+    tmpDS->SetEquivalentLuminosity( dataSet->EquivalentLumi() );
     datasets.push_back( tmpDS );
   }
 
   cout << " colors defined " << endl;  
+
+  for(int ii = 0; ii<datasets.size(); ii++){
+    cout << ii << " ) Defining of MSPlots:  --> Cross section = " << datasets[ii]->Xsection() << "  intLumi = " << datasets[ii]->EquivalentLumi() << " Normfactor = " << datasets[ii]->NormFactor() << endl;
+  }
 
   ////////////////////////////////////////////////////////////////////
   //  MSPlots for case with b-tag after jet combination selection:  //
@@ -1150,7 +1160,8 @@ int main (int argc, char *argv[])
     Dataset* dataSet = (Dataset*) tc_dataset->At(0);
     cout << "Processing DataSet " << iDataSet << " : " << dataSetName << "  containing " << nEvent << " events" << endl;
     cout << " ***************************************** " << endl;
-    cout << "Before changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
+    cout << "Before changing (Line 1158)--> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
+    cout << "Before changing (Line 1158)--> Cross section = " << datasets[iDataSet]->Xsection() << "  intLumi = " << datasets[iDataSet]->EquivalentLumi() << " Normfactor = " << datasets[iDataSet]->NormFactor() << endl;
     if( dataSetName.find("WSystMinus_WJets") == 0 && WSystResults == true){
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
@@ -1327,8 +1338,8 @@ int main (int argc, char *argv[])
     /////////////////////////////////////////
     // Loop on events
     /////////////////////////////////////////  
-    for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
-      //for(unsigned int iEvt=0; iEvt<3000; iEvt++){
+    //for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
+    for(unsigned int iEvt=0; iEvt<10; iEvt++){
       
       inWTreeTree->GetEvent(iEvt);
       if(iEvt%10000 == 0)
@@ -1402,7 +1413,11 @@ int main (int argc, char *argv[])
       float DeltaRJetLepton = wTree->deltaRJetLepton();
       float DeltaRMuonJet = wTree->deltaRMuonJet();
       float DeltaRElectronJet = wTree->deltaRElectronJet();
-      MSPlot["DeltaRJetLepton"]->Fill(DeltaRJetLepton,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+      MSPlot["DeltaRJetLepton"]->Fill(DeltaRJetLepton,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D); 
+      cout << " Luminosity : " << Luminosity << endl;
+      cout << " scaleFactor : " << scaleFactor << endl;
+      cout << " lumiWeight3D : " << lumiWeight3D << endl;
+      continue;
       MSPlot["DeltaRMuonJet"]->Fill(DeltaRMuonJet,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
       MSPlot["DeltaRElectronJet"]->Fill(DeltaRElectronJet, datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
                       
