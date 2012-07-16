@@ -527,9 +527,6 @@ int main (int argc, char *argv[])
     NominalNormFactor = dataSet->NormFactor();
     dataSetName = nameDataSet[iDataSet];
  
-    cout << "Processing DataSet " << dataSet << " : " << dataSetName << endl; //"  containing " << dataSet->GetEntries()  << " events" << endl;
-    cout << " ***************************************** " << endl;
-    cout << "Before changing (Line 532)--> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
     if( dataSetName.find("WSystMinus_WJets") == 0 && WSystResults == true){
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
@@ -538,9 +535,6 @@ int main (int argc, char *argv[])
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (1.3) ); //WJets Plus 30 %
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (2.) ); //WJets Plus 100 %
     }
-    //datasets[iDataSet]->SetEquivalentLuminosity( dataSet->EquivalentLumi());
-    cout << "After changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
-    cout << " ************************************** " << endl;
    
     //Nominal samples:
     if( dataSet->Name().find("TTbarJets_SemiMuon") == 0 && dataSet->Name().find("JES") != 0) color = kRed+1;
@@ -602,10 +596,6 @@ int main (int argc, char *argv[])
   }
 
   cout << " colors defined " << endl;  
-
-  for(int ii = 0; ii<datasets.size(); ii++){
-    cout << ii << " ) Defining of MSPlots:  --> Cross section = " << datasets[ii]->Xsection() << "  intLumi = " << datasets[ii]->EquivalentLumi() << " Normfactor = " << datasets[ii]->NormFactor() << endl;
-  }
 
   ////////////////////////////////////////////////////////////////////
   //  MSPlots for case with b-tag after jet combination selection:  //
@@ -1161,7 +1151,6 @@ int main (int argc, char *argv[])
     cout << "Processing DataSet " << iDataSet << " : " << dataSetName << "  containing " << nEvent << " events" << endl;
     cout << " ***************************************** " << endl;
     cout << "Before changing (Line 1158)--> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
-    cout << "Before changing (Line 1158)--> Cross section = " << datasets[iDataSet]->Xsection() << "  intLumi = " << datasets[iDataSet]->EquivalentLumi() << " Normfactor = " << datasets[iDataSet]->NormFactor() << endl;
     if( dataSetName.find("WSystMinus_WJets") == 0 && WSystResults == true){
       dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.7) );  //WJets Minus 30%
       //dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / (0.0000001) );  //WJets Minus 100%
@@ -1414,10 +1403,6 @@ int main (int argc, char *argv[])
       float DeltaRMuonJet = wTree->deltaRMuonJet();
       float DeltaRElectronJet = wTree->deltaRElectronJet();
       MSPlot["DeltaRJetLepton"]->Fill(DeltaRJetLepton,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D); 
-      cout << " Luminosity : " << Luminosity << endl;
-      cout << " scaleFactor : " << scaleFactor << endl;
-      cout << " lumiWeight3D : " << lumiWeight3D << endl;
-      continue;
       MSPlot["DeltaRMuonJet"]->Fill(DeltaRMuonJet,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
       MSPlot["DeltaRElectronJet"]->Fill(DeltaRElectronJet, datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
                       
