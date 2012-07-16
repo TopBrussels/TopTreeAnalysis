@@ -158,12 +158,15 @@ int main(int argc, char* argv[]) {
       // cross sections and weights
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
-      else if (dataSetName == "twdr"){         	sprintf(name, "twdr");         	xlweight = lumi*11.1/497657; 		} 
-      else if (dataSetName == "atwdr"){         sprintf(name, "atwdr");         xlweight = lumi*11.1/493460; 		} 
+      else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
+      else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} 
       else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} 
       else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} 
+      else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} 
       else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
           
+	  
+	  
       //Test file
       else{    	                                sprintf(name, "test");	        xlweight = 1;} 
       
@@ -544,8 +547,8 @@ int main(int argc, char* argv[]) {
 		
 	      // Select Objects -> Cuts
 	      selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
-              selection.setMuonCuts(20,2.4,0.125,0,0.02,0.3,1,1,5);
-              selection.setElectronCuts(20,2.5,0.1,0.02,0.,1,0.3);
+              selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
+              selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
               selection.setLooseMuonCuts(10,2.5,0.2);
               selection.setLooseElectronCuts(15,2.5,0.2,0.);
 		
@@ -762,9 +765,6 @@ int main(int argc, char* argv[]) {
 			  // Filling all the regions
 			  if (nJets !=0){
 			    TRootJet* jet = (TRootJet*) selectedJets[iJet];
-			    //double ptSysPx = lepton0.Px() + lepton1.Px() + jet->Px() + met_px;
-			    //double ptSysPy = lepton0.Py() + lepton1.Py() + jet->Py() + met_py;
-			    //double ptSys = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 			    double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
 			    if (Ht > 160 || mode != 0){
 			      if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged)R->Fill(1, weight);
@@ -828,9 +828,9 @@ int main(int argc, char* argv[]) {
 	scaler1=1.;
       cout << "--------------------------------------------------" << endl;
       cout << "[Results Normalized:] " <<  endl;
-      cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << "\t = " << 100.*cutflow->GetBinContent(2)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(2)/scaler1 << "%" << endl;
-      cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) <<  "\t = " << 100.*cutflow->GetBinContent(3)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(3)/scaler1 << "%" <<endl;
-      cout << "PV:        " <<  cutflow->GetBinContent(4) << " +/- "  << cutflow->GetBinError(4) <<  "\t = " << 100.*cutflow->GetBinContent(4)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(4)/scaler1 << "%" <<endl;
+      //cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << "\t = " << 100.*cutflow->GetBinContent(2)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(2)/scaler1 << "%" << endl;
+      //cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) <<  "\t = " << 100.*cutflow->GetBinContent(3)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(3)/scaler1 << "%" <<endl;
+      //cout << "PV:        " <<  cutflow->GetBinContent(4) << " +/- "  << cutflow->GetBinError(4) <<  "\t = " << 100.*cutflow->GetBinContent(4)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(4)/scaler1 << "%" <<endl;
       cout << "Lep. Sel:  " <<  cutflow->GetBinContent(5) << " +/- "  << cutflow->GetBinError(5) <<  "\t = " << 100.*cutflow->GetBinContent(5)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(5)/scaler1 << "%" <<endl;
       cout << "Lep. Veto: " <<  cutflow->GetBinContent(6) << " +/- "  << cutflow->GetBinError(6) <<  "\t = " << 100.*cutflow->GetBinContent(6)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(6)/scaler1 << "%" <<endl;
       cout << "mll:       " <<  cutflow->GetBinContent(7) << " +/- "  << cutflow->GetBinError(7) <<  "\t = " << 100.*cutflow->GetBinContent(7)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(7)/scaler1 << "%" << endl;
@@ -845,9 +845,9 @@ int main(int argc, char* argv[]) {
       double scaler2 =  cutflow_raw->GetBinContent(2);
       if(scaler2 <=0.0)
 	scaler2=1.;
-      cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) <<  "\t = " << 100.*cutflow_raw->GetBinContent(2)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(2)/scaler2 << "%" << endl;
-      cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) <<  "\t = " << 100.*cutflow_raw->GetBinContent(3)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(3)/scaler2 << "%" << endl;
-      cout << "PV:        " <<  cutflow_raw->GetBinContent(4) << " +/- "  << cutflow_raw->GetBinError(4) <<  "\t = " << 100.*cutflow_raw->GetBinContent(4)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(4)/scaler2 << "%" <<endl;
+      // cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) <<  "\t = " << 100.*cutflow_raw->GetBinContent(2)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(2)/scaler2 << "%" << endl;
+      //cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) <<  "\t = " << 100.*cutflow_raw->GetBinContent(3)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(3)/scaler2 << "%" << endl;
+      // cout << "PV:        " <<  cutflow_raw->GetBinContent(4) << " +/- "  << cutflow_raw->GetBinError(4) <<  "\t = " << 100.*cutflow_raw->GetBinContent(4)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(4)/scaler2 << "%" <<endl;
       cout << "Lep. Sel:  " <<  cutflow_raw->GetBinContent(5) << " +/- "  << cutflow_raw->GetBinError(5) <<  "\t = " << 100.*cutflow_raw->GetBinContent(5)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(5)/scaler2 << "%" <<endl;
       cout << "Lep. Veto: " <<  cutflow_raw->GetBinContent(6) << " +/- "  << cutflow_raw->GetBinError(6) <<  "\t = " << 100.*cutflow_raw->GetBinContent(6)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(6)/scaler2 << "%" <<endl;
       cout << "mll:       " <<  cutflow_raw->GetBinContent(7) << " +/- "  << cutflow_raw->GetBinError(7) <<  "\t = " << 100.*cutflow_raw->GetBinContent(7)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(7)/scaler2 << "%" <<endl;

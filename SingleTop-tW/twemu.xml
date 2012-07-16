@@ -9,6 +9,8 @@
  <d name="t" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/T_t.root"/> 
  <d name="at" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/Tbar_t/*"/> 
  
+ <d name="ww" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/WW/*"/> 
+ 
  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/ZJets/*"/> 
 
 
