@@ -292,10 +292,10 @@ int main(int argc, char* argv[]) {
       std::vector<double> *pzJet;
       std::vector<double> *eJet;
       std::vector<double> *qJet;
-      std::vector<double> *btTCHPJet;
-      std::vector<double> *btTCHEJet;
-      std::vector<double> *btSSVHPJet;
-      std::vector<double> *btSSVHEJet;
+      std::vector<double> *btJPBJet;
+      std::vector<double> *btBJPBJet;
+      std::vector<double> *btCSVBJet;
+      std::vector<double> *btCSVBmvaJet;
       
       // Output Tree
       TTree* myTree = new TTree("myTree", "   ");
@@ -327,10 +327,10 @@ int main(int argc, char* argv[]) {
       myTree->Branch("pzJet","std::vector<double>",&pzJet);
       myTree->Branch("eJet","std::vector<double>",&eJet);
       myTree->Branch("qJet","std::vector<double>",&qJet);
-      myTree->Branch("btTCHPJet","std::vector<double>",&btTCHPJet);
-      myTree->Branch("btTCHEJet","std::vector<double>",&btTCHEJet);
-      myTree->Branch("btSSVHPJet","std::vector<double>",&btSSVHPJet);
-      myTree->Branch("btSSVHEJet","std::vector<double>",&btSSVHEJet);
+      myTree->Branch("btJPBJet","std::vector<double>",&btJPBJet);
+      myTree->Branch("btBJPBJet","std::vector<double>",&btBJPBJet);
+      myTree->Branch("btCSVBJet","std::vector<double>",&btCSVBJet);
+      myTree->Branch("btCSVBmvaJet","std::vector<double>",&btCSVBmvaJet);
       
       cout << "[Info:] output rootfile named " << rootFileName << endl; 
       cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
@@ -546,7 +546,7 @@ int main(int argc, char* argv[]) {
 	      cutflow_raw->Fill(3);
 		
 	      // Select Objects -> Cuts
-	      selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1);
+	      selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
               selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
               selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
               selection.setLooseMuonCuts(10,2.5,0.2);
@@ -651,10 +651,10 @@ int main(int argc, char* argv[]) {
 		      pzJet = new std::vector<double>; 
 		      eJet = new std::vector<double>; 
 		      qJet = new std::vector<double>; 
-		      btTCHPJet = new std::vector<double>; 
-		      btTCHEJet = new std::vector<double>; 
-		      btSSVHPJet = new std::vector<double>;
-		      btSSVHEJet = new std::vector<double>; 
+		      btJPBJet = new std::vector<double>; 
+		      btBJPBJet = new std::vector<double>; 
+		      btCSVBJet = new std::vector<double>;
+		      btCSVBmvaJet = new std::vector<double>; 
 			
 		      ptLepton->push_back(lepton0.Pt());
 		      ptLepton->push_back(lepton1.Pt());
@@ -682,12 +682,13 @@ int main(int argc, char* argv[]) {
 			pzJet->push_back(tempJet->Pz());
 			eJet->push_back(tempJet->Energy());
 			qJet->push_back(tempJet->charge());
-			btTCHPJet->push_back(tempJet->btag_trackCountingHighPurBJetTags() );
-			btTCHEJet->push_back(tempJet->btag_trackCountingHighEffBJetTags() );
-			btSSVHPJet->push_back(tempJet->btag_simpleSecondaryVertexHighPurBJetTags() );
-			btSSVHEJet->push_back(tempJet->btag_simpleSecondaryVertexHighEffBJetTags() );  
+			btJPBJet->push_back(tempJet->btag_jetProbabilityBJetTags() );
+			btBJPBJet->push_back(tempJet->btag_jetBProbabilityBJetTags());
+			btCSVBJet->push_back(tempJet->btag_combinedSecondaryVertexBJetTags() );
+			btCSVBmvaJet->push_back(tempJet->btag_combinedSecondaryVertexMVABJetTags());  
 		      }
 			
+	
 		      myTree->Fill();
 			
 		      delete ptLepton;
@@ -703,10 +704,10 @@ int main(int argc, char* argv[]) {
 		      delete pzJet;
 		      delete eJet;
 		      delete qJet;
-		      delete btTCHPJet;
-		      delete btTCHEJet;
-		      delete btSSVHPJet;
-		      delete btSSVHEJet;
+		      delete btJPBJet;
+		      delete btBJPBJet;
+		      delete btCSVBJet;
+		      delete btCSVBmvaJet;
 			
 		      // double SFval = 0.95;  //Summer11 version
 		      double SFval, SFerror;
@@ -739,7 +740,7 @@ int main(int argc, char* argv[]) {
 			if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 			  nJets++;
 			  iJet = i;
-			  if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+			  if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){
 			    iSF = rand() % 100;
 			    if (iSF < SFvalue || SFval == 1){
 			      bTagged = true;
@@ -747,7 +748,7 @@ int main(int argc, char* argv[]) {
 			      nTightJetsBT++;
 			    } 
 			  } 
-			} else if (tempJet->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74){
+			} else if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){
 			  iSF = rand() % 100;
 			  if (iSF < SFvalue  || SFval == 1) nJetsBT++;
 			}
