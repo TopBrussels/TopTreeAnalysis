@@ -23,11 +23,11 @@ void tables(int mode = 0){
   
   
   char myTexFile[300];
-  sprintf(myTexFile,"tables/table_%d_%dpb.tex", mode, lumi);
+  sprintf(myTexFile,"tables/sf_table_%d_%dpb.tex", mode, lumi);
   ofstream salida(myTexFile); 
   
   char myRootFile[300];
-  sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
+  sprintf(myRootFile,"results/sf_an_%dpb_%d.root", lumi, mode);
   TFile *_file0 = TFile::Open(myRootFile);
   
   const int nProcess = 10;
@@ -38,11 +38,21 @@ void tables(int mode = 0){
   if (mode == 1)        processLabel[8] = "\\textbf{$DoubleMu$}";
   else if (mode == 2)   processLabel[8] = "\\textbf{$DoubleElectron$}";
   
-  TString cutLabel[9] = { "blank0", "blank1", "Lepton Sel.", "Inv. Mass", "$E_{T}^{miss}$", "1 Jet", "b-tagging", "$P_{T}^{system}$", "$H_{T}$"};
+  TString cutLabel[8] = { "blank0", "blank1", "Lepton Sel.", "Inv. Mass", "$E_{T}^{miss}$", "1 Jet", "b-tagging", "$H_{T}$"};
   
   TH1F*  h [nProcess];
   for(int i=0; i<10; i++){
-    h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
+    if (i == 9) {
+     h[i] =  (TH1F*)h[0]->Clone();
+     h[i]->Add(h[1]);
+     h[i]->Add(h[2]);
+     h[i]->Add(h[3]);
+     h[i]->Add(h[4]);
+     h[i]->Add(h[5]);
+     h[i]->Add(h[6]);
+     
+    }
+    else h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
     // Lepton ID and HLT SF
     // if (mode == 0 && i != 8) h[i]->Scale(0.97713);
     // if (mode == 1 && i != 8) h[i]->Scale(0.910067);
@@ -74,7 +84,7 @@ void tables(int mode = 0){
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
   
-  for (int i=2; i < 9; i++){
+  for (int i=2; i < 8; i++){
     salida << cutLabel[i];
     for (int j = 0; j < 7; j++){
       if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] != 0){
@@ -105,7 +115,7 @@ void tables(int mode = 0){
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
   
-  for (int i=2; i < 9; i++){
+  for (int i=2; i < 8; i++){
     salida << cutLabel[i];
     for (int j = 0; j < 8; j++){
       if (j == 2) j = 4;
@@ -140,7 +150,7 @@ void tables(int mode = 0){
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
   
-  for (int i=2; i < 9; i++){
+  for (int i=2; i < 8; i++){
     salida << cutLabel[i] << "	";
     for (int j = 8; j < 10; j++){
       if (j == 8){

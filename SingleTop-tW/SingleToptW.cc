@@ -164,6 +164,7 @@ int main(int argc, char* argv[]) {
       else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} 
       else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} 
       else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
+      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	} 
           
 	  
 	  
@@ -369,7 +370,7 @@ int main(int argc, char* argv[]) {
 	    sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
 	  }
 	 
-	  // Pile-Up re-weighting
+	  // Applying Pile-Up re-weighting
 	  double lumiWeight3D = 1.0;
 	  double lumiWeight = 1.0;
 	  if (reweightPU && !isData ){

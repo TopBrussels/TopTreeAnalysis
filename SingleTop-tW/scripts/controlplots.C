@@ -56,7 +56,7 @@ void controlplots(int mode = 0){
   else if ( mode == 1)   lumi = 4919.924;
   else if ( mode == 2)   lumi = 4895.249;
 
-  sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
+  sprintf(myRootFile,"results/sf_an_%dpb_%d.root", lumi, mode);
   
   
   TFile *_file0 = TFile::Open(myRootFile);
@@ -92,12 +92,12 @@ void controlplots(int mode = 0){
     histo[iProcess]->SetLineColor(kBlack);
     histo[iProcess]->SetLineWidth(1);
     histo[iProcess]->SetFillColor(color[iProcess]);
-    histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(2));
-    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(7));
-    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(8));
-    histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(2));
-    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(7));
-    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(8));
+    histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(28));
+    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(30));
+    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(31));
+    histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(28));
+    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(30));
+    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(31));
     
     if (iProcess == 0){
       h[iProcess]->SetLineColor(kBlack);
@@ -151,11 +151,11 @@ void controlplots(int mode = 0){
   labelcms->Draw();
   labelcms2->Draw();
   
-  c1->SaveAs("plots/control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".png");
-  c1->SaveAs("plots/pdf/control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".pdf");
+  c1->SaveAs("plots/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".png");
+  c1->SaveAs("plots/pdf/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".pdf");
   c1->SetLogy();
   hStack->SetMaximum(max * 10);
-  c1->SaveAs("plots/control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.png");
-  c1->SaveAs("plots/pdf/control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.pdf");
+  c1->SaveAs("plots/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.png");
+  c1->SaveAs("plots/pdf/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.pdf");
   
 }

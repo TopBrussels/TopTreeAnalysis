@@ -50,8 +50,8 @@ void looper::myLoop(int nsel, int mode, bool silent)
   else if ( mode == 1)   lumi = 4919.924;
   else if ( mode == 2)   lumi = 4895.249;
   else if ( mode == 3)   lumi = 4.9;
-  sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
-  
+  sprintf(newRootFile,"results/sf_an_%dpb_%d.root", (int)lumi, mode);
+ 
   TFile f_var(newRootFile, "UPDATE");
   
   if(!silent){
@@ -64,14 +64,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"cuts_%s",plotName);
   TH1F* histo = new TH1F( title, " ", 10,  0, 10 );
   histo->Sumw2();
-  
-  sprintf(title,"met_%s",plotName);
-  TH1F* histo_met = new TH1F( title, " ", 100,  0, 200 );
-  histo_met->Sumw2();
-  
-  sprintf(title, "tmet_%s", plotName);
-  TH1F* histo_tmet = new TH1F(title, " ", 100, 0, 200);
-  histo_tmet->Sumw2();
   
   sprintf(title,"met_high_%s",plotName);
   TH1F* histo_met_high = new TH1F( title, " ", 100,  0, 200 );
@@ -93,25 +85,13 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_met_bt = new TH1F( title, " ", 100,  0, 200 );
   histo_met_bt->Sumw2();
   
-  sprintf(title,"mll_%s",plotName);
-  TH1F* histo_mll = new TH1F( title, " ", 100,  0, 200 );
-  histo_mll->Sumw2();
-  
   sprintf(title,"mll_after_%s",plotName);
   TH1F* histo_mll_after = new TH1F( title, " ", 100,  0, 200 );
   histo_mll_after->Sumw2();
   
-  sprintf(title,"njets_%s",plotName);
-  TH1F* histo_njets = new TH1F( title, " ", 10,  0, 10 );
-  histo_njets->Sumw2();
-  
   sprintf(title,"njets_cut_%s",plotName);
   TH1F* histo_njets_cut = new TH1F( title, " ", 10,  -0.5, 9.5 );
   histo_njets_cut->Sumw2();
-  
-  sprintf(title,"njetsbt_%s",plotName);
-  TH1F* histo_njetsbt = new TH1F( title, " ", 10,  -0.5, 9.5 );
-  histo_njetsbt->Sumw2();
   
   sprintf(title,"njetsbt_cut_%s",plotName);
   TH1F* histo_njetsbt_cut = new TH1F( title, " ", 10,   -0.5, 9.5 );
@@ -133,10 +113,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_njets_low = new TH1F( title, " ", 10,   -0.5, 9.5 );
   histo_njets_low->Sumw2();
   
-  sprintf(title,"ptsys_%s",plotName);
-  TH1F* histo_ptsys = new TH1F( title, " ", 100,  0, 200 );
-  histo_ptsys->Sumw2();
-  
   sprintf(title,"ptsys_high_%s",plotName);
   TH1F* histo_ptsys_high = new TH1F( title, " ", 100,  0, 200 );
   histo_ptsys_high->Sumw2();
@@ -144,10 +120,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"ptsys_low_%s",plotName);
   TH1F* histo_ptsys_low = new TH1F( title, " ", 100,  0, 200 );
   histo_ptsys_low->Sumw2();
-  
-  sprintf(title,"ht_%s",plotName);
-  TH1F* histo_ht = new TH1F( title, " ", 300,  0, 600 );
-  histo_ht->Sumw2();
   
   sprintf(title,"ht_high_%s",plotName);
   TH1F* histo_ht_high = new TH1F( title, " ", 300,  0, 600 );
@@ -169,10 +141,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_pt_min = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_min->Sumw2();
   
-  sprintf(title,"pt_leading_%s",plotName);
-  TH1F* histo_pt_leading = new TH1F( title, " ", 100,  0, 200 );
-  histo_pt_leading->Sumw2();
-  
   sprintf(title,"btagHE_%s",plotName);
   TH2F* histo_btagHE = new TH2F( title, " ", 300,  -200, 100, 100, -2, 7);
   histo_btagHE->Sumw2();
@@ -193,20 +161,232 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ptsys_bf = new TH1F( title, " ", 100,  0, 200 );
   histo_ptsys_bf->Sumw2();
   
-  sprintf(title,"nvertex_%s",plotName);
-  TH1F* histo_nvertex = new TH1F( title, " ", 30,   -0.5, 29.5 );
-  histo_nvertex->Sumw2();
-  
   sprintf(title,"npu_%s",plotName);
   TH1F* histo_npu = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_npu->Sumw2();
   
+  
+  /// Classic plotmaker plots
+  sprintf(title,"met_%s",plotName);
+  TH1F* histo_met = new TH1F( title, " ", 100,  0, 200 );
+  histo_met->Sumw2();
+  
+  sprintf(title,"min_met_%s",plotName);
+  TH1F* histo_min_met = new TH1F( title, " ", 100,  0, 200 );
+  histo_min_met->Sumw2();
+  
+  sprintf(title, "tmet_%s", plotName);
+  TH1F* histo_tmet = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet->Sumw2();
+  
+  sprintf(title,"mll_%s",plotName);
+  TH1F* histo_mll = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll->Sumw2();
+  
+  sprintf(title,"njets_%s",plotName);
+  TH1F* histo_njets = new TH1F( title, " ", 10,  0, 10 );
+  histo_njets->Sumw2();
+  
+  sprintf(title,"njetsbt_%s",plotName);
+  TH1F* histo_njetsbt = new TH1F( title, " ", 10,  -0.5, 9.5 );
+  histo_njetsbt->Sumw2();
+  
+  sprintf(title,"ptsys_%s",plotName);
+  TH1F* histo_ptsys = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys->Sumw2();
+  
+  sprintf(title,"ht_%s",plotName);
+  TH1F* histo_ht = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht->Sumw2();
+  
+  sprintf(title,"pt_leading_%s",plotName);
+  TH1F* histo_pt_leading = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_leading->Sumw2();
+  
+  sprintf(title,"nvertex_%s",plotName);
+  TH1F* histo_nvertex = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  histo_nvertex->Sumw2();
+  
+  // 1 jet level
+  /// Classic plotmaker plots
+  sprintf(title,"met_1j_%s",plotName);
+  TH1F* histo_met_1j = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_1j->Sumw2();
+  
+  sprintf(title,"min_met_1j_%s",plotName);
+  TH1F* histo_min_met_1j = new TH1F( title, " ", 100,  0, 200 );
+  histo_min_met_1j->Sumw2();
+  
+  sprintf(title, "tmet_1j_%s", plotName);
+  TH1F* histo_tmet_1j = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet_1j->Sumw2();
+  
+  sprintf(title,"mll_1j_%s",plotName);
+  TH1F* histo_mll_1j = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_1j->Sumw2();
+  
+  sprintf(title,"ptsys_1j_%s",plotName);
+  TH1F* histo_ptsys_1j = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_1j->Sumw2();
+  
+  sprintf(title,"ht_1j_%s",plotName);
+  TH1F* histo_ht_1j = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_1j->Sumw2();
+  
+  sprintf(title,"pt_leading_1j_%s",plotName);
+  TH1F* histo_pt_leading_1j = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_leading_1j->Sumw2();
+  
+  sprintf(title,"nvertex_1j_%s",plotName);
+  TH1F* histo_nvertex_1j = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  histo_nvertex_1j->Sumw2();
+  
+  // 1 jet level
+  /// Classic plotmaker plots
+  sprintf(title,"met_1j1t_%s",plotName);
+  TH1F* histo_met_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_1j1t->Sumw2();
+  
+  sprintf(title,"min_met_1j1t_%s",plotName);
+  TH1F* histo_min_met_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_min_met_1j1t->Sumw2();
+  
+  sprintf(title, "tmet_1j1t_%s", plotName);
+  TH1F* histo_tmet_1j1t = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet_1j1t->Sumw2();
+  
+  sprintf(title,"mll_1j1t_%s",plotName);
+  TH1F* histo_mll_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_1j1t->Sumw2();
+  
+  sprintf(title,"ptsys_1j1t_%s",plotName);
+  TH1F* histo_ptsys_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_1j1t->Sumw2();
+  
+  sprintf(title,"ht_1j1t_%s",plotName);
+  TH1F* histo_ht_1j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_1j1t->Sumw2();
+  
+  sprintf(title,"pt_leading_1j1t_%s",plotName);
+  TH1F* histo_pt_leading_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_leading_1j1t->Sumw2();
+  
+  sprintf(title,"nvertex_1j1t_%s",plotName);
+  TH1F* histo_nvertex_1j1t = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  histo_nvertex_1j1t->Sumw2();
+  
+  
+  // 2j1t
+  /// Classic plotmaker plots
+  sprintf(title,"met_2j1t_%s",plotName);
+  TH1F* histo_met_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_2j1t->Sumw2();
+  
+  sprintf(title,"min_met_2j1t_%s",plotName);
+  TH1F* histo_min_met_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_min_met_2j1t->Sumw2();
+  
+  sprintf(title, "tmet_2j1t_%s", plotName);
+  TH1F* histo_tmet_2j1t = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet_2j1t->Sumw2();
+  
+  sprintf(title,"mll_2j1t_%s",plotName);
+  TH1F* histo_mll_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_2j1t->Sumw2();
+  
+  sprintf(title,"ptsys_2j1t_%s",plotName);
+  TH1F* histo_ptsys_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_2j1t->Sumw2();
+  
+  sprintf(title,"ht_2j1t_%s",plotName);
+  TH1F* histo_ht_2j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_2j1t->Sumw2();
+  
+  sprintf(title,"pt_leading_2j1t_%s",plotName);
+  TH1F* histo_pt_leading_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_leading_2j1t->Sumw2();
+  
+  sprintf(title,"nvertex_2j1t_%s",plotName);
+  TH1F* histo_nvertex_2j1t = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  histo_nvertex_2j1t->Sumw2();
+  
+  
+  // 2j2t
+  /// Classic plotmaker plots
+  sprintf(title,"met_2j2t_%s",plotName);
+  TH1F* histo_met_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_2j2t->Sumw2();
+  
+  sprintf(title,"min_met_2j2t_%s",plotName);
+  TH1F* histo_min_met_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_min_met_2j2t->Sumw2();
+  
+  sprintf(title, "tmet_2j2t_%s", plotName);
+  TH1F* histo_tmet_2j2t = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet_2j2t->Sumw2();
+  
+  sprintf(title,"mll_2j2t_%s",plotName);
+  TH1F* histo_mll_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_2j2t->Sumw2();
+  
+  sprintf(title,"ptsys_2j2t_%s",plotName);
+  TH1F* histo_ptsys_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_2j2t->Sumw2();
+  
+  sprintf(title,"ht_2j2t_%s",plotName);
+  TH1F* histo_ht_2j2t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_2j2t->Sumw2();
+  
+  sprintf(title,"pt_leading_2j2t_%s",plotName);
+  TH1F* histo_pt_leading_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_leading_2j2t->Sumw2();
+  
+  sprintf(title,"nvertex_2j2t_%s",plotName);
+  TH1F* histo_nvertex_2j2t = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  histo_nvertex_2j2t->Sumw2();
+  
+  
+  // inside the window
+  sprintf(title,"met_dyin_%s",plotName);
+  TH1F* histo_met_dyin = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_dyin->Sumw2();
+  
+  sprintf(title,"min_met_dyin_%s",plotName);
+  TH1F* histo_min_met_dyin = new TH1F( title, " ", 100,  0, 200 );
+  histo_min_met_dyin->Sumw2();
+  
+  sprintf(title, "tmet_dyin_%s", plotName);
+  TH1F* histo_tmet_dyin = new TH1F(title, " ", 100, 0, 200);
+  histo_tmet_dyin->Sumw2();
+  
+  sprintf(title,"mll_dyin_%s",plotName);
+  TH1F* histo_mll_dyin = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_dyin->Sumw2();
+  
+  sprintf(title,"ptsys_dyin_%s",plotName);
+  TH1F* histo_ptsys_dyin = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_dyin->Sumw2();
+  
+  sprintf(title,"ht_dyin_%s",plotName);
+  TH1F* histo_ht_dyin = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_dyin->Sumw2();
+  
+  sprintf(title,"pt_leading_dyin_%s",plotName);
+  TH1F* histo_pt_leading_dyin = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_leading_dyin->Sumw2();
+  
+  sprintf(title,"nvertex_dyin_%s",plotName);
+  TH1F* histo_nvertex_dyin = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  histo_nvertex_dyin->Sumw2();
+  
+  
+  
+  // tt control regions
   sprintf(title,"R_%s",plotName);
   TH1F* histo_R = new TH1F( title, " ", 40,  0, 40 );
   histo_R->Sumw2();
   
-  
-   // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
+  // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
   sprintf(title,"R_dy_%s",plotName);
   TH1F* histo_R_dy = new TH1F( title, " ", 40,  0, 40 );
   histo_R_dy->Sumw2();
@@ -235,6 +415,79 @@ void looper::myLoop(int nsel, int mode, bool silent)
       break;
     } else {
       
+      /*
+      //1 jet
+      if (nsel == 2 && mode == 1){
+      if (metPt <= 5) xlWeight*=0.917087;
+      else if (metPt <= 10) xlWeight*=0.94228;
+      else if (metPt <= 15) xlWeight*=1.02343;
+      else if (metPt <= 20) xlWeight*=1.11051;
+      else if (metPt <= 25) xlWeight*=1.20101;
+      else if (metPt <= 30) xlWeight*=1.26738;
+      else if (metPt <= 35) xlWeight*=1.46525;
+      else if (metPt <= 40) xlWeight*=1.47895;
+      else if (metPt <= 45) xlWeight*=1.46037;
+      else if (metPt <= 50) xlWeight*=1.28589;
+      else if (metPt <= 60) xlWeight*=1.15589;
+      else  xlWeight*=0.689844;
+      } else if (nsel == 2 && mode == 2){
+      if (metPt <= 5) xlWeight*=0.917655;
+      else if (metPt <= 10) xlWeight*=1.04012;
+      else if (metPt <= 15) xlWeight*=0.986518;
+      else if (metPt <= 20) xlWeight*=1.11664;
+      else if (metPt <= 25) xlWeight*=1.16103;
+      else if (metPt <= 30) xlWeight*=1.22194;
+      else if (metPt <= 35) xlWeight*=1.43669;
+      else if (metPt <= 40) xlWeight*=1.79543;
+      else if (metPt <= 45) xlWeight*=1.23258;
+      else if (metPt <= 50) xlWeight*=1.69726;
+      else if (metPt <= 60) xlWeight*=1.89196;
+      else  xlWeight*= 0.743117;
+      }
+      */
+      
+      
+      //dilepton
+      if (nsel == 2 && mode == 1){
+	if (metPt <= 5) xlWeight*=0.800093;
+	else if (metPt <= 10) xlWeight*=0.822401;
+	else if (metPt <= 15) xlWeight*=0.879812;
+	else if (metPt <= 20) xlWeight*=0.948094;
+	else if (metPt <= 25) xlWeight*=1.03923;
+	else if (metPt <= 30) xlWeight*=1.14394;
+	else if (metPt <= 35) xlWeight*=1.25926;
+	else if (metPt <= 40) xlWeight*=1.39992;
+	else if (metPt <= 45) xlWeight*=1.49694;
+	else if (metPt <= 50) xlWeight*=1.60845;
+	else if (metPt <= 60) xlWeight*=1.78741;
+	else  xlWeight*=1.4131;
+      } else if (nsel == 2 && mode == 2){
+	if (metPt <= 5) xlWeight*=0.791871;
+	else if (metPt <= 10) xlWeight*=0.823337;
+	else if (metPt <= 15) xlWeight*=0.893007;
+	else if (metPt <= 20) xlWeight*=0.965893;
+	else if (metPt <= 25) xlWeight*=1.07273;
+	else if (metPt <= 30) xlWeight*=1.17567;
+	else if (metPt <= 35) xlWeight*=1.28749;
+	else if (metPt <= 40) xlWeight*=1.43283;
+	else if (metPt <= 45) xlWeight*=1.51069;
+	else if (metPt <= 50) xlWeight*=1.80464;
+	else if (metPt <= 60) xlWeight*=1.86129;
+	else  xlWeight*= 1.68509;
+      }else if (nsel == 2){
+	if (metPt <= 5) xlWeight*=0.80;
+	else if (metPt <= 10) xlWeight*=0.82;
+	else if (metPt <= 15) xlWeight*=0.88;
+	else if (metPt <= 20) xlWeight*=0.96;
+	else if (metPt <= 25) xlWeight*=1.06;
+	else if (metPt <= 30) xlWeight*=1.16;
+	else if (metPt <= 35) xlWeight*=1.27;
+	else if (metPt <= 40) xlWeight*=1.41;
+	else if (metPt <= 45) xlWeight*=1.50;
+	else if (metPt <= 50) xlWeight*=1.70;
+	else if (metPt <= 60) xlWeight*=1.82;
+	else  xlWeight*= 1.54;
+      }
       
       histo->Fill(0.,xlWeight);
       
@@ -245,7 +498,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
       double phipairmet_t = 0;
       double pi_m = 3.1416/2;
       phipairmet_t = pi_m;
-    
+      
       TVector3 vmet(metPx, metPy, 0);
       
       double promet = metPt*sin(phipairmet_t);
@@ -281,7 +534,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	double tempSF = SFval;
 	
 	int SFvalue = int(tempSF*100);
-
+	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
 	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
@@ -309,6 +562,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	histo_mll->Fill(pair.M(),  xlWeight);
 	histo_met->Fill(metPt,  xlWeight);
 	histo_tmet->Fill(tmetPt, xlWeight);
+	histo_min_met->Fill(TMath::Min(metPt, tmetPt), xlWeight);
 	histo_promet->Fill(promet, xlWeight);
 	
 	if (nvertex > 5){
@@ -332,7 +586,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
 	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
 	  histo_ht_bf->Fill(ht1, xlWeight);
-	 }
+	}
 	bool invMass = false;
 	if      (mode == 0) invMass = true;
 	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
@@ -343,7 +597,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(1, xlWeight);
 	else histo_R_dy->Fill(2, xlWeight);
 	
-	if (metPt >= metCut || mode == 0){
+	if (TMath::Min(metPt, tmetPt) >= metCut){
 	  if (nJets == 1){
 	    TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
 	    if (nTightJetsBT == 1 && bTagged && nJetsBT == 1){
@@ -351,9 +605,20 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	      if ((ptSystem <= ptsysCut && mode !=0) || (mode ==0 && ht > htMin)){
+	      if (ptSystem <= ptsysCut ){
 		if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(3, xlWeight);
-		else histo_R_dy->Fill(4, xlWeight);
+		else {
+		  histo_R_dy->Fill(4, xlWeight);
+	         
+		  histo_mll_dyin->Fill(pair.M(),  xlWeight);
+	          histo_met_dyin->Fill(metPt,  xlWeight);
+	          histo_tmet_dyin->Fill(tmetPt, xlWeight);
+	          histo_min_met_dyin->Fill(TMath::Min(metPt, tmetPt), xlWeight);
+	          histo_ptsys_dyin->Fill(ptSystem, xlWeight);
+	          histo_ht_dyin->Fill(ht, xlWeight);
+	          histo_pt_leading_dyin->Fill(jet.Pt(), xlWeight);
+		 
+	        }
 	      }
 	    }
 	  }
@@ -365,7 +630,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  histo_mll_after->Fill(pair.M(),  xlWeight);
 	  histo_met_cut->Fill(metPt,  xlWeight);
 	  if (TMath::Min(metPt, tmetPt) >= metCut || mode ==0){
-	  //if (metPt >= metCut || mode ==0){
+	    //if (metPt >= metCut || mode ==0){
 	    //if (promet >= metCut || mode ==0){
 	    histo->Fill(3, xlWeight);
 	    histo_njets_cut->Fill(nJets, xlWeight);
@@ -373,14 +638,33 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      histo->Fill(4, xlWeight);
 	      histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
 	      TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+		
+	      double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
+	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
+	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
+	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	      
+	      histo_mll_1j->Fill(pair.M(),  xlWeight);
+	      histo_met_1j->Fill(metPt,  xlWeight);
+	      histo_tmet_1j->Fill(tmetPt, xlWeight);
+	      histo_min_met_1j->Fill(TMath::Min(metPt, tmetPt), xlWeight);
+	      histo_ptsys_1j->Fill(ptSystem, xlWeight);
+	      histo_ht_1j->Fill(ht, xlWeight);
+	      histo_pt_leading_1j->Fill(jet.Pt(), xlWeight);
+	      
+	      
 	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1){
 		histo->Fill(5, xlWeight);
 		
-		double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-		double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
-		double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-		double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-		
+	      
+	        histo_mll_1j1t->Fill(pair.M(),  xlWeight);
+	        histo_met_1j1t->Fill(metPt,  xlWeight);
+	        histo_tmet_1j1t->Fill(tmetPt, xlWeight);
+	        histo_min_met_1j1t->Fill(TMath::Min(metPt, tmetPt), xlWeight);
+	        histo_ptsys_1j1t->Fill(ptSystem, xlWeight);
+	        histo_ht_1j1t->Fill(ht, xlWeight);
+	        histo_pt_leading_1j1t->Fill(jet.Pt(), xlWeight);
+	      
 		histo_ptsys->Fill(ptSystem, xlWeight);
 		histo_ht->Fill(ht, xlWeight);
 		histo_btagHE->Fill(btTCHEJet->at(iJet), btSSVHEJet->at(iJet), xlWeight);
@@ -399,10 +683,12 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		  
 		}
 		
-		if (ptSystem <= ptsysCut){
+		if (ht > htMin || mode !=0){
+		  //if (ptSystem <= ptsysCut){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
-		  if (ht > htMin || mode !=0){
+		  if (ptSystem <= ptsysCut){
+		    //  if (ht > htMin || mode !=0){
 		    histo->Fill(7, xlWeight);
 		  }
 		}
@@ -423,27 +709,60 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
 	      
-	      if (ptSystem <= ptsysCut){
-		
-		if (ht > htMin || mode !=0){
-		  
-		  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)histo_R->Fill(1, xlWeight);
-		  if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
-		  if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
-		  if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight);
-		  if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight);
-		  if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
-		  if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
-		  if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
-		  if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
-		  if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
-		  if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
-		}
+	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1) {
+	        histo_mll_2j1t->Fill(pair.M(),  xlWeight);
+	        histo_met_2j1t->Fill(metPt,  xlWeight);
+	        histo_tmet_2j1t->Fill(tmetPt, xlWeight);
+	        histo_min_met_2j1t->Fill(TMath::Min(metPt, tmetPt), xlWeight);
+	        histo_ptsys_2j1t->Fill(ptSystem, xlWeight);
+	        histo_ht_2j1t->Fill(ht, xlWeight);
+	        histo_pt_leading_2j1t->Fill(jet.Pt(), xlWeight);
+	      } else if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  {
+	        histo_mll_2j2t->Fill(pair.M(),  xlWeight);
+	        histo_met_2j2t->Fill(metPt,  xlWeight);
+	        histo_tmet_2j2t->Fill(tmetPt, xlWeight);
+	        histo_min_met_2j2t->Fill(TMath::Min(metPt, tmetPt), xlWeight);
+	        histo_ptsys_2j2t->Fill(ptSystem, xlWeight);
+	        histo_ht_2j2t->Fill(ht, xlWeight);
+	        histo_pt_leading_2j2t->Fill(jet.Pt(), xlWeight);
 	      }
+	      
+	      
+	   
+		  
+	      //All possible regions
+	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_R->Fill(1, xlWeight); //signal
+	      if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
+	      if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
+	      if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight); //CR1 no ht no ptsys
+	      if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight); //CR2 no ht no ptsys
+	      if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
+	      if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
+	      if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
+	      if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
+	      if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
+	      if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
+	      if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
+	      if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
+	      if (nJets == 1 && nTightJetsBT ==1 && bTagged && nJetsBT == 1)  histo_R->Fill(16, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(17, xlWeight); //CR 1 regular
+	      if (nJets == 2 && nTightJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(18, xlWeight); //CR 2 regular
+	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(19, xlWeight);
+	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(20, xlWeight);
+	      if (nJets == 2 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(21, xlWeight); //CR 1 another way
+	      if (nJets == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(22, xlWeight); //CR 2 another way
+	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(23, xlWeight); //CR1 no ht no ptsys tighter
+	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(24, xlWeight); //CR2 no ht no ptsys tighter
+	      if (nJets == 2 && nJetsBT == 1)  histo_R->Fill(25, xlWeight); //CR1 no ht no ptsys another flavor
+	      if (nJets == 2 && nJetsBT == 2)  histo_R->Fill(26, xlWeight); //CR2 no ht no ptsys another flavor
+	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && (ht > htMin || mode !=0))histo_R->Fill(27, xlWeight); //signal no ptsys
+	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut)histo_R->Fill(28, xlWeight); //signal no ht
+	      if (nJets == 2 && nTightJetsBT == 1 &&  (ht > htMin || mode !=0))  histo_R->Fill(29, xlWeight); //CR 1 
+	      if (nJets == 2 && nTightJetsBT == 2 &&  (ht > htMin || mode !=0))  histo_R->Fill(30, xlWeight); //CR 2 
+				
+	      
 	    }
 	  } //tt CR
 	} // mll
@@ -463,8 +782,8 @@ void looper::myLoop(int nsel, int mode, bool silent)
       if (i == 4) cout << " met: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 5) cout << " jet: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 6) cout << " jet_bt: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
-      if (i == 7) cout << " pt system: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
-      if (i == 8) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
+      // if (i == 7) cout << " pt system: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
+      if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
     cout << "------------------------------------------" << endl; 
   }

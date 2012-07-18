@@ -1,4 +1,4 @@
-rm outputs/*zjetsall.root;
+rm outputs/out_*_zjetsall.root;
 hadd -f outputs/out_0_zjetsall.root outputs/out_0_zjets*;
 hadd -f outputs/out_1_zjetsall.root outputs/out_1_zjets*;
 hadd -f outputs/out_2_zjetsall.root outputs/out_2_zjets*;

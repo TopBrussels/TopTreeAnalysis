@@ -11,27 +11,54 @@
 #include <cmath>
 #include "inputs.h"
 
-
 using namespace std;
+
 void syst(){
 
-  TString processName[4] =  { "twdr", "tt","others", "zjets"};
-  char myRootFile[300]; 
-  TH1F*  hnominal [3][4];
-  for (int mode = 0; mode < 3; mode++){
-   for (int j = 0; j < 3; j++){
-     sprintf(myRootFile,"outputs/out_%d_", mode);
-     TFile *_file1 = TFile::Open(myRootFile + processName[j] + ".root");
-     hnominal[mode][j] = (TH1F*) _file1->Get("R");
-     if (j == 2 && mode == 2) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 59.2);
-     if (j == 2 && mode == 0) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 19.8);
-     if (j == 2 && mode == 1) hnominal[mode][j]->SetBinContent(2,  hnominal[mode][j]->GetBinContent(2) + 132.3);
-   }
- } 
+  bool verbose = false;
+  
+  //choose regions
+  const int SRbin = 28;
+  const int CR1bin = 30;
+  const int CR2bin = 31;
+  
+  
+
+  char myRootFile[300];
+  sprintf(myRootFile,"results/Histos_cutbased_full.root");
+  
+  TFile *_file0 = TFile::Open(myRootFile);
+  
+  const int nProcess = 5;
+  TString processName[nProcess] =  { "data", "twdr", "tt", "zjets", "others"};
+  
+  TH1F*  hdata [3];
+  TH1F*  hnom [3][4];
+  
+  for (int process = 0; process < nProcess; process++){
+    for (int i = 0; i < 3; i++){
+      
+      int mode = i;
+      char modeName[300];
+      if (i == 0) sprintf(modeName,"emu");
+      else if (i == 1) sprintf(modeName,"mumu");
+      else sprintf(modeName,"ee");
+      char title[300];
+      sprintf(title,"R_%s_",modeName);
+      if (verbose) cout << "Reading " << title + processName[process] << ", ordered at " << mode << endl;
+      if (process == 0) hdata[mode] = (TH1F*) (_file0->Get(title + processName[process]))->Clone();
+      else {
+	hnom[mode][process-1] = (TH1F*) (_file0->Get(title + processName[process]))->Clone();
+	
+      }    
+    }
+  } 
+  if (verbose) cout << endl;
+  
   cout << "Breakdown of the systematics " << endl;
   cout << "* Lumi " << endl;
   for (int i = 0; i < 3; i++){
-    cout << "mode:" << i << "      4.5%" << endl;
+    cout << "mode:" << i << "      2.2%" << endl;
   }
   cout << "* HLT (electron):" << endl;
   for (int i = 0; i < 3; i++){
@@ -58,294 +85,633 @@ void syst(){
     else if (i == 2) cout << "mode:" << i << "      -" << endl;
   }
   
-  
   cout.precision(2);
   
   TH1F*  hup [3][4];
   TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
+  
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+    
     for (int j = 0; j < 3; j++){
-      if (j == 0){
-	sprintf(myRootFile,"outputs/noPU_%d_tbar_sup.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tbar_sdo.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+      if (j == 0){ 
+        char title[300];
+        sprintf(title,"R_%s_tw_sup",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+        hup[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
+        sprintf(title,"R_%s_tw_sdo",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+	hdown[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
       } else if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_scaleup.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_scaledown.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+        char title[300];
+        sprintf(title,"R_%s_tt_scaleup",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+        hup[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
+        sprintf(title,"R_%s_tt_scaledown",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+	hdown[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
       }
     }
   } 
+  if (verbose) cout << endl;
   
   cout << "* Factorization/Normalization Scale " << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 3; j++){ 
+    for (int j = 0; j <3; j++){ 
       if(j < 2){
-	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(2) - average)/average)*100 << "%    " ;
-	else cout << " -      ";
+        double avn = (hnom[0][j]->GetBinContent(SRbin)+hnom[1][j]->GetBinContent(SRbin)+hnom[2][j]->GetBinContent(SRbin));
+        double avup = (hup[0][j]->GetBinContent(SRbin)+hup[1][j]->GetBinContent(SRbin)+hup[2][j]->GetBinContent(SRbin));
+	double avdown = (hdown[0][j]->GetBinContent(SRbin)+hdown[1][j]->GetBinContent(SRbin)+hdown[2][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <3; j++){ 
+      if(j < 2){
+        double avn = (hnom[0][j]->GetBinContent(CR1bin)+hnom[1][j]->GetBinContent(CR1bin)+hnom[2][j]->GetBinContent(CR1bin));
+        double avup = (hup[0][j]->GetBinContent(CR1bin)+hup[1][j]->GetBinContent(CR1bin)+hup[2][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR1bin)+hdown[1][j]->GetBinContent(CR1bin)+hdown[2][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <3; j++){ 
+      if(j < 2){
+        double avn = (hnom[0][j]->GetBinContent(CR2bin)+hnom[1][j]->GetBinContent(CR2bin)+hnom[2][j]->GetBinContent(CR2bin));
+        double avup = (hup[0][j]->GetBinContent(CR2bin)+hup[1][j]->GetBinContent(CR2bin)+hup[2][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR2bin)+hdown[1][j]->GetBinContent(CR2bin)+hdown[2][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
+  cout << endl;
   
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
   for (int i = 0; i < 3; i++){
+    
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else  sprintf(modeName,"ee");
+    
     for (int j = 0; j < 3; j++){
       if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingup.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_matchingdown.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+        char title[300];
+        sprintf(title,"R_%s_tt_matchingup",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+        hup[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
+        sprintf(title,"R_%s_tt_matchingdown",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+	hdown[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
       }
     }
   } 
+  if (verbose) cout << endl;
+ 
   
   cout << "* ME/PS matching thresholds" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 3; j++){ 
+    for (int j = 0; j <3; j++){ 
       if(j == 1){
-	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(2) - average)/average)*100 << "%    " ;
-	else cout << " -      ";
+        double avn = (hnom[0][j]->GetBinContent(SRbin)+hnom[1][j]->GetBinContent(SRbin)+hnom[2][j]->GetBinContent(SRbin));
+        double avup = (hup[0][j]->GetBinContent(SRbin)+hup[1][j]->GetBinContent(SRbin)+hup[2][j]->GetBinContent(SRbin));
+	double avdown = (hdown[0][j]->GetBinContent(SRbin)+hdown[1][j]->GetBinContent(SRbin)+hdown[2][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <3; j++){ 
+      if(j == 1){
+        double avn = (hnom[0][j]->GetBinContent(CR1bin)+hnom[1][j]->GetBinContent(CR1bin)+hnom[2][j]->GetBinContent(CR1bin));
+        double avup = (hup[0][j]->GetBinContent(CR1bin)+hup[1][j]->GetBinContent(CR1bin)+hup[2][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR1bin)+hdown[1][j]->GetBinContent(CR1bin)+hdown[2][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <3; j++){ 
+      if(j == 1){
+        double avn = (hnom[0][j]->GetBinContent(CR2bin)+hnom[1][j]->GetBinContent(CR2bin)+hnom[2][j]->GetBinContent(CR2bin));
+        double avup = (hup[0][j]->GetBinContent(CR2bin)+hup[1][j]->GetBinContent(CR2bin)+hup[2][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[0][j]->GetBinContent(CR2bin)+hdown[1][j]->GetBinContent(CR2bin)+hdown[2][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
+  cout << endl;
   
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
+  TH1F*  h [3][3];
   for (int i = 0; i < 3; i++){
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+     
     for (int j = 0; j < 3; j++){
-      if (j == 1) {
-	sprintf(myRootFile,"outputs/noPU_%d_tt_largeISR.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hup[i][j] = (TH1F*) _file1->Get("R");
-	sprintf(myRootFile,"outputs/noPU_%d_tt_smallISR.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	hdown[i][j] = (TH1F*) _file1->Get("R");
+      if (j == 0){ 
+	char title[300];
+	sprintf(title,"R_%s_twds",modeName);
+	if (verbose) cout << "Reading " << modeName << ", " << title << ", ordered at " << mode << endl;
+	h[mode][j] = (TH1F*) (_file0->Get(title))->Clone();
       }
     }
   } 
-  
-  cout << "* ISR/FSR " << endl;
-  for (int i = 0; i < 3; i++){
-    cout << "mode:" << i << "      " ;
-    for (int j = 0; j < 3; j++){ 
-      if(j == 1){
-	cout << processName[j] << ":" ;
-	double average = (hup[i][j]->GetBinContent(2) + hdown[i][j]->GetBinContent(2))/2;
-	if (average !=0) cout << fabs((hup[i][j]->GetBinContent(2) - average)/average)*100 << "%    " ;
-	else cout << " -      ";
-      }
-    }
-    cout << endl;
-  }
-  
-  
-  TH1F*  h [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      if (j == 0) {
-	sprintf(myRootFile,"outputs/out_%d_twds.root", i);
-	TFile* _file1 = TFile::Open(myRootFile);
-	h[i][j] = (TH1F*) _file1->Get("R");
-      }
-    }
-  } 
-  
+  if (verbose) cout << endl;
+   
+   
   cout << "* DRDS scheme" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
-    for (int j = 0; j <4; j++){ 
+    for (int j = 0; j <3; j++){ 
       if(j == 0){
-	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << fabs((h[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-	else cout << " -      ";
+        double avn = (hnom[0][j]->GetBinContent(SRbin)+hnom[1][j]->GetBinContent(SRbin)+hnom[2][j]->GetBinContent(SRbin));
+        double avup = (h[0][j]->GetBinContent(SRbin)+h[1][j]->GetBinContent(SRbin)+h[2][j]->GetBinContent(SRbin));
+	double upv = (avup - avn)/avn;
+	if (avn !=0){
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%\t ";
+	} 
       }
     }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <3; j++){ 
+      if(j == 0){
+        double avn = (hnom[0][j]->GetBinContent(CR1bin)+hnom[1][j]->GetBinContent(CR1bin)+hnom[2][j]->GetBinContent(CR1bin));
+        double avup = (h[0][j]->GetBinContent(CR1bin)+h[1][j]->GetBinContent(CR1bin)+h[2][j]->GetBinContent(CR1bin));
+	double upv = (avup - avn)/avn;
+	if (avn !=0){
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%\t ";
+	
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <3; j++){ 
+      if(j == 0){
+        double avn = (hnom[0][j]->GetBinContent(CR2bin)+hnom[1][j]->GetBinContent(CR2bin)+hnom[2][j]->GetBinContent(CR2bin));
+        double avup = (h[0][j]->GetBinContent(CR2bin)+h[1][j]->GetBinContent(CR2bin)+h[2][j]->GetBinContent(CR2bin));
+	double upv = (avup - avn)/avn;
+	if (avn !=0){
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%\t ";
+	
+	} 
+      }
+    } 
     cout << endl;
   }
-  
-  
+  cout << endl;
+   
   TString SystName = "PU";
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      sprintf(myRootFile,"_%d_", i);
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-      hup[i][j] = (TH1F*) _file1->Get("R");
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
-      hdown[i][j] = (TH1F*) _file1->Get("R"); 
-    }
-  } 
   
+  for (int i = 0; i < 3; i++){
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+   
+    for (int j = 0; j < 4; j++){
+      char title[300];
+      sprintf(title,"R_%s_",modeName);
+      hup[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__plus" ))->Clone();
+      hdown[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__minus"))->Clone();
+    }
+     
+  } 
+  if (verbose) cout << endl;
+   
   cout << "* PU" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
     for (int j = 0; j <4; j++){ 
-      if (j == 0){
-	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-	else cout << " -      ";
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(SRbin));
+        double avup = (hup[i][j]->GetBinContent(SRbin));
+	double avdown = (hdown[i][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR1bin));
+        double avup = (hup[i][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR2bin));
+	double avup = (hup[i][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
-  
+  cout << endl;
+
+   
+   
   cout << "* tt cross-section:" << endl;
   for (int i = 0; i < 3; i++){
-    if (i == 0) cout << "mode:" << i << "      15%" << endl;
-    else if (i == 1) cout << "mode:" << i << "      15%" << endl;
-    else if (i == 2) cout << "mode:" << i << "      15" << endl;
+    if (i == 0) cout << "mode:" << i << "      6%" << endl;
+    else if (i == 1) cout << "mode:" << i << "      6%" << endl;
+    else if (i == 2) cout << "mode:" << i << "      6" << endl;
   }
   
+   
   TString SystName = "JES";
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      sprintf(myRootFile,"_%d_", i);
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-      hup[i][j] = (TH1F*) _file1->Get("R");
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
-      hdown[i][j] = (TH1F*) _file1->Get("R"); 
-    }
-  } 
   
-  cout << "* JES" << endl;
+  for (int i = 0; i < 3; i++){
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+   
+    for (int j = 0; j < 4; j++){
+      char title[300];
+      sprintf(title,"R_%s_",modeName);
+      hup[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__plus" ))->Clone();
+      hdown[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__minus"))->Clone();
+    }
+     
+  } 
+  if (verbose) cout << endl;
+   
+   
+  cout << "* JES" << endl; 
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
-	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-	else cout << " -      ";
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(SRbin));
+        double avup = (hup[i][j]->GetBinContent(SRbin));
+	double avdown = (hdown[i][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR1bin));
+        double avup = (hup[i][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR2bin));
+	double avup = (hup[i][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
+  cout << endl;
 
- TString SystName = "SF";
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      sprintf(myRootFile,"_%d_", i);
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-      hup[i][j] = (TH1F*) _file1->Get("R");
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
-      hdown[i][j] = (TH1F*) _file1->Get("R"); 
-    }
-  } 
+   
+   
+  TString SystName = "btag";
   
+  for (int i = 0; i < 3; i++){
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+   
+    for (int j = 0; j < 4; j++){
+      char title[300];
+      sprintf(title,"R_%s_",modeName);
+      hup[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__plus" ))->Clone();
+      hdown[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__minus"))->Clone();
+    }
+     
+  } 
+  if (verbose) cout << endl;
+   
   cout << "* B-tagging" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
-	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-	else cout << " -      ";
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(SRbin));
+        double avup = (hup[i][j]->GetBinContent(SRbin));
+	double avdown = (hdown[i][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR1bin));
+        double avup = (hup[i][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR2bin));
+	double avup = (hup[i][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
+  cout << endl;
 
- TString SystName = "JER";
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      sprintf(myRootFile,"_%d_", i);
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-      hup[i][j] = (TH1F*) _file1->Get("R");
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
-      hdown[i][j] = (TH1F*) _file1->Get("R"); 
-    }
-  } 
   
+  TString SystName = "JER";
+  
+  for (int i = 0; i < 3; i++){
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+   
+    for (int j = 0; j < 4; j++){
+      char title[300];
+      sprintf(title,"R_%s_",modeName);
+      hup[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__plus" ))->Clone();
+      hdown[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__minus"))->Clone();
+    }
+     
+  } 
+  if (verbose) cout << endl;
+   
   cout << "* JER" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
     for (int j = 0; j <4; j++){ 
-      if (j < 2){
-	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-	else cout << " -      ";
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(SRbin));
+        double avup = (hup[i][j]->GetBinContent(SRbin));
+	double avdown = (hdown[i][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR1bin));
+        double avup = (hup[i][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR2bin));
+	double avup = (hup[i][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
+  cout << endl;
 
- TString SystName = "MET";
-  TH1F*  hup [3][4];
-  TH1F*  hdown [3][4];
-  for (int i = 0; i < 3; i++){
-    for (int j = 0; j < 3; j++){
-      sprintf(myRootFile,"_%d_", i);
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysUp"+ myRootFile + processName[j] + ".root");
-      hup[i][j] = (TH1F*) _file1->Get("R");
-      TFile* _file1 = TFile::Open("outputs/" + SystName + "sysDown"+ myRootFile + processName[j] + ".root");
-      hdown[i][j] = (TH1F*) _file1->Get("R"); 
-    }
-  } 
+   
+  TString SystName = "MET";
   
+  for (int i = 0; i < 3; i++){
+    int mode = i;
+    char modeName[300];
+    if (i == 0) sprintf(modeName,"emu");
+    else if (i == 1) sprintf(modeName,"mumu");
+    else sprintf(modeName,"ee");
+   
+    for (int j = 0; j < 4; j++){
+      char title[300];
+      sprintf(title,"R_%s_",modeName);
+      hup[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__plus" ))->Clone();
+      hdown[mode][j] = (TH1F*) (_file0->Get(title + processName[j+1]+ "__" + SystName + "__minus"))->Clone();
+    }
+     
+  } 
+  if (verbose) cout << endl;
+   
   cout << "* Missing ET (unclustered)" << endl;
   for (int i = 0; i < 3; i++){
     cout << "mode:" << i << "      " ;
     for (int j = 0; j <4; j++){ 
-      if (j == 0){
-	cout << processName[j] << ":" ;
-	if (hnominal[i][j]->GetBinContent(2) !=0) cout << ((hup[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%/" <<  ((hdown[i][j]->GetBinContent(2) - hnominal[i][j]->GetBinContent(2))/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-	else cout << " -      ";
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(SRbin));
+        double avup = (hup[i][j]->GetBinContent(SRbin));
+	double avdown = (hdown[i][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR1bin));
+        double avup = (hup[i][j]->GetBinContent(CR1bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+	double avn = (hnom[i][j]->GetBinContent(CR2bin));
+	double avup = (hup[i][j]->GetBinContent(CR2bin));
+	double avdown = (hdown[i][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  double upv = (avup - avn)/avn;
+	  double downv =  (avdown - avn)/avn;
+	  cout << processName[j+1] << ":" ;
+	  cout <<  upv*100 << "%/" <<  downv*100<< "%\t ";
+	} 
       }
     }
     cout << endl;
   }
+  cout << endl;
 
-  cout << "* pdf:" << endl;
+  
+  cout << "* pdf (signal only, for all of them check https://fblekman.web.cern.ch/fblekman/documents/pdf_systs_cut-and-count.txt):" << endl;
   for (int i = 0; i < 3; i++){
-    if (i == 0) cout << "mode:" << i << "      4.5%" << endl;
-    else if (i == 1) cout << "mode:" << i << "      4.5%" << endl;
-    else if (i == 2) cout << "mode:" << i << "      4.5%" << endl;
+    if (i == 0) cout << "mode:" << i << "      -2.0/1.8%" << endl;
+    else if (i == 1) cout << "mode:" << i << "      -2.0/1.8%" << endl;
+    else if (i == 2) cout << "mode:" << i << "      -2.2/2.0%" << endl;
   }
   
-
- cout << "* MC statistics for signal:" << endl;
- for (int i = 0; i < 3; i++){
-   cout << "mode:" << i << "      " ;
-   for (int j = 0; j <4; j++){ 
-     if(j == 0 || j == 2){
-       cout << processName[j] << ":" ;
-       if (hnominal[i][j]->GetBinContent(2) !=0) cout << (hnominal[i][j]->GetBinError(2)/hnominal[i][j]->GetBinContent(2))*100 << "%   " ;
-       else cout << "-          ";
-     }
-   }
-   cout << endl;
- }
-
- cout << "* z+jet background normalization:" << endl;
+  
+  cout << "*DY re-weighted/non re-weighted" << endl;
   for (int i = 0; i < 3; i++){
-    if (i == 0) cout << "mode:" << i << "      50%" << endl;
-    else if (i == 1) cout << "mode:" << i << "      50%" << endl;
-    else if (i == 2) cout << "mode:" << i << "      50%" << endl;
-  } 
+   
+    cout << "mode:" << i << " ";
+    if(i ==2)cout <<  "34%\t ";
+    if(i ==0)cout <<  "28%\t ";
+    if(i ==1)cout <<  "27%\t ";
+  
+    cout << "\t[2j1t]" ;
 
+    if(i ==2)cout <<"32%\t";
+    if(i ==0)cout <<"30%\t";
+    if(i ==1)cout <<"28%\t";
+   
+    cout << "\t[2j2t]" ;
+   
+    if(i ==2)cout <<  "27%\t ";
+    if(i ==0)cout <<  "28%\t ";
+    if(i ==1)cout <<  "33%\t ";
+    cout << endl;
+  }
+  cout << endl;
+  
+  
+  cout << "* MC statistics:" << endl;
+  for (int i = 0; i < 3; i++){
+    cout << "mode:" << i << "      " ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(SRbin));
+	if (avn !=0){
+	  cout << processName[j+1] << ":" ;
+	  cout <<  hnom[i][j]->GetBinError(SRbin)*100/avn << "%\t ";
+	} 
+      }
+    }
+    cout << "\t[2j1t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(CR1bin));
+	if (avn !=0){
+	  cout << processName[j+1] << ":" ;
+	  cout <<  hnom[i][j]->GetBinError(CR1bin)*100/avn << "%\t ";
+	} 
+      }
+    } cout << "\t[2j2t]" ;
+    for (int j = 0; j <4; j++){ 
+      if(j < 4){
+        double avn = (hnom[i][j]->GetBinContent(CR2bin));
+	if (avn !=0){
+	  cout << processName[j+1] << ":" ;
+	  cout <<  hnom[i][j]->GetBinError(CR2bin)*100/avn << "%\t ";
+	} 
+      }
+    } 
+	
+    cout << endl;
+  }
+  cout << endl;
+
+  cout << endl;
 }
-
-
