@@ -23,11 +23,7 @@ class looper {
   Double_t        metPt;
   Double_t        metPx;
   Double_t        metPy;
-  
-  Double_t 	  tmetPx;
-  Double_t        tmetPy;
-  Double_t        tmetPt;
-  
+ 
   
   std::vector<double>  *ptLepton;
   std::vector<double>  *pxLepton;
@@ -42,10 +38,10 @@ class looper {
   std::vector<double>  *pzJet;
   std::vector<double>  *eJet;
   std::vector<double>  *qJet;
-  std::vector<double>  *btTCHPJet;
-  std::vector<double>  *btTCHEJet;
-  std::vector<double>  *btSSVHPJet;
-  std::vector<double>  *btSSVHEJet;
+  std::vector<double>  *btJPBJet;
+  std::vector<double>  *btBJPBJet;
+  std::vector<double>  *btCSVBJet;
+  std::vector<double>  *btCSVBmvaJet;
   
   // List of branches
   TBranch        *b_xlWeight;   //!
@@ -55,9 +51,6 @@ class looper {
   TBranch        *b_metPt;   //!
   TBranch        *b_metPx;   //!
   TBranch        *b_metPy;   //!
-  TBranch        *b_tmetPt;  //!
-  TBranch        *b_tmetPy;   //!
-  TBranch        *b_tmetPx;  //!
   
   
   TBranch        *b_ptLepton;   //!
@@ -72,10 +65,10 @@ class looper {
   TBranch        *b_pzJet;   //!
   TBranch        *b_eJet;   //!
   TBranch        *b_qJet;   //!
-  TBranch        *b_btTCHPJet;   //!
-  TBranch        *b_btTCHEJet;   //!
-  TBranch        *b_btSSVHPJet;   //!
-  TBranch        *b_btSSVHEJet;   //!
+  TBranch        *b_btJPBJet;   //!
+  TBranch        *b_btBJPBJet;   //!
+  TBranch        *b_btCSVBJet;   //!
+  TBranch        *b_btCSVBmvaJet;   //!
   
   looper(TTree *tree=0);
   virtual ~looper();
@@ -143,10 +136,10 @@ void looper::Init(TTree *tree)
   pzJet = 0;
   eJet = 0;
   qJet = 0;
-  btTCHPJet = 0;
-  btTCHEJet = 0;
-  btSSVHPJet = 0;
-  btSSVHEJet = 0;
+  btJPBJet = 0;
+  btBJPBJet = 0;
+  btCSVBJet = 0;
+  btCSVBmvaJet = 0;
   
   // Set branch addresses and branch pointers
   if (!tree) return;
@@ -163,10 +156,6 @@ void looper::Init(TTree *tree)
   fChain->SetBranchAddress("metPx", &metPx, &b_metPx);
   fChain->SetBranchAddress("metPy", &metPy, &b_metPy);
  
-  fChain->SetBranchAddress("tmetPt", &tmetPt, &b_tmetPt);
-  fChain->SetBranchAddress("tmetPx", &tmetPx, &b_tmetPx);
-  fChain->SetBranchAddress("tmetPy", &tmetPy, &b_tmetPy);
- 
   fChain->SetBranchAddress("ptLepton", &ptLepton, &b_ptLepton);
   fChain->SetBranchAddress("pxLepton", &pxLepton, &b_pxLepton);
   fChain->SetBranchAddress("pyLepton", &pyLepton, &b_pyLepton);
@@ -181,10 +170,11 @@ void looper::Init(TTree *tree)
   fChain->SetBranchAddress("eJet", &eJet, &b_eJet);
   fChain->SetBranchAddress("qJet", &qJet, &b_qJet);
   
-  fChain->SetBranchAddress("btTCHPJet", &btTCHPJet, &b_btTCHPJet);
-  fChain->SetBranchAddress("btTCHEJet", &btTCHEJet, &b_btTCHEJet);
-  fChain->SetBranchAddress("btSSVHPJet", &btSSVHPJet, &b_btSSVHPJet);
-  fChain->SetBranchAddress("btSSVHEJet", &btSSVHEJet, &b_btSSVHEJet);
+  fChain->SetBranchAddress("btJPBJet",&btJPBJet, &b_btJPBJet);
+  fChain->SetBranchAddress("btBJPBJet",&btBJPBJet, &b_btBJPBJet);
+  fChain->SetBranchAddress("btCSVBJet",&btCSVBJet, &b_btCSVBJet);
+  fChain->SetBranchAddress("btCSVBmvaJet",&btCSVBmvaJet, &b_btCSVBmvaJet);
+  
   Notify();
 }
 

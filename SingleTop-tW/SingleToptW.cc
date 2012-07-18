@@ -75,6 +75,11 @@ int main(int argc, char* argv[]) {
   // Naked option
   bool isRAW = false;
   
+  
+  //Run A or B 2012 (both will also work, but so far, we test A)
+  bool RunA = true;
+  bool RunB = false;
+  
   cout << "[Info:] start of the 2012 Data analysis with Summer12 Monte Carlo " << endl;
   
   // Arguments
@@ -123,10 +128,16 @@ int main(int argc, char* argv[]) {
   
   // Luminosity and xml files
   double lumi = 0;
-  if      (mode == 0){ 	 lumi = 1000;  xmlfile ="twemu.xml";}
-  else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
-  else if (mode == 2){	 lumi = 1000;  xmlfile = "twee.xml";}
+  if (RunA){
+    if      (mode == 0){ 	 lumi = 708.246;  	xmlfile ="twemu.xml";}
+    else if (mode == 1){	 lumi = 1000;  		xmlfile = "twmumu.xml";}
+    else if (mode == 2){	 lumi = 1000;  		xmlfile = "twee.xml";}
+  } else {
+    if      (mode == 0){ 	 lumi = 1000;  xmlfile ="twemu.xml";}
+    else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
+    else if (mode == 2){	 lumi = 1000;  xmlfile = "twee.xml";}
  
+  }
    
   // Analysis environment
   TTree *configTree = new TTree("configTree","configuration Tree");
@@ -156,13 +167,15 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
+      if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
       else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
       else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} 
       else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} 
       else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} 
       else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} 
+      else if (dataSetName == "wz"){         	sprintf(name, "wz");         	xlweight = lumi*22.44/8080197; 		} 
+      else if (dataSetName == "zz"){         	sprintf(name, "zz");         	xlweight = lumi*9.03/9799902; 		} 
       else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
       else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	} 
           
@@ -355,7 +368,7 @@ int main(int argc, char* argv[]) {
 	
       } else cout << "[Info:] Standard setup " << endl;
       cout << "[Info:] " << datasets[d]->NofEvtsToRunOver() << " total events" << endl;
-      
+      if ((!RunA && RunB) || (RunA && RunB))   cout << "[Warning:] You are using a Run range that the code is not ready for, either fix the code or run over A only " << endl;
       
       for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
 	{

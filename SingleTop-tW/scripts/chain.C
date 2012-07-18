@@ -25,9 +25,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
 
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
-  else if (nsel == 666)                	{sprintf(plotName,"data");}
-  else if (nsel == 6661)                {sprintf(plotName,"data1");}
-  else if (nsel == 6662)                {sprintf(plotName,"data2");}
+  else if (nsel == 666)                	{sprintf(plotName,"data_a");}
   
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;
   if (!silent){
@@ -37,13 +35,8 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
     else if (mode == 2) 	cout << " ee channel, " ;
   }
   
-
-  bool RunA = false;
-  bool RunB = false;
   char myRootFile[300];
   sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
-  if (RunA) sprintf(myRootFile,"outputs/out_runA_%d_%s.root", mode, plotName);
-  if (RunB) sprintf(myRootFile,"outputs/out_runB_%d_%s.root", mode, plotName);
   
   TChain *myCh = new TChain("myTree","myTree");
   myCh->Add(myRootFile);

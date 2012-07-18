@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <datasets>
 
+ <d name="data_a" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/MuEGRun2012A/*"/> 
+ 
  <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/TTJets/*"/> 
  
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/T_tW_DR.root"/> 
@@ -10,6 +12,9 @@
  <d name="at" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/Tbar_t/*"/> 
  
  <d name="ww" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/WW/*"/> 
+ <d name="wz" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/WZ/*"/> 
+ <d name="zz" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/ZZ/*"/> 
+ 
  
  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/ZJets/*"/> 
 

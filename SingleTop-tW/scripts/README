@@ -44,4 +44,23 @@ nohup ./SingleToptW.exe --mumu > mumu.txt&
 tail -f mumu.txt
 
 
+Once all have run:
+
+cd scripts
+sh merge.sh
+
+to run:
+
+sh emu.csh
+
+(all the final states run.csh)
+
+mkdir plots
+mkdor plots/pdf/
+
+To do the plots:
+
+root.exe plotmaker.C
+
+
 
