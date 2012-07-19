@@ -561,15 +561,12 @@ int main (int argc, char *argv[])
       
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) )
       {
-        // Correct for the difference in muon efficiency (HLT and Id) between Data and MC
-//        scaleFactor *= 0.965; // Fall10 value...
-        
         if(systematic == "JERPlus")
-          jetTools->correctJetJER(init_jets_corrected, genjets, "plus");
+          jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "plus", false);
         else if(systematic == "JERMinus")
-          jetTools->correctJetJER(init_jets_corrected, genjets, "minus");
+          jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "minus", false);
         else
-          jetTools->correctJetJER(init_jets_corrected, genjets, "nominal");
+          jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "nominal", false);
         
         // Correct jets for JES uncertainy systematics
         if(systematic == "JESPlus")
