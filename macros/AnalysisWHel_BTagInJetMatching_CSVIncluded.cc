@@ -808,7 +808,11 @@ int main (int argc, char *argv[])
     MSPlot["ChiSqKinFitCosThetaFoundSpecificBTag"]= new MultiSamplePlot(datasets,"ChiSqKinFitCosThetaFoundSpecificBTag",40,0,150,"ChiSqKinFitCosThetaFoundSpecificBTag");
     MSPlot["ProbKinFitCosThetaFoundSpecificBTag"]= new MultiSamplePlot(datasets,"ProbKinFitCosThetaFoundSpecificBTag",20,0,1,"ProbKinFitCosThetaFoundSpecificBTag");
 
-    MSPlot["CosThetaSpecificBTag"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag",CosThetaBinNumber,-1,1,"CosThetaSpecificBTag");
+    MSPlot["CosThetaSpecificBTag50Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag50Bins",50,-1,1,"CosThetaSpecificBTag50Bins");
+    MSPlot["CosThetaSpecificBTag30Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag30Bins",30,-1,1,"CosThetaSpecificBTag30Bins");
+    MSPlot["CosThetaSpecificDoubleBTag50Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificDoubleBTag50Bins",50,-1,1,"CosThetaSpecificDoubleBTag50Bins");
+    MSPlot["CosThetaSpecificDoubleBTag30Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificDoubleBTag30Bins",30,-1,1,"CosThetaSpecificDoubleBTag30Bins");
+
     MSPlot["nPVSpecificBTag"]= new MultiSamplePlot(datasets,"nPVSpecificBTag",25,0,25,"nPVSpecificBTag");
     MSPlot["TransverseMassSpecificBTag"]= new MultiSamplePlot(datasets,"TransverseMassSpecificBTag",30,0,200,"TransverseMassSpecificBTag");
     MSPlot["TransverseMassSelectedParticlesSpecificBTag"]= new MultiSamplePlot(datasets,"TransverseMassSelectedParticlesSpecificBTag",30,0,200,"TransverseMassSelectedParticlesSpecificBTag");
@@ -1001,9 +1005,6 @@ int main (int argc, char *argv[])
   int NumberBLeptCorrectEventsKinFitHadr[TotalNumberbTags][inputWTree.size()];
   int NumberBLeptCorrectEventsKinFitHadrAndLeptWOnly[TotalNumberbTags][inputWTree.size()];
   int NumberBLeptCorrectEventsKinFitHadrAndLept[TotalNumberbTags][inputWTree.size()];
-  //  int LumiWeightVectorKinFitHadr[TotalNumberbTags][inputWTree.size()];
-  //  int LumiWeightVectorKinFitHadrAndLeptWOnly[TotalNumberbTags][inputWTree.size()];
-  //  int LumiWeightVectorKinFitHadrAndLept[TotalNumberbTags][inputWTree.size()];
 
   //Initialize:
   for(int ii=0;ii<14;ii++){  //tche
@@ -1072,7 +1073,6 @@ int main (int argc, char *argv[])
   BTagCosThetaCalculation bTagCosThetaCalculation = BTagCosThetaCalculation();
 
   int LengthOfPresentationArray=0;
-
   int NumberSelectedEvents =0;
   int NumberEventsBeforeCuts = 0;
   int NumberSelectedDataEvents = 0;
@@ -1948,8 +1948,25 @@ int main (int argc, char *argv[])
 				MSPlot["LeptonicTopMassNoBTag"]->Fill((leptonChangedHadrAndLept[JetCombHadrAndLept]+neutrinoChangedHadrAndLept[JetCombHadrAndLept]+leptBChangedHadrAndLept[JetCombHadrAndLept]).M(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 			      }			    
 			    }
+
+			    //Check influence of used binnumber:
+			    if(ConsideredTagger == 6 && bTagLoop == 9){
+			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
+			      MSPlot["CosThetaSpecificDoubleBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			      MSPlot["CosThetaSpecificDoubleBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			    }
+			    
 			    //  MSPlots for specific b-tag case:  
-			    if(ConsideredBTagger == 4 && bTagLoop == 9){
+			    int OptimalTagger, OptimalbTagLoop;
+			    if(semiMuon == true){
+			      OptimalTagger = 6;
+			      OptimalbTagLoop = 7;
+			    }
+			    else if(semiElectron == true){
+			      OptimalTagger = 1
+			      OptimalbTagLoop = 1;
+			    }
+			    if(ConsideredBTagger == OptimalTagger && bTagLoop == OptimalbTagLoop){
 			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
 			      NumberEventsChiSqAndBTagCosThetaFound[iDataSet]++;
 				
@@ -1983,7 +2000,8 @@ int main (int argc, char *argv[])
 				MSPlot["JetCombCosThetaFoundSpecificBTag"]->Fill(JetCombHadrAndLept,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 				
 				//Cos theta:
-				MSPlot["CosThetaSpecificBTag"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);			   			    
+				MSPlot["CosThetaSpecificBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+				MSPlot["CosThetaSpecificBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 				
 				//Particle Kinematics:
 				MSPlot["PtLeptonicBSpecificBTag"]->Fill(leptBChangedHadrAndLept[JetCombHadrAndLept].Pt(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
