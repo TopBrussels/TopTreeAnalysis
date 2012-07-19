@@ -263,7 +263,7 @@ int main (int argc, char *argv[])
       }
       else
       {
-        dataSet->SetTitle("Data");
+        dataSet->SetTitle("Data_El");
         dataSet->SetName("Data");
         dataSet->SetEquivalentLuminosity(LuminosityEl);
       }
@@ -278,7 +278,7 @@ int main (int argc, char *argv[])
       }
       else
       {
-        dataSet->SetTitle("Data");
+        dataSet->SetTitle("Data_Mu");
         dataSet->SetName("Data");
         dataSet->SetEquivalentLuminosity(LuminosityMu);
       }
@@ -579,6 +579,16 @@ int main (int argc, char *argv[])
     mkdir("FitResults_ASCII/",0777);
     string outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_SemiMu.txt";
     string outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_SemiEl.txt";
+    if( dataSet->Title().find("Data_El") == 0 )
+    {
+      outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_El_SemiMu.txt";
+      outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_El_SemiEl.txt";
+    }
+    else if( dataSet->Title().find("Data_Mu") == 0 )
+    {
+      outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_Mu_SemiMu.txt";
+      outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_Mu_SemiEl.txt";
+    }
     ofstream outFileSemiMu(outFileNameSemiMu.c_str());
     ofstream outFileSemiEl(outFileNameSemiEl.c_str());
     
@@ -612,6 +622,16 @@ int main (int argc, char *argv[])
     mkdir("LikelihoodResults_ASCII/",0777);
     string outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiMu.txt";
     string outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiEl.txt";
+    if( dataSet->Title().find("Data_El") == 0 )
+    {
+      outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_El_SemiMu.txt";
+      outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_El_SemiEl.txt";
+    }
+    else if( dataSet->Title().find("Data_Mu") == 0 )
+    {
+      outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiMu.txt";
+      outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiEl.txt";
+    }
     ofstream outFileLikelihoodSemiMu(outFileNameLikelihoodSemiMu.c_str());
     ofstream outFileLikelihoodSemiEl(outFileNameLikelihoodSemiEl.c_str());
     
@@ -1243,7 +1263,7 @@ int main (int argc, char *argv[])
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first;
-    temp->showNumberEntries(false);
+    temp->showNumberEntries(true);
     if(name.find("muPlus") < name.size()) temp->addText("#mu^{+}+jets");
     else if(name.find("muMinus") < name.size()) temp->addText("#mu^{-}+jets");
     else if(name.find("elPlus") < name.size()) temp->addText("e^{+}+jets");

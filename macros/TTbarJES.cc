@@ -372,7 +372,7 @@ int main (int argc, char *argv[])
     int itriggerSemiMu = -1, itriggerSemiEl = -1, previousRun = -1;
     if (verbose > 1)
       cout << "	Loop over events " << endl;
-
+    
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
 //    for (unsigned int ievt = 0; ievt < 30000; ievt++)
     {
@@ -514,14 +514,9 @@ int main (int argc, char *argv[])
         }
         else
         {
-//          itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v5"), currentRun);
-          itriggerSemiMu = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v2"), currentRun);
-//          if (itriggerSemiMu == 9999)
-//      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_v4"), currentRun); // Spring11: HLT_Mu15_v1
+          itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralJet30_v1"), currentRun);
 //      	  if (itriggerSemiMu == 9999)
-//      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu9"), currentRun); // Fall10: HLT_Mu9
-      	  if (itriggerSemiMu == 9999)
-      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
+//      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
         }
         
         // semi-electron
@@ -555,9 +550,9 @@ int main (int argc, char *argv[])
         }
         else
         {
-          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun);
-      	  if (itriggerSemiEl == 9999)
-      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
+          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun);
+//      	  if (itriggerSemiEl == 9999)
+//      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
         }
       }
       // Apply Jet Corrections on-the-fly
@@ -710,7 +705,7 @@ int main (int argc, char *argv[])
                         selecTableSemiMu.Fill(d,9,scaleFactor*lumiWeight);
                         eventSelectedSemiMu = true;
                         float reliso = (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt();
-                        MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);                   
+                        MSPlot["SelectedEventsMuonsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
                       }
                     }
                   }
@@ -788,7 +783,7 @@ int main (int argc, char *argv[])
       if( eventSelectedSemiEl && eventSelectedSemiMu )
         cout << "Event selected in semiEl and semiMu channel???" << endl;
       
-      continue;
+//      continue;
         
       vector<TRootMCParticle*> mcParticles;
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
@@ -805,7 +800,7 @@ int main (int argc, char *argv[])
       if(CalculateResolutions && dataSetName.find("TTbarJets") == 0)
         jetCombiner->FillResolutions(resFitLightJets, resFitBJets, resFitBJets_B, resFitBJets_Bbar);
       
-      if ( !TrainMVA )
+      if ( !TrainMVA && !CalculateResolutions )
       {
         //get the MC matched jet combination, not the MVA best matched
 	      vector<unsigned int> goodCombi = jetCombiner->GetGoodJetCombination();
@@ -814,28 +809,26 @@ int main (int argc, char *argv[])
 	      // KINFITTER //
 	      ///////////////
 
-        if( !CalculateResolutions )
-	      {
-     	    kinFit->SetJets(selectedJets);
-     	    
-     	    vector<TH2F> monsterVector;
-     	    vector< float > mvaValsVector;
-     	    vector< vector<unsigned int> > mvaResultsVector;
-     	    vector< vector< float > > topMassVector; // mTopFit, sigmaMTopFit, chi2MTopFit
-     	    for(unsigned int iCombi=0; iCombi<12; iCombi++)
-     	    {
-     	      pair<float, vector<unsigned int> > tmpMvaVals = jetCombiner->getMVAValue(MVAmethod, iCombi+1);
-     	      mvaResultsVector.push_back(tmpMvaVals.second);
-     	      mvaValsVector.push_back(tmpMvaVals.first);
-            kinFit->SetMVAStuff(tmpMvaVals);
-            
-            if(measureTopMassDifference)
-            {
-              vector<float> tmp;
-              float* res = 0;
+   	    kinFit->SetJets(selectedJets);
+   	    
+   	    vector<TH2F> monsterVector;
+   	    vector< float > mvaValsVector;
+   	    vector< vector<unsigned int> > mvaResultsVector;
+   	    vector< vector< float > > topMassVector; // mTopFit, sigmaMTopFit, chi2MTopFit
+   	    for(unsigned int iCombi=0; iCombi<12; iCombi++)
+   	    {
+   	      pair<float, vector<unsigned int> > tmpMvaVals = jetCombiner->getMVAValue(MVAmethod, iCombi+1);
+   	      mvaResultsVector.push_back(tmpMvaVals.second);
+   	      mvaValsVector.push_back(tmpMvaVals.first);
+          kinFit->SetMVAStuff(tmpMvaVals);
+          
+          if(measureTopMassDifference)
+          {
+            vector<float> tmp;
+            float* res = 0;
 //              if( goodCombi[2] == tmpMvaVals.second[2] && ( ( goodCombi[1] == tmpMvaVals.second[1] && goodCombi[0] == tmpMvaVals.second[0] )
 //                 || ( goodCombi[0] == tmpMvaVals.second[1] && goodCombi[1] == tmpMvaVals.second[0] ) ) )
-              res = kinFit->EstimateTopMass(event, 80.4, false, iCombi);
+            res = kinFit->EstimateTopMass(event, 80.4, false, iCombi);
 //              else
 //              {
 //                res = new float[3];
@@ -843,119 +836,118 @@ int main (int argc, char *argv[])
 //                res[1] = 99.;
 //                res[2] = 99.;
 //              }
-              tmp.push_back(res[0]);
-              tmp.push_back(res[1]);
-              tmp.push_back(res[2]);
-              topMassVector.push_back(tmp);
-              delete res;
-            }
-            else
-            {
-          	  TH2F* histo = 0;
-          	  if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
-          	    histo = kinFit->FitEvent(event, 80.4, 173.3, false, iCombi); // As measured by the Tevatron //switch first boolean to true to save all monsters
-              else
-                histo = kinFit->FitEvent(event, 80.4, 172.5, false, iCombi); // As used in the MC
-              monsterVector.push_back(*histo);
-              delete histo;
-            }
+            tmp.push_back(res[0]);
+            tmp.push_back(res[1]);
+            tmp.push_back(res[2]);
+            topMassVector.push_back(tmp);
+            delete res;
           }
+          else
+          {
+        	  TH2F* histo = 0;
+        	  if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
+        	    histo = kinFit->FitEvent(event, 80.4, 173.3, false, iCombi); // As measured by the Tevatron //switch first boolean to true to save all monsters
+            else
+              histo = kinFit->FitEvent(event, 80.4, 172.5, false, iCombi); // As used in the MC
+            monsterVector.push_back(*histo);
+            delete histo;
+          }
+        }
 //          continue;
-          vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
-          int hadrBJetIndex = mcJetCombi[2], lightJet1Index = mcJetCombi[0], lightJet2Index = mcJetCombi[1], leptBJetIndex = mcJetCombi[3];
+        vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
+        int hadrBJetIndex = mcJetCombi[2], lightJet1Index = mcJetCombi[0], lightJet2Index = mcJetCombi[1], leptBJetIndex = mcJetCombi[3];
 
-          vector<float> bTagTCHE, bTagTCHP, bTagSSVHE, bTagSSVHP;
-          vector<TLorentzVector> otherSelectedJets;
-          for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
-          {
-            otherSelectedJets.push_back( *selectedJets[iJet] );
-            bTagTCHE.push_back(selectedJets[iJet]->btag_trackCountingHighEffBJetTags());
-            bTagTCHP.push_back(selectedJets[iJet]->btag_trackCountingHighPurBJetTags());
-            bTagSSVHE.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags());
-            bTagSSVHP.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighPurBJetTags());
-          }
+        vector<float> bTagTCHE, bTagTCHP, bTagSSVHE, bTagSSVHP;
+        vector<TLorentzVector> otherSelectedJets;
+        for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
+        {
+          otherSelectedJets.push_back( *selectedJets[iJet] );
+          bTagTCHE.push_back(selectedJets[iJet]->btag_trackCountingHighEffBJetTags());
+          bTagTCHP.push_back(selectedJets[iJet]->btag_trackCountingHighPurBJetTags());
+          bTagSSVHE.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags());
+          bTagSSVHP.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighPurBJetTags());
+        }
 
-          if(measureTopMassDifference)
+        if(measureTopMassDifference)
+        {
+          // check top quark masses and which top is decaying hadronically
+          float topMass = -1., antiTopMass = -1.;
+          bool topDecayedLept = false;
+          
+          if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0)
           {
-            // check top quark masses and which top is decaying hadronically
-            float topMass = -1., antiTopMass = -1.;
-            bool topDecayedLept = false;
-            
-            if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0)
+            for(unsigned int iPart=0; iPart<mcParticles.size(); iPart++)
             {
-              for(unsigned int iPart=0; iPart<mcParticles.size(); iPart++)
-              {
-                if( mcParticles[iPart]->status() != 3) continue;
+              if( mcParticles[iPart]->status() != 3) continue;
 //                cout << "type: " << mcParticles[iPart]->type() << endl;
-                if( mcParticles[iPart]->type() == 6 )
-                  topMass = mcParticles[iPart]->M();
-                else if( mcParticles[iPart]->type() == -6 )
-                  antiTopMass = mcParticles[iPart]->M();
-                else if( mcParticles[iPart]->type() == -13 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
-                  topDecayedLept = true;
-                else if( mcParticles[iPart]->type() == -11 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
-                  topDecayedLept = true;
-              }
+              if( mcParticles[iPart]->type() == 6 )
+                topMass = mcParticles[iPart]->M();
+              else if( mcParticles[iPart]->type() == -6 )
+                antiTopMass = mcParticles[iPart]->M();
+              else if( mcParticles[iPart]->type() == -13 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
+                topDecayedLept = true;
+              else if( mcParticles[iPart]->type() == -11 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
+                topDecayedLept = true;
             }
-            
-            lightMonster = new LightMonster();
-            lightMonster->setEventID( event->eventId() );
-            lightMonster->setRunID( event->runId() );
-            lightMonster->setLumiBlockID( event->lumiBlockId() );
-            lightMonster->setIdParton1( event->idParton1() );
-            lightMonster->setXParton1( event->xParton1() );
-            lightMonster->setIdParton2( event->idParton2() );
-            lightMonster->setXParton2( event->xParton2() );
-            lightMonster->setFactorizationScale( event->factorizationScale() );
-            lightMonster->setNPV(vertex.size());
-            lightMonster->setNPUBXm1(event->nPu(-1));
-            lightMonster->setNPU(event->nPu(0));
-            lightMonster->setNPUBXp1(event->nPu(1));
-            lightMonster->setTopMass(topMass);
-            lightMonster->setAntiTopMass(antiTopMass);
-            lightMonster->setSelectedSemiMu(eventSelectedSemiMu);
-            if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0)
-            {
-              lightMonster->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
-              lightMonster->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
-            }
-            lightMonster->setTopDecayedLept(topDecayedLept);
-            lightMonster->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
-            lightMonster->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
-            lightMonster->setMvaVals(mvaValsVector);
-            lightMonster->setMvaResults(mvaResultsVector);
-            lightMonster->setEventWeight(scaleFactor);
-            lightMonster->setMTopFitResults(topMassVector);
-            lightMonster->setHadrBJet( hadrBJetIndex );
-            lightMonster->setHadrLJet1( lightJet1Index );
-            lightMonster->setHadrLJet2( lightJet2Index );
-            lightMonster->setLeptBJet( leptBJetIndex );
-            lightMonster->setMET( *mets[0] );
-            lightMonster->setSelectedJets( otherSelectedJets );
-            lightMonster->setBTagTCHE(bTagTCHE);
-            lightMonster->setBTagTCHP(bTagTCHP);
-            lightMonster->setBTagSSVHE(bTagSSVHE);
-            lightMonster->setBTagSSVHP(bTagSSVHP);
-            if( eventSelectedSemiMu )
-            {
-              lightMonster->setLepton( *selectedMuons[0] );
-              lightMonster->setLeptonCharge( selectedMuons[0]->charge() );
-              lightMonster->setLeptonPFRelIso( (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt() );
-            }
-            else
-            {
-              lightMonster->setLepton( *selectedElectrons[0] );
-              lightMonster->setLeptonCharge( selectedElectrons[0]->charge() );
-              lightMonster->setLeptonPFRelIso( (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt() );
-            }
-            lightMonster->setHadrBQuark( jetCombiner->GetHadrBQuark() );
-            lightMonster->setHadrLQuark1( jetCombiner->GetLightQuark1() );
-            lightMonster->setHadrLQuark2( jetCombiner->GetLightQuark2() );
-            lightMonster->setLeptBQuark( jetCombiner->GetLeptBQuark() );
-            
-            MonsterTree->Fill();
-            delete lightMonster;
           }
+          
+          lightMonster = new LightMonster();
+          lightMonster->setEventID( event->eventId() );
+          lightMonster->setRunID( event->runId() );
+          lightMonster->setLumiBlockID( event->lumiBlockId() );
+          lightMonster->setIdParton1( event->idParton1() );
+          lightMonster->setXParton1( event->xParton1() );
+          lightMonster->setIdParton2( event->idParton2() );
+          lightMonster->setXParton2( event->xParton2() );
+          lightMonster->setFactorizationScale( event->factorizationScale() );
+          lightMonster->setNPV(vertex.size());
+          lightMonster->setNPUBXm1(event->nPu(-1));
+          lightMonster->setNPU(event->nPu(0));
+          lightMonster->setNPUBXp1(event->nPu(1));
+          lightMonster->setTopMass(topMass);
+          lightMonster->setAntiTopMass(antiTopMass);
+          lightMonster->setSelectedSemiMu(eventSelectedSemiMu);
+          if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0)
+          {
+            lightMonster->setSemiMuDecay(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ));
+            lightMonster->setSemiElDecay(genEvt->isSemiLeptonic( TRootGenEvent::kElec ));
+          }
+          lightMonster->setTopDecayedLept(topDecayedLept);
+          lightMonster->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );
+          lightMonster->setAllHadronicJetsMCMatched( jetCombiner->HadronicTopJetsMatched_MCdef() );
+          lightMonster->setMvaVals(mvaValsVector);
+          lightMonster->setMvaResults(mvaResultsVector);
+          lightMonster->setEventWeight(scaleFactor);
+          lightMonster->setMTopFitResults(topMassVector);
+          lightMonster->setHadrBJet( hadrBJetIndex );
+          lightMonster->setHadrLJet1( lightJet1Index );
+          lightMonster->setHadrLJet2( lightJet2Index );
+          lightMonster->setLeptBJet( leptBJetIndex );
+          lightMonster->setMET( *mets[0] );
+          lightMonster->setSelectedJets( otherSelectedJets );
+          lightMonster->setBTagTCHE(bTagTCHE);
+          lightMonster->setBTagTCHP(bTagTCHP);
+          lightMonster->setBTagSSVHE(bTagSSVHE);
+          lightMonster->setBTagSSVHP(bTagSSVHP);
+          if( eventSelectedSemiMu )
+          {
+            lightMonster->setLepton( *selectedMuons[0] );
+            lightMonster->setLeptonCharge( selectedMuons[0]->charge() );
+            lightMonster->setLeptonPFRelIso( (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt() );
+          }
+          else
+          {
+            lightMonster->setLepton( *selectedElectrons[0] );
+            lightMonster->setLeptonCharge( selectedElectrons[0]->charge() );
+            lightMonster->setLeptonPFRelIso( (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt() );
+          }
+          lightMonster->setHadrBQuark( jetCombiner->GetHadrBQuark() );
+          lightMonster->setHadrLQuark1( jetCombiner->GetLightQuark1() );
+          lightMonster->setHadrLQuark2( jetCombiner->GetLightQuark2() );
+          lightMonster->setLeptBQuark( jetCombiner->GetLeptBQuark() );
+          
+          MonsterTree->Fill();
+          delete lightMonster;
 	      }
       }// end !TrainMVA && eventSelected
     }				//loop on events
@@ -981,15 +973,18 @@ int main (int argc, char *argv[])
     
     treeLoader.UnLoadDataset(); //important: free memory
     
-    histo1D["mTop_LeptonPlus_"+dataSetName]->Fit("gaus", "QR","",160,180);
-    histo1D["mTop_LeptonMinus_"+dataSetName]->Fit("gaus", "QR","",160,180);
+    if(!CalculateResolutions)
+    {
+      histo1D["mTop_LeptonPlus_"+dataSetName]->Fit("gaus", "QR","",160,180);
+      histo1D["mTop_LeptonMinus_"+dataSetName]->Fit("gaus", "QR","",160,180);
     
-    TF1* funcPlus = histo1D["mTop_LeptonPlus_"+dataSetName]->GetFunction("gaus");
-    TF1* funcMinus = histo1D["mTop_LeptonMinus_"+dataSetName]->GetFunction("gaus");
-    cout << "mTop:\nleptonPlus: " << funcPlus->GetParameter(1) << " +/- " <<  funcPlus->GetParError(1);
-    cout << "  leptonMinus: " << funcMinus->GetParameter(1) << " +/- " <<  funcMinus->GetParError(1) << endl;
-    float error = sqrt(funcPlus->GetParError(1)*funcPlus->GetParError(1) + funcMinus->GetParError(1)*funcMinus->GetParError(1));
-    cout << "mTopDiff:  " << funcPlus->GetParameter(1) - funcMinus->GetParameter(1) << " +/- " << error << endl;
+      TF1* funcPlus = histo1D["mTop_LeptonPlus_"+dataSetName]->GetFunction("gaus");
+      TF1* funcMinus = histo1D["mTop_LeptonMinus_"+dataSetName]->GetFunction("gaus");
+      cout << "mTop:\nleptonPlus: " << funcPlus->GetParameter(1) << " +/- " <<  funcPlus->GetParError(1);
+      cout << "  leptonMinus: " << funcMinus->GetParameter(1) << " +/- " <<  funcMinus->GetParError(1) << endl;
+      float error = sqrt(funcPlus->GetParError(1)*funcPlus->GetParError(1) + funcMinus->GetParError(1)*funcMinus->GetParError(1));
+      cout << "mTopDiff:  " << funcPlus->GetParameter(1) - funcMinus->GetParameter(1) << " +/- " << error << endl;
+    }
   }				//loop on datasets
   
   //Once everything is filled ...
@@ -1019,11 +1014,12 @@ int main (int argc, char *argv[])
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
   mkdir(pathPNGJetCombi.c_str(),0777);
   
-  jetCombiner->Write(fout, true, pathPNGJetCombi);
+  jetCombiner->Write(fout, true, pathPNGJetCombi, false);
   
   // Fill the resolution histograms and calculate the resolutions
   if(CalculateResolutions)
   {
+    cout << "Fit the resolution stuff..." << endl;
     mkdir((pathPNG+"resFit_LightJet/").c_str(),0777);
     mkdir((pathPNG+"resFit_BJet/").c_str(),0777);
     mkdir((pathPNG+"resFit_BJet_B/").c_str(),0777);
