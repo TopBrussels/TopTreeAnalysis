@@ -87,11 +87,11 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TtbarJets_Chamonix_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
   
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
   
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
@@ -517,31 +517,22 @@ int main (int argc, char *argv[])
   
   // initialize LumiReWeighting stuff
   cout << "Initializing LumiReWeighting stuff" << endl;
-//  LumiReWeighting LumiWeightsMu = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
-//  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun173692.root", "pileup2", "pileup");
-  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_WJets_36bins.root", "PileUpReweighting/pileup_2011Data_UpToRun180252.root", "pileup2", "pileup");
-  PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
-  PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
-  
-  // 3D-reweighting
-  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-//  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun173692.root", "pileup", "pileup");
+  Lumi3DReWeighting Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
   Lumi3DWeights.weight3D_init(1.);
-  Lumi3DReWeighting Lumi3DWeightsUp = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-  Lumi3DWeightsUp.weight3D_init(1.08);
-  Lumi3DReWeighting Lumi3DWeightsDown = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Flat10PlusTail.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-  Lumi3DWeightsDown.weight3D_init(0.92);
-  
+  Lumi3DReWeighting Lumi3DWeightsUp = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DWeightsUp.weight3D_init(1.05);
+  Lumi3DReWeighting Lumi3DWeightsDown = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root", "PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DWeightsDown.weight3D_init(0.95);
   cout << " Initialized LumiReWeighting stuff" << endl;
   
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
-  resFitLightJets->LoadResolutions("/home/stijn/JES+MTop/Presentatie/2011/11_07_2011_L7Corrections/Summer11/lightJetReso.root");
+  resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
   ResolutionFit* resFitBJets = new ResolutionFit("BJet");
-  resFitBJets->LoadResolutions("/home/stijn/JES+MTop/Presentatie/2011/11_07_2011_L7Corrections/Summer11/bJetReso.root");
+  resFitBJets->LoadResolutions("resolutions/bJetReso.root");
   
   // load ideogram cfg stuff
-  string ideogramParameterFilename("../config/ideogramConfig");
+  string ideogramParameterFilename("resolutions/ideogramConfig");
   ideogram::MassLikelihoodWriter writer(ideogramParameterFilename);
   Double_t maxChi2 = writer.initialParameter->GetValue("maxChi2",(Double_t) -1.0);
   Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
@@ -656,19 +647,13 @@ int main (int argc, char *argv[])
       
 //      if( monster->runID() > 174000 ) continue;
       
-      // PU reweighting???
-//      float avPU = ( (float)monster->nPUBXm1() + (float)monster->nPU() + (float)monster->nPUBXp1() ) / 3.; // average in 3 BX!!!, as recommended
-//      float lumiWeight = LumiWeights.ITweight( (float) monster->nPU() );
-//      lumiWeight = 1;
+      // PU reweighting
       float lumiWeight = 1., lumiWeightUp = 1., lumiWeightDown = 1.;
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("DAtaDriven") != string::npos) )
       {
         lumiWeight = Lumi3DWeights.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
         lumiWeightUp = Lumi3DWeightsUp.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
         lumiWeightDown = Lumi3DWeightsDown.weight3D(monster->nPUBXm1(), monster->nPU(), monster->nPUBXp1());
-//        lumiWeight = LumiWeights.ITweight( monster->nPU() );
-//        lumiWeightUp = lumiWeight * PShiftUp.ShiftWeight( (float) monster->nPU() );
-//        lumiWeightDown = lumiWeight * PShiftDown.ShiftWeight( (float) monster->nPU() );
       }
       
       // muoncharge-string
