@@ -1058,7 +1058,7 @@ void JetCombiner::EndJob()
   graphAsymmErr_["PtJetCutBadMatchingNoISRFraction"] = GraphRatio(histo1D_["PtJetCut_nEventsAfterBadNoISR"],histo1D_["PtJetCut_nEventsAfter"],"PtJetCutBadMatchingNoISRFraction","cut on p_{T}^{4 leading jets}","Fraction with unmatched (no ISR) in 4 leading jets");
 }
 
-void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
+void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG, bool plotMVAstuff)
 {
   if( !EndJobWasRun_ )
     EndJob();
@@ -1074,7 +1074,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	fout->cd(dirname.c_str());
 	
   // Write MVA distributions
-  if( !trainMVA_ )
+  if( !trainMVA_ && plotMVAstuff )
   {
     map<string,Float_t> MVAVals = computer_->GetMVAValues();
     vector< pair<TGraph*, string> > effpurplots;
@@ -1212,6 +1212,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
     TCanvas* tempCanvas5 = TCanvasCreator(effpurplotsAllSemiMuBG, effpurtitle.c_str());
     if(savePNG) tempCanvas5->SaveAs( (pathPNG+effpurtitle+".png").c_str() );
     tempCanvas5->Write();
+    cout << "Done with complicated MVA plotting" << endl;
   } // done with MVA plotting
   
   if(savePNG) mkdir( (pathPNG+"MSPlot/").c_str(),0777);
