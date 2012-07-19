@@ -320,7 +320,7 @@ int main (int argc, char *argv[])
 //      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
 //      vCorrParam.push_back(*ResJetCorPar);
 //    }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
@@ -374,7 +374,7 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
     
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 30000; ievt++)
+//    for (unsigned int ievt = 0; ievt < 1000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -973,7 +973,7 @@ int main (int argc, char *argv[])
     
     treeLoader.UnLoadDataset(); //important: free memory
     
-    if(!CalculateResolutions)
+/*    if(!CalculateResolutions)
     {
       histo1D["mTop_LeptonPlus_"+dataSetName]->Fit("gaus", "QR","",160,180);
       histo1D["mTop_LeptonMinus_"+dataSetName]->Fit("gaus", "QR","",160,180);
@@ -984,7 +984,7 @@ int main (int argc, char *argv[])
       cout << "  leptonMinus: " << funcMinus->GetParameter(1) << " +/- " <<  funcMinus->GetParError(1) << endl;
       float error = sqrt(funcPlus->GetParError(1)*funcPlus->GetParError(1) + funcMinus->GetParError(1)*funcMinus->GetParError(1));
       cout << "mTopDiff:  " << funcPlus->GetParameter(1) - funcMinus->GetParameter(1) << " +/- " << error << endl;
-    }
+    }*/
   }				//loop on datasets
   
   //Once everything is filled ...
