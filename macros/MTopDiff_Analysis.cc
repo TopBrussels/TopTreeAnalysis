@@ -547,6 +547,7 @@ int main (int argc, char *argv[])
   
   for(unsigned int iDataSet=0; iDataSet<inputMonsters.size(); iDataSet++)
   {
+    string inputFileName = inputMonsters[iDataSet];
     TFile* inFile = new TFile(inputMonsters[iDataSet].c_str(),"READ");
     
     TTree* inMonstersTree = (TTree*) inFile->Get("MonsterTree");
@@ -568,17 +569,29 @@ int main (int argc, char *argv[])
     
     // output ascii file stuff
     mkdir("FitResults_ASCII/",0777);
-    string outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_SemiMu.txt";
+    string outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_SemiMu";
     string outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_SemiEl.txt";
     if( dataSet->Title().find("Data_El") == 0 )
     {
-      outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_El_SemiMu.txt";
-      outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_El_SemiEl.txt";
+      outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_El_SemiMu";
+      outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_El_SemiEl";
     }
     else if( dataSet->Title().find("Data_Mu") == 0 )
     {
-      outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_Mu_SemiMu.txt";
-      outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_Mu_SemiEl.txt";
+      outFileNameSemiMu = "FitResults_ASCII/FitResults_" + dataSetName + "_Mu_SemiMu";
+      outFileNameSemiEl = "FitResults_ASCII/FitResults_" + dataSetName + "_Mu_SemiEl";
+    }
+    if(inputFileName.find("SemiLep_") != string::npos)
+    {
+      string nr = inputFileName.substr( inputFileName.find("SemiLep_")+8, (inputFileName.find(".root")) - (inputFileName.find("SemiLep_")+8) );
+      cout << "fileNr = |" << nr << "|" << endl;
+      outFileNameSemiMu += "_"+nr+".txt";
+      outFileNameSemiEl += "_"+nr+".txt";
+    }
+    else
+    {
+      outFileNameSemiMu += ".txt";
+      outFileNameSemiEl += ".txt";
     }
     ofstream outFileSemiMu(outFileNameSemiMu.c_str());
     ofstream outFileSemiEl(outFileNameSemiEl.c_str());
@@ -622,6 +635,18 @@ int main (int argc, char *argv[])
     {
       outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiMu.txt";
       outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiEl.txt";
+    }
+    if(inputFileName.find("SemiLep_") != string::npos)
+    {
+      string nr = inputFileName.substr( inputFileName.find("SemiLep_")+8, (inputFileName.find(".root")) - (inputFileName.find("SemiLep_")+8) );
+      cout << "fileNr = |" << nr << "|" << endl;
+      outFileNameLikelihoodSemiMu += "_"+nr+".txt";
+      outFileNameLikelihoodSemiEl += "_"+nr+".txt";
+    }
+    else
+    {
+      outFileNameLikelihoodSemiMu += ".txt";
+      outFileNameLikelihoodSemiEl += ".txt";
     }
     ofstream outFileLikelihoodSemiMu(outFileNameLikelihoodSemiMu.c_str());
     ofstream outFileLikelihoodSemiEl(outFileNameLikelihoodSemiEl.c_str());
