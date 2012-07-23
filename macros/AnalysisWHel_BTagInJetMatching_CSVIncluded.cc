@@ -125,24 +125,24 @@ int main (int argc, char *argv[])
   //Booleans to load in different root files
   bool SignalOnly = false;
   bool DataResults = true;
-  bool JESResults = true;
-  bool JERResults = true;
-  bool WSystResults = true;
-  bool TTScalingResults = true;
-  bool TTMatchingResults = true;
-  bool PUResults = true;
-  bool UnclusEnergyResults = true;
-  bool TopMassResults = true;
-  bool TriggEvtSelResults = true;
+  bool JESResults = false;
+  bool JERResults = false;
+  bool WSystResults = false;
+  bool TTScalingResults = false;
+  bool TTMatchingResults = false;
+  bool PUResults = false;
+  bool UnclusEnergyResults = false;
+  bool TopMassResults = false;
+  bool TriggEvtSelResults = false;
   cout << " Obtaining results for : Data = " << DataResults << " , JES = " << JESResults << " , JER = " << JERResults << " , WSyst = " << WSystResults << endl;
 
   //Different KinFit configurations studied:
-  bool HadronicOnly = true;
-  bool HadronicAndLeptonicWOnly = true;
+  bool HadronicOnly = false;
+  bool HadronicAndLeptonicWOnly = false;
   bool HadronicAndLeptonic = true;
 
   //Boolean to put MinuitFitter on and off:
-  bool PerformMinuit = true;
+  bool PerformMinuit = false;
 
   //Boolean to create MSPlots:
   bool CreateMSPlots = false;
@@ -943,6 +943,10 @@ int main (int argc, char *argv[])
     MSPlot["DeltaRMuonJet"] =new MultiSamplePlot(datasets,"DeltaRMuonJet",50,0,4,"DeltaRMuonJet");
     MSPlot["DeltaRElectronJet"] =new MultiSamplePlot(datasets,"DeltaRElectronJet",50,0,10,"DeltaRElectronJet");
   }
+  cout << " Defining MSPlots: " << endl;
+  MSPlot["HadrTopMassSelJetsNobTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsNobTag",100,0,250,"HadrTopMassSelJetsNobTag");
+  MSPlot["HadrTopMassSelJetsOnebTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsOnebTag",100,0,250,"HadrTopMassSelJetsOnebTag");
+  MSPlot["HadrTopMassSelJetsTwobTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsTwobTag",100,0,250,"HadrTopMassSelJetsTwobTag");
 
   ////////////////////////////////
   //     Selection Table        // 
@@ -1767,7 +1771,6 @@ int main (int argc, char *argv[])
 	//Initialize bTag loop variables:
 	int TCHEbTagLoop, TCHPbTagLoop, SSVHEbTagLoop, SSVHPbTagLoop, CSVbTagLoop,JPbTagLoop, JBPbTagLoop;
 	int ConsideredBTagger=0; //0=tche, 1 = tchp, 2 = ssvhe, 3 = ssvhp, 4 = csv, 5 = JP & 6 = JBP		
-	
 	for(JBPbTagLoop =1;JBPbTagLoop< (NumberJBPbTags+1); JBPbTagLoop++){	  
 	  for(JPbTagLoop=1;JPbTagLoop <=(NumberJPbTags+1); JPbTagLoop++){
 	    if(ConsideredBTagger == 6) JPbTagLoop =14;   //--> Do not run over all possible TCHE bTag values!	    
@@ -1797,6 +1800,8 @@ int main (int argc, char *argv[])
 			int JetCombHadrAndLept = bTagJetSelection.HighestProbSelection(bTagLoop,ConsideredBTagger,KinFitProbHadrAndLept,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV,btagJP,btagJBP);
 			  
 			if(bTagLoop ==1){
+
+			  if(JetCombHadrAndLept != 999) MSPlot["HadrTopMassSelJetsNobTag"]->Fill((selectedJets[BLeptIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 			  
 			  if(CreateMSPlots == true){
 			    MSPlot["JetCombination"]->Fill(JetCombHadrAndLept,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
@@ -1804,6 +1809,17 @@ int main (int argc, char *argv[])
 			    histo1D["JetCombHadrAndLeptWOnly"]->Fill(JetCombHadrAndLeptWOnly);
 			    histo1D["JetCombHadrAndLept"]->Fill(JetCombHadrAndLept);
 			  }
+			}
+
+			if(ConsideredBTagger == 6 && bTagLoop == 7 && JetCombHadrAndLept != 999){
+			  cout << " Hadr Top mass histo ! " << endl;
+			  MSPlot["HadrTopMassSelJetsOnebTag"]->Fill((selectedJets[BLeptIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			  cout << " Hadr Top mass histo ! (end)" << endl;
+			}
+
+			if(ConsideredBTagger == 6 && bTagLoop == 9 && JetCombHadrAndLept != 999){
+			  cout << " Hadr Top Mass histo " << endl;
+			  MSPlot["HadrTopMassSelJetsTwobTag"]->Fill((selectedJets[BLeptIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 			}
 			
 			// Only hadronic KinFit configuration:
@@ -1863,10 +1879,10 @@ int main (int argc, char *argv[])
 			}
 			
 			//Hadronic and leptonic KinFit configuration:
-			NumberEventsChiSqAndBTag[iDataSet]++;
+			if(bTagLoop == 1) NumberEventsChiSqAndBTag[iDataSet]++;
 			if(JetCombHadrAndLept!=999 && HadronicAndLeptonic == true){ 
 
-			  NumberEventsChiSqAndBTagJetCombFound[iDataSet]++;
+			  if(bTagLoop == 1) NumberEventsChiSqAndBTagJetCombFound[iDataSet]++;
 			  float CosThetaCalcHadrAndLept=bTagCosThetaCalculation.Calculation(leptonChangedHadrAndLept[JetCombHadrAndLept],neutrinoChangedHadrAndLept[JetCombHadrAndLept],leptBChangedHadrAndLept[JetCombHadrAndLept]);
 			  if(CosThetaCalcHadrAndLept != 999){
 
@@ -1950,7 +1966,12 @@ int main (int argc, char *argv[])
 			    }
 
 			    //Check influence of used binnumber:
-			    if(ConsideredTagger == 6 && bTagLoop == 9){
+			    if(ConsideredBTagger == 6 && bTagLoop == 9 && semiMuon == true){
+			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
+			      MSPlot["CosThetaSpecificDoubleBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			      MSPlot["CosThetaSpecificDoubleBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			    }
+			    if(ConsideredBTagger == 6 && bTagLoop == 7 && semiElectron == true){
 			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
 			      MSPlot["CosThetaSpecificDoubleBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 			      MSPlot["CosThetaSpecificDoubleBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
@@ -1963,8 +1984,8 @@ int main (int argc, char *argv[])
 			      OptimalbTagLoop = 7;
 			    }
 			    else if(semiElectron == true){
-			      OptimalTagger = 1
-			      OptimalbTagLoop = 1;
+			      OptimalTagger = 6;
+			      OptimalbTagLoop = 9;
 			    }
 			    if(ConsideredBTagger == OptimalTagger && bTagLoop == OptimalbTagLoop){
 			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
