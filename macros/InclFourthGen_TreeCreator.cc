@@ -177,12 +177,12 @@ int main (int argc, char *argv[])
   string postfix = ""; // to relabel the names of the output file  
 	postfix= postfix+"_"+systematic;
 
-  string Treespath = "InclFourthGenTrees_Fall11_17Apr_TESTING";
+  string Treespath = "InclFourthGenTrees_Fall11_04June12_TriggerFilters_TriggerCentralJet30applied";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
 	
-  string Outpath = "DatadrivenBackgroundEstimations";
+  string Outpath = "TriggerFilters_05June12_TriggerCentralJet30applied";
   Outpath = Outpath + postfix;
   Outpath = Outpath +"/";
 	if(datadriven)
@@ -195,7 +195,7 @@ int main (int argc, char *argv[])
   
   //xml file
   string xmlFileName = "";
-	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_tmp.xml";
+	if(semiElectron) xmlFileName = "../config/myFourthGenconfig_Electron_Fall11_triggerpart4.xml";
   else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
@@ -476,6 +476,7 @@ int main (int argc, char *argv[])
         sort(genjets.begin(),genjets.end(),HighestPt()); // HighestPt() is included from the Selection class
       }			
 			
+
 			
       // scale factor for the event
       float scaleFactor = 1.;
@@ -598,8 +599,10 @@ int main (int argc, char *argv[])
 					  //Problem: a trigger reweighting procedure for MC should be done when using the summer11 electron trigger...
 					  if(dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown")
    						itrigger = treeLoader.iTrigger (string ("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2"), currentRun, iFile);//Summer11 MC has other triggers!	
-						else
-						  itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);//Fall11 MC!
+						else{						
+						  //itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5"), currentRun, iFile);//Fall11 MC!
+							itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_v5"), currentRun, iFile);//Fall11 MC!
+						}
 						
 						if(itrigger == 9999)
 						{
@@ -787,6 +790,9 @@ int main (int argc, char *argv[])
 
      
       selecTableSemiLep.Fill(d,1,scaleFactor);		
+			
+			
+			//trigged = true; //if uncommented = only to switch off temporarily the trigger!!
 			
 			
 			//// EVENTS TRIGGERED BY MUON TRIGGER			
@@ -1733,6 +1739,22 @@ int main (int argc, char *argv[])
 			//}
 			//cout << endl;
 
+
+			/*if(dataSetName.find("WJets")<=dataSetName.size())
+			{
+			  cout<<"New event"<<endl;
+				for(unsigned int i=0; i<mcParticles.size(); i++)
+    		{
+					cout<<"  "<<i<<", type: "<<mcParticles[i]->type()<<", mother type: "<<mcParticles[i]->motherType()<<", nDaughters: "<<mcParticles[i]->nDau()
+					<<", (types "<<mcParticles[i]->dauOneId()<<","<<mcParticles[i]->dauTwoId()<<","<<mcParticles[i]->dauThreeId()<<","<<mcParticles[i]->dauFourId()<<"), status: "<<mcParticles[i]->status()<<endl;
+					
+				}
+			}*/
+
+
+
+
+
       vector<float> bTagTCHE, bTagTCHP, InitJetsbTagTCHE, InitJetsbTagTCHP;
 			vector<int> partonFlavourJet;
       vector<TLorentzVector> SelectedJetsTLV, SelectedForwardJetsTLV, SelectedMuonsTLV, SelectedElectronsTLV, InitJets;
@@ -1769,6 +1791,26 @@ int main (int argc, char *argv[])
 						SelectedElectronsRelIso.push_back(relIso);			
       }
 
+      
+			vector<TVector3> BJetTriggerObjects;
+      map<string, vector<TopTree::triggeredObject> > myTriggerFilters = event->getTriggerFilters();
+			vector<TopTree::triggeredObject> myTriggeredObjects;
+			if(dataSetName == "Data" || dataSetName == "ttW" || dataSetName == "ttZ" || dataSetName == "samesignWWjj" || dataSetName == "TTbarJets_scaleup" || dataSetName == "TTbarJets_scaledown" || dataSetName == "TTbarJets_matchingup" || dataSetName == "TTbarJets_matchingdown" || dataSetName.find("QCD")<=0 )
+			   myTriggeredObjects = myTriggerFilters[""];
+			else
+			{
+				 //myTriggeredObjects = myTriggerFilters["hltSingleIsoEleCleanBJet30Central"]; //Fall11, jet piece of ~trigger HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v5, I ran TopTreeProducer with verbosity > 2 on a Fall11 ttbar sample to obtain these strings...
+      	 myTriggeredObjects = myTriggerFilters["hltEle27CaloIdVTCaloIsoTTrkIdTTrkIsoTCentralJet30Cleaned"]; //Fall11
+			}
+			//cout<<"Triggered objects size = "<<myTriggeredObjects.size()<<endl;
+			for(unsigned int t=0; t<myTriggeredObjects.size(); t++)
+			{
+				//cout<<"t = "<<t<<", Pt = "<<myTriggeredObjects[t].pt<<endl;
+				TVector3 myvector;
+				myvector.SetPtEtaPhi(myTriggeredObjects[t].pt,myTriggeredObjects[t].eta,myTriggeredObjects[t].phi);
+				BJetTriggerObjects.push_back(myvector);
+			}
+			
 
 			if(!datadriven)
 			{
@@ -1839,6 +1881,9 @@ int main (int argc, char *argv[])
       	myBranch_selectedEvents->setElectrons( SelectedElectronsTLV );
 				myBranch_selectedEvents->setMuonsRelIso( SelectedMuonsRelIso );
       	myBranch_selectedEvents->setElectronsRelIso( SelectedElectronsRelIso );
+				
+				myBranch_selectedEvents->setBJetTriggerObjects( BJetTriggerObjects );
+				
 			
 				//myBranch_selectedEvents->setTopDecayedLept( topDecayedLept );
       	//myBranch_selectedEvents->setAll4JetsMCMatched( jetCombiner->All4JetsMatched_MCdef() );

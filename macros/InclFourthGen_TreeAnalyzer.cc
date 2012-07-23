@@ -140,12 +140,13 @@ int main (int argc, char *argv[])
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
   
 	string Treespath = "/user/pvmulder/NewEraOfDataAnalysis/TopTree/CMSSW_4_2_8_patch7/src/TopBrussels/TopTreeAnalysis/macros/InclFourthGenTrees_Fall11_3Apr/"; //this also contains newer trees than 3apr, for example the WNJets trees in InclFourthGenTrees_Fall11_01May12_WNJetsRun/ 
-  //string Treespath = "InclFourthGenTrees_Fall11_3May"; //copy from 3Apr trees and the 1May WNJetsRun from Gerrit
-  Treespath = Treespath + "/"; 		
+  
+	Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_9May_JetCombinationsTest";
+	//string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_20June12_TopMassRebinning";
+	string Outputpath = "OutputFiles_InclFourthGenTreeAnalyzer_23June12";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 
@@ -217,7 +218,8 @@ int main (int argc, char *argv[])
   else if(semiMuon) xmlFileName = "../config/myFourthGenconfig_Muon_Fall11.xml";	
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
-  
+  bool JetPtcutaBjet = false;
+	float BJetPtCut = 65; //doesn't matter if JetPtcutaBjet = false
   
   ////////////////////////////////////
   /// AnalysisEnvironment  
@@ -292,7 +294,6 @@ int main (int argc, char *argv[])
   pathPNG = pathPNG +"/"; 	
   pathPNG = pathPNG +"/"; 	
   if(savePNG) mkdir(pathPNG.c_str(),0777);
-
   //Most 1D and MS plots are declared inside this class
   InclFourthGenSearchTools myInclFourthGenSearchTools(semiMuon, semiElectron, datasets, Luminosity,false); //last argument is doKinematicFit
   
@@ -300,7 +301,6 @@ int main (int argc, char *argv[])
   MSPlot["hadronicRecoWMass_chosenWjets"] = new MultiSamplePlot(datasets, "hadronicRecoWMass_chosenWjets", 50, 0, 500, "m_{W}"); 
   histo1D["hadronicPartonWMass"] = new TH1F("hadronicPartonWMass","Hadronic W Mass, using the Partons",100,0,200);
   histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
-  
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
   histo1D["LeptonPt_TTbar"] = new TH1F("leptonspt ttbar","leptonspt ttbar;pt leptons;#events",250,0,500);
   histo1D["LeptonPt_Tprime500"] = new TH1F("leptonspt tprime500","leptonspt tprime500;pt leptons;#events",250,0,500);
@@ -331,7 +331,6 @@ int main (int argc, char *argv[])
   MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "BtaggedJetMultiplicity", 7, -0.5, 6.5, "b-tagged jet multiplicity");
 	MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicityAtleast1Btag", 10, -0.5, 9.5, "Jet multiplicity (>=1 b-tag)");
   MSPlot["MS_Reliso_Lepton"] = new MultiSamplePlot(datasets, "Lepton reliso", 40, 0, 0.25, "Lepton reliso");
-
   MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
 	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
@@ -352,6 +351,10 @@ int main (int argc, char *argv[])
   MSPlot["MS_MET_4jets"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
   MSPlot["MS_LeptonPt_4jets"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
   MSPlot["MS_JetPt_all_SingleLepton_4jets"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
+
+  //control plots to know if b-tagging/mistagging scale factors are ok
+	MSPlot["MS_HT_semiMu_nobtagging"] = new MultiSamplePlot(datasets,"Ht_alt_nobtagging", 80, 0, 800, "Ht_alt (GeV)"); //alternative HT definition: sum of met, lepton pt and jet pt's
+	MSPlot["MS_HT_semiMu_atleast1btag"] = new MultiSamplePlot(datasets,"Ht_alt_atleast1btag", 80, 0, 800, "Ht_alt (GeV)"); //alternative HT definition: sum of met, lepton pt and jet pt's
 
   //for the events that are actually used
 	MSPlot["MS_MET_used"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
@@ -703,6 +706,7 @@ int main (int argc, char *argv[])
      
     cout << " - Loop over events " << endl;      
     //cout<<"start = "<<start<<"end = "<<end<<endl;
+		int SampleNofEvts = 0;
 		
     for (int ievt = start; ievt < end; ievt++)
     {        
@@ -865,7 +869,16 @@ int main (int argc, char *argv[])
 					  MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 					else
 					  MSPlot["MS_JetPt_nonbtagged_SingleLepton_nobtag"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
-				}			
+				}	
+
+        if(semiMuon)
+				{
+				  double myHT = met;					
+					for(int i=0; i<selectedJets.size(); i++)
+					  myHT = myHT + selectedJets[i].Pt();						
+					myHT = myHT + selectedMuons[0].Pt();
+					MSPlot["MS_HT_semiMu_nobtagging"]->Fill(myHT,datasets[d], true, Luminosity*scaleFactor);
+				}		
 			}			
 
 
@@ -873,8 +886,11 @@ int main (int argc, char *argv[])
 			bool eventSelected = false;
 			for(unsigned int j=0;j<selectedJets.size();j++)
 			{	//now require at least a b-tagged jet larger than a certain pre-defined cut
-				if(bTagValues[j] > workingpointvalue && !eventSelected)
+				if((bTagValues[j] > workingpointvalue) && !eventSelected && (!JetPtcutaBjet || (JetPtcutaBjet && (selectedJets[j].Pt() > BJetPtCut))))
+				{
 					eventSelected = true;
+					//cout<<"b-jet Pt = "<<selectedJets[j].Pt()<<endl;
+				}
 			}
 			if(!eventSelected) continue;
 			
@@ -985,11 +1001,14 @@ int main (int argc, char *argv[])
 					}
 				}
 							
+
+      	double HT = 0.;
+				HT = HT + met;
+
+
 				//////////////////
 				// rescale events according to b-tag/mistag eff scalefactors
 				//////////////////
-      	double HT = 0.;
-				HT = HT + met;
 
 				int nbOfBtags = 0;
 				int bJet1 = 999;
@@ -1015,6 +1034,7 @@ int main (int argc, char *argv[])
 								{
 									if(jetindex_isb[j].second)
 									{ // jet is b-tagged and a true b
+									  //cout<<"SFb = "<<SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic)<<endl;
 										scaleFactor = scaleFactor * SFb(selectedJetsForBtagging[bJet1].Pt(),btagger,systematic);
 									}
 									else if(fabs((myBranch_selectedEvents->partonFlavourJet())[bJet1]) == 4)
@@ -1094,7 +1114,16 @@ int main (int argc, char *argv[])
 					  MSPlot["MS_JetPt_nonbtagged_SingleLepton"]->Fill(selectedJets[j].Pt(),datasets[d], true, Luminosity*scaleFactor);
 				}
 				
-				MSPlot["MS_nJets_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);		
+				MSPlot["MS_nJets_SingleLepton"]->Fill(selectedJets.size(),datasets[d], true, Luminosity*scaleFactor);
+				
+				if(semiMuon)
+				{
+				  double myHT = met;					
+					for(int i=0; i<selectedJets.size(); i++)
+					  myHT = myHT + selectedJets[i].Pt();						
+					myHT = myHT + selectedMuons[0].Pt();
+					MSPlot["MS_HT_semiMu_atleast1btag"]->Fill(myHT,datasets[d], true, Luminosity*scaleFactor); //so we have required at least one jet to be b-tagged, but there could be twob-tagged jets of course; the scalefator is adapted acoordingly in a block of code somewher above
+				}	
 			}			
 			
 //			if(isSSLepton)
@@ -1610,7 +1639,8 @@ int main (int argc, char *argv[])
 						myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 						selecTableSemiLep.Fill(d,1,scaleFactor);
 						selecTableSemiLep.Fill(d,3,scaleFactor);
-			
+			      SampleNofEvts++;
+						
 						//////////////
 						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
 						//////////////
@@ -1640,7 +1670,7 @@ int main (int argc, char *argv[])
 					
 					
 						 ////to test 'purity' of good jet combinations with a 'simple' method (not MVA)... 
-						 myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,isSemiLep_MC,myBranch_selectedEvents->mcQuarksForMatching(),selectedJets_MVAinput,TprimeEvaluation,scaleFactor);
+						 myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,isSemiLep_MC,myBranch_selectedEvents->mcQuarksForMatching(),selectedJets_MVAinput,TprimeEvaluation,scaleFactor);//last 2 arguments: TprimeEvaluation,scaleFactor
 						
 						
 					   //reconstructing the mass of the top/t', and fill vector for binning
@@ -1705,6 +1735,7 @@ int main (int argc, char *argv[])
 				      myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);				
 							selecTableSemiLep.Fill(d,1,scaleFactor);
 							selecTableSemiLep.Fill(d,4,scaleFactor);
+							SampleNofEvts++;
 				    }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1736,6 +1767,7 @@ int main (int argc, char *argv[])
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,1,scaleFactor);
 							selecTableSemiLep.Fill(d,5,scaleFactor);
+							SampleNofEvts++;
 				   }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1757,7 +1789,7 @@ int main (int argc, char *argv[])
 				   //cout << "in 2B 1W box" << endl;
 				   if(selectedForwardJets.size() != 0) continue;
 				   if(selectedJets.size() != 2) continue;
-
+					 
 				   float DeltaPhi = fabs(selectedJets[0].DeltaPhi(selectedJets[1]));
 				   float RelPt = fabs(selectedJets[0].Pt()-selectedJets[1].Pt())/(selectedJets[0].Pt()+selectedJets[1].Pt());
 
@@ -1785,6 +1817,7 @@ int main (int argc, char *argv[])
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,1,scaleFactor);
 							selecTableSemiLep.Fill(d,6,scaleFactor);
+							SampleNofEvts++;
 				   }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1819,7 +1852,8 @@ int main (int argc, char *argv[])
 							myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 							selecTableSemiLep.Fill(d,1,scaleFactor);
 							selecTableSemiLep.Fill(d,7,scaleFactor);
-					
+					    SampleNofEvts++;
+							
 						//////////////
 						// MVA stuff, only to be done when this is decided in the configuration of this macro (the doMVAjetcombination boolean)
 						//////////////
@@ -1842,7 +1876,7 @@ int main (int argc, char *argv[])
 	   					//coutObjectsFourVector(init_muons,init_electrons,selectedJets_MVAinput,mets,"*** Before kinematic fit ***");
 						
 						      ////to test 'purity' of good jet combinations with a 'simple' method (not MVA)...
-						      myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,isSemiLep_MC,myBranch_selectedEvents->mcQuarksForMatching(),selectedJets_MVAinput,TprimeEvaluation,scaleFactor);
+						      myInclFourthGenSearchTools.TestPurityGoodCombinations(d,nbOfBtags,nbOfWs,isSemiLep_MC,myBranch_selectedEvents->mcQuarksForMatching(),selectedJets_MVAinput,TprimeEvaluation,scaleFactor); //last 2 arguments: TprimeEvaluation,scaleFactor
 						
 						
 					        //reconstructing the mass of the top/t', and fill vector for binning
@@ -1908,6 +1942,7 @@ int main (int argc, char *argv[])
 								myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 								selecTableSemiLep.Fill(d,1,scaleFactor);
 								selecTableSemiLep.Fill(d,8,scaleFactor);
+								SampleNofEvts++;
 				     }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1939,6 +1974,7 @@ int main (int argc, char *argv[])
 								myInclFourthGenSearchTools.FillPlots(d,nbOfBtags,nbOfWs,HT,selectedMuons,selectedElectrons,met,selectedJets,scaleFactor);
 								selecTableSemiLep.Fill(d,1,scaleFactor);
 								selecTableSemiLep.Fill(d,9,scaleFactor);
+								SampleNofEvts++;
 				     }
 					if(dataSetName=="WJets"){
 						int flavorHP = myBranch_selectedEvents->flavorHistoryPath();
@@ -1958,8 +1994,10 @@ int main (int argc, char *argv[])
 		}//loop on events
 
     ////to test 'purity' of good jet combinations with a 'simple' method (not MVA).
-    myInclFourthGenSearchTools.PrintPurityGoodCombinations();
+    //myInclFourthGenSearchTools.PrintPurityGoodCombinations();
     
+		cout<<"  ... For dataset "<<dataSetName<<": "<<SampleNofEvts<<" events of the sample passed the selection (no scale factors applied)"<<endl;
+		
 		cout<<endl;
     
     //important: free memory
@@ -2157,12 +2195,12 @@ int main (int argc, char *argv[])
     selecTableSemiLep.TableCalculator(true, true, true, true, true, true, true, true);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableSemiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_"+channelpostfix;
     selectiontableSemiLep = Outputpath+selectiontableSemiLep+outputpostfix+".tex"; 	
-    selecTableSemiLep.Write(selectiontableSemiLep.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
+    selecTableSemiLep.Write(selectiontableSemiLep.c_str(),true, true, false, false, false, false, false); //selecTableSemiLep.Write(selectiontableSemiLep.c_str(),true, true, false, false, false, false, false); // (filename, error, merged, lines, unscaled, eff, totaleff, landscape)
     
-		selecTableMultiLep.TableCalculator(true, true, true, true, true, false, true, true);
+		selecTableMultiLep.TableCalculator(true, true, true, true, true, false, true, true); //selecTableMultiLep.TableCalculator(true, true, true, true, true, false, true, true);
     string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton_"+channelpostfix;
     selectiontableMultiLep = Outputpath+selectiontableMultiLep+outputpostfix+".tex"; 	
-    selecTableMultiLep.Write(selectiontableMultiLep.c_str(),false, true, false, false, false, false, false);
+    selecTableMultiLep.Write(selectiontableMultiLep.c_str(),true, true, false, false, false, false, false);
 		
      //regarding binning, which is only relevant when you do the MVA jet combination to reconstruct the top mass   
      if (doMVAjetcombination && make2Dbinning==true)
