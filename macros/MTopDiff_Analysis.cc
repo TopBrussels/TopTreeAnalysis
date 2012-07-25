@@ -87,23 +87,20 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
-  
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_Nominal_SemiLep.root");
-  
+    
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
-  
+    
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
-  
+    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep_MERGED.root");
+    
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_BCtoE_Nominal_SemiLep.root");
@@ -111,7 +108,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_EMEnriched_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_EMEnriched_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_EMEnriched_Nominal_SemiLep.root");
-  
+      
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
@@ -120,58 +117,6 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
-  
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_AlignPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_AlignPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_AlignPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_AlignPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignMinus_SemiLep.root"); broken file
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_AlignPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_AlignPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_AlignPlus_SemiLep.root");
-    
-/*    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingdown_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingup_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaledown_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaleup_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_matchingdown_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_matchingup_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_scaledown_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_scaleup_Nominal_SemiLep.root");*/
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -227,14 +172,10 @@ int main (int argc, char *argv[])
   
   // Ideogram shapes
   histo1D["wJets_mTopFitted"] = new TH1F("wJets_mTopFitted","wJets_mTopFitted;Fitted top quark mass;#jet-combis",100,0,500);
-  histo1D["wJets_mTopFitted_noChi2weight"] = new TH1F("wJets_mTopFitted_noChi2weight","wJets_mTopFitted_noChi2weight;Fitted top quark mass;#jet-combis",100,0,500);
-  histo1D["wJets_mTopFitted_muPlus"] = new TH1F("wJets_mTopFitted_muPlus","wJets_mTopFitted_muPlus;Fitted top quark mass;#jet-combis",100,0,500);
-  histo1D["wJets_mTopFitted_muMinus"] = new TH1F("wJets_mTopFitted_muMinus","wJets_mTopFitted_muMinus;Fitted top quark mass;#jet-combis",100,0,500);
+  histo1D["wJets_mTopFitted_noWeight"] = new TH1F("wJets_mTopFitted_noWeight","wJets_mTopFitted_noWeight;Fitted top quark mass;#jet-combis",100,0,500);
   
-  histo1D["ttJets_mTopFitted_badcombi"] = new TH1F("ttJets_mTopFitted_badcombi","ttJets_mTopFitted_badcomb;Fitted top quark mass;#jet-combis",200,0,500);
-  histo1D["ttJets_mTopFitted_badcombi_noChi2weight"] = new TH1F("ttJets_mTopFitted_badcombi_noChi2weight","ttJets_mTopFitted_badcomb_noChi2weight;Fitted top quark mass;#jet-combis",200,0,500);
-  histo1D["ttJets_mTopFitted_badcombi_muPlus"] = new TH1F("ttJets_mTopFitted_badcombi_muPlus","ttJets_mTopFitted_badcomb_muPlus;Fitted top quark mass;#jet-combis",200,0,500);
-  histo1D["ttJets_mTopFitted_badcombi_muMinus"] = new TH1F("ttJets_mTopFitted_badcombi_muMinus","ttJets_mTopFitted_badcomb_muMinus;Fitted top quark mass;#jet-combis",200,0,500);
+  histo1D["ttJets_mTopFitted_badcombi"] = new TH1F("ttJets_mTopFitted_badcombi","ttJets_mTopFitted_badcombi;Fitted top quark mass;#jet-combis",200,0,500);
+  histo1D["ttJets_mTopFitted_badcombi_noWeight"] = new TH1F("ttJets_mTopFitted_badcombi_noWeight","ttJets_mTopFitted_badcombi_noWeight;Fitted top quark mass;#jet-combis",200,0,500);
   
   histo1D["combiWeight"] = new TH1F("combiWeight","combiWeight",100,0,1.00001);
   histo1D["wJets_combiWeight"] = new TH1F("wJets_combiWeight","wJets_combiWeight",100,0,1.00001);
@@ -624,17 +565,17 @@ int main (int argc, char *argv[])
     
     // output ascii file after likelihood calculation
     mkdir("LikelihoodResults_ASCII/",0777);
-    string outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiMu.txt";
-    string outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiEl.txt";
+    string outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiMu";
+    string outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_SemiEl";
     if( dataSet->Title().find("Data_El") == 0 )
     {
-      outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_El_SemiMu.txt";
-      outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_El_SemiEl.txt";
+      outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_El_SemiMu";
+      outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_El_SemiEl";
     }
     else if( dataSet->Title().find("Data_Mu") == 0 )
     {
-      outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiMu.txt";
-      outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiEl.txt";
+      outFileNameLikelihoodSemiMu = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiMu";
+      outFileNameLikelihoodSemiEl = "LikelihoodResults_ASCII/LikelihoodResults_" + dataSetName + "_Mu_SemiEl";
     }
     if(inputFileName.find("SemiLep_") != string::npos)
     {
@@ -779,7 +720,7 @@ int main (int argc, char *argv[])
       MSPlot["RelPFISo"+leptonDecay]->Fill(monster->leptonPFRelIso(), dataSet, true, monster->eventWeight()*lumiWeight);
       
       // Extra mTop and sigma(mTop) from fitresults
-      vector<float> mTop, sigmaMtop, minChi2;
+      vector<float> mTop, sigmaMtop, minChi2, bTagWeight;
       vector<int> hadrBindex, light1index, light2index;
       int nFinalCombis=0; // final means after chi2<10 cut
       int mcCombiIndex = -1;
@@ -805,6 +746,22 @@ int main (int argc, char *argv[])
           mTop.push_back(mTopFit);
           sigmaMtop.push_back(sigmaMTopFit);
           minChi2.push_back(chi2MTopFit);
+          
+          float bTagW = 1;
+          for(size_t i=0; i<4; i++)
+          {
+            if(btagSSVHE[combi[i]] > bTagCut) // b-tagged!
+            {
+              if(i == 0 || i == 1) bTagW *= misTagRate;
+              else bTagW *= bTagEff;
+            }
+            else // NOT b-tagged!
+            {
+              if(i == 0 || i == 1) bTagW *= (1 - misTagRate);
+              else bTagW *= (1 - bTagEff);
+            }
+          }
+          bTagWeight.push_back(bTagW);
           
           // control plots
           if( dataSetName.find("TTbarJets") == 0 )
@@ -1009,9 +966,9 @@ int main (int argc, char *argv[])
           outFileSemiEl << "FinishedEvent" << endl;
           outFileSemiEl << "------------------------------------------" << endl;
         }
-        // normalize chi2-weights to 1
-/*        float totalWeight = 0;
-        for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++) totalWeight += TMath::Exp(-0.5*minChi2[iCombi]);
+/*        // normalize chi2 and b-tag weights to 1
+        float totalWeight = 0;
+        for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++) totalWeight += (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]);
         
         // shape study
         for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++)
@@ -1021,17 +978,15 @@ int main (int argc, char *argv[])
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]));
             if( dataSetName.find("WJets") == 0 )
             {
-              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*TMath::Exp(-0.5*minChi2[iCombi]));
-              histo1D["wJets_mTopFitted_noChi2weight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
-              histo1D["wJets_mTopFitted"+leptonCharge]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*TMath::Exp(-0.5*minChi2[iCombi]));
-              histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]));
-              histo2D["wJets_mTopFitted_VS_combiWeight"]->Fill(mTop[iCombi],TMath::Exp(-0.5*minChi2[iCombi]));
+              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]));
+              histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
+              histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]);
+              histo2D["wJets_mTopFitted_VS_combiWeight"]->Fill(mTop[iCombi], (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]));
             }
             if( dataSetName.find("TTbarJets") == 0 && mcCombiIndex != iCombi )
             {
-              histo1D["ttJets_mTopFitted_badcombi"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*TMath::Exp(-0.5*minChi2[iCombi]));
-              histo1D["ttJets_mTopFitted_badcombi_noChi2weight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
-              histo1D["ttJets_mTopFitted_badcombi"+leptonCharge]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*TMath::Exp(-0.5*minChi2[iCombi]));
+              histo1D["ttJets_mTopFitted_badcombi"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]));
+              histo1D["ttJets_mTopFitted_badcombi_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
             }
           }
         }*/
@@ -1120,14 +1075,14 @@ int main (int argc, char *argv[])
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(true), PrintLevel(-3), Verbose(false), Extended(false));
     
-	  RooRealVar mean2010("mean2010","mean2010",169.092); // 2010 values
-	  RooRealVar sigma2010("sigma2010","sigma2010",24.825); // 2010 values
+	  RooRealVar mean2010("mean2010","mean2010",155); // old values
+	  RooRealVar sigma2010("sigma2010","sigma2010",25); // old values
     RooLandau wJetsShape2010("wJetsShape2010","wJetsShape2010",mTopFitWjets,mean2010,sigma2010);
     
     RooPlot* plot = mTopFitWjets.frame();
     dataHistWjets.plotOn(plot);
     wJetsShapeLandau.plotOn(plot);
-//    wJetsShape2010.plotOn(plot, LineColor(6));
+    wJetsShape2010.plotOn(plot, LineColor(6));
     
     TCanvas* cFit = new TCanvas("mTopFitWjets","mTopFitWjets");
     cFit->cd();
@@ -1135,121 +1090,8 @@ int main (int argc, char *argv[])
     cFit->SaveAs( (pathPNG+"mTopFitWjets.png").c_str() );
     cFit->Write();
     
-    RooPlot* plotMuPlus = mTopFitWjets.frame();
-    RooDataHist dataHistWjetsMuPlus("dataHistWjetsMuPlus","dataHistWjetsMuPlus",mTopFitWjets,histo1D["wJets_mTopFitted_muPlus"]);
-    dataHistWjetsMuPlus.plotOn(plotMuPlus);
-    wJetsShapeLandau.plotOn(plotMuPlus);
-    
-    TCanvas* cFitMuPlus = new TCanvas("mTopFitWjetsMuPlus","mTopFitWjetsMuPlus");
-    cFitMuPlus->cd();
-    plotMuPlus->Draw();
-    cFitMuPlus->SaveAs( (pathPNG+"mTopFitWjets_MuPlus.png").c_str() );
-    cFitMuPlus->Write();
-    
-    RooPlot* plotMuMinus = mTopFitWjets.frame();
-    RooDataHist dataHistWjetsMuMinus("dataHistWjetsMuMinus","dataHistWjetsMuMinus",mTopFitWjets,histo1D["wJets_mTopFitted_muMinus"]);
-    dataHistWjetsMuMinus.plotOn(plotMuMinus);
-    wJetsShapeLandau.plotOn(plotMuMinus);
-    
-    TCanvas* cFitMuMinus = new TCanvas("mTopFitWjetsMuMinus","mTopFitWjetsMuMinus");
-    cFitMuMinus->cd();
-    plotMuMinus->Draw();
-    cFitMuMinus->SaveAs( (pathPNG+"mTopFitWjets_MuMinus.png").c_str() );
-    cFitMuMinus->Write();
-    
     cout << "Shape-fit results for WJets: " << endl;
     cout << "Landau function with:  mean = " << mean.getVal() << " +- " << mean.getError() << "  sigma = " << sigma.getVal() << " +- " << sigma.getError() << endl;
-  }
-  
-  if( histo1D["ttJets_mTopFitted_badcombi"]->GetEntries() > 2 )
-  {
-	  RooRealVar mTopFitTTjets("mTopFitTTjets","mTopFitTTjets",0.,500.);
-	  RooDataHist dataHistTTjets("dataHistTTjets","dataHistTTjets",mTopFitTTjets,histo1D["ttJets_mTopFitted_badcombi"]);
-	  
-	  RooRealVar mean("mean","mean",154.,1.,500.);
-	  RooRealVar sigma("sigma","sigma",20.,2.,500.);
-	  RooRealVar alpha("alpha","alpha",-0.35,-10.,10.);
-	  RooRealVar N("N","N",5);
-	  RooCBShape TTJetsShapeCB("TTJetsShapeCB","TTJetsShapeCB",mTopFitTTjets,mean,sigma,alpha,N);
-	  
-	  RooRealVar meanLandau("meanLandau","meanLandau",125.,1.,500.);
-	  RooRealVar sigmaLandau("sigmaLandau","sigmaLandau",10.,2.,500.);
-    RooLandau TTJetsShapeLandau("TTJetsShapeLandau","TTJetsShapeLandau",mTopFitTTjets,meanLandau,sigmaLandau);
-    
-    // --- Construct signal+background PDF ---
-    RooRealVar nsig("nsig","#signal events",0.,100000000);
-    RooRealVar nbkg("nbkg","#background events",0.,100000000);
-    RooAddPdf TTJetsShapeTotal("TTJetsShapeTotal","TTJetsShapeTotal",RooArgList(TTJetsShapeCB,TTJetsShapeLandau),RooArgList(nsig,nbkg));
-    TTJetsShapeTotal.fitTo(dataHistTTjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(true));
-    
-    float truemass = 172.5;
-    float cbmean = 15.3679 + 1.01314*truemass; // 2010 value
-    float cbsigma = 152.705 - 0.426815*truemass; // 2010 value
-//    float cbalpha = 250.0 + 0.0*truemass; // 2010 value, fixed???
-    float cbalpha = -3308.87 + 18.208*truemass; // 2010 value
-	  RooRealVar mean2010("mean2010","mean2010",cbmean); // 2010 value
-	  RooRealVar sigma2010("sigma2010","sigma2010",cbsigma); // 201 value
-	  RooRealVar alpha2010("alpha2010","alpha2010",cbalpha); // 2010 value
-	  RooRealVar N2010("N2010","N2010",5); // 2010 value
-    RooCBShape TTJetsShape2010("TTJetsShape2010","TTJetsShape2010",mTopFitTTjets,mean2010,sigma2010,alpha2010,N2010); // 2010 shape
-    
-    RooRealVar mean2011("mean2011","mean2011",166.567);
-	  RooRealVar sigma2011("sigma2011","sigma2011",21.9164);
-	  RooRealVar alpha2011("alpha2011","alpha2011",-0.397863);
-	  RooCBShape TTJetsShapeCB2011("TTJetsShapeCB2011","TTJetsShapeCB2011",mTopFitTTjets,mean2011,sigma2011,alpha2011,N);
-	  
-	  RooRealVar meanLandau2011("meanLandau2011","meanLandau2011",138.145);
-	  RooRealVar sigmaLandau2011("sigmaLandau2011","sigmaLandau2011",15.918);
-    RooLandau TTJetsShapeLandau2011("TTJetsShapeLandau2011","TTJetsShapeLandau2011",mTopFitTTjets,meanLandau2011,sigmaLandau2011);
-    
-    // --- Construct signal+background PDF ---
-    RooRealVar nsig2011("nsig2011","#signal events",54735.7);
-    RooRealVar nbkg2011("nbkg2011","#background events",34110);
-    RooAddPdf TTJetsShapeTotal2011("TTJetsShapeTotal2011","TTJetsShapeTotal2011",RooArgList(TTJetsShapeCB2011,TTJetsShapeLandau2011),RooArgList(nsig2011,nbkg2011));
-
-    
-    RooPlot* plot = mTopFitTTjets.frame();
-    dataHistTTjets.plotOn(plot);
-    TTJetsShapeTotal.plotOn(plot);
-    TTJetsShapeTotal.plotOn(plot, Components(TTJetsShapeCB), LineStyle(kDashed), LineColor(2));
-    TTJetsShapeTotal.plotOn(plot, Components(TTJetsShapeLandau), LineStyle(kDashed), LineColor(3));
-//    TTJetsShapeTotal2011.plotOn(plot, LineStyle(kDashed), LineColor(1));
-//    TTJetsShape2010.plotOn(plot, LineColor(6));
-    
-    TCanvas* cFit = new TCanvas("mTopFitTTjets","mTopFitTTjets");
-    cFit->cd();
-    plot->Draw();
-    cFit->SaveAs( (pathPNG+"mTopFitTTjets.png").c_str() );
-    cFit->Write();
-    
-    RooPlot* plotMuPlus = mTopFitTTjets.frame();
-    RooDataHist dataHistTTjetsMuPlus("dataHistTTjetsMuPlus","dataHistTTjetsMuPlus",mTopFitTTjets,histo1D["ttJets_mTopFitted_badcombi_muPlus"]);
-    dataHistTTjetsMuPlus.plotOn(plotMuPlus);
-    TTJetsShapeTotal.plotOn(plotMuPlus);
-    
-    TCanvas* cFitMuPlus = new TCanvas("mTopFitTTjetsMuPlus","mTopFitTTjetsMuPlus");
-    cFitMuPlus->cd();
-    plotMuPlus->Draw();
-    cFitMuPlus->SaveAs( (pathPNG+"mTopFitTTjets_MuPlus.png").c_str() );
-    cFitMuPlus->Write();
-    
-    RooPlot* plotMuMinus = mTopFitTTjets.frame();
-    RooDataHist dataHistTTjetsMuMinus("dataHistTTjetsMuMinus","dataHistTTjetsMuMinus",mTopFitTTjets,histo1D["ttJets_mTopFitted_badcombi_muMinus"]);
-    dataHistTTjetsMuMinus.plotOn(plotMuMinus);
-    TTJetsShapeTotal.plotOn(plotMuMinus);
-    
-    TCanvas* cFitMuMinus = new TCanvas("mTopFitTTjetsMuMinus","mTopFitTTjetsMuMinus");
-    cFitMuMinus->cd();
-    plotMuMinus->Draw();
-    cFitMuMinus->SaveAs( (pathPNG+"mTopFitTTjets_MuMinus.png").c_str() );
-    cFitMuMinus->Write();
-    
-    cout << "Shape-fit results for TTJets:   f * Crystal-Ball + (1 - f) * Landau " << endl;
-    TTJetsShapeTotal.Print("t");
-//    cout << "Landau function with:  mean = " << meanLandau.getVal() << " +- " << meanLandau.getError() << "  sigma = " << sigmaLandau.getVal() << " +- " << sigmaLandau.getError() << endl;
-//    cout << "CB function with:  mean = " << mean.getVal() << " +- " << mean.getError() << "  sigma = " << sigma.getVal() << " +- " << sigma.getError() <<
-//      "  alpha = " << alpha.getVal() << " +- " << alpha.getError() << "  N = " << N.getVal() << " +- " << N.getError() << endl;
-//    cout << " N1 = " << nbkg.getVal() << " +- " << nbkg.getError() << "  N2 = " << nsig.getVal() << " +- " << nsig.getError() << endl;
   }
   
   cout << "Writing out..." << endl;
