@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
   // Luminosity and xml files
   double lumi = 0;
   if (RunA){
-    if      (mode == 0){ 	 lumi = 708.246;  	xmlfile ="twemu.xml";}
+    if      (mode == 0){ 	 lumi = 706.039;  	xmlfile ="twemu.xml";}
     else if (mode == 1){	 lumi = 1000;  		xmlfile = "twmumu.xml";}
     else if (mode == 2){	 lumi = 1000;  		xmlfile = "twee.xml";}
   } else {
@@ -236,7 +236,7 @@ int main(int argc, char* argv[]) {
        
       // Lumi re-weighting Michael Style
       LumiReWeighting LumiWeights;
-      LumiWeights = LumiReWeighting("../macros/PileUpReweighting/pileup_MC_Summer12.root", "../macros/PileUpReweighting/pileup_2012Data_UpToRun191810.root", "pileup", "pileup");
+      LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/MuEG_RunA.root", "pileup", "pileup");
 
       //systematic
       reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
 
       //3D Pile-Up reweighting  
       Lumi3DReWeighting Lumi3DWeights;
-      Lumi3DWeights =  Lumi3DReWeighting("../macros/PileUpReweighting/pileup_MC_Summer12.root", "../macros/PileUpReweighting/pileup_2012Data_UpToRun191810.root", "pileup", "pileup");
+      Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/Summer12.root", "pileupHistos/MuEG_RunA.root", "pileup", "pileup");
 
       if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
       else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);

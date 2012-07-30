@@ -75,7 +75,7 @@ void plotmaker(int mode = 0){
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets_low", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex"};
   int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1};
   TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex"};
   TString modeString[3] = {"0", "1", "2"};
