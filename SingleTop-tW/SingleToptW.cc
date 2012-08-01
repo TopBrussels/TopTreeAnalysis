@@ -396,6 +396,8 @@ int main(int argc, char* argv[]) {
 	    pileup_weights_3D->Fill(lumiWeight3D);
 	    pileup_weights->Fill(lumiWeight);
 	      
+	    //cout <<   lumiWeight << " - 3D: " << lumiWeight3D << endl;
+	      
 	    if(Pu3D)weight *= lumiWeight3D;
 	    else weight *=lumiWeight;
 	    
