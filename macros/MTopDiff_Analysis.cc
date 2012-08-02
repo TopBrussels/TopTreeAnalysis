@@ -79,6 +79,7 @@ int main (int argc, char *argv[])
   float LuminosityMu = 4953, LuminosityEl = 4961;
   
   bool doAllMSPlots = false;
+  bool writeASCIIstuff = true; // files are created but no events are filled
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
@@ -149,6 +150,7 @@ int main (int argc, char *argv[])
 	histo1D["sigmaMtop_Fit"] = new TH1F("sigmaMtop_Fit","sigmaMtop_Fit;sigmaMtop;#jet-combis",100,0,50);
 	histo1D["MinChi2ndf_Fit"] = new TH1F("MinChi2ndf_Fit","MinChi2ndf_Fit;sigmaMtop;#jet-combis",80,0,20);
 	histo1D["Prob_MinChi2_Fit"] = new TH1F("Prob_MinChi2_Fit","Prob_MinChi2_Fit;Prob_MinChi2;#jet-combis",50,0,1);
+	histo1D["nBtags_allcombi"] = new TH1F("nBtags_allcombi","nBtags_allcombi;nBtags;#jet-combis",5,-0.5,4.5);
   
   histo1D["mTop_NoFit_goodcombi"] = new TH1F("mTop_NoFit_goodcombi","mTop_NoFit_goodcombi;#events",100,50,250);
   histo1D["mTopL7_NoFit_goodcombi"] = new TH1F("mTopL7_NoFit_goodcombi","mTopL7_NoFit_goodcombi;#events",100,50,250);
@@ -156,6 +158,7 @@ int main (int argc, char *argv[])
 	histo1D["sigmaMtop_Fit_goodcombi"] = new TH1F("sigmaMtop_Fit_goodcombi","sigmaMtop_Fit_goodcombi;sigmaMtop;#events",50,0,25);
 	histo1D["MinChi2ndf_Fit_goodcombi"] = new TH1F("MinChi2ndf_Fit_goodcombi","MinChi2ndf_Fit_goodcombi;MinChi2ndf;#events",80,0,20);
 	histo1D["Prob_MinChi2_Fit_goodcombi"] = new TH1F("Prob_MinChi2_Fit_goodcombi","Prob_MinChi2_Fit_goodcombi;Prob_MinChi2_goodcombi;#events",50,0,1);
+	histo1D["nBtags_goodcombi"] = new TH1F("nBtags_goodcombi","nBtags_goodcombi;nBtags;#jet-combis",5,-0.5,4.5);
 	
 	histo1D["nUsedCombis_TTJets"] = new TH1F("nUsedCombis_TTJets","nUsedCombis_TTJets",13,-0.5,12.5);
 	histo1D["nUsedCombis_WJets"] = new TH1F("nUsedCombis_WJets","nUsedCombis_WJets",13,-0.5,12.5);
@@ -313,6 +316,11 @@ int main (int argc, char *argv[])
   MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   
+  MSPlot["nBtags_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+  MSPlot["nBtags_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+  MSPlot["nBtags_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+  MSPlot["nBtags_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+  
   if(doAllMSPlots)
   {
     MSPlot["Lepton_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muPlus",50,0,250,"Positive Muon p_{T} (GeV)","Nr. of events / 5 GeV");
@@ -396,10 +404,6 @@ int main (int argc, char *argv[])
     MSPlot["Nr_of_jets_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Nr_of_jets_muMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
     MSPlot["Nr_of_jets_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets_elPlus",5,3.5,8.5,"Nr. of jets","Nr. of events");
     MSPlot["Nr_of_jets_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets_elMinus",5,3.5,8.5,"Nr. of jets","Nr. of events");
-    MSPlot["nBtags_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-    MSPlot["nBtags_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-    MSPlot["nBtags_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-    MSPlot["nBtags_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
     MSPlot["M3_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"M3_muPlus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
     MSPlot["M3_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"M3_muMinus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
     MSPlot["M3_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"M3_elPlus",80,0,800,"M3 (GeV)","Nr. of events / 10 GeV");
@@ -730,8 +734,6 @@ int main (int argc, char *argv[])
         bool goodCombi = hadrJetsMVAMatched(monster, iCombi);
         if(goodCombi) mcCombiIndex = nFinalCombis;
         
-//        cout << "goodCombi: " << goodCombi << endl;
-        
         float mTopFit = monster->mTopFit(iCombi);
         float sigmaMTopFit = monster->sigmaMTopFit(iCombi);
         float chi2MTopFit = monster->chi2MTopFit(iCombi);
@@ -770,7 +772,7 @@ int main (int argc, char *argv[])
             histo1D["sigmaMtop_Fit"]->Fill(sigmaMTopFit);
             histo1D["MinChi2ndf_Fit"]->Fill(chi2MTopFit);
             histo1D["Prob_MinChi2_Fit"]->Fill(TMath::Prob(chi2MTopFit, 1));
-            
+           	      
             if( goodCombi )
             {
               float mTopNoFit = ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).M();
@@ -841,6 +843,7 @@ int main (int argc, char *argv[])
           MSPlot["sigmaMtop_Fit_AllCombi"+leptonCharge]->Fill(sigmaMtop[i], dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["MinChi2ndf_Fit_AllCombi"+leptonCharge]->Fill(minChi2[i], dataSet, true, monster->eventWeight()*lumiWeight);
         }
+        MSPlot["nBtags"+leptonCharge]->Fill(nBtags, dataSet, true, monster->eventWeight()*lumiWeight);
         
         if(doAllMSPlots)
         {
@@ -861,7 +864,6 @@ int main (int argc, char *argv[])
 	        MSPlot["4th_jet_eta"+leptonCharge]->Fill(selectedJets[3].Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
 	        MSPlot["4th_jet_phi"+leptonCharge]->Fill(selectedJets[3].Phi(), dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["Nr_of_jets"+leptonCharge]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight);
-          MSPlot["nBtags"+leptonCharge]->Fill(nBtags, dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["Angle_1stjet_2ndjet"+leptonCharge]->Fill(selectedJets[0].Angle(selectedJets[1].Vect()), dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["Angle_1stjet_3rdjet"+leptonCharge]->Fill(selectedJets[0].Angle(selectedJets[2].Vect()), dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["MET"+leptonCharge]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
@@ -910,12 +912,15 @@ int main (int argc, char *argv[])
         // Write everything out to the ASCII file
         if(monster->selectedSemiMu())
         {
-          fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown);
-          if(applyChi2Cut(eventMu, maxChi2))
+          if(writeASCIIstuff)
           {
-            setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
-//            cout << eventMu << endl;
-            writer(outFileLikelihoodSemiMu,eventMu);
+            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown);
+            if(applyChi2Cut(eventMu, maxChi2))
+            {
+              setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
+//              cout << eventMu << endl;
+              writer(outFileLikelihoodSemiMu,eventMu);
+            }
           }
           
           nSemiMuInASCII++;
@@ -939,12 +944,15 @@ int main (int argc, char *argv[])
         }
         else // selected semiEl
         {
-          fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown);
-          if(applyChi2Cut(eventEl, maxChi2))
+          if(writeASCIIstuff)
           {
-            setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
-//            cout << eventEl << endl;
-            writer(outFileLikelihoodSemiEl,eventEl);
+            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown);
+            if(applyChi2Cut(eventEl, maxChi2))
+            {
+              setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
+//              cout << eventEl << endl;
+              writer(outFileLikelihoodSemiEl,eventEl);
+            }
           }
           
           nSemiElInASCII++;
@@ -966,30 +974,38 @@ int main (int argc, char *argv[])
           outFileSemiEl << "FinishedEvent" << endl;
           outFileSemiEl << "------------------------------------------" << endl;
         }
-/*        // normalize chi2 and b-tag weights to 1
+        // normalize chi2 and b-tag weights to 1
         float totalWeight = 0;
         for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++) totalWeight += (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]);
         
         // shape study
         for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++)
         {
-//          if( minChi2[iCombi] < maxChi2 )
+          if( minChi2[iCombi] < maxChi2 )
           {
-            histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]));
+            histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
             if( dataSetName.find("WJets") == 0 )
             {
-              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]));
+              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
               histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
-              histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]);
-              histo2D["wJets_mTopFitted_VS_combiWeight"]->Fill(mTop[iCombi], (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]));
+              histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
+              histo2D["wJets_mTopFitted_VS_combiWeight"]->Fill(mTop[iCombi], (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
             }
-            if( dataSetName.find("TTbarJets") == 0 && mcCombiIndex != iCombi )
+            if( dataSetName.find("TTbarJets") == 0)
             {
-              histo1D["ttJets_mTopFitted_badcombi"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]));
-              histo1D["ttJets_mTopFitted_badcombi_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
+              histo1D["nBtags_allcombi"]->Fill(nBtags, monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
+              if(mcCombiIndex == iCombi)
+              {
+             	  histo1D["nBtags_goodcombi"]->Fill(nBtags, monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
+              }
+              else
+              {
+                histo1D["ttJets_mTopFitted_badcombi"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi])*bTagWeight[iCombi]/totalWeight));
+                histo1D["ttJets_mTopFitted_badcombi_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
+              }
             }
           }
-        }*/
+        }
       }
     } // end loop over monsters
     
