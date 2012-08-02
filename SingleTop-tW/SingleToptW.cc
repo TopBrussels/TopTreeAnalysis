@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
   
   
   //Run A or B 2012 (both will also work, but so far, we test A)
-  bool RunA = true;
+  bool RunA = false;
   bool RunB = false;
   
   cout << "[Info:] start of the 2012 Data analysis with Summer12 Monte Carlo " << endl;
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
     else if (mode == 1){	 lumi = 1000;  		xmlfile = "twmumu.xml";}
     else if (mode == 2){	 lumi = 1000;  		xmlfile = "twee.xml";}
   } else {
-    if      (mode == 0){ 	 lumi = 1000;  xmlfile ="twemu.xml";}
+    if      (mode == 0){ 	 lumi = 5085.246;  xmlfile ="twemu.xml";}
     else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
     else if (mode == 2){	 lumi = 1000;  xmlfile = "twee.xml";}
  
@@ -168,6 +168,7 @@ int main(int argc, char* argv[]) {
       
       // cross sections and weights
       if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}
+      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
       else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
       else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} 
@@ -395,9 +396,7 @@ int main(int argc, char* argv[]) {
 	      
 	    pileup_weights_3D->Fill(lumiWeight3D);
 	    pileup_weights->Fill(lumiWeight);
-	      
-	    //cout <<   lumiWeight << " - 3D: " << lumiWeight3D << endl;
-	      
+	    
 	    if(Pu3D)weight *= lumiWeight3D;
 	    else weight *=lumiWeight;
 	    
@@ -779,6 +778,7 @@ int main(int argc, char* argv[]) {
 			if (met_pt > 30 || mode == 0){
 			  cutflow->Fill(7, weight);
 			  cutflow_raw->Fill(7);
+			  
 			  // Filling all the regions
 			  if (nJets !=0){
 			    TRootJet* jet = (TRootJet*) selectedJets[iJet];
@@ -813,10 +813,6 @@ int main(int argc, char* argv[]) {
 			    if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
 			      cutflow->Fill(9,weight);
 			      cutflow_raw->Fill(9);
-				
-			      //double ptSysPx = lepton0.Px() + lepton1.Px() + jet->Px() + met_px;
-			      //double ptSysPy = lepton0.Py() + lepton1.Py() + jet->Py() + met_py;
-			      //double ptSys = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 			      double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
 			      if (Ht > 160 || mode != 0){
 				cutflow->Fill(10, weight);
@@ -845,8 +841,8 @@ int main(int argc, char* argv[]) {
 	scaler1=1.;
       cout << "--------------------------------------------------" << endl;
       cout << "[Results Normalized:] " <<  endl;
-      //cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << "\t = " << 100.*cutflow->GetBinContent(2)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(2)/scaler1 << "%" << endl;
-      //cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) <<  "\t = " << 100.*cutflow->GetBinContent(3)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(3)/scaler1 << "%" <<endl;
+      cout << "All:       " <<  cutflow->GetBinContent(2) << " +/- "  << cutflow->GetBinError(2) << "\t = " << 100.*cutflow->GetBinContent(2)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(2)/scaler1 << "%" << endl;
+      cout << "HLT:       " <<  cutflow->GetBinContent(3) << " +/- "  << cutflow->GetBinError(3) <<  "\t = " << 100.*cutflow->GetBinContent(3)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(3)/scaler1 << "%" <<endl;
       //cout << "PV:        " <<  cutflow->GetBinContent(4) << " +/- "  << cutflow->GetBinError(4) <<  "\t = " << 100.*cutflow->GetBinContent(4)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(4)/scaler1 << "%" <<endl;
       cout << "Lep. Sel:  " <<  cutflow->GetBinContent(5) << " +/- "  << cutflow->GetBinError(5) <<  "\t = " << 100.*cutflow->GetBinContent(5)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(5)/scaler1 << "%" <<endl;
       cout << "Lep. Veto: " <<  cutflow->GetBinContent(6) << " +/- "  << cutflow->GetBinError(6) <<  "\t = " << 100.*cutflow->GetBinContent(6)/scaler1 << " +/- "  << 100.*cutflow->GetBinError(6)/scaler1 << "%" <<endl;
@@ -862,8 +858,8 @@ int main(int argc, char* argv[]) {
       double scaler2 =  cutflow_raw->GetBinContent(2);
       if(scaler2 <=0.0)
 	scaler2=1.;
-      // cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) <<  "\t = " << 100.*cutflow_raw->GetBinContent(2)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(2)/scaler2 << "%" << endl;
-      //cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) <<  "\t = " << 100.*cutflow_raw->GetBinContent(3)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(3)/scaler2 << "%" << endl;
+      cout << "All:       " <<  cutflow_raw->GetBinContent(2) << " +/- "  << cutflow_raw->GetBinError(2) <<  "\t = " << 100.*cutflow_raw->GetBinContent(2)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(2)/scaler2 << "%" << endl;
+      cout << "HLT:       " <<  cutflow_raw->GetBinContent(3) << " +/- "  << cutflow_raw->GetBinError(3) <<  "\t = " << 100.*cutflow_raw->GetBinContent(3)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(3)/scaler2 << "%" << endl;
       // cout << "PV:        " <<  cutflow_raw->GetBinContent(4) << " +/- "  << cutflow_raw->GetBinError(4) <<  "\t = " << 100.*cutflow_raw->GetBinContent(4)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(4)/scaler2 << "%" <<endl;
       cout << "Lep. Sel:  " <<  cutflow_raw->GetBinContent(5) << " +/- "  << cutflow_raw->GetBinError(5) <<  "\t = " << 100.*cutflow_raw->GetBinContent(5)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(5)/scaler2 << "%" <<endl;
       cout << "Lep. Veto: " <<  cutflow_raw->GetBinContent(6) << " +/- "  << cutflow_raw->GetBinError(6) <<  "\t = " << 100.*cutflow_raw->GetBinContent(6)/scaler2 << " +/- "  << 100.*cutflow_raw->GetBinError(6)/scaler2 << "%" <<endl;

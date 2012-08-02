@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <datasets>
 
- <d name="data_a" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/MuEGRun2012A/*"/> 
+ <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/MuEGRun2012/*"/> 
 
  <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/TTJets/*"/> 
 
@@ -17,8 +17,7 @@
  
  
  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/ZJets/*"/> 
- <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/ZJets_1050/*"/> 
-
+ <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/ZJets_1050/*"/>
 
 </datasets>
 

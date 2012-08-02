@@ -44,7 +44,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   
   char newRootFile[300];
   double lumi = luminosity; 
-  if (mode == 0 )        lumi = 708.246;
+  if (mode == 0 )        lumi = 5085.246; 
   else if ( mode == 1)   lumi = 1000;
   else if ( mode == 2)   lumi = 1000;
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
@@ -195,6 +195,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_%s",plotName);
   TH1F* histo_nvertex = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_nvertex->Sumw2();
+ 
   
   // 1 jet level
   /// Classic plotmaker plots
@@ -301,44 +302,12 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_2j2t_%s",plotName);
   TH1F* histo_nvertex_2j2t = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_nvertex_2j2t->Sumw2();
+
   
-  
-  // inside the window
-  sprintf(title,"met_dyin_%s",plotName);
-  TH1F* histo_met_dyin = new TH1F( title, " ", 100,  0, 200 );
-  histo_met_dyin->Sumw2();
-  
-  sprintf(title,"mll_dyin_%s",plotName);
-  TH1F* histo_mll_dyin = new TH1F( title, " ", 100,  0, 200 );
-  histo_mll_dyin->Sumw2();
-  
-  sprintf(title,"ptsys_dyin_%s",plotName);
-  TH1F* histo_ptsys_dyin = new TH1F( title, " ", 100,  0, 200 );
-  histo_ptsys_dyin->Sumw2();
-  
-  sprintf(title,"ht_dyin_%s",plotName);
-  TH1F* histo_ht_dyin = new TH1F( title, " ", 300,  0, 600 );
-  histo_ht_dyin->Sumw2();
-  
-  sprintf(title,"pt_leading_dyin_%s",plotName);
-  TH1F* histo_pt_leading_dyin = new TH1F( title, " ", 100,  0, 200 );
-  histo_pt_leading_dyin->Sumw2();
-  
-  sprintf(title,"nvertex_dyin_%s",plotName);
-  TH1F* histo_nvertex_dyin = new TH1F( title, " ", 30,   -0.5, 29.5 );
-  histo_nvertex_dyin->Sumw2();
-  
-  
-  
-  // tt control regions
+  // all regions
   sprintf(title,"R_%s",plotName);
   TH1F* histo_R = new TH1F( title, " ", 40,  0, 40 );
   histo_R->Sumw2();
-  
-  // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
-  sprintf(title,"R_dy_%s",plotName);
-  TH1F* histo_R_dy = new TH1F( title, " ", 40,  0, 40 );
-  histo_R_dy->Sumw2();
   
 
   if (fChain == 0) return;
@@ -465,36 +434,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
 	else if (mode == 2 && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
 	
-	//DY control region
-        // bin: 2 out loose, 3 in loose, 4 out all cuts, 5 in all cuts
-	if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(1, xlWeight);
-	else histo_R_dy->Fill(2, xlWeight);
-	
-	if (metPt >= metCut){
-	  if (nJets == 1){
-	    TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
-	    if (nTightJetsBT == 1 && bTagged && nJetsBT == 1){
-	      double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
-	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	      if (ptSystem <= ptsysCut ){
-		if (pair.M() > invMax || pair.M() < invMin) histo_R_dy->Fill(3, xlWeight);
-		else {
-		  histo_R_dy->Fill(4, xlWeight);
-	         
-		  histo_mll_dyin->Fill(pair.M(),  xlWeight);
-	          histo_met_dyin->Fill(metPt,  xlWeight);
-	          histo_ptsys_dyin->Fill(ptSystem, xlWeight);
-	          histo_ht_dyin->Fill(ht, xlWeight);
-	          histo_pt_leading_dyin->Fill(jet.Pt(), xlWeight);
-		 
-	        }
-	      }
-	    }
-	  }
-	} 
-	//
 
 	if (invMass){
 	  histo->Fill(2, xlWeight);
@@ -549,11 +488,9 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		}
 		
 		if (ht > htMin || mode !=0){
-		  //if (ptSystem <= ptsysCut){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
 		  if (ptSystem <= ptsysCut){
-		    //  if (ht > htMin || mode !=0){
 		    histo->Fill(7, xlWeight);
 		  }
 		}
@@ -562,7 +499,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  }
 	  
 	  
-	  //tt control region from here
+	  //Filling of all region from here
 	  if (metPt >= metCut || mode ==0){
 	
 	    if (nJets != 0){
@@ -624,8 +561,9 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	      if (nJets == 2 && nTightJetsBT == 2 &&  (ht > htMin || mode !=0))  histo_R->Fill(30, xlWeight); //CR 2 
 				
 	      
-	    }
-	  } //tt CR
+	    } //jets in the event
+	  } //all CR
+	  
 	} // mll
       } //mll pre
     } // 2 leptons
@@ -643,7 +581,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
       if (i == 4) cout << " met: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 5) cout << " jet: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 6) cout << " jet_bt: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
-      // if (i == 7) cout << " pt system: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
     cout << "------------------------------------------" << endl; 
