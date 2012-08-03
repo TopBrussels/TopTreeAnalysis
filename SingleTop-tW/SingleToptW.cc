@@ -237,7 +237,7 @@ int main(int argc, char* argv[]) {
        
       // Lumi re-weighting Michael Style
       LumiReWeighting LumiWeights;
-      LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/MuEG_RunA.root", "pileup", "pileup");
+      LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB.root", "pileup", "pileup");
 
       //systematic
       reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
@@ -246,7 +246,7 @@ int main(int argc, char* argv[]) {
 
       //3D Pile-Up reweighting  
       Lumi3DReWeighting Lumi3DWeights;
-      Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/Summer12.root", "pileupHistos/MuEG_RunA.root", "pileup", "pileup");
+      Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB.root", "pileup", "pileup");
 
       if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
       else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);

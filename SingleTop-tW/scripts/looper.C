@@ -193,7 +193,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   histo_pt_leading->Sumw2();
   
   sprintf(title,"nvertex_%s",plotName);
-  TH1F* histo_nvertex = new TH1F( title, " ", 30,   -0.5, 29.5 );
+  TH1F* histo_nvertex = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex->Sumw2();
  
   
