@@ -39,7 +39,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   
   else if (nsel == 666)                	{sprintf(plotName,"data_a");}
   
-  bool nosf = true;
+  bool nosf = false;
   
   
   char newRootFile[300];
@@ -361,11 +361,11 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  SFval = 1;
 	  SFerror = 0;
 	} else if (nsel == 0){
-	  SFval = 0.956;
-	  SFerror = 0.030;
+	  SFval = 0.95;
+	  SFerror = 0.03;
 	} else {
-	  SFval = 0.96;
-	  SFerror = 0.04;
+	  SFval = 0.97;
+	  SFerror = 0.03;
 	}
 	
 	

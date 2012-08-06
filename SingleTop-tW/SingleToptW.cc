@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
   bool Pu3D = false;
   
   //b-tag scale factor
-  bool scaleFactor = false;
+  bool scaleFactor = true;
   
   // Systematic Calculations
   bool JESPlus= false;
@@ -411,106 +411,28 @@ int main(int argc, char* argv[]) {
 	  if (JESPlus) jetTools->correctJetJESUnc(init_jets_corrected, "minus",1);
 	  else if (JESMinus) jetTools->correctJetJESUnc(init_jets_corrected, "plus",1);
 	   
+	  
 	  //Trigger
-	 
-	  //No trigger after first test
-	  bool trigged = true;
-	  /*
-	    bool trigged = false;
-	    
-	    int currentRun = event->runId();
-	    bool itrigger = false;
-	    bool isecondtrigger = false;
-	    if(isData) { 
+	  bool trigged = false;
+	  int currentRun = event->runId();
+	  bool itrigger = false;
+	  bool isecondtrigger = false;
+	  if(isData) { 
 	    if (mode == 0){
-	    if(currentRun >= 150000 && currentRun <= 161176){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v1", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v1", currentRun);
-	    }else if(currentRun >= 161179 && currentRun <= 163261){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v2", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v2", currentRun);
-	    }else if(currentRun >= 163262 && currentRun <= 164237){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v3", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v3", currentRun);
-	    }else if(currentRun >= 165085 && currentRun <= 165888){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v4", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v4", currentRun);
-	    }else if(currentRun >= 165900 && currentRun <= 166967){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v5", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v5", currentRun);
-	    }else if(currentRun >= 166968 && currentRun <= 170053){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v6", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdL_v6", currentRun);
-	    }else if(currentRun >= 170054 && currentRun <= 173198){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdL_v8", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v3", currentRun);
-	    }else if(currentRun >= 173199 && currentRun <= 178380){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v4", currentRun);
-	    }else if(currentRun >= 178381 && currentRun <= 999999){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v7", currentRun);
-	    isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v7", currentRun);
-	    }
+	      itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+	      isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
 	    } else if (mode == 1){
-	    if(currentRun >= 150000 && currentRun <= 161176){
-	    itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
-	    }else if(currentRun >= 161179 && currentRun <= 163261){
-	    itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v1", currentRun);
-	    }else if(currentRun >= 163262 && currentRun <= 164237){
-	    itrigger = treeLoader.iTrigger ("HLT_DoubleMu7_v2", currentRun);
-	    }else if(currentRun >= 165085 && currentRun <= 165888){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
-	    }else if(currentRun >= 165900 && currentRun <= 167043){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v2", currentRun);
-	    }else if(currentRun >= 167044 && currentRun <= 170053){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v4", currentRun);
-	    }else if(currentRun >= 170054 && currentRun <= 173198){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v6", currentRun);
-	    }else if(currentRun >= 173199 && currentRun <= 178380){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu13_Mu8_v7", currentRun);
-	    }else if(currentRun >= 178381 && currentRun <= 999999){
-	    itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v10", currentRun);
-	    }
+	      itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v16", currentRun);
+	      isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_TkMu8_v9", currentRun);
 	    } else if (mode == 2){
-	    if(currentRun >= 150000 && currentRun <= 161176){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1", currentRun);
-	    }else if(currentRun >= 161179 && currentRun <= 163261){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2", currentRun);
-	    }else if(currentRun >= 163262 && currentRun <= 164237){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v3", currentRun);
-	    }else if(currentRun >= 165085 && currentRun <= 165888){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v4", currentRun);
-	    }else if(currentRun >= 165900 && currentRun <= 167043){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v5", currentRun);
-	    }else if(currentRun >= 167044 && currentRun <= 170053){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v6", currentRun);
-	    }else if(currentRun >= 170054 && currentRun <= 170759){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
-	    }else if(currentRun >= 170760 && currentRun <= 173198){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7", currentRun);
-	    }else if(currentRun >= 173199 && currentRun <= 178380){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8", currentRun);
-	    }else if(currentRun >= 178381 && currentRun <= 999999){
-	    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9", currentRun);
+	      itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
 	    }
-	    }
-	      
-	    //No trigger for quicker tests
-	    // itrigger = true;
-	    // isecondtrigger = true;
-	      
-	    } else {
+	  } else {
 	    // No trigger in MC
 	    itrigger = true;
 	    isecondtrigger = true;
-	    }
-	   
-	  
-	    if (itrigger || isecondtrigger) trigged = true;
-	 
-	  */
-	 
-	   
+	  }
+	  if (itrigger || isecondtrigger) trigged = true;
 	 
 	    
 	  //Start selection
@@ -724,17 +646,17 @@ int main(int argc, char* argv[]) {
 		      delete btCSVBJet;
 		      delete btCSVBmvaJet;
 			
-		      // double SFval = 0.95;  //Summer11 version
+		      
 		      double SFval, SFerror;
 		      if (isData || !scaleFactor){
 			SFval = 1;
 			SFerror = 0;
 		      } else if (isTop){
-			SFval = 0.956;
-			SFerror = 0.030;
+			SFval = 0.95;
+			SFerror = 0.03;
 		      } else {
-			SFval = 0.96;
-			SFerror = 0.04;
+			SFval = 0.97;
+			SFerror = 0.03;
 		      } 
 			
 		      //Jet and b-tag selection
