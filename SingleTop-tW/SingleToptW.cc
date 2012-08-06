@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
   int  mode = 0; 
   string xmlfile ="twemu.xml";
   
-  bool reweightPU = true;
+  bool reweightPU = false;
   bool Pu3D = false;
   
   //b-tag scale factor
@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
       else if (!isData && unclusteredDown) sprintf(rootFileName,"outputs/METsysDown_%d_%s.root", mode, name);
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
-      else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/noPU_%d_%s.root", mode, name);
+      else if (!isData && reweightPU) sprintf(rootFileName,"outputs/out_PU_%d_%s.root", mode, name);
       else if (!isData && Pu3D) sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
@@ -361,7 +361,7 @@ int main(int argc, char* argv[]) {
 	if (SFminus) cout <<"[Warning:]  SF down 10% " << endl;
 	if (unclusteredUp) cout <<"[Warning:] unclustered MET up 10% " << endl;
 	if (unclusteredDown) cout <<"[Warning:] unclustered MET down 10% " << endl;
-	if (!reweightPU && !isData) cout << "[Warning:] You are NOT applying PU re-weighting " << endl;
+	if (!reweightPU && !isData) cout << "[Warning:] You are NOT applying PU re-weighting, we keep it this way for Summer12 " << endl;
 	if (!scaleFactor && !isData) cout << "[Warning:] You are NOT applying the b-tagging SF " << endl;
 	if (PUsysUp) cout <<"[Warning:] PU up " << endl;
 	if (PUsysDown) cout <<"[Warning:] PU down " << endl;
@@ -387,7 +387,7 @@ int main(int argc, char* argv[]) {
 	  // Applying Pile-Up re-weighting
 	  double lumiWeight3D = 1.0;
 	  double lumiWeight = 1.0;
-	  if (reweightPU && !isData ){
+	  if (!isData ){
 	  
 	    lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
 	    lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
@@ -397,9 +397,10 @@ int main(int argc, char* argv[]) {
 	    pileup_weights_3D->Fill(lumiWeight3D);
 	    pileup_weights->Fill(lumiWeight);
 	    
-	    if(Pu3D)weight *= lumiWeight3D;
-	    else weight *=lumiWeight;
-	    
+	    if (reweightPU){
+	      if(Pu3D)weight *= lumiWeight3D;
+	      else weight *=lumiWeight;
+	    }
 	  }
 	   
 	  // JER

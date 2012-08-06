@@ -309,6 +309,20 @@ void looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_R = new TH1F( title, " ", 40,  0, 40 );
   histo_R->Sumw2();
   
+  
+  // checking pu reweighting
+  sprintf(title,"nvertex_final_%s",plotName);
+  TH1F* histo_nvertex_final = new TH1F( title, " ", 70,   -0.5, 69.5 );
+  histo_nvertex_final->Sumw2();
+  
+  sprintf(title,"nvertex_final_3D_%s",plotName);
+  TH1F* histo_nvertex_final_3D = new TH1F( title, " ", 70,   -0.5, 69.5 );
+  histo_nvertex_final_3D->Sumw2();
+  
+  sprintf(title,"nvertex_final_purw_%s",plotName);
+  TH1F* histo_nvertex_final_purw = new TH1F( title, " ", 70,   -0.5, 69.5 );
+  histo_nvertex_final_purw->Sumw2();
+  
 
   if (fChain == 0) return;
   
@@ -490,9 +504,12 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		if (ht > htMin || mode !=0){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
-		  if (ptSystem <= ptsysCut){
-		    histo->Fill(7, xlWeight);
-		  }
+		  
+		  //Example to access the pu reweighting!
+		  histo_nvertex_final->Fill(nvertex, xlWeight);
+		  histo_nvertex_final_3D->Fill(nvertex*puweight3D, xlWeight);
+		  histo_nvertex_final_purw->Fill(nvertex*puweight, xlWeight);
+		  
 		}
 	      }
 	    }
