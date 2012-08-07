@@ -346,6 +346,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
       std::cout << "[Warning:] Something is wrong, your Tree is not correctly filled" << std::endl;
       break;
     } else {
+
  
       histo->Fill(0.,xlWeight);
       
@@ -507,8 +508,8 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		  
 		  //Example to access the pu reweighting!
 		  histo_nvertex_final->Fill(nvertex, xlWeight);
-		  histo_nvertex_final_3D->Fill(nvertex*puweight3D, xlWeight);
-		  histo_nvertex_final_purw->Fill(nvertex*puweight, xlWeight);
+		  histo_nvertex_final_3D->Fill(nvertex, xlWeight*puweight3D);
+		  histo_nvertex_final_purw->Fill(nvertex, xlWeight*puweight);
 		  
 		}
 	      }
