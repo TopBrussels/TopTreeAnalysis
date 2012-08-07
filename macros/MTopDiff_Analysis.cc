@@ -79,7 +79,7 @@ int main (int argc, char *argv[])
   float LuminosityMu = 4953, LuminosityEl = 4961;
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = true; // files are created but no events are filled
+  bool writeASCIIstuff = true; // false:  files are created but no events are filled
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
@@ -94,13 +94,13 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
     
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep_MERGED.root");
+//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -150,7 +150,7 @@ int main (int argc, char *argv[])
 	histo1D["sigmaMtop_Fit"] = new TH1F("sigmaMtop_Fit","sigmaMtop_Fit;sigmaMtop;#jet-combis",100,0,50);
 	histo1D["MinChi2ndf_Fit"] = new TH1F("MinChi2ndf_Fit","MinChi2ndf_Fit;sigmaMtop;#jet-combis",80,0,20);
 	histo1D["Prob_MinChi2_Fit"] = new TH1F("Prob_MinChi2_Fit","Prob_MinChi2_Fit;Prob_MinChi2;#jet-combis",50,0,1);
-	histo1D["nBtags_allcombi"] = new TH1F("nBtags_allcombi","nBtags_allcombi;nBtags;#jet-combis",5,-0.5,4.5);
+	histo1D["nBtags_allcombi"] = new TH1F("nBtags_allcombi","nBtags_allcombi;nBtags;#jet-combis",3,-0.5,2.5);
   
   histo1D["mTop_NoFit_goodcombi"] = new TH1F("mTop_NoFit_goodcombi","mTop_NoFit_goodcombi;#events",100,50,250);
   histo1D["mTopL7_NoFit_goodcombi"] = new TH1F("mTopL7_NoFit_goodcombi","mTopL7_NoFit_goodcombi;#events",100,50,250);
@@ -158,7 +158,7 @@ int main (int argc, char *argv[])
 	histo1D["sigmaMtop_Fit_goodcombi"] = new TH1F("sigmaMtop_Fit_goodcombi","sigmaMtop_Fit_goodcombi;sigmaMtop;#events",50,0,25);
 	histo1D["MinChi2ndf_Fit_goodcombi"] = new TH1F("MinChi2ndf_Fit_goodcombi","MinChi2ndf_Fit_goodcombi;MinChi2ndf;#events",80,0,20);
 	histo1D["Prob_MinChi2_Fit_goodcombi"] = new TH1F("Prob_MinChi2_Fit_goodcombi","Prob_MinChi2_Fit_goodcombi;Prob_MinChi2_goodcombi;#events",50,0,1);
-	histo1D["nBtags_goodcombi"] = new TH1F("nBtags_goodcombi","nBtags_goodcombi;nBtags;#jet-combis",5,-0.5,4.5);
+	histo1D["nBtags_goodcombi"] = new TH1F("nBtags_goodcombi","nBtags_goodcombi;nBtags;#jet-combis",3,-0.5,2.5);
 	
 	histo1D["nUsedCombis_TTJets"] = new TH1F("nUsedCombis_TTJets","nUsedCombis_TTJets",13,-0.5,12.5);
 	histo1D["nUsedCombis_WJets"] = new TH1F("nUsedCombis_WJets","nUsedCombis_WJets",13,-0.5,12.5);
@@ -316,13 +316,15 @@ int main (int argc, char *argv[])
   MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   
-  MSPlot["nBtags_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["nBtags_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["nBtags_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
-  MSPlot["nBtags_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+  MSPlot["nBtags"] = new MultiSamplePlot(datasetsSemiMu,"nBtags",3,-0.5,2.5,"Nr. of b-tagged jets","Nr. of events");
+  MSPlot["leptonCharge"] = new MultiSamplePlot(datasetsSemiMu,"leptonCharge",3,-1.5,1.5,"leptonCharge","Nr. of events");
   
   if(doAllMSPlots)
   {
+    MSPlot["nBtags_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["nBtags_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"nBtags_muMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["nBtags_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elPlus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
+    MSPlot["nBtags_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"nBtags_elMinus",6,-0.5,5.5,"Nr. of b-tagged jets","Nr. of events");
     MSPlot["Lepton_pt_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muPlus",50,0,250,"Positive Muon p_{T} (GeV)","Nr. of events / 5 GeV");
     MSPlot["Lepton_pt_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Lepton_pt_muMinus",50,0,250,"Negative Muon p_{T} (GeV)","Nr. of events / 5 GeV");
     MSPlot["Lepton_pt_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Lepton_pt_elPlus",50,0,250,"Positive Electron p_{T} (GeV)","Nr. of events / 5 GeV");
@@ -483,12 +485,14 @@ int main (int argc, char *argv[])
   Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
+  Double_t pTjetCut = 45.;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
   cout << " --> maxChi2 : " << maxChi2 << endl;
   cout << " --> bTagCut : " << bTagCut << endl;
   cout << " --> bTagEff : " << bTagEff << endl;
   cout << " --> misTagRate : " << misTagRate << endl;
+  cout << " --> pTjetCut : " << pTjetCut << endl;
   
   for(unsigned int iDataSet=0; iDataSet<inputMonsters.size(); iDataSet++)
   {
@@ -663,6 +667,9 @@ int main (int argc, char *argv[])
       TLorentzVector MET = monster->met();
       vector<float> btagSSVHE = monster->bTagSSVHE();
       
+      if( !(selectedJets[0].Pt()>pTjetCut && selectedJets[1].Pt()>pTjetCut && selectedJets[2].Pt()>pTjetCut && selectedJets[3].Pt()>pTjetCut) )
+        continue;
+    	
     	if(dataSetName.find("DAtaDriven") != string::npos)
     	{
     	  if(monster->selectedSemiMu())
@@ -843,10 +850,12 @@ int main (int argc, char *argv[])
           MSPlot["sigmaMtop_Fit_AllCombi"+leptonCharge]->Fill(sigmaMtop[i], dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["MinChi2ndf_Fit_AllCombi"+leptonCharge]->Fill(minChi2[i], dataSet, true, monster->eventWeight()*lumiWeight);
         }
-        MSPlot["nBtags"+leptonCharge]->Fill(nBtags, dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["nBtags"]->Fill(nBtags, dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["leptonCharge"]->Fill(monster->leptonCharge(), dataSet, true, monster->eventWeight()*lumiWeight);
         
         if(doAllMSPlots)
         {
+          MSPlot["nBtags"+leptonCharge]->Fill(nBtags, dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["Lepton_pt"+leptonCharge]->Fill(lepton.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["Lepton_et"+leptonCharge]->Fill(lepton.Et(), dataSet, true, monster->eventWeight()*lumiWeight);
           MSPlot["Lepton_eta"+leptonCharge]->Fill(lepton.Eta(), dataSet, true, monster->eventWeight()*lumiWeight);
@@ -1098,7 +1107,7 @@ int main (int argc, char *argv[])
     RooPlot* plot = mTopFitWjets.frame();
     dataHistWjets.plotOn(plot);
     wJetsShapeLandau.plotOn(plot);
-    wJetsShape2010.plotOn(plot, LineColor(6));
+//    wJetsShape2010.plotOn(plot, LineColor(6));
     
     TCanvas* cFit = new TCanvas("mTopFitWjets","mTopFitWjets");
     cFit->cd();
@@ -1138,8 +1147,8 @@ int main (int argc, char *argv[])
     else if(name.find("elMinus") < name.size()) temp->addText("e^{-}+jets");
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
-    temp->Draw(false, name, false, true, true, true, true, 1, true);
-//    temp->Draw(false, name, false, false, false, false, false);
+//    temp->Draw(false, name, false, true, true, true, true, 1, true);
+    temp->Draw(false, name, false, false, false, false, false, 1, true);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
 //    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
