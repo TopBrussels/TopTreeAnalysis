@@ -1,6 +1,24 @@
+<?xml version="1.0"?>
+<datasets>
 
+ <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/DoubleMuRun2012/*"/> 
+
+ <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/TTJets/*"/> 
+
+ <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/T_tW_DR.root"/> 
  <d name="atwdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/Tbar_tW_DR.root"/> 
  
+ <d name="t" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/T_t.root"/> 
+ <d name="at" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/Tbar_t/*"/> 
+ 
+ <d name="ww" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/WW/*"/> 
+ <d name="wz" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/WZ/*"/> 
+ <d name="zz" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/ZZ/*"/> 
+ 
+ <d name="wjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/WJets/*"/> 
+ 
+ <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/ZJets/*"/> 
+ <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_2mu/ZJets_1050/*"/> 
 
 </datasets>
 

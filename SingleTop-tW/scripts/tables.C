@@ -17,17 +17,17 @@ void tables(int mode = 0){
 
   double lumi = luminosity;
   
-  if (mode == 0 )        lumi = 4904.338;
+  if (mode == 0 )        lumi = 5085.246;
   else if ( mode == 1)   lumi = 4919.924;
   else if ( mode == 2)   lumi = 4895.249;
   
   
   char myTexFile[300];
-  sprintf(myTexFile,"tables/sf_table_%d_%dpb.tex", mode, lumi);
+  sprintf(myTexFile,"tables/table_%d_%dpb.tex", mode, lumi);
   ofstream salida(myTexFile); 
   
   char myRootFile[300];
-  sprintf(myRootFile,"results/sf_an_%dpb_%d.root", lumi, mode);
+  sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   TFile *_file0 = TFile::Open(myRootFile);
   
   const int nProcess = 10;
@@ -45,12 +45,12 @@ void tables(int mode = 0){
     if (i == 9) {
      h[i] =  (TH1F*)h[0]->Clone();
      h[i]->Add(h[1]);
-     h[i]->Add(h[2]);
-     h[i]->Add(h[3]);
+    // h[i]->Add(h[2]);
+     //h[i]->Add(h[3]);
      h[i]->Add(h[4]);
-     h[i]->Add(h[5]);
-     h[i]->Add(h[6]);
-     
+     //h[i]->Add(h[5]);
+    // h[i]->Add(h[6]);
+      h[i]->Add(h[7]);
     }
     else h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
     // Lepton ID and HLT SF

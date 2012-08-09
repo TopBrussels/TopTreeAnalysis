@@ -37,7 +37,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
-  else if (nsel == 666)                	{sprintf(plotName,"data_a");}
+  else if (nsel == 666)                	{sprintf(plotName,"data");}
   
   bool nosf = false;
   
@@ -46,7 +46,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   double lumi = luminosity; 
   if (mode == 0 )        lumi = 5085.246; 
   else if ( mode == 1)   lumi = 1000;
-  else if ( mode == 2)   lumi = 1000;
+  else if ( mode == 2)   lumi = 5103.58;
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
  
   TFile f_var(newRootFile, "UPDATE");
@@ -346,8 +346,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
       std::cout << "[Warning:] Something is wrong, your Tree is not correctly filled" << std::endl;
       break;
     } else {
-
- 
+xlWeight*=puweight3D;
       histo->Fill(0.,xlWeight);
       
       TLorentzVector lepton0(pxLepton->at(0),pyLepton->at(0), pzLepton->at(0), eLepton->at(0));

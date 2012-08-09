@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
   } else {
     if      (mode == 0){ 	 lumi = 5085.246;  xmlfile ="twemu.xml";}
     else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
-    else if (mode == 2){	 lumi = 1000;  xmlfile = "twee.xml";}
+    else if (mode == 2){	 lumi = 5103.58;  xmlfile = "twee.xml";}
  
   }
    
@@ -179,6 +179,7 @@ int main(int argc, char* argv[]) {
       else if (dataSetName == "zz"){         	sprintf(name, "zz");         	xlweight = lumi*9.03/9799902; 		} 
       else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
       else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	} 
+      else if (dataSetName == "wjets"){  	sprintf(name, "wjets");  	xlweight = lumi*37509/18036994; 	} 
           
 	  
 	  
