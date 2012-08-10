@@ -94,13 +94,13 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
     
-//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p3/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -485,7 +485,7 @@ int main (int argc, char *argv[])
   Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
-  Double_t pTjetCut = 45.;
+  Double_t pTjetCut = 40.;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
   cout << " --> maxChi2 : " << maxChi2 << endl;
