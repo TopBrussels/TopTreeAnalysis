@@ -75,6 +75,8 @@ int main(int argc, char* argv[]) {
   // Naked option
   bool isRAW = false;
   
+  // Run HLT
+  bool runHLT = false;
   
   //Run A or B 2012 (both will also work, but so far, we test A)
   bool RunA = false;
@@ -416,26 +418,27 @@ int main(int argc, char* argv[]) {
 	  
 	  //Trigger
 	  bool trigged = false;
-	  int currentRun = event->runId();
-	  bool itrigger = false;
-	  bool isecondtrigger = false;
-	  if(isData) { 
-	    if (mode == 0){
-	      itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
-	      isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
-	    } else if (mode == 1){
-	      itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v16", currentRun);
-	      isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_TkMu8_v9", currentRun);
-	    } else if (mode == 2){
-	      itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
+	  if (runHLT){
+	    int currentRun = event->runId();
+	    bool itrigger = false;
+	    bool isecondtrigger = false;
+	    if(isData) { 
+	      if (mode == 0){
+		itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+		isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+	      } else if (mode == 1){
+		itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v16", currentRun);
+		isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_TkMu8_v9", currentRun);
+	      } else if (mode == 2){
+		itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
+	      }
+	    } else {
+	      // No trigger in MC
+	      itrigger = true;
+	      isecondtrigger = true;
 	    }
-	  } else {
-	    // No trigger in MC
-	    itrigger = true;
-	    isecondtrigger = true;
-	  }
-	  if (itrigger || isecondtrigger) trigged = true;
-	 
+	    if (itrigger || isecondtrigger) trigged = true;
+	  } else trigged = true;
 	    
 	  //Start selection
 	  Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
