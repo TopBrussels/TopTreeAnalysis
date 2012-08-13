@@ -100,7 +100,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
     inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -485,7 +485,8 @@ int main (int argc, char *argv[])
   Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
-  Double_t pTjetCut = 40.;
+  Double_t pTjetCut = 45.;
+  Int_t nBtagCut = -1;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
   cout << " --> maxChi2 : " << maxChi2 << endl;
@@ -493,6 +494,7 @@ int main (int argc, char *argv[])
   cout << " --> bTagEff : " << bTagEff << endl;
   cout << " --> misTagRate : " << misTagRate << endl;
   cout << " --> pTjetCut : " << pTjetCut << endl;
+  cout << " --> nBtagCut : " << nBtagCut << endl;
   
   for(unsigned int iDataSet=0; iDataSet<inputMonsters.size(); iDataSet++)
   {
@@ -666,9 +668,14 @@ int main (int argc, char *argv[])
       TLorentzVector lepton = monster->lepton();
       TLorentzVector MET = monster->met();
       vector<float> btagSSVHE = monster->bTagSSVHE();
+      int nBtags = 0;
+      for(unsigned int i=0; i<selectedJets.size(); i++)
+        if(btagSSVHE[i] > bTagCut) nBtags++;
       
       if( !(selectedJets[0].Pt()>pTjetCut && selectedJets[1].Pt()>pTjetCut && selectedJets[2].Pt()>pTjetCut && selectedJets[3].Pt()>pTjetCut) )
         continue;
+    	if( nBtags < nBtagCut )
+    	  continue;
     	
     	if(dataSetName.find("DAtaDriven") != string::npos)
     	{
@@ -704,10 +711,6 @@ int main (int argc, char *argv[])
         lumiWeight = 1;
       if( dataSetName.find("Fall10") != string::npos )
         lumiWeight = 1; //no PU in Fall10!
-      
-      int nBtags = 0;
-      for(unsigned int i=0; i<selectedJets.size(); i++)
-        if(btagSSVHE[i] > bTagCut) nBtags++;
       
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
       {
