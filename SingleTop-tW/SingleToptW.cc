@@ -488,7 +488,7 @@ int main(int argc, char* argv[]) {
 	      cutflow_raw->Fill(3);
 		
 	      // Select Objects -> Cuts
-	      selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
+	      selection.setJetCuts(20.,5,0.01,1.,0.98,0.3,0.1); //2.5 before, now 5
               selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
               selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
               selection.setLooseMuonCuts(10,2.5,0.2);
@@ -679,7 +679,7 @@ int main(int argc, char* argv[]) {
 		      for (unsigned int i =0; i < selectedJets.size(); i ++){
 			TRootJet* tempJet = (TRootJet*) selectedJets[i];
 			TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
-			if (tempJet->Pt() > 30 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
+			if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 			  nJets++;
 			  iJet = i;
 			  if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){
@@ -690,7 +690,7 @@ int main(int argc, char* argv[]) {
 			      nTightJetsBT++;
 			    } 
 			  } 
-			} else if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){
+			} else if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679 && fabs(tempJet->Eta()) < 2.5){
 			  iSF = rand() % 100;
 			  if (iSF < SFvalue  || SFval == 1) nJetsBT++;
 			}
