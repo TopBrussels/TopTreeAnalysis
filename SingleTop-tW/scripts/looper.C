@@ -399,7 +399,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
+	  if (ptJet->at(i) > 30 && fabs(tempJet.Eta()) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	    nJets++;
 	    iJet = i;
 	    if (btCSVBJet->at(i) > 0.679){
@@ -410,7 +410,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		nTightJetsBT++;
 	      } 
 	    } 
-	  } else if (btCSVBJet->at(i) > 0.679){
+	  } else if (btCSVBJet->at(i) > 0.679 && fabs(tempJet.Eta()) < 2.5){
 	    iSF = rand() % 100;
 	    if (iSF < SFvalue ) nJetsBT++;
 	  }
