@@ -202,7 +202,7 @@ int main(int argc, char* argv[]) {
       else if (!isData && unclusteredDown) sprintf(rootFileName,"outputs/METsysDown_%d_%s.root", mode, name);
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
-     // else if (!isData && reweightPU) sprintf(rootFileName,"outputs/out_PU_%d_%s.root", mode, name);
+      else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/out_noPU_%d_%s.root", mode, name);
       else if (!isData && Pu3D) sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
