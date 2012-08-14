@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
   int  mode = 0; 
   string xmlfile ="twemu.xml";
   
-  bool reweightPU = false;
+  bool reweightPU = true;
   bool Pu3D = false;
   
   //b-tag scale factor
@@ -202,7 +202,7 @@ int main(int argc, char* argv[]) {
       else if (!isData && unclusteredDown) sprintf(rootFileName,"outputs/METsysDown_%d_%s.root", mode, name);
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
-      else if (!isData && reweightPU) sprintf(rootFileName,"outputs/out_PU_%d_%s.root", mode, name);
+     // else if (!isData && reweightPU) sprintf(rootFileName,"outputs/out_PU_%d_%s.root", mode, name);
       else if (!isData && Pu3D) sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
@@ -240,7 +240,7 @@ int main(int argc, char* argv[]) {
        
       // Lumi re-weighting Michael Style
       LumiReWeighting LumiWeights;
-      LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB.root", "pileup", "pileup");
+      LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB_new.root", "pileup", "pileup");
 
       //systematic
       reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
@@ -249,7 +249,7 @@ int main(int argc, char* argv[]) {
 
       //3D Pile-Up reweighting  
       Lumi3DReWeighting Lumi3DWeights;
-      Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB.root", "pileup", "pileup");
+      Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB_new.root", "pileup", "pileup");
 
       if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
       else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);

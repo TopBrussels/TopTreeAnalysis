@@ -1,4 +1,4 @@
-#include "looper.h"
+#include "isis_looper.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -15,11 +15,11 @@
 #include "TH2F.h"
 #include "TLorentzVector.h"
 
-void looper::Loop(){
+void isis_looper::Loop(){
   // running default loop:
   myLoop(0,0,0);
 }
-void looper::myLoop(int nsel, int mode, bool silent)
+void isis_looper::myLoop(int nsel, int mode, bool silent)
 {
 
   char plotName[300];
@@ -191,6 +191,11 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"pt_leading_%s",plotName);
   TH1F* histo_pt_leading = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_leading->Sumw2();
+  
+  
+  sprintf(title,"eta_leading_%s",plotName);
+  TH1F* histo_eta_leading = new TH1F( title, " ", 101,  -3, 3);
+  histo_eta_leading->Sumw2();
   
   sprintf(title,"nvertex_%s",plotName);
   TH1F* histo_nvertex = new TH1F( title, " ", 70,   -0.5, 69.5 );
@@ -436,6 +441,12 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	}
 	
 	if (nJets) histo_pt_leading->Fill(ptJet->at(0), xlWeight);
+	
+	if (nJets){
+	  TLorentzVector jet_aux(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
+	  histo_eta_leading->Fill(jet_aux.Eta(), xlWeight);
+	}
+	
 	if (nJets == 1){
 	  histo_etalepton->Fill(lepton0.Eta(), xlWeight);
 	  TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
