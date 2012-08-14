@@ -114,7 +114,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
@@ -485,8 +485,9 @@ int main (int argc, char *argv[])
   Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
-  Double_t pTjetCut = 45.;
+  Double_t pTjetCut = 55.;
   Int_t nBtagCut = -1;
+  Int_t nJetCut = 9999;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
   cout << " --> maxChi2 : " << maxChi2 << endl;
@@ -495,6 +496,7 @@ int main (int argc, char *argv[])
   cout << " --> misTagRate : " << misTagRate << endl;
   cout << " --> pTjetCut : " << pTjetCut << endl;
   cout << " --> nBtagCut : " << nBtagCut << endl;
+  cout << " --> nJetCut : " << nJetCut << endl;
   
   for(unsigned int iDataSet=0; iDataSet<inputMonsters.size(); iDataSet++)
   {
@@ -668,13 +670,17 @@ int main (int argc, char *argv[])
       TLorentzVector lepton = monster->lepton();
       TLorentzVector MET = monster->met();
       vector<float> btagSSVHE = monster->bTagSSVHE();
-      int nBtags = 0;
+      int nBtags = 0, nJets = 0;
       for(unsigned int i=0; i<selectedJets.size(); i++)
+      {
         if(btagSSVHE[i] > bTagCut) nBtags++;
-      
+        if(selectedJets[0].Pt()>pTjetCut) nJets++;
+      }
       if( !(selectedJets[0].Pt()>pTjetCut && selectedJets[1].Pt()>pTjetCut && selectedJets[2].Pt()>pTjetCut && selectedJets[3].Pt()>pTjetCut) )
         continue;
     	if( nBtags < nBtagCut )
+    	  continue;
+    	if( nJets > nJetCut )
     	  continue;
     	
     	if(dataSetName.find("DAtaDriven") != string::npos)
