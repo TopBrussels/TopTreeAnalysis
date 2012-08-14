@@ -333,6 +333,12 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_2lep_%s",plotName);
   TH1F* histo_nvertex_2lep = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex_2lep->Sumw2();
+  
+  
+    sprintf(title,"eta_jet_%s",plotName);
+  TH1F* histo_eta_jet = new TH1F( title, " ", 50,-3, 3 );
+  histo_eta_jet->Sumw2();
+  
 
   if (fChain == 0) return;
   
@@ -457,6 +463,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
 	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
 	  histo_ht_bf->Fill(ht1, xlWeight);
+	  histo_eta_jet->Fill(jet.Eta(),xlWeight); 
 	}
 	bool invMass = false;
 	if      (mode == 0) invMass = true;
