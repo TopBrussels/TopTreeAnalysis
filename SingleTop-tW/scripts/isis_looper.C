@@ -333,6 +333,57 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_2lep_%s",plotName);
   TH1F* histo_nvertex_2lep = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex_2lep->Sumw2();
+//<<<<<<< isis_looper.C
+  
+  
+  //added by Isis
+  
+    sprintf(title,"eta_jet_%s",plotName);
+  TH1F* histo_eta_jet = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet->Sumw2();
+  
+ 
+     sprintf(title,"eta_jet_110_%s",plotName);
+  TH1F* histo_eta_jet_110 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet_110->Sumw2();
+  
+      sprintf(title,"eta_jet_90_%s",plotName);
+  TH1F* histo_eta_jet_90 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet_90->Sumw2();
+  
+  
+      sprintf(title,"eta_jet_70_%s",plotName);
+  TH1F* histo_eta_jet_70 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet_70->Sumw2();
+  
+  
+      sprintf(title,"eta_jet_50_%s",plotName);
+  TH1F* histo_eta_jet_50 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet_50->Sumw2();
+  
+      sprintf(title,"eta_jet_30_%s",plotName);
+  TH1F* histo_eta_jet_30 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet_30->Sumw2();
+ 
+ 
+    sprintf(title,"mll_zgamma_%s",plotName);
+  TH1F* histo_mll_zgamma = new TH1F( title, " ", 50,  0, 200 );
+  histo_mll_zgamma->Sumw2();
+  
+  
+    sprintf(title,"met_zgamma_%s",plotName);
+  TH1F* histo_met_zgamma= new TH1F( title, " ", 50,  0, 200 );
+  histo_met_zgamma->Sumw2();
+  
+//=======
+//>>>>>>> 1.1.2.3
+
+
+
+  
+
+//__________________________________________________ END HISTO DEF _________________________________________________________
+
 
   if (fChain == 0) return;
   
@@ -351,6 +402,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (jentry == 0)std::cout << "[Warning:] This tree was made with a different luminosity (" << lum << ") than " << lumi << std::endl;
       //xlWeight*=(lumi/lum);
     }
+    
+  //  if(puweight > 5){ continue ;}
     
     if(ptLepton->size() != 2){
       std::cout << "[Warning:] Something is wrong, your Tree is not correctly filled" << std::endl;
@@ -407,6 +460,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	    nJets++;
 	    iJet = i;
+	    
+	    
+	    
+	    
 	    if (btCSVBJet->at(i) > 0.679){
 	      iSF = rand() % 100;
 	      if (iSF < SFvalue ){
@@ -418,7 +475,32 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  } else if (btCSVBJet->at(i) > 0.679){
 	    iSF = rand() % 100;
 	    if (iSF < SFvalue ) nJetsBT++;
-	  }
+	  }  
+	  
+	}
+	
+	
+        if(nJets){
+	 TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	 histo_eta_jet->Fill(jet.Eta(),xlWeight); 
+	 
+	 if( ptJet->at(iJet) > 110 ){
+	   histo_eta_jet_110->Fill(jet.Eta(),xlWeight); 
+	}
+	 else if (ptJet->at(iJet) > 90){
+	   histo_eta_jet_90->Fill(jet.Eta(),xlWeight); 
+	 }
+	 else if (ptJet->at(iJet) > 70){
+	   histo_eta_jet_70->Fill(jet.Eta(),xlWeight); 
+	 }
+	 else if(ptJet->at(iJet) > 50){
+	  histo_eta_jet_50->Fill(jet.Eta(),xlWeight); 
+	 }
+	 else{
+	  histo_eta_jet_30->Fill(jet.Eta(),xlWeight); 
+	 }
+	 
+	
 	}
 	
 
@@ -430,6 +512,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	histo_met->Fill(metPt,  xlWeight);
 	histo_promet->Fill(promet, xlWeight);
 	
+
 	if (nvertex > 5){
 	  histo_met_high->Fill(metPt,  xlWeight);
 	  histo_njets_high->Fill(nJets,  xlWeight);
@@ -463,6 +546,20 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
 	else if (mode == 2 && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
 	
+	//____________________________
+        //Z/gamma control region
+        
+	//if (pair.M() > 81 || pair.M() < 101)
+	if(!invMass || (mode == 0 && (pair.M() > 81 || pair.M() < 101) )) 
+	{	  
+	         
+		  histo_mll_zgamma->Fill(pair.M(),  xlWeight);
+	          histo_met_zgamma->Fill(metPt,  xlWeight);
+	          
+	}	 
+
+	//______________________________________
+
 
 	if (invMass){
 	  histo->Fill(2, xlWeight);
@@ -616,6 +713,94 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
     cout << "------------------------------------------" << endl; 
+    cout << "[eta values:]" << plotName << endl;
+    cout << "------------------------------------------" << endl; 
+    for (int j =1 ; j<7; j++){
+      if(j == 1) {
+         double amount = 0; 
+	 //double amounterror = 0; 
+      
+         for(int k = 0; k< 50; k++) {   
+	     amount = amount + histo_eta_jet_30->GetBinContent(k); 
+	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
+           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
+         }
+	 
+	 cout << "pt higher then 30: " << amount <<  endl;
+      
+      }
+        if(j == 2) {
+         double amount = 0; 
+	 //double amounterror = 0; 
+      
+         for(int k = 0; k< 50; k++) {   
+	     amount = amount + histo_eta_jet_50->GetBinContent(k); 
+	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
+           //cout << "pt higher then 50: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
+         }
+	 
+	 cout << "pt higher then 50: " << amount <<  endl;
+      
+      }
+      
+            if(j == 3) {
+         double amount = 0; 
+	 //double amounterror = 0; 
+      
+         for(int k = 0; k< 50; k++) {   
+	     amount = amount + histo_eta_jet_70->GetBinContent(k); 
+	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
+           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
+         }
+	 
+	 cout << "pt higher then 70: " << amount <<  endl;
+      
+      }
+            if(j == 4) {
+         double amount = 0; 
+	 //double amounterror = 0; 
+      
+         for(int k = 0; k< 50; k++) {   
+	     amount = amount + histo_eta_jet_70->GetBinContent(k); 
+	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
+           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
+         }
+	 
+	 cout << "pt higher then 70: " << amount <<  endl;
+      
+      }
+            if(j == 5) {
+         double amount = 0; 
+	 //double amounterror = 0; 
+      
+         for(int k = 0; k< 50; k++) {   
+	     amount = amount + histo_eta_jet_90->GetBinContent(k); 
+	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
+           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
+         }
+	 
+	 cout << "pt higher then 90: " << amount <<  endl;
+      
+      }
+            if(j == 6) {
+         double amount = 0; 
+	 //double amounterror = 0; 
+      
+         for(int k = 0; k< 50; k++) {   
+	     amount = amount + histo_eta_jet_110->GetBinContent(k); 
+	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
+           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
+         }
+	 
+	 cout << "pt higher then 110: " << amount <<  endl;
+      
+      }
+    
+    }
+    
+    
+    
+    
   }
   f_var.Write();
   f_var.Close();
