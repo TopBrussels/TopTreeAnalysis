@@ -25,6 +25,18 @@ void compare(){
   leg ->AddEntry(eta_jet_twdr, "tW signal", "l");  
   leg ->AddEntry(eta_jet_tt, "tt bckgr.", "l");
 
+  TCanvas *c41 = new TCanvas();
+
+
+  
+  eta_jet_twdr->Draw("h");
+  eta_jet_tt->Draw("h, sames");
+  
+  leg->Draw();
+  
+  c41->SaveAs("plots/compare_tw_tt_eta_jet.png");
+
+
   TCanvas *c1 = new TCanvas();
   // This is only for visualization
   eta_jet_twdr->SetNormFactor(1);   // Zet alles genormaliseerd tot 1
@@ -36,7 +48,10 @@ void compare(){
   
   leg->Draw();
   
-  c1->SaveAs("plots/compare_tw_tt_eta_jet.png");
+  c1->SaveAs("plots/compare_tw_tt_eta_jet_norm.png");
+  
+  
+
 
 
 //______________________________ 30 ___________________________________________________________________
@@ -48,10 +63,10 @@ void compare(){
   eta_jet_30_tt->SetLineWidth(2);
   
  
- /*// Rebin  // om aantal bins te kiezen 
-  eta_jet_30__twdr->Rebin(2);
-  eta_jet_30__tt->Rebin(2);
- */
+ // Rebin  // om aantal bins te kiezen 
+  eta_jet_30_twdr->Rebin(2);
+  eta_jet_30_tt->Rebin(2);
+ 
   
  // TCanvas *c1 = new TCanvas();
  // pt_leading_twdr->Draw("h");  // teken in histo mode

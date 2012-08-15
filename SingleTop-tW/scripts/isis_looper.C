@@ -449,6 +449,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	int nTightJetsBT = 0;
 	int nJets = 0;
 	bool bTagged = false;
+	int iJetn[5]={-1, -1,-1,-1,-1};
 	int iJet = -5;
 	int iSF;
 	double tempSF = SFval;
@@ -458,10 +459,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
 	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-	    nJets++;
+	    
+	    iJetn[nJets] = i;
 	    iJet = i;
-	    
-	    
+	    nJets++;
 	    
 	    
 	    if (btCSVBJet->at(i) > 0.679){
@@ -481,22 +482,24 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	
 	
         if(nJets){
-	 TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
-	 histo_eta_jet->Fill(jet.Eta(),xlWeight); 
+	 TLorentzVector jet(pxJet->at(iJetn[0]),pyJet->at(iJetn[0]), pzJet->at(iJetn[0]), eJet->at(iJetn[0]));
+	// TLorentzVector jet1(pxJet->at(iJetn[1]),pyJet->at(iJetn[1]), pzJet->at(iJetn[1]), eJet->at(iJetn[1])); //2e jet erbij nemen
+	 histo_eta_jet->Fill(jet.Eta(),xlWeight);      
+	 histo_eta_jet->Fill(jet1.Eta(),xlWeight);    // 2e jet in dezelfde plot steken , misschien beter om aparte plot te maken? 
 	 
 	 if( ptJet->at(iJet) > 110 ){
 	   histo_eta_jet_110->Fill(jet.Eta(),xlWeight); 
 	}
-	 else if (ptJet->at(iJet) > 90){
+	 if (ptJet->at(iJet) > 90){
 	   histo_eta_jet_90->Fill(jet.Eta(),xlWeight); 
 	 }
-	 else if (ptJet->at(iJet) > 70){
+	 if (ptJet->at(iJet) > 70){
 	   histo_eta_jet_70->Fill(jet.Eta(),xlWeight); 
 	 }
-	 else if(ptJet->at(iJet) > 50){
+	 if(ptJet->at(iJet) > 50){
 	  histo_eta_jet_50->Fill(jet.Eta(),xlWeight); 
 	 }
-	 else{
+	 if (ptJet->at(iJet) > 30){
 	  histo_eta_jet_30->Fill(jet.Eta(),xlWeight); 
 	 }
 	 
