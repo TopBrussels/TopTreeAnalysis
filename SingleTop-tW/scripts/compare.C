@@ -16,6 +16,13 @@ void compare(){
   
   eta_jet_twdr->SetLineWidth(2);
   eta_jet_tt->SetLineWidth(2);
+
+ // Rebin  // om aantal bins te kiezen 
+  eta_jet_twdr->Rebin(2);
+  eta_jet_tt->Rebin(2);
+
+
+
  
   
   leg = new TLegend(0.7,0.7,0.94,0.94);  // maak legende
@@ -34,7 +41,7 @@ void compare(){
   
   leg->Draw();
   
-  c41->SaveAs("plots/compare_tw_tt_eta_jet.png");
+ // c41->SaveAs("plots/compairison/compare_tw_tt_eta_jet.png");
 
 
   TCanvas *c1 = new TCanvas();
@@ -48,7 +55,7 @@ void compare(){
   
   leg->Draw();
   
-  c1->SaveAs("plots/compare_tw_tt_eta_jet_norm.png");
+  c1->SaveAs("plots/compairison/compare_tw_tt_eta_jet_norm.png");
   
   
 
@@ -80,7 +87,7 @@ void compare(){
   leg ->AddEntry(eta_jet_30_tt, "tt bckgr.", "l");
 //  leg->Draw();
   
-//  c1->SaveAs("plots/compare_tw_tt_pt_leading.png");  // sla histo op als png
+//  c1->SaveAs("plots/compairison/compare_tw_tt_pt_leading.png");  // sla histo op als png
   
   TCanvas *c2 = new TCanvas();
   // This is only for visualization
@@ -98,7 +105,7 @@ void compare(){
   
   leg->Draw();
   
-  c2->SaveAs("plots/compare_tw_tt_eta_jet_30.png");
+  c2->SaveAs("plots/compairison/compare_tw_tt_eta_jet_30.png");
 
 //______________________________ 50 ___________________________________________________________________
 
@@ -108,6 +115,11 @@ void compare(){
   eta_jet_50_twdr->SetLineWidth(2);
   eta_jet_50_tt->SetLineWidth(2);
  
+  
+   // Rebin  // om aantal bins te kiezen 
+  eta_jet_50_twdr->Rebin(2);
+  eta_jet_50_tt->Rebin(2);
+  
   
   leg = new TLegend(0.7,0.7,0.94,0.94);  // maak legende
   leg ->SetFillStyle(1001);
@@ -127,7 +139,7 @@ void compare(){
   
   leg->Draw();
   
-  c5->SaveAs("plots/compare_tw_tt_eta_jet_50.png");
+  c5->SaveAs("plots/compairison/compare_tw_tt_eta_jet_50.png");
  // ______________________________ 70 ___________________________________________________________________
 
   eta_jet_70_twdr->SetLineColor(kBlue);
@@ -136,7 +148,9 @@ void compare(){
   eta_jet_70_twdr->SetLineWidth(2);
   eta_jet_70_tt->SetLineWidth(2);
  
-  
+   // Rebin  // om aantal bins te kiezen 
+  eta_jet_70_twdr->Rebin(2);
+  eta_jet_70_tt->Rebin(2);
   leg = new TLegend(0.7,0.7,0.94,0.94);  // maak legende
   leg ->SetFillStyle(1001);
   leg ->SetFillColor(kWhite);
@@ -155,7 +169,7 @@ void compare(){
   
   leg->Draw();
   
-  c7->SaveAs("plots/compare_tw_tt_eta_jet_70.png");
+  c7->SaveAs("plots/compairison/compare_tw_tt_eta_jet_70.png");
  //   ______________________________ 90 ___________________________________________________________________
 
   eta_jet_90_twdr->SetLineColor(kBlue);
@@ -164,6 +178,9 @@ void compare(){
   eta_jet_90_twdr->SetLineWidth(2);
   eta_jet_90_tt->SetLineWidth(2);
  
+  // Rebin  // om aantal bins te kiezen 
+  eta_jet_90_twdr->Rebin(2);
+  eta_jet_90_tt->Rebin(2);
   
   leg = new TLegend(0.7,0.7,0.94,0.94);  // maak legende
   leg ->SetFillStyle(1001);
@@ -183,7 +200,7 @@ void compare(){
   
   leg->Draw();
   
-  c9->SaveAs("plots/compare_tw_tt_eta_jet_90.png");
+  c9->SaveAs("plots/compairison/compare_tw_tt_eta_jet_90.png");
  //   ______________________________ 110 ___________________________________________________________________
 
   eta_jet_110_twdr->SetLineColor(kBlue);
@@ -192,6 +209,9 @@ void compare(){
   eta_jet_110_twdr->SetLineWidth(2);
   eta_jet_110_tt->SetLineWidth(2);
  
+  // Rebin  // om aantal bins te kiezen 
+  eta_jet_110_twdr->Rebin(2);
+  eta_jet_110_tt->Rebin(2);
   
   leg = new TLegend(0.7,0.7,0.94,0.94);  // maak legende
   leg ->SetFillStyle(1001);
@@ -211,6 +231,6 @@ void compare(){
   
   leg->Draw();
   
-  c11->SaveAs("plots/compare_tw_tt_eta_jet_110.png");
+  c11->SaveAs("plots/compairison/compare_tw_tt_eta_jet_110.png");
 
 }

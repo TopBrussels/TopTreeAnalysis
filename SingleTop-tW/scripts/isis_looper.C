@@ -335,9 +335,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   histo_nvertex_2lep->Sumw2();
 //<<<<<<< isis_looper.C
   
-  
+  //_________________________________________________________________________________
   //added by Isis
   
+  // -- Leading jet --- 
     sprintf(title,"eta_jet_%s",plotName);
   TH1F* histo_eta_jet = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
   histo_eta_jet->Sumw2();
@@ -365,6 +366,36 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_eta_jet_30 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
   histo_eta_jet_30->Sumw2();
  
+ 
+   // -- Second Leading jet --- 
+    sprintf(title,"eta_jet1_%s",plotName);
+  TH1F* histo_eta_jet1 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet1->Sumw2();
+  
+ 
+     sprintf(title,"eta_jet1_110_%s",plotName);
+  TH1F* histo_eta_jet1_110 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet1_110->Sumw2();
+  
+      sprintf(title,"eta_jet1_90_%s",plotName);
+  TH1F* histo_eta_jet1_90 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet1_90->Sumw2();
+  
+  
+      sprintf(title,"eta_jet1_70_%s",plotName);
+  TH1F* histo_eta_jet1_70 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet1_70->Sumw2();
+  
+  
+      sprintf(title,"eta_jet1_50_%s",plotName);
+  TH1F* histo_eta_jet1_50 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet1_50->Sumw2();
+  
+      sprintf(title,"eta_jet1_30_%s",plotName);
+  TH1F* histo_eta_jet1_30 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
+  histo_eta_jet1_30->Sumw2();
+  
+  // ---- Z/gamma controlregion 
  
     sprintf(title,"mll_zgamma_%s",plotName);
   TH1F* histo_mll_zgamma = new TH1F( title, " ", 50,  0, 200 );
@@ -485,22 +516,27 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	 TLorentzVector jet(pxJet->at(iJetn[0]),pyJet->at(iJetn[0]), pzJet->at(iJetn[0]), eJet->at(iJetn[0]));
 	// TLorentzVector jet1(pxJet->at(iJetn[1]),pyJet->at(iJetn[1]), pzJet->at(iJetn[1]), eJet->at(iJetn[1])); //2e jet erbij nemen
 	 histo_eta_jet->Fill(jet.Eta(),xlWeight);      
-	 histo_eta_jet->Fill(jet1.Eta(),xlWeight);    // 2e jet in dezelfde plot steken , misschien beter om aparte plot te maken? 
+	 //histo_eta_jet1->Fill(jet1.Eta(),xlWeight);    // 2e jet in dezelfde plot steken , misschien beter om aparte plot te maken? 
 	 
 	 if( ptJet->at(iJet) > 110 ){
 	   histo_eta_jet_110->Fill(jet.Eta(),xlWeight); 
+	  // histo_eta_jet1_110->Fill(jet1.Eta(),xlWeight); 
 	}
 	 if (ptJet->at(iJet) > 90){
-	   histo_eta_jet_90->Fill(jet.Eta(),xlWeight); 
+	   histo_eta_jet_90->Fill(jet.Eta(),xlWeight);
+	 //  histo_eta_jet1_90->Fill(jet1.Eta(),xlWeight);  
 	 }
 	 if (ptJet->at(iJet) > 70){
-	   histo_eta_jet_70->Fill(jet.Eta(),xlWeight); 
+	   histo_eta_jet_70->Fill(jet.Eta(),xlWeight);
+	 //  histo_eta_jet1_70->Fill(jet1.Eta(),xlWeight);  
 	 }
 	 if(ptJet->at(iJet) > 50){
 	  histo_eta_jet_50->Fill(jet.Eta(),xlWeight); 
+	 // histo_eta_jet1_50->Fill(jet1.Eta(),xlWeight); 
 	 }
 	 if (ptJet->at(iJet) > 30){
-	  histo_eta_jet_30->Fill(jet.Eta(),xlWeight); 
+	  histo_eta_jet_30->Fill(jet.Eta(),xlWeight);
+	 // histo_eta_jet1_30->Fill(jet1.Eta(),xlWeight); 
 	 }
 	 
 	

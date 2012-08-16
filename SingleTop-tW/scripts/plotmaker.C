@@ -71,14 +71,14 @@ void plotmaker(int mode = 0){
   cout << myRootFile << endl;
   
   const int nProcess = 8;
-  const int nPlots = 22;
+  const int nPlots = 29;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets",  "njetsbt", "ptsys", "ht", "pt_leading", "nvertex", "pt_max", "pt_min","nvertex_2lep", "nvertex_final_purw", "nvertex_final_3D",  "eta_jet", "mll_zgamma", "met_zgamma","eta_jet_30","eta_jet_50","eta_jet_70", "eta_jet_90","eta_jet_110" };
-  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 2, 2,  1, 1, 1, 2, 2,2,2,2,2,2,2};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}","Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]","H_{T}[GeV]","P_{T} of the leading jet", "# of vertex", "p_T ofthe first lepton [GeV]", "p_T  of the second lepton [GeV]", "# ofvertex", "# of vertex after cuts PU reweighted", "# of vertex aftercuts 3D PU reweighted", "eta jets", "mll in zgamma control region","MET in zgamma  control region", "eta with pt30", "eta with pt50","eta with pt70", "eta with pt90", "eta with pt110"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets",  "njetsbt", "ptsys", "ht", "pt_leading", "nvertex", "pt_max","pt_min","nvertex_2lep", "nvertex_final_purw", "nvertex_final_3D",  "eta_jet", "mll_zgamma", "met_zgamma","eta_jet_30","eta_jet_50","eta_jet_70", "eta_jet_90","eta_jet_110","eta_jet1","eta_jet1_30","eta_jet1_50","eta_jet1_70","eta_jet1_90","eta_jet1_110" };
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 2, 2,  1, 1, 1, 2, 2,2,2,2,2,2,2,2,2,2,2,2,2,2};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}","Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system[GeV]","H_{T}[GeV]","P_{T} of the leading jet", "# of vertex", "p_T ofthe first lepton [GeV]", "p_T  of the second lepton [GeV]", "# ofvertex", "# of vertex after cuts PU reweighted", "# of vertex aftercuts 3D PU reweighted", "eta jets", "mll in zgamma control region","MET in zgamma  control region", "eta with pt30", "eta with pt50","eta with pt70", "eta with pt90", "eta with pt110","eta secondleading jet", "eta secondleading jet with pt30", "eta second leading jet with pt50","eta second leading jet with pt70", "eta second leading jet with pt90", "eta second leading jet with pt110"};
   TString modeString[3] = {"0", "1", "2"};
   
   TString plotExtension = "plot_";
