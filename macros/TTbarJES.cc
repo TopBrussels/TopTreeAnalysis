@@ -324,6 +324,21 @@ int main (int argc, char *argv[])
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
+    histo2D["jesUncPlus"] = new TH2F("jesUncPlus", "jesUncPlus", 51, 29.5, 80.5, 51, -2.55, 2.55);
+    histo2D["jesUncMinus"] = new TH2F("jesUncMinus", "jesUncMinus", 51, 29.5, 80.5, 51, -2.55, 2.55);
+    for(float jetPt=30; jetPt<=80; jetPt++)
+    {
+      for(float jetEta=-2.4; jetEta<=2.4; jetEta+=0.1)
+      {
+        jecUnc->setJetEta(jetEta);
+        jecUnc->setJetPt(jetPt);
+        histo2D["jesUncPlus"]->Fill(jetPt, jetEta, jecUnc->getUncertainty(true));
+        jecUnc->setJetEta(jetEta);
+        jecUnc->setJetPt(jetPt);
+        histo2D["jesUncMinus"]->Fill(jetPt, jetEta, jecUnc->getUncertainty(false));
+      }
+    }
+    
     ////////////////////////////////
     // LOAD THE FULLKINFIT OBJECT //
     ////////////////////////////////
@@ -373,8 +388,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 1000; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 10; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
