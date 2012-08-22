@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<datasets>
+
+ <d name="Data"     title="Data"             add="1"   color="1"  ls="1"  lw="2" normf="1" xsection="1"       EqLumi="371.223"    PreselEff="0.0" filenames="/user/keaveney/2012AMuHad/*.root"/>
+
+ <d name="TTJets"         title="t\bar{t}+jets"         add="1"   color="633"  ls="1"  lw="2"  EqLumi="5343.64" xsection="225.197"   PreselEff="0.00610" NofPSEvts="734600"  filenames="/user/keaveney/TTJets2/*.root"/>
+
+ <d name="WJets"    title="W\rightarrow l\nu"           add="1"   color="413" ls="1"  lw="2"  EqLumi="497.47" xsection="36257.2" PreselEff="0.000175" NofPSEvts="31614"  filenames="/user/keaveney/WJets/*.root"/>
+
+<d name="ZJets"    title="Z\rightarrow ll"           add="1"   color="858" ls="1"  lw="2"  EqLumi="307.63" xsection="3503.2" PreselEff="0.0016418" NofPSEvts="1769700"  filenames="/user/keaveney/ZJets/*.root"/>
+
+<d name="Multijet"    title="Multijet"           add="1"   color="400" ls="1"  lw="2"  EqLumi="2041594" xsection="1" PreselEff="0.0000069" NofPSEvts="14200"  filenames="/user/keaveney/Skimmed-TopTrees/QCD_80_170/*.root"/>
+
+<d name="SingleTop"    title="SingleTop"           add="1"   color="7" ls="1"  lw="2"  EqLumi="170000" xsection="22.65" PreselEff="0.00309" NofPSEvts="525300"  filenames="/user/keaveney/SingleTop/*.root"/>
+
+</datasets>
+
+<analysis>
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="0" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
+</analysis>
+
