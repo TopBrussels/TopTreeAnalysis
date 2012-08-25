@@ -515,7 +515,7 @@ int main (int argc, char *argv[])
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_TriCentralJet30_v5"), currentRun, iFile);
           else if( event->runId() >= 173236 && event->runId() <= 178380 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralJet30_v1"), currentRun, iFile);
-          else if( event->runId() >= 178381 && event->runId() <= 179889 )
+          else if( event->runId() >= 178420 && event->runId() <= 179889 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
           else if( event->runId() >= 179959 && event->runId() <= 180252 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
@@ -539,10 +539,12 @@ int main (int argc, char *argv[])
         {
           if( event->runId() <= 161176 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
-          else if( event->runId() >= 161177 && event->runId() <= 163261 )
+          else if( event->runId() >= 161217 && event->runId() <= 163261 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v2"), currentRun, iFile);
-          else if( event->runId() >= 163262 && event->runId() <= 165633 )
+          else if( event->runId() >= 163270 && event->runId() <= 163869 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v3"), currentRun, iFile);
+          else if( event->runId() >= 165088 && event->runId() <= 165633 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v3"), currentRun, iFile);
           else if( event->runId() >= 165970 && event->runId() <= 166967 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v1"), currentRun, iFile);
           else if( event->runId() >= 167039 && event->runId() <= 167913 )
@@ -551,7 +553,7 @@ int main (int argc, char *argv[])
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v4"), currentRun, iFile);
           else if( event->runId() >= 173236 && event->runId() <= 178380 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun, iFile);
-          else if( event->runId() >= 178381 && event->runId() <= 179889 )
+          else if( event->runId() >= 178420 && event->runId() <= 179889 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v2"), currentRun, iFile);
           else if( event->runId() >= 179959 && event->runId() <= 180252 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun, iFile);
