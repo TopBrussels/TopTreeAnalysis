@@ -30,6 +30,7 @@ Selection::Selection(const std::vector<TRootJet*>& jets_, const std::vector<TRoo
   setMuonCuts();
   setDiMuonCuts();
   setElectronCuts();
+  setDiElectronCuts();
   setLooseMuonCuts();
   setLooseElectronCuts();
   for(unsigned int i=0;i<jets_.size();i++) jets.push_back(jets_[i]);
@@ -50,7 +51,7 @@ Selection::Selection(const Selection& s) {
   setDiMuonCuts(s.MuonPtThreshold_,s.MuonEtaThreshold_,s.MuonRelIso_,s.MuonNofValidHits_,s.Muond0Cut_);
   setLooseMuonCuts(s.JetPtThreshold_,s.JetEtaThreshold_,s.MuonRelIso_);
   setElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronMVAId_,s.ElectronDistVzPVz_,s.ElectronDRJetsCut_);
-  setDiElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronDistVzPVz_);
+  setDiElectronCuts(s.ElectronEtThreshold_,s.ElectronEtaThreshold_,s.ElectronRelIso_,s.Electrond0Cut_,s.ElectronMVAId_,s.ElectronDistVzPVz_,s.ElectronDRJetsCut_);
   setLooseElectronCuts(s.ElectronLooseEtThreshold_,s.ElectronLooseEtaThreshold_,s.ElectronLooseRelIso_,s.ElectronLooseMVAId_);
 }
 
@@ -100,17 +101,20 @@ void Selection::setElectronCuts() {
 }
 
 
-void Selection::setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float DistVzPVz) {
+void Selection::setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets) {
   ElectronEtThreshold_ = Et;
   ElectronEtaThreshold_ = Eta;
   ElectronRelIso_ = RelIso;
   Electrond0Cut_ = d0;
   ElectronDistVzPVz_ = DistVzPVz;
+  ElectronDRJetsCut_ = DRJets;
+  ElectronMVAId_ = MVAId_;
 }
 
 void Selection::setDiElectronCuts() {
-  setDiElectronCuts(20,2.5,0.15,0.02,1);
+  setElectronCuts(35,2.5,0.1,0.02,0.,1,0.3);
 }
+
 
 
 void Selection::setLooseElectronCuts(float Et, float Eta, float RelIso, float MVAId_) {
@@ -674,23 +678,19 @@ std::vector<TRootElectron*> Selection::GetSelectedElectrons(float EtThr, float E
 
 //
 
-std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float EtaThr, float ElectronRelIso) const {
+std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float PtThr, float EtaThr, float ElectronRelIso) const {
   std::vector<TRootElectron*> selectedElectrons;
   //cout << ElectronRelIso << endl;
-  for(unsigned int i=0;i<electrons.size();i++){
+  for(unsigned int i=0;i<electrons.size();i++)
+  {
     TRootElectron* el = (TRootElectron*) electrons[i];
-    float RelIso = (el->chargedHadronIso()+el->neutralHadronIso()+el->photonIso())/el->Pt();
-    
-    int eidBit = 0;//el->CiCTightId();
-    int eidBitMask = 5; // id + conv rejection, 
-    bool passEId = ((eidBit & eidBitMask) == eidBitMask);
-    
-    if(el->Et() > EtThr && fabs(el->Eta())< EtaThr)
-      if ( fabs(el->superClusterEta()) > 1.5660 ||  fabs(el->superClusterEta()) < 1.4442 )
-	if ( fabs(el->d0()) < Electrond0Cut_ )
-	  if ( RelIso < ElectronRelIso )
-	    if (passEId)
-	      if(fabs(el->Dist()) >= 0.02 && fabs(el->DCot()) >= 0.02 && el->missingHits() == 0) 
+    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt(); // dBeta corrected
+
+    if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
+    	if ( fabs(el->d0()) < Electrond0Cut_ )
+	  if (el->passConversion())
+	  if (el->mvaTrigId() > ElectronMVAId_)
+	    if ( RelIso < ElectronRelIso )
 	      selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
@@ -701,23 +701,8 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons() const{
   return GetSelectedDiElectrons(ElectronEtThreshold_, ElectronEtaThreshold_, ElectronRelIso_);
 }
 
-std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(TRootVertex* vertex) const{
-  return GetSelectedDiElectrons(ElectronEtThreshold_, ElectronEtaThreshold_, ElectronRelIso_,vertex);
-}
 
-std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float EtThr, float EtaThr, float ElectronRelIso, TRootVertex* vertex) const {
-  std::vector<TRootElectron*> init_electrons = GetSelectedDiElectrons(EtThr,EtaThr,ElectronRelIso);
-  std::vector<TRootElectron*> selectedElectrons;
-  for(unsigned int i=0;i<init_electrons.size();i++){
-    TRootElectron* el = (TRootElectron*) init_electrons[i];
-    if ( fabs(el->vz() - vertex->Z()) < ElectronDistVzPVz_) {
-      selectedElectrons.push_back(init_electrons[i]);
-    }
-  }
 
-  std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
-  return selectedElectrons;
-}
 
 //
 std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, float EtaThr, float ElectronRelIso, bool vbtfid) const {

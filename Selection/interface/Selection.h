@@ -88,7 +88,7 @@ class Selection{
       void setElectronCuts();
       void setElectronCuts(float Pt, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets);
       void setDiElectronCuts();
-      void setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float DistVzPVz);
+      void setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets);
       void setLooseElectronCuts();
       void setLooseElectronCuts(float Pt, float Eta, float RelIso, float MVAId_);
       void setMuonCuts();
@@ -116,9 +116,7 @@ class Selection{
       std::vector<TRootElectron*> GetSelectedElectrons(float EtThr, float EtaThr, float ElectronRelIso, TRootVertex* vertex) const;
       std::vector<TRootElectron*> GetSelectedElectrons(float EtThr, float EtaThr, float ElectronRelIso, TRootVertex* vertex, vector<TRootJet*>& selJets) const;
       std::vector<TRootElectron*> GetSelectedDiElectrons() const;
-      std::vector<TRootElectron*> GetSelectedDiElectrons(TRootVertex* vertex) const;
       std::vector<TRootElectron*> GetSelectedDiElectrons(float EtThr, float EtaThr, float ElectronRelIso) const;
-      std::vector<TRootElectron*> GetSelectedDiElectrons(float EtThr, float EtaThr, float ElectronRelIso, TRootVertex* vertex) const;
       std::vector<TRootElectron*> GetSelectedLooseElectrons(bool vbtfid = false) const;
       std::vector<TRootElectron*> GetSelectedLooseElectrons(float EtThr, float EtaThr, float ElectronRelIso, bool vbtfid = false) const;
 

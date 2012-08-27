@@ -490,7 +490,7 @@ int main(int argc, char* argv[]) {
 	      // Select Objects -> Cuts
 	      selection.setJetCuts(20.,5,0.01,1.,0.98,0.3,0.1); //2.5 before, now 5
               selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
-              selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
+              selection.setDiElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
               selection.setLooseMuonCuts(10,2.5,0.2);
               selection.setLooseElectronCuts(15,2.5,0.2,0.);
 		
@@ -498,7 +498,7 @@ int main(int argc, char* argv[]) {
 	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
 	      vector<TRootMuon*> selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
-	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedElectrons();
+	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons();
 	             
 		
