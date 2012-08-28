@@ -3,7 +3,7 @@
 
  <d name="data" title="data" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/MuEGRun2012/*"/> 
 
- <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/TTJets/*"/> 
+ <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/TTJets_mass/*"/> 
 
  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/T_tW_DR.root"/> 
  <d name="atwdr" title="mc" add="1" filenames="/user/rebeca/Files/TopTrees/Summer12_1e1mu/Tbar_tW_DR.root"/> 
