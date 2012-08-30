@@ -171,8 +171,8 @@ int main(int argc, char* argv[]) {
       // cross sections and weights
       if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
-      //else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/7576270; 	isTop = true;}  //massive bin decay
+      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
+      else if (dataSetName == "tt_m"){          sprintf(name, "tt_m");          xlweight = lumi*225.197/7576270; 	isTop = true;}  //massive bin decay
       else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
       else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} 
       else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} 
