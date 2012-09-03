@@ -676,19 +676,16 @@ int main (int argc, char *argv[])
       //for(unsigned int i=0; i<init_jets.size(); i++)
       //  init_jets_corrected.push_back( (TRootJet*) init_jets[i]->Clone() );
       
-      // Apply Jet Corrections on-the-fly
+      //////////////////////////////////////
+      // Apply Jet Corrections on-the-fly //   
+      //////////////////////////////////////
 
-      // FOR NOW THE JET CORRECTIONS ARE OK!!
-      
-      
-      
-      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) {
-	//cout << "pom" << endl;
-	//jetTools->correctJets(init_jets, vertex);
+      // not needed for now, GT contains good stuff
+      /*if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) {
       	//jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
       } else {
-	jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-      }
+	jetTools->correctJets(init_jets_corrected,event->kt6PFJets_rho(),false); //last boolean: isData (needed for L2L3Residual...)
+	}*/
       
       
       // after correction
@@ -792,7 +789,9 @@ int main (int argc, char *argv[])
           }
 
 	} else {
-	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun);
+	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
+	  if (itriggerSemiMu == 9999)
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun);
 	  if (itriggerSemiMu == 9999) 
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun);
 
@@ -852,7 +851,9 @@ int main (int argc, char *argv[])
         }
         else
         {
-          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun);
+	  itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
+          if( itriggerSemiEl == 9999 )
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun);
 	  if( itriggerSemiEl == 9999 )
 	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun);
 	  
