@@ -35,15 +35,16 @@
 #include "../WHelicities/interface/BTagJetSelection.h"
 #include "../WHelicities/interface/BTagCosThetaCalculation.h"
 #include "../WHelicities/interface/MinuitFitter.h"
+#include "../WHelicities/interface/MlbFitter.h"
 //#include "../WHelicities/interface/KinematicFitClass.h"
 
 //Includes for Minuit
 #include <TMinuitMinimizer.h>
 //#include "TNtuple.h"  //A simple tree restricted to a list of float variables only. 
 
-const int ndimen = 3;
+const int ndimen = 4;
 
-const int CosThetaBinNumber = 30;       
+const int CosThetaBinNumber = 35;       
 const int NumberSSVHP=14;
 const int NumberSSVHE=14;
 const int NumberTCHP=14;
@@ -51,7 +52,6 @@ const int NumberTCHE=14;
 const int NumberCSV=14;
 const int NumberJP=14;
 const int NumberJBP=14;
-int NumberOfHelicityBins=100; 
 TNtuple *genttbarhistoHadr[CosThetaBinNumber];  //This is the vector of ntuples containing the generated values of cos theta* for each cos theta* reconstructed bin
 TNtuple *genttbarhistoHadrAndLeptWOnly[CosThetaBinNumber];  //This is the vector of ntuples containing the generated values of cos theta* for each cos theta* reconstructed bin
 TNtuple *genttbarhistoHadrAndLept[CosThetaBinNumber];  //This is the vector of ntuples containing the generated values of cos theta* for each cos theta* reconstructed bin
@@ -92,17 +92,16 @@ int main (int argc, char *argv[])
 
   //--------------------------------------------------------------
   //     DataSamples needed for 2011 Data for muon channel:     --
-  //--------------------------------------------------------------
-  
+  //-------------------------------------------------------------- 
   string decayChannel;
-  bool semiMuon = false;
-  bool semiElectron = true;
+  bool semiMuon = true;
+  bool semiElectron = false;
   if(semiMuon == true){decayChannel = "SemiMu";}
   else if(semiElectron == true){decayChannel = "SemiEl";}
 
   string UsedTrigger;
-  bool IsoMu172024Trigger = false;
-  bool TriCentralJet30Trigger = true;
+  bool IsoMu172024Trigger = true;
+  bool TriCentralJet30Trigger = false;
   if(IsoMu172024Trigger == true){
     UsedTrigger = "IsoMu172024Trigger";
     Luminosity = 4938.985;
@@ -125,15 +124,16 @@ int main (int argc, char *argv[])
   //Booleans to load in different root files
   bool SignalOnly = false;
   bool DataResults = true;
-  bool JESResults = false;
-  bool JERResults = false;
-  bool WSystResults = false;
-  bool TTScalingResults = false;
-  bool TTMatchingResults = false;
-  bool PUResults = false;
-  bool UnclusEnergyResults = false;
-  bool TopMassResults = false;
-  bool TriggEvtSelResults = false;
+  bool JESResults = true;
+  bool JERResults = true;
+  bool WSystResults = true;
+  bool TTScalingResults = true;
+  bool TTMatchingResults = true;
+  bool PUResults = true;
+  bool UnclusEnergyResults = true;
+  bool TopMassResults = true;
+  bool TriggEvtSelResults = true;
+  bool bTagResults = true;
   cout << " Obtaining results for : Data = " << DataResults << " , JES = " << JESResults << " , JER = " << JERResults << " , WSyst = " << WSystResults << endl;
 
   //Different KinFit configurations studied:
@@ -142,40 +142,60 @@ int main (int argc, char *argv[])
   bool HadronicAndLeptonic = true;
 
   //Boolean to put MinuitFitter on and off:
-  bool PerformMinuit = false;
+  bool PerformMinuit = true;
 
   //Boolean to create MSPlots:
   bool CreateMSPlots = false;
  
   //1) Nominal samples:
-  if(SignalOnly == false){
-    if(DataResults == true){
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
-      nameDataSet.push_back("Data");
-    }
+  if(DataResults == true){
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_"+"Data_"+decayChannel+".root").c_str());
+    nameDataSet.push_back("Data");
+  }
+  inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+  nameDataSet.push_back("Nom_ST_SingleTop_tChannel_tbar");
+  //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+  //nameDataSet.push_back("Nom_ST_SingleTop_tChannel_t");
+  inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+  nameDataSet.push_back("Nom_ST_SingleTop_tWChannel_tbar");
+  inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+  nameDataSet.push_back("Nom_ST_SingleTop_tWChannel_t");
+  inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_Other_"+decayChannel+".root").c_str());
+  nameDataSet.push_back("Nom_TTbarJets_Other");
+  if(semiMuon == true){
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  //In muon channel case SemiEl is considered as background
+    nameDataSet.push_back("Nom_TTbarJets_SemiEl");
+  }
+  else if(semiElectron == true){
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
+    nameDataSet.push_back("Nom_TTbarJets_SemiMuon");
+  }
+  inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());
+  nameDataSet.push_back("Nom_WJets");
+  inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
+  nameDataSet.push_back("Nom_ZJets");  
+
+  if(SignalOnly == true){
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tChannel_tbar");
-    //    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-    //    nameDataSet.push_back("ST_SingleTop_tChannel_t");
+    nameDataSet.push_back("McDta_ST_SingleTop_tChannel_tbar");
+    //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+    //nameDataSet.push_back("McDta_ST_SingleTop_tChannel_t");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tWChannel_tbar");
+    nameDataSet.push_back("McDta_ST_SingleTop_tWChannel_tbar");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ST_SingleTop_tWChannel_t");
+    nameDataSet.push_back("McDta_ST_SingleTop_tWChannel_t");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_Other_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("TTbarJets_Other");
-    if(semiMuon == true){
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  //In muon channel case SemiEl is considered as background
-      nameDataSet.push_back("TTbarJets_SemiEl");
-    }
-    else if(semiElectron == true){
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  //In electron channel case SemiMu is considered as background
-      nameDataSet.push_back("TTbarJets_SemiMuon");
-    }
+    nameDataSet.push_back("McDta_TTbarJets_Other");
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());  
+    nameDataSet.push_back("McDta_TTbarJets_SemiEl");    
+    inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());  
+    nameDataSet.push_back("McDta_TTbarJets_SemiMuon");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("WJets_Nominal");
+    nameDataSet.push_back("McDta_WJets");
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("ZJets");  
-    
+    nameDataSet.push_back("McDta_ZJets");  
+  }  
+  else if(SignalOnly == false){
     //2) JES Plus/Min samples:
     if(JESResults == true ){
       //Consider JESPlus samples:
@@ -412,7 +432,7 @@ int main (int argc, char *argv[])
       nameDataSet.push_back("TriggEvtSelPlus_TTbarJets_SemiEl");
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());    
       nameDataSet.push_back("TriggEvtSelPlus_WJets");
-      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
+           inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
       nameDataSet.push_back("TriggEvtSelPlus_ZJets");
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
       nameDataSet.push_back("TriggEvtSelPlus_TTbarJets_SemiMuon");
@@ -420,8 +440,8 @@ int main (int argc, char *argv[])
       //Consider TriggEvtSel Minus samples:
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
       nameDataSet.push_back("TriggEvtSelMinus_ST_SingleTop_tChannel_tbar");
-      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
-      //      nameDataSet.push_back("TriggEvtSel_ST_SingleTop_tChannel_t");
+      //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //nameDataSet.push_back("TriggEvtSel_ST_SingleTop_tChannel_t");
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
       nameDataSet.push_back("TriggEvtSelMinus_ST_SingleTop_tWChannel_tbar");
       inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
@@ -438,16 +458,58 @@ int main (int argc, char *argv[])
       nameDataSet.push_back("TriggEvtSelMinus_TTbarJets_SemiMuon");      
     }
 
+    //11) BTag ScaleFactor Systematic
+    if(bTagResults == true){
+      //Consider bTagSyst Plus samples:
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_ST_SingleTop_tChannel_tbar");
+      //      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //      nameDataSet.push_back("bTagSystPlus_ST_SingleTop_tChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_ST_SingleTop_tWChannel_tbar");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_ST_SingleTop_tWChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_Other_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_TTbarJets_Other");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_TTbarJets_SemiEl");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());    
+      nameDataSet.push_back("bTagSystPlus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_ZJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystPlus_TTbarJets_SemiMuon");
+
+      //Consider bTagSyst Minus samples:
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_ST_SingleTop_tChannel_tbar");
+      //inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tChannel_t_"+decayChannel+".root").c_str());
+      //nameDataSet.push_back("bTagSyst_ST_SingleTop_tChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_tbar_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_ST_SingleTop_tWChannel_tbar");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ST_SingleTop_tWChannel_t_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_ST_SingleTop_tWChannel_t");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_Other_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_TTbarJets_Other");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_TTbarJets_SemiEl");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_WJets_"+decayChannel+".root").c_str());    
+      nameDataSet.push_back("bTagSystMinus_WJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_ZJets_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_ZJets");
+      inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
+      nameDataSet.push_back("bTagSystMinus_TTbarJets_SemiMuon");      
+    }
   }//End of signalOnly = false loop
   
   //TTbarJets_SemiMuon sample should always be put as latest sample to avoid crash of TMinuitMinimizer !!
   if(semiMuon == true){
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiMuon_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("TTbarJets_SemiMuon");
+    nameDataSet.push_back("Nom_TTbarJets_SemiMuon");
   }
   else if(semiElectron == true){
     inputWTree.push_back(("WTree/KinFit_WTree_"+UsedTrigger+"_TTbarJets_SemiEl_"+decayChannel+".root").c_str());
-    nameDataSet.push_back("TTbarJets_SemiEl");
+    nameDataSet.push_back("Nom_TTbarJets_SemiEl");
   }
   
   TFile *fout = new TFile (("WHelicities_Analysis_"+UsedTrigger+".root").c_str(), "RECREATE");
@@ -456,8 +518,6 @@ int main (int argc, char *argv[])
   //-----------------------------------------------
   //  Output .tex files for presentation/paper
   //-----------------------------------------------
-  //mkdir("BTagPerformanceStudy/",0777);
-
   string bTagPerf = "BTagPerformanceStudy/";
   mkdir(("HadrKinFit/"+bTagPerf).c_str(),0777);
   mkdir(("HadrAndLeptWOnlyKinFit/"+bTagPerf).c_str(),0777);
@@ -466,9 +526,7 @@ int main (int argc, char *argv[])
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
   //1) Own results: No btag at event selection, top mass constraint for leptonic top in KinFit and offline muon pt cut of 27
   //oooooOOOOOOOOOOOoooooooooooOOOOOOOOOOOOOOOOoooooooooOOOOOOOOOOOoooooooooooooooooOOOOOOOOOOOOOOOoooooooooooooOOOOOOOOOOOoooooooo
-
-  string PresentationTexTitle;
-  PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+".tex").c_str();
+  string PresentationTexTitle =("BTagPerformanceStudy/"+UsedTrigger+"_"+decayChannel+".tex").c_str();
  
   ofstream PresentationTexHadr(("HadrKinFit/"+PresentationTexTitle).c_str());
   ofstream PresentationTexHadrAndLeptWOnly(("HadrAndLeptWOnlyKinFit/"+PresentationTexTitle).c_str());
@@ -477,74 +535,60 @@ int main (int argc, char *argv[])
   ofstream FMinusTexHadr("HadrKinFit/FMinus.tex");
   ofstream FPlusTexHadr("HadrKinFit/FPlus.tex");
   ofstream FZeroTexHadr("HadrKinFit/FZero.tex");
+  ofstream NormTexHadr("HadrKinFit/Norm.tex");
 
   ofstream FMinusTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/FMinus.tex");
   ofstream FPlusTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/FPlus.tex");
   ofstream FZeroTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/FZero.tex");
+  ofstream NormTexHadrAndLeptWOnly("HadrAndLeptWOnlyKinFit/Norm.tex");
 
   ofstream FMinusTexHadrAndLept("HadrAndLeptKinFit/FMinus.tex");
   ofstream FPlusTexHadrAndLept("HadrAndLeptKinFit/FPlus.tex");
   ofstream FZeroTexHadrAndLept("HadrAndLeptKinFit/FZero.tex");
+  ofstream NormTexHadrAndLept("HadrAndLeptKinFit/Norm.tex");
+  ofstream NormBckgTexHadrAndLept("HadrAndLeptKinFit/NormBckg.tex");
+  ofstream MlbNormTex("HadrAndLeptKinFit/MlbNormTex.tex");
 
   //-----------------------------------------
   //  Start of filling of .tex files !!
   //-----------------------------------------
   //Hadronic KinFit configuration: 
-  PresentationTexHadr << " \\begin{table} " << endl;
-  PresentationTexHadr << " \\begin{tiny} " << endl;
-  PresentationTexHadr << " \\renewcommand{\\arraystretch}{1.2} " << endl;
-  PresentationTexHadr << " \\begin{center} " << endl;
+  PresentationTexHadr << " \\begin{table} \n  \begin{tiny} \n \\renewcommand{\\arraystretch}{1.2} \n \\begin{center} \n ";
   for(int ii=0; ii<nameDataSet.size(); ii++){
     if(ii==0){PresentationTexHadr << "  \\begin{tabular}{|c|";}
     else if(ii < (nameDataSet.size()-1)){PresentationTexHadr << "c|";}
     else{PresentationTexHadr << "c|c|c|c|c|c|c|c|c|c|c|} " << endl;}
   }
   PresentationTexHadr << " \\hline " << endl;
-  for(int ii=0; ii < nameDataSet.size();ii++){
-    PresentationTexHadr << " & " << nameDataSet[ii];
-  }
-  PresentationTexHadr << " & bLept correct & F+ & F+ - SM & $\\delta$ F+ & F- & F- - SM & $\\delta$ F- & F0 & F0 - SM & $\\delta$ F0 \\\\ " << endl;
-  PresentationTexHadr << " \\hline " << endl;
+  for(int ii=0; ii < nameDataSet.size();ii++)
+    PresentationTexHadr << " & " << nameDataSet[ii];  
+  PresentationTexHadr << " & bLept correct & F+ & F+ - SM & $\\delta$ F+ & F- & F- - SM & $\\delta$ F- & F0 & F0 - SM & $\\delta$ F0 \\\\ \n \\hline " << endl;
 
   //Hadronic and Leptonic W Only KinFit configuration: 
-  PresentationTexHadrAndLeptWOnly << " \\begin{table} " << endl;
-  PresentationTexHadrAndLeptWOnly << " \\begin{tiny} " << endl;
-  PresentationTexHadrAndLeptWOnly << " \\renewcommand{\\arraystretch}{1.2} " << endl;
-  PresentationTexHadrAndLeptWOnly << " \\begin{center} " << endl;
+  PresentationTexHadrAndLeptWOnly << " \\begin{table} \n \\begin{tiny} \n \\renewcommand{\\arraystretch}{1.2} \n \\begin{center}" << endl;
   for(int ii=0; ii<nameDataSet.size(); ii++){
     if(ii==0){PresentationTexHadrAndLeptWOnly << "  \\begin{tabular}{|c|";}
     else if(ii < (nameDataSet.size()-1)){PresentationTexHadrAndLeptWOnly << "c|";}
     else{PresentationTexHadrAndLeptWOnly << "c|c|c|c|c|c|c|c|c|c|c|} " << endl;}
   }
   PresentationTexHadrAndLeptWOnly << " \\hline " << endl;
-  for(int ii=0; ii < nameDataSet.size();ii++){
-    PresentationTexHadrAndLeptWOnly << " & " << nameDataSet[ii];
-  }
-  PresentationTexHadrAndLeptWOnly << " & bLept correct & F+ & F+ - SM & $\\delta$ F+ & F- & F- - SM & $\\delta$ F- & F0 & F0 - SM & $\\delta$ F0 \\\\ " << endl;
-  PresentationTexHadrAndLeptWOnly << " \\hline " << endl;
+  for(int ii=0; ii < nameDataSet.size();ii++)
+    PresentationTexHadrAndLeptWOnly << " & " << nameDataSet[ii];  
+  PresentationTexHadrAndLeptWOnly << " & bLept correct & F+ & F+ - SM & $\\delta$ F+ & F- & F- - SM & $\\delta$ F- & F0 & F0 - SM & $\\delta$ F0 \\\\ \n  \\hline " << endl;
 
   //Hadronic and Leptonic KinFit configuration: 
-  PresentationTexHadrAndLept << " \\begin{table} " << endl;
-  PresentationTexHadrAndLept << " \\begin{tiny} " << endl;
-  PresentationTexHadrAndLept << " \\renewcommand{\\arraystretch}{1.2} " << endl;
-  PresentationTexHadrAndLept << " \\begin{center} " << endl;
+  PresentationTexHadrAndLept << " \\begin{table} \n \\begin{tiny} \n \\renewcommand{\\arraystretch}{1.2} \n \\begin{center} " << endl;
   for(int ii=0; ii<nameDataSet.size(); ii++){
     if(ii==0){PresentationTexHadrAndLept << "  \\begin{tabular}{|c|";}
     else if(ii < (nameDataSet.size()-1)){PresentationTexHadrAndLept << "c|";}
     else{PresentationTexHadrAndLept << "c|c|c|c|c|c|c|c|c|c|c|} " << endl;}
   }
   PresentationTexHadrAndLept << " \\hline " << endl;
-  for(int ii=0; ii < nameDataSet.size();ii++){
-    PresentationTexHadrAndLept << " & " << nameDataSet[ii];
-  }
-  PresentationTexHadrAndLept << " & bLept correct & F+ & F+ - SM & $\\delta$ F+ & F- & F- - SM & $\\delta$ F- & F0 & F0 - SM & $\\delta$ F0 \\\\ " << endl;
-  PresentationTexHadrAndLept << " \\hline " << endl;
+  for(int ii=0; ii < nameDataSet.size();ii++)
+    PresentationTexHadrAndLept << " & " << nameDataSet[ii];  
+  PresentationTexHadrAndLept << " & bLept correct & F+ & F+ - SM & $\\delta$ F+ & F- & F- - SM & $\\delta$ F- & F0 & F0 - SM & $\\delta$ F0 \\\\ \n \\hline " << endl;
 
-  // initialize histograms
-  cout << "Initializing histograms" << endl;
-
-  histo1D["lumiWeights3D"]= new TH1F("lumiWeights3D","lumiWeights3D",25,0,50);
-
+  //TriggEvtSel systematics initialization
   Int_t N;
   Double_t *xVec, *yVec, *xErrHi, *xErrLo, *yErrHi, *yErrLo;
   if(semiElectron == true){
@@ -572,21 +616,46 @@ int main (int argc, char *argv[])
     yErrLo = effHists_->GetEYlow(); 
   } 
 
-  //Standard Model helicity values:
-  float SMfrResult = 0.0334506;
-  float SMflResult = 0.321241;
-  float SMf0Result = 0.64491;
-  histo1D["StandardCosThetaFit"]=new TH1F("StCosThetaFit","StCosThetaFit",200,-1,1);   
-  histo1D["StandardCosTheta"]=new TH1F("StCosTheta","StCosTheta",200,-1,1);   
-
-  //Zie code Stijn voor alle gebruikte controle plots !
-
+  // initialize histograms
+  histo1D["lumiWeights3D"]= new TH1F("lumiWeights3D","lumiWeights3D",25,0,50);  
   histo1D["JetCombHadr"] = new TH1F("JetCombHadr","JetCombHadr",14,-0.5,13.5);
   histo1D["JetCombHadrAndLeptWOnly"] = new TH1F("JetCombHadrAndLeptWOnly","JetCombHadrAndLeptWOnly",14,-0.5,13.5);
   histo1D["JetCombHadrAndLept"] = new TH1F("JetCombHaAndLeptdr","JetCombHadrAndLept",14,-0.5,13.5);
-
   histo1D["LeptWMassHadr"] = new TH1F("LeptWMassHadr","LeptWMassHadr",40,0,150);
   histo1D["LeptTopMassHadr"] = new TH1F("LeptTopMassHadr","LeptTopMassHadr",60,50,350);
+
+  histo1D["CosThetaNoBTagData"] = new TH1F("CosThetaNoBTagData","CosThetaNoBTagData",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagSemiMu"] = new TH1F("CosThetaNoBTagSemiMu","CosThetaNoBTagSemiMu",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagSemiEl"] = new TH1F("CosThetaNoBTagSemiEl","CosThetaNoBTagSemiEl",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagOther"] = new TH1F("CosThetaNoBTagOther","CosThetaNoBTagOther",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagWJets"] = new TH1F("CosThetaNoBTagWJets","CosThetaNoBTagWJets",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagZJets"] = new TH1F("CosThetaNoBTagZJets","CosThetaNoBTagZJets",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagSTtChtBar"] = new TH1F("CosThetaNoBTagSTtChtBar","CosThetaNoBTagSTtChtBar",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagSTtCht"] = new TH1F("CosThetaNoBTagSTtCht","CosThetaNoBTagSTtCht",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagSTtWChtBar"] = new TH1F("CosThetaNoBTagSTtWChtBar","CosThetaNoBTagSTtWChtBar",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaNoBTagSTtWCht"] = new TH1F("CosThetaNoBTagSTtWCht","CosThetaNoBTagSTtWCht",CosThetaBinNumber,-1,1);
+
+  histo1D["CosThetaOneBTagData"] = new TH1F("CosThetaOneBTagData","CosThetaOneBTagData",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagSemiMu"] = new TH1F("CosThetaOneBTagSemiMu","CosThetaOneBTagSemiMu",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagSemiEl"] = new TH1F("CosThetaOneBTagSemiEl","CosThetaOneBTagSemiEl",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagOther"] = new TH1F("CosThetaOneBTagOther","CosThetaOneBTagOther",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagWJets"] = new TH1F("CosThetaOneBTagWJets","CosThetaOneBTagWJets",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagZJets"] = new TH1F("CosThetaOneBTagZJets","CosThetaOneBTagZJets",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagSTtChtBar"] = new TH1F("CosThetaOneBTagSTtChtBar","CosThetaOneBTagSTtChtBar",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagSTtCht"] = new TH1F("CosThetaOneBTagSTtCht","CosThetaOneBTagSTtCht",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagSTtWChtBar"] = new TH1F("CosThetaOneBTagSTtWChtBar","CosThetaOneBTagSTtWChtBar",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaOneBTagSTtWCht"] = new TH1F("CosThetaOneBTagSTtWCht","CosThetaOneBTagSTtWCht",CosThetaBinNumber,-1,1);
+
+  histo1D["CosThetaTwoBTagData"] = new TH1F("CosThetaTwoBTagData","CosThetaTwoBTagData",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagSemiMu"] = new TH1F("CosThetaTwoBTagSemiMu","CosThetaTwoBTagSemiMu",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagSemiEl"] = new TH1F("CosThetaTwoBTagSemiEl","CosThetaTwoBTagSemiEl",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagOther"] = new TH1F("CosThetaTwoBTagOther","CosThetaTwoBTagOther",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagWJets"] = new TH1F("CosThetaTwoBTagWJets","CosThetaTwoBTagWJets",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagZJets"] = new TH1F("CosThetaTwoBTagZJets","CosThetaTwoBTagZJets",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagSTtChtBar"] = new TH1F("CosThetaTwoBTagSTtChtBar","CosThetaTwoBTagSTtChtBar",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagSTtCht"] = new TH1F("CosThetaTwoBTagSTtCht","CosThetaTwoBTagSTtCht",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagSTtWChtBar"] = new TH1F("CosThetaTwoBTagSTtWChtBar","CosThetaTwoBTagSTtWChtBar",CosThetaBinNumber,-1,1);
+  histo1D["CosThetaTwoBTagSTtWCht"] = new TH1F("CosThetaTwoBTagSTtWCht","CosThetaTwoBTagSTtWCht",CosThetaBinNumber,-1,1);
 
   //   //Histograms to obtain ratio of cos theta* for alternative and SM helicities
   //   float HelicityWeight[3];
@@ -660,19 +729,20 @@ int main (int argc, char *argv[])
     }
    
     //Nominal samples:
-    if( dataSet->Name().find("TTbarJets_SemiMuon") == 0 && dataSet->Name().find("JES") != 0) color = kRed+1;
-    if( dataSet->Name().find("TTbarJets_SemiEl") == 0 && dataSet->Name().find("JES") != 0) color = kRed-4;
-    if( dataSet->Name().find("TTbarJets_Other") == 0 && dataSet->Name().find("JES") != 0 ) color = kRed-7;
-    if( dataSet->Name().find("WJets") == 0 ){
+    if( dataSetName.find("Nom_TTbarJets_SemiMuon") == 0) color = kRed+1;
+    if( dataSetName.find("Nom_TTbarJets_SemiEl") == 0) color = kRed-4;
+    if( dataSetName.find("Nom_TTbarJets_Other") == 0) color = kRed-7;
+    if( dataSetName.find("TopMass") == 0) color = kRed+1;
+    if( dataSetName.find("Nom_WJets") == 0 ){
       dataSet->SetTitle("W#rightarrowl#nu");
       color = kGreen-3;
     }
-    if( dataSet->Name().find("ZJets") == 0 && dataSet->Name().find("JES") != 0 ){
+    if( dataSetName.find("Nom_ZJets") == 0){
       dataSet->SetTitle("Z/#gamma*#rightarrowl^{+}l^{-}");
       color = kAzure-2;
     }
-    if( dataSet->Name().find("ST") == 0 && dataSet->Name().find("JES") != 0 ) color = kMagenta;
-    if( dataSet->Name().find("QCD") == 0 && dataSet->Name().find("JES") !=0 ) color = kBlue;        
+    if( dataSetName.find("Nom_ST") == 0) color = kMagenta;
+    //if( dataSet->Name().find("QCD") == 0 && dataSet->Name().find("JES") !=0 ) color = kBlue;        
       
     Dataset* tmpDS = new Dataset(dataSet->Name(), dataSet->Title(), dataSet->DoIt(), color, dataSet->LineStyle(), dataSet->LineWidth(), dataSet->NormFactor(), dataSet->Xsection());
     tmpDS->SetEquivalentLuminosity( dataSet->EquivalentLumi() );
@@ -694,7 +764,7 @@ int main (int argc, char *argv[])
     MSPlot["ChiSqKinFitCosThetaFoundChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"ChiSqKinFitCosThetaFoundChiSqOnlyNoBTag",40,0,150,"ChiSqKinFitCosThetaFoundChiSqOnlyNoBTag");
     MSPlot["ProbKinFitCosThetaFoundChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"ProbKinFitCosThetaFoundChiSqOnlyNoBTag",20,0,1,"ProbKinFitCosThetaFoundChiSqOnlyNoBTag");
 
-    MSPlot["CosThetaChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"CosThetaChiSqOnlyNoBTag",CosThetaBinNumber,-1,1,"CosThetaChiSqOnlyNoBTag");
+    MSPlot["CosThetaChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"CosThetaChiSqOnlyNoBTag",CosThetaBinNumber,-1,2,"CosThetaChiSqOnlyNoBTag");
     MSPlot["nPVChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"nPVChiSqOnlyNoBTag",25,0,25,"nPVChiSqOnlyNoBTag");
     MSPlot["TransverseMassChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"TransverseMassChiSqOnlyNoBTag",30,0,200,"TransverseMassChiSqOnlyNoBTag");
     MSPlot["TransverseMassSelectedParticlesChiSqOnlyNoBTag"]= new MultiSamplePlot(datasets,"TransverseMassSelectedParticlesChiSqOnlyNoBTag",30,0,200,"TransverseMassSelectedParticlesChiSqOnlyNoBTag");
@@ -798,20 +868,20 @@ int main (int argc, char *argv[])
     MSPlot["METPtNoBTag"]= new MultiSamplePlot(datasets,"METPtNoBTag",100,0,500,"METPtNoBTag");
     MSPlot["METMassNoBTag"]= new MultiSamplePlot(datasets,"METMassNoBTag",30,0,0.01,"METMassNoBTag");
 
-    MSPlot["HadronicWMassNoBTag"]= new MultiSamplePlot(datasets,"HadronicWMassNoBTag",50,50,110,"HadronicWMassNoBTag");
-    MSPlot["HadronicTopMassNoBTag"]= new MultiSamplePlot(datasets,"HadronicTopMassNoBTag",50,130,210,"HadronicTopMassNoBTag");
-    MSPlot["LeptonicWMassNoBTag"]= new MultiSamplePlot(datasets,"LeptonicWMassNoBTag",50,500,110,"LeptonicWMassNoBTag");
-    MSPlot["LeptonicTopMassNoBTag"]= new MultiSamplePlot(datasets,"LeptonicTopMassNoBTag",50,130,210,"LeptonicTopMassNoBTag");
+    MSPlot["HadronicWMassNoBTag"]= new MultiSamplePlot(datasets,"HadronicWMassNoBTag",50,78,82,"HadronicWMassNoBTag");
+    MSPlot["HadronicTopMassNoBTag"]= new MultiSamplePlot(datasets,"HadronicTopMassNoBTag",50,170,174,"HadronicTopMassNoBTag");
+    MSPlot["LeptonicWMassNoBTag"]= new MultiSamplePlot(datasets,"LeptonicWMassNoBTag",50,78,82,"LeptonicWMassNoBTag");
+    MSPlot["LeptonicTopMassNoBTag"]= new MultiSamplePlot(datasets,"LeptonicTopMassNoBTag",50,170,174,"LeptonicTopMassNoBTag");
     
     //Specific b-tag applied
     MSPlot["JetCombCosThetaFoundSpecificBTag"]= new MultiSamplePlot(datasets,"JetCombCosThetaFoundSpecificBTag",13,-0.5,12.5,"JetCombCosThetaFoundSpecificBTag");
     MSPlot["ChiSqKinFitCosThetaFoundSpecificBTag"]= new MultiSamplePlot(datasets,"ChiSqKinFitCosThetaFoundSpecificBTag",40,0,150,"ChiSqKinFitCosThetaFoundSpecificBTag");
     MSPlot["ProbKinFitCosThetaFoundSpecificBTag"]= new MultiSamplePlot(datasets,"ProbKinFitCosThetaFoundSpecificBTag",20,0,1,"ProbKinFitCosThetaFoundSpecificBTag");
 
-    MSPlot["CosThetaSpecificBTag50Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag50Bins",50,-1,1,"CosThetaSpecificBTag50Bins");
-    MSPlot["CosThetaSpecificBTag30Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag30Bins",30,-1,1,"CosThetaSpecificBTag30Bins");
-    MSPlot["CosThetaSpecificDoubleBTag50Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificDoubleBTag50Bins",50,-1,1,"CosThetaSpecificDoubleBTag50Bins");
-    MSPlot["CosThetaSpecificDoubleBTag30Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificDoubleBTag30Bins",30,-1,1,"CosThetaSpecificDoubleBTag30Bins");
+    MSPlot["CosThetaSpecificBTag35Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag35Bins",35,-1,1,"CosThetaSpecificBTag35Bins");
+    MSPlot["CosThetaSpecificBTag25Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificBTag25Bins",25,-1,1,"CosThetaSpecificBTag25Bins");
+    MSPlot["CosThetaSpecificDoubleBTag35Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificDoubleBTag35Bins",35,-1,1,"CosThetaSpecificDoubleBTag35Bins");
+    MSPlot["CosThetaSpecificDoubleBTag25Bins"]= new MultiSamplePlot(datasets,"CosThetaSpecificDoubleBTag25Bins",25,-1,1,"CosThetaSpecificDoubleBTag25Bins");
 
     MSPlot["nPVSpecificBTag"]= new MultiSamplePlot(datasets,"nPVSpecificBTag",25,0,25,"nPVSpecificBTag");
     MSPlot["TransverseMassSpecificBTag"]= new MultiSamplePlot(datasets,"TransverseMassSpecificBTag",30,0,200,"TransverseMassSpecificBTag");
@@ -841,18 +911,21 @@ int main (int argc, char *argv[])
     MSPlot["METPtSpecificBTag"]= new MultiSamplePlot(datasets,"METPtSpecificBTag",100,0,500,"METPtSpecificBTag");
     MSPlot["METMassSpecificBTag"]= new MultiSamplePlot(datasets,"METMassSpecificBTag",30,0,0.01,"METMassSpecificBTag");  
 
-    MSPlot["HadronicWMassSpecificBTag"]= new MultiSamplePlot(datasets,"HadronicWMassSpecificBTag",50,50,110,"HadronicWMassSpecificBTag");
-    MSPlot["HadronicTopMassSpecificBTag"]= new MultiSamplePlot(datasets,"HadronicTopMassSpecificBTag",50,130,210,"HadronicTopMassSpecificBTag");
-    MSPlot["LeptonicWMassSpecificBTag"]= new MultiSamplePlot(datasets,"LeptonicWMassSpecificBTag",50,500,110,"LeptonicWMassSpecificBTag");
-    MSPlot["LeptonicTopMassSpecificBTag"]= new MultiSamplePlot(datasets,"LeptonicTopMassSpecificBTag",50,130,210,"LeptonicTopMassSpecificBTag");
-
+    MSPlot["HadronicWMassSpecificBTag"]= new MultiSamplePlot(datasets,"HadronicWMassSpecificBTag",50,78,82,"HadronicWMassSpecificBTag");
+    MSPlot["HadronicTopMassSpecificBTag"]= new MultiSamplePlot(datasets,"HadronicTopMassSpecificBTag",50,170,174,"HadronicTopMassSpecificBTag");
+    MSPlot["LeptonicWMassSpecificBTag"]= new MultiSamplePlot(datasets,"LeptonicWMassSpecificBTag",50,78,82,"LeptonicWMassSpecificBTag");
+    MSPlot["LeptonicTopMassSpecificBTag"]= new MultiSamplePlot(datasets,"LeptonicTopMassSpecificBTag",50,170,174,"LeptonicTopMassSpecificBTag");
    
     //Check nPrimary vertices for different executed cuts !!
     MSPlot["nPVBeforeCuts"] = new MultiSamplePlot(datasets,"nPVBeforeCuts" , 20, 0, 20, "nPVBeforeCuts");
     MSPlot["nPVAfterTransverseMassCut"] = new MultiSamplePlot(datasets,"nPVAfterTransverseMassCut" , 20, 0, 20, "nPVAfterTransverseMassCut");
 
     MSPlot["TransverseMassBeforeCut"]=new MultiSamplePlot(datasets,"TransverseMassBeforeCut",50,0,200,"TransverseMassBeforeCut");
+    MSPlot["TransverseMassBeforeCutTopMassPlus"]=new MultiSamplePlot(datasets,"TransverseMassBeforeCutTopMassPlus",50,0,200,"TransverseMassBeforeCutTopMassPlus");
+    MSPlot["TransverseMassBeforeCutTopMassMinus"]=new MultiSamplePlot(datasets,"TransverseMassBeforeCutTopMassMinus",50,0,200,"TransverseMassBeforeCutTopMassMinus");
     MSPlot["TransverseMassAfterCut"]=new MultiSamplePlot(datasets,"TransverseMassAfterCut",50,0,200,"TransverseMassAfterCut"); 
+    MSPlot["TransverseMassAfterCutTopMassPlus"]=new MultiSamplePlot(datasets,"TransverseMassAfterCutTopMassPlus",50,0,200,"TransverseMassAfterCutTopMassPlus");
+    MSPlot["TransverseMassAfterCutTopMassMinus"]=new MultiSamplePlot(datasets,"TransverseMassAfterCutTopMassMinus",50,0,200,"TransverseMassAfterCutTopMassMinus");
   
     MSPlot["RelIsoLepton"]=new MultiSamplePlot(datasets,"RelIsoLepton",50,0,0.5,"RelIsoLepton");
 
@@ -942,16 +1015,64 @@ int main (int argc, char *argv[])
     MSPlot["DeltaRJetLepton"] =new MultiSamplePlot(datasets,"DeltaRJetLepton",50,0,4,"DeltaRJetLepton");
     MSPlot["DeltaRMuonJet"] =new MultiSamplePlot(datasets,"DeltaRMuonJet",50,0,4,"DeltaRMuonJet");
     MSPlot["DeltaRElectronJet"] =new MultiSamplePlot(datasets,"DeltaRElectronJet",50,0,10,"DeltaRElectronJet");
+  
+    MSPlot["HadrTopMassSelJetsNobTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsNobTag",100,0,250,"HadrTopMassSelJetsNobTag");
+    MSPlot["HadrTopMassSelJetsOnebTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsOnebTag",100,0,250,"HadrTopMassSelJetsOnebTag");
+    MSPlot["HadrTopMassSelJetsTwobTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsTwobTag",100,0,250,"HadrTopMassSelJetsTwobTag");
+
+    //Control plots chapter:
+    MSPlot["METAfterMTCut"]=new MultiSamplePlot(datasets,"METAfterMTCut",100,0,500,"METAfterMTCut");
+    MSPlot["4thJetPtBeforeMTCut"]=new MultiSamplePlot(datasets,"4thJetPtBeforeMTCut",50,0,500,"4thJetPtBeforeMTCut");
+    MSPlot["METAfterMCSVbTag"]=new MultiSamplePlot(datasets,"METAfterMCSVbTag",100,0,500,"METAfterMCSVbTag");
+    MSPlot["4thJetPtAfterMCSVbTag"]=new MultiSamplePlot(datasets,"4thJetPtAfterMCSVbTag",50,0,500,"4thJetPtAfterMCSVbTag");
+
+    MSPlot["CosThetaOneMCSVBTag"]= new MultiSamplePlot(datasets,"CosThetaOneMCSVBTag",CosThetaBinNumber,-1,1,"CosThetaOneMCSVBTag");
+    MSPlot["CosThetaTwoMCSVBTag"]= new MultiSamplePlot(datasets,"CosThetaTwoMCSVBTag",CosThetaBinNumber,-1,1,"CosThetaTwoMCSVBTag");
+    MSPlot["4thJetPtTwoMCSVBTag"]=new MultiSamplePlot(datasets,"4thJetPtTwoMCSVBTag",50,0,500,"4thJetPtTwoMCSVBTag");
+
+    MSPlot["HadrTopMassOrigKins"]=new MultiSamplePlot(datasets,"HadrTopMassOrigKins",40,0,400,"HadrTopMassOrigKins");
+    MSPlot["HadrTopMassOrigKinsWJetsPlus"]=new MultiSamplePlot(datasets,"HadrTopMassOrigKinsWJetsPlus",40,0,400,"HadrTopMassOrigKinsWJetsPlus");
+    MSPlot["HadrTopMassOrigKinsWJetsMinus"]=new MultiSamplePlot(datasets,"HadrTopMassOrigKinsWJetsMinus",40,0,400,"HadrTopMassOrigKinsWJetsMinus");
+        
+    MSPlot["CosThetaOrigKin"]=new MultiSamplePlot(datasets,"CosThetaOrigKin",CosThetaBinNumber,-1,1,"CosThetaOrigKin");
+    MSPlot["NeutrinoPzOrigKin"]=new MultiSamplePlot(datasets,"NeutrinoPzOrigKin",50,-500,500,"NeutrinoPzOrigKin");
+    MSPlot["METPtOrigKin"]=new MultiSamplePlot(datasets,"METPtOrigKin",100,0,500,"METPtOrigKin");
+    MSPlot["LeptonPzOrigKin"]=new MultiSamplePlot(datasets,"LeptonPzOrigKin",50,-500,500,"LeptonPzOrigKin");
+    MSPlot["LeptonPtOrigKin"]=new MultiSamplePlot(datasets,"LeptonPtOrigKin",50,0,500,"LeptonPtOrigKin");
+
+    MSPlot["LightJet1PtOrigKin"]=new MultiSamplePlot(datasets,"LightJet1PtOrigKin",100,0,500,"LightJet1PtOrigKin");
+    MSPlot["LightJet2PtOrigKin"]=new MultiSamplePlot(datasets,"LightJet2PtOrigKin",100,0,500,"LightJet2PtOrigKin");
+    MSPlot["LeptBJetPtOrigKin"]=new MultiSamplePlot(datasets,"LeptBJetPtOrigKin",100,0,500,"LeptBJetPtOrigKin");
+    MSPlot["HadrBJetPtOrigKin"]=new MultiSamplePlot(datasets,"HadrBJetPtOrigKin",100,0,500,"HadrBJetPtOrigKin");
+
+    MSPlot["LeptonPtAfterMTCut"]=new MultiSamplePlot(datasets,"LeptonPtAfterMTCut",20,0,400,"LeptonPtAfterMTCut");
+    MSPlot["LeptonPtMCSVbTag"]=new MultiSamplePlot(datasets,"LeptonPtMCSVbTag",20,0,400,"LeptonPtMCSVbTag");
+    MSPlot["Jet1PtMCSVbTag"]=new MultiSamplePlot(datasets,"Jet1PtMCSVbTag",20,0,400,"Jet1PtMCSVbTag");
+
+    MSPlot["MlbNoBTag"] = new MultiSamplePlot(datasets,"MlbNoBTag",100,0,160,"MlbNoBTag");
+
+    MSPlot["MlbBeforeTransMassCut"]  = new MultiSamplePlot(datasets,"MlbBeforeTransMassCut",200,0,310,"MlbBeforeTransMassCut");
+    MSPlot["MlbAfterTransMassCut"]  = new MultiSamplePlot(datasets,"MlbAfterTransMassCut",200,0,310,"MlbAfterTransMassCut");
+    MSPlot["MlbAfterTransMassCutAfterMCSVbTag"]  = new MultiSamplePlot(datasets,"MlbAfterTransMassCutAfterMCSVbTag",200,0,310,"MlbAfterTransMassCutAfterMCSVbTag");
+    MSPlot["MlbAfterTransMassCutAfterMCSVbTagSFAdded"] = new MultiSamplePlot(datasets,"MlbAfterTransMassCutAfterMCSVbTagSFAdded",200,0,310,"MlbAfterTransMassCutAfterMCSVbTagSFAdded");
+
+    MSPlot["TransverseMassExistingJetComb"] = new MultiSamplePlot(datasets,"TransverseMassExistingJetComb",100,0,200,"TransverseMassExistingJetComb");
+    MSPlot["TransverseMassExistingCos"] = new MultiSamplePlot(datasets,"TransverseMassExistingCos",100,0,200,"TransverseMassExistingCos");
+   
+    MSPlot["nPVAll"] = new MultiSamplePlot(datasets,"nPVAll",100,0,20,"nPVAll");
+    MSPlot["nPVExistingJetComb"] = new MultiSamplePlot(datasets,"nPVExistingJetComb",100,0,20,"nPVExistingJetComb");
+    MSPlot["nPVExistingCos"] = new MultiSamplePlot(datasets,"nPVExistingCos",100,0,20,"nPVExistingCos");
+    MSPlot["nPVExistingCosbTag"] = new MultiSamplePlot(datasets,"nPVExistingCosbTag",100,0,20,"nPVExistingCosbTag");
+
+    MSPlot["bTagCSVbLeptDistribution"] = new MultiSamplePlot(datasets,"bTagCSVbLeptDistribution",100,-1.1,1.1,"bTagCSVbLeptDistribution");
+    MSPlot["bTagCSVbLeptDistributionAfterCut"] = new MultiSamplePlot(datasets,"bTagCSVbLeptDistributionAfterCut",100,-1.1,1.1,"bTagCSVbLeptDistributionAfterCut");
+    MSPlot["bTagCSVbLeptDistributionClass"] = new MultiSamplePlot(datasets,"bTagCSVbLeptDistributionClass",100,-1.1,1.1,"bTagCSVbLeptDistributionClass");
+    MSPlot["bTagCSVbLeptDistributionClassAfterCut"] = new MultiSamplePlot(datasets,"bTagCSVbLeptDistributionClassAfterCut",100,-1.1,1.1,"bTagCSVbLeptDistributionClassAfterCut");
   }
-  cout << " Defining MSPlots: " << endl;
-  MSPlot["HadrTopMassSelJetsNobTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsNobTag",100,0,250,"HadrTopMassSelJetsNobTag");
-  MSPlot["HadrTopMassSelJetsOnebTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsOnebTag",100,0,250,"HadrTopMassSelJetsOnebTag");
-  MSPlot["HadrTopMassSelJetsTwobTag"]=new MultiSamplePlot(datasets,"HadrTopMassSelJetsTwobTag",100,0,250,"HadrTopMassSelJetsTwobTag");
 
   ////////////////////////////////
   //     Selection Table        // 
   ////////////////////////////////
-
   vector<string> CutsSelecTableMacro;
   CutsSelecTableMacro.push_back(string("offline cuts"));
   CutsSelecTableMacro.push_back(string("M SSVHE bTag"));
@@ -963,27 +1084,22 @@ int main (int argc, char *argv[])
 
   // initialize LumiReWeighting stuff  
   cout << " Starting LumiReWeighting stuff " << endl;
-
   Lumi3DReWeighting Lumi3DWeights;
+  Lumi3DReWeighting Lumi3DWeightsMinus;
+  Lumi3DReWeighting Lumi3DWeightsPlus;
   Lumi3DWeights = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
-  Lumi3DWeights.weight3D_init(1.0);
+  Lumi3DWeightsMinus = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
+  Lumi3DWeightsPlus = Lumi3DReWeighting("PileUpReweighting/pileup_MC_Fall11.root","PileUpReweighting/pileup_FineBin_2011Data_UpToRun180252.root", "pileup", "pileup");
 
-  if(dataSetName.find("PUMinus_") == true && PUResults == true)
-    Lumi3DWeights.weight3D_init(0.92);
-  if(dataSetName.find("PUPlus_") == true && PUResults == true)
-    Lumi3DWeights.weight3D_init(1.08);
-  
-  PoissonMeanShifter PShiftUp = PoissonMeanShifter(0.6); // PU-systematic
-  PoissonMeanShifter PShiftDown = PoissonMeanShifter(-0.6); // PU-systematic
+  if(PUResults == true){
+    Lumi3DWeightsMinus.weight3D_init(0.92);
+    Lumi3DWeightsPlus.weight3D_init(1.08);
+  }
+  Lumi3DWeights.weight3D_init(1.0);
 
   /////////////////////////////////////////
   // Initializing used variables
   /////////////////////////////////////////
-  float MassW=83.6103;
-  float MassTop = 172.956;
-  float SigmaW=11.1534;  //Obtained from gaussian fit on Top and W distribution with simulated information
-  float SigmaTop=18.232;
-
   std::string bTag[14];
   for(int ii=1;ii<=14;ii++){
     std::stringstream out;
@@ -1001,7 +1117,6 @@ int main (int argc, char *argv[])
   int TotalNumberbTags = NumberTCHEbTags + 1 + NumberTCHPbTags+1 + NumberSSVHEbTags + 1 + NumberSSVHPbTags + 1 + NumberCSVbTags + 1 + NumberJPbTags + 1 + NumberJBPbTags + 1;
   
   std::string bTagFileOutput[TotalNumberbTags];
-  map<int, int[5]> ProcessedbTags;
   std::string PresentationOutput[TotalNumberbTags];
   int NumberRemainingEventsKinFitHadr[TotalNumberbTags][inputWTree.size()];
   int NumberRemainingEventsKinFitHadrAndLeptWOnly[TotalNumberbTags][inputWTree.size()];
@@ -1076,7 +1191,6 @@ int main (int argc, char *argv[])
   BTagJetSelection bTagJetSelection = BTagJetSelection();
   BTagCosThetaCalculation bTagCosThetaCalculation = BTagCosThetaCalculation();
 
-  int LengthOfPresentationArray=0;
   int NumberSelectedEvents =0;
   int NumberEventsBeforeCuts = 0;
   int NumberSelectedDataEvents = 0;
@@ -1138,23 +1252,38 @@ int main (int argc, char *argv[])
     if( dataSetName.find("Data") == 0 && semiElectron == true && TriCentralJet30Trigger == true){
       dataSet->SetEquivalentLuminosity( Luminosity);
     }
+    if(dataSetName.find("TopMassPlus") == 0 && TopMassResults == true){
+      dataSet->SetEquivalentLuminosity( 9572.5587 );
+    }
+    if(dataSetName.find("TopMassMinus") == 0 && TopMassResults == true){
+      dataSet->SetEquivalentLuminosity( 9996.5650 );
+    }
     cout << "After changing --> Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << " Normfactor = " << dataSet->NormFactor() << endl;
     cout << " ************************************** " << endl;
 
-    // output ascii file stuff
-    mkdir("WHelResults_ASCII/",0777);
-    string outFileName = "WHelResults_ASCII/WHelResults_" + dataSetName + ".txt";
-    ofstream outFile(outFileName.c_str());
+    //BTag ScaleFactors:  --> Put here to avoid keeping substracting the uncertainties !!
+    float LooseSF[7] = {0.95,0.93,1.,1.,1.01,0.97,0.98};
+    float MediumSF[7] = {0.96,0.93,0.96,1.,0.97,0.95,0.94};
+    float TightSF[7] = {0.95,0.93,0.95,0.95,0.97,0.9,0.89};
+    float SFUnc = 0.04;
     
-    outFile << "Output of WHelicities_Analysis.cc" << endl;
-    outFile << "First some dataSet info: " << endl;
-    outFile << "dataSet Name: " << dataSetName << endl;
-    outFile << "dataSet Title: " << dataSet->Title() << endl;
-    //outFile << "dataSet cross-section: " << dataSet->Xsection() << endl;
-    //outFile << "dataSet integrated lumi: " << dataSet->EquivalentLumi() << endl << endl;
-    outFile << "dataSet cross-section: " << XSection << endl;
-    outFile << "dataSet integrated lumi: " << EqLumi << endl << endl;    
-    outFile << "Start of event-by-event info " << endl << endl;
+    //Apply bTaggings systematics:
+    if(bTagResults == true){
+      if(dataSetName.find("bTagSystMinus") == 0){
+	for(int ii = 0; ii<7; ii++){
+	  LooseSF[ii]=LooseSF[ii]-SFUnc;
+	  MediumSF[ii]=MediumSF[ii]-SFUnc;
+	  TightSF[ii]=TightSF[ii]-SFUnc;
+	}
+      }
+      if(dataSetName.find("bTagSystPlus") == 0){
+	for(int ii = 0; ii<7; ii++){
+	  LooseSF[ii]=LooseSF[ii]+SFUnc;
+	  MediumSF[ii]=MediumSF[ii]+SFUnc;
+	  TightSF[ii]=TightSF[ii]+SFUnc;
+	}
+      }
+    }
     
     //Value needed to study the reconstruction efficiency of the leptonic b-jet:
     int CorrectBLeptConstruction=0;
@@ -1162,7 +1291,7 @@ int main (int argc, char *argv[])
 
     vector<float> CosThetaValuesKinFitHadr[TotalNumberbTags],CosThetaValuesKinFitHadrAndLeptWOnly[TotalNumberbTags],CosThetaValuesKinFitHadrAndLept[TotalNumberbTags];//,LumiWeightVectorKinFitHadr[TotalNumberbTags],LumiWeightVectorKinFitHadrAndLeptWOnly[TotalNumberbTags],LumiWeightVectorKinFitHadrAndLept[TotalNumberbTags];
     int FilledEntries = 0;
-    vector<double> CosThGenKinFitHadr[TotalNumberbTags],CosThGenKinFitHadrAndLeptWOnly[TotalNumberbTags],CosThGenKinFitHadrAndLept[TotalNumberbTags],EventCorrectionWeightKinFitHadr[TotalNumberbTags],EventCorrectionWeightKinFitHadrAndLeptWOnly[TotalNumberbTags],EventCorrectionWeightKinFitHadrAndLept[TotalNumberbTags];
+    vector<double> CosThGenKinFitHadr[TotalNumberbTags],CosThGenKinFitHadrAndLeptWOnly[TotalNumberbTags],CosThGenKinFitHadrAndLept[TotalNumberbTags],EventCorrectionWeightKinFitHadr[TotalNumberbTags],EventCorrectionWeightKinFitHadrAndLeptWOnly[TotalNumberbTags],EventCorrectionWeightKinFitHadrAndLept[TotalNumberbTags],MlbValuesKinFitHadrAndLept[TotalNumberbTags];
     float binEdge[CosThetaBinNumber+1];
     float binSize = (1.-(-1.))/CosThetaBinNumber;
     for(int ii=0; ii<=CosThetaBinNumber;ii++){
@@ -1170,14 +1299,13 @@ int main (int argc, char *argv[])
     }
 
     //Initialize naming of different bTag options:
-    int TCHELoop,TCHPLoop,SSVHELoop,SSVHPLoop,CSVLoop,JPLoop, JBPLoop;
-    TCHELoop = 1;
-    TCHPLoop = 1;
-    SSVHELoop = 1;
-    SSVHPLoop = 1;
-    CSVLoop =1;
-    JPLoop = 1;
-    JBPLoop = 1;
+    int TCHELoop = 1;
+    int TCHPLoop = 1;
+    int SSVHELoop = 1;
+    int SSVHPLoop = 1;
+    int CSVLoop =1;
+    int JPLoop = 1;
+    int JBPLoop = 1;
        
     int UsedTCHE[TotalNumberbTags],UsedTCHP[TotalNumberbTags],UsedSSVHE[TotalNumberbTags],UsedSSVHP[TotalNumberbTags],UsedCSV[TotalNumberbTags], UsedJP[TotalNumberbTags], UsedJBP[TotalNumberbTags];
     while(JBPLoop <= NumberJBPbTags){
@@ -1292,25 +1420,29 @@ int main (int argc, char *argv[])
     // Loop on events
     /////////////////////////////////////////  
     for(unsigned int iEvt=0; iEvt<nEvent; iEvt++){
-    //for(unsigned int iEvt=0; iEvt<1000; iEvt++){
+    //for(unsigned int iEvt=0; iEvt<10; iEvt++){
       
       inWTreeTree->GetEvent(iEvt);
       if(iEvt%10000 == 0)
         std::cout<<"Processing the "<<iEvt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC <<endl;
       
-      // PU reweighting???
+      // PU reweighting
       float avPU = ( (float)wTree->nPUBXm1() + (float)wTree->nPU() + (float)wTree->nPUBXp1() ) / 3.; // average in 3 BX!!!, as recommended
       
-      double lumiWeight3D = 1.0;
-      if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")){
-	lumiWeight3D = Lumi3DWeights.weight3D(wTree->nPUBXm1(),wTree->nPU(),wTree->nPUBXp1());
-      }
+      double lumiWeight3D=1.0;
+      if(dataSetName.find("PUMinus_") == 0)
+	lumiWeight3D = Lumi3DWeightsMinus.weight3D(wTree->nPUBXm1(),wTree->nPU(),wTree->nPUBXp1());
+      else if(dataSetName.find("PUPlus_") == 0)
+	lumiWeight3D = Lumi3DWeightsPlus.weight3D(wTree->nPUBXm1(),wTree->nPU(),wTree->nPUBXp1());
+      else if(!(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" || dataSetName.find("PU") == 0))
+	lumiWeight3D = Lumi3DWeights.weight3D(wTree->nPUBXm1(),wTree->nPU(),wTree->nPUBXp1());    
+      else if(dataSetName == "Data")
+	lumiWeight3D = 1.0;
       histo1D["lumiWeights3D"]->Fill(lumiWeight3D);
-      
+
       ////////////////////////////////////////////////////////////////
       //    Get variables from wTree needed for Analysis            //
       ////////////////////////////////////////////////////////////////
-      //Primary vertices:
       float nPrimaryVertices = wTree->nPV();
           
       //Different bTag values:
@@ -1400,8 +1532,19 @@ int main (int argc, char *argv[])
 	  errorUpSFjet   = yErrHi[iPoint];
 	  errorDownSFjet = yErrLo[iPoint];
 	}
+	
+	if(dataSetName.find("TriggEvtSelMinus") == 0){
+	  meanEvtSelEffSF_=meanEvtSelEffSF_-0.004;
+	  meanTriggerEffSF_=meanTriggerEffSF_-0.001;
+	  SFjet=SFjet-errorDownSFjet;
+	}
+	else if(dataSetName.find("TriggEvtSelPlus") == 0){
+	  meanEvtSelEffSF_=meanEvtSelEffSF_+0.004;
+	  meanTriggerEffSF_=meanTriggerEffSF_+0.001;
+	  SFjet=SFjet-errorUpSFjet;
+	}
 	float SFele = meanTriggerEffSF_ * (factorIso_ + factorNonIso_ / (0.997+0.05*relativeLeptonIsolation-3.*relativeLeptonIsolation*relativeLeptonIsolation));
-	scaleFactor = 1;//meanEvtSelEffSF_*SFele*SFjet;
+	scaleFactor = meanEvtSelEffSF_*SFele*SFjet;
       }
       //SemiMuon case !!!
       if(semiMuon == true && dataSetName.find("Data") != 0){
@@ -1423,17 +1566,15 @@ int main (int argc, char *argv[])
 	    if(lepton.Eta() <xVec[iPoint]+xErrLo[iPoint]) break;
 	  }
 	}
-	SFmuon    = yVec[iPoint];
-	errorUpSFmuon   = yErrHi[iPoint];
+	SFmuon = yVec[iPoint];
+	errorUpSFmuon = yErrHi[iPoint];
 	errorDownSFmuon = yErrLo[iPoint];	
 	
 	scaleFactor = SFmuon;
-	if(dataSetName.find("TriggEvtSelMinus") == true){
-	  scaleFactor = SFmuon-errorDownSFmuon;
-	}
-	else if(dataSetName.find("TriggEvtSelPlus") == true){
-	  scaleFactor = SFmuon+errorUpSFmuon;
-	}
+	if(dataSetName.find("TriggEvtSelMinus") == 0)
+	  scaleFactor = SFmuon-errorDownSFmuon;	
+	else if(dataSetName.find("TriggEvtSelPlus") == 0)
+	  scaleFactor = SFmuon+errorUpSFmuon;	
       }
 
       //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1443,21 +1584,6 @@ int main (int argc, char *argv[])
 	MSPlot["DeltaRElectronJet"]->Fill(DeltaRElectronJet, datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
       }                      
       
-      if(dataSetName.find("Data") == 0) float MassTop = 173.1;
-      else float MassTop = 172.5;
-      
-      for(int ii = 0; ii < 12; ii++){	
-	float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndex[ii], BHadrIndex[ii],  lepton, selectedJets, 80.4, MassTop);
-	if(CosThetaOrigKins != 999){
-	  TLorentzVector neutrinoOrigKins = bTagCosThetaCalculation.GetNeutrino();
-
-	  TLorentzVector WLeptOrigKins = (neutrinoOrigKins+lepton);
-	  if(WLeptOrigKins.E() < 0.){
-	    cout << " Considering event with negative WLept energy !!! ( " << WLeptOrigKins.E() << " ) " << endl;
-	  }
-	}
-      }	  
-
       //Chi squared values for different KinFit configurations:  --> Original kinematics Chi Squared with calculation class !!
       vector<float> ChiSqKinFitHadr;
       vector<float> KinFitProbHadr;
@@ -1467,9 +1593,7 @@ int main (int argc, char *argv[])
       vector<float> KinFitProbHadrAndLept;
       
       //Original kinematics initializing:
-      vector<TLorentzVector> leptBJetOrigKins, hadrBJetOrigKins, light1JetOrigKins, light2JetOrigKins, leptonOrigKins, neutrinoOrigKins;  //Get this with different method??
-      //Original kinematics should not change when different KinFit configuration is used to determine ChiSquared value !! 
-      //  --> Only ChiSquared value should change !!
+      //vector<TLorentzVector> leptBJetOrigKins, hadrBJetOrigKins, light1JetOrigKins, light2JetOrigKins, leptonOrigKins;  //Get this with different method??
 
       //Changed kinematics initializing:
       vector<TLorentzVector> leptonChangedHadrAndLeptWOnly, neutrinoChangedHadrAndLeptWOnly;
@@ -1500,20 +1624,87 @@ int main (int argc, char *argv[])
 
 	//Hadronic and leptonic KinFit
 	ChiSqKinFitHadrAndLept.push_back(wTree->hadrAndLeptKinFitChiSq(iCombi));
-	if(ChiSqKinFitHadrAndLept[iCombi] != 9999) KinFitProbHadrAndLept.push_back(TMath::Prob(ChiSqKinFitHadr[iCombi],2));
+	if(ChiSqKinFitHadrAndLept[iCombi] != 9999) KinFitProbHadrAndLept.push_back(TMath::Prob(ChiSqKinFitHadrAndLept[iCombi],2));
 	else KinFitProbHadrAndLept.push_back(-1.);
 	leptBChangedHadrAndLept.push_back(wTree->hadrAndLeptKinFitLeptB(iCombi));
 	leptonChangedHadrAndLept.push_back(wTree->hadrAndLeptKinFitLepton(iCombi));
 	neutrinoChangedHadrAndLept.push_back(wTree->hadrAndLeptKinFitNeutrino(iCombi));
-
-	if((wTree->hadrAndLeptKinFitLepton(iCombi)+wTree->hadrAndLeptKinFitNeutrino(iCombi)).E() < 0.){	 
-	  //cout << " Combination " << iCombi << " gives negative leptonic energy ! Corresponding chi squared = " << wTree->hadrAndLeptKinFitChiSq(iCombi) << endl;
-	}
 	hadrBChangedHadrAndLept.push_back(wTree->hadrAndLeptKinFitHadrB(iCombi));
 	light1ChangedHadrAndLept.push_back(wTree->hadrAndLeptKinFitLight1(iCombi));
 	light2ChangedHadrAndLept.push_back(wTree->hadrAndLeptKinFitLight2(iCombi));       
 		
-      }//End loop for filling KinFit stuff!!	  
+      }//End loop for filling KinFit stuff!!
+
+      float TransverseMass = sqrt(2*(abs(lepton.Pt()))*abs(MET.Pt())*(1-cos(lepton.DeltaPhi(MET))));	//Should this not be updated to correct lepton and MET?? --> Not really a difference of lepton and MET after KinFit
+      if(CreateMSPlots == true){
+	if(dataSetName.find("TopMass") != 0) MSPlot["TransverseMassBeforeCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	if(dataSetName.find("TopMassMinus") != 0 && dataSetName.find("Nom_TTbarJets_") != 0) MSPlot["TransverseMassBeforeCutTopMassPlus"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	if(dataSetName.find("TopMassPlus") != 0 && dataSetName.find("Nom_TTbarJets_") != 0) MSPlot["TransverseMassBeforeCutTopMassMinus"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	MSPlot["4thJetPtBeforeMTCut"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	
+	//MSPlot["RelIsoLepton"]->Fill(relativeLeptonIsolation, datasets[iDataSet], true, Luminosity);
+      }
+
+      //Select KinFit combination with lowest chi squared using original kinematics:
+      float MassTop;
+      if(dataSetName.find("Data") == 0) MassTop = 173.1;
+      else MassTop = 172.5;
+      
+      //Select lowest chi squared value for HadrAndLept KinFit configuration:
+      int SelectedJetCombinationHadrAndLept=999;
+      float LowestChiSq=999.;
+      for(int ii=0;ii<12;ii++){
+	if(LowestChiSq > ChiSqKinFitHadrAndLept[ii]){
+	  LowestChiSq = ChiSqKinFitHadrAndLept[ii];
+	  SelectedJetCombinationHadrAndLept=ii;
+	}
+      }
+      
+      if(SelectedJetCombinationHadrAndLept != 999){
+	if(CreateMSPlots == true)
+	  MSPlot["TransverseMassExistingJetComb"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+
+	float CosThetaOrigKins = bTagCosThetaCalculation.CalcOrigKins(BLeptIndex[SelectedJetCombinationHadrAndLept], BHadrIndex[SelectedJetCombinationHadrAndLept],  lepton, selectedJets, 80.4, MassTop);
+	if(CosThetaOrigKins != 999){
+	  if(CreateMSPlots == true)
+	    MSPlot["TransverseMassExistingCos"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+
+	  TLorentzVector neutrinoOrigKins = bTagCosThetaCalculation.GetNeutrino();
+	  TLorentzVector WLeptOrigKins = (neutrinoOrigKins+lepton);
+      
+	  if(CreateMSPlots == true){
+	    MSPlot["CosThetaOrigKin"]->Fill(CosThetaOrigKins, datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["METPtOrigKin"]->Fill(neutrinoOrigKins.Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["NeutrinoPzOrigKin"]->Fill(neutrinoOrigKins.Pz(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["LeptonPzOrigKin"]->Fill(lepton.Pz(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["LeptonPtOrigKin"]->Fill(lepton.Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["LeptBJetPtOrigKin"]->Fill(selectedJets[BLeptIndex[SelectedJetCombinationHadrAndLept]].Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["HadrBJetPtOrigKin"]->Fill(selectedJets[BHadrIndex[SelectedJetCombinationHadrAndLept]].Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["LightJet1PtOrigKin"]->Fill(selectedJets[Quark1Index[SelectedJetCombinationHadrAndLept]].Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["LightJet2PtOrigKin"]->Fill(selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]].Pt(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    MSPlot["MlbBeforeTransMassCut"]->Fill((selectedJets[BLeptIndex[SelectedJetCombinationHadrAndLept]]+lepton).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    
+	    MSPlot["HadrTopMassOrigKins"]->Fill((selectedJets[BHadrIndex[SelectedJetCombinationHadrAndLept]]+selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]]+selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]]).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    if(dataSetName.find("WSystMinus_WJets") != 0 && WSystResults == true)
+	      MSPlot["HadrTopMassOrigKinsWJetsPlus"]->Fill((selectedJets[BHadrIndex[SelectedJetCombinationHadrAndLept]]+selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]]+selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]]).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    if(dataSetName.find("WSystPlus_WJets") != 0 && WSystResults == true)
+	      MSPlot["HadrTopMassOrigKinsWJetsMinus"]->Fill((selectedJets[BHadrIndex[SelectedJetCombinationHadrAndLept]]+selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]]+selectedJets[Quark2Index[SelectedJetCombinationHadrAndLept]]).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);	
+	    
+	    if(TransverseMass > 30&& DeltaRJetLepton > 0.3 && ((DeltaRMuonJet > 0.3 && semiMuon == true) || (DeltaRElectronJet > 0.3 && semiElectron == true)) && relativeLeptonIsolation <= 0.125){
+	      MSPlot["METAfterMTCut"]->Fill(neutrinoOrigKins.Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
+	      MSPlot["LeptonPtAfterMTCut"]->Fill(lepton.Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);	
+	      MSPlot["MlbAfterTransMassCut"]->Fill((selectedJets[BLeptIndex[SelectedJetCombinationHadrAndLept]]+lepton).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);	      
+	      if(btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]]>CSVbTag[1] || btagCSV[BHadrIndex[SelectedJetCombinationHadrAndLept]]>CSVbTag[1]){
+		MSPlot["METAfterMCSVbTag"]->Fill(neutrinoOrigKins.Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
+		MSPlot["LeptonPtMCSVbTag"]->Fill(lepton.Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+		MSPlot["Jet1PtMCSVbTag"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+		MSPlot["MlbAfterTransMassCutAfterMCSVbTag"]->Fill((selectedJets[BLeptIndex[SelectedJetCombinationHadrAndLept]]+lepton).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+		if(dataSetName.find("Data") == 0) MSPlot["MlbAfterTransMassCutAfterMCSVbTagSFAdded"]->Fill((selectedJets[BLeptIndex[SelectedJetCombinationHadrAndLept]]+lepton).M(), datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D); //SF only for MC
+		else MSPlot["MlbAfterTransMassCutAfterMCSVbTagSFAdded"]->Fill((selectedJets[BLeptIndex[SelectedJetCombinationHadrAndLept]]+lepton).M(), datasets[iDataSet], true, Luminosity*scaleFactor*0.97*lumiWeight3D);
+	      }
+	    }
+	  }
+	}
+      }
       
       if(CreateMSPlots == true){
 	MSPlot["ChiSqHadrComb0"]->Fill(ChiSqKinFitHadr[0], datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
@@ -1599,20 +1790,13 @@ int main (int argc, char *argv[])
       //ooOOooOOoo      Reading out nTuples done           ooOOooOOoo
       //ooOOooOOoo-----------------------------------------ooOOooOOoo
       //ooOOooOOoo      Start of actual analysis           ooOOooOOoo
-      //ooooooooOOOOOOOOOOOOooooooooooooOOOOOOOOOOOOooooooooooooOOOOO
-      float TransverseMass = sqrt(2*(abs(lepton.Pt()))*abs(MET.Pt())*(1-cos(lepton.DeltaPhi(MET))));	//Should this not be updated to correct lepton and MET??
-      
-      if(CreateMSPlots == true){
-	MSPlot["TransverseMassBeforeCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);		
-	MSPlot["RelIsoLepton"]->Fill(relativeLeptonIsolation, datasets[iDataSet], true, Luminosity);
-      }
-      
+      //ooooooooOOOOOOOOOOOOooooooooooooOOOOOOOOOOOOooooooooooooOOOOO            
       //----------------------------------
       //     Require some extra cuts:
       //----------------------------------
       bool eventSelected = false;
 
-      if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberEventsBeforeCuts++;
+      if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberEventsBeforeCuts++;
       if(dataSetName.find("Data") ==0) NumberDataEventsBeforeCuts++;
       
       if(CreateMSPlots == true)
@@ -1620,32 +1804,29 @@ int main (int argc, char *argv[])
       selecTableMacro.Fill(iDataSet,0,scaleFactor*lumiWeight3D);
 
       //Apply extra event selections:
-      if(TransverseMass > 30 && DeltaRJetLepton > 0.3 && ((DeltaRMuonJet > 0.3 && semiMuon == true) || (DeltaRElectronJet > 0.3 && semiElectron == true))){
-	if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberSelectedEvents++;
+      if(TransverseMass > 30 && DeltaRJetLepton > 0.3 && ((DeltaRMuonJet > 0.3 && semiMuon == true) || (DeltaRElectronJet > 0.3 && semiElectron == true)) && relativeLeptonIsolation <= 0.125){
+	if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ) NumberSelectedEvents++;
 	if(dataSetName.find("Data") ==0) NumberSelectedDataEvents++;
 	
 	if(CreateMSPlots == true){
-	  MSPlot["TransverseMassAfterCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	  if(dataSetName.find("TopMass") != 0) MSPlot["TransverseMassAfterCut"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	  if(dataSetName.find("TopMassMinus") != 0 && dataSetName.find("Nom_TTbarJets_") != 0) MSPlot["TransverseMassAfterCutTopMassPlus"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	  if(dataSetName.find("TopMassPlus") != 0 && dataSetName.find("Nom_TTbarJets_") != 0) MSPlot["TransverseMassAfterCutTopMassMinus"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
+	  MSPlot["RelIsoLepton"]->Fill(relativeLeptonIsolation, datasets[iDataSet], true, Luminosity);
 	  MSPlot["nPVAfterTransverseMassCut"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	  MSPlot["Jet1Pt"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);    
 	  MSPlot["Jet2Pt"]->Fill(selectedJets[1].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
 	  MSPlot["Jet3Pt"]->Fill(selectedJets[2].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
-	  MSPlot["Jet4Pt"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	  
+	  MSPlot["Jet4Pt"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	
+	}
+
+	if(CreateMSPlots == true && (btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]]>CSVbTag[1] || btagCSV[BHadrIndex[SelectedJetCombinationHadrAndLept]]>CSVbTag[1])){
+	  MSPlot["4thJetPtAfterMCSVbTag"]->Fill(selectedJets[3].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 	
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//  No bTag discriminator combined with jet-combination selection   //
 	//////////////////////////////////////////////////////////////////////	
-	//Select lowest chi squared value for HadrAndLept KinFit configuration:
-	int SelectedJetCombinationHadrAndLept=999;
-	float LowestChiSq=9999;
-	for(int ii=0;ii<12;ii++){
-	  //cout << ii << " ) Lowest Chi Sq : " << LowestChiSq << " versus ChiSqHadrAndLept : " << ChiSqKinFitHadrAndLept[ii] << endl;
-	  if(LowestChiSq > ChiSqKinFitHadrAndLept[ii]){
-	    LowestChiSq = ChiSqKinFitHadrAndLept[ii];
-	    SelectedJetCombinationHadrAndLept=ii;
-	  }
-	}
 
 	//Original kinematics plots for comparison:
 	if(CreateMSPlots == true)
@@ -1676,13 +1857,23 @@ int main (int argc, char *argv[])
 	    if(CreateMSPlots == true){
 	      //MSPlots for no b-tag case: 	   
 	      MSPlot["JetCombCosThetaFoundChiSqOnlyNoBTag"]->Fill(SelectedJetCombinationHadrAndLept,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	      MSPlot["ChiSqKinFitCosThetaFoundChiSqOnlyNoBTag"]->Fill(LowestChiSq,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	      float LowestChiSqHisto = LowestChiSq;
+	      if(LowestChiSq > 150.){
+		cout << " Large ChiSq Value for event " << iEvt << " , namely : " << LowestChiSq << endl;
+		LowestChiSqHisto = 150.;
+	      }
+	      MSPlot["ChiSqKinFitCosThetaFoundChiSqOnlyNoBTag"]->Fill(LowestChiSqHisto,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	      MSPlot["ProbKinFitCosThetaFoundChiSqOnlyNoBTag"]->Fill(TMath::Prob(LowestChiSq,2),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	      
 	      MSPlot["nPVChiSqOnlyNoBTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	      MSPlot["TransverseMassChiSqOnlyNoBTag"]->Fill(TransverseMass,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	      MSPlot["TransverseMassSelectedParticlesChiSqOnlyNoBTag"]->Fill(sqrt(2*(abs(leptonChangedHadrAndLept[SelectedJetCombinationHadrAndLept].Pt()))*abs(neutrinoChangedHadrAndLept[SelectedJetCombinationHadrAndLept].Pt())*(1-cos(leptonChangedHadrAndLept[SelectedJetCombinationHadrAndLept].DeltaPhi(neutrinoChangedHadrAndLept[SelectedJetCombinationHadrAndLept])))),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-	      MSPlot["CosThetaChiSqOnlyNoBTag"]->Fill(CosThetaCalculation,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	      float CosThetaCalculationHisto = CosThetaCalculation;
+	      if(CosThetaCalculation < -1. || CosThetaCalculation > 1.){
+		cout << " Wrong Cos theta value for event " << iEvt << " , namely : " << CosThetaCalculation << endl;
+		CosThetaCalculationHisto = 2.;
+	      }
+	      MSPlot["CosThetaChiSqOnlyNoBTag"]->Fill(CosThetaCalculationHisto,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 	      
 	      MSPlot["Jet1PtChiSqOnlyNoBTag"]->Fill(selectedJets[0].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);    
 	      MSPlot["Jet2PtChiSqOnlyNoBTag"]->Fill(selectedJets[1].Pt(), datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D); 
@@ -1710,11 +1901,21 @@ int main (int argc, char *argv[])
 	    }
 	    
 	    //Consider specific b-tag case (SSVHE M lept):
-	    if(btagSSVHE[BLeptIndex[SelectedJetCombinationHadrAndLept]]>SSVHEbTag[1]){
+	    //cout<<" Event " << iEvt << " ) Chosen combination is : " << SelectedJetCombinationHadrAndLept << " which has btag SSVHE value : " << btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]] << " (Compared to cut value : " << CSVbTag[1] << " ) " << endl;
+	    if(CreateMSPlots == true) MSPlot["bTagCSVbLeptDistribution"]->Fill(btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]],datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	    if(btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]]>CSVbTag[1]){
+	      if(dataSetName.find("Data") != 0 && CreateMSPlots == true) MSPlot["bTagCSVbLeptDistributionAfterCut"]->Fill(btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]],datasets[iDataSet], true, Luminosity*scaleFactor*0.97*lumiWeight3D);
+	      else if(CreateMSPlots == true) MSPlot["bTagCSVbLeptDistributionAfterCut"]->Fill(btagCSV[BLeptIndex[SelectedJetCombinationHadrAndLept]],datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+	      //cout << " Event " << iEvt << " has been selected " << endl;
 	      
 	      if(CreateMSPlots == true){
 		MSPlot["JetCombCosThetaFoundChiSqOnlySpecificBTag"]->Fill(SelectedJetCombinationHadrAndLept,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-		MSPlot["ChiSqKinFitCosThetaFoundChiSqOnlySpecificBTag"]->Fill(LowestChiSq,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+		float LowestChiSqHisto = LowestChiSq;
+		if(LowestChiSq > 150.){
+		  cout << " Large ChiSq Value for event " << iEvt << " , namely : " << LowestChiSq << endl;
+		  LowestChiSqHisto = 150.;
+		}
+		MSPlot["ChiSqKinFitCosThetaFoundChiSqOnlySpecificBTag"]->Fill(LowestChiSqHisto,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 		MSPlot["ProbKinFitCosThetaFoundChiSqOnlySpecificBTag"]->Fill(TMath::Prob(LowestChiSq,2),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 		
 		MSPlot["nPVChiSqOnlySpecificBTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
@@ -1758,7 +1959,7 @@ int main (int argc, char *argv[])
 	// float RightHandedFraction = 0.033464;
 	// float TheoreticalDistributionValue = (LongitudinalFraction*6*(1-CosThetaGenerator*CosThetaGenerator) + (1-CosThetaGenerator)*(1-CosThetaGenerator)*3*LeftHandedFraction + RightHandedFraction*3*(1+CosThetaGenerator)*(1+CosThetaGenerator))/8;
 	// for(int helicityNumbers=0;helicityNumbers<SizeArray;helicityNumbers++){
-	//   if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){ 
+	//   if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){ 
 	//     UsedDistributionValue[helicityNumbers]=(HelicityFraction[helicityNumbers][0]*6*(1-CosThetaGenerator*CosThetaGenerator) + (1-CosThetaGenerator)*(1-CosThetaGenerator)*3*HelicityFraction[helicityNumbers][2] + HelicityFraction[helicityNumbers][1]*3*(1+CosThetaGenerator)*(1+CosThetaGenerator))/8;
 	//     HelicityWeight[helicityNumbers]=UsedDistributionValue[helicityNumbers]/TheoreticalDistributionValue;
 	//   }
@@ -1767,8 +1968,9 @@ int main (int argc, char *argv[])
 	//-------------------------------------------------------------
 	//Obtain jet combination for the different b-tag constraints:
 	//------------------------------------------------------------
-	
-	//Initialize bTag loop variables:
+	float OriginalScaleFactor = scaleFactor;
+	float WeightedScaleFactor = scaleFactor;
+
 	int TCHEbTagLoop, TCHPbTagLoop, SSVHEbTagLoop, SSVHPbTagLoop, CSVbTagLoop,JPbTagLoop, JBPbTagLoop;
 	int ConsideredBTagger=0; //0=tche, 1 = tchp, 2 = ssvhe, 3 = ssvhp, 4 = csv, 5 = JP & 6 = JBP		
 	for(JBPbTagLoop =1;JBPbTagLoop< (NumberJBPbTags+1); JBPbTagLoop++){	  
@@ -1786,22 +1988,40 @@ int main (int argc, char *argv[])
 		      if(ConsideredBTagger ==1 || ConsideredBTagger ==2 || ConsideredBTagger ==3 || ConsideredBTagger ==4 || ConsideredBTagger == 5 || ConsideredBTagger == 6) TCHEbTagLoop =14;
 		      int SumBTag = TCHEbTagLoop-1+TCHPbTagLoop-1+SSVHEbTagLoop-1+SSVHPbTagLoop-1+CSVbTagLoop-1+JPbTagLoop-1+JBPbTagLoop-1;
 		      if(UsedTCHE[SumBTag]==TCHEbTagLoop && UsedTCHP[SumBTag]==TCHPbTagLoop && UsedSSVHE[SumBTag]==SSVHEbTagLoop && UsedSSVHP[SumBTag]==SSVHPbTagLoop && UsedCSV[SumBTag]==CSVbTagLoop && UsedJP[SumBTag]==JPbTagLoop && UsedJBP[SumBTag]==JBPbTagLoop){
+			
 			int bTagLoop;
-			if(ConsideredBTagger == 0) bTagLoop = TCHEbTagLoop;
+			if(ConsideredBTagger == 0) bTagLoop = TCHEbTagLoop;		   
 			else if(ConsideredBTagger == 1) bTagLoop = TCHPbTagLoop;
 			else if(ConsideredBTagger == 2) bTagLoop = SSVHEbTagLoop;
 			else if(ConsideredBTagger == 3) bTagLoop = SSVHPbTagLoop;
 			else if(ConsideredBTagger == 4) bTagLoop = CSVbTagLoop;
 			else if(ConsideredBTagger == 5) bTagLoop = JPbTagLoop;
 			else if(ConsideredBTagger == 6) bTagLoop = JBPbTagLoop;
+
+			if(dataSetName.find("Data")!=0){
+			  if(bTagLoop == 1) scaleFactor = OriginalScaleFactor;
+			  else if(bTagLoop == 2 || bTagLoop == 3 || bTagLoop == 4) scaleFactor = OriginalScaleFactor*LooseSF[ConsideredBTagger];
+			  else if(bTagLoop == 5) scaleFactor = OriginalScaleFactor*LooseSF[ConsideredBTagger]*LooseSF[ConsideredBTagger];
+			  else if(bTagLoop == 6 || bTagLoop == 7 || bTagLoop == 8) scaleFactor = OriginalScaleFactor*MediumSF[ConsideredBTagger];
+			  else if(bTagLoop == 9) scaleFactor = OriginalScaleFactor*MediumSF[ConsideredBTagger]*MediumSF[ConsideredBTagger];
+			  else if(bTagLoop == 10 || bTagLoop == 11 || bTagLoop == 12) scaleFactor = OriginalScaleFactor*TightSF[ConsideredBTagger];
+			  else if(bTagLoop == 13) scaleFactor = OriginalScaleFactor*TightSF[ConsideredBTagger]*TightSF[ConsideredBTagger];
+ // 			  if(ConsideredBTagger == 4 && bTagLoop == 8){
+//  			    cout << " Original scale factor = " << OriginalScaleFactor << endl;
+//  			    cout << " Scale factor multiplied with 0.97 = " << WeightedScaleFactor << endl;
+//  			    cout << " Scale factor after reweighting = " << scaleFactor << endl;			    
+//  			  }
+			}
 			
 			int JetCombHadr = bTagJetSelection.HighestProbSelection(bTagLoop,ConsideredBTagger,KinFitProbHadr,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV,btagJP,btagJBP);
 			int JetCombHadrAndLeptWOnly =bTagJetSelection.HighestProbSelection(bTagLoop,ConsideredBTagger,KinFitProbHadrAndLeptWOnly,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV,btagJP,btagJBP);
 			int JetCombHadrAndLept = bTagJetSelection.HighestProbSelection(bTagLoop,ConsideredBTagger,KinFitProbHadrAndLept,btagTCHE,btagTCHP,btagSSVHE,btagSSVHP,btagCSV,btagJP,btagJBP);
 			  
 			if(bTagLoop ==1){
-
-			  if(JetCombHadrAndLept != 999) MSPlot["HadrTopMassSelJetsNobTag"]->Fill((selectedJets[BLeptIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			  if(JetCombHadrAndLept != 999 && CreateMSPlots == true){
+			    MSPlot["HadrTopMassSelJetsNobTag"]->Fill((selectedJets[BHadrIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			    MSPlot["bTagCSVbLeptDistributionClass"]->Fill(btagCSV[BLeptIndex[JetCombHadrAndLept]],datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			  }
 			  
 			  if(CreateMSPlots == true){
 			    MSPlot["JetCombination"]->Fill(JetCombHadrAndLept,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
@@ -1810,23 +2030,22 @@ int main (int argc, char *argv[])
 			    histo1D["JetCombHadrAndLept"]->Fill(JetCombHadrAndLept);
 			  }
 			}
-
-			if(ConsideredBTagger == 6 && bTagLoop == 7 && JetCombHadrAndLept != 999){
-			  cout << " Hadr Top mass histo ! " << endl;
-			  MSPlot["HadrTopMassSelJetsOnebTag"]->Fill((selectedJets[BLeptIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
-			  cout << " Hadr Top mass histo ! (end)" << endl;
+			if(ConsideredBTagger == 4 && bTagLoop == 7 && JetCombHadrAndLept != 999 && CreateMSPlots == true){
+			  //cout << " Selected jet combination with class : " << JetCombHadrAndLept << " has bTag value of : " << btagCSV[BLeptIndex[JetCombHadrAndLept]] << endl;
+			  MSPlot["HadrTopMassSelJetsOnebTag"]->Fill((selectedJets[BHadrIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			  MSPlot["bTagCSVbLeptDistributionClassAfterCut"]->Fill(btagCSV[BLeptIndex[JetCombHadrAndLept]],datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			  if(btagCSV[BLeptIndex[JetCombHadrAndLept]] < 0.679){
+			    cout << " KinFit Probability = " << KinFitProbHadrAndLept[JetCombHadrAndLept] << endl;
+			    cout << " Chosen combination = " << JetCombHadrAndLept << endl;
+			  }
 			}
 
-			if(ConsideredBTagger == 6 && bTagLoop == 9 && JetCombHadrAndLept != 999){
-			  cout << " Hadr Top Mass histo " << endl;
-			  MSPlot["HadrTopMassSelJetsTwobTag"]->Fill((selectedJets[BLeptIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			if(ConsideredBTagger == 4 && bTagLoop == 9 && JetCombHadrAndLept != 999 && CreateMSPlots == true){
+			  MSPlot["HadrTopMassSelJetsTwobTag"]->Fill((selectedJets[BHadrIndex[JetCombHadrAndLept]]+selectedJets[Quark1Index[JetCombHadrAndLept]]+selectedJets[Quark2Index[JetCombHadrAndLept]]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 			}
 			
 			// Only hadronic KinFit configuration:
-			if(JetCombHadr!=999 && HadronicOnly == true){ 	
-			  
-			  if(dataSetName.find("Data") == 0) float MassTop = 173.1;
-			  else float MassTop = 172.5;
+			if(JetCombHadr!=999 && HadronicOnly == true){ 				  
 			  
 			  float CosThetaCalcHadr = bTagCosThetaCalculation.CalcOrigKins(BLeptIndex[JetCombHadr], BHadrIndex[JetCombHadr],  lepton, selectedJets, 80.4, MassTop);
 			  if(CosThetaCalcHadr != 999){			    
@@ -1836,7 +2055,7 @@ int main (int argc, char *argv[])
 			      cout << " Processing event : " << iEvt << " with cos theta = " << CosThetaCalcHadr << " (Chi Sq and BTag case -- Hadr)  --   Used combination is : " << JetCombHadr << " with chi squared value = " << ChiSqKinFitHadr[JetCombHadr] << " and KinFit probability : " << KinFitProbHadr[JetCombHadr] << endl;
 			    }
 			    
-			    if((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") == 0 && semiElectron == true)){
+			    if((dataSetName.find("Nom_TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") == 0 && semiElectron == true)){
 			      histo1D["LeptWMassHadr"]->Fill((neutrinoHadr+lepton).M());
 			      histo1D["LeptTopMassHadr"]->Fill((neutrinoHadr+lepton+selectedJets[BLeptIndex[JetCombHadr]]).M());
 			    }		      
@@ -1845,7 +2064,7 @@ int main (int argc, char *argv[])
 			    CosThetaValuesKinFitHadr[SumBTag].push_back(CosThetaCalcHadr);
 			    //LumiWeightVectorKinFitHadr[SumBTag].push_back(lumiWeight3D);
 			    EventCorrectionWeightKinFitHadr[SumBTag].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
-			    if(((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) && dataSetName.find("JES") != 0){
+			    if((dataSetName.find("Nom_TTbarJets_SemiMu") == 0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){
 			      if(BLeptIndex[JetCombHadr] == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
 				NumberBLeptCorrectEventsKinFitHadr[SumBTag][iDataSet]++;
 			      }
@@ -1866,10 +2085,9 @@ int main (int argc, char *argv[])
 
 			    NumberRemainingEventsKinFitHadrAndLeptWOnly[SumBTag][iDataSet]++;
 			    CosThetaValuesKinFitHadrAndLeptWOnly[SumBTag].push_back(CosThetaCalcHadrAndLeptWOnly);
-			    //LumiWeightVectorKinFitHadrAndLeptWOnly[SumBTag].push_back(lumiWeight3D);
 			    EventCorrectionWeightKinFitHadrAndLeptWOnly[SumBTag].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
 
-			    if(((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) && dataSetName.find("JES") != 0){
+			    if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){
 			      if(BLeptIndex[JetCombHadrAndLeptWOnly] == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
 				NumberBLeptCorrectEventsKinFitHadrAndLeptWOnly[SumBTag][iDataSet]++;
 			      }
@@ -1880,13 +2098,78 @@ int main (int argc, char *argv[])
 			
 			//Hadronic and leptonic KinFit configuration:
 			if(bTagLoop == 1) NumberEventsChiSqAndBTag[iDataSet]++;
+			if(bTagLoop == 1 && CreateMSPlots == true) MSPlot["nPVAll"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 			if(JetCombHadrAndLept!=999 && HadronicAndLeptonic == true){ 
+			  if(bTagLoop == 1 && CreateMSPlots == true) MSPlot["nPVExistingJetComb"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 
 			  if(bTagLoop == 1) NumberEventsChiSqAndBTagJetCombFound[iDataSet]++;
 			  float CosThetaCalcHadrAndLept=bTagCosThetaCalculation.Calculation(leptonChangedHadrAndLept[JetCombHadrAndLept],neutrinoChangedHadrAndLept[JetCombHadrAndLept],leptBChangedHadrAndLept[JetCombHadrAndLept]);
 			  if(CosThetaCalcHadrAndLept != 999){
+			    if(bTagLoop == 1 && CreateMSPlots == true) MSPlot["nPVExistingCos"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			    if(ConsideredBTagger == 4 && bTagLoop == 7 && CreateMSPlots == true) MSPlot["nPVExistingCosbTag"]->Fill(nPrimaryVertices,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 
-			    if(((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) && dataSetName.find("JES") != 0){	
+			    if(bTagLoop == 1){
+			      if(dataSetName.find("Data") == 0) histo1D["CosThetaNoBTagData"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_SemiMuon")==0) histo1D["CosThetaNoBTagSemiMu"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_SemiEl")==0) histo1D["CosThetaNoBTagSemiEl"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_Other")==0) histo1D["CosThetaNoBTagOther"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_WJets")==0) histo1D["CosThetaNoBTagWJets"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ZJets")==0) histo1D["CosThetaNoBTagZJets"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tChannel_tbar")==0) histo1D["CosThetaNoBTagSTtChtBar"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tChannel_t")==0) histo1D["CosThetaNoBTagSTtCht"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tWChannel_tbar")==0) histo1D["CosThetaNoBTagSTtWChtBar"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tWChannel_t")==0) histo1D["CosThetaNoBTagSTtWCht"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			    }
+
+			    if(bTagLoop == 7 && ConsideredBTagger == 4){
+			      if(dataSetName.find("Data") == 0) histo1D["CosThetaOneBTagData"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_SemiMuon")==0) histo1D["CosThetaOneBTagSemiMu"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_SemiEl")==0) histo1D["CosThetaOneBTagSemiEl"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_Other")==0) histo1D["CosThetaOneBTagOther"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_WJets")==0) histo1D["CosThetaOneBTagWJets"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ZJets")==0) histo1D["CosThetaOneBTagZJets"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tChannel_tbar")==0) histo1D["CosThetaOneBTagSTtChtBar"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tChannel_t")==0) histo1D["CosThetaOneBTagSTtCht"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tWChannel_tbar")==0) histo1D["CosThetaOneBTagSTtWChtBar"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tWChannel_t")==0) histo1D["CosThetaOneBTagSTtWCht"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			    }
+		
+			    if(bTagLoop == 9 && ConsideredBTagger == 4){
+			      if(dataSetName.find("Data") == 0) histo1D["CosThetaTwoBTagData"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_SemiMuon")==0) histo1D["CosThetaTwoBTagSemiMu"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_SemiEl")==0) histo1D["CosThetaTwoBTagSemiEl"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_TTbarJets_Other")==0) histo1D["CosThetaTwoBTagOther"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_WJets")==0) histo1D["CosThetaTwoBTagWJets"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ZJets")==0) histo1D["CosThetaTwoBTagZJets"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tChannel_tbar")==0) histo1D["CosThetaTwoBTagSTtChtBar"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tChannel_t")==0) histo1D["CosThetaTwoBTagSTtCht"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tWChannel_tbar")==0) histo1D["CosThetaTwoBTagSTtWChtBar"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			      if(dataSetName.find("Nom_ST_SingleTop_tWChannel_t")==0) histo1D["CosThetaTwoBTagSTtWCht"]->Fill(CosThetaCalcHadrAndLept,scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor() );
+			    }
+
+// 			    //Create MSPlots for selecting optimal electron b-tagger:
+// 			    if(dataSetName.find("Nom_TTbarJets_SemiEl") == 0 && semiElectron == true && CreateMSPlots == true && ConsideredBTagger == 4 && bTagLoop == 9)
+// 			      scaleFactor = scaleFactor*(1.130 + 1.115)/2.;
+			    
+// 			    if(ConsideredBTagger == 4 && bTagLoop == 7 && semiMuon == true && (dataSetName.find("Nom_TTbarJets_SemiMuon") == 0 || dataSetName.find("McData_TTbarJets_SemiMuon") == 0))
+// 			      scaleFactor = scaleFactor*1.0585;//(1.121+1.108)/2.;
+// 			    else if(ConsideredBTagger == 4 && bTagLoop == 7 && semiMuon == true && dataSetName.find("Nom_TTbarJets_SemiMuon") != 0 && dataSetName.find("McData_TTbarJets_SemiMuon") != 0)
+// 			      scaleFactor = scaleFactor*1.1885;//(1.121+1.108)/2.;
+// 			    if(ConsideredBTagger == 4 && bTagLoop == 7 && semiMuon == true && dataSetName.find("Nom_TTbarJets_SemiMuon") == 0 )
+// 			      scaleFactor = scaleFactor*1.0585;//(1.121+1.108)/2.;
+// 			    else if(ConsideredBTagger == 4 && bTagLoop == 7 && semiMuon == true && dataSetName.find("Nom_TTbarJets_SemiMuon") != 0 && dataSetName.find("Data") != 0 && dataSetName.find("McDta") != 0)
+// 			      scaleFactor = scaleFactor*1.1885;//(1.121+1.108)/2.;
+			    
+// 			    if(dataSetName.find("Nom_TTbarJets_SemiEl") == 0)	
+// 			      scaleFactor = scaleFactor*1.1;
+// 			    else if(dataSetName.find("Nom_TTbarJets_Other")==0)
+// 			      scaleFactor = scaleFactor*0.7121;			  
+ 			    //if(dataSetName.find("Nom_TTbarJets_SemiMu") == 0)	
+			    //scaleFactor = scaleFactor*0.9;
+ 			    //if(dataSetName.find("Nom_WJets")==0)
+			    //scaleFactor = scaleFactor*1.83;			  
+			    
+			    if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){	
 			      NumberEventsSignalCosThetaFound++;
 			      if(BLeptIndex[JetCombHadrAndLept] == CorrectBLept)
 				NumberEventsSignalCorrectLeptBCosThetaFound++;
@@ -1915,13 +2198,14 @@ int main (int argc, char *argv[])
 			    if((leptonChangedHadrAndLept[JetCombHadrAndLept]+neutrinoChangedHadrAndLept[JetCombHadrAndLept]).E() < 0.){
 			      cout << " Processing event : " << iEvt << " with cos theta = " << CosThetaCalcHadrAndLept << " (Chi Sq and BTag case -- HadrAndLept)  --   Used combination is : " << JetCombHadrAndLept << " with chi squared value = " << ChiSqKinFitHadrAndLept[JetCombHadrAndLept] << " and KinFit probability : " << KinFitProbHadrAndLept[JetCombHadrAndLept] << endl;
 			    }
-			    
-			    NumberEventsChiSqAndBTagCosThetaFound[iDataSet]++;
+			    if(bTagLoop == 1) NumberEventsChiSqAndBTagCosThetaFound[iDataSet]++;
 			    NumberRemainingEventsKinFitHadrAndLept[SumBTag][iDataSet]++;
 			    CosThetaValuesKinFitHadrAndLept[SumBTag].push_back(CosThetaCalcHadrAndLept);
-			    //LumiWeightVectorKinFitHadrAndLept[SumBTag].push_back(lumiWeight3D);
-			    EventCorrectionWeightKinFitHadrAndLept[SumBTag].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());		      		      
-
+			    //MlbValuesKinFitHadrAndLept[SumBTag].push_back((leptonChangedHadrAndLept[JetCombHadrAndLept]+leptBChangedHadrAndLept[JetCombHadrAndLept]).M());
+			    MlbValuesKinFitHadrAndLept[SumBTag].push_back(sqrt(2*(abs(leptonChangedHadrAndLept[JetCombHadrAndLept].Pt()))*abs(neutrinoChangedHadrAndLept[JetCombHadrAndLept].Pt())*(1-cos(leptonChangedHadrAndLept[JetCombHadrAndLept].DeltaPhi(neutrinoChangedHadrAndLept[JetCombHadrAndLept])))));
+			    EventCorrectionWeightKinFitHadrAndLept[SumBTag].push_back(scaleFactor*Luminosity*lumiWeight3D*dataSet->NormFactor());
+			    if(bTagLoop == 1 && CreateMSPlots == true) MSPlot["MlbNoBTag"]->Fill((leptonChangedHadrAndLept[JetCombHadrAndLept]+leptBChangedHadrAndLept[JetCombHadrAndLept]).M(),datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
+			    
 			    if(CreateMSPlots == true){
 			      //  MSPlots for no b-tag case:   
 			      if(bTagLoop ==1){
@@ -1966,30 +2250,27 @@ int main (int argc, char *argv[])
 			    }
 
 			    //Check influence of used binnumber:
-			    if(ConsideredBTagger == 6 && bTagLoop == 9 && semiMuon == true){
-			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
-			      MSPlot["CosThetaSpecificDoubleBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
-			      MSPlot["CosThetaSpecificDoubleBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			    if(ConsideredBTagger == 4 && bTagLoop == 9 && semiMuon == true && CreateMSPlots == true){
+			      MSPlot["CosThetaSpecificDoubleBTag35Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			      MSPlot["CosThetaSpecificDoubleBTag25Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 			    }
-			    if(ConsideredBTagger == 6 && bTagLoop == 7 && semiElectron == true){
-			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
-			      MSPlot["CosThetaSpecificDoubleBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
-			      MSPlot["CosThetaSpecificDoubleBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			    if(ConsideredBTagger == 4 && bTagLoop == 7 && semiElectron == true && CreateMSPlots == true){
+			      MSPlot["CosThetaSpecificDoubleBTag35Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+			      MSPlot["CosThetaSpecificDoubleBTag25Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 			    }
 			    
 			    //  MSPlots for specific b-tag case:  
 			    int OptimalTagger, OptimalbTagLoop;
 			    if(semiMuon == true){
-			      OptimalTagger = 6;
+			      OptimalTagger = 4;
 			      OptimalbTagLoop = 7;
 			    }
 			    else if(semiElectron == true){
-			      OptimalTagger = 6;
+			      OptimalTagger = 4;
 			      OptimalbTagLoop = 9;
 			    }
 			    if(ConsideredBTagger == OptimalTagger && bTagLoop == OptimalbTagLoop){
-			      //cout << " Considered bTagger : " << PresentationOutput[SumBTag] << endl;
-			      NumberEventsChiSqAndBTagCosThetaFound[iDataSet]++;
+			      NumberEventsChiSqAndBTagSpecificBTag[iDataSet]++;
 				
 			      if(CreateMSPlots == true){
 				MSPlot["TransverseMassSpecificBTag"]->Fill(TransverseMass, datasets[iDataSet], true, Luminosity);
@@ -2021,8 +2302,8 @@ int main (int argc, char *argv[])
 				MSPlot["JetCombCosThetaFoundSpecificBTag"]->Fill(JetCombHadrAndLept,datasets[iDataSet], true, Luminosity*scaleFactor*lumiWeight3D);
 				
 				//Cos theta:
-				MSPlot["CosThetaSpecificBTag50Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
-				MSPlot["CosThetaSpecificBTag30Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+				MSPlot["CosThetaSpecificBTag35Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
+				MSPlot["CosThetaSpecificBTag25Bins"]->Fill(CosThetaCalcHadrAndLept,datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 				
 				//Particle Kinematics:
 				MSPlot["PtLeptonicBSpecificBTag"]->Fill(leptBChangedHadrAndLept[JetCombHadrAndLept].Pt(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
@@ -2034,11 +2315,10 @@ int main (int argc, char *argv[])
 				MSPlot["HadronicTopMassSpecificBTag"]->Fill((hadrBChangedHadrAndLept[JetCombHadrAndLept]+light1ChangedHadrAndLept[JetCombHadrAndLept]+light2ChangedHadrAndLept[JetCombHadrAndLept]).M(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 				MSPlot["LeptonicWMassSpecificBTag"]->Fill((leptonChangedHadrAndLept[JetCombHadrAndLept]+neutrinoChangedHadrAndLept[JetCombHadrAndLept]).M(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
 				MSPlot["LeptonicTopMassSpecificBTag"]->Fill((leptonChangedHadrAndLept[JetCombHadrAndLept]+neutrinoChangedHadrAndLept[JetCombHadrAndLept]+leptBChangedHadrAndLept[JetCombHadrAndLept]).M(),datasets[iDataSet],true, Luminosity*scaleFactor*lumiWeight3D);
-
 			      }
 			    }//End of specific bTag loop
 			    
-			    if(((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ) && dataSetName.find("JES") != 0){
+			    if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){
 			      if(BLeptIndex[JetCombHadrAndLept] == CorrectBLept){//Count the number of events with correctly reconstructed leptonic b-jet
 				NumberBLeptCorrectEventsKinFitHadrAndLept[SumBTag][iDataSet]++;
 			      }
@@ -2073,49 +2353,49 @@ int main (int argc, char *argv[])
 	    }//end of CSV
 	    if(JPbTagLoop == NumberJPbTags) ConsideredBTagger = 6;
 	  }//end of JP
-	}//end of JBP	    
+	}//end of JBP
 	      		
-      }// End of loop over selected events      
+      }// End of loop over selected events
     } // end loop over events in wTrees    
     
     std::cout << "  " << endl;
     std::cout << " size of cos theta : " << endl;
-    std::cout << "            - Hadronic KinFit only                : " << CosThetaValuesKinFitHadr[0].size() << endl;
-    std::cout << "            - Hadronic KinFit and leptonic W only : " << CosThetaValuesKinFitHadrAndLeptWOnly[0].size() << endl;
+    //std::cout << "            - Hadronic KinFit only                : " << CosThetaValuesKinFitHadr[0].size() << endl;
+    //std::cout << "            - Hadronic KinFit and leptonic W only : " << CosThetaValuesKinFitHadrAndLeptWOnly[0].size() << endl;
     std::cout << "            - Hadronic KinFit and leptonic W      : " << CosThetaValuesKinFitHadrAndLept[0].size() << endl;
+    std::cout << "            - Hadronic KinFit and leptonic W (M CSV lept)     : " << CosThetaValuesKinFitHadrAndLept[13+13+13+13+6+1+1].size() << endl;
+    cout << " Considered configuration : " << PresentationOutput[13+13+13+13+6+1+1] << endl;
     std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
-    std::cout << "  " << endl;
-    std::cout << " size of generator cos theta :   -->Should not be doubled when looking at JES semiMu of semiEl" << endl;
-    std::cout << "            - Hadronic KinFit only                : " << CosThGenKinFitHadr[0].size() << endl;
-    std::cout << "            - Hadronic KinFit and leptonic W only : " << CosThGenKinFitHadrAndLeptWOnly[0].size() << endl;
-    std::cout << "            - Hadronic KinFit and leptonic W      : " << CosThGenKinFitHadrAndLept[0].size() << endl;
-    std::cout << " °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° " << endl;
-   
+
     if(iDataSet==(datasets.size()-1)){
-      FMinusTexHadr << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst  & Total Syst uncert & Total stat + syst uncert " << endl;
-      FPlusTexHadr << " bTagger  &  FR result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert " << endl;
-      FZeroTexHadr << " bTagger  &  F0 result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FMinusTexHadr<<" bTagger  &  FL result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total stat + syst uncert "<< endl;
+      FPlusTexHadr<<" bTagger  &  FR result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FZeroTexHadr<<" bTagger  &  F0 result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total stat + syst uncert " << endl;
+      NormTexHadr<<" bTagger  &  Normalisation & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total stat + syst uncert " << endl;
 
-      FMinusTexHadrAndLeptWOnly<<" bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert "<<endl;
-      FPlusTexHadrAndLeptWOnly<<" bTagger  &  FR result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert "<< endl;
-      FZeroTexHadrAndLeptWOnly<<" bTagger  &  F0 result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert "<< endl;
+      FMinusTexHadrAndLeptWOnly<<" bTagger  &  FL result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<<endl;
+      FPlusTexHadrAndLeptWOnly<<" bTagger  &  FR result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<< endl;
+      FZeroTexHadrAndLeptWOnly<<" bTagger  &  F0 result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<< endl;
+      NormTexHadrAndLeptWOnly<<" bTagger  & Normalisation & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<< endl;
 
-      FMinusTexHadrAndLept << " bTagger  &  FL result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert " << endl;
-      FPlusTexHadrAndLept << " bTagger  &  FR result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert " << endl;
-      FZeroTexHadrAndLept << " bTagger  &  F0 result & Diff from SM & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & Total Syst uncert & Total stat + syst uncert " << endl;
+      FMinusTexHadrAndLept<<" bTagger & FL result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & TTMatch Up & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<<endl;
+      FPlusTexHadrAndLept<<" bTagger & FR result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & TTMatch Up & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<<endl;
+      FZeroTexHadrAndLept<<" bTagger & F0 result & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & TTMatch Up & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<<endl;
+      NormTexHadrAndLept<<" bTagger  & Normalisation & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & TTMatch Up & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<< endl;
+      NormBckgTexHadrAndLept<<" bTagger  & Normalisation (Bckg) & Stat uncert & JES Syst & JER Syst & W Syst & TTScale Syst & TTMatch Syst & TTMatch Up & PU Syst & UnclusEnergy Syst & Top Mass Syst & TriggEvtSel Syst & BTagSyst & Total Syst uncert & Total uncert "<< endl;
+      MlbNormTex<<" bTagger  & Normalisation & Normalisation Uncert & Bckg Normalisation & Bckg Normalisation Uncert & MC Normalisation & MC Normalisation Uncert & MC Bckg Normalisation & MC Bckg Normalisation Uncert "<< endl;
     }
     
     ////////////////////////////////
     //    Execute MinuitFitter:   //
     ////////////////////////////////
-    if(PerformMinuit == true){
+    //if(PerformMinuit == true){
 
       int SumbTag, ConsideredTagger, JBP, JP, CSV, SSVHP, SSVHE, TCHP, TCHE;
       ConsideredTagger = 0;
       for(JBP=0; JBP<NumberJBPbTags;JBP++){
-	cout << " JBP value : " << JBP << endl;
-	for(JP=0;JP<=NumberJPbTags;JP++){
-	  if(ConsideredTagger == 6) JP =13;   //--> Do not run over all possible TCHE bTag values!	    
+	for(JP=0;JP<=NumberJPbTags;JP++){	  
+	  if(ConsideredTagger == 6) JP =13;   //--> Do not run over all possible TCHE bTag values!
 	  for(CSV =0;CSV<= NumberCSVbTags; CSV++){
 	    if(ConsideredTagger == 5 || ConsideredTagger ==6) CSV = 13;
 	    for(SSVHP=0;SSVHP <=NumberSSVHPbTags; SSVHP++){
@@ -2127,9 +2407,11 @@ int main (int argc, char *argv[])
 		  for(TCHE=0; TCHE<= NumberTCHEbTags;TCHE++){
 		    if(ConsideredTagger ==1 || ConsideredTagger ==2 || ConsideredTagger ==3 || ConsideredTagger ==4 || ConsideredTagger == 5 || ConsideredTagger ==6) TCHE =13;
 		    SumbTag = TCHE+TCHP+SSVHE+SSVHP+CSV+JP+JBP;
-		    if(UsedTCHE[SumbTag]==(TCHE+1) && UsedTCHP[SumbTag]==(TCHP+1) && UsedSSVHE[SumbTag]==(SSVHE+1) && UsedSSVHP[SumbTag]==(SSVHP+1) && UsedCSV[SumbTag]==(CSV+1) && UsedJP[SumbTag] == (JP+1) && UsedJBP[SumbTag] == (JBP+1) ){
+		    if(UsedTCHE[SumbTag]==(TCHE+1) && UsedTCHP[SumbTag]==(TCHP+1) && UsedSSVHE[SumbTag]==(SSVHE+1) && UsedSSVHP[SumbTag]==(SSVHP+1) && UsedCSV[SumbTag]==(CSV+1) && UsedJP[SumbTag] == (JP+1) && UsedJBP[SumbTag] == (JBP+1) ){		      
+		      
+		      //if(CSV == 6 || CSV == 7){
 
-		      if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of the genttbar histo
+		      if(((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true)) && PerformMinuit == true ){//Defining of the genttbar histo
 			char hisnameHadr[100];
 			char hisnameHadrAndLeptWOnly[100];
 			char hisnameHadrAndLept[100];
@@ -2145,46 +2427,36 @@ int main (int argc, char *argv[])
 			  genttbarhistoHadrAndLept[ibinn]->SetDirectory(0);
 			}
 		      }
-		      float scaleFactor = 1.;  //Make an array of the scaleFactor such that it can be different for every event !!
 		    
-		      if(HadronicOnly == true){
+		      if(HadronicOnly == true && PerformMinuit == true){
 			//Data:
 			std::string CosThetaDataStringHadr = "CosThetaDataHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JES Plus:
+			//JES 
 			std::string CosThetaJESPlusStringHadr = "CosThetaJESPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JES Minus:
 			std::string CosThetaJESMinusStringHadr = "CosThetaJESMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JER Plus:
+			//JER :
 			std::string CosThetaJERPlusStringHadr = "CosThetaJERPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JER Minus:
 			std::string CosThetaJERMinusStringHadr = "CosThetaJERMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//WSyst Plus:
+			//WSyst :
 			std::string CosThetaWPlusStringHadr = "CosThetaWPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//WSyst Minus:
 			std::string CosThetaWMinusStringHadr = "CosThetaWMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTScaling Plus:
+			//TTScaling :
 			std::string CosThetaTTScalingUpStringHadr = "CosThetaTTScalingUpHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTScaling Minus:
 			std::string CosThetaTTScalingDownStringHadr = "CosThetaTTScalingDownHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTMatching Plus:
+			//TTMatching :
 			std::string CosThetaTTMatchingUpStringHadr = "CosThetaTTMatchingUpHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTMatching Minus:
 			std::string CosThetaTTMatchingDownStringHadr = "CosThetaTTMatchingDownHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//PU Plus:
+			//PU :
 			std::string CosThetaPUPlusStringHadr = "CosThetaPUPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//PU Minus:
 			std::string CosThetaPUMinusStringHadr = "CosThetaPUMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//UnclusEnergy Plus:
+			//UnclusEnergy :
 			std::string CosThetaUnclusEnergyPlusStringHadr = "CosThetaUnclusEnergyPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//UnclusEnergy Minus:
 			std::string CosThetaUnclusEnergyMinusStringHadr = "CosThetaUnclusEnergyMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TopMass Plus:
+			//TopMass :
 			std::string CosThetaTopMassPlusStringHadr = "CosThetaTopMassPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TopMass Minus:
 			std::string CosThetaTopMassMinusStringHadr = "CosThetaTopMassMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TriggEvtSel Plus:
+			//TriggEvtSel :
 			std::string CosThetaTriggEvtSelPlusStringHadr = "CosThetaTriggEvtSelPlusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TriggEvtSel Minus:
 			std::string CosThetaTriggEvtSelMinusStringHadr = "CosThetaTriggEvtSelMinusHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 			std::string CosThetaSignalStringHadr = "CosThetaSignalHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 			std::string CosThetaBckgStringHadr = "CosThetaBckgHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
@@ -2193,58 +2465,49 @@ int main (int argc, char *argv[])
 			  //Data:
 			  histo1D[CosThetaDataStringHadr]=new TH1F(CosThetaDataStringHadr.c_str(),CosThetaDataStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaDataStringHadr]->SetDirectory(0);
-			  //JESPlus:
+			  //JES:
 			  histo1D[CosThetaJESPlusStringHadr]=new TH1F(CosThetaJESPlusStringHadr.c_str(),CosThetaJESPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJESPlusStringHadr]->SetDirectory(0);
-			  //JESMinus:
 			  histo1D[CosThetaJESMinusStringHadr]=new TH1F(CosThetaJESMinusStringHadr.c_str(),CosThetaJESMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJESMinusStringHadr]->SetDirectory(0);
-			  //JERPlus:
+			  //JER:
 			  histo1D[CosThetaJERPlusStringHadr]=new TH1F(CosThetaJERPlusStringHadr.c_str(),CosThetaJERPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJERPlusStringHadr]->SetDirectory(0);
-			  //JERMinus:
 			  histo1D[CosThetaJERMinusStringHadr]=new TH1F(CosThetaJERMinusStringHadr.c_str(),CosThetaJERMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJERMinusStringHadr]->SetDirectory(0);
-			  //WJets Plus:
+			  //WJets :
 			  histo1D[CosThetaWPlusStringHadr]=new TH1F(CosThetaWPlusStringHadr.c_str(),CosThetaWPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaWPlusStringHadr]->SetDirectory(0);
-			  //WJets Minus:
 			  histo1D[CosThetaWMinusStringHadr]=new TH1F(CosThetaWMinusStringHadr.c_str(),CosThetaWMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaWMinusStringHadr]->SetDirectory(0);
-			  //TTScaling Up:
+			  //TTScaling :
 			  histo1D[CosThetaTTScalingUpStringHadr]=new TH1F(CosThetaTTScalingUpStringHadr.c_str(),CosThetaTTScalingUpStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTScalingUpStringHadr]->SetDirectory(0);
-			  //TTScaling Down:
 			  histo1D[CosThetaTTScalingDownStringHadr]=new TH1F(CosThetaTTScalingDownStringHadr.c_str(),CosThetaTTScalingDownStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTScalingDownStringHadr]->SetDirectory(0);
-			  //TTMatching Up:
+			  //TTMatching :
 			  histo1D[CosThetaTTMatchingUpStringHadr]=new TH1F(CosThetaTTMatchingUpStringHadr.c_str(),CosThetaTTMatchingUpStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTMatchingUpStringHadr]->SetDirectory(0);
-			  //TTMatching Down:
 			  histo1D[CosThetaTTMatchingDownStringHadr]=new TH1F(CosThetaTTMatchingDownStringHadr.c_str(),CosThetaTTMatchingDownStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTMatchingDownStringHadr]->SetDirectory(0);
-			  //PU Plus:
+			  //PU :
 			  histo1D[CosThetaPUPlusStringHadr]=new TH1F(CosThetaPUPlusStringHadr.c_str(),CosThetaPUPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaPUPlusStringHadr]->SetDirectory(0);
-			  //PU Minus:
 			  histo1D[CosThetaPUMinusStringHadr]=new TH1F(CosThetaPUMinusStringHadr.c_str(),CosThetaPUMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaPUMinusStringHadr]->SetDirectory(0);
-			  //UnclusEnergy Plus:
+			  //UnclusEnergy :
 			  histo1D[CosThetaUnclusEnergyPlusStringHadr]=new TH1F(CosThetaUnclusEnergyPlusStringHadr.c_str(),CosThetaUnclusEnergyPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaUnclusEnergyPlusStringHadr]->SetDirectory(0);
-			  //UnclusEnergy Minus:
 			  histo1D[CosThetaUnclusEnergyMinusStringHadr]=new TH1F(CosThetaUnclusEnergyMinusStringHadr.c_str(),CosThetaUnclusEnergyMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaUnclusEnergyMinusStringHadr]->SetDirectory(0);
-			  //TopMass Plus:
+			  //TopMass :
 			  histo1D[CosThetaTopMassPlusStringHadr]=new TH1F(CosThetaTopMassPlusStringHadr.c_str(),CosThetaTopMassPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTopMassPlusStringHadr]->SetDirectory(0);
-			  //TopMass Minus:
 			  histo1D[CosThetaTopMassMinusStringHadr]=new TH1F(CosThetaTopMassMinusStringHadr.c_str(),CosThetaTopMassMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTopMassMinusStringHadr]->SetDirectory(0);
-			  //TriggEvtSel Plus:
+			  //TriggEvtSel :
 			  histo1D[CosThetaTriggEvtSelPlusStringHadr]=new TH1F(CosThetaTriggEvtSelPlusStringHadr.c_str(),CosThetaTriggEvtSelPlusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTriggEvtSelPlusStringHadr]->SetDirectory(0);
-			  //TriggEvtSel Minus:
 			  histo1D[CosThetaTriggEvtSelMinusStringHadr]=new TH1F(CosThetaTriggEvtSelMinusStringHadr.c_str(),CosThetaTriggEvtSelMinusStringHadr.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTriggEvtSelMinusStringHadr]->SetDirectory(0);
 			  histo1D[CosThetaSignalStringHadr]=new TH1F(CosThetaSignalStringHadr.c_str(),CosThetaSignalStringHadr.c_str(),CosThetaBinNumber,-1,1);
@@ -2256,7 +2519,7 @@ int main (int argc, char *argv[])
 			//Filling of the histograms:		    
 			for(int ii=0; ii<CosThetaValuesKinFitHadr[SumbTag].size();ii++){		
 		      
-			  if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
+			  if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
 			    for(int iBin=0; iBin< CosThetaBinNumber; iBin++){//Filling of genttbar histo:		   
 			      if(CosThetaValuesKinFitHadr[SumbTag][ii] >= binEdge[iBin] && CosThetaValuesKinFitHadr[SumbTag][ii] < binEdge[iBin+1]){
 				genttbarhistoHadr[iBin]->Fill(CosThGenKinFitHadr[SumbTag][ii], EventCorrectionWeightKinFitHadr[SumbTag][ii]) ; 
@@ -2272,71 +2535,62 @@ int main (int argc, char *argv[])
 			  ///////////////////////////////////////////////////////////////////////////////
 		      
 			  //Data result:
-			  if(dataSetName.find("Data") == 0)
+			  if(dataSetName.find("Data") == 0 && SignalOnly == false)
 			    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //JES Plus:
+			  //JES :
 			  if(dataSetName.find("JESPlus") == 0)
 			    histo1D[CosThetaJESPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //JES Minus:
 			  if(dataSetName.find("JESMinus") == 0)
 			    histo1D[CosThetaJESMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //JER Plus:
+			  //JER :
 			  if(dataSetName.find("JERPlus") == 0)
 			    histo1D[CosThetaJERPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //JER Minus:
 			  if(dataSetName.find("JERMinus") == 0)
 			    histo1D[CosThetaJERMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //WJets Plus:
+			  //WJets :
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
 			    histo1D[CosThetaWPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //WJets Minus:
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
 			    histo1D[CosThetaWMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //TTScaling Up:
+			  //TTScaling :
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0&& dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0)
 			    histo1D[CosThetaTTScalingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //TTScaling Down:
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTTScalingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //TTMatching Up:
+			  //TTMatching :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTTMatchingUpStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //TTMatching Down:
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTTMatchingDownStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);	
-			  //PU Plus:
+			  //PU :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PUMinus") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaPUPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //PU Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PUPlus") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaPUMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //UnclusEnergy Plus:
+			  //UnclusEnergy :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergyMinus") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaUnclusEnergyPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //UnclusEnergy Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergyPlus") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaUnclusEnergyMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //Top Mass Plus:
+			  //Top Mass :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMassMinus") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTopMassPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //Top Mass Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMassPlus") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )		      
 			    histo1D[CosThetaTopMassMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //TriggEvtSel Plus:
+			  //TriggEvtSel :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSelMinus") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTriggEvtSelPlusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
-			  //TrigEvtSel Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSelPlus") != 0 && dataSetName.find("TTbarJets") !=0 )		      
 			    histo1D[CosThetaTriggEvtSelMinusStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
 	      
-			  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))	    
+			  if(SignalOnly == true && dataSetName.find("McDta") == 0)	    
 			    histo1D[CosThetaDataStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
 		      
 			  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
-			    histo1D[CosThetaSignalStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);//Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
+			    histo1D[CosThetaSignalStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
 		      
 			  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) )) 
-			    histo1D[CosThetaBckgStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);//Luminosity*scaleFactor*(LumiWeightVectorKinFitHadr[SumbTag][ii])*NominalNormFactor);
+			    histo1D[CosThetaBckgStringHadr]->Fill(CosThetaValuesKinFitHadr[SumbTag][ii],EventCorrectionWeightKinFitHadr[SumbTag][ii]);
 			}
 
 			//Perform Minuit Fitter:
@@ -2344,45 +2598,35 @@ int main (int argc, char *argv[])
 
 			  //Data:
 			  MinuitFitter minuitFitterHadr = MinuitFitter(histo1D[CosThetaDataStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //JESPlus
+			  //JES
 			  MinuitFitter minuitFitterHadrJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //JES Minus
 			  MinuitFitter minuitFitterHadrJESMinus = MinuitFitter(histo1D[CosThetaJESMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //JERPlus
+			  //JER
 			  MinuitFitter minuitFitterHadrJERPlus = MinuitFitter(histo1D[CosThetaJERPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //JER Minus
 			  MinuitFitter minuitFitterHadrJERMinus = MinuitFitter(histo1D[CosThetaJERMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //W Plus
+			  //WSyst
 			  MinuitFitter minuitFitterHadrWPlus = MinuitFitter(histo1D[CosThetaWPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //W Minus
 			  MinuitFitter minuitFitterHadrWMinus = MinuitFitter(histo1D[CosThetaWMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //TTScaling Up
+			  //TTScaling 
 			  MinuitFitter minuitFitterHadrTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //TTScaling Down
 			  MinuitFitter minuitFitterHadrTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //TTMatching Up
+			  //TTMatching 
 			  MinuitFitter minuitFitterHadrTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //TTMatching Down
 			  MinuitFitter minuitFitterHadrTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //PU Plus
+			  //PU 
 			  MinuitFitter minuitFitterHadrPUPlus = MinuitFitter(histo1D[CosThetaPUPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //PU Minus
 			  MinuitFitter minuitFitterHadrPUMinus = MinuitFitter(histo1D[CosThetaPUMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //UnclusEnergy Plus
+			  //UnclusEnergy 
 			  MinuitFitter minuitFitterHadrUnclusEnergyPlus = MinuitFitter(histo1D[CosThetaUnclusEnergyPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);  
-			  //UnclusEnergy Minus
 			  MinuitFitter minuitFitterHadrUnclusEnergyMinus = MinuitFitter(histo1D[CosThetaUnclusEnergyMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
-			  //TopMass Plus
+			  //TopMass 
 			  MinuitFitter minuitFitterHadrTopMassPlus = MinuitFitter(histo1D[CosThetaTopMassPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //TopMass Minus
 			  MinuitFitter minuitFitterHadrTopMassMinus = MinuitFitter(histo1D[CosThetaTopMassMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //TriggEvtSel Plus
+			  //TriggEvtSel 
 			  MinuitFitter minuitFitterHadrTriggEvtSelPlus = MinuitFitter(histo1D[CosThetaTriggEvtSelPlusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
-			  //TriggEvtSel Minus
-			  MinuitFitter minuitFitterHadrTriggEvtSelMinus = MinuitFitter(histo1D[CosThetaTriggEvtSelMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);			  
+			  MinuitFitter minuitFitterHadrTriggEvtSelMinus = MinuitFitter(histo1D[CosThetaTriggEvtSelMinusStringHadr], histo1D[CosThetaSignalStringHadr], histo1D[CosThetaBckgStringHadr], 0.6671, 0.3325, 0.0004,genttbarhistoHadr,ndimen);
 			  
 			  PresentationTexHadr << PresentationOutput[SumbTag] << " & ";
-			  cout << " Inside minuitFitter loop : " << PresentationOutput[SumbTag] << " & " << endl;
 			  for(int ii=0; ii< nameDataSet.size(); ii++){
 			    if(ii < nameDataSet.size()-1){ PresentationTexHadr << NumberRemainingEventsKinFitHadr[SumbTag][ii] << " & ";}
 			    else if(ii == nameDataSet.size()-1 ){ 
@@ -2406,11 +2650,11 @@ int main (int argc, char *argv[])
 			  float FLUnclusEnergySystHadr = 0;
 			  if(UnclusEnergyResults == true) FLUnclusEnergySystHadr = (abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrUnclusEnergyPlus.GetFLResult()) + abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrUnclusEnergyMinus.GetFLResult()))/2;
 			  float FLTopMassSystHadr = 0;
-			  if(TopMassResults == true) FLTopMassSystHadr = (abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrTopMassPlus.GetFLResult()) + abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrTopMassMinus.GetFLResult()))/2;		      
+			  if(TopMassResults == true) FLTopMassSystHadr=(abs(minuitFitterHadr.GetFLResult() -minuitFitterHadrTopMassPlus.GetFLResult()) + abs(minuitFitterHadr.GetFLResult() -minuitFitterHadrTopMassMinus.GetFLResult()))/6; //Propagate to shift of 1 GeV
 			  float FLTriggEvtSelSystHadr = 0;
-			  if(TriggEvtSelResults == true) FLTriggEvtSelSystHadr = (abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrTriggEvtSelPlus.GetFLResult()) + abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrTriggEvtSelMinus.GetFLResult()))/2;		      
+			  if(TriggEvtSelResults == true) FLTriggEvtSelSystHadr = (abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrTriggEvtSelPlus.GetFLResult()) + abs(minuitFitterHadr.GetFLResult() - minuitFitterHadrTriggEvtSelMinus.GetFLResult()))/2;
 			  FMinusTexHadr << "\\hline" << endl;
-			  FMinusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMfrResult <<" & " << minuitFitterHadr.GetFLError() << " & " << FLJESSystHadr << " & " << FLJERSystHadr << " & " << FLWSystHadr << " & " << FLTTScalingHadr << " & " << FLTTMatchingHadr << " & " << FLPUSystHadr << " & " << FLUnclusEnergySystHadr << " & " << FLTopMassSystHadr << " & " << FLTriggEvtSelSystHadr << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr + FLPUSystHadr*FLPUSystHadr + FLUnclusEnergySystHadr*FLUnclusEnergySystHadr + FLTopMassSystHadr*FLTopMassSystHadr + FLTriggEvtSelSystHadr*FLTriggEvtSelSystHadr) << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr + FLPUSystHadr*FLPUSystHadr + FLUnclusEnergySystHadr*FLUnclusEnergySystHadr + FLTopMassSystHadr*FLTopMassSystHadr + FLTriggEvtSelSystHadr*FLTriggEvtSelSystHadr + (minuitFitterHadr.GetFLError())*(minuitFitterHadr.GetFLError())) << "\\\\" << endl;
+			  FMinusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLError() << " & " << FLJESSystHadr << " & " << FLJERSystHadr << " & " << FLWSystHadr << " & " << FLTTScalingHadr << " & " << FLTTMatchingHadr << " & " << FLPUSystHadr << " & " << FLUnclusEnergySystHadr << " & " << FLTopMassSystHadr << " & " << FLTriggEvtSelSystHadr << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr + FLPUSystHadr*FLPUSystHadr + FLUnclusEnergySystHadr*FLUnclusEnergySystHadr + FLTopMassSystHadr*FLTopMassSystHadr + FLTriggEvtSelSystHadr*FLTriggEvtSelSystHadr) << " & " << sqrt(FLJESSystHadr*FLJESSystHadr + FLJERSystHadr*FLJERSystHadr + FLWSystHadr*FLWSystHadr + FLTTScalingHadr*FLTTScalingHadr + FLTTMatchingHadr*FLTTMatchingHadr + FLPUSystHadr*FLPUSystHadr + FLUnclusEnergySystHadr*FLUnclusEnergySystHadr + FLTopMassSystHadr*FLTopMassSystHadr + FLTriggEvtSelSystHadr*FLTriggEvtSelSystHadr + (minuitFitterHadr.GetFLError())*(minuitFitterHadr.GetFLError())) << "\\\\" << endl;
 		  
 			  //FR results:
 			  float FRJESSystHadr = (abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrJESPlus.GetFRResult()) + abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrJESMinus.GetFRResult()))/2;
@@ -2427,11 +2671,11 @@ int main (int argc, char *argv[])
 			  float FRUnclusEnergySystHadr = 0;
 			  if(UnclusEnergyResults == true) FRUnclusEnergySystHadr = (abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrUnclusEnergyPlus.GetFRResult()) + abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrUnclusEnergyMinus.GetFRResult()))/2;
 			  float FRTopMassSystHadr = 0;
-			  if(TopMassResults == true) FRTopMassSystHadr = (abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrTopMassPlus.GetFRResult()) + abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrTopMassMinus.GetFRResult()))/2;
+			  if(TopMassResults == true) FRTopMassSystHadr = (abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrTopMassPlus.GetFRResult()) + abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrTopMassMinus.GetFRResult()))/6; //Shift to 1 GeV
 			  float FRTriggEvtSelSystHadr = 0;
 			  if(TriggEvtSelResults == true) FRTriggEvtSelSystHadr = (abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrTriggEvtSelPlus.GetFRResult()) + abs(minuitFitterHadr.GetFRResult() - minuitFitterHadrTriggEvtSelMinus.GetFRResult()))/2;
 			  FPlusTexHadr << "\\hline" << endl;
-			  FPlusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << FRJESSystHadr << " & " << FRJERSystHadr << " & " << FRWSystHadr << " & " << FRTTScalingHadr << " & " << FRTTMatchingHadr << " & " << FRPUSystHadr << " & " << FRUnclusEnergySystHadr << " & " << FRTopMassSystHadr << " & " << FRTriggEvtSelSystHadr << " & " << sqrt(FRJESSystHadr*FRJESSystHadr + FRJERSystHadr*FRJERSystHadr + FRWSystHadr*FRWSystHadr + FRTTScalingHadr*FRTTScalingHadr + FRTTMatchingHadr*FRTTMatchingHadr + FRPUSystHadr*FRPUSystHadr + FRUnclusEnergySystHadr*FRUnclusEnergySystHadr + FRTopMassSystHadr*FRTopMassSystHadr + FRTriggEvtSelSystHadr*FRTriggEvtSelSystHadr) << " & " << sqrt(FRJESSystHadr*FRJESSystHadr + FRJERSystHadr*FRJERSystHadr + FRWSystHadr*FRWSystHadr + FRTTScalingHadr*FRTTScalingHadr + FRTTMatchingHadr*FRTTMatchingHadr + FRPUSystHadr*FRPUSystHadr + FRUnclusEnergySystHadr*FRUnclusEnergySystHadr + FRTopMassSystHadr*FRTopMassSystHadr + FRTriggEvtSelSystHadr*FRTriggEvtSelSystHadr + (minuitFitterHadr.GetFRError())*(minuitFitterHadr.GetFRError())) << "\\\\" << endl;
+			  FPlusTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetFRResult() <<" & " << minuitFitterHadr.GetFRError() << " & " << FRJESSystHadr << " & " << FRJERSystHadr << " & " << FRWSystHadr << " & " << FRTTScalingHadr << " & " << FRTTMatchingHadr << " & " << FRPUSystHadr << " & " << FRUnclusEnergySystHadr << " & " << FRTopMassSystHadr << " & " << FRTriggEvtSelSystHadr << " & " << sqrt(FRJESSystHadr*FRJESSystHadr + FRJERSystHadr*FRJERSystHadr + FRWSystHadr*FRWSystHadr + FRTTScalingHadr*FRTTScalingHadr + FRTTMatchingHadr*FRTTMatchingHadr + FRPUSystHadr*FRPUSystHadr + FRUnclusEnergySystHadr*FRUnclusEnergySystHadr + FRTopMassSystHadr*FRTopMassSystHadr + FRTriggEvtSelSystHadr*FRTriggEvtSelSystHadr) << " & " << sqrt(FRJESSystHadr*FRJESSystHadr + FRJERSystHadr*FRJERSystHadr + FRWSystHadr*FRWSystHadr + FRTTScalingHadr*FRTTScalingHadr + FRTTMatchingHadr*FRTTMatchingHadr + FRPUSystHadr*FRPUSystHadr + FRUnclusEnergySystHadr*FRUnclusEnergySystHadr + FRTopMassSystHadr*FRTopMassSystHadr + FRTriggEvtSelSystHadr*FRTriggEvtSelSystHadr + (minuitFitterHadr.GetFRError())*(minuitFitterHadr.GetFRError())) << "\\\\" << endl;
 
 			  //F0 results:
 			  float F0JESSystHadr = (abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrJESPlus.GetF0Result()) + abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrJESMinus.GetF0Result()))/2;
@@ -2448,56 +2692,47 @@ int main (int argc, char *argv[])
 			  float F0UnclusEnergySystHadr = 0;
 			  if(UnclusEnergyResults == true) F0UnclusEnergySystHadr = (abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrUnclusEnergyPlus.GetF0Result()) + abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrUnclusEnergyMinus.GetF0Result()))/2;
 			  float F0TopMassSystHadr = 0;
-			  if(TopMassResults == true) F0TopMassSystHadr = (abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrTopMassPlus.GetF0Result()) + abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrTopMassMinus.GetF0Result()))/2;
+			  if(TopMassResults == true) F0TopMassSystHadr = (abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrTopMassPlus.GetF0Result()) + abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrTopMassMinus.GetF0Result()))/6;  //Shift to 1 GeV
 			  float F0TriggEvtSelSystHadr = 0;
 			  if(TriggEvtSelResults == true) F0TriggEvtSelSystHadr = (abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrTriggEvtSelPlus.GetF0Result()) + abs(minuitFitterHadr.GetF0Result() - minuitFitterHadrTriggEvtSelMinus.GetF0Result()))/2;
 			  FZeroTexHadr << " \\hline" << endl;
-			  FZeroTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMfrResult <<" & " << minuitFitterHadr.GetF0Error() << " & " << F0JESSystHadr << " & " << F0JERSystHadr << " & " << F0WSystHadr << " & " << F0TTScalingHadr << " & " << F0TTMatchingHadr << " & " << F0PUSystHadr << " & " << F0UnclusEnergySystHadr << " & " << F0TopMassSystHadr << " & " << F0TriggEvtSelSystHadr << " & " << sqrt(F0JESSystHadr*F0JESSystHadr + F0JERSystHadr*F0JERSystHadr + F0WSystHadr*F0WSystHadr + F0TTScalingHadr*F0TTScalingHadr + F0TTMatchingHadr*F0TTMatchingHadr + F0PUSystHadr*F0PUSystHadr + F0UnclusEnergySystHadr*F0UnclusEnergySystHadr + F0TopMassSystHadr*F0TopMassSystHadr + F0TriggEvtSelSystHadr*F0TriggEvtSelSystHadr) << " & " << sqrt(F0JESSystHadr*F0JESSystHadr + F0JERSystHadr*F0JERSystHadr + F0WSystHadr*F0WSystHadr + F0TTScalingHadr*F0TTScalingHadr + F0TTMatchingHadr*F0TTMatchingHadr + F0PUSystHadr*F0PUSystHadr + F0UnclusEnergySystHadr*F0UnclusEnergySystHadr + F0TopMassSystHadr*F0TopMassSystHadr + F0TriggEvtSelSystHadr*F0TriggEvtSelSystHadr + (minuitFitterHadr.GetF0Error())*(minuitFitterHadr.GetF0Error())) << "\\\\" << endl;
+			  FZeroTexHadr << PresentationOutput[SumbTag] << " & " << minuitFitterHadr.GetF0Result() <<" & " << minuitFitterHadr.GetF0Error() << " & " << F0JESSystHadr << " & " << F0JERSystHadr << " & " << F0WSystHadr << " & " << F0TTScalingHadr << " & " << F0TTMatchingHadr << " & " << F0PUSystHadr << " & " << F0UnclusEnergySystHadr << " & " << F0TopMassSystHadr << " & " << F0TriggEvtSelSystHadr << " & " << sqrt(F0JESSystHadr*F0JESSystHadr + F0JERSystHadr*F0JERSystHadr + F0WSystHadr*F0WSystHadr + F0TTScalingHadr*F0TTScalingHadr + F0TTMatchingHadr*F0TTMatchingHadr + F0PUSystHadr*F0PUSystHadr + F0UnclusEnergySystHadr*F0UnclusEnergySystHadr + F0TopMassSystHadr*F0TopMassSystHadr + F0TriggEvtSelSystHadr*F0TriggEvtSelSystHadr) << " & " << sqrt(F0JESSystHadr*F0JESSystHadr + F0JERSystHadr*F0JERSystHadr + F0WSystHadr*F0WSystHadr + F0TTScalingHadr*F0TTScalingHadr + F0TTMatchingHadr*F0TTMatchingHadr + F0PUSystHadr*F0PUSystHadr + F0UnclusEnergySystHadr*F0UnclusEnergySystHadr + F0TopMassSystHadr*F0TopMassSystHadr + F0TriggEvtSelSystHadr*F0TriggEvtSelSystHadr + (minuitFitterHadr.GetF0Error())*(minuitFitterHadr.GetF0Error())) << "\\\\" << endl;
 
 			  //Statistical results and number of events:
-			  PresentationTexHadr << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRResult()-SMfrResult <<" & " << minuitFitterHadr.GetFRError() << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLResult()-SMflResult << " & " << minuitFitterHadr.GetFLError() << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Result()-SMf0Result << " & " << minuitFitterHadr.GetF0Error() << " \\\\ " << endl;		
+			  PresentationTexHadr << minuitFitterHadr.GetFRResult() << " & " << minuitFitterHadr.GetFRError() << " & " << minuitFitterHadr.GetFLResult() << " & " << minuitFitterHadr.GetFLError() << " & " << minuitFitterHadr.GetF0Result() << " & " << minuitFitterHadr.GetF0Error() << " \\\\ " << endl;		
 			  PresentationTexHadr << " \\hline " << endl;
 			}
 		      }
 		    
-		      if(HadronicAndLeptonicWOnly == true){
+		      if(HadronicAndLeptonicWOnly == true && PerformMinuit == true){
 			//Data:       
 			std::string CosThetaDataStringHadrAndLeptW = "CosThetaDataHadrAndLeptWOnly_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JES Plus:
+			//JES :
 			std::string CosThetaJESPlusStringHadrAndLeptW = "CosThetaJESPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JES Minus:
 			std::string CosThetaJESMinusStringHadrAndLeptW="CosThetaJESMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JER Plus:
+			//JER :
 			std::string CosThetaJERPlusStringHadrAndLeptW = "CosThetaJERPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JER Minus:
 			std::string CosThetaJERMinusStringHadrAndLeptW="CosThetaJERMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//WSyst Plus:
+			//WSyst :
 			std::string CosThetaWPlusStringHadrAndLeptW = "CosThetaWPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//WSyst Minus:
 			std::string CosThetaWMinusStringHadrAndLeptW = "CosThetaWMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTScaling Plus:
+			//TTScaling :
 			std::string CosThetaTTScalingUpStringHadrAndLeptW = "CosThetaTTScalingUpHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTScaling Minus:
 			std::string CosThetaTTScalingDownStringHadrAndLeptW = "CosThetaTTScalingDownHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTMatching Plus:
+			//TTMatching :
 			std::string CosThetaTTMatchingUpStringHadrAndLeptW = "CosThetaTTMatchingUpHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTMatching Minus:
 			std::string CosThetaTTMatchingDownStringHadrAndLeptW = "CosThetaTTMatchingDownHadr_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//PU Plus:
+			//PU :
 			std::string CosThetaPUPlusStringHadrAndLeptW = "CosThetaPUPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//PU Minus:
 			std::string CosThetaPUMinusStringHadrAndLeptW = "CosThetaPUMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//UnclusEnergy Plus:
+			//UnclusEnergy :
 			std::string CosThetaUnclusEnergyPlusStringHadrAndLeptW = "CosThetaUnclusEnergyPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//UnclusEnergy Minus:
 			std::string CosThetaUnclusEnergyMinusStringHadrAndLeptW = "CosThetaUnclusEnergyMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TopMass Plus:
+			//TopMass :
 			std::string CosThetaTopMassPlusStringHadrAndLeptW = "CosThetaTopMassPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TopMass Minus:
 			std::string CosThetaTopMassMinusStringHadrAndLeptW = "CosThetaTopMassMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TriggEvtSel Plus:
+			//TriggEvtSel :
 			std::string CosThetaTriggEvtSelPlusStringHadrAndLeptW = "CosThetaTriggEvtSelPlusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TriggEvtSel Minus:
 			std::string CosThetaTriggEvtSelMinusStringHadrAndLeptW = "CosThetaTriggEvtSelMinusHadrAndLeptW_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 			std::string CosThetaSignalStringHadrAndLeptW="CosThetaSignalHadrAndLeptWOnly_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 			std::string CosThetaBckgStringHadrAndLeptW = "CosThetaBckgHadrAndLeptWOnly_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
@@ -2506,58 +2741,49 @@ int main (int argc, char *argv[])
 			  //Data:
 			  histo1D[CosThetaDataStringHadrAndLeptW]=new TH1F(CosThetaDataStringHadrAndLeptW.c_str(),CosThetaDataStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaDataStringHadrAndLeptW]->SetDirectory(0);
-			  //JESPlus:
+			  //JES:
 			  histo1D[CosThetaJESPlusStringHadrAndLeptW]=new TH1F(CosThetaJESPlusStringHadrAndLeptW.c_str(),CosThetaJESPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJESPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //JESMinus:
 			  histo1D[CosThetaJESMinusStringHadrAndLeptW]=new TH1F(CosThetaJESMinusStringHadrAndLeptW.c_str(),CosThetaJESMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJESMinusStringHadrAndLeptW]->SetDirectory(0);
-			  //JERPlus:
+			  //JER:
 			  histo1D[CosThetaJERPlusStringHadrAndLeptW]=new TH1F(CosThetaJERPlusStringHadrAndLeptW.c_str(),CosThetaJERPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJERPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //JERMinus:
 			  histo1D[CosThetaJERMinusStringHadrAndLeptW]=new TH1F(CosThetaJERMinusStringHadrAndLeptW.c_str(),CosThetaJERMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJERMinusStringHadrAndLeptW]->SetDirectory(0);
-			  //WJets Plus:
+			  //WJets :
 			  histo1D[CosThetaWPlusStringHadrAndLeptW]=new TH1F(CosThetaWPlusStringHadrAndLeptW.c_str(),CosThetaWPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaWPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //WJets Minus:
 			  histo1D[CosThetaWMinusStringHadrAndLeptW]=new TH1F(CosThetaWMinusStringHadrAndLeptW.c_str(),CosThetaWMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaWMinusStringHadrAndLeptW]->SetDirectory(0);
-			  //TTScaling Up:
+			  //TTScaling :
 			  histo1D[CosThetaTTScalingUpStringHadrAndLeptW]=new TH1F(CosThetaTTScalingUpStringHadrAndLeptW.c_str(),CosThetaTTScalingUpStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTScalingUpStringHadrAndLeptW]->SetDirectory(0);
-			  //TTScaling Down:
 			  histo1D[CosThetaTTScalingDownStringHadrAndLeptW]=new TH1F(CosThetaTTScalingDownStringHadrAndLeptW.c_str(),CosThetaTTScalingDownStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTScalingDownStringHadrAndLeptW]->SetDirectory(0);
-			  //TTMatching Up:
+			  //TTMatching :
 			  histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]=new TH1F(CosThetaTTMatchingUpStringHadrAndLeptW.c_str(),CosThetaTTMatchingUpStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]->SetDirectory(0);
-			  //TTMatching Down:
 			  histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]=new TH1F(CosThetaTTMatchingDownStringHadrAndLeptW.c_str(),CosThetaTTMatchingDownStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]->SetDirectory(0);
-			  //PU Plus:
+			  //PU :
 			  histo1D[CosThetaPUPlusStringHadrAndLeptW]=new TH1F(CosThetaPUPlusStringHadrAndLeptW.c_str(),CosThetaPUPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaPUPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //PU Minus:
 			  histo1D[CosThetaPUMinusStringHadrAndLeptW]=new TH1F(CosThetaPUMinusStringHadrAndLeptW.c_str(),CosThetaPUMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaPUMinusStringHadrAndLeptW]->SetDirectory(0);
-			  //UnclusEnergy Plus:
+			  //UnclusEnergy :
 			  histo1D[CosThetaUnclusEnergyPlusStringHadrAndLeptW]=new TH1F(CosThetaUnclusEnergyPlusStringHadrAndLeptW.c_str(),CosThetaUnclusEnergyPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaUnclusEnergyPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //UnclusEnergy Minus:
 			  histo1D[CosThetaUnclusEnergyMinusStringHadrAndLeptW]=new TH1F(CosThetaUnclusEnergyMinusStringHadrAndLeptW.c_str(),CosThetaUnclusEnergyMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaUnclusEnergyMinusStringHadrAndLeptW]->SetDirectory(0);
-			  //TopMass Plus:
+			  //TopMass :
 			  histo1D[CosThetaTopMassPlusStringHadrAndLeptW]=new TH1F(CosThetaTopMassPlusStringHadrAndLeptW.c_str(),CosThetaTopMassPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTopMassPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //TopMass Minus:
 			  histo1D[CosThetaTopMassMinusStringHadrAndLeptW]=new TH1F(CosThetaTopMassMinusStringHadrAndLeptW.c_str(),CosThetaTopMassMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTopMassMinusStringHadrAndLeptW]->SetDirectory(0);
-			  //TriggEvtSel Plus:
+			  //TriggEvtSel :
 			  histo1D[CosThetaTriggEvtSelPlusStringHadrAndLeptW]=new TH1F(CosThetaTriggEvtSelPlusStringHadrAndLeptW.c_str(),CosThetaTriggEvtSelPlusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTriggEvtSelPlusStringHadrAndLeptW]->SetDirectory(0);
-			  //TriggEvtSel Minus:
 			  histo1D[CosThetaTriggEvtSelMinusStringHadrAndLeptW]=new TH1F(CosThetaTriggEvtSelMinusStringHadrAndLeptW.c_str(),CosThetaTriggEvtSelMinusStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTriggEvtSelMinusStringHadrAndLeptW]->SetDirectory(0);
 			  histo1D[CosThetaSignalStringHadrAndLeptW]=new TH1F(CosThetaSignalStringHadrAndLeptW.c_str(),CosThetaSignalStringHadrAndLeptW.c_str(),CosThetaBinNumber,-1,1);
@@ -2569,7 +2795,7 @@ int main (int argc, char *argv[])
 			//Filling of the histograms:		    
 			for(int ii=0; ii<CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag].size();ii++){		
 		      
-			  if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
+			  if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
 			    for(int iBin=0; iBin< CosThetaBinNumber; iBin++){//Filling of genttbar histo:		   
 			      if(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii] >= binEdge[iBin] && CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii] < binEdge[iBin+1]){
 				genttbarhistoHadrAndLeptWOnly[iBin]->Fill(CosThGenKinFitHadrAndLeptWOnly[SumbTag][ii], EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]) ; 
@@ -2587,58 +2813,49 @@ int main (int argc, char *argv[])
 			  //Data result:
 			  if(dataSetName.find("Data") == 0)
 			    histo1D[CosThetaDataStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //JES Plus:
+			  //JES :
 			  if(dataSetName.find("JESPlus") == 0)
 			    histo1D[CosThetaJESPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //JES Minus:
 			  if(dataSetName.find("JESMinus") == 0)
 			    histo1D[CosThetaJESMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //JER Plus:
+			  //JER :
 			  if(dataSetName.find("JERPlus") == 0)
 			    histo1D[CosThetaJERPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //JER Minus:
 			  if(dataSetName.find("JERMinus") == 0)
 			    histo1D[CosThetaJERMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //WJets Plus:  --> Fill with WsystPlus sample and all other MC
+			  //WJets :  --> Fill with WsystPlus sample and all other MC
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
 			    histo1D[CosThetaWPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //WJets Minus:  --> Fill with WsystMinus sample and all other MC
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
 			    histo1D[CosThetaWMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //TTScaling Up:
+			  //TTScaling :
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingDown") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0)
 			    histo1D[CosThetaTTScalingUpStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //TTScaling Down:
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTTScalingDownStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //TTMatching Up:
+			  //TTMatching :
 			  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTTMatchingUpStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //TTMatching Down:
 			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0  && dataSetName.find("TriggEvtSel") != 0&& dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTTMatchingDownStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);		  
-			  //PU Plus:
+			  //PU :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PUMinus") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaPUPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //PU Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PUPlus") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaPUMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //UnclusEnergy Plus:
+			  //UnclusEnergy :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergyMinus") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaUnclusEnergyPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //UnclusEnergy Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergyPlus") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaUnclusEnergyMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //Top Mass Plus:
+			  //Top Mass :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMassMinus") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTopMassPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //Top Mass Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMassPlus") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )		      
 			    histo1D[CosThetaTopMassMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //TriggEvtSel Plus:
+			  //TriggEvtSel :
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSelMinus") != 0 && dataSetName.find("TTbarJets") !=0 )
 			    histo1D[CosThetaTriggEvtSelPlusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
-			  //TriggEvtSel Minus:
 			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSelPlus") != 0 && dataSetName.find("TTbarJets") !=0 )		      
 			    histo1D[CosThetaTriggEvtSelMinusStringHadrAndLeptW]->Fill(CosThetaValuesKinFitHadrAndLeptWOnly[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLeptWOnly[SumbTag][ii]);
 
@@ -2655,42 +2872,33 @@ int main (int argc, char *argv[])
 			//Perform MinuitFitter:
 			if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active to perform MinuitFitter
 			  //Data:
-			  MinuitFitter minuitFitterHadrAndLeptWOnly = MinuitFitter(histo1D[CosThetaDataStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
-			  //JESPlus
+			  MinuitFitter minuitFitterHadrAndLeptWOnly=MinuitFitter(histo1D[CosThetaDataStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
+			  //JES
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //JES Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyJESMinus = MinuitFitter(histo1D[CosThetaJESMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //JERPlus
+			  //JER
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyJERPlus = MinuitFitter(histo1D[CosThetaJERPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //JER Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyJERMinus = MinuitFitter(histo1D[CosThetaJERMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //W Plus
+			  //WJets
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyWPlus = MinuitFitter(histo1D[CosThetaWPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //W Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyWMinus = MinuitFitter(histo1D[CosThetaWMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
-			  //TTScaling Up
+			  //TTScaling 
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
-			  //TTScaling Down
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
-			  //TTMatching Up
+			  //TTMatching 
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
-			  //TTMatching Down
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);
-			  //PU Plus
+			  //PU 
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyPUPlus = MinuitFitter(histo1D[CosThetaPUPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //PU Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyPUMinus = MinuitFitter(histo1D[CosThetaPUMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //UnclusEnergy Plus
+			  //UnclusEnergy 
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyUnclusEnergyPlus = MinuitFitter(histo1D[CosThetaUnclusEnergyPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //UnclusEnergy Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyUnclusEnergyMinus = MinuitFitter(histo1D[CosThetaUnclusEnergyMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //TopMass Plus
+			  //TopMass 
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTopMassPlus = MinuitFitter(histo1D[CosThetaTopMassPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //TopMass Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTopMassMinus = MinuitFitter(histo1D[CosThetaTopMassMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //TriggEvtSel Plus
+			  //TriggEvtSel
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTriggEvtSelPlus = MinuitFitter(histo1D[CosThetaTriggEvtSelPlusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
-			  //TriggEvtSel Minus
 			  MinuitFitter minuitFitterHadrAndLeptWOnlyTriggEvtSelMinus = MinuitFitter(histo1D[CosThetaTriggEvtSelMinusStringHadrAndLeptW], histo1D[CosThetaSignalStringHadrAndLeptW], histo1D[CosThetaBckgStringHadrAndLeptW], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLeptWOnly,ndimen);			  
 			  
 			  PresentationTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & ";
@@ -2718,11 +2926,11 @@ int main (int argc, char *argv[])
 			  float FLUnclusEnergySystHadrAndLeptWOnly = 0;
 			  if(UnclusEnergyResults == true) FLUnclusEnergySystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyUnclusEnergyPlus.GetFLResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyUnclusEnergyMinus.GetFLResult()))/2;
 			  float FLTopMassSystHadrAndLeptWOnly = 0;
-			  if(TopMassResults == true) FLTopMassSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyTopMassPlus.GetFLResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyTopMassMinus.GetFLResult()))/2;		      
+			  if(TopMassResults == true) FLTopMassSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyTopMassPlus.GetFLResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyTopMassMinus.GetFLResult()))/6;  //Shift to 1 GeV
 			  float FLTriggEvtSelSystHadrAndLeptWOnly = 0;
 			  if(TriggEvtSelResults == true) FLTriggEvtSelSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyTriggEvtSelPlus.GetFLResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFLResult() - minuitFitterHadrAndLeptWOnlyTriggEvtSelMinus.GetFLResult()))/2;		      
 			  FMinusTexHadrAndLeptWOnly << "\\hline" << endl;
-			  FMinusTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetFLError() << " & " << FLJESSystHadrAndLeptWOnly << " & " << FLJERSystHadrAndLeptWOnly << " & " << FLWSystHadrAndLeptWOnly << " & " << FLTTScalingHadrAndLeptWOnly << " & " << FLTTMatchingHadrAndLeptWOnly << " & " << FLPUSystHadrAndLeptWOnly << " & " << FLUnclusEnergySystHadrAndLeptWOnly << " & " << FLTopMassSystHadrAndLeptWOnly << " & " << FLTriggEvtSelSystHadrAndLeptWOnly << " & " << sqrt(FLJESSystHadrAndLeptWOnly*FLJESSystHadrAndLeptWOnly + FLJERSystHadrAndLeptWOnly*FLJERSystHadrAndLeptWOnly + FLWSystHadrAndLeptWOnly*FLWSystHadrAndLeptWOnly + FLTTScalingHadrAndLeptWOnly*FLTTScalingHadrAndLeptWOnly + FLTTMatchingHadrAndLeptWOnly*FLTTMatchingHadrAndLeptWOnly + FLPUSystHadrAndLeptWOnly*FLPUSystHadrAndLeptWOnly + FLUnclusEnergySystHadrAndLeptWOnly*FLUnclusEnergySystHadrAndLeptWOnly + FLTopMassSystHadrAndLeptWOnly*FLTopMassSystHadrAndLeptWOnly + FLTriggEvtSelSystHadrAndLeptWOnly*FLTriggEvtSelSystHadrAndLeptWOnly) << " & " << sqrt(FLJESSystHadrAndLeptWOnly*FLJESSystHadrAndLeptWOnly + FLJERSystHadrAndLeptWOnly*FLJERSystHadrAndLeptWOnly + FLWSystHadrAndLeptWOnly*FLWSystHadrAndLeptWOnly + FLTTScalingHadrAndLeptWOnly*FLTTScalingHadrAndLeptWOnly + FLTTMatchingHadrAndLeptWOnly*FLTTMatchingHadrAndLeptWOnly + FLPUSystHadrAndLeptWOnly*FLPUSystHadrAndLeptWOnly + FLUnclusEnergySystHadrAndLeptWOnly*FLUnclusEnergySystHadrAndLeptWOnly + FLTopMassSystHadrAndLeptWOnly*FLTopMassSystHadrAndLeptWOnly + FLTriggEvtSelSystHadrAndLeptWOnly*FLTriggEvtSelSystHadrAndLeptWOnly + (minuitFitterHadrAndLeptWOnly.GetFLError())*(minuitFitterHadrAndLeptWOnly.GetFLError())) << "\\\\" << endl;
+			  FMinusTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult() <<" & " << minuitFitterHadrAndLeptWOnly.GetFLError() << " & " << FLJESSystHadrAndLeptWOnly << " & " << FLJERSystHadrAndLeptWOnly << " & " << FLWSystHadrAndLeptWOnly << " & " << FLTTScalingHadrAndLeptWOnly << " & " << FLTTMatchingHadrAndLeptWOnly << " & " << FLPUSystHadrAndLeptWOnly << " & " << FLUnclusEnergySystHadrAndLeptWOnly << " & " << FLTopMassSystHadrAndLeptWOnly << " & " << FLTriggEvtSelSystHadrAndLeptWOnly << " & " << sqrt(FLJESSystHadrAndLeptWOnly*FLJESSystHadrAndLeptWOnly + FLJERSystHadrAndLeptWOnly*FLJERSystHadrAndLeptWOnly + FLWSystHadrAndLeptWOnly*FLWSystHadrAndLeptWOnly + FLTTScalingHadrAndLeptWOnly*FLTTScalingHadrAndLeptWOnly + FLTTMatchingHadrAndLeptWOnly*FLTTMatchingHadrAndLeptWOnly + FLPUSystHadrAndLeptWOnly*FLPUSystHadrAndLeptWOnly + FLUnclusEnergySystHadrAndLeptWOnly*FLUnclusEnergySystHadrAndLeptWOnly + FLTopMassSystHadrAndLeptWOnly*FLTopMassSystHadrAndLeptWOnly + FLTriggEvtSelSystHadrAndLeptWOnly*FLTriggEvtSelSystHadrAndLeptWOnly) << " & " << sqrt(FLJESSystHadrAndLeptWOnly*FLJESSystHadrAndLeptWOnly + FLJERSystHadrAndLeptWOnly*FLJERSystHadrAndLeptWOnly + FLWSystHadrAndLeptWOnly*FLWSystHadrAndLeptWOnly + FLTTScalingHadrAndLeptWOnly*FLTTScalingHadrAndLeptWOnly + FLTTMatchingHadrAndLeptWOnly*FLTTMatchingHadrAndLeptWOnly + FLPUSystHadrAndLeptWOnly*FLPUSystHadrAndLeptWOnly + FLUnclusEnergySystHadrAndLeptWOnly*FLUnclusEnergySystHadrAndLeptWOnly + FLTopMassSystHadrAndLeptWOnly*FLTopMassSystHadrAndLeptWOnly + FLTriggEvtSelSystHadrAndLeptWOnly*FLTriggEvtSelSystHadrAndLeptWOnly + (minuitFitterHadrAndLeptWOnly.GetFLError())*(minuitFitterHadrAndLeptWOnly.GetFLError())) << "\\\\" << endl;
 		  
 			  //FR results:
 			  float FRJESSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyJESPlus.GetFRResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyJESMinus.GetFRResult()))/2;
@@ -2739,11 +2947,11 @@ int main (int argc, char *argv[])
 			  float FRUnclusEnergySystHadrAndLeptWOnly = 0;
 			  if(UnclusEnergyResults == true) FRUnclusEnergySystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyUnclusEnergyPlus.GetFRResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyUnclusEnergyMinus.GetFRResult()))/2;
 			  float FRTopMassSystHadrAndLeptWOnly = 0;
-			  if(TopMassResults == true) FRTopMassSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyTopMassPlus.GetFRResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyTopMassMinus.GetFRResult()))/2;
+			  if(TopMassResults == true) FRTopMassSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyTopMassPlus.GetFRResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyTopMassMinus.GetFRResult()))/6;  //Shift to 1 GeV
 			  float FRTriggEvtSelSystHadrAndLeptWOnly = 0;
 			  if(TriggEvtSelResults == true) FRTriggEvtSelSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyTriggEvtSelPlus.GetFRResult()) + abs(minuitFitterHadrAndLeptWOnly.GetFRResult() - minuitFitterHadrAndLeptWOnlyTriggEvtSelMinus.GetFRResult()))/2;
 			  FPlusTexHadrAndLeptWOnly << "\\hline" << endl;
-			  FPlusTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetFRError() << " & " << FRJESSystHadrAndLeptWOnly << " & " << FRJERSystHadrAndLeptWOnly << " & " << FRWSystHadrAndLeptWOnly << " & " << FRTTScalingHadrAndLeptWOnly << " & " << FRTTMatchingHadrAndLeptWOnly << " & " << FRPUSystHadrAndLeptWOnly << " & " << FRUnclusEnergySystHadrAndLeptWOnly << " & " << FRTopMassSystHadrAndLeptWOnly << " & " << FRTriggEvtSelSystHadrAndLeptWOnly << " & " << sqrt(FRJESSystHadrAndLeptWOnly*FRJESSystHadrAndLeptWOnly + FRJERSystHadrAndLeptWOnly*FRJERSystHadrAndLeptWOnly + FRWSystHadrAndLeptWOnly*FRWSystHadrAndLeptWOnly + FRTTScalingHadrAndLeptWOnly*FRTTScalingHadrAndLeptWOnly + FRTTMatchingHadrAndLeptWOnly*FRTTMatchingHadrAndLeptWOnly + FRPUSystHadrAndLeptWOnly*FRPUSystHadrAndLeptWOnly + FRUnclusEnergySystHadrAndLeptWOnly*FRUnclusEnergySystHadrAndLeptWOnly + FRTopMassSystHadrAndLeptWOnly*FRTopMassSystHadrAndLeptWOnly + FRTriggEvtSelSystHadrAndLeptWOnly*FRTriggEvtSelSystHadrAndLeptWOnly) << " & " << sqrt(FRJESSystHadrAndLeptWOnly*FRJESSystHadrAndLeptWOnly + FRJERSystHadrAndLeptWOnly*FRJERSystHadrAndLeptWOnly + FRWSystHadrAndLeptWOnly*FRWSystHadrAndLeptWOnly + FRTTScalingHadrAndLeptWOnly*FRTTScalingHadrAndLeptWOnly + FRTTMatchingHadrAndLeptWOnly*FRTTMatchingHadrAndLeptWOnly + FRPUSystHadrAndLeptWOnly*FRPUSystHadrAndLeptWOnly + FRUnclusEnergySystHadrAndLeptWOnly*FRUnclusEnergySystHadrAndLeptWOnly + FRTopMassSystHadrAndLeptWOnly*FRTopMassSystHadrAndLeptWOnly + FRTriggEvtSelSystHadrAndLeptWOnly*FRTriggEvtSelSystHadrAndLeptWOnly + (minuitFitterHadrAndLeptWOnly.GetFRError())*(minuitFitterHadrAndLeptWOnly.GetFRError())) << "\\\\" << endl;
+			  FPlusTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult() <<" & " << minuitFitterHadrAndLeptWOnly.GetFRError() << " & " << FRJESSystHadrAndLeptWOnly << " & " << FRJERSystHadrAndLeptWOnly << " & " << FRWSystHadrAndLeptWOnly << " & " << FRTTScalingHadrAndLeptWOnly << " & " << FRTTMatchingHadrAndLeptWOnly << " & " << FRPUSystHadrAndLeptWOnly << " & " << FRUnclusEnergySystHadrAndLeptWOnly << " & " << FRTopMassSystHadrAndLeptWOnly << " & " << FRTriggEvtSelSystHadrAndLeptWOnly << " & " << sqrt(FRJESSystHadrAndLeptWOnly*FRJESSystHadrAndLeptWOnly + FRJERSystHadrAndLeptWOnly*FRJERSystHadrAndLeptWOnly + FRWSystHadrAndLeptWOnly*FRWSystHadrAndLeptWOnly + FRTTScalingHadrAndLeptWOnly*FRTTScalingHadrAndLeptWOnly + FRTTMatchingHadrAndLeptWOnly*FRTTMatchingHadrAndLeptWOnly + FRPUSystHadrAndLeptWOnly*FRPUSystHadrAndLeptWOnly + FRUnclusEnergySystHadrAndLeptWOnly*FRUnclusEnergySystHadrAndLeptWOnly + FRTopMassSystHadrAndLeptWOnly*FRTopMassSystHadrAndLeptWOnly + FRTriggEvtSelSystHadrAndLeptWOnly*FRTriggEvtSelSystHadrAndLeptWOnly) << " & " << sqrt(FRJESSystHadrAndLeptWOnly*FRJESSystHadrAndLeptWOnly + FRJERSystHadrAndLeptWOnly*FRJERSystHadrAndLeptWOnly + FRWSystHadrAndLeptWOnly*FRWSystHadrAndLeptWOnly + FRTTScalingHadrAndLeptWOnly*FRTTScalingHadrAndLeptWOnly + FRTTMatchingHadrAndLeptWOnly*FRTTMatchingHadrAndLeptWOnly + FRPUSystHadrAndLeptWOnly*FRPUSystHadrAndLeptWOnly + FRUnclusEnergySystHadrAndLeptWOnly*FRUnclusEnergySystHadrAndLeptWOnly + FRTopMassSystHadrAndLeptWOnly*FRTopMassSystHadrAndLeptWOnly + FRTriggEvtSelSystHadrAndLeptWOnly*FRTriggEvtSelSystHadrAndLeptWOnly + (minuitFitterHadrAndLeptWOnly.GetFRError())*(minuitFitterHadrAndLeptWOnly.GetFRError())) << "\\\\" << endl;
 
 			  //F0 results:
 			  float F0JESSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyJESPlus.GetF0Result()) + abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyJESMinus.GetF0Result()))/2;
@@ -2760,130 +2968,142 @@ int main (int argc, char *argv[])
 			  float F0UnclusEnergySystHadrAndLeptWOnly = 0;
 			  if(UnclusEnergyResults == true) F0UnclusEnergySystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyUnclusEnergyPlus.GetF0Result()) + abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyUnclusEnergyMinus.GetF0Result()))/2;
 			  float F0TopMassSystHadrAndLeptWOnly = 0;
-			  if(TopMassResults == true) F0TopMassSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyTopMassPlus.GetF0Result()) + abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyTopMassMinus.GetF0Result()))/2;
+			  if(TopMassResults == true) F0TopMassSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyTopMassPlus.GetF0Result()) + abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyTopMassMinus.GetF0Result()))/6;  //Shift to 1 GeV
 			  float F0TriggEvtSelSystHadrAndLeptWOnly = 0;
 			  if(TriggEvtSelResults == true) F0TriggEvtSelSystHadrAndLeptWOnly = (abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyTriggEvtSelPlus.GetF0Result()) + abs(minuitFitterHadrAndLeptWOnly.GetF0Result() - minuitFitterHadrAndLeptWOnlyTriggEvtSelMinus.GetF0Result()))/2;
 			  FZeroTexHadrAndLeptWOnly << " \\hline" << endl;
-			  FZeroTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetF0Error() << " & " << F0JESSystHadrAndLeptWOnly << " & " << F0JERSystHadrAndLeptWOnly << " & " << F0WSystHadrAndLeptWOnly << " & " << F0TTScalingHadrAndLeptWOnly << " & " << F0TTMatchingHadrAndLeptWOnly << " & " << F0PUSystHadrAndLeptWOnly << " & " << F0UnclusEnergySystHadrAndLeptWOnly << " & " << F0TopMassSystHadrAndLeptWOnly << " & " << F0TriggEvtSelSystHadrAndLeptWOnly << " & " << sqrt(F0JESSystHadrAndLeptWOnly*F0JESSystHadrAndLeptWOnly + F0JERSystHadrAndLeptWOnly*F0JERSystHadrAndLeptWOnly + F0WSystHadrAndLeptWOnly*F0WSystHadrAndLeptWOnly + F0TTScalingHadrAndLeptWOnly*F0TTScalingHadrAndLeptWOnly + F0TTMatchingHadrAndLeptWOnly*F0TTMatchingHadrAndLeptWOnly + F0PUSystHadrAndLeptWOnly*F0PUSystHadrAndLeptWOnly + F0UnclusEnergySystHadrAndLeptWOnly*F0UnclusEnergySystHadrAndLeptWOnly + F0TopMassSystHadrAndLeptWOnly*F0TopMassSystHadrAndLeptWOnly + F0TriggEvtSelSystHadrAndLeptWOnly*F0TriggEvtSelSystHadrAndLeptWOnly) << " & " << sqrt(F0JESSystHadrAndLeptWOnly*F0JESSystHadrAndLeptWOnly + F0JERSystHadrAndLeptWOnly*F0JERSystHadrAndLeptWOnly + F0WSystHadrAndLeptWOnly*F0WSystHadrAndLeptWOnly + F0TTScalingHadrAndLeptWOnly*F0TTScalingHadrAndLeptWOnly + F0TTMatchingHadrAndLeptWOnly*F0TTMatchingHadrAndLeptWOnly + F0PUSystHadrAndLeptWOnly*F0PUSystHadrAndLeptWOnly + F0UnclusEnergySystHadrAndLeptWOnly*F0UnclusEnergySystHadrAndLeptWOnly + F0TopMassSystHadrAndLeptWOnly*F0TopMassSystHadrAndLeptWOnly + F0TriggEvtSelSystHadrAndLeptWOnly*F0TriggEvtSelSystHadrAndLeptWOnly + (minuitFitterHadrAndLeptWOnly.GetF0Error())*(minuitFitterHadrAndLeptWOnly.GetF0Error())) << "\\\\" << endl;
+			  FZeroTexHadrAndLeptWOnly << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result() <<" & " << minuitFitterHadrAndLeptWOnly.GetF0Error() << " & " << F0JESSystHadrAndLeptWOnly << " & " << F0JERSystHadrAndLeptWOnly << " & " << F0WSystHadrAndLeptWOnly << " & " << F0TTScalingHadrAndLeptWOnly << " & " << F0TTMatchingHadrAndLeptWOnly << " & " << F0PUSystHadrAndLeptWOnly << " & " << F0UnclusEnergySystHadrAndLeptWOnly << " & " << F0TopMassSystHadrAndLeptWOnly << " & " << F0TriggEvtSelSystHadrAndLeptWOnly << " & " << sqrt(F0JESSystHadrAndLeptWOnly*F0JESSystHadrAndLeptWOnly + F0JERSystHadrAndLeptWOnly*F0JERSystHadrAndLeptWOnly + F0WSystHadrAndLeptWOnly*F0WSystHadrAndLeptWOnly + F0TTScalingHadrAndLeptWOnly*F0TTScalingHadrAndLeptWOnly + F0TTMatchingHadrAndLeptWOnly*F0TTMatchingHadrAndLeptWOnly + F0PUSystHadrAndLeptWOnly*F0PUSystHadrAndLeptWOnly + F0UnclusEnergySystHadrAndLeptWOnly*F0UnclusEnergySystHadrAndLeptWOnly + F0TopMassSystHadrAndLeptWOnly*F0TopMassSystHadrAndLeptWOnly + F0TriggEvtSelSystHadrAndLeptWOnly*F0TriggEvtSelSystHadrAndLeptWOnly) << " & " << sqrt(F0JESSystHadrAndLeptWOnly*F0JESSystHadrAndLeptWOnly + F0JERSystHadrAndLeptWOnly*F0JERSystHadrAndLeptWOnly + F0WSystHadrAndLeptWOnly*F0WSystHadrAndLeptWOnly + F0TTScalingHadrAndLeptWOnly*F0TTScalingHadrAndLeptWOnly + F0TTMatchingHadrAndLeptWOnly*F0TTMatchingHadrAndLeptWOnly + F0PUSystHadrAndLeptWOnly*F0PUSystHadrAndLeptWOnly + F0UnclusEnergySystHadrAndLeptWOnly*F0UnclusEnergySystHadrAndLeptWOnly + F0TopMassSystHadrAndLeptWOnly*F0TopMassSystHadrAndLeptWOnly + F0TriggEvtSelSystHadrAndLeptWOnly*F0TriggEvtSelSystHadrAndLeptWOnly + (minuitFitterHadrAndLeptWOnly.GetF0Error())*(minuitFitterHadrAndLeptWOnly.GetF0Error())) << "\\\\" << endl;
 
 			  //Statistical results and number of events:
-			  PresentationTexHadrAndLeptWOnly << minuitFitterHadrAndLeptWOnly.GetFRResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLeptWOnly.GetFRError() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult()-SMflResult << " & " << minuitFitterHadrAndLeptWOnly.GetFLError() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result()-SMf0Result << " & " << minuitFitterHadrAndLeptWOnly.GetF0Error() << " \\\\ " << endl;		
+			  PresentationTexHadrAndLeptWOnly << minuitFitterHadrAndLeptWOnly.GetFRResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFRError() << " & " << minuitFitterHadrAndLeptWOnly.GetFLResult() << " & " << minuitFitterHadrAndLeptWOnly.GetFLError() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Result() << " & " << minuitFitterHadrAndLeptWOnly.GetF0Error() << " \\\\ " << endl;		
 			  PresentationTexHadrAndLeptWOnly << " \\hline " << endl;
 			}
 		      }
 
-		      if(HadronicAndLeptonic == true){
+		      if(HadronicAndLeptonic == true && PerformMinuit == true){
+			//Nominal:
+			std::string CosThetaStringHadrAndLept = "CosThetaHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+			std::string MlbStringHadrAndLept = "MlbHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 			//Data:
 			std::string CosThetaDataStringHadrAndLept = "CosThetaDataHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JES Plus:
+			std::string MlbDataStringHadrAndLept = "MlbDataHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+			//JES :
 			std::string CosThetaJESPlusStringHadrAndLept = "CosThetaJESPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JES Minus:
 			std::string CosThetaJESMinusStringHadrAndLept="CosThetaJESMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JER Plus:
+			//JER :
 			std::string CosThetaJERPlusStringHadrAndLept = "CosThetaJERPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//JER Minus:
 			std::string CosThetaJERMinusStringHadrAndLept="CosThetaJERMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//WSyst Plus:
+			//WSyst :
 			std::string CosThetaWPlusStringHadrAndLept = "CosThetaWPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//WSyst Minus:
 			std::string CosThetaWMinusStringHadrAndLept = "CosThetaWMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTScaling Plus:
+			//TTScaling :
 			std::string CosThetaTTScalingUpStringHadrAndLept="CosThetaTTScalingUpHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTScaling Minus:
 			std::string CosThetaTTScalingDownStringHadrAndLept = "CosThetaTTScalingDownHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTMatching Plus:
+			//TTMatching :
 			std::string CosThetaTTMatchingUpStringHadrAndLept = "CosThetaTTMatchingUpHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TTMatching Minus:
 			std::string CosThetaTTMatchingDownStringHadrAndLept = "CosThetaTTMatchingDownHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//PU Plus:
+			//PU :
 			std::string CosThetaPUPlusStringHadrAndLept = "CosThetaPUPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//PU Minus:
 			std::string CosThetaPUMinusStringHadrAndLept = "CosThetaPUMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//UnclusEnergy Plus:
+			//UnclusEnergy :
 			std::string CosThetaUnclusEnergyPlusStringHadrAndLept = "CosThetaUnclusEnergyPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//UnclusEnergy Minus:
 			std::string CosThetaUnclusEnergyMinusStringHadrAndLept = "CosThetaUnclusEnergyMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TopMass Plus:
+			//TopMass :
 			std::string CosThetaTopMassPlusStringHadrAndLept = "CosThetaTopMassPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TopMass Minus:
 			std::string CosThetaTopMassMinusStringHadrAndLept = "CosThetaTopMassMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TriggEvtSel Plus:
+			//TriggEvtSel :
 			std::string CosThetaTriggEvtSelPlusStringHadrAndLept = "CosThetaTriggEvtSelPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-			//TriggEvtSel Minus:
 			std::string CosThetaTriggEvtSelMinusStringHadrAndLept = "CosThetaTriggEvtSelMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+			//BTagSyst :
+			std::string CosThetaBTagSystPlusStringHadrAndLept = "CosThetaBTagSystPlusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+			std::string CosThetaBTagSystMinusStringHadrAndLept = "CosThetaBTagSystMinusHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+	
 			std::string CosThetaSignalStringHadrAndLept = "CosThetaSignalHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+			std::string MlbSignalStringHadrAndLept = "MlbSignalHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 			std::string CosThetaBckgStringHadrAndLept = "CosThetaBckgHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];		    
+			std::string MlbBckgStringHadrAndLept = "MlbBckgHadrAndLept_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    
 			if(iDataSet == 0){		      
 
+			  //Nominal
+			  histo1D[CosThetaStringHadrAndLept]=new TH1F(CosThetaStringHadrAndLept.c_str(),CosThetaStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+			  histo1D[CosThetaStringHadrAndLept]->SetDirectory(0);
+			  histo1D[MlbStringHadrAndLept]=new TH1F(MlbStringHadrAndLept.c_str(),MlbStringHadrAndLept.c_str(),100,0,200);
+			  histo1D[MlbStringHadrAndLept]->SetDirectory(0);
+			  //Data
 			  histo1D[CosThetaDataStringHadrAndLept]=new TH1F(CosThetaDataStringHadrAndLept.c_str(),CosThetaDataStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaDataStringHadrAndLept]->SetDirectory(0);
-			  //JESPlus:
+			  histo1D[MlbDataStringHadrAndLept]=new TH1F(MlbDataStringHadrAndLept.c_str(),MlbDataStringHadrAndLept.c_str(),100,0,200);
+			  histo1D[MlbDataStringHadrAndLept]->SetDirectory(0);
+			  //JES :
 			  histo1D[CosThetaJESPlusStringHadrAndLept]=new TH1F(CosThetaJESPlusStringHadrAndLept.c_str(),CosThetaJESPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJESPlusStringHadrAndLept]->SetDirectory(0);
-			  //JESMinus:
 			  histo1D[CosThetaJESMinusStringHadrAndLept]=new TH1F(CosThetaJESMinusStringHadrAndLept.c_str(),CosThetaJESMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJESMinusStringHadrAndLept]->SetDirectory(0);
-			  //JERPlus:
+			  //JER :
 			  histo1D[CosThetaJERPlusStringHadrAndLept]=new TH1F(CosThetaJERPlusStringHadrAndLept.c_str(),CosThetaJERPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJERPlusStringHadrAndLept]->SetDirectory(0);
-			  //JERMinus:
 			  histo1D[CosThetaJERMinusStringHadrAndLept]=new TH1F(CosThetaJERMinusStringHadrAndLept.c_str(),CosThetaJERMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaJERMinusStringHadrAndLept]->SetDirectory(0);
-			  //WJets Plus:
+			  //WJets :
 			  histo1D[CosThetaWPlusStringHadrAndLept]=new TH1F(CosThetaWPlusStringHadrAndLept.c_str(),CosThetaWPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaWPlusStringHadrAndLept]->SetDirectory(0);
-			  //WJets Minus:
 			  histo1D[CosThetaWMinusStringHadrAndLept]=new TH1F(CosThetaWMinusStringHadrAndLept.c_str(),CosThetaWMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaWMinusStringHadrAndLept]->SetDirectory(0);
-			  //TTScaling Up:
+			  //TTScaling :
 			  histo1D[CosThetaTTScalingUpStringHadrAndLept]=new TH1F(CosThetaTTScalingUpStringHadrAndLept.c_str(),CosThetaTTScalingUpStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTScalingUpStringHadrAndLept]->SetDirectory(0);
-			  //TTScaling Down:
 			  histo1D[CosThetaTTScalingDownStringHadrAndLept]=new TH1F(CosThetaTTScalingDownStringHadrAndLept.c_str(),CosThetaTTScalingDownStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTScalingDownStringHadrAndLept]->SetDirectory(0);
-			  //TTMatching Up:
+			  //TTMatching :
 			  histo1D[CosThetaTTMatchingUpStringHadrAndLept]=new TH1F(CosThetaTTMatchingUpStringHadrAndLept.c_str(),CosThetaTTMatchingUpStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTMatchingUpStringHadrAndLept]->SetDirectory(0);
-			  //TTMatching Down:
 			  histo1D[CosThetaTTMatchingDownStringHadrAndLept]=new TH1F(CosThetaTTMatchingDownStringHadrAndLept.c_str(),CosThetaTTMatchingDownStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTTMatchingDownStringHadrAndLept]->SetDirectory(0);
-			  //PU Plus:
+			  //PU :
 			  histo1D[CosThetaPUPlusStringHadrAndLept]=new TH1F(CosThetaPUPlusStringHadrAndLept.c_str(),CosThetaPUPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaPUPlusStringHadrAndLept]->SetDirectory(0);
-			  //PU Minus:
 			  histo1D[CosThetaPUMinusStringHadrAndLept]=new TH1F(CosThetaPUMinusStringHadrAndLept.c_str(),CosThetaPUMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaPUMinusStringHadrAndLept]->SetDirectory(0);
-			  //UnclusEnergy Plus:
+			  //UnclusEnergy :
 			  histo1D[CosThetaUnclusEnergyPlusStringHadrAndLept]=new TH1F(CosThetaUnclusEnergyPlusStringHadrAndLept.c_str(),CosThetaUnclusEnergyPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaUnclusEnergyPlusStringHadrAndLept]->SetDirectory(0);
-			  //UnclusEnergy Minus:
 			  histo1D[CosThetaUnclusEnergyMinusStringHadrAndLept]=new TH1F(CosThetaUnclusEnergyMinusStringHadrAndLept.c_str(),CosThetaUnclusEnergyMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaUnclusEnergyMinusStringHadrAndLept]->SetDirectory(0);
-			  //TopMass Plus:
+			  //TopMass :
 			  histo1D[CosThetaTopMassPlusStringHadrAndLept]=new TH1F(CosThetaTopMassPlusStringHadrAndLept.c_str(),CosThetaTopMassPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTopMassPlusStringHadrAndLept]->SetDirectory(0);
-			  //TopMass Minus:
 			  histo1D[CosThetaTopMassMinusStringHadrAndLept]=new TH1F(CosThetaTopMassMinusStringHadrAndLept.c_str(),CosThetaTopMassMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTopMassMinusStringHadrAndLept]->SetDirectory(0);
-			  //TriggEvtSel Plus:
+			  //TriggEvtSel :
 			  histo1D[CosThetaTriggEvtSelPlusStringHadrAndLept]=new TH1F(CosThetaTriggEvtSelPlusStringHadrAndLept.c_str(),CosThetaTriggEvtSelPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTriggEvtSelPlusStringHadrAndLept]->SetDirectory(0);
-			  //TriggEvtSel Minus:
 			  histo1D[CosThetaTriggEvtSelMinusStringHadrAndLept]=new TH1F(CosThetaTriggEvtSelMinusStringHadrAndLept.c_str(),CosThetaTriggEvtSelMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaTriggEvtSelMinusStringHadrAndLept]->SetDirectory(0);
+			  //bTagSyst :
+			  histo1D[CosThetaBTagSystPlusStringHadrAndLept]=new TH1F(CosThetaBTagSystPlusStringHadrAndLept.c_str(),CosThetaBTagSystPlusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+			  histo1D[CosThetaBTagSystPlusStringHadrAndLept]->SetDirectory(0);
+			  histo1D[CosThetaBTagSystMinusStringHadrAndLept]=new TH1F(CosThetaBTagSystMinusStringHadrAndLept.c_str(),CosThetaBTagSystMinusStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
+			  histo1D[CosThetaBTagSystMinusStringHadrAndLept]->SetDirectory(0);
+			  
 			  histo1D[CosThetaSignalStringHadrAndLept]=new TH1F(CosThetaSignalStringHadrAndLept.c_str(),CosThetaSignalStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaSignalStringHadrAndLept]->SetDirectory(0);
+			  histo1D[MlbSignalStringHadrAndLept]=new TH1F(MlbSignalStringHadrAndLept.c_str(),MlbSignalStringHadrAndLept.c_str(),100,0,200);
+			  histo1D[MlbSignalStringHadrAndLept]->SetDirectory(0);
+
 			  histo1D[CosThetaBckgStringHadrAndLept]=new TH1F(CosThetaBckgStringHadrAndLept.c_str(),CosThetaBckgStringHadrAndLept.c_str(),CosThetaBinNumber,-1,1);
 			  histo1D[CosThetaBckgStringHadrAndLept]->SetDirectory(0);
+			  histo1D[MlbBckgStringHadrAndLept]=new TH1F(MlbBckgStringHadrAndLept.c_str(),MlbBckgStringHadrAndLept.c_str(),100,0,200);
+			  histo1D[MlbBckgStringHadrAndLept]->SetDirectory(0);
 			}
 
 			//Filling of the histograms:
-			for(int ii=0; ii<CosThetaValuesKinFitHadrAndLept[SumbTag].size();ii++){				      
-			  if((dataSetName.find("TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
+			for(int ii=0; ii<CosThetaValuesKinFitHadrAndLept[SumbTag].size();ii++){	
+
+			  if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
 			    for(int iBin=0; iBin< CosThetaBinNumber; iBin++){//Filling of genttbar histo:		   
 			      if(CosThetaValuesKinFitHadrAndLept[SumbTag][ii] >= binEdge[iBin] && CosThetaValuesKinFitHadrAndLept[SumbTag][ii] < binEdge[iBin+1]){
-				genttbarhistoHadrAndLept[iBin]->Fill(CosThGenKinFitHadrAndLept[SumbTag][ii], EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]) ; 
+				genttbarhistoHadrAndLept[iBin]->Fill(CosThGenKinFitHadrAndLept[SumbTag][ii], EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
 			      }
 			      else if(CosThetaValuesKinFitHadrAndLept[SumbTag][ii] ==1){ //1 is included in last bin
 				genttbarhistoHadrAndLept[CosThetaBinNumber-1]->Fill(CosThGenKinFitHadrAndLept[SumbTag][ii], EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
@@ -2894,117 +3114,144 @@ int main (int argc, char *argv[])
 			  // Change data to systematics since then nominal values will be reweighted!! //
 			  ///////////////////////////////////////////////////////////////////////////////
 
+			  //Nominal result:
+			  if(dataSetName.find("Nom_") == 0){
+			    histo1D[CosThetaStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			    histo1D[MlbStringHadrAndLept]->Fill(MlbValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  }
 			  //Data result:
-			  if(dataSetName.find("Data") == 0)
+			  if(dataSetName.find("Data") == 0){
 			    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //JES Plus:
+			    histo1D[MlbDataStringHadrAndLept]->Fill(MlbValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  }
+			  //JES:
 			  if(dataSetName.find("JESPlus") == 0)
 			    histo1D[CosThetaJESPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //JES Minus:
 			  if(dataSetName.find("JESMinus") == 0)
 			    histo1D[CosThetaJESMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //JER Plus:
+			  //JER :
 			  if(dataSetName.find("JERPlus") == 0)
 			    histo1D[CosThetaJERPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //JER Minus:
 			  if(dataSetName.find("JERMinus") == 0)
 			    histo1D[CosThetaJERMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //WJets Plus:  --> Fill with WsystPlus sample and all other MC
-			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystMinus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0&& dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
+			  //WJets :  --> Fill with WsystPlus sample and all other MC
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_WJets") != 0 && WSystResults == true) || dataSetName.find("WSystPlus") == 0 )
 			    histo1D[CosThetaWPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //WJets Minus:  --> Fill with WsystMinus sample and all other MC
-			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSystPlus") != 0  && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0&& dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 )
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_WJets") != 0 && WSystResults == true) || dataSetName.find("WSystMinus") == 0 )
 			    histo1D[CosThetaWMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //TTScaling Up:
-			  if( dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 &&dataSetName.find("WSyst") != 0 &&dataSetName.find("TTScalingDown") != 0 &&dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 &&dataSetName.find("TTbarJets") !=0)
+			  //TTScaling :
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TTScalingResults == true) || dataSetName.find("TTScalingUp") == 0)
 			    histo1D[CosThetaTTScalingUpStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //TTScaling Down:
-			  if( dataSetName.find("Data") !=0 &&dataSetName.find("JES") != 0 &&dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 &&dataSetName.find("TTScalingUp") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TTScalingResults == true) || dataSetName.find("TTScalingDown") == 0)
 			    histo1D[CosThetaTTScalingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //TTMatching Up:
-			  if(dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 &&dataSetName.find("JER") != 0 &&dataSetName.find("WSyst") != 0 &&dataSetName.find("TTScaling") != 0 &&dataSetName.find("TTMatchingDown") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  //TTMatching :
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TTMatchingResults == true) || dataSetName.find("TTMatchingUp") == 0 )
 			    histo1D[CosThetaTTMatchingUpStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //TTMatching Down:
-			  if( dataSetName.find("Data") !=0 &&dataSetName.find("JES") != 0 &&dataSetName.find("JER") != 0&& dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatchingUp") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
-			    histo1D[CosThetaTTMatchingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);		  
-			  //PU Plus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PUMinus") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TTMatchingResults == true) || dataSetName.find("TTMatchingDown") == 0 )
+			    histo1D[CosThetaTTMatchingDownStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  //PU :
+			  if(dataSetName.find("PUPlus_") == 0)
 			    histo1D[CosThetaPUPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //PU Minus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PUPlus") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  if(dataSetName.find("PUMinus_") == 0)
 			    histo1D[CosThetaPUMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //UnclusEnergy Plus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergyMinus") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  //UnclusEnergy :
+			  if(dataSetName.find("UnclusEnergyPlus_") == 0)
 			    histo1D[CosThetaUnclusEnergyPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //UnclusEnergy Minus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergyPlus") != 0 && dataSetName.find("TopMass") != 0  && dataSetName.find("TriggEvtSel") != 0&& dataSetName.find("TTbarJets") !=0 )
+			  if(dataSetName.find("UnclusEnergyMinus_") == 0)
 			    histo1D[CosThetaUnclusEnergyMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //Top Mass Plus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMassMinus") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  //Top Mass :
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TopMassResults == true) ||dataSetName.find("TopMassPlus") == 0)
 			    histo1D[CosThetaTopMassPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //Top Mass Minus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMassPlus") != 0 && dataSetName.find("TriggEvtSel") != 0 && dataSetName.find("TTbarJets") !=0 )		      
+			  if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TopMassResults == true) ||dataSetName.find("TopMassMinus") == 0)
 			    histo1D[CosThetaTopMassMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //TriggEvtSel Plus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSelMinus") != 0 && dataSetName.find("TTbarJets") !=0 )
+			  //TriggEvtSel :
+			  if(dataSetName.find("TriggEvtSelPlus_") == 0)
 			    histo1D[CosThetaTriggEvtSelPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-			  //TriggEvtSel Minus:
-			  if(dataSetName.find("Data") !=0&& dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSelPlus") != 0 && dataSetName.find("TTbarJets") !=0 )		      
+			  if(dataSetName.find("TriggEvtSelMinus_") == 0)
 			    histo1D[CosThetaTriggEvtSelMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  //bTag Syst :
+			  if(dataSetName.find("bTagSystPlus_") == 0)
+			    histo1D[CosThetaBTagSystPlusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  if(dataSetName.find("bTagSystMinus_") == 0)
+			    histo1D[CosThetaBTagSystMinusStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
 
-			  if(SignalOnly == true && ((dataSetName.find("TTbarJets_SemiMu") == 0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true)))
+			  if(SignalOnly == true && dataSetName.find("McDta") == 0){
 			    histo1D[CosThetaDataStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-
-			  if(((dataSetName.find("TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")==0 && semiElectron == true) ) && dataSetName.find("JES_") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0)
+			    histo1D[MlbDataStringHadrAndLept]->Fill(MlbValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  }
+			  if((dataSetName.find("Nom_TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("Nom_TTbarJets_SemiEl")==0 && semiElectron == true) ){
 			    histo1D[CosThetaSignalStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
-
-			  if (dataSetName.find("Data") !=0 && dataSetName.find("JES") != 0 && dataSetName.find("JER") != 0 && dataSetName.find("WSyst") != 0 && dataSetName.find("TTScaling") != 0 && dataSetName.find("TTMatching") != 0 && dataSetName.find("PU") != 0 && dataSetName.find("UnclusEnergy") != 0 && dataSetName.find("TopMass") != 0 && dataSetName.find("TriggEvtSel") != 0 && ((dataSetName.find("TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("TTbarJets_SemiEl")!=0 && semiElectron == true) ))
-			    histo1D[CosThetaBckgStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);		  
+			    histo1D[MlbSignalStringHadrAndLept]->Fill(MlbValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  }
+			  if(dataSetName.find("Nom_") == 0 && ((dataSetName.find("Nom_TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("Nom_TTbarJets_SemiEl")!=0 && semiElectron == true))){
+			    histo1D[CosThetaBckgStringHadrAndLept]->Fill(CosThetaValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);			
+			    histo1D[MlbBckgStringHadrAndLept]->Fill(MlbValuesKinFitHadrAndLept[SumbTag][ii],EventCorrectionWeightKinFitHadrAndLept[SumbTag][ii]);
+			  }
 			}
 		    
 			//Perform MinuitFitter:
-			if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active to perform MinuitFitter
-			  //Data:
-			  MinuitFitter minuitFitterHadrAndLept = MinuitFitter(histo1D[CosThetaDataStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
-			  //JESPlus
-			  MinuitFitter minuitFitterHadrAndLeptJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //JES Minus
-			  MinuitFitter minuitFitterHadrAndLeptJESMinus = MinuitFitter(histo1D[CosThetaJESMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //JERPlus
-			  MinuitFitter minuitFitterHadrAndLeptJERPlus = MinuitFitter(histo1D[CosThetaJERPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //JER Minus
-			  MinuitFitter minuitFitterHadrAndLeptJERMinus = MinuitFitter(histo1D[CosThetaJERMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //W Plus
-			  MinuitFitter minuitFitterHadrAndLeptWPlus = MinuitFitter(histo1D[CosThetaWPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //W Minus
-			  MinuitFitter minuitFitterHadrAndLeptWMinus = MinuitFitter(histo1D[CosThetaWMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
-			  //TTScaling Up
-			  MinuitFitter minuitFitterHadrAndLeptTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
-			  //TTScaling Down
-			  MinuitFitter minuitFitterHadrAndLeptTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
-			  //TTMatching Up
-			  MinuitFitter minuitFitterHadrAndLeptTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
-			  //TTMatching Down
-			  MinuitFitter minuitFitterHadrAndLeptTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
-			  //PU Plus
-			  MinuitFitter minuitFitterHadrAndLeptPUPlus = MinuitFitter(histo1D[CosThetaPUPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //PU Minus
-			  MinuitFitter minuitFitterHadrAndLeptPUMinus = MinuitFitter(histo1D[CosThetaPUMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //UnclusEnergy Plus
-			  MinuitFitter minuitFitterHadrAndLeptUnclusEnergyPlus = MinuitFitter(histo1D[CosThetaUnclusEnergyPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //UnclusEnergy Minus
-			  MinuitFitter minuitFitterHadrAndLeptUnclusEnergyMinus = MinuitFitter(histo1D[CosThetaUnclusEnergyMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //TopMass Plus
-			  MinuitFitter minuitFitterHadrAndLeptTopMassPlus = MinuitFitter(histo1D[CosThetaTopMassPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //TopMass Minus
-			  MinuitFitter minuitFitterHadrAndLeptTopMassMinus = MinuitFitter(histo1D[CosThetaTopMassMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //TriggEvtSel Plus
-			  MinuitFitter minuitFitterHadrAndLeptTriggEvtSelPlus = MinuitFitter(histo1D[CosThetaTriggEvtSelPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
-			  //TriggEvtSel Minus
-			  MinuitFitter minuitFitterHadrAndLeptTriggEvtSelMinus = MinuitFitter(histo1D[CosThetaTriggEvtSelMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);			  
+			if(iDataSet==(datasets.size()-1)){//Go in this loop when the last datasample is active to perform MinuitFitter			  
+
+			  //if(CosThetaDataStringHadrAndLept == ("CosThetaDataHadrAndLept_TCHE"+bTag[13]+"_TCHP"+bTag[13]+"_SSVHE"+bTag[13]+"_SSVHP"+bTag[13]+"_CSV"+bTag[6]+"_JP"+bTag[1]+"_JBP"+bTag[1]).c_str()){
+//  			  cout << "               -------------------------------------------   Considering combination : " << PresentationOutput[SumbTag] << endl;
+//  			  cout << "               -------------------------------------------   Size of data histo : " << histo1D[CosThetaDataStringHadrAndLept]->GetEntries() << endl;
+// 			  cout << "               -------------------------------------------   size of signal histo : " << histo1D[CosThetaSignalStringHadrAndLept]->GetEntries() << endl;
+//  			  cout << "               -------------------------------------------   Size of bckg histo : " << histo1D[CosThetaBckgStringHadrAndLept]->GetEntries() << endl;
+			  //}
 			  
+			  if(CSV == 6 || CSV == 7){
+			    cout << " Size of 'Data' histo for Nominal minuitFitter : " << histo1D[CosThetaStringHadrAndLept]->GetEntries() << " | " << histo1D[CosThetaStringHadrAndLept]->GetEffectiveEntries() << endl;
+			    cout << " Size of 'Data' histo                          : " << histo1D[CosThetaDataStringHadrAndLept]->GetEntries() << " | " << histo1D[CosThetaDataStringHadrAndLept]->GetEffectiveEntries() << endl;
+			    cout << " Size of Signal histo                          : " << histo1D[CosThetaSignalStringHadrAndLept]->GetEntries() << " | " << histo1D[CosThetaSignalStringHadrAndLept]->GetEffectiveEntries() << endl;
+			    cout << " Size of Bckg histo                            : " << histo1D[CosThetaBckgStringHadrAndLept]->GetEntries() << " | " << histo1D[CosThetaBckgStringHadrAndLept]->GetEffectiveEntries() << endl;
+			  }
+			  //Nominal:
+// 			  cout << " Starting with Mlb Fitter " << endl;
+// 			  cout << " size of histo's : " << endl;
+// 			  cout << " Nominal MC : " << histo1D[MlbStringHadrAndLept]->GetEntries() << endl;
+// 			  cout << " Signal     : " << histo1D[MlbSignalStringHadrAndLept]->GetEntries() << endl;
+// 			  cout << " Bckg       : " << histo1D[MlbBckgStringHadrAndLept]->GetEntries() << endl;
+// 			  cout << " Data       : " << histo1D[MlbDataStringHadrAndLept]->GetEntries() << endl;
+			  MlbFitter MlbFitterHadrAndLept = MlbFitter(histo1D[MlbStringHadrAndLept], histo1D[MlbSignalStringHadrAndLept], histo1D[MlbBckgStringHadrAndLept]);
+			  MlbFitter MlbFitterHadrAndLeptData = MlbFitter(histo1D[MlbDataStringHadrAndLept], histo1D[MlbSignalStringHadrAndLept], histo1D[MlbBckgStringHadrAndLept]);
+			  MlbNormTex << " \\hline \n ";
+			  MlbNormTex << PresentationOutput[SumbTag] << " & " << MlbFitterHadrAndLeptData.GetNorm() << " & " << MlbFitterHadrAndLeptData.GetNormError() << " & " << " & " << MlbFitterHadrAndLeptData.GetNormBckg() << " & " << MlbFitterHadrAndLeptData.GetNormBckgError() << " & " << MlbFitterHadrAndLept.GetNorm() << " & " << MlbFitterHadrAndLept.GetNormError() << " & " << MlbFitterHadrAndLept.GetNormBckg() << " & " << MlbFitterHadrAndLept.GetNormBckgError() << endl;
+
+			  //Nominal:
+			  MinuitFitter minuitFitterHadrAndLept = MinuitFitter(histo1D[CosThetaStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //Data:
+			  MinuitFitter minuitFitterHadrAndLeptData = MinuitFitter(histo1D[CosThetaDataStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //JES
+			  MinuitFitter minuitFitterHadrAndLeptJESPlus = MinuitFitter(histo1D[CosThetaJESPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptJESMinus = MinuitFitter(histo1D[CosThetaJESMinusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //JER
+			  MinuitFitter minuitFitterHadrAndLeptJERPlus = MinuitFitter(histo1D[CosThetaJERPlusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptJERMinus = MinuitFitter(histo1D[CosThetaJERMinusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept], 0.6671,0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //WSyst
+			  MinuitFitter minuitFitterHadrAndLeptWPlus = MinuitFitter(histo1D[CosThetaWPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptWMinus = MinuitFitter(histo1D[CosThetaWMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //TTScaling
+			  MinuitFitter minuitFitterHadrAndLeptTTScalingUp=MinuitFitter(histo1D[CosThetaTTScalingUpStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //TTMatching
+			  MinuitFitter minuitFitterHadrAndLeptTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //PU
+			  MinuitFitter minuitFitterHadrAndLeptPUPlus = MinuitFitter(histo1D[CosThetaPUPlusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept], histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptPUMinus = MinuitFitter(histo1D[CosThetaPUMinusStringHadrAndLept], histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept], 0.6671, 0.3325, 0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //UnclusEnergy
+			  MinuitFitter minuitFitterHadrAndLeptUnclusEnergyPlus=MinuitFitter(histo1D[CosThetaUnclusEnergyPlusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptUnclusEnergyMinus=MinuitFitter(histo1D[CosThetaUnclusEnergyMinusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //TopMass
+			  MinuitFitter minuitFitterHadrAndLeptTopMassPlus=MinuitFitter(histo1D[CosThetaTopMassPlusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptTopMassMinus=MinuitFitter(histo1D[CosThetaTopMassMinusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //TriggEvtSel
+			  MinuitFitter minuitFitterHadrAndLeptTriggEvtSelPlus = MinuitFitter(histo1D[CosThetaTriggEvtSelPlusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptTriggEvtSelMinus =MinuitFitter(histo1D[CosThetaTriggEvtSelMinusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  //BTag
+			  MinuitFitter minuitFitterHadrAndLeptBTagSystPlus=MinuitFitter(histo1D[CosThetaBTagSystPlusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
+			  MinuitFitter minuitFitterHadrAndLeptBTagSystMinus=MinuitFitter(histo1D[CosThetaBTagSystMinusStringHadrAndLept],histo1D[CosThetaSignalStringHadrAndLept],histo1D[CosThetaBckgStringHadrAndLept],0.6671,0.3325,0.0004,genttbarhistoHadrAndLept,ndimen);
 			  PresentationTexHadrAndLept << PresentationOutput[SumbTag] << " & ";
-			  cout << " Inside minuitFitter loop : " << PresentationOutput[SumbTag] << " & " << endl;
 			  for(int ii=0; ii< nameDataSet.size(); ii++){
 			    if(ii < nameDataSet.size()-1){ PresentationTexHadrAndLept << NumberRemainingEventsKinFitHadrAndLept[SumbTag][ii] << " & ";}
 			    else if(ii == nameDataSet.size()-1 ){ 
@@ -3014,7 +3261,8 @@ int main (int argc, char *argv[])
 			  }	
 		  
 			  //FL results:
-			  float FLJESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptJESPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptJESMinus.GetFLResult()))/2;
+			  float FLJESSystHadrAndLept = 0;
+			  if(JESResults == true) FLJESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptJESPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptJESMinus.GetFLResult()))/2;
 			  float FLJERSystHadrAndLept = 0;
 			  if(JERResults == true) FLJERSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptJERPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptJERMinus.GetFLResult()))/2;
 			  float FLWSystHadrAndLept = 0;
@@ -3022,20 +3270,27 @@ int main (int argc, char *argv[])
 			  float FLTTScalingHadrAndLept = 0;
 			  if(TTScalingResults == true) FLTTScalingHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTScalingUp.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTScalingDown.GetFLResult()))/2;
 			  float FLTTMatchingHadrAndLept = 0;
-			  if(TTMatchingResults == true) FLTTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTMatchingUp.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTMatchingDown.GetFLResult()))/2;
+			  float FLTTMatchingUpHadrAndLept = 0;
+			  if(TTMatchingResults == true){
+			    FLTTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTMatchingUp.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTMatchingDown.GetFLResult()))/2;
+			    FLTTMatchingUpHadrAndLept = abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTTMatchingUp.GetFLResult());
+			  }
 			  float FLPUSystHadrAndLept = 0;
 			  if(PUResults == true) FLPUSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptPUPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptPUMinus.GetFLResult()))/2;
 			  float FLUnclusEnergySystHadrAndLept = 0;
 			  if(UnclusEnergyResults == true) FLUnclusEnergySystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptUnclusEnergyPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptUnclusEnergyMinus.GetFLResult()))/2;
 			  float FLTopMassSystHadrAndLept = 0;
-			  if(TopMassResults == true) FLTopMassSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTopMassPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTopMassMinus.GetFLResult()))/2;		      
+			  if(TopMassResults == true) FLTopMassSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTopMassPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTopMassMinus.GetFLResult()))/6;  //Shift to 1 GeV
 			  float FLTriggEvtSelSystHadrAndLept = 0;
 			  if(TriggEvtSelResults == true) FLTriggEvtSelSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTriggEvtSelPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptTriggEvtSelMinus.GetFLResult()))/2;		      
+			  float FLBTagSystHadrAndLept = 0;
+			  if(bTagResults == true) FLBTagSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptBTagSystPlus.GetFLResult()) + abs(minuitFitterHadrAndLept.GetFLResult() - minuitFitterHadrAndLeptBTagSystMinus.GetFLResult()))/2;		      
 			  FMinusTexHadrAndLept << "\\hline" << endl;
-			  FMinusTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLept.GetFLResult() << " & " << minuitFitterHadrAndLept.GetFLResult()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetFLError() << " & " << FLJESSystHadrAndLept << " & " << FLJERSystHadrAndLept << " & " << FLWSystHadrAndLept << " & " << FLTTScalingHadrAndLept << " & " << FLTTMatchingHadrAndLept << " & " << FLPUSystHadrAndLept << " & " << FLUnclusEnergySystHadrAndLept << " & " << FLTopMassSystHadrAndLept << " & " << FLTriggEvtSelSystHadrAndLept << " & " << sqrt(FLJESSystHadrAndLept*FLJESSystHadrAndLept + FLJERSystHadrAndLept*FLJERSystHadrAndLept + FLWSystHadrAndLept*FLWSystHadrAndLept + FLTTScalingHadrAndLept*FLTTScalingHadrAndLept + FLTTMatchingHadrAndLept*FLTTMatchingHadrAndLept + FLPUSystHadrAndLept*FLPUSystHadrAndLept + FLUnclusEnergySystHadrAndLept*FLUnclusEnergySystHadrAndLept + FLTopMassSystHadrAndLept*FLTopMassSystHadrAndLept + FLTriggEvtSelSystHadrAndLept*FLTriggEvtSelSystHadrAndLept) << " & " << sqrt(FLJESSystHadrAndLept*FLJESSystHadrAndLept + FLJERSystHadrAndLept*FLJERSystHadrAndLept + FLWSystHadrAndLept*FLWSystHadrAndLept + FLTTScalingHadrAndLept*FLTTScalingHadrAndLept + FLTTMatchingHadrAndLept*FLTTMatchingHadrAndLept + FLPUSystHadrAndLept*FLPUSystHadrAndLept + FLUnclusEnergySystHadrAndLept*FLUnclusEnergySystHadrAndLept + FLTopMassSystHadrAndLept*FLTopMassSystHadrAndLept + FLTriggEvtSelSystHadrAndLept*FLTriggEvtSelSystHadrAndLept + (minuitFitterHadrAndLept.GetFLError())*(minuitFitterHadrAndLept.GetFLError())) << "\\\\" << endl;
+			  FMinusTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptData.GetFLResult() <<" & " << minuitFitterHadrAndLeptData.GetFLError() << " & " << FLJESSystHadrAndLept << " & " << FLJERSystHadrAndLept << " & " << FLWSystHadrAndLept << " & " << FLTTScalingHadrAndLept << " & " << FLTTMatchingHadrAndLept << " & " << FLTTMatchingUpHadrAndLept << " & " << FLPUSystHadrAndLept << " & " << FLUnclusEnergySystHadrAndLept << " & " << FLTopMassSystHadrAndLept << " & " << FLTriggEvtSelSystHadrAndLept << " & " << FLBTagSystHadrAndLept << " & " << sqrt(FLJESSystHadrAndLept*FLJESSystHadrAndLept + FLJERSystHadrAndLept*FLJERSystHadrAndLept + FLWSystHadrAndLept*FLWSystHadrAndLept + FLTTScalingHadrAndLept*FLTTScalingHadrAndLept + FLTTMatchingHadrAndLept*FLTTMatchingHadrAndLept + FLPUSystHadrAndLept*FLPUSystHadrAndLept + FLUnclusEnergySystHadrAndLept*FLUnclusEnergySystHadrAndLept + FLTopMassSystHadrAndLept*FLTopMassSystHadrAndLept + FLTriggEvtSelSystHadrAndLept*FLTriggEvtSelSystHadrAndLept + FLBTagSystHadrAndLept*FLBTagSystHadrAndLept) << " & " << sqrt(FLJESSystHadrAndLept*FLJESSystHadrAndLept + FLJERSystHadrAndLept*FLJERSystHadrAndLept + FLWSystHadrAndLept*FLWSystHadrAndLept + FLTTScalingHadrAndLept*FLTTScalingHadrAndLept + FLTTMatchingHadrAndLept*FLTTMatchingHadrAndLept + FLPUSystHadrAndLept*FLPUSystHadrAndLept + FLUnclusEnergySystHadrAndLept*FLUnclusEnergySystHadrAndLept + FLTopMassSystHadrAndLept*FLTopMassSystHadrAndLept + FLTriggEvtSelSystHadrAndLept*FLTriggEvtSelSystHadrAndLept + FLBTagSystHadrAndLept*FLBTagSystHadrAndLept + (minuitFitterHadrAndLeptData.GetFLError())*(minuitFitterHadrAndLeptData.GetFLError())) << "\\\\" << endl;
 		  
 			  //FR results:
-			  float FRJESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptJESPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptJESMinus.GetFRResult()))/2;
+			  float FRJESSystHadrAndLept = 0;
+			  if(JESResults == true) FRJESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptJESPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptJESMinus.GetFRResult()))/2;
 			  float FRJERSystHadrAndLept = 0;
 			  if(JERResults == true) FRJERSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptJERPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptJERMinus.GetFRResult()))/2;
 			  float FRWSystHadrAndLept = 0;
@@ -3043,20 +3298,27 @@ int main (int argc, char *argv[])
 			  float FRTTScalingHadrAndLept = 0;
 			  if(TTScalingResults == true) FRTTScalingHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTScalingUp.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTScalingDown.GetFRResult()))/2;
 			  float FRTTMatchingHadrAndLept = 0;
-			  if(TTMatchingResults == true) FRTTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTMatchingUp.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTMatchingDown.GetFRResult()))/2;		  
+			  float FRTTMatchingUpHadrAndLept = 0;
+			  if(TTMatchingResults == true){
+			    FRTTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTMatchingUp.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTMatchingDown.GetFRResult()))/2;		  
+			    FRTTMatchingUpHadrAndLept = abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTTMatchingUp.GetFRResult());		  
+			  }
 			  float FRPUSystHadrAndLept = 0;
 			  if(PUResults == true) FRPUSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptPUPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptPUMinus.GetFRResult()))/2;
 			  float FRUnclusEnergySystHadrAndLept = 0;
 			  if(UnclusEnergyResults == true) FRUnclusEnergySystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptUnclusEnergyPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptUnclusEnergyMinus.GetFRResult()))/2;
 			  float FRTopMassSystHadrAndLept = 0;
-			  if(TopMassResults == true) FRTopMassSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTopMassPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTopMassMinus.GetFRResult()))/2;
+			  if(TopMassResults == true) FRTopMassSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTopMassPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTopMassMinus.GetFRResult()))/6;  //Shift to 1 GeV
 			  float FRTriggEvtSelSystHadrAndLept = 0;
 			  if(TriggEvtSelResults == true) FRTriggEvtSelSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTriggEvtSelPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptTriggEvtSelMinus.GetFRResult()))/2;
+			  float FRBTagSystHadrAndLept = 0;
+			  if(bTagResults == true) FRBTagSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptBTagSystPlus.GetFRResult()) + abs(minuitFitterHadrAndLept.GetFRResult() - minuitFitterHadrAndLeptBTagSystMinus.GetFRResult()))/2;		      
 			  FPlusTexHadrAndLept << "\\hline" << endl;
-			  FPlusTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLept.GetFRResult() << " & " << minuitFitterHadrAndLept.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetFRError() << " & " << FRJESSystHadrAndLept << " & " << FRJERSystHadrAndLept << " & " << FRWSystHadrAndLept << " & " << FRTTScalingHadrAndLept << " & " << FRTTMatchingHadrAndLept << " & " << FRPUSystHadrAndLept << " & " << FRUnclusEnergySystHadrAndLept << " & " << FRTopMassSystHadrAndLept << " & " << FRTriggEvtSelSystHadrAndLept << " & " << sqrt(FRJESSystHadrAndLept*FRJESSystHadrAndLept + FRJERSystHadrAndLept*FRJERSystHadrAndLept + FRWSystHadrAndLept*FRWSystHadrAndLept + FRTTScalingHadrAndLept*FRTTScalingHadrAndLept + FRTTMatchingHadrAndLept*FRTTMatchingHadrAndLept + FRPUSystHadrAndLept*FRPUSystHadrAndLept + FRUnclusEnergySystHadrAndLept*FRUnclusEnergySystHadrAndLept + FRTopMassSystHadrAndLept*FRTopMassSystHadrAndLept + FRTriggEvtSelSystHadrAndLept*FRTriggEvtSelSystHadrAndLept) << " & " << sqrt(FRJESSystHadrAndLept*FRJESSystHadrAndLept + FRJERSystHadrAndLept*FRJERSystHadrAndLept + FRWSystHadrAndLept*FRWSystHadrAndLept + FRTTScalingHadrAndLept*FRTTScalingHadrAndLept + FRTTMatchingHadrAndLept*FRTTMatchingHadrAndLept + FRPUSystHadrAndLept*FRPUSystHadrAndLept + FRUnclusEnergySystHadrAndLept*FRUnclusEnergySystHadrAndLept + FRTopMassSystHadrAndLept*FRTopMassSystHadrAndLept + FRTriggEvtSelSystHadrAndLept*FRTriggEvtSelSystHadrAndLept + (minuitFitterHadrAndLept.GetFRError())*(minuitFitterHadrAndLept.GetFRError())) << "\\\\" << endl;
+			  FPlusTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptData.GetFRResult() <<" & " << minuitFitterHadrAndLeptData.GetFRError() << " & " << FRJESSystHadrAndLept << " & " << FRJERSystHadrAndLept << " & " << FRWSystHadrAndLept << " & " << FRTTScalingHadrAndLept << " & " << FRTTMatchingHadrAndLept << " & " << FRTTMatchingUpHadrAndLept << " & " << FRPUSystHadrAndLept << " & " << FRUnclusEnergySystHadrAndLept << " & " << FRTopMassSystHadrAndLept << " & " << FRTriggEvtSelSystHadrAndLept << " & " << FRBTagSystHadrAndLept << " & " << sqrt(FRJESSystHadrAndLept*FRJESSystHadrAndLept + FRJERSystHadrAndLept*FRJERSystHadrAndLept + FRWSystHadrAndLept*FRWSystHadrAndLept + FRTTScalingHadrAndLept*FRTTScalingHadrAndLept + FRTTMatchingHadrAndLept*FRTTMatchingHadrAndLept + FRPUSystHadrAndLept*FRPUSystHadrAndLept + FRUnclusEnergySystHadrAndLept*FRUnclusEnergySystHadrAndLept + FRTopMassSystHadrAndLept*FRTopMassSystHadrAndLept + FRTriggEvtSelSystHadrAndLept*FRTriggEvtSelSystHadrAndLept + FRBTagSystHadrAndLept*FRBTagSystHadrAndLept) << " & " << sqrt(FRJESSystHadrAndLept*FRJESSystHadrAndLept + FRJERSystHadrAndLept*FRJERSystHadrAndLept + FRWSystHadrAndLept*FRWSystHadrAndLept + FRTTScalingHadrAndLept*FRTTScalingHadrAndLept + FRTTMatchingHadrAndLept*FRTTMatchingHadrAndLept + FRPUSystHadrAndLept*FRPUSystHadrAndLept + FRUnclusEnergySystHadrAndLept*FRUnclusEnergySystHadrAndLept + FRTopMassSystHadrAndLept*FRTopMassSystHadrAndLept + FRTriggEvtSelSystHadrAndLept*FRTriggEvtSelSystHadrAndLept + FRBTagSystHadrAndLept*FRBTagSystHadrAndLept + (minuitFitterHadrAndLeptData.GetFRError())*(minuitFitterHadrAndLeptData.GetFRError())) << "\\\\" << endl;
 
 			  //F0 results:
-			  float F0JESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptJESPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptJESMinus.GetF0Result()))/2;
+			  float F0JESSystHadrAndLept = 0;
+			  if(JESResults == true) F0JESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptJESPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptJESMinus.GetF0Result()))/2;
 			  float F0JERSystHadrAndLept = 0;
 			  if(JERResults == true) F0JERSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptJERPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptJERMinus.GetF0Result()))/2;
 			  float F0WSystHadrAndLept = 0;
@@ -3064,24 +3326,101 @@ int main (int argc, char *argv[])
 			  float F0TTScalingHadrAndLept = 0;
 			  if(TTScalingResults == true) F0TTScalingHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTScalingUp.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTScalingDown.GetF0Result()))/2;
 			  float F0TTMatchingHadrAndLept = 0;
-			  if(TTMatchingResults == true) F0TTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTMatchingUp.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTMatchingDown.GetF0Result()))/2;		  
+			  float F0TTMatchingUpHadrAndLept = 0;
+			  if(TTMatchingResults == true){
+			    F0TTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTMatchingUp.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTMatchingDown.GetF0Result()))/2;		  
+			    F0TTMatchingUpHadrAndLept = abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTTMatchingUp.GetF0Result());		  
+			  }
 			  float F0PUSystHadrAndLept = 0;
 			  if(PUResults == true) F0PUSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptPUPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptPUMinus.GetF0Result()))/2;
 			  float F0UnclusEnergySystHadrAndLept = 0;
 			  if(UnclusEnergyResults == true) F0UnclusEnergySystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptUnclusEnergyPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptUnclusEnergyMinus.GetF0Result()))/2;
 			  float F0TopMassSystHadrAndLept = 0;
-			  if(TopMassResults == true) F0TopMassSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTopMassPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTopMassMinus.GetF0Result()))/2;
+			  if(TopMassResults == true) F0TopMassSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTopMassPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTopMassMinus.GetF0Result()))/6;  //Shift to 1 GeV
 			  float F0TriggEvtSelSystHadrAndLept = 0;
 			  if(TriggEvtSelResults == true) F0TriggEvtSelSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTriggEvtSelPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptTriggEvtSelMinus.GetF0Result()))/2;
+			  float F0BTagSystHadrAndLept = 0;
+			  if(bTagResults == true) F0BTagSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptBTagSystPlus.GetF0Result()) + abs(minuitFitterHadrAndLept.GetF0Result() - minuitFitterHadrAndLeptBTagSystMinus.GetF0Result()))/2;		      
 			  FZeroTexHadrAndLept << " \\hline" << endl;
-			  FZeroTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLept.GetF0Result() << " & " << minuitFitterHadrAndLept.GetF0Result()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetF0Error() << " & " << F0JESSystHadrAndLept << " & " << F0JERSystHadrAndLept << " & " << F0WSystHadrAndLept << " & " << F0TTScalingHadrAndLept << " & " << F0TTMatchingHadrAndLept << " & " << F0PUSystHadrAndLept << " & " << F0UnclusEnergySystHadrAndLept << " & " << F0TopMassSystHadrAndLept << " & " << F0TriggEvtSelSystHadrAndLept << " & " << sqrt(F0JESSystHadrAndLept*F0JESSystHadrAndLept + F0JERSystHadrAndLept*F0JERSystHadrAndLept + F0WSystHadrAndLept*F0WSystHadrAndLept + F0TTScalingHadrAndLept*F0TTScalingHadrAndLept + F0TTMatchingHadrAndLept*F0TTMatchingHadrAndLept + F0PUSystHadrAndLept*F0PUSystHadrAndLept + F0UnclusEnergySystHadrAndLept*F0UnclusEnergySystHadrAndLept + F0TopMassSystHadrAndLept*F0TopMassSystHadrAndLept + F0TriggEvtSelSystHadrAndLept*F0TriggEvtSelSystHadrAndLept) << " & " << sqrt(F0JESSystHadrAndLept*F0JESSystHadrAndLept + F0JERSystHadrAndLept*F0JERSystHadrAndLept + F0WSystHadrAndLept*F0WSystHadrAndLept + F0TTScalingHadrAndLept*F0TTScalingHadrAndLept + F0TTMatchingHadrAndLept*F0TTMatchingHadrAndLept + F0PUSystHadrAndLept*F0PUSystHadrAndLept + F0UnclusEnergySystHadrAndLept*F0UnclusEnergySystHadrAndLept + F0TopMassSystHadrAndLept*F0TopMassSystHadrAndLept + F0TriggEvtSelSystHadrAndLept*F0TriggEvtSelSystHadrAndLept + (minuitFitterHadrAndLept.GetF0Error())*(minuitFitterHadrAndLept.GetF0Error())) << "\\\\" << endl;
+			  FZeroTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptData.GetF0Result() <<" & " << minuitFitterHadrAndLeptData.GetF0Error() << " & " << F0JESSystHadrAndLept << " & " << F0JERSystHadrAndLept << " & " << F0WSystHadrAndLept << " & " << F0TTScalingHadrAndLept << " & " << F0TTMatchingHadrAndLept << " & " << F0TTMatchingUpHadrAndLept << " & " << F0PUSystHadrAndLept << " & " << F0UnclusEnergySystHadrAndLept << " & " << F0TopMassSystHadrAndLept << " & " << F0TriggEvtSelSystHadrAndLept << " & " << F0BTagSystHadrAndLept << " & " << sqrt(F0JESSystHadrAndLept*F0JESSystHadrAndLept + F0JERSystHadrAndLept*F0JERSystHadrAndLept + F0WSystHadrAndLept*F0WSystHadrAndLept + F0TTScalingHadrAndLept*F0TTScalingHadrAndLept + F0TTMatchingHadrAndLept*F0TTMatchingHadrAndLept + F0PUSystHadrAndLept*F0PUSystHadrAndLept + F0UnclusEnergySystHadrAndLept*F0UnclusEnergySystHadrAndLept + F0TopMassSystHadrAndLept*F0TopMassSystHadrAndLept + F0TriggEvtSelSystHadrAndLept*F0TriggEvtSelSystHadrAndLept + F0BTagSystHadrAndLept*F0BTagSystHadrAndLept) << " & " << sqrt(F0JESSystHadrAndLept*F0JESSystHadrAndLept + F0JERSystHadrAndLept*F0JERSystHadrAndLept + F0WSystHadrAndLept*F0WSystHadrAndLept + F0TTScalingHadrAndLept*F0TTScalingHadrAndLept + F0TTMatchingHadrAndLept*F0TTMatchingHadrAndLept + F0PUSystHadrAndLept*F0PUSystHadrAndLept + F0UnclusEnergySystHadrAndLept*F0UnclusEnergySystHadrAndLept + F0TopMassSystHadrAndLept*F0TopMassSystHadrAndLept + F0TriggEvtSelSystHadrAndLept*F0TriggEvtSelSystHadrAndLept + F0BTagSystHadrAndLept*F0BTagSystHadrAndLept + (minuitFitterHadrAndLeptData.GetF0Error())*(minuitFitterHadrAndLeptData.GetF0Error())) << "\\\\" << endl;
+
+			  //Normalisation results:
+			  float NormJESSystHadrAndLept = 0;
+			  if(JESResults == true) NormJESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptJESPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptJESMinus.GetNorm()))/2;
+			  float NormJERSystHadrAndLept = 0;
+			  if(JERResults == true) NormJERSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptJERPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptJERMinus.GetNorm()))/2;
+			  float NormWSystHadrAndLept = 0;
+			  if(WSystResults == true) NormWSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptWPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptWMinus.GetNorm()))/2;
+			  float NormTTScalingHadrAndLept = 0;
+			  if(TTScalingResults == true) NormTTScalingHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTTScalingUp.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTTScalingDown.GetNorm()))/2;
+			  float NormTTMatchingHadrAndLept = 0;
+			  float NormTTMatchingUpHadrAndLept = 0;
+			  if(TTMatchingResults == true){
+			    NormTTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTTMatchingUp.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTTMatchingDown.GetNorm()))/2;
+			    NormTTMatchingUpHadrAndLept = abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTTMatchingUp.GetNorm());
+			  }
+			  float NormPUSystHadrAndLept = 0;
+			  if(PUResults == true) NormPUSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptPUPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptPUMinus.GetNorm()))/2;
+			  float NormUnclusEnergySystHadrAndLept = 0;
+			  if(UnclusEnergyResults == true) NormUnclusEnergySystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptUnclusEnergyPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptUnclusEnergyMinus.GetNorm()))/2;
+			  float NormTopMassSystHadrAndLept = 0;
+			  if(TopMassResults==true) NormTopMassSystHadrAndLept=(abs(minuitFitterHadrAndLept.GetNorm()-minuitFitterHadrAndLeptTopMassPlus.GetNorm())+abs(minuitFitterHadrAndLept.GetNorm()-minuitFitterHadrAndLeptTopMassMinus.GetNorm()))/6;//Shift to 1 GeV
+			  float NormTriggEvtSelSystHadrAndLept = 0;
+			  if(TriggEvtSelResults == true) NormTriggEvtSelSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTriggEvtSelPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptTriggEvtSelMinus.GetNorm()))/2;
+			  float NormBTagSystHadrAndLept = 0;
+			  if(bTagResults == true) NormBTagSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptBTagSystPlus.GetNorm()) + abs(minuitFitterHadrAndLept.GetNorm() - minuitFitterHadrAndLeptBTagSystMinus.GetNorm()))/2;
+
+			  if(CSV == 6 || CSV == 7){
+			    cout << " Norm result (Data) : " << minuitFitterHadrAndLeptData.GetNorm() << endl;
+			    cout << " Norm result (Nominal) : " << minuitFitterHadrAndLept.GetNorm() << endl;
+			    cout << " Configuration : " << PresentationOutput[SumbTag] << endl;
+			  }
+
+			  NormTexHadrAndLept << " \\hline" << endl;
+			  NormTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptData.GetNorm() <<" & " << minuitFitterHadrAndLeptData.GetNormError() << " & " << NormJESSystHadrAndLept << " & " << NormJERSystHadrAndLept << " & " << NormWSystHadrAndLept << " & " << NormTTScalingHadrAndLept << " & " << NormTTMatchingHadrAndLept << " & " << NormTTMatchingUpHadrAndLept << " & " << NormPUSystHadrAndLept << " & " << NormUnclusEnergySystHadrAndLept << " & " << NormTopMassSystHadrAndLept << " & " << NormTriggEvtSelSystHadrAndLept << " & " << NormBTagSystHadrAndLept << " & " << sqrt(NormJESSystHadrAndLept*NormJESSystHadrAndLept + NormJERSystHadrAndLept*NormJERSystHadrAndLept + NormWSystHadrAndLept*NormWSystHadrAndLept + NormTTScalingHadrAndLept*NormTTScalingHadrAndLept + NormTTMatchingHadrAndLept*NormTTMatchingHadrAndLept + NormPUSystHadrAndLept*NormPUSystHadrAndLept + NormUnclusEnergySystHadrAndLept*NormUnclusEnergySystHadrAndLept + NormTopMassSystHadrAndLept*NormTopMassSystHadrAndLept + NormTriggEvtSelSystHadrAndLept*NormTriggEvtSelSystHadrAndLept + NormBTagSystHadrAndLept*NormBTagSystHadrAndLept) << " & " << sqrt(NormJESSystHadrAndLept*NormJESSystHadrAndLept + NormJERSystHadrAndLept*NormJERSystHadrAndLept + NormWSystHadrAndLept*NormWSystHadrAndLept + NormTTScalingHadrAndLept*NormTTScalingHadrAndLept + NormTTMatchingHadrAndLept*NormTTMatchingHadrAndLept + NormPUSystHadrAndLept*NormPUSystHadrAndLept + NormUnclusEnergySystHadrAndLept*NormUnclusEnergySystHadrAndLept + NormTopMassSystHadrAndLept*NormTopMassSystHadrAndLept + NormTriggEvtSelSystHadrAndLept*NormTriggEvtSelSystHadrAndLept + NormBTagSystHadrAndLept*NormBTagSystHadrAndLept + (minuitFitterHadrAndLeptData.GetNormError())*(minuitFitterHadrAndLeptData.GetNormError())) << "\\\\" << endl;
+
+			  //Normalisation results:
+			  float NormBckgJESSystHadrAndLept = 0;
+			  if(JESResults == true) NormBckgJESSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptJESPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptJESMinus.GetNormBckg()))/2;
+			  float NormBckgJERSystHadrAndLept = 0;
+			  if(JERResults == true) NormBckgJERSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptJERPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptJERMinus.GetNormBckg()))/2;
+			  float NormBckgWSystHadrAndLept = 0;
+			  if(WSystResults == true) NormBckgWSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptWPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptWMinus.GetNormBckg()))/2;
+			  float NormBckgTTScalingHadrAndLept = 0;
+			  if(TTScalingResults == true) NormBckgTTScalingHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTTScalingUp.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTTScalingDown.GetNormBckg()))/2;
+			  float NormBckgTTMatchingHadrAndLept = 0;
+			  float NormBckgTTMatchingUpHadrAndLept = 0;
+			  if(TTMatchingResults == true){
+			    NormBckgTTMatchingHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTTMatchingUp.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTTMatchingDown.GetNormBckg()))/2;
+			    NormBckgTTMatchingUpHadrAndLept = abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTTMatchingUp.GetNormBckg());
+			  }
+			  float NormBckgPUSystHadrAndLept = 0;
+			  if(PUResults == true) NormBckgPUSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptPUPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptPUMinus.GetNormBckg()))/2;
+			  float NormBckgUnclusEnergySystHadrAndLept = 0;
+			  if(UnclusEnergyResults == true) NormBckgUnclusEnergySystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptUnclusEnergyPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptUnclusEnergyMinus.GetNormBckg()))/2;
+			  float NormBckgTopMassSystHadrAndLept = 0;
+			  if(TopMassResults==true) NormBckgTopMassSystHadrAndLept=(abs(minuitFitterHadrAndLept.GetNormBckg()-minuitFitterHadrAndLeptTopMassPlus.GetNormBckg())+abs(minuitFitterHadrAndLept.GetNormBckg()-minuitFitterHadrAndLeptTopMassMinus.GetNormBckg()))/6;//Shift to 1 GeV
+			  float NormBckgTriggEvtSelSystHadrAndLept = 0;
+			  if(TriggEvtSelResults == true) NormBckgTriggEvtSelSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTriggEvtSelPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptTriggEvtSelMinus.GetNormBckg()))/2;
+			  float NormBckgBTagSystHadrAndLept = 0;
+			  if(bTagResults == true) NormBckgBTagSystHadrAndLept = (abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptBTagSystPlus.GetNormBckg()) + abs(minuitFitterHadrAndLept.GetNormBckg() - minuitFitterHadrAndLeptBTagSystMinus.GetNormBckg()))/2;
+
+			  if(CSV == 6 || CSV == 7){
+			    cout << " NormBckg result (Data) : " << minuitFitterHadrAndLeptData.GetNormBckg() << endl;
+			    cout << " NormBckg result (Nominal) : " << minuitFitterHadrAndLept.GetNormBckg() << endl;
+			    cout << " Configuration : " << PresentationOutput[SumbTag] << endl;
+			  }
+
+			  NormBckgTexHadrAndLept << " \\hline" << endl;
+			  NormBckgTexHadrAndLept << PresentationOutput[SumbTag] << " & " << minuitFitterHadrAndLeptData.GetNormBckg() <<" & " << minuitFitterHadrAndLeptData.GetNormBckgError() << " & " << NormBckgJESSystHadrAndLept << " & " << NormBckgJERSystHadrAndLept << " & " << NormBckgWSystHadrAndLept << " & " << NormBckgTTScalingHadrAndLept << " & " << NormBckgTTMatchingHadrAndLept << " & " << NormBckgTTMatchingUpHadrAndLept << " & " << NormBckgPUSystHadrAndLept << " & " << NormBckgUnclusEnergySystHadrAndLept << " & " << NormBckgTopMassSystHadrAndLept << " & " << NormBckgTriggEvtSelSystHadrAndLept << " & " << NormBckgBTagSystHadrAndLept << " & " << sqrt(NormBckgJESSystHadrAndLept*NormBckgJESSystHadrAndLept + NormBckgJERSystHadrAndLept*NormBckgJERSystHadrAndLept + NormBckgWSystHadrAndLept*NormBckgWSystHadrAndLept + NormBckgTTScalingHadrAndLept*NormBckgTTScalingHadrAndLept + NormBckgTTMatchingHadrAndLept*NormBckgTTMatchingHadrAndLept + NormBckgPUSystHadrAndLept*NormBckgPUSystHadrAndLept + NormBckgUnclusEnergySystHadrAndLept*NormBckgUnclusEnergySystHadrAndLept + NormBckgTopMassSystHadrAndLept*NormBckgTopMassSystHadrAndLept + NormBckgTriggEvtSelSystHadrAndLept*NormBckgTriggEvtSelSystHadrAndLept + NormBckgBTagSystHadrAndLept*NormBckgBTagSystHadrAndLept) << " & " << sqrt(NormBckgJESSystHadrAndLept*NormBckgJESSystHadrAndLept + NormBckgJERSystHadrAndLept*NormBckgJERSystHadrAndLept + NormBckgWSystHadrAndLept*NormBckgWSystHadrAndLept + NormBckgTTScalingHadrAndLept*NormBckgTTScalingHadrAndLept + NormBckgTTMatchingHadrAndLept*NormBckgTTMatchingHadrAndLept + NormBckgPUSystHadrAndLept*NormBckgPUSystHadrAndLept + NormBckgUnclusEnergySystHadrAndLept*NormBckgUnclusEnergySystHadrAndLept + NormBckgTopMassSystHadrAndLept*NormBckgTopMassSystHadrAndLept + NormBckgTriggEvtSelSystHadrAndLept*NormBckgTriggEvtSelSystHadrAndLept + NormBckgBTagSystHadrAndLept*NormBckgBTagSystHadrAndLept + (minuitFitterHadrAndLeptData.GetNormBckgError())*(minuitFitterHadrAndLeptData.GetNormBckgError())) << "\\\\" << endl;
+			  
 
 			  //Statistical results and number of events:
-			  PresentationTexHadrAndLept << minuitFitterHadrAndLept.GetFRResult() << " & " << minuitFitterHadrAndLept.GetFRResult()-SMfrResult <<" & " << minuitFitterHadrAndLept.GetFRError() << " & " << minuitFitterHadrAndLept.GetFLResult() << " & " << minuitFitterHadrAndLept.GetFLResult()-SMflResult << " & " << minuitFitterHadrAndLept.GetFLError() << " & " << minuitFitterHadrAndLept.GetF0Result() << " & " << minuitFitterHadrAndLept.GetF0Result()-SMf0Result << " & " << minuitFitterHadrAndLept.GetF0Error() << " \\\\ " << endl;		
+			  PresentationTexHadrAndLept << minuitFitterHadrAndLeptData.GetFRResult() <<" & " << minuitFitterHadrAndLeptData.GetFRError() << " & " << minuitFitterHadrAndLeptData.GetFLResult() << " & " << minuitFitterHadrAndLeptData.GetFLError() << " & " << minuitFitterHadrAndLeptData.GetF0Result() << " & " << minuitFitterHadrAndLeptData.GetF0Error() << " \\\\ " << endl;		
 			  PresentationTexHadrAndLept << " \\hline " << endl;
 			}
 		      }
-		  		
+		      //}
 		    }//end of wrong entry chosen failed requirement!
 		    else{
 		      cout << " Looking at wrong bTagging combination in fitting minuit !! " << endl;
@@ -3097,7 +3436,7 @@ int main (int argc, char *argv[])
 		      CSV=1;
 		      JP=1;
 		      JBP=1;
-		    }	      
+		    }		    
 		  }//end of TCHE
 		  if(TCHP == NumberTCHPbTags-1) ConsideredTagger =2;
 		}//end of TCHP
@@ -3111,11 +3450,8 @@ int main (int argc, char *argv[])
 	}//end of JP
       }//end of JBP      
 
-    } //End of boolean request: PerformMinuit
-        
-    outFile << endl << "Finished event-by-event info, end of file!" << endl;
-    outFile.close();
-    
+      //} //End of boolean request: PerformMinuit
+            
     inFile->Close();
     delete inFile;
     
