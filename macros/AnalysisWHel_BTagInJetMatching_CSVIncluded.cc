@@ -1128,6 +1128,10 @@ int main (int argc, char *argv[])
   BTagName bTagName = BTagName();  //for bTagFileOutput name giving
   BTagJetSelection bTagJetSelection = BTagJetSelection();
   BTagCosThetaCalculation bTagCosThetaCalculation = BTagCosThetaCalculation();
+  MinuitFitterPerforming minuitFitterHadronic = MinuitFitterPerforming();  //Can give here the booleans for the considered dataSamples + CosThetaBinNumber + HadronicOnly + PerformMinuit + ndimen + semiMuon + semiElectron !!
+  MinuitFitterPerforming minuitFitterHadronicAndLeptonicWOnly = MinuitFitterPerforming();
+  MinuitFitterPerforming minuitFitterHadronicAndLeptonic = MinuitFitterPerforming();
+  //First introduce all the general stuff ==> Stuff like UsedTCHE, ...
 
   int NumberSelectedEvents =0;
   int NumberEventsBeforeCuts = 0;
@@ -2236,7 +2240,11 @@ int main (int argc, char *argv[])
     ////////////////////////////////
 
     int dataSetSize = datasets.size();
-    MinuitFitterPerforming minuitFitterHadronic = MinuitFitterPerforming(HadronicOnly, PerformMinuit, "Had", CosThetaBinNumber, ndimen, iDataSet, &CosThetaValuesKinFitHadr[TotalNumberbTags], &CosThGenKinFitHadr[TotalNumberbTags], &EventCorrectionWeightKinFitHadr[TotalNumberbTags], dataSetName, semiMuon, semiElectron, SignalOnly, DataResults, JESResults, JERResults, WSystResults, TTScalingResults, TTMatchingResults, PUResults, UnclusEnergyResults, TopMassResults, TriggEvtSelResults, bTagResults, dataSetSize);
+    minuitFitterHadronic.StoreVectors(HadronicOnly, PerformMinuit, "Had", CosThetaBinNumber, ndimen, iDataSet, &CosThetaValuesKinFitHadr[TotalNumberbTags], &CosThGenKinFitHadr[TotalNumberbTags], &EventCorrectionWeightKinFitHadr[TotalNumberbTags], dataSetName, semiMuon, semiElectron, SignalOnly, DataResults, JESResults, JERResults, WSystResults, TTScalingResults, TTMatchingResults, PUResults, UnclusEnergyResults, TopMassResults, TriggEvtSelResults, bTagResults, dataSetSize);
+    minuitFitterHadronic.CalculateMinuitFitter(); 
+    //Make a separate function where you store all the entries for the different datasets!!
+    //Make an extra class which you activate when you reach the last dataset!!
+    // --> First step in this last function: Perform the StoreVectors function for the last dataset!!
 
     MinuitFitterPerforming minuitFitterHadronicAndLeptonicWOnly = MinuitFitterPerforming(HadronicAndLeptonicWOnly, PerformMinuit, "HadrAndLeptWOnly", CosThetaBinNumber, ndimen, iDataSet, &CosThetaValuesKinFitHadrAndLeptWOnly[TotalNumberbTags], &CosThGenKinFitHadrAndLeptWOnly[TotalNumberbTags], &EventCorrectionWeightKinFitHadrAndLeptWOnly[TotalNumberbTags], dataSetName, semiMuon, semiElectron, SignalOnly, DataResults, JESResults, JERResults, WSystResults, TTScalingResults, TTMatchingResults, PUResults, UnclusEnergyResults, TopMassResults, TriggEvtSelResults, bTagResults, dataSetSize);
 
