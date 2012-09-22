@@ -174,9 +174,18 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		if(ConsideredTagger ==1 || ConsideredTagger ==2 || ConsideredTagger ==3 || ConsideredTagger ==4 || ConsideredTagger == 5 || ConsideredTagger ==6) TCHE =13;
 		SumbTag = TCHE+TCHP+SSVHE+SSVHP+CSV+JP+JBP;
 		if(UsedTCHE[SumbTag]==(TCHE+1) && UsedTCHP[SumbTag]==(TCHP+1) && UsedSSVHE[SumbTag]==(SSVHE+1) && UsedSSVHP[SumbTag]==(SSVHP+1) && UsedCSV[SumbTag]==(CSV+1) && UsedJP[SumbTag] == (JP+1) && UsedJBP[SumbTag] == (JBP+1) ){
-
+		  
+		  if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true)){//Defining of the genttbar histo 	 
+		    char hisname[100]; 	 
+		    sprintf(hisname,"CosThetaGen_TCHE%s_TCHP%s_SSVHE%s_SSVHP%s_CSV%s_JP%s_JBP%s", bTag[TCHE].c_str(),bTag[TCHP].c_str(),bTag[SSVHE].c_str(),bTag[SSVHP].c_str(),bTag[CSV].c_str(),bTag[JP].c_str(),bTag[JBP].c_str()); 	 
+		    for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){ 	 
+		      genttbarhisto[ibinn]= new TNtuple(hisname,hisname,"costhgen:evtweight"); 	 
+		      genttbarhisto[ibinn]->SetDirectory(0); 	 
+		    } 	 
+		  } 	 		 
+		  
 		  if(iDataSet == 0){		      
-
+		    
 		    //Nominal:
 		    CosThetaString = "CosTheta_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    //Data:
