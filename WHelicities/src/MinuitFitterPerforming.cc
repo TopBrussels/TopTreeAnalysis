@@ -173,33 +173,25 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 	      for(TCHE=0; TCHE<= NumberTCHEbTags;TCHE++){
 		if(ConsideredTagger ==1 || ConsideredTagger ==2 || ConsideredTagger ==3 || ConsideredTagger ==4 || ConsideredTagger == 5 || ConsideredTagger ==6) TCHE =13;
 		SumbTag = TCHE+TCHP+SSVHE+SSVHP+CSV+JP+JBP;
-		if(UsedTCHE[SumbTag]==(TCHE+1) && UsedTCHP[SumbTag]==(TCHP+1) && UsedSSVHE[SumbTag]==(SSVHE+1) && UsedSSVHP[SumbTag]==(SSVHP+1) && UsedCSV[SumbTag]==(CSV+1) && UsedJP[SumbTag] == (JP+1) && UsedJBP[SumbTag] == (JBP+1) ){		      		  
+		if(UsedTCHE[SumbTag]==(TCHE+1) && UsedTCHP[SumbTag]==(TCHP+1) && UsedSSVHE[SumbTag]==(SSVHE+1) && UsedSSVHP[SumbTag]==(SSVHP+1) && UsedCSV[SumbTag]==(CSV+1) && UsedJP[SumbTag] == (JP+1) && UsedJBP[SumbTag] == (JBP+1) ){
 
-  
-		  if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true)){//Defining of the genttbar histo
-		    char hisname[100];
-		    sprintf(hisname,"CosThetaGen_TCHE%s_TCHP%s_SSVHE%s_SSVHP%s_CSV%s_JP%s_JBP%s", bTag[TCHE].c_str(),bTag[TCHP].c_str(),bTag[SSVHE].c_str(),bTag[SSVHP].c_str(),bTag[CSV].c_str(),bTag[JP].c_str(),bTag[JBP].c_str());
-		    for (int ibinn=0; ibinn<CosThetaBinNumber; ibinn++){
-		      genttbarhisto[ibinn]= new TNtuple(hisname,hisname,"costhgen:evtweight");
-		      genttbarhisto[ibinn]->SetDirectory(0);
-		    }
-		  }
-		    
-		  if(iDataSet == 0){
-		    //Data:
+		  if(iDataSet == 0){		      
+
+		    //Nominal:
 		    CosThetaString = "CosTheta_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+		    //Data:
 		    CosThetaDataString = "CosThetaData_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-		    //JES 
+		    //JES :
 		    CosThetaJESPlusString = "CosThetaJESPlus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-		    CosThetaJESMinusString = "CosThetaJESMinus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+		    CosThetaJESMinusString="CosThetaJESMinus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    //JER :
 		    CosThetaJERPlusString = "CosThetaJERPlus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-		    CosThetaJERMinusString = "CosThetaJERMinus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+		    CosThetaJERMinusString="CosThetaJERMinus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    //WSyst :
 		    CosThetaWPlusString = "CosThetaWPlus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    CosThetaWMinusString = "CosThetaWMinus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    //TTScaling :
-		    CosThetaTTScalingUpString = "CosThetaTTScalingUp_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+		    CosThetaTTScalingUpString="CosThetaTTScalingUp_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    CosThetaTTScalingDownString = "CosThetaTTScalingDown_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    //TTMatching :
 		    CosThetaTTMatchingUpString = "CosThetaTTMatchingUp_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
@@ -219,22 +211,28 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    //BTagSyst :
 		    CosThetaBTagSystPlusString = "CosThetaBTagSystPlus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
 		    CosThetaBTagSystMinusString = "CosThetaBTagSystMinus_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-		    
+	
 		    CosThetaSignalString = "CosThetaSignal_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-		    CosThetaBckgString = "CosThetaBckg_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
-
+		    //		    MlbSignalString = "MlbSignal_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+		    CosThetaBckgString = "CosThetaBckg_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];		    
+		    //		    MlbBckgString = "MlbBckg_TCHE"+bTag[TCHE]+"_TCHP"+bTag[TCHP]+"_SSVHE"+bTag[SSVHE]+"_SSVHP"+bTag[SSVHP]+"_CSV"+bTag[CSV]+"_JP"+bTag[JP]+"_JBP"+bTag[JBP];
+		    
 		    //Nominal
 		    histo1D[CosThetaString]=new TH1F(CosThetaString.c_str(),CosThetaString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaString]->SetDirectory(0);
-		    //Data:
+		    //		    histo1D[MlbString]=new TH1F(MlbString.c_str(),MlbString.c_str(),100,0,200);
+		    //		    histo1D[MlbString]->SetDirectory(0);
+		    //Data
 		    histo1D[CosThetaDataString]=new TH1F(CosThetaDataString.c_str(),CosThetaDataString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaDataString]->SetDirectory(0);
-		    //JES:
+		    //		    histo1D[MlbDataString]=new TH1F(MlbDataString.c_str(),MlbDataString.c_str(),100,0,200);
+		    //		    histo1D[MlbDataString]->SetDirectory(0);
+		    //JES :
 		    histo1D[CosThetaJESPlusString]=new TH1F(CosThetaJESPlusString.c_str(),CosThetaJESPlusString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaJESPlusString]->SetDirectory(0);
 		    histo1D[CosThetaJESMinusString]=new TH1F(CosThetaJESMinusString.c_str(),CosThetaJESMinusString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaJESMinusString]->SetDirectory(0);
-		    //JER:
+		    //JER :
 		    histo1D[CosThetaJERPlusString]=new TH1F(CosThetaJERPlusString.c_str(),CosThetaJERPlusString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaJERPlusString]->SetDirectory(0);
 		    histo1D[CosThetaJERMinusString]=new TH1F(CosThetaJERMinusString.c_str(),CosThetaJERMinusString.c_str(),CosThetaBinNumber,-1,1);
@@ -279,39 +277,46 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    histo1D[CosThetaBTagSystPlusString]->SetDirectory(0);
 		    histo1D[CosThetaBTagSystMinusString]=new TH1F(CosThetaBTagSystMinusString.c_str(),CosThetaBTagSystMinusString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaBTagSystMinusString]->SetDirectory(0);
-
+			  
 		    histo1D[CosThetaSignalString]=new TH1F(CosThetaSignalString.c_str(),CosThetaSignalString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaSignalString]->SetDirectory(0);
+		    //		    histo1D[MlbSignalString]=new TH1F(MlbSignalString.c_str(),MlbSignalString.c_str(),100,0,200);
+		    //		    histo1D[MlbSignalString]->SetDirectory(0);
+
 		    histo1D[CosThetaBckgString]=new TH1F(CosThetaBckgString.c_str(),CosThetaBckgString.c_str(),CosThetaBinNumber,-1,1);
 		    histo1D[CosThetaBckgString]->SetDirectory(0);
+		    //		    histo1D[MlbBckgString]=new TH1F(MlbBckgString.c_str(),MlbBckgString.c_str(),100,0,200);
+		    //		    histo1D[MlbBckgString]->SetDirectory(0);
 		  }
-		    
-		  //Filling of the histograms:		    
-		  for(int ii=0; ii<CosThetaValuesKinFit[SumbTag].size();ii++){		
-		      
+
+		  //Filling of the histograms:
+		  for(int ii=0; ii<CosThetaValuesKinFit[SumbTag].size();ii++){	
+
 		    if((dataSetName.find("Nom_TTbarJets_SemiMu") ==0 && semiMuon == true) || (dataSetName.find("Nom_TTbarJets_SemiEl") ==0 && semiElectron == true) ){//Defining of genttbar histo
 		      for(int iBin=0; iBin< CosThetaBinNumber; iBin++){//Filling of genttbar histo:		   
 			if(CosThetaValuesKinFit[SumbTag][ii] >= binEdge[iBin] && CosThetaValuesKinFit[SumbTag][ii] < binEdge[iBin+1]){
-			  genttbarhisto[iBin]->Fill(CosThGenKinFit[SumbTag][ii], EventCorrectionWeightKinFit[SumbTag][ii]) ; 
+			  genttbarhisto[iBin]->Fill(CosThGenKinFit[SumbTag][ii], EventCorrectionWeightKinFit[SumbTag][ii]);
 			}
 			else if(CosThetaValuesKinFit[SumbTag][ii] ==1){ //1 is included in last bin
 			  genttbarhisto[CosThetaBinNumber-1]->Fill(CosThGenKinFit[SumbTag][ii], EventCorrectionWeightKinFit[SumbTag][ii]);
 			}	      	   
 		      }
 		    }
-			  
 		    ///////////////////////////////////////////////////////////////////////////////
 		    // Change data to systematics since then nominal values will be reweighted!! //
 		    ///////////////////////////////////////////////////////////////////////////////
-			  
+
 		    //Nominal result:
 		    if(dataSetName.find("Nom_") == 0){
 		      histo1D[CosThetaString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
+		      //		      histo1D[MlbString]->Fill(MlbValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    }
 		    //Data result:
-		    if(dataSetName.find("Data") == 0 && SignalOnly == false)
+		    if(dataSetName.find("Data") == 0){
 		      histo1D[CosThetaDataString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
-		    //JES :
+		      //		      histo1D[MlbDataString]->Fill(MlbValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
+		    }
+		    //JES:
 		    if(dataSetName.find("JESPlus") == 0)
 		      histo1D[CosThetaJESPlusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    if(dataSetName.find("JESMinus") == 0)
@@ -321,7 +326,7 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		      histo1D[CosThetaJERPlusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    if(dataSetName.find("JERMinus") == 0)
 		      histo1D[CosThetaJERMinusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
-		    //WJets :
+		    //WJets :  --> Fill with WsystPlus sample and all other MC
 		    if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_WJets") != 0 && WSystResults == true) || dataSetName.find("WSystPlus") == 0 )
 		      histo1D[CosThetaWPlusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_WJets") != 0 && WSystResults == true) || dataSetName.find("WSystMinus") == 0 )
@@ -335,7 +340,7 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TTMatchingResults == true) || dataSetName.find("TTMatchingUp") == 0 )
 		      histo1D[CosThetaTTMatchingUpString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    if((dataSetName.find("Nom_") == 0 && dataSetName.find("Nom_TTbarJets") != 0 && TTMatchingResults == true) || dataSetName.find("TTMatchingDown") == 0 )
-		      histo1D[CosThetaTTMatchingDownString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);	
+		      histo1D[CosThetaTTMatchingDownString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    //PU :
 		    if(dataSetName.find("PUPlus_") == 0)
 		      histo1D[CosThetaPUPlusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
@@ -361,56 +366,71 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		      histo1D[CosThetaBTagSystPlusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    if(dataSetName.find("bTagSystMinus_") == 0)
 		      histo1D[CosThetaBTagSystMinusString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
-			  
-		    if(SignalOnly == true && dataSetName.find("McDta") == 0)	    
+
+		    if(SignalOnly == true && dataSetName.find("McDta") == 0){
 		      histo1D[CosThetaDataString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
-			  
+		      //		      histo1D[MlbDataString]->Fill(MlbValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
+		    }
 		    if((dataSetName.find("Nom_TTbarJets_SemiMu")==0 && semiMuon==true) || (dataSetName.find("Nom_TTbarJets_SemiEl")==0 && semiElectron == true) ){
 		      histo1D[CosThetaSignalString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
+		      //		      histo1D[MlbSignalString]->Fill(MlbValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    }
-		    if(dataSetName.find("Nom_") == 0 && ((dataSetName.find("Nom_TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("Nom_TTbarJets_SemiEl")!=0 && semiElectron == true))){		      
-		      histo1D[CosThetaBckgString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
+		    if(dataSetName.find("Nom_") == 0 && ((dataSetName.find("Nom_TTbarJets_SemiMu")!=0 && semiMuon==true) || (dataSetName.find("Nom_TTbarJets_SemiEl")!=0 && semiElectron == true))){
+		      histo1D[CosThetaBckgString]->Fill(CosThetaValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);			
+		      //		      histo1D[MlbBckgString]->Fill(MlbValuesKinFit[SumbTag][ii],EventCorrectionWeightKinFit[SumbTag][ii]);
 		    }
 		  }
-			
-		  //Perform Minuit Fitter:
-		  if(iDataSet==(dataSetsSize-1)){//Go in this loop when the last datasample is active to perform MinuitFitter
+		    
+		  //Perform MinuitFitter:
+		  if(iDataSet==(dataSetsSize-1)){//Go in this loop when the last datasample is active to perform MinuitFitter			  
 			  
+		    if(CSV == 6 || CSV == 7){
+		      cout << " Size of 'Data' histo for Nominal minuitFitter : " << histo1D[CosThetaString]->GetEntries() << " | " << histo1D[CosThetaString]->GetEffectiveEntries() << endl;
+		      cout << " Size of 'Data' histo                          : " << histo1D[CosThetaDataString]->GetEntries() << " | " << histo1D[CosThetaDataString]->GetEffectiveEntries() << endl;
+		      cout << " Size of Signal histo                          : " << histo1D[CosThetaSignalString]->GetEntries() << " | " << histo1D[CosThetaSignalString]->GetEffectiveEntries() << endl;
+		      cout << " Size of Bckg histo                            : " << histo1D[CosThetaBckgString]->GetEntries() << " | " << histo1D[CosThetaBckgString]->GetEffectiveEntries() << endl;
+		    }
+		    
+		    //		    MlbFitter MlbFitter = MlbFitter(histo1D[MlbString], histo1D[MlbSignalString], histo1D[MlbBckgString]);
+		    //		    MlbFitter MlbFitterData = MlbFitter(histo1D[MlbDataString], histo1D[MlbSignalString], histo1D[MlbBckgString]);
+		    //		    MlbNormTex << " \\hline \n ";
+		    //		    MlbNormTex << PresentationOutput[SumbTag] << " & " << MlbFitterData.GetNorm() << " & " << MlbFitterData.GetNormError() << " & " << " & " << MlbFitterData.GetNormBckg() << " & " << MlbFitterData.GetNormBckgError() << " & " << MlbFitter.GetNorm() << " & " << MlbFitter.GetNormError() << " & " << MlbFitter.GetNormBckg() << " & " << MlbFitter.GetNormBckgError() << endl;
+
 		    //Nominal:
 		    MinuitFitter minuitFitter = MinuitFitter(histo1D[CosThetaString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
 		    //Data:
 		    MinuitFitter minuitFitterData = MinuitFitter(histo1D[CosThetaDataString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
 		    //JES
-		    MinuitFitter minuitFitterJESPlus = MinuitFitter(histo1D[CosThetaJESPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    MinuitFitter minuitFitterJESMinus = MinuitFitter(histo1D[CosThetaJESMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
+		    MinuitFitter minuitFitterJESPlus = MinuitFitter(histo1D[CosThetaJESPlusString], histo1D[CosThetaSignalString],histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterJESMinus = MinuitFitter(histo1D[CosThetaJESMinusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
 		    //JER
-		    MinuitFitter minuitFitterJERPlus = MinuitFitter(histo1D[CosThetaJERPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    MinuitFitter minuitFitterJERMinus = MinuitFitter(histo1D[CosThetaJERMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
+		    MinuitFitter minuitFitterJERPlus = MinuitFitter(histo1D[CosThetaJERPlusString],histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterJERMinus = MinuitFitter(histo1D[CosThetaJERMinusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString], 0.6671,0.3325, 0.0004,genttbarhisto,ndimen);
 		    //WSyst
-		    MinuitFitter minuitFitterWPlus = MinuitFitter(histo1D[CosThetaWPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
+		    MinuitFitter minuitFitterWPlus = MinuitFitter(histo1D[CosThetaWPlusString], histo1D[CosThetaSignalString],histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
 		    MinuitFitter minuitFitterWMinus = MinuitFitter(histo1D[CosThetaWMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
-		    //TTScaling 
-		    MinuitFitter minuitFitterTTScalingUp = MinuitFitter(histo1D[CosThetaTTScalingUpString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+		    //TTScaling
+		    MinuitFitter minuitFitterTTScalingUp=MinuitFitter(histo1D[CosThetaTTScalingUpString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
 		    MinuitFitter minuitFitterTTScalingDown = MinuitFitter(histo1D[CosThetaTTScalingDownString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
-		    //TTMatching 
+		    //TTMatching
 		    MinuitFitter minuitFitterTTMatchingUp = MinuitFitter(histo1D[CosThetaTTMatchingUpString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
-		    MinuitFitter minuitFitterTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
-		    //PU 
-		    MinuitFitter minuitFitterPUPlus = MinuitFitter(histo1D[CosThetaPUPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    MinuitFitter minuitFitterPUMinus = MinuitFitter(histo1D[CosThetaPUMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    //UnclusEnergy 
-		    MinuitFitter minuitFitterUnclusEnergyPlus = MinuitFitter(histo1D[CosThetaUnclusEnergyPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);  
-		    MinuitFitter minuitFitterUnclusEnergyMinus = MinuitFitter(histo1D[CosThetaUnclusEnergyMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
-		    //TopMass 
-		    MinuitFitter minuitFitterTopMassPlus = MinuitFitter(histo1D[CosThetaTopMassPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    MinuitFitter minuitFitterTopMassMinus = MinuitFitter(histo1D[CosThetaTopMassMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    //TriggEvtSel 
-		    MinuitFitter minuitFitterTriggEvtSelPlus = MinuitFitter(histo1D[CosThetaTriggEvtSelPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);			  
-		    MinuitFitter minuitFitterTriggEvtSelMinus = MinuitFitter(histo1D[CosThetaTriggEvtSelMinusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterTTMatchingDown = MinuitFitter(histo1D[CosThetaTTMatchingDownString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString],0.6671,0.3325, 0.0004,genttbarhisto,ndimen);
+		    //PU
+		    MinuitFitter minuitFitterPUPlus = MinuitFitter(histo1D[CosThetaPUPlusString], histo1D[CosThetaSignalString], histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterPUMinus = MinuitFitter(histo1D[CosThetaPUMinusString], histo1D[CosThetaSignalString],histo1D[CosThetaBckgString], 0.6671, 0.3325, 0.0004,genttbarhisto,ndimen);
+		    //UnclusEnergy
+		    MinuitFitter minuitFitterUnclusEnergyPlus=MinuitFitter(histo1D[CosThetaUnclusEnergyPlusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterUnclusEnergyMinus=MinuitFitter(histo1D[CosThetaUnclusEnergyMinusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
+		    //TopMass
+		    MinuitFitter minuitFitterTopMassPlus=MinuitFitter(histo1D[CosThetaTopMassPlusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterTopMassMinus=MinuitFitter(histo1D[CosThetaTopMassMinusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
+		    //TriggEvtSel
+		    MinuitFitter minuitFitterTriggEvtSelPlus = MinuitFitter(histo1D[CosThetaTriggEvtSelPlusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
+		    MinuitFitter minuitFitterTriggEvtSelMinus =MinuitFitter(histo1D[CosThetaTriggEvtSelMinusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
 		    //BTag
 		    MinuitFitter minuitFitterBTagSystPlus=MinuitFitter(histo1D[CosThetaBTagSystPlusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
 		    MinuitFitter minuitFitterBTagSystMinus=MinuitFitter(histo1D[CosThetaBTagSystMinusString],histo1D[CosThetaSignalString],histo1D[CosThetaBckgString],0.6671,0.3325,0.0004,genttbarhisto,ndimen);
-			  		  
+		  
 		    //FL results:
 		    float FLJESSyst = 0;
 		    if(JESResults == true) FLJESSyst = (abs(minuitFitter.GetFLResult() - minuitFitterJESPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterJESMinus.GetFLResult()))/2;
@@ -421,19 +441,23 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float FLTTScaling = 0;
 		    if(TTScalingResults == true) FLTTScaling = (abs(minuitFitter.GetFLResult() - minuitFitterTTScalingUp.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterTTScalingDown.GetFLResult()))/2;
 		    float FLTTMatching = 0;
-		    if(TTMatchingResults == true) FLTTMatching = (abs(minuitFitter.GetFLResult() - minuitFitterTTMatchingUp.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterTTMatchingDown.GetFLResult()))/2;
+		    float FLTTMatchingUp = 0;
+		    if(TTMatchingResults == true){
+		      FLTTMatching = (abs(minuitFitter.GetFLResult() - minuitFitterTTMatchingUp.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterTTMatchingDown.GetFLResult()))/2;
+		      FLTTMatchingUp = abs(minuitFitter.GetFLResult() - minuitFitterTTMatchingUp.GetFLResult());
+		    }
 		    float FLPUSyst = 0;
 		    if(PUResults == true) FLPUSyst = (abs(minuitFitter.GetFLResult() - minuitFitterPUPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterPUMinus.GetFLResult()))/2;
 		    float FLUnclusEnergySyst = 0;
 		    if(UnclusEnergyResults == true) FLUnclusEnergySyst = (abs(minuitFitter.GetFLResult() - minuitFitterUnclusEnergyPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterUnclusEnergyMinus.GetFLResult()))/2;
 		    float FLTopMassSyst = 0;
-		    if(TopMassResults == true) FLTopMassSyst=(abs(minuitFitter.GetFLResult() -minuitFitterTopMassPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() -minuitFitterTopMassMinus.GetFLResult()))/6; //Propagate to shift of 1 GeV
+		    if(TopMassResults == true) FLTopMassSyst = (abs(minuitFitter.GetFLResult() - minuitFitterTopMassPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterTopMassMinus.GetFLResult()))/6;  //Shift to 1 GeV
 		    float FLTriggEvtSelSyst = 0;
-		    if(TriggEvtSelResults == true) FLTriggEvtSelSyst = (abs(minuitFitter.GetFLResult() - minuitFitterTriggEvtSelPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterTriggEvtSelMinus.GetFLResult()))/2;
+		    if(TriggEvtSelResults == true) FLTriggEvtSelSyst = (abs(minuitFitter.GetFLResult() - minuitFitterTriggEvtSelPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterTriggEvtSelMinus.GetFLResult()))/2;		      
 		    float FLBTagSyst = 0;
 		    if(bTagResults == true) FLBTagSyst = (abs(minuitFitter.GetFLResult() - minuitFitterBTagSystPlus.GetFLResult()) + abs(minuitFitter.GetFLResult() - minuitFitterBTagSystMinus.GetFLResult()))/2;		      
 		    FMinusTex << "\\hline" << endl;
-		    FMinusTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetFLResult() << " & " << minuitFitterData.GetFLError() << " & " << FLJESSyst << " & " << FLJERSyst << " & " << FLWSyst << " & " << FLTTScaling << " & " << FLTTMatching << " & " << FLPUSyst << " & " << FLUnclusEnergySyst << " & " << FLTopMassSyst << " & " << FLTriggEvtSelSyst << " & " << FLBTagSyst << " & " << sqrt(FLJESSyst*FLJESSyst + FLJERSyst*FLJERSyst + FLWSyst*FLWSyst + FLTTScaling*FLTTScaling + FLTTMatching*FLTTMatching + FLPUSyst*FLPUSyst + FLUnclusEnergySyst*FLUnclusEnergySyst + FLTopMassSyst*FLTopMassSyst + FLTriggEvtSelSyst*FLTriggEvtSelSyst + FLBTagSyst*FLBTagSyst) << " & " << sqrt(FLJESSyst*FLJESSyst + FLJERSyst*FLJERSyst + FLWSyst*FLWSyst + FLTTScaling*FLTTScaling + FLTTMatching*FLTTMatching + FLPUSyst*FLPUSyst + FLUnclusEnergySyst*FLUnclusEnergySyst + FLTopMassSyst*FLTopMassSyst + FLTriggEvtSelSyst*FLTriggEvtSelSyst + FLBTagSyst*FLBTagSyst + (minuitFitter.GetFLError())*(minuitFitter.GetFLError())) << endl;
+		    FMinusTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetFLResult() <<" & " << minuitFitterData.GetFLError() << " & " << FLJESSyst << " & " << FLJERSyst << " & " << FLWSyst << " & " << FLTTScaling << " & " << FLTTMatching << " & " << FLTTMatchingUp << " & " << FLPUSyst << " & " << FLUnclusEnergySyst << " & " << FLTopMassSyst << " & " << FLTriggEvtSelSyst << " & " << FLBTagSyst << " & " << sqrt(FLJESSyst*FLJESSyst + FLJERSyst*FLJERSyst + FLWSyst*FLWSyst + FLTTScaling*FLTTScaling + FLTTMatching*FLTTMatching + FLPUSyst*FLPUSyst + FLUnclusEnergySyst*FLUnclusEnergySyst + FLTopMassSyst*FLTopMassSyst + FLTriggEvtSelSyst*FLTriggEvtSelSyst + FLBTagSyst*FLBTagSyst) << " & " << sqrt(FLJESSyst*FLJESSyst + FLJERSyst*FLJERSyst + FLWSyst*FLWSyst + FLTTScaling*FLTTScaling + FLTTMatching*FLTTMatching + FLPUSyst*FLPUSyst + FLUnclusEnergySyst*FLUnclusEnergySyst + FLTopMassSyst*FLTopMassSyst + FLTriggEvtSelSyst*FLTriggEvtSelSyst + FLBTagSyst*FLBTagSyst + (minuitFitterData.GetFLError())*(minuitFitterData.GetFLError())) << endl;
 		  
 		    //FR results:
 		    float FRJESSyst = 0;
@@ -445,19 +469,23 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float FRTTScaling = 0;
 		    if(TTScalingResults == true) FRTTScaling = (abs(minuitFitter.GetFRResult() - minuitFitterTTScalingUp.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterTTScalingDown.GetFRResult()))/2;
 		    float FRTTMatching = 0;
-		    if(TTMatchingResults == true) FRTTMatching = (abs(minuitFitter.GetFRResult() - minuitFitterTTMatchingUp.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterTTMatchingDown.GetFRResult()))/2;		  
+		    float FRTTMatchingUp = 0;
+		    if(TTMatchingResults == true){
+		      FRTTMatching = (abs(minuitFitter.GetFRResult() - minuitFitterTTMatchingUp.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterTTMatchingDown.GetFRResult()))/2;		  
+		      FRTTMatchingUp = abs(minuitFitter.GetFRResult() - minuitFitterTTMatchingUp.GetFRResult());		  
+		    }
 		    float FRPUSyst = 0;
 		    if(PUResults == true) FRPUSyst = (abs(minuitFitter.GetFRResult() - minuitFitterPUPlus.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterPUMinus.GetFRResult()))/2;
 		    float FRUnclusEnergySyst = 0;
 		    if(UnclusEnergyResults == true) FRUnclusEnergySyst = (abs(minuitFitter.GetFRResult() - minuitFitterUnclusEnergyPlus.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterUnclusEnergyMinus.GetFRResult()))/2;
 		    float FRTopMassSyst = 0;
-		    if(TopMassResults == true) FRTopMassSyst = (abs(minuitFitter.GetFRResult() - minuitFitterTopMassPlus.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterTopMassMinus.GetFRResult()))/6; //Shift to 1 GeV
+		    if(TopMassResults == true) FRTopMassSyst = (abs(minuitFitter.GetFRResult() - minuitFitterTopMassPlus.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterTopMassMinus.GetFRResult()))/6;  //Shift to 1 GeV
 		    float FRTriggEvtSelSyst = 0;
 		    if(TriggEvtSelResults == true) FRTriggEvtSelSyst = (abs(minuitFitter.GetFRResult() - minuitFitterTriggEvtSelPlus.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterTriggEvtSelMinus.GetFRResult()))/2;
 		    float FRBTagSyst = 0;
 		    if(bTagResults == true) FRBTagSyst = (abs(minuitFitter.GetFRResult() - minuitFitterBTagSystPlus.GetFRResult()) + abs(minuitFitter.GetFRResult() - minuitFitterBTagSystMinus.GetFRResult()))/2;		      
 		    FPlusTex << "\\hline" << endl;
-		    FPlusTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetFRResult() <<" & " << minuitFitterData.GetFRError() << " & " << FRJESSyst << " & " << FRJERSyst << " & " << FRWSyst << " & " << FRTTScaling << " & " << FRTTMatching << " & " << FRPUSyst << " & " << FRUnclusEnergySyst << " & " << FRTopMassSyst << " & " << FRTriggEvtSelSyst << " & " << FRBTagSyst << " & " << sqrt(FRJESSyst*FRJESSyst + FRJERSyst*FRJERSyst + FRWSyst*FRWSyst + FRTTScaling*FRTTScaling + FRTTMatching*FRTTMatching + FRPUSyst*FRPUSyst + FRUnclusEnergySyst*FRUnclusEnergySyst + FRTopMassSyst*FRTopMassSyst + FRTriggEvtSelSyst*FRTriggEvtSelSyst + FRBTagSyst*FRBTagSyst) << " & " << sqrt(FRJESSyst*FRJESSyst + FRJERSyst*FRJERSyst + FRWSyst*FRWSyst + FRTTScaling*FRTTScaling + FRTTMatching*FRTTMatching + FRPUSyst*FRPUSyst + FRUnclusEnergySyst*FRUnclusEnergySyst + FRTopMassSyst*FRTopMassSyst + FRTriggEvtSelSyst*FRTriggEvtSelSyst + FRBTagSyst*FRBTagSyst + (minuitFitter.GetFRError())*(minuitFitter.GetFRError())) << endl;
+		    FPlusTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetFRResult() <<" & " << minuitFitterData.GetFRError() << " & " << FRJESSyst << " & " << FRJERSyst << " & " << FRWSyst << " & " << FRTTScaling << " & " << FRTTMatching << " & " << FRTTMatchingUp << " & " << FRPUSyst << " & " << FRUnclusEnergySyst << " & " << FRTopMassSyst << " & " << FRTriggEvtSelSyst << " & " << FRBTagSyst << " & " << sqrt(FRJESSyst*FRJESSyst + FRJERSyst*FRJERSyst + FRWSyst*FRWSyst + FRTTScaling*FRTTScaling + FRTTMatching*FRTTMatching + FRPUSyst*FRPUSyst + FRUnclusEnergySyst*FRUnclusEnergySyst + FRTopMassSyst*FRTopMassSyst + FRTriggEvtSelSyst*FRTriggEvtSelSyst + FRBTagSyst*FRBTagSyst) << " & " << sqrt(FRJESSyst*FRJESSyst + FRJERSyst*FRJERSyst + FRWSyst*FRWSyst + FRTTScaling*FRTTScaling + FRTTMatching*FRTTMatching + FRPUSyst*FRPUSyst + FRUnclusEnergySyst*FRUnclusEnergySyst + FRTopMassSyst*FRTopMassSyst + FRTriggEvtSelSyst*FRTriggEvtSelSyst + FRBTagSyst*FRBTagSyst + (minuitFitterData.GetFRError())*(minuitFitterData.GetFRError())) << "\\\\" << endl;
 
 		    //F0 results:
 		    float F0JESSyst = 0;
@@ -469,7 +497,11 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float F0TTScaling = 0;
 		    if(TTScalingResults == true) F0TTScaling = (abs(minuitFitter.GetF0Result() - minuitFitterTTScalingUp.GetF0Result()) + abs(minuitFitter.GetF0Result() - minuitFitterTTScalingDown.GetF0Result()))/2;
 		    float F0TTMatching = 0;
-		    if(TTMatchingResults == true) F0TTMatching = (abs(minuitFitter.GetF0Result() - minuitFitterTTMatchingUp.GetF0Result()) + abs(minuitFitter.GetF0Result() - minuitFitterTTMatchingDown.GetF0Result()))/2;		  
+		    float F0TTMatchingUp = 0;
+		    if(TTMatchingResults == true){
+		      F0TTMatching = (abs(minuitFitter.GetF0Result() - minuitFitterTTMatchingUp.GetF0Result()) + abs(minuitFitter.GetF0Result() - minuitFitterTTMatchingDown.GetF0Result()))/2;		  
+		      F0TTMatchingUp = abs(minuitFitter.GetF0Result() - minuitFitterTTMatchingUp.GetF0Result());		  
+		    }
 		    float F0PUSyst = 0;
 		    if(PUResults == true) F0PUSyst = (abs(minuitFitter.GetF0Result() - minuitFitterPUPlus.GetF0Result()) + abs(minuitFitter.GetF0Result() - minuitFitterPUMinus.GetF0Result()))/2;
 		    float F0UnclusEnergySyst = 0;
@@ -481,7 +513,7 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float F0BTagSyst = 0;
 		    if(bTagResults == true) F0BTagSyst = (abs(minuitFitter.GetF0Result() - minuitFitterBTagSystPlus.GetF0Result()) + abs(minuitFitter.GetF0Result() - minuitFitterBTagSystMinus.GetF0Result()))/2;		      
 		    FZeroTex << " \\hline" << endl;
-		    FZeroTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetF0Result() <<" & " << minuitFitterData.GetF0Error() << " & " << F0JESSyst << " & " << F0JERSyst << " & " << F0WSyst << " & " << F0TTScaling << " & " << F0TTMatching << " & " << F0PUSyst << " & " << F0UnclusEnergySyst << " & " << F0TopMassSyst << " & " << F0TriggEvtSelSyst << " & " << F0BTagSyst << " & " << sqrt(F0JESSyst*F0JESSyst + F0JERSyst*F0JERSyst + F0WSyst*F0WSyst + F0TTScaling*F0TTScaling + F0TTMatching*F0TTMatching + F0PUSyst*F0PUSyst + F0UnclusEnergySyst*F0UnclusEnergySyst + F0TopMassSyst*F0TopMassSyst + F0TriggEvtSelSyst*F0TriggEvtSelSyst + F0BTagSyst*F0BTagSyst) << " & " << sqrt(F0JESSyst*F0JESSyst + F0JERSyst*F0JERSyst + F0WSyst*F0WSyst + F0TTScaling*F0TTScaling + F0TTMatching*F0TTMatching + F0PUSyst*F0PUSyst + F0UnclusEnergySyst*F0UnclusEnergySyst + F0TopMassSyst*F0TopMassSyst + F0TriggEvtSelSyst*F0TriggEvtSelSyst + F0BTagSyst*F0BTagSyst+ (minuitFitter.GetF0Error())*(minuitFitter.GetF0Error())) << endl;
+		    FZeroTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetF0Result() <<" & " << minuitFitterData.GetF0Error() << " & " << F0JESSyst << " & " << F0JERSyst << " & " << F0WSyst << " & " << F0TTScaling << " & " << F0TTMatching << " & " << F0TTMatchingUp << " & " << F0PUSyst << " & " << F0UnclusEnergySyst << " & " << F0TopMassSyst << " & " << F0TriggEvtSelSyst << " & " << F0BTagSyst << " & " << sqrt(F0JESSyst*F0JESSyst + F0JERSyst*F0JERSyst + F0WSyst*F0WSyst + F0TTScaling*F0TTScaling + F0TTMatching*F0TTMatching + F0PUSyst*F0PUSyst + F0UnclusEnergySyst*F0UnclusEnergySyst + F0TopMassSyst*F0TopMassSyst + F0TriggEvtSelSyst*F0TriggEvtSelSyst + F0BTagSyst*F0BTagSyst) << " & " << sqrt(F0JESSyst*F0JESSyst + F0JERSyst*F0JERSyst + F0WSyst*F0WSyst + F0TTScaling*F0TTScaling + F0TTMatching*F0TTMatching + F0PUSyst*F0PUSyst + F0UnclusEnergySyst*F0UnclusEnergySyst + F0TopMassSyst*F0TopMassSyst + F0TriggEvtSelSyst*F0TriggEvtSelSyst + F0BTagSyst*F0BTagSyst + (minuitFitterData.GetF0Error())*(minuitFitterData.GetF0Error())) << endl;
 
 		    //Normalisation results:
 		    float NormJESSyst = 0;
@@ -496,7 +528,7 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float NormTTMatchingUp = 0;
 		    if(TTMatchingResults == true){
 		      NormTTMatching = (abs(minuitFitter.GetNorm() - minuitFitterTTMatchingUp.GetNorm()) + abs(minuitFitter.GetNorm() - minuitFitterTTMatchingDown.GetNorm()))/2;
-		      //NormTTMatchingUp = abs(minuitFitter.GetNorm() - minuitFitterTTMatchingUp.GetNorm());
+		      NormTTMatchingUp = abs(minuitFitter.GetNorm() - minuitFitterTTMatchingUp.GetNorm());
 		    }
 		    float NormPUSyst = 0;
 		    if(PUResults == true) NormPUSyst = (abs(minuitFitter.GetNorm() - minuitFitterPUPlus.GetNorm()) + abs(minuitFitter.GetNorm() - minuitFitterPUMinus.GetNorm()))/2;
@@ -509,8 +541,14 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float NormBTagSyst = 0;
 		    if(bTagResults == true) NormBTagSyst = (abs(minuitFitter.GetNorm() - minuitFitterBTagSystPlus.GetNorm()) + abs(minuitFitter.GetNorm() - minuitFitterBTagSystMinus.GetNorm()))/2;
 
+		    if(CSV == 6 || CSV == 7){
+		      cout << " Norm result (Data) : " << minuitFitterData.GetNorm() << endl;
+		      cout << " Norm result (Nominal) : " << minuitFitter.GetNorm() << endl;
+		      cout << " Configuration : " << PresentationOutput[SumbTag] << endl;
+		    }
+
 		    NormTex << " \\hline" << endl;
-		    NormTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetNorm() <<" & " << minuitFitterData.GetNormError() << " & " << NormJESSyst << " & " << NormJERSyst << " & " << NormWSyst << " & " << NormTTScaling << " & " << NormTTMatching << " & " << NormPUSyst << " & " << NormUnclusEnergySyst << " & " << NormTopMassSyst << " & " << NormTriggEvtSelSyst << " & " << NormBTagSyst << " & " << sqrt(NormJESSyst*NormJESSyst + NormJERSyst*NormJERSyst + NormWSyst*NormWSyst + NormTTScaling*NormTTScaling + NormTTMatching*NormTTMatching + NormPUSyst*NormPUSyst + NormUnclusEnergySyst*NormUnclusEnergySyst + NormTopMassSyst*NormTopMassSyst + NormTriggEvtSelSyst*NormTriggEvtSelSyst + NormBTagSyst*NormBTagSyst) << " & " << sqrt(NormJESSyst*NormJESSyst + NormJERSyst*NormJERSyst + NormWSyst*NormWSyst + NormTTScaling*NormTTScaling + NormTTMatching*NormTTMatching + NormPUSyst*NormPUSyst + NormUnclusEnergySyst*NormUnclusEnergySyst + NormTopMassSyst*NormTopMassSyst + NormTriggEvtSelSyst*NormTriggEvtSelSyst + NormBTagSyst*NormBTagSyst + (minuitFitterData.GetNormError())*(minuitFitterData.GetNormError())) << "\\\\" << endl;
+		    NormTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetNorm() <<" & " << minuitFitterData.GetNormError() << " & " << NormJESSyst << " & " << NormJERSyst << " & " << NormWSyst << " & " << NormTTScaling << " & " << NormTTMatching << " & " << NormTTMatchingUp << " & " << NormPUSyst << " & " << NormUnclusEnergySyst << " & " << NormTopMassSyst << " & " << NormTriggEvtSelSyst << " & " << NormBTagSyst << " & " << sqrt(NormJESSyst*NormJESSyst + NormJERSyst*NormJERSyst + NormWSyst*NormWSyst + NormTTScaling*NormTTScaling + NormTTMatching*NormTTMatching + NormPUSyst*NormPUSyst + NormUnclusEnergySyst*NormUnclusEnergySyst + NormTopMassSyst*NormTopMassSyst + NormTriggEvtSelSyst*NormTriggEvtSelSyst + NormBTagSyst*NormBTagSyst) << " & " << sqrt(NormJESSyst*NormJESSyst + NormJERSyst*NormJERSyst + NormWSyst*NormWSyst + NormTTScaling*NormTTScaling + NormTTMatching*NormTTMatching + NormPUSyst*NormPUSyst + NormUnclusEnergySyst*NormUnclusEnergySyst + NormTopMassSyst*NormTopMassSyst + NormTriggEvtSelSyst*NormTriggEvtSelSyst + NormBTagSyst*NormBTagSyst + (minuitFitterData.GetNormError())*(minuitFitterData.GetNormError())) << endl;
 
 		    //Normalisation results:
 		    float NormBckgJESSyst = 0;
@@ -525,7 +563,7 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float NormBckgTTMatchingUp = 0;
 		    if(TTMatchingResults == true){
 		      NormBckgTTMatching = (abs(minuitFitter.GetNormBckg() - minuitFitterTTMatchingUp.GetNormBckg()) + abs(minuitFitter.GetNormBckg() - minuitFitterTTMatchingDown.GetNormBckg()))/2;
-		      //NormBckgTTMatchingUp = abs(minuitFitter.GetNormBckg() - minuitFitterTTMatchingUp.GetNormBckg());
+		      NormBckgTTMatchingUp = abs(minuitFitter.GetNormBckg() - minuitFitterTTMatchingUp.GetNormBckg());
 		    }
 		    float NormBckgPUSyst = 0;
 		    if(PUResults == true) NormBckgPUSyst = (abs(minuitFitter.GetNormBckg() - minuitFitterPUPlus.GetNormBckg()) + abs(minuitFitter.GetNormBckg() - minuitFitterPUMinus.GetNormBckg()))/2;
@@ -538,21 +576,49 @@ MinuitFitterPerforming::MinuitFitterPerforming(string Name, int CosThetaBinNumbe
 		    float NormBckgBTagSyst = 0;
 		    if(bTagResults == true) NormBckgBTagSyst = (abs(minuitFitter.GetNormBckg() - minuitFitterBTagSystPlus.GetNormBckg()) + abs(minuitFitter.GetNormBckg() - minuitFitterBTagSystMinus.GetNormBckg()))/2;
 
+		    if(CSV == 6 || CSV == 7){
+		      cout << " NormBckg result (Data) : " << minuitFitterData.GetNormBckg() << endl;
+		      cout << " NormBckg result (Nominal) : " << minuitFitter.GetNormBckg() << endl;
+		      cout << " Configuration : " << PresentationOutput[SumbTag] << endl;
+		    }
+
 		    NormBckgTex << " \\hline" << endl;
-		    NormBckgTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetNormBckg() <<" & " << minuitFitterData.GetNormBckgError() << " & " << NormBckgJESSyst << " & " << NormBckgJERSyst << " & " << NormBckgWSyst << " & " << NormBckgTTScaling << " & " << NormBckgTTMatching << " & " << NormBckgPUSyst << " & " << NormBckgUnclusEnergySyst << " & " << NormBckgTopMassSyst << " & " << NormBckgTriggEvtSelSyst << " & " << NormBckgBTagSyst << " & " << sqrt(NormBckgJESSyst*NormBckgJESSyst + NormBckgJERSyst*NormBckgJERSyst + NormBckgWSyst*NormBckgWSyst + NormBckgTTScaling*NormBckgTTScaling + NormBckgTTMatching*NormBckgTTMatching + NormBckgPUSyst*NormBckgPUSyst + NormBckgUnclusEnergySyst*NormBckgUnclusEnergySyst + NormBckgTopMassSyst*NormBckgTopMassSyst + NormBckgTriggEvtSelSyst*NormBckgTriggEvtSelSyst + NormBckgBTagSyst*NormBckgBTagSyst) << " & " << sqrt(NormBckgJESSyst*NormBckgJESSyst + NormBckgJERSyst*NormBckgJERSyst + NormBckgWSyst*NormBckgWSyst + NormBckgTTScaling*NormBckgTTScaling + NormBckgTTMatching*NormBckgTTMatching + NormBckgPUSyst*NormBckgPUSyst + NormBckgUnclusEnergySyst*NormBckgUnclusEnergySyst + NormBckgTopMassSyst*NormBckgTopMassSyst + NormBckgTriggEvtSelSyst*NormBckgTriggEvtSelSyst + NormBckgBTagSyst*NormBckgBTagSyst + (minuitFitterData.GetNormBckgError())*(minuitFitterData.GetNormBckgError())) << "\\\\" << endl;
+		    NormBckgTex << PresentationOutput[SumbTag] << " & " << minuitFitterData.GetNormBckg() <<" & " << minuitFitterData.GetNormBckgError() << " & " << NormBckgJESSyst << " & " << NormBckgJERSyst << " & " << NormBckgWSyst << " & " << NormBckgTTScaling << " & " << NormBckgTTMatching << " & " << NormBckgTTMatchingUp << " & " << NormBckgPUSyst << " & " << NormBckgUnclusEnergySyst << " & " << NormBckgTopMassSyst << " & " << NormBckgTriggEvtSelSyst << " & " << NormBckgBTagSyst << " & " << sqrt(NormBckgJESSyst*NormBckgJESSyst + NormBckgJERSyst*NormBckgJERSyst + NormBckgWSyst*NormBckgWSyst + NormBckgTTScaling*NormBckgTTScaling + NormBckgTTMatching*NormBckgTTMatching + NormBckgPUSyst*NormBckgPUSyst + NormBckgUnclusEnergySyst*NormBckgUnclusEnergySyst + NormBckgTopMassSyst*NormBckgTopMassSyst + NormBckgTriggEvtSelSyst*NormBckgTriggEvtSelSyst + NormBckgBTagSyst*NormBckgBTagSyst) << " & " << sqrt(NormBckgJESSyst*NormBckgJESSyst + NormBckgJERSyst*NormBckgJERSyst + NormBckgWSyst*NormBckgWSyst + NormBckgTTScaling*NormBckgTTScaling + NormBckgTTMatching*NormBckgTTMatching + NormBckgPUSyst*NormBckgPUSyst + NormBckgUnclusEnergySyst*NormBckgUnclusEnergySyst + NormBckgTopMassSyst*NormBckgTopMassSyst + NormBckgTriggEvtSelSyst*NormBckgTriggEvtSelSyst + NormBckgBTagSyst*NormBckgBTagSyst + (minuitFitterData.GetNormBckgError())*(minuitFitterData.GetNormBckgError())) << endl;
+			  
 
-		  }
+		  }		
 
+		}//end of wrong entry chosen failed requirement!
+		else{
+		  cout << " Looking at wrong bTagging combination in fitting minuit !! " << endl;
+		  cout << " Looking at : TCHE = " << TCHE+1<< " TCHP = " << TCHP+1 << " SSVHE = " << SSVHE+1 << " SSVHP = " << SSVHP+1 << " CSV = " << CSV+1 << " JP = " << JP+1 << " JBP = " << JBP+1<< endl;
+		  cout << " Correct combination : TCHE = "<< UsedTCHE[SumbTag] << " TCHP = " << UsedTCHP[SumbTag] << " SSVHE = " << UsedSSVHE[SumbTag] << " SSVHP = " << UsedSSVHP[SumbTag] << " CSV = " << UsedCSV[SumbTag] << " JP = " << UsedJP[SumbTag] << " JBP = " << UsedJBP[SumbTag] << endl;
 		}
-
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-
+		
+		if(TCHE==NumberTCHEbTags-1) {
+		  ConsideredTagger =1;
+		  TCHP=1;
+		  SSVHE=1;
+		  SSVHP=1;
+		  CSV=1;
+		  JP=1;
+		  JBP=1;
+		}		    
+	      }//end of TCHE
+	      if(TCHP == NumberTCHPbTags-1) ConsideredTagger =2;
+	    }//end of TCHP
+	    if(SSVHE == NumberSSVHEbTags-1) ConsideredTagger = 3;
+	  }//end of SSVHE
+	  if(SSVHP == NumberSSVHPbTags-1) ConsideredTagger = 4;
+	}//end of SSVHP
+	if(CSV == NumberCSVbTags-1) ConsideredTagger = 5;
+      }//end of CSV
+      if(JP == NumberJPbTags-1) ConsideredTagger=6;
+    }//end of JP
+  }//end of JBP      
+  
+  //} //End of boolean request: PerformMinuit
+    
   //Closing of the texfiles!
   FMinusTex.close();
   FPlusTex.close();
