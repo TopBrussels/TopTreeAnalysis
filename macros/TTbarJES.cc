@@ -187,6 +187,29 @@ int main (int argc, char *argv[])
   histo1D["FourthJetPtTriggered"] = new TH1F("FourthJetPtTriggered","FourthJetPtTriggered",100,0,100);
   histo1D["AlignSystSF"] = new TH1F("AlignSystSF","AlignSystSF",200,-.001,.001);
   
+  histo1D["dRMin"] = new TH1F("dRMin","dRMin",120,0.,3.);
+  histo1D["jetArea"] = new TH1F("jetArea","jetArea",120,0.4,1.);
+  histo1D["nParticlesInJet"] = new TH1F("nParticlesInJet","nParticlesInJet",70,-0.5,69.5);
+  histo1D["mW_dRsmall"] = new TH1F("mW_dRsmall","mW_dRsmall",100,0,200);
+  histo1D["mW_dRlarge"] = new TH1F("mW_dRlarge","mW_dRlarge",100,0,200);
+  histo1D["mTop_dRsmall"] = new TH1F("mTop_dRsmall","mTop_dRsmall",100,0,300);
+  histo1D["mTop_dRlarge"] = new TH1F("mTop_dRlarge","mTop_dRlarge",100,0,300);
+  
+  int nBinsJet = 12;
+  float binningDR[13] = {0.5, 0.65, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.9, 2.5};
+  float binningJetArea[13] = {0.5, 0.55, 0.6, 0.65, 0.7, 0.725, 0.75, 0.775, 0.8, 0.825, 0.85, 0.9, 0.95};
+  float binningNpart[13] = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65};
+  for(size_t i=0; i<nBinsJet; i++)
+  {
+    stringstream ss; ss << i;
+    histo1D["lightJetResp_DR_"+ss.str()] = new TH1F(("lightJetResp_DR_"+ss.str()).c_str(),("lightJetResp_DR_"+ss.str()).c_str(),100,0.,2.);
+    histo1D["bJetResp_DR_"+ss.str()] = new TH1F(("bJetResp_DR_"+ss.str()).c_str(),("bJetResp_DR_"+ss.str()).c_str(),100,0.,2.);
+    histo1D["lightJetResp_Area_"+ss.str()] = new TH1F(("lightJetResp_Area_"+ss.str()).c_str(),("lightJetResp_Area_"+ss.str()).c_str(),100,0.,2.);
+    histo1D["bJetResp_Area_"+ss.str()] = new TH1F(("bJetResp_Area_"+ss.str()).c_str(),("bJetResp_Area_"+ss.str()).c_str(),100,0.,2.);
+    histo1D["lightJetResp_nPart_"+ss.str()] = new TH1F(("lightJetResp_nPart_"+ss.str()).c_str(),("lightJetResp_nPart_"+ss.str()).c_str(),100,0.,2.);
+    histo1D["bJetResp_nPart_"+ss.str()] = new TH1F(("bJetResp_nPart_"+ss.str()).c_str(),("bJetResp_nPart_"+ss.str()).c_str(),100,0.,2.);
+  }
+  
   ////////////////////////////////////
   /// Selection table
   ////////////////////////////////////
@@ -275,6 +298,8 @@ int main (int argc, char *argv[])
   string MVAmethod = "Likelihood"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
     
   JetCombiner* jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, Tprime);
+  JetCombiner* jetCombinerGenPartGenJets = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, Tprime);
+  JetCombiner* jetCombinerGenJetsPFJets = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, Tprime);
   if (verbose > 0)
     cout << " - JetCombiner instantiated ..." << endl;
   
@@ -306,9 +331,6 @@ int main (int argc, char *argv[])
     string dataSetName = datasets[d]->Name();
     string previousFilename = "";
     int iFile = -1;
-    
-    histo1D["mTop_LeptonPlus_"+dataSetName] = new TH1F(("mTop_LeptonPlus_"+dataSetName).c_str(),("mTop_LeptonPlus_"+dataSetName).c_str(),150,100,250);
-    histo1D["mTop_LeptonMinus_"+dataSetName] = new TH1F(("mTop_LeptonMinus_"+dataSetName).c_str(),("mTop_LeptonMinus_"+dataSetName).c_str(),150,100,250);
     
     /////////////////////////////////////
    	/// Initialize JEC factors
@@ -388,8 +410,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 10; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 100000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -423,53 +445,6 @@ int main (int argc, char *argv[])
 			  else if( genEvt->isFullLeptonic() )
   		    scaleFactor *= (0.108*9.)*(0.108*9.);
   		  scaleFactor = 1.;
-/*  		  if(genEvt->isSemiLeptonic( TRootGenEvent::kMuon ) || genEvt->isSemiLeptonic( TRootGenEvent::kElec ) )
-  		  {
-          vector<TRootMCParticle*> mcParticles = treeLoader.LoadMCPart(ievt);
-          bool leptonPlus = false;
-          for(unsigned int i=0; i<mcParticles.size(); i++)
-          {
-            if( mcParticles[i]->status() != 3) continue;
-            
-            if( mcParticles[i]->type() == 13 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6 )
-              leptonPlus = false;
-            else if( mcParticles[i]->type() == -13 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6 )
-              leptonPlus = true;
-            else if( mcParticles[i]->type() == 11 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6 )
-              leptonPlus = false;
-            else if( mcParticles[i]->type() == -11 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6 )
-              leptonPlus = true;
-          }
-          TLorentzVector hadrB = genEvt->hadronicDecayB();
-          TLorentzVector hadrQ1 = genEvt->hadronicDecayQuark();
-          TLorentzVector hadrQ2 = genEvt->hadronicDecayQuarkBar();
-          TLorentzVector hadrBGenJet, hadrQ1GenJet, hadrQ2GenJet;
-          float minDRhadrB = 9999, minDRhadrQ1 = 9999, minDRhadrQ2 = 9999;
-          for(unsigned int i=0; i<genjets.size(); i++)
-          {
-            if(hadrB.DeltaR(*genjets[i]) < minDRhadrB)
-            {
-              minDRhadrB = hadrB.DeltaR(*genjets[i]);
-              hadrBGenJet = *genjets[i];
-            }
-            if(hadrQ1.DeltaR(*genjets[i]) < minDRhadrQ1)
-            {
-              minDRhadrQ1 = hadrQ1.DeltaR(*genjets[i]);
-              hadrQ1GenJet = *genjets[i];
-            }
-            if(hadrQ2.DeltaR(*genjets[i]) < minDRhadrQ2)
-            {
-              minDRhadrQ2 = hadrQ2.DeltaR(*genjets[i]);
-              hadrQ2GenJet = *genjets[i];
-            }
-          }
-          if(hadrBGenJet.Pt() > 20. && hadrQ1GenJet.Pt() > 20. && hadrQ2GenJet.Pt() > 20. && ( hadrBGenJet.Pt() != hadrQ1GenJet.Pt() ) && ( hadrBGenJet.Pt() != hadrQ2GenJet.Pt() ) && ( hadrQ1GenJet.Pt() != hadrQ2GenJet.Pt() ))
-          { // fill the plots!!
-            float mTop = (hadrBGenJet+hadrQ1GenJet+hadrQ2GenJet).M();
-            if(leptonPlus) histo1D["mTop_LeptonPlus_"+dataSetName]->Fill( mTop );
-            else histo1D["mTop_LeptonMinus_"+dataSetName]->Fill( mTop );
-          }
-  		  }*/
       }
       
       // Clone the init_jets vector, otherwise the corrections will be removed
@@ -527,12 +502,7 @@ int main (int argc, char *argv[])
             exit(-1);
           }
         }
-        else
-        {
-          itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralJet30_v1"), currentRun);
-//      	  if (itriggerSemiMu == 9999)
-//      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
-        }
+        else itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralJet30_v1"), currentRun);
         
         // semi-electron
         if(dataSetName.find("Data_ElectronHad") == 0 || dataSetName.find("data_ElectronHad") == 0 || dataSetName.find("DATA_ElectronHad") == 0 )
@@ -565,12 +535,7 @@ int main (int argc, char *argv[])
             exit(-1);
           }
         }
-        else
-        {
-          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun);
-//      	  if (itriggerSemiEl == 9999)
-//      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
-        }
+        else itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v5"), currentRun);
       }
       // Apply Jet Corrections on-the-fly
 //      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
@@ -797,8 +762,6 @@ int main (int argc, char *argv[])
       if( eventSelectedSemiEl && eventSelectedSemiMu )
         cout << "Event selected in semiEl and semiMu channel???" << endl;
       
-//      continue;
-        
       vector<TRootMCParticle*> mcParticles;
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
       {
@@ -817,7 +780,121 @@ int main (int argc, char *argv[])
       if ( !TrainMVA && !CalculateResolutions )
       {
         //get the MC matched jet combination, not the MVA best matched
-	      vector<unsigned int> goodCombi = jetCombiner->GetGoodJetCombination();
+	      vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
+        int hadrBJetIndex = mcJetCombi[2], lightJet1Index = mcJetCombi[0], lightJet2Index = mcJetCombi[1], leptBJetIndex = mcJetCombi[3];
+        
+        if( mcJetCombi[0] < 9999 && mcJetCombi[1] < 9999 && mcJetCombi[2] < 9999 && mcJetCombi[3] < 9999 && (genEvt->isSemiLeptonic( TRootGenEvent::kMuon ) || genEvt->isSemiLeptonic( TRootGenEvent::kElec )) )
+        {
+          vector<TLorentzVector> matchedQuarks, genJetsTLV, matchedGenJets, selectedJetsTLV, matchedPFJetsGenJets;
+          matchedQuarks.push_back(jetCombiner->GetLightQuark1());
+          matchedQuarks.push_back(jetCombiner->GetLightQuark2());
+          matchedQuarks.push_back(jetCombiner->GetHadrBQuark());
+          matchedQuarks.push_back(jetCombiner->GetLeptBQuark());
+          vector<float> dummyBtag (4, 0.);
+          for(size_t i=0; i<genjets.size(); i++)
+            genJetsTLV.push_back( *genjets[i] );
+          jetCombinerGenPartGenJets->ProcessEvent(datasets[d], matchedQuarks, genJetsTLV, dummyBtag, TLorentzVector(), true, scaleFactor, false);
+          vector<unsigned int> mcGenJetCombi = jetCombinerGenPartGenJets->GetGoodJetCombination(); // matching of genParticles with genJets
+          
+          if( mcGenJetCombi[0] < 9999 && mcGenJetCombi[1] < 9999 && mcGenJetCombi[2] < 9999 && mcGenJetCombi[3] < 9999 )
+          {
+            matchedGenJets.push_back(*genjets[mcGenJetCombi[0]]);
+            matchedGenJets.push_back(*genjets[mcGenJetCombi[1]]);
+            matchedGenJets.push_back(*genjets[mcGenJetCombi[2]]);
+            matchedGenJets.push_back(*genjets[mcGenJetCombi[3]]);
+            for(size_t i=0; i<selectedJets.size(); i++)
+              selectedJetsTLV.push_back( *selectedJets[i] );
+            jetCombinerGenJetsPFJets->ProcessEvent(datasets[d], matchedGenJets, selectedJetsTLV, dummyBtag, TLorentzVector(), true, scaleFactor, false);
+            vector<unsigned int> mcGenJetPFJetCombi = jetCombinerGenJetsPFJets->GetGoodJetCombination(); // matching of PFJets with genJets
+            
+            if( mcGenJetPFJetCombi[0] < 9999 && mcGenJetPFJetCombi[1] < 9999 && mcGenJetPFJetCombi[2] < 9999 && mcGenJetPFJetCombi[3] < 9999 )
+            {
+              matchedPFJetsGenJets.push_back(selectedJetsTLV[mcGenJetPFJetCombi[0]]);
+              matchedPFJetsGenJets.push_back(selectedJetsTLV[mcGenJetPFJetCombi[1]]);
+              matchedPFJetsGenJets.push_back(selectedJetsTLV[mcGenJetPFJetCombi[2]]);
+              matchedPFJetsGenJets.push_back(selectedJetsTLV[mcGenJetPFJetCombi[3]]);
+              
+              vector<TRootJet*> matchedJets;
+              for(size_t i=0; i<4; i++)
+                for(size_t j=0; j<selectedJets.size(); j++)
+                  if( fabs(matchedPFJetsGenJets[i].Pt() - selectedJets[j]->Pt()) < 0.01 && fabs(matchedPFJetsGenJets[i].Eta() - selectedJets[j]->Eta()) < 0.01 )
+                    matchedJets.push_back( selectedJets[j] );
+              vector<TRootPFJet*> pfJets = jetTools->convertToPFJets(matchedJets);
+              
+              float lightCorr1 = 1 - resFitLightJets->EtCorrection(&matchedPFJetsGenJets[0]);
+              float lightCorr2 = 1 - resFitLightJets->EtCorrection(&matchedPFJetsGenJets[1]);
+              float bCorr = 1 - resFitBJets->EtCorrection(&matchedPFJetsGenJets[2]);
+              
+              // Now do something with the fully matched events.....
+              float dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
+              if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMin ) dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
+              if( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) < dRMin ) dRMin = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
+              
+              histo1D["dRMin"]->Fill(dRMin);
+              for(size_t i=0; i<matchedJets.size(); i++)
+                histo1D["jetArea"]->Fill(matchedJets[i]->jetArea());
+              
+              if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < 1. )
+                histo1D["mW_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
+              else
+                histo1D["mW_dRlarge"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
+              
+              if(dRMin < 1.)
+                histo1D["mTop_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2+matchedPFJetsGenJets[2]*bCorr).M() );
+              else
+                histo1D["mTop_dRlarge"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2+matchedPFJetsGenJets[2]*bCorr).M() );
+              
+//              float mTopNoFitL7 = ( selectedJets[combi[0]]*lightCorr1 + selectedJets[combi[1]]*lightCorr2 + selectedJets[combi[2]]*bCorr ).M();
+              
+              float dRMinLight1 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
+              if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMinLight1)
+                dRMinLight1 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
+              
+              float dRMinLight2 = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
+              if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < dRMinLight2)
+                dRMinLight2 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
+              
+              float dRMinHadrB = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
+              if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMinHadrB)
+                dRMinHadrB = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
+              
+              for(size_t i=0; i<nBinsJet; i++)
+              {
+                stringstream ss; ss << i;
+                if( dRMinLight1 > binningDR[i] && dRMinLight1 <= binningDR[i+1] )
+                  histo1D["lightJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[0].Pt() / matchedQuarks[0].Pt() );
+                if( dRMinLight2 > binningDR[i] && dRMinLight2 <= binningDR[i+1] )
+                  histo1D["lightJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[1].Pt() / matchedQuarks[1].Pt() );
+                if( dRMinHadrB > binningDR[i] && dRMinHadrB <= binningDR[i+1] )
+                  histo1D["bJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[2].Pt() / matchedQuarks[2].Pt() );
+                
+                for(size_t j=0; j<3; j++)
+                {
+                  if( matchedJets[j]->jetArea() > binningJetArea[i] && matchedJets[j]->jetArea() <= binningJetArea[i+1] )
+                  {
+                    if(j<2) histo1D["lightJetResp_Area_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                    else histo1D["bJetResp_Area_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                  }
+                  float nPart = pfJets[j]->chargedMultiplicity()+pfJets[j]->neutralMultiplicity()+pfJets[j]->muonMultiplicity();
+                  if( nPart > binningNpart[i] && nPart <= binningNpart[i+1] )
+                  {
+                    if(j<2) histo1D["lightJetResp_nPart_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                    else  histo1D["bJetResp_nPart_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                  }
+                }
+              }
+              
+              for(size_t i=0; i<pfJets.size(); i++)
+                histo1D["nParticlesInJet"]->Fill( pfJets[i]->chargedMultiplicity()+pfJets[i]->neutralMultiplicity()+pfJets[i]->muonMultiplicity() );
+              
+              
+              
+              
+            }
+          }
+        }
+        
+        continue;
         
 				///////////////
 	      // KINFITTER //
@@ -840,8 +917,8 @@ int main (int argc, char *argv[])
           {
             vector<float> tmp;
             float* res = 0;
-//              if( goodCombi[2] == tmpMvaVals.second[2] && ( ( goodCombi[1] == tmpMvaVals.second[1] && goodCombi[0] == tmpMvaVals.second[0] )
-//                 || ( goodCombi[0] == tmpMvaVals.second[1] && goodCombi[1] == tmpMvaVals.second[0] ) ) )
+//              if( mcJetCombi[2] == tmpMvaVals.second[2] && ( ( mcJetCombi[1] == tmpMvaVals.second[1] && mcJetCombi[0] == tmpMvaVals.second[0] )
+//                 || ( mcJetCombi[0] == tmpMvaVals.second[1] && mcJetCombi[1] == tmpMvaVals.second[0] ) ) )
             res = kinFit->EstimateTopMass(event, 80.4, false, iCombi);
 //              else
 //              {
@@ -867,10 +944,6 @@ int main (int argc, char *argv[])
             delete histo;
           }
         }
-//          continue;
-        vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
-        int hadrBJetIndex = mcJetCombi[2], lightJet1Index = mcJetCombi[0], lightJet2Index = mcJetCombi[1], leptBJetIndex = mcJetCombi[3];
-
         vector<float> bTagTCHE, bTagTCHP, bTagSSVHE, bTagSSVHP;
         vector<TLorentzVector> otherSelectedJets;
         for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
@@ -986,19 +1059,6 @@ int main (int argc, char *argv[])
     if(jetTools) delete jetTools;
     
     treeLoader.UnLoadDataset(); //important: free memory
-    
-/*    if(!CalculateResolutions)
-    {
-      histo1D["mTop_LeptonPlus_"+dataSetName]->Fit("gaus", "QR","",160,180);
-      histo1D["mTop_LeptonMinus_"+dataSetName]->Fit("gaus", "QR","",160,180);
-    
-      TF1* funcPlus = histo1D["mTop_LeptonPlus_"+dataSetName]->GetFunction("gaus");
-      TF1* funcMinus = histo1D["mTop_LeptonMinus_"+dataSetName]->GetFunction("gaus");
-      cout << "mTop:\nleptonPlus: " << funcPlus->GetParameter(1) << " +/- " <<  funcPlus->GetParError(1);
-      cout << "  leptonMinus: " << funcMinus->GetParameter(1) << " +/- " <<  funcMinus->GetParError(1) << endl;
-      float error = sqrt(funcPlus->GetParError(1)*funcPlus->GetParError(1) + funcMinus->GetParError(1)*funcMinus->GetParError(1));
-      cout << "mTopDiff:  " << funcPlus->GetParameter(1) - funcMinus->GetParameter(1) << " +/- " << error << endl;
-    }*/
   }				//loop on datasets
   
   //Once everything is filled ...
@@ -1016,6 +1076,51 @@ int main (int argc, char *argv[])
   // Do some special things with certain plots (normalize, BayesDivide, ... )
   if (verbose > 0)
     cout << "Treating the special plots." << endl;
+  
+  double respLightDR[nBinsJet], respLightDRErr[nBinsJet], respBDR[nBinsJet], respBDRErr[nBinsJet], respLightArea[nBinsJet], respLightAreaErr[nBinsJet], respBArea[nBinsJet], respBAreaErr[nBinsJet], respLightNpart[nBinsJet], respLightNpartErr[nBinsJet], respBNpart[nBinsJet], respBNpartErr[nBinsJet];
+  double dR[nBinsJet], dRErr[nBinsJet], area[nBinsJet], areaErr[nBinsJet], nPart[nBinsJet], nPartErr[nBinsJet];
+  
+  for(size_t i=0; i<nBinsJet; i++)
+  {
+    dR[i] = (binningDR[i]+binningDR[i+1])/2.;
+    dRErr[i] = fabs(binningDR[i+1]-binningDR[i])/2.;
+    area[i] = (binningJetArea[i]+binningJetArea[i+1])/2.;
+    areaErr[i] = fabs(binningJetArea[i+1]-binningJetArea[i])/2.;
+    nPart[i] = (binningNpart[i]+binningNpart[i+1])/2.;
+    nPartErr[i] = fabs(binningNpart[i+1]-binningNpart[i])/2.;
+    stringstream ss; ss << i;
+    vector<double> lightDR = resFitLightJets->ExtractSigmaMean(histo1D["lightJetResp_DR_"+ss.str()]);
+    respLightDR[i] = lightDR[2];
+    respLightDRErr[i] = lightDR[3];
+    vector<double> bDR = resFitLightJets->ExtractSigmaMean(histo1D["bJetResp_DR_"+ss.str()]);
+    respBDR[i] = bDR[2];
+    respBDRErr[i] = bDR[3];
+    vector<double> lightArea = resFitLightJets->ExtractSigmaMean(histo1D["lightJetResp_Area_"+ss.str()]);
+    respLightArea[i] = lightArea[2];
+    respLightAreaErr[i] = lightArea[3];
+    vector<double> bArea = resFitLightJets->ExtractSigmaMean(histo1D["bJetResp_Area_"+ss.str()]);
+    respBArea[i] = bArea[2];
+    respBAreaErr[i] = bArea[3];
+    vector<double> lightNpart = resFitLightJets->ExtractSigmaMean(histo1D["lightJetResp_nPart_"+ss.str()]);
+    respLightNpart[i] = lightNpart[2];
+    respLightNpartErr[i] = lightNpart[3];
+    vector<double> bNpart = resFitLightJets->ExtractSigmaMean(histo1D["bJetResp_nPart_"+ss.str()]);
+    respBNpart[i] = bNpart[2];
+    respBNpartErr[i] = bNpart[3];
+  }
+  
+  graphErr["lightResp_DR"] = new TGraphErrors(nBinsJet, dR, respLightDR, dRErr, respLightDRErr);
+  graphErr["lightResp_DR"]->SetNameTitle("lightResp_DR","lightResp_DR");
+  graphErr["bResp_DR"] = new TGraphErrors(nBinsJet, dR, respBDR, dRErr, respBDRErr);
+  graphErr["bResp_DR"]->SetNameTitle("bResp_DR","bResp_DR");
+  graphErr["lightResp_Area"] = new TGraphErrors(nBinsJet, area, respLightArea, areaErr, respLightAreaErr);
+  graphErr["lightResp_Area"]->SetNameTitle("lightResp_Area","lightResp_Area");
+  graphErr["bResp_Area"] = new TGraphErrors(nBinsJet, area, respBArea, areaErr, respBAreaErr);
+  graphErr["bResp_Area"]->SetNameTitle("bResp_Area","bResp_Area");
+  graphErr["lightResp_nPart"] = new TGraphErrors(nBinsJet, nPart, respLightNpart, nPartErr, respLightNpartErr);
+  graphErr["lightResp_nPart"]->SetNameTitle("lightResp_nPart","lightResp_nPart");
+  graphErr["bResp_nPart"] = new TGraphErrors(nBinsJet, nPart, respBNpart, nPartErr, respBNpartErr);
+  graphErr["bResp_nPart"]->SetNameTitle("bResp_nPart","bResp_nPart");
   
   ///////////////////
   // Writing

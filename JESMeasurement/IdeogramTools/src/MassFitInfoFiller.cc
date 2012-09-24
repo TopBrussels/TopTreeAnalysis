@@ -46,17 +46,44 @@ void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHead
   TLorentzVector met =  monster->met();
   event.METx = met.Px();
   event.METy = met.Py();
-  for (size_t j = 0 ; j != ideogram::MassFitInfoEvent::kNJET ; ++j)
+  double Ht = 0;
+  for (size_t j = 0 ; j != selJets.size() ; ++j)
   {
-    event.jetPt[j] = selJets[j].Pt();
-    event.jetEta[j] = selJets[j].Eta();
-    event.jetPhi[j] = selJets[j].Phi();
-    event.jetBTagDiscriminant[j] = bTag[j];
+    Ht += selJets[j].Pt();
+    if(j < ideogram::MassFitInfoEvent::kNJET)
+    {
+      event.jetPt[j] = selJets[j].Pt();
+      event.jetEta[j] = selJets[j].Eta();
+      event.jetPhi[j] = selJets[j].Phi();
+      event.jetBTagDiscriminant[j] = bTag[j];
+    }
   }
+  event.HT = Ht;
   event.eventWeight = monster->eventWeight();
   event.lumiWeight = PUweight;
   event.PUdown = PUdown;
   event.PUup = PUup;
+  // calculate pz neutrino (for mttbar)
+  double M_W  = 80.4;
+  double M_mu =  0.10566;
+  double pznu = 0.;
+  
+  double a = M_W*M_W - M_mu*M_mu + 2.0*lepton.Px()*met.Px() + 2.0*lepton.Py()*met.Py();
+  double A = 4.0*(pow(lepton.E(),2)- pow(lepton.Pz(),2));
+  double B = -4.0*a*lepton.Pz();
+  double C = 4.0*pow(lepton.E(),2)*(pow(met.Px(),2) + pow(met.Py(),2)) - a*a;
+  double tmproot = B*B - 4.0*A*C;
+  
+  if(tmproot < 0) pznu = - B/(2*A); // take real part for complex roots
+  else
+  {
+    double tmpsol1 = (-B + TMath::Sqrt(tmproot))/(2.0*A);
+    double tmpsol2 = (-B - TMath::Sqrt(tmproot))/(2.0*A);
+    pznu = TMath::Abs(tmpsol1)<TMath::Abs(tmpsol2) ? tmpsol1 : tmpsol2;
+  }
+  met.SetPxPyPzE(met.Px(), met.Py(), pznu, sqrt(met.Px()*met.Px() + met.Py()*met.Py() + pznu*pznu ) );
+  event.Mttbar = (selJets[0]+selJets[1]+selJets[2]+selJets[3]+lepton+met).M();
+  
   fillMassFitResult(monster, event);
 }
 
