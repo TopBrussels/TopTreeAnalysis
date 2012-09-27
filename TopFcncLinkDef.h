@@ -7,6 +7,8 @@
 //#include "KinFitter/interface/TKinFitter.h"
 //#include "Reconstruction/interface/Observables.h"
 #include "../TopTreeProducer/interface/TRootEvent.h"
+#include "../TopTreeProducer/interface/TRootGenEvent.h"
+#include "../TopTreeProducer/interface/TRootNPGenEvent.h"
 #include "../TopTreeProducer/interface/TRootHLTInfo.h"
 #include "../TopTreeProducer/interface/TRootRun.h"
 #include "../TopTreeProducer/interface/TRootVertex.h"
@@ -20,6 +22,7 @@
 #include "../TopTreeProducer/interface/TRootTrackMET.h"
 #include "../TopTreeProducer/interface/TRootParticle.h"
 #include "../TopTreeProducer/interface/TRootMCParticle.h"
+#include "../TopTreeProducer/interface/TRootGenTop.h"
 
 #else
 
@@ -30,6 +33,8 @@
 //#include "KinFitter/interface/TKinFitter.h"
 //#include "Reconstruction/interface/Observables.h"
 #include "../TopTreeProducer/interface/TRootEvent.h"
+#include "../TopTreeProducer/interface/TRootGenEvent.h"
+#include "../TopTreeProducer/interface/TRootNPGenEvent.h"
 #include "../TopTreeProducer/interface/TRootHLTInfo.h"
 #include "../TopTreeProducer/interface/TRootRun.h"
 #include "../TopTreeProducer/interface/TRootVertex.h"
@@ -43,6 +48,7 @@
 #include "../TopTreeProducer/interface/TRootTrackMET.h"
 #include "../TopTreeProducer/interface/TRootParticle.h"
 #include "../TopTreeProducer/interface/TRootMCParticle.h"
+#include "../TopTreeProducer/interface/TRootGenTop.h"
 
 #endif
 
@@ -56,6 +62,8 @@
 #pragma link C++ class Dataset;
 //#pragma link C++ class TKinFitter;
 #pragma link C++ class TRootEvent;
+#pragma link C++ class TRootGenEvent;
+#pragma link C++ class TRootNPGenEvent;
 #pragma link C++ class TRootHLTInfo;
 #pragma link C++ class TRootRun;
 #pragma link C++ class TRootVertex;
@@ -69,6 +77,7 @@
 #pragma link C++ class TRootTrackMET;
 #pragma link C++ class TRootParticle;
 #pragma link C++ class TRootMCParticle;
+#pragma link C++ class TRootGenTop;
 #pragma link C++ class AnalysisEnvironment;
 //#pragma link C++ class Observables;
 
