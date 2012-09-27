@@ -79,6 +79,7 @@ int main (int argc, char *argv[])
   
   bool doAllMSPlots = false;
   bool writeASCIIstuff = true; // false:  files are created but no events are filled
+  bool useOnlyLowestChi2 = true;
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
@@ -99,7 +100,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -109,14 +110,14 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_EMEnriched_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_EMEnriched_Nominal_SemiLep.root");
       
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/JetEta1p8/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -291,6 +292,7 @@ int main (int argc, char *argv[])
   MSPlot["Leading_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["4th_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
   MSPlot["4th_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+  MSPlot["MET"] = new MultiSamplePlot(dataSetsOneData,"MET",100,0,350,"MET (GeV)","Nr. of events");
   MSPlot["MET_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonPlus",100,0,250,"MET (GeV)","Nr. of events");
   MSPlot["MET_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonMinus",100,0,250,"MET (GeV)","Nr. of events");
   MSPlot["Nr_of_jets"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets",5,3.5,8.5,"Nr. of jets","Nr. of events");
@@ -320,13 +322,16 @@ int main (int argc, char *argv[])
   MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
   
-  MSPlot["nBtags"] = new MultiSamplePlot(datasetsSemiMu,"nBtags",3,-0.5,2.5,"Nr. of b-tagged jets","Nr. of events");
+  MSPlot["nBtags"] = new MultiSamplePlot(datasetsSemiMu,"nBtags",5,-0.5,4.5,"Nr. of b-tagged jets","Nr. of events");
   MSPlot["leptonCharge"] = new MultiSamplePlot(datasetsSemiMu,"leptonCharge",3,-1.5,1.5,"leptonCharge","Nr. of events");
   
   MSPlot["etaTop"] = new MultiSamplePlot(datasetsSemiMu,"etaTop",20,-2.5,2.5,"#eta_{top}","Nr. of events");
   MSPlot["PtTop"] = new MultiSamplePlot(datasetsSemiMu,"PtTop",50,0,500,"#P_{T, top}","Nr. of events");
   MSPlot["etaBjet"] = new MultiSamplePlot(datasetsSemiMu,"etaBjet",20,-2.5,2.5,"#eta_{b-jet}","Nr. of events");
   MSPlot["PtBjet"] = new MultiSamplePlot(datasetsSemiMu,"PtBjet",50,0,250,"#P_{T, b-jet}","Nr. of events");
+  
+  MSPlot["Mttbar"] = new MultiSamplePlot(datasetsSemiMu,"Mttbar",100,0,2000,"M_{t#bar{t}}","Nr. of events");
+  MSPlot["HT"] = new MultiSamplePlot(datasetsSemiMu,"HT",100,0,1000,"H_{T}","Nr. of events");
   
   if(doAllMSPlots)
   {
@@ -625,8 +630,8 @@ int main (int argc, char *argv[])
     float nMuPlus = 0, nElPlus = 0, nMuMinus = 0, nElMinus = 0;
     int nRealBjets = 0, nRealBjetsBtag = 0;
     
-//    for(unsigned int iEvt=0; iEvt<nEvent; iEvt++)
-    for(unsigned int iEvt=0; iEvt<1000; iEvt++)
+    for(unsigned int iEvt=0; iEvt<nEvent; iEvt++)
+//    for(unsigned int iEvt=0; iEvt<1000; iEvt++)
     {
       inMonstersTree->GetEvent(iEvt);
 //      cout << "event: " << iEvt << endl;
@@ -760,6 +765,7 @@ int main (int argc, char *argv[])
       vector<int> hadrBindex, light1index, light2index;
       int nFinalCombis=0; // final means after chi2<10 cut
       int mcCombiIndex = -1;
+      double lowestChi2 = 99999;
       for(unsigned int iCombi=0; iCombi<12; iCombi++)
       {
         unsigned int* combi = monster->mvaResult(iCombi);
@@ -774,60 +780,77 @@ int main (int argc, char *argv[])
         if( chi2MTopFit < maxChi2 )
         {
           nFinalCombis++;
-          light1index.push_back(combi[0]);
-          light2index.push_back(combi[1]);
-          hadrBindex.push_back(combi[2]);
-          mTop.push_back(mTopFit);
-          sigmaMtop.push_back(sigmaMTopFit);
-          minChi2.push_back(chi2MTopFit);
-          etaTop.push_back( ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).Eta() );
-          PtTop.push_back( ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).Pt() );
-          etaBjet.push_back( selectedJets[combi[2]].Eta() );
-          PtBjet.push_back( selectedJets[combi[2]].Pt() );
-          
-          float bTagW = 1;
-          for(size_t i=0; i<4; i++)
+          if( !useOnlyLowestChi2 || ( useOnlyLowestChi2 && chi2MTopFit < lowestChi2 ) )
           {
-            if(btagSSVHE[combi[i]] > bTagCut) // b-tagged!
+            if(useOnlyLowestChi2)
             {
-              if(i == 0 || i == 1) bTagW *= misTagRate;
-              else bTagW *= bTagEff;
+              lowestChi2 = chi2MTopFit;
+              light1index.clear();
+              light2index.clear();
+              hadrBindex.clear();
+              mTop.clear();
+              sigmaMtop.clear();
+              minChi2.clear();
+              etaTop.clear();
+              PtTop.clear();
+              etaBjet.clear();
+              PtBjet.clear();
+              bTagWeight.clear();
             }
-            else // NOT b-tagged!
+            light1index.push_back(combi[0]);
+            light2index.push_back(combi[1]);
+            hadrBindex.push_back(combi[2]);
+            mTop.push_back(mTopFit);
+            sigmaMtop.push_back(sigmaMTopFit);
+            minChi2.push_back(chi2MTopFit);
+            etaTop.push_back( ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).Eta() );
+            PtTop.push_back( ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).Pt() );
+            etaBjet.push_back( selectedJets[combi[2]].Eta() );
+            PtBjet.push_back( selectedJets[combi[2]].Pt() );
+            
+            float bTagW = 1;
+            for(size_t i=0; i<4; i++)
             {
-              if(i == 0 || i == 1) bTagW *= (1 - misTagRate);
-              else bTagW *= (1 - bTagEff);
+              if(btagSSVHE[combi[i]] > bTagCut) // b-tagged!
+              {
+                if(i == 0 || i == 1) bTagW *= misTagRate;
+                else bTagW *= bTagEff;
+              }
+              else // NOT b-tagged!
+              {
+                if(i == 0 || i == 1) bTagW *= (1 - misTagRate);
+                else bTagW *= (1 - bTagEff);
+              }
             }
-          }
-          bTagWeight.push_back(bTagW);
-          
-          // control plots
-          if( dataSetName.find("TTbarJets") == 0 )
-          {
-            histo1D["mTop_Fit"]->Fill(mTopFit);
-            histo1D["sigmaMtop_Fit"]->Fill(sigmaMTopFit);
-            histo1D["MinChi2ndf_Fit"]->Fill(chi2MTopFit);
-            histo1D["Prob_MinChi2_Fit"]->Fill(TMath::Prob(chi2MTopFit, 1));
-           	      
-            if( goodCombi )
+            bTagWeight.push_back(bTagW);
+            
+            // control plots
+            if( dataSetName.find("TTbarJets") == 0 )
             {
-              float mTopNoFit = ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).M();
-              float lightCorr1 = 1 - resFitLightJets->EtCorrection(&selectedJets[combi[0]]);
-              float lightCorr2 = 1 - resFitLightJets->EtCorrection(&selectedJets[combi[1]]);
-              float bCorr = 1 - resFitBJets->EtCorrection(&selectedJets[combi[2]]);
-              float mTopNoFitL7 = ( selectedJets[combi[0]]*lightCorr1 + selectedJets[combi[1]]*lightCorr2 + selectedJets[combi[2]]*bCorr ).M();
-              
-              histo1D["mTop_NoFit_goodcombi"]->Fill(mTopNoFit);
-              histo1D["mTopL7_NoFit_goodcombi"]->Fill(mTopNoFitL7);
-              histo1D["mTop_Fit_goodcombi"]->Fill(mTopFit);
-              histo1D["sigmaMtop_Fit_goodcombi"]->Fill(sigmaMTopFit);
-            	histo1D["MinChi2ndf_Fit_goodcombi"]->Fill(chi2MTopFit);
-            	histo1D["Prob_MinChi2_Fit_goodcombi"]->Fill(TMath::Prob(chi2MTopFit, 1));
+              histo1D["mTop_Fit"]->Fill(mTopFit);
+              histo1D["sigmaMtop_Fit"]->Fill(sigmaMTopFit);
+              histo1D["MinChi2ndf_Fit"]->Fill(chi2MTopFit);
+              histo1D["Prob_MinChi2_Fit"]->Fill(TMath::Prob(chi2MTopFit, 1));
+             	      
+              if( goodCombi )
+              {
+                float mTopNoFit = ( selectedJets[combi[0]] + selectedJets[combi[1]] + selectedJets[combi[2]] ).M();
+                float lightCorr1 = 1 - resFitLightJets->EtCorrection(&selectedJets[combi[0]]);
+                float lightCorr2 = 1 - resFitLightJets->EtCorrection(&selectedJets[combi[1]]);
+                float bCorr = 1 - resFitBJets->EtCorrection(&selectedJets[combi[2]]);
+                float mTopNoFitL7 = ( selectedJets[combi[0]]*lightCorr1 + selectedJets[combi[1]]*lightCorr2 + selectedJets[combi[2]]*bCorr ).M();
+                
+                histo1D["mTop_NoFit_goodcombi"]->Fill(mTopNoFit);
+                histo1D["mTopL7_NoFit_goodcombi"]->Fill(mTopNoFitL7);
+                histo1D["mTop_Fit_goodcombi"]->Fill(mTopFit);
+                histo1D["sigmaMtop_Fit_goodcombi"]->Fill(sigmaMTopFit);
+              	histo1D["MinChi2ndf_Fit_goodcombi"]->Fill(chi2MTopFit);
+              	histo1D["Prob_MinChi2_Fit_goodcombi"]->Fill(TMath::Prob(chi2MTopFit, 1));
+              }
             }
           }
         }
       }
-      
       int bestCombiIndex = 99;
       float minChi2BestCombi = 9999;
       for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++)
@@ -873,6 +896,7 @@ int main (int argc, char *argv[])
         MSPlot["Leading_jet_pt"+leptonChargeIncl]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
         MSPlot["4th_jet_pt"+leptonChargeIncl]->Fill(selectedJets[3].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
         MSPlot["MET"+leptonChargeIncl]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["MET"]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
         MSPlot["etaTop"]->Fill(etaTop[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
         MSPlot["PtTop"]->Fill(PtTop[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
         MSPlot["etaBjet"]->Fill(etaBjet[bestCombiIndex], dataSet, true, monster->eventWeight()*lumiWeight);
@@ -921,9 +945,10 @@ int main (int argc, char *argv[])
           MSPlot["Prob_MinChi2_Fit"+leptonCharge]->Fill(TMath::Prob(minChi2[bestCombiIndex], 1), dataSet, true, monster->eventWeight()*lumiWeight);
         }
         
-        float M3 = -1, maxPt = -1, PtTTbar = (selectedJets[0]+selectedJets[1]+selectedJets[2]+selectedJets[3]+MET+lepton).Pt();
+        float M3 = -1, maxPt = -1, PtTTbar = (selectedJets[0]+selectedJets[1]+selectedJets[2]+selectedJets[3]+MET+lepton).Pt(), Ht = 0;
         for(int i=0;i<selectedJets.size();i++)
         {
+          Ht += selectedJets[i].Pt();
           MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight);
           if(doAllMSPlots)
           {
@@ -950,13 +975,37 @@ int main (int argc, char *argv[])
         if(PtTTbar>200) MSPlot["M3_PtTTbar200"]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
         if(maxPt>300) MSPlot["M3_PtTop300"]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
         if(doAllMSPlots) MSPlot["M3"+leptonCharge]->Fill(M3, dataSet, true, monster->eventWeight()*lumiWeight);
+        MSPlot["HT"]->Fill(Ht, dataSet, true, monster->eventWeight()*lumiWeight);
+        
+        //calculate pz neutrino (for mttbar)
+        {
+          double M_W  = 80.4;
+          double M_mu =  0.10566;
+          double pznu = 0.;
+          
+          double a = M_W*M_W - M_mu*M_mu + 2.0*lepton.Px()*MET.Px() + 2.0*lepton.Py()*MET.Py();
+          double A = 4.0*(pow(lepton.E(),2)- pow(lepton.Pz(),2));
+          double B = -4.0*a*lepton.Pz();
+          double C = 4.0*pow(lepton.E(),2)*(pow(MET.Px(),2) + pow(MET.Py(),2)) - a*a;
+          double tmproot = B*B - 4.0*A*C;
+          
+          if(tmproot < 0) pznu = - B/(2*A); // take real part for complex roots
+          else
+          {
+            double tmpsol1 = (-B + TMath::Sqrt(tmproot))/(2.0*A);
+            double tmpsol2 = (-B - TMath::Sqrt(tmproot))/(2.0*A);
+            pznu = TMath::Abs(tmpsol1)<TMath::Abs(tmpsol2) ? tmpsol1 : tmpsol2;
+          }
+          MET.SetPxPyPzE(MET.Px(), MET.Py(), pznu, sqrt(MET.Px()*MET.Px() + MET.Py()*MET.Py() + pznu*pznu ) );
+        }
+        MSPlot["Mttbar"]->Fill((selectedJets[0]+selectedJets[1]+selectedJets[2]+selectedJets[3]+lepton+MET).M(), dataSet, true, monster->eventWeight()*lumiWeight);
         
         // Write everything out to the ASCII file
         if(monster->selectedSemiMu())
         {
           if(writeASCIIstuff)
           {
-            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown);
+            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, useOnlyLowestChi2);
             if(applyChi2Cut(eventMu, maxChi2))
             {
               setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
@@ -991,7 +1040,7 @@ int main (int argc, char *argv[])
         {
           if(writeASCIIstuff)
           {
-            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown);
+            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, useOnlyLowestChi2);
             if(applyChi2Cut(eventEl, maxChi2))
             {
               setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);

@@ -18,7 +18,7 @@ void fillMassFitInfoHeader(Dataset* dataSet, ideogram::MassFitInfoHeader& header
   header.pdf_ = containsPDFsyst;
 }
 
-void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHeader& header, ideogram::MassFitInfoEvent& event, float PUweight, float PUup, float PUdown)
+void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHeader& header, ideogram::MassFitInfoEvent& event, float PUweight, float PUup, float PUdown, bool onlyLowestChi2)
 {
   event.runNumber = monster->runID();
   event.luminositySection = monster->lumiBlockID();
@@ -84,24 +84,33 @@ void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHead
   met.SetPxPyPzE(met.Px(), met.Py(), pznu, sqrt(met.Px()*met.Px() + met.Py()*met.Py() + pznu*pznu ) );
   event.Mttbar = (selJets[0]+selJets[1]+selJets[2]+selJets[3]+lepton+met).M();
   
-  fillMassFitResult(monster, event);
+  fillMassFitResult(monster, event, onlyLowestChi2);
 }
 
-void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event)
+void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event, bool onlyLowestChi2)
 {
   // remove what is already stored in the event
   event.fitInfo.clear();
   event.fitSortedChi2Index.clear();
-  size_t nFit(0);
-  
+  size_t nFit = 0;
+  double lowestChi2 = 99999;
   for(unsigned int iCombi=0; iCombi<12; iCombi++)
   {
     unsigned int* combi = monster->mvaResult(iCombi);
     vector<Int_t> jetType;
     for (size_t j = 0 ; j!= 4 ; ++j) jetType.push_back(combi[j]);
     
-    event.fitInfo.push_back( ideogram::MassFitInfo(jetType, monster->chi2MTopFit(iCombi), exp(-0.5*monster->chi2MTopFit(iCombi)), 1., true, monster->mTopFit(iCombi), monster->sigmaMTopFit(iCombi)) );
-    nFit++;
+    if( !onlyLowestChi2 || ( onlyLowestChi2 && monster->chi2MTopFit(iCombi) < lowestChi2 ) )
+    {
+      if(onlyLowestChi2)
+      {
+        lowestChi2 = monster->chi2MTopFit(iCombi);
+        nFit = 0;
+        event.fitInfo.clear();
+      }
+      event.fitInfo.push_back( ideogram::MassFitInfo(jetType, monster->chi2MTopFit(iCombi), exp(-0.5*monster->chi2MTopFit(iCombi)), 1., true, monster->mTopFit(iCombi), monster->sigmaMTopFit(iCombi)) );
+      nFit++;
+    }
   }
   event.nFit = nFit;
   event.nFitConverge = nFit; // Implement ad-hoc calculation of fit convergence criteria here

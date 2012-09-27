@@ -14,8 +14,8 @@
 
 void fillMassFitInfoHeader(Dataset* dataSet, ideogram::MassFitInfoHeader& header, bool isSemiMu, bool containsPDFsyst);
 
-void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHeader& header, ideogram::MassFitInfoEvent& event, float PUweight, float PUup, float PUdown);
+void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHeader& header, ideogram::MassFitInfoEvent& event, float PUweight, float PUup, float PUdown, bool onlyLowestChi2);
 
-void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event);
+void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event, bool onlyLowestChi2);
 
 #endif
