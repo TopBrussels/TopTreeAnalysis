@@ -22,7 +22,7 @@
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../TopFCNC/interface/TopFCNC_GenEvt.h"
 
-#include "Style.C"
+#include "../../macros/Style.C"
 
 using namespace std;
 using namespace TopTree;
@@ -46,7 +46,6 @@ int main (int argc, char *argv[])
   setGregStyle();
   //setMyStyle();
 
-  string postfix = "_Resolutions"; // to relabel the names of the output file
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +56,31 @@ int main (int argc, char *argv[])
   string xmlFileName = "../config/myTopFCNCconfig_Resolutions.xml";
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
+
+  string postfix = "_Resolutions"; // to relabel the names of the output file
+
+  //Output ROOT file
+  string rootFileName ("TopFCNC"+postfix+".root");
+  TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
   
+  //vector of objects
+  cout << " - Variable declaration ..." << endl;
+
+  vector < TRootVertex* >   vertex;
+  vector < TRootMuon* >     init_muons;
+  vector < TRootElectron* > init_electrons;
+  vector < TRootJet* >      init_jets;
+  vector < TRootMET* >      mets;
+
+  //Global variable
+  TRootEvent* event = 0;
+  TopFCNC_GenEvt *GenEvent = 0;
+
+  ResolutionFit *resFitMuons     = new ResolutionFit("Muon");
+  ResolutionFit *resFitElectrons = new ResolutionFit("Electron");
+  ResolutionFit *resFitBJets     = new ResolutionFit("BJet");
+  ResolutionFit *resFitQJets     = new ResolutionFit("BJet");
+  ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////// AnalysisEnvironment /////////////////////////////////////////////////////////////////
@@ -80,26 +103,6 @@ int main (int argc, char *argv[])
   cout << " - Loading datasets ..." << endl;
   treeLoader.LoadDatasets (datasets, xmlfile);
   
-
-  //Output ROOT file
-  string rootFileName ("TopFCNC"+postfix+".root");
-  TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
-
-  //vector of objects
-  cout << " - Variable declaration ..." << endl;
-
-  vector < TRootVertex* >   vertex;
-  vector < TRootMuon* >     init_muons;
-  vector < TRootElectron* > init_electrons;
-  vector < TRootJet* >      init_jets;
-  vector < TRootMET* >      mets;
-
-  //Global variable
-  TRootEvent* event = 0;
-
-  ResolutionFit *resFitLeptons   = new ResolutionFit("Muon"); //("Electron");
-  ResolutionFit *resFitBJets     = new ResolutionFit("BJet");
-  ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -109,8 +112,12 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
   ////////////////// 1D histograms  //////////////////////////////////
   ////////////////////////////////////////////////////////////////////
-  histo1D["DR_lepton_MC_vs_RECO"] = new TH1F("DR_lepton_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
-  histo1D["DiLeptonMass"] = new TH1F("DiLeptonMass",";m_{ll};#events",320,50,130);
+  histo1D["DR_muon_MC_vs_RECO"] = new TH1F("DR_muon_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
+  histo1D["DR_elec_MC_vs_RECO"] = new TH1F("DR_elec_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
+  histo1D["DR_jets_MC_vs_RECO"] = new TH1F("DR_jets_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
+
+  histo1D["DiMuonMass"] = new TH1F("DiMuonMass",";m_{ll};#events",320,50,130);
+  histo1D["DiElecMass"] = new TH1F("DiElecMass",";m_{ll};#events",320,50,130);
 
   histo1D["TopMass_Had_Decay"]  = new TH1F("TopMass_Had_Decay",";m_{bqq};#events",500,100,250);
   histo1D["WMass_Had_Decay"]    = new TH1F("WMass_Had_Decay",";m_{qq};#events",480,0,160);
@@ -164,43 +171,53 @@ int main (int argc, char *argv[])
       if(ievt%1000 == 0)
 		  std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
 
-	    //load event
+	    // load Event
 	    event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-	    //vector<TRootGenJet*>     genjets     = treeLoader.LoadGenJet(ievt);
-	    vector<TRootMCParticle*> mcParticles   = treeLoader.LoadMCPart(ievt);
-      //cout<<"Nb of MC particles : "<<mcParticles.size()<<endl;
+      // load MCParticles
+	    vector<TRootMCParticle*> mcParticles = treeLoader.LoadMCPart(ievt);
+
 	    Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-	    selection.setJetCuts(20.,2.4,0.01,1.,0.98,0.3,0.1); //Pt,Eta,EMF,n90Hits,fHPD,dRJetElectron,dRJetMuon
-	    selection.setDiMuonCuts(15,2.4,0.15,10,0.02); //Et,Eta,RelIso,NValidHits,d0
+	    selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1); //Pt,Eta,EMF,n90Hits,fHPD,dRJetElectron,dRJetMuon
+    	selection.setDiMuonCuts(15,2.4,0.20,999.); //Et,Eta,RelIso,d0
+  	  selection.setDiElectronCuts(15,2.5,0.15,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
 
 	    vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
 	    vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
+	    vector<TRootElectron*> selectedElectrons   = selection.GetSelectedDiElectrons();
 
-	    if(selectedMuons.size()<2) continue;
+      // instanciate topfcnc object
+      GenEvent = new TopFCNC_GenEvt();
+      // reconstruct top fcnc event
+      GenEvent->ReconstructEvt(mcParticles);
+      // match jets to top fcnc partons
+      GenEvent->MatchJetsToPartons(selectedJets);
 
-      float dr = 9999.;
-      float dr_tmp = 999.;
-      int idx1 = -1;
-
-      TLorentzVector* lepton = 0;
-      for(unsigned int i=0;i<selectedMuons.size();++i){
-        lepton = (TLorentzVector*) selectedMuons[i];
-        dr = 9999.;
-        dr_tmp = 999.;
-        for(unsigned int j=0;j<mcParticles.size();++j){
-          //if(j==idx1) continue;
-          dr_tmp = lepton->DeltaR(*mcParticles[j]);
-          if(dr>dr_tmp){
-            dr = dr_tmp;
-            idx1 = j;
-          }
-        }
-        histo1D["DR_lepton_MC_vs_RECO"]->Fill(dr);
-        resFitLeptons->Fill(selectedMuons[i],mcParticles[idx1]);
-        // Erase MC candidate from the particle list
-				mcParticles.erase(mcParticles.begin()+idx1);
+      if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon){
+        // match muons to top fcnc Z decay products
+        GenEvent->MatchLeptonsToZ(selectedMuons);
+        // fill corresponding histograms
+        histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
+        histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
       }
+      else if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
+        // match electrons to top fcnc Z decay products
+        GenEvent->MatchLeptonsToZ(selectedElectrons);
+        // fill corresponding histograms
+        histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
+        histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
+      }
+
+      histo1D["DR_bjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchBFromTop());
+      histo1D["DR_qjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQFromTop());
+
+      histo1D["DR_lightjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
+      histo1D["DR_lightjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
+
+      GenEvent->FillResolutions(resFitMuons, resFitElectrons, resFitBJets, resFitQJets, resFitLightJets);
+
 	    //delete selection;
+	    delete GenEvent;
+
     }//loop on events
     
     cout<<endl;
@@ -218,32 +235,39 @@ int main (int argc, char *argv[])
   //////////////////
   cout << " - Writing outputs to the files ..." << endl;
   fout->cd();
+
   TDirectory* th1dir = fout->mkdir("Histos1D");
   th1dir->cd();
   for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
   {
-	TH1F *temp = it->second;
-	temp->Write();
-	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+  	TH1F *temp = it->second;
+  	temp->Write();
+  	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+  	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
+
   TDirectory* th2dir = fout->mkdir("Histos2D");
   th2dir->cd();
-   for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
+  for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
   {
-	TH2F *temp = it->second;
-	temp->Write();
-	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
-	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+  	TH2F *temp = it->second;
+  	temp->Write();
+  	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+  	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
-  resFitLeptons->WritePlots(fout, true, pathPNG+"resFit_Lepton/");
-  resFitLeptons->WriteResolutions("leptonReso.root");
-/*
-  resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
-  resFitLightJets->WriteResolutions("lightJetReso.root");
+
+  resFitMuons->WritePlots(fout, true, pathPNG+"resFit_Muon/");
+  resFitMuons->WriteResolutions("muonReso.root");
+  resFitElectrons->WritePlots(fout, true, pathPNG+"resFit_Electron/");
+  resFitElectrons->WriteResolutions("electronReso.root");
+
   resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
   resFitBJets->WriteResolutions("bJetReso.root");
-*/
+  resFitQJets->WritePlots(fout, true, pathPNG+"resFit_QJet/");
+  resFitQJets->WriteResolutions("qJetReso.root");
+  resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
+  resFitLightJets->WriteResolutions("lightJetReso.root");
+
   //delete  
   delete fout;
 

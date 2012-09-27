@@ -57,10 +57,13 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // Choose leptonic channel
+  Bool_t UseMuChannel = true;
+
   //Output ROOT file
   string postfix = "_Analysis";
-  string channelpostfix = "_DiMuonTrigger";
-  string comments = "_Run2011AB";
+  string channelpostfix = (UseMuChannel ? "_DiMuonTrigger" : "_DiElecTrigger");
+  string comments = "_Run2012A";
   string rootFileName ("TopFCNC"+postfix+channelpostfix+comments+".root");
 
   Float_t Luminosity = -1.;
@@ -69,15 +72,15 @@ int main (int argc, char *argv[])
   vector<Dataset*> dataSets; // needed for MSPlots
   vector<string>   inputFiles;
   
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_Data.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_ST_tbar_tWch_DR.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_ST_t_tWch_DR.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_ww.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_wz.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_zz.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_TTjets.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_Z_Jets.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection_DiMu_Run2011AB_TTree_ttbar_fcnc.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Data.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_tbar_tWch_DR.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_t_tWch_DR.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ww.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_wz.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_zz.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_TTjets.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Z_Jets.root");
+  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttbar_fcnc.root");
 
   for(unsigned int iDataSet=0; iDataSet<inputFiles.size(); iDataSet++)
   {
@@ -103,14 +106,25 @@ int main (int argc, char *argv[])
   TFile      *fout  = new TFile (rootFileName.c_str(), "RECREATE");
   TDirectory *myDir = 0;
 
-  ResolutionFit *resFitLeptons = new ResolutionFit("Muon");
-  resFitLeptons->LoadResolutions("../rootfiles/leptonReso_FromZJets.root");
+  ResolutionFit *resFitLeptons = 0;
+  if(UseMuChannel){
+    resFitLeptons = new ResolutionFit("Muon");
+    resFitLeptons->LoadResolutions("../rootfiles/muonReso_FromZJets.root");
+  }
+  else{
+    resFitLeptons = new ResolutionFit("Electron");
+    resFitLeptons->LoadResolutions("../rootfiles/electronReso_FromZJets.root");
+  }
+  
+  ResolutionFit *resFitBJets = new ResolutionFit("BJet");
+  resFitBJets->LoadResolutions("../rootfiles/bJetReso.root");
+
+  ResolutionFit *resFitQJets = new ResolutionFit("BJet");
+  resFitQJets->LoadResolutions("../rootfiles/qJetReso.root");
 
   ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
   resFitLightJets->LoadResolutions("../rootfiles/lightJetReso.root");
   
-  ResolutionFit *resFitBJets = new ResolutionFit("BJet");
-  resFitBJets->LoadResolutions("../rootfiles/bJetReso.root");
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -175,7 +189,7 @@ int main (int argc, char *argv[])
     m_br->SetAddress(&topFCNC_Evt);
     m_br->SetAutoDelete(kTRUE);
     
-    TopFCNC_KinFit *topFCNC_KinFit = new TopFCNC_KinFit(dataSet, resFitLeptons, resFitLightJets, resFitBJets);
+    TopFCNC_KinFit *topFCNC_KinFit = new TopFCNC_KinFit(dataSet, resFitLeptons, resFitBJets, resFitQJets, resFitLightJets);
     topFCNC_KinFit->SetMaxNbIter(60);
     topFCNC_KinFit->SetVerbosity(false);
     topFCNC_KinFit->SetFitVerbosity(false);
