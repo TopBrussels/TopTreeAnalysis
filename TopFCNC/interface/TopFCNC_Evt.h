@@ -32,15 +32,18 @@ class TopFCNC_Evt : public TObject
       xParton2_(-1.),
       factorizationScale_(-1.),
       nPV_(0),
+/*
       nPUBXm1_(0),
       nPU_(0),
       nPUBXp1_(0),
+*/
       nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(kNone),
 			wLeptonicChannel_(kNone),
 			isDiLeptonic_(false),
 			isTriLeptonic_(false),
+/*
 			wMass_(80.4),
 			zMass_(91.2),
 			topMass_(170.),
@@ -53,6 +56,7 @@ class TopFCNC_Evt : public TObject
 			massChi2_(-999.),
 			massChi2_SM_(-999.),
 			massChi2_FCNC_(-999.),
+*/
 			verbose_(false)
 			{;}
 
@@ -67,15 +71,18 @@ class TopFCNC_Evt : public TObject
       xParton2_(-1.),
       factorizationScale_(-1.),
       nPV_(0),
+/*
       nPUBXm1_(0),
       nPU_(0),
       nPUBXp1_(0),
+*/
       nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(type),
 			wLeptonicChannel_(kNone),
 			isDiLeptonic_(true),
 			isTriLeptonic_(false),
+/*
 			wMass_(80.4),
 			zMass_(91.2),
 			topMass_(170.),
@@ -88,6 +95,7 @@ class TopFCNC_Evt : public TObject
 			massChi2_(-999.),
 			massChi2_SM_(-999.),
 			massChi2_FCNC_(-999.),
+*/
 			verbose_(false)
 			{;}
 
@@ -102,15 +110,18 @@ class TopFCNC_Evt : public TObject
       xParton2_(-1.),
       factorizationScale_(-1.),
       nPV_(0),
+/*
       nPUBXm1_(0),
       nPU_(0),
       nPUBXp1_(0),
+*/
       nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(type1),
 			wLeptonicChannel_(type2),
 			isDiLeptonic_(false),
 			isTriLeptonic_(true),
+/*
 			wMass_(80.4),
 			zMass_(91.2),
 			topMass_(170.),
@@ -123,6 +134,7 @@ class TopFCNC_Evt : public TObject
 			massChi2_(-999.),
 			massChi2_SM_(-999.),
 			massChi2_FCNC_(-999.),
+*/
 			verbose_(false)
 			{;}
 
@@ -137,9 +149,11 @@ class TopFCNC_Evt : public TObject
       xParton2_(evt.xParton2_),
       factorizationScale_(evt.factorizationScale_),
       nPV_(evt.nPV_),
+/*
       nPUBXm1_(evt.nPUBXm1_),
       nPU_(evt.nPU_),
       nPUBXp1_(evt.nPUBXp1_),
+*/
       nTruePU_(evt.nTruePU_),
       eventWeight_(evt.eventWeight_),
 			zLeptonicChannel_(evt.zLeptonicChannel_),
@@ -162,6 +176,7 @@ class TopFCNC_Evt : public TObject
 			ISR_(evt.ISR_),
 			smDecayTopRadiation_(evt.smDecayTopRadiation_),
 			fcncDecayTopRadiation_(evt.fcncDecayTopRadiation_),
+/*
 			wMass_(evt.wMass_),
 			zMass_(evt.zMass_),
 			topMass_(evt.topMass_),
@@ -174,6 +189,7 @@ class TopFCNC_Evt : public TObject
 			massChi2_(evt.massChi2_),
 			massChi2_SM_(evt.massChi2_SM_),
 			massChi2_FCNC_(evt.massChi2_FCNC_),
+*/
 			verbose_(evt.verbose_)
 			{;}
 	
@@ -192,9 +208,11 @@ class TopFCNC_Evt : public TObject
     const Float_t factorizationScale() const { return factorizationScale_;}
 
     const UInt_t  nPV()     const { return nPV_;}
+/*
     const UInt_t  nPUBXm1() const { return nPUBXm1_;}
     const UInt_t  nPU()     const { return nPU_;}
     const UInt_t  nPUBXp1() const { return nPUBXp1_;}
+*/
     const Float_t nTruePU() const { return nTruePU_;}
 
     const Float_t eventWeight() const { return eventWeight_;}
@@ -226,7 +244,9 @@ class TopFCNC_Evt : public TObject
 		const std::vector<TRootJet> ISR()                      const { return ISR_;}
 		const std::vector<TRootJet> smDecayTopRadiation()      const { return smDecayTopRadiation_;}
 		const std::vector<TRootJet> fcncDecayTopRadiation()    const { return fcncDecayTopRadiation_;}
-
+		
+		const TRootMET met() const { return met_;}
+/*
 		const Float_t WMass()   const { return wMass_; }
 		const Float_t ZMass()   const { return zMass_; }
 		const Float_t TopMass() const { return topMass_; }
@@ -241,7 +261,7 @@ class TopFCNC_Evt : public TObject
 		const Float_t MassChi2()      const { return massChi2_; }
 		const Float_t MassChi2_SM()   const { return massChi2_SM_; }
 		const Float_t MassChi2_FCNC() const { return massChi2_FCNC_; }
-
+*/
     void SetEventID(UInt_t eventID)         { eventID_ = eventID; }
     void SetRunID(UInt_t runID)             { runID_ = runID; }
     void SetLumiBlockID(UInt_t lumiBlockID) { lumiBlockID_ = lumiBlockID; }
@@ -254,9 +274,11 @@ class TopFCNC_Evt : public TObject
     void SetFactorizationScale(Float_t factorizationScale) { factorizationScale_ = factorizationScale; }
 
     void SetnPV(UInt_t nPV)         { nPV_ = nPV; }
+/*
     void SetnPUBXm1(UInt_t nPUBXm1) { nPUBXm1_ = nPUBXm1; }
     void SetnPU(UInt_t nPU)         { nPU_ = nPU; }
     void SetnPUBXp1(UInt_t nPUBXp1) { nPUBXp1_ = nPUBXp1; }
+*/
     void SetnTruePU(Float_t nTruePU){ nTruePU_ = nTruePU; }
 
     void SetEventWeight(Float_t eventWeight) { eventWeight_ = eventWeight;}
@@ -315,11 +337,16 @@ class TopFCNC_Evt : public TObject
 			fcncDecayTopRadiation_ = fcncDecayTopRadiation;
 			ISR_ = ISR; 
 		}
-    void SetSelectedJets(std::vector<TRootJet> selectedJets){ selectedJets_ = selectedJets; }
+    void SetSelectedJets(std::vector<TRootJet*> selectedJets){
+      selectedJets_.clear();
+			for(UInt_t i=0;i<selectedJets.size();++i) selectedJets_.push_back(*selectedJets[i]);
+    }
+    void SetMET(TRootMET met){ met_ = met;}
+    
 		void SetISR(std::vector<TRootJet> ISR){ISR_ = ISR;}
 		void SetSmDecayTopRadiation(std::vector<TRootJet> smDecayTopRadiation){ smDecayTopRadiation_ = smDecayTopRadiation; }
 		void SetFcncDecayTopRadiation(std::vector<TRootJet> fcncDecayTopRadiation){ fcncDecayTopRadiation_ = fcncDecayTopRadiation; }
-
+/*
 		void SetWMass(Float_t wMass){ wMass_ = wMass; }
 		void SetZMass(Float_t zMass){ zMass_ = zMass; }
 		void SetTopMass(Float_t topMass){ topMass_ = topMass; }
@@ -330,7 +357,7 @@ class TopFCNC_Evt : public TObject
 		void SetLepZMassResol(Float_t lepZMassResol)       { lepZMassResol_    = lepZMassResol; }
 		void SetLepTopMassResol(Float_t lepTopMassResol)   { lepTopMassResol_  = lepTopMassResol; }
 		void SetFcncTopMassResol(Float_t fcncTopMassResol) { fcncTopMassResol_ = fcncTopMassResol; }
-
+*/
 		void SetVerbosity(Bool_t verbose)                  { verbose_ = verbose; }
 
 		void ReconstructEvt()
@@ -355,9 +382,11 @@ class TopFCNC_Evt : public TObject
 			smDecayTop_ = B_ + W_ ;
 			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
 			fcncDecayTop_ = Q_ + Z_ ;
+/*			
 			massChi2_SM_   = pow((W_.M()-wMass_)/hadWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/hadTopMassResol_,2);
 			massChi2_FCNC_ = pow((Z_.M()-zMass_)/lepZMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
 			massChi2_      = pow((W_.M()-wMass_)/hadWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/hadTopMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
+*/
 		}
 
 		void ReconstructTriLeptEvt()
@@ -371,11 +400,13 @@ class TopFCNC_Evt : public TObject
 			smDecayTop_ = B_ + W_ ;
 			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
 			fcncDecayTop_ = Q_ + Z_ ;
+/*
 			massChi2_SM_   = pow((W_.M()-wMass_)/lepWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/lepTopMassResol_,2);
 			massChi2_FCNC_ = pow((Z_.M()-zMass_)/lepZMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
 			massChi2_      = pow((W_.M()-wMass_)/lepWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/lepTopMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
+*/
 		}
-
+/*
 		void ReconstructDiLeptEvt(const TRootParticle* lept1, const TRootParticle* lept2, const std::vector<TopTree::TRootJet*> &init_jets, bool UseMinChi2 = true)
 		{
 			// Topology to reconstruct : tt-> bW + qZ -> bqq + qll
@@ -576,7 +607,7 @@ class TopFCNC_Evt : public TObject
 				ReconstructTriLeptEvt();
 			}
 	}
-	
+*/	
 		virtual TString typeName() const { return "TopFCNC_Evt"; }
 
 		friend std::ostream& operator<< (std::ostream& stream, const TopFCNC_Evt& fcncEvt)
@@ -624,9 +655,11 @@ class TopFCNC_Evt : public TObject
     Float_t factorizationScale_;
 
     UInt_t  nPV_;
+/*
     UInt_t  nPUBXm1_;
     UInt_t  nPU_;
     UInt_t  nPUBXp1_;
+*/
     Float_t nTruePU_;
 
     Float_t eventWeight_;
@@ -656,7 +689,9 @@ class TopFCNC_Evt : public TObject
 		std::vector<TRootJet> ISR_;
 		std::vector<TRootJet> smDecayTopRadiation_;
 		std::vector<TRootJet> fcncDecayTopRadiation_;
-
+		
+		TRootMET met_;
+/*
 		Float_t wMass_;
 		Float_t zMass_;
 		Float_t topMass_;
@@ -671,7 +706,7 @@ class TopFCNC_Evt : public TObject
 		Float_t massChi2_;
 		Float_t massChi2_SM_;
 		Float_t massChi2_FCNC_;
-
+*/
 		Bool_t verbose_;
 
 		ClassDef (TopFCNC_Evt,2);

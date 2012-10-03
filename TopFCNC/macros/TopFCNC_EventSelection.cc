@@ -264,7 +264,7 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_ee_ch", 30, 0, 30, "Nb. of vertices");
   MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eem_ch", 30, 0, 30, "Nb. of vertices");
   MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eee_ch", 30, 0, 30, "Nb. of vertices");
-
+/*
   MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["BdiscBJetCand_mm_ch_JP"]            = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_JP",  50, 0, 1, "JP b-disc.");
@@ -279,11 +279,21 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   MSPlot["BdiscBJetCand_eem_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["BdiscBJetCand_mmm_ch_JP"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_JP",  50, 0, 1, "JP b-disc.");
   MSPlot["BdiscBJetCand_eem_ch_JP"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_JP",  50, 0, 1, "JP b-disc.");
-
+*/
   MSPlot["HighestBdisc_mm_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_ee_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_mm_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_JP",  50, 0, 1, "JP b-disc.");
   MSPlot["HighestBdisc_ee_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_JP",  50, 0, 1, "JP b-disc.");
+
+  MSPlot["HighestBdisc_mmm_ch_CVS"]           = new MultiSamplePlot(datasets, "HighestBdisc_mmm_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_eem_ch_CVS"]           = new MultiSamplePlot(datasets, "HighestBdisc_eem_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_mmm_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_mmm_ch_JP",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_eem_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_eem_ch_JP",  50, 0, 1, "JP b-disc.");
+
+  MSPlot["HighestBdisc_mme_ch_CVS"]           = new MultiSamplePlot(datasets, "HighestBdisc_mme_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_eee_ch_CVS"]           = new MultiSamplePlot(datasets, "HighestBdisc_eee_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_mme_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_mme_ch_JP",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_eee_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_eee_ch_JP",  50, 0, 1, "JP b-disc.");
   
   MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
@@ -291,7 +301,7 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
-
+/*
   MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
   MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
   MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
@@ -326,7 +336,7 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   MSPlot["MassChi2_FCNC_ee_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_ee_ch",  20, 0, 20, "\\chi^{2}");
   MSPlot["MassChi2_FCNC_eem_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eem_ch", 20, 0, 20, "\\chi^{2}");
   MSPlot["MassChi2_FCNC_eee_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eee_ch", 20, 0, 20, "\\chi^{2}");
-
+*/
   MSPlot["TriLeptonInvMass_mmm_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mmm_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
   MSPlot["TriLeptonInvMass_mme_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mme_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
   MSPlot["TriLeptonInvMass_eem_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eem_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
@@ -339,11 +349,13 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   ////////////////////////////////////////////////////////////////////
 
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",50,0,4);
+/*
   for (unsigned int d = 0; d < datasets.size(); d++){
 	histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
 	histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
 	histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
   }
+*/
   cout << " - Declared histograms ..." <<  endl;
 	
   ////////////////////////////////////////////////////////////////////
@@ -1015,24 +1027,36 @@ CombinedSecondaryVertex 	CSVT 	  0.898
      		    MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
      		    MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiMu.Fill(d,10,scaleFactor);
+
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 						MSPlot["HighestBdisc_mm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+
+            // Create TopFCNC_Evt object
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
+						MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]);
+						MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedMuons[idx_Z_2]);
+						MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
+						MyTopFCNC_EvtCand->SetMET(*mets[0]);
+/*
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedJets, true);
 						MSPlot["BdiscBJetCand_mm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true, Luminosity*scaleFactor);
 						MSPlot["BdiscBJetCand_mm_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d],true, Luminosity*scaleFactor);
-						if(highestbtagdisc<btagcut) continue;
-						selecTableDiMu.Fill(d,11,scaleFactor);
-						MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+*/
+						if(highestbtagdisc>btagcut){
+  						selecTableDiMu.Fill(d,11,scaleFactor);
+  						MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+  				  }
+/*
 						MSPlot["Mtt_mm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d],true,Luminosity*scaleFactor);
 						MSPlot["Mzq_mm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_SM_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_FCNC_mm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d], true, Luminosity*scaleFactor);
 						histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+*/
 					}
 				}
 			}
@@ -1050,23 +1074,38 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
         MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableDiMuEl.Fill(d,8,scaleFactor);
-  			if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor); //at least 3 jets
-  			//{
-  				//selecTableDiMuEl.Fill(d,9,scaleFactor);
-					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
-					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedElectrons[0], selectedJets, mets[0], true);
-					invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedElectrons[0]).M();
-					MSPlot["BdiscBJetCand_mme_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(), datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["BdiscBJetCand_mme_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(), datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mtt_mme_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mzq_mme_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_SM_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["MassChi2_FCNC_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
-					MSPlot["TriLeptonInvMass_mme_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-					histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-        //}
+  			if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor);//at least 3 jets
+
+				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+				MSPlot["HighestBdisc_mme_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
+				MSPlot["HighestBdisc_mme_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+
+        // Create TopFCNC_Evt object
+  			MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
+				MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]); 
+				MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedMuons[idx_Z_2]);
+				MyTopFCNC_EvtCand->SetLeptonFromW(*selectedElectrons[0]);
+				MyTopFCNC_EvtCand->SetSelectedJets(selectedJets), 
+				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
+				MyTopFCNC_EvtCand->SetMET(*mets[0]);
+				invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedElectrons[0]).M();
+/*
+				MSPlot["BdiscBJetCand_mme_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["BdiscBJetCand_mme_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+*/
+				MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+/*
+				MSPlot["Mtt_mme_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["Mzq_mme_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_SM_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+				MSPlot["MassChi2_FCNC_mme_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
+*/
+				MSPlot["TriLeptonInvMass_mme_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+/*
+				histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+*/
 			}
 		}
 	}
@@ -1083,22 +1122,39 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 		    MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableTriMu.Fill(d,8,scaleFactor);
   			if(selectedJets.size()>2) selecTableTriMu.Fill(d,9,scaleFactor); //at least 3 jets
-  			//{	
-          //selecTableTriMu.Fill(d,9,scaleFactor);
-					MSPlot["MET_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
-					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedExtraMuons[0], selectedJets, mets[0], true);
-					invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedExtraMuons[0]).M();
-					MSPlot["BdiscBJetCand_mmm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["BdiscBJetCand_mmm_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mtt_mmm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mzq_mmm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_SM_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["MassChi2_FCNC_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
-					MSPlot["TriLeptonInvMass_mmm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-					histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-        //}
+
+				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+				MSPlot["HighestBdisc_mmm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
+				MSPlot["HighestBdisc_mmm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+
+        // Create TopFCNC_Evt object
+				MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
+				MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]); 
+				MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedMuons[idx_Z_2]);
+				MyTopFCNC_EvtCand->SetLeptonFromW(*selectedExtraMuons[0]);
+				MyTopFCNC_EvtCand->SetSelectedJets(selectedJets), 
+				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
+				MyTopFCNC_EvtCand->SetMET(*mets[0]);
+
+//			MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedMuons[idx_Z_1], selectedMuons[idx_Z_2], selectedExtraMuons[0], selectedJets, mets[0], true);
+				invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedExtraMuons[0]).M();
+/*
+				MSPlot["BdiscBJetCand_mmm_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["BdiscBJetCand_mmm_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+*/
+				MSPlot["MET_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+/*
+				MSPlot["Mtt_mmm_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["Mzq_mmm_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_SM_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+				MSPlot["MassChi2_FCNC_mmm_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true, Luminosity*scaleFactor);
+*/
+				MSPlot["TriLeptonInvMass_mmm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+/*
+				histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+*/
 			}
 		}
 	}
@@ -1120,24 +1176,35 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 		        MSPlot["FourthLeadingJetPt_ee_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
      		    MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiEl.Fill(d,10,scaleFactor);
+
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 						MSPlot["HighestBdisc_ee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+
+            // Create TopFCNC_Evt object
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
+						MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedElectrons[idx_Z_1]);
+						MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedElectrons[idx_Z_2]);
+						MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
+						MyTopFCNC_EvtCand->SetMET(*mets[0]);
+/*
 						MyTopFCNC_EvtCand->ReconstructDiLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedJets);
 						MSPlot["BdiscBJetCand_ee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["BdiscBJetCand_ee_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d],true, Luminosity*scaleFactor);
 						if(highestbtagdisc<btagcut) continue;
 						selecTableDiEl.Fill(d,11,scaleFactor);
+*/
 						MSPlot["MET_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+/*
 						MSPlot["Mtt_ee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d],true,Luminosity*scaleFactor);
 						MSPlot["Mzq_ee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_SM_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["MassChi2_FCNC_ee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d], true, Luminosity*scaleFactor);
 						histo2D[("MET_vs_Mzq_ee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+*/
 					}
 				}
 			}
@@ -1156,21 +1223,39 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 		    MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableDiElMu.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2) selecTableDiElMu.Fill(d,9,scaleFactor); //at least 3 jets
-				//{
-          //selecTableDiElMu.Fill(d,9,scaleFactor);
-					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
-					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedMuons[0], selectedJets, mets[0]);
-					invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedMuons[0]).M();
-					MSPlot["BdiscBJetCand_eem_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["BdiscBJetCand_eem_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["MET_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mtt_eem_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mzq_eem_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_SM_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["MassChi2_FCNC_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 					
-					MSPlot["TriLeptonInvMass_eem_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-          histo2D[("MET_vs_Mzq_eem_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+
+				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+				MSPlot["HighestBdisc_eem_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
+				MSPlot["HighestBdisc_eem_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+
+  			MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
+				MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedElectrons[idx_Z_1]); 
+				MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedElectrons[idx_Z_2]);
+				MyTopFCNC_EvtCand->SetLeptonFromW(*selectedMuons[0]);
+				MyTopFCNC_EvtCand->SetSelectedJets(selectedJets), 
+				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
+				MyTopFCNC_EvtCand->SetMET(*mets[0]);
+/*
+				MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedMuons[0], selectedJets, mets[0]);
+*/
+				invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedMuons[0]).M();
+/*
+				MSPlot["BdiscBJetCand_eem_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true,Luminosity*scaleFactor);
+				MSPlot["BdiscBJetCand_eem_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d],true,Luminosity*scaleFactor);
+*/
+				MSPlot["MET_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+/*
+				MSPlot["Mtt_eem_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["Mzq_eem_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_SM_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+				MSPlot["MassChi2_FCNC_eem_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 					
+*/
+				MSPlot["TriLeptonInvMass_eem_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+/*
+        histo2D[("MET_vs_Mzq_eem_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+*/
         //}
 			}
 		}
@@ -1188,22 +1273,39 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 		    MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableTriEl.Fill(d,8,scaleFactor);
 				if(selectedJets.size()>2) selecTableTriEl.Fill(d,9,scaleFactor); //at least 3 jets
-				//{
-				  //selecTableTriEl.Fill(d,9,scaleFactor);
-					MSPlot["MET_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-					MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
-					MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1], selectedElectrons[idx_Z_2], selectedExtraElectrons[0], selectedJets, mets[0]);
-					invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedExtraElectrons[0]).M();
-					MSPlot["BdiscBJetCand_eee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true, Luminosity*scaleFactor);
-					MSPlot["BdiscBJetCand_eee_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["Mtt_eee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["Mzq_eee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
-					MSPlot["MassChi2_SM_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
-					MSPlot["MassChi2_FCNC_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 					
-					MSPlot["TriLeptonInvMass_eee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-          histo2D[("MET_vs_Mzq_eee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
-  			//}
+
+				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+				MSPlot["HighestBdisc_eee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
+				MSPlot["HighestBdisc_eee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+
+				MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
+				MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedElectrons[idx_Z_1]); 
+				MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedElectrons[idx_Z_2]);
+				MyTopFCNC_EvtCand->SetLeptonFromW(*selectedExtraElectrons[0]);
+				MyTopFCNC_EvtCand->SetSelectedJets(selectedJets), 
+				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
+				MyTopFCNC_EvtCand->SetMET(*mets[0]);
+/*
+				MyTopFCNC_EvtCand->ReconstructTriLeptEvt(selectedElectrons[idx_Z_1],selectedElectrons[idx_Z_2],selectedExtraElectrons[0],selectedJets,mets[0]);
+*/
+				invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedExtraElectrons[0]).M();
+/*
+				MSPlot["BdiscBJetCand_eee_ch_CVS"]->Fill(MyTopFCNC_EvtCand->B().btag_combinedSecondaryVertexBJetTags(),datasets[d],true, Luminosity*scaleFactor);
+				MSPlot["BdiscBJetCand_eee_ch_JP"]->Fill(MyTopFCNC_EvtCand->B().btag_jetProbabilityBJetTags(),datasets[d],true,Luminosity*scaleFactor);
+*/
+				MSPlot["MET_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+/*
+				MSPlot["Mtt_eee_ch"]->Fill((MyTopFCNC_EvtCand->smDecayTop()+MyTopFCNC_EvtCand->fcncDecayTop()).M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["Mzq_eee_ch"]->Fill(MyTopFCNC_EvtCand->fcncDecayTop().M(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MassChi2_SM_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_SM(),datasets[d],true,Luminosity*scaleFactor);
+				MSPlot["MassChi2_FCNC_eee_ch"]->Fill(MyTopFCNC_EvtCand->MassChi2_FCNC(),datasets[d],true,Luminosity*scaleFactor); 					
+*/
+				MSPlot["TriLeptonInvMass_eee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
+/*
+        histo2D[("MET_vs_Mzq_eee_ch_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),MyTopFCNC_EvtCand->fcncDecayTop().M());
+*/
 			}
 		}
 	}
@@ -1218,9 +1320,11 @@ CombinedSecondaryVertex 	CSVT 	  0.898
     MyTopFCNC_EvtCand->SetxParton2( event->xParton2() );
     MyTopFCNC_EvtCand->SetFactorizationScale( event->factorizationScale() );
     MyTopFCNC_EvtCand->SetnPV(vertex.size());
+/*
     MyTopFCNC_EvtCand->SetnPUBXm1(event->nPu(-1));
     MyTopFCNC_EvtCand->SetnPU(event->nPu(0));
     MyTopFCNC_EvtCand->SetnPUBXp1(event->nPu(1));
+*/
     MyTopFCNC_EvtCand->SetnTruePU(event->nTruePU());
     MyTopFCNC_EvtCand->SetEventWeight(scaleFactor);
   }

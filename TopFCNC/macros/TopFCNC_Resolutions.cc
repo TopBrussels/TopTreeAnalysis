@@ -114,13 +114,15 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
   histo1D["DR_muon_MC_vs_RECO"] = new TH1F("DR_muon_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
   histo1D["DR_elec_MC_vs_RECO"] = new TH1F("DR_elec_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
-  histo1D["DR_jets_MC_vs_RECO"] = new TH1F("DR_jets_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
+  histo1D["DR_qjets_MC_vs_RECO"] = new TH1F("DR_qjets_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
+  histo1D["DR_ljets_MC_vs_RECO"] = new TH1F("DR_ljets_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
 
   histo1D["DiMuonMass"] = new TH1F("DiMuonMass",";m_{ll};#events",320,50,130);
   histo1D["DiElecMass"] = new TH1F("DiElecMass",";m_{ll};#events",320,50,130);
 
-  histo1D["TopMass_Had_Decay"]  = new TH1F("TopMass_Had_Decay",";m_{bqq};#events",500,100,250);
   histo1D["WMass_Had_Decay"]    = new TH1F("WMass_Had_Decay",";m_{qq};#events",480,0,160);
+  histo1D["TopMass_Had_Decay"]  = new TH1F("TopMass_Had_Decay",";m_{bqq};#events",500,100,250);
+  histo1D["TopMass_Fcnc_Decay"] = new TH1F("TopMass_Fcnc_Decay",";m_{llq};#events",500,100,250);
 
   cout << " - Declared histograms ..." <<  endl;
 	
@@ -198,6 +200,7 @@ int main (int argc, char *argv[])
         // fill corresponding histograms
         histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
         histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
+        histo1D["DiMuonMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
       }
       else if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
         // match electrons to top fcnc Z decay products
@@ -205,13 +208,18 @@ int main (int argc, char *argv[])
         // fill corresponding histograms
         histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
         histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
+        histo1D["DiElecMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
       }
 
       histo1D["DR_bjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchBFromTop());
       histo1D["DR_qjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQFromTop());
 
-      histo1D["DR_lightjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
-      histo1D["DR_lightjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
+      histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
+      histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
+
+      histo1D["WMass_Had_Decay"]   ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()).M());
+      histo1D["TopMass_Had_Decay"] ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()+GenEvent->matchedB()).M());
+      histo1D["TopMass_Fcnc_Decay"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()+GenEvent->matchedQ()).M());
 
       GenEvent->FillResolutions(resFitMuons, resFitElectrons, resFitBJets, resFitQJets, resFitLightJets);
 
