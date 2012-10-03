@@ -86,13 +86,13 @@ class Selection{
   void setJetCuts();
   void setJetCuts(float Pt, float Eta, float EMF, float n90Hits, float fHPD, float dRJetElectron, float dRJetMuon);  
   void setElectronCuts();
-  void setElectronCuts(float Pt, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets);
+  void setElectronCuts(float Pt, float Eta, float RelIso, float d0, float MVAId, float DistVzPVz, float DRJets, int MaxMissingHits);
   void setDiElectronCuts();
-  void setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId_, float DistVzPVz, float DRJets);
+  void setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId, float DistVzPVz, float DRJets, int MaxMissingHits);
   void setLooseElectronCuts();
-  void setLooseElectronCuts(float Pt, float Eta, float RelIso, float MVAId_);
+  void setLooseElectronCuts(float Pt, float Eta, float RelIso, float MVAId);
   void setMuonCuts();
-  void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NTrackerLayersWithMeas);
+  void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NTrackerLayersWithMeas, int NValidPixelHits);
   void setDiMuonCuts();
   void setDiMuonCuts(float Pt, float Eta, float RelIso, float d0);
   void setLooseMuonCuts();
@@ -174,13 +174,14 @@ class Selection{
   float MuonLoosePtThreshold_;
   float MuonLooseEtaThreshold_;
   float MuonLooseRelIso_;
-  int MuonNofValidHits_;
+  int   MuonNofValidHits_;
   float Muond0Cut_;
   float MuonDRJetsCut_;
   float MuonNormChi2_;
-  int MuonNMatchedStations_;
+  int   MuonNMatchedStations_;
   float MuonDistVzPVz_;
-  int MuonNTrackerLayersWithMeasurement_;
+  int   MuonNTrackerLayersWithMeasurement_;
+  int   MuonNValidPixelHits_;
 
   float DRJetMuon_; // for pflow mu-jet cleaning
 
@@ -196,6 +197,7 @@ class Selection{
   float ElectronDRJetsCut_;
   float ElectronMVAId_;
   float ElectronLooseMVAId_;
+  int   ElectronMaxMissingHitsCut_;
 
   std::map<std::string,float> cutsVBTFWP70;
   std::map<std::string,float> cutsVBTFWP80;
