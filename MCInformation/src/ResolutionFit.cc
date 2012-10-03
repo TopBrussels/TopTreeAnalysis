@@ -28,6 +28,14 @@ ResolutionFit::ResolutionFit(string label)
     for(unsigned int i=0; i < nPtBins_+1; i++)
       jetPtBinning_[i] = jetPtBinning[i];
   }
+  else if( label_.find("QJet") == 0 ){
+    Float_t towerBinning[] = {0.0, 0.174, 0.348, 0.522, 0.696, 0.87, 1.044, 1.218, 1.392, 1.566, 1.74, 2.5};
+    for(unsigned int i=0; i < nEtaBins_+1; i++)
+      towerBinning_[i] = towerBinning[i];
+    Float_t jetPtBinning[] = {20.,30.,40.,50.,60.,70.,80.,90.,100.,120.,150.,1800.};
+    for(unsigned int i=0; i < nPtBins_+1; i++)
+      jetPtBinning_[i] = jetPtBinning[i];
+  }
   else if( label_.find("Neutrino") == 0){
     
     nEtaBins_=1;
@@ -518,7 +526,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphMean_[iEta]->GetYaxis()->SetTitle("Mean(E_{T}^{reco} - E_{T}^{parton})");
 	bGraphMean_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphMean_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphMean_[iEta]->GetYaxis()->SetRangeUser(-7,12);
 	}
@@ -547,7 +555,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphSigma_[iEta]->GetYaxis()->SetTitle("#sigma(E_{T}^{reco} - E_{T}^{parton})");
 	bGraphSigma_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  //bGraphSigma_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  //bGraphSigma_[iEta]->GetYaxis()->SetRangeUser(-7,12);
 	}
@@ -579,7 +587,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphEtaMean_[iEta]->GetYaxis()->SetTitle("Mean(#eta^{reco} - #eta^{parton})");
 	bGraphEtaMean_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphEtaMean_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphEtaMean_[iEta]->GetYaxis()->SetRangeUser(-0.01,0.01);
 	}
@@ -605,7 +613,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphEtaSigma_[iEta]->GetYaxis()->SetTitle("#sigma(#eta^{reco} - #eta^{parton})");
 	bGraphEtaSigma_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphEtaSigma_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphEtaSigma_[iEta]->GetYaxis()->SetRangeUser(0,0.06);
 	}
@@ -636,7 +644,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphThetaMean_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 	bGraphThetaMean_[iEta]->GetYaxis()->SetTitle("Mean(#theta^{reco} - #theta^{parton})");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphThetaMean_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphThetaMean_[iEta]->GetYaxis()->SetRangeUser(-0.01,0.01);
 	}
@@ -663,7 +671,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphThetaSigma_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 	bGraphThetaSigma_[iEta]->GetYaxis()->SetTitle("#sigma(#theta^{reco} - #theta^{parton})");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphThetaSigma_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphThetaSigma_[iEta]->GetYaxis()->SetRangeUser(0,0.05);
 	}
@@ -694,7 +702,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphPhiMean_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 	bGraphPhiMean_[iEta]->GetYaxis()->SetTitle("Mean(#phi^{reco} - #phi^{parton})");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphPhiMean_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphPhiMean_[iEta]->GetYaxis()->SetRangeUser(-0.01,0.01);
 	}
@@ -720,7 +728,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphPhiSigma_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 	bGraphPhiSigma_[iEta]->GetYaxis()->SetTitle("#sigma(#phi^{reco} - #phi^{parton})");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphPhiSigma_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphPhiSigma_[iEta]->GetYaxis()->SetRangeUser(0,0.07);
 	}
@@ -748,7 +756,7 @@ void ResolutionFit::CalculateResolutions()
 	    bGraphRelMeanIncl_->GetYaxis()->SetTitle("Mean(#frac{E_{T}^{reco} - E_{T}^{parton}}{E_{T}^{reco}})");
 	    bGraphRelMeanIncl_->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	    if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	    if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	      bGraphRelMeanIncl_->GetXaxis()->SetLimits(0.,250);        
 	      bGraphRelMeanIncl_->GetYaxis()->SetRangeUser(-0.3,0.3);
 	    }
@@ -775,7 +783,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphRelMean_[iEta]->GetYaxis()->SetTitle("Mean(#frac{E_{T}^{reco} - E_{T}^{parton}}{E_{T}^{reco}})");
 	bGraphRelMean_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphRelMean_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphRelMean_[iEta]->GetYaxis()->SetRangeUser(-0.3,0.3);
 	}
@@ -805,7 +813,7 @@ void ResolutionFit::CalculateResolutions()
 	bGraphRelSigma_[iEta]->GetYaxis()->SetTitle("#sigma(#frac{E_{T}^{reco} - E_{T}^{parton}}{E_{T}^{reco}})");
 	bGraphRelSigma_[iEta]->GetXaxis()->SetTitle("p_{T}^{reco} [GeV]");
 
-	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 ){
+	if( label_.find("LightJet") == 0 || label_.find("BJet") == 0 || label_.find("QJet") == 0 ){
 	  bGraphRelSigma_[iEta]->GetXaxis()->SetLimits(0.,250);        
 	  bGraphRelSigma_[iEta]->GetYaxis()->SetRangeUser(0,0.26);
 	}
@@ -828,7 +836,7 @@ void ResolutionFit::CalculateResolutions()
 	bFuncRelSigma_[iEta]->SetNameTitle(etahname[iEta],etahname[iEta]);
       }
       
-      if(label_.find("BJet") == 0 || label_.find("LightJet") == 0)
+  if(label_.find("BJet") == 0 || label_.find("QJet") == 0 || label_.find("LightJet") == 0 )
 	{
 	  //      cout << "myetfunction: " << myetfunction->GetExpFormula("p") << ", Prob: " << myetfunction->GetProb() << endl;
 	  TLatex l;
