@@ -443,7 +443,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		hStack_->GetXaxis()->SetTitle(histosForHStack[0]->GetXaxis()->GetTitle());
 		hStack_->GetYaxis()->SetTitle(histosForHStack[0]->GetYaxis()->GetTitle());
 		hStack_->GetYaxis()->SetTitleOffset(1.1);
-		if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 7 TeV").c_str());
+		if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 8 TeV").c_str());
 		if(!text_.IsNull()) text2.DrawLatex(0.5,0.86,text_);
 		
 		for(unsigned int i=0;i<histosForOverlay.size();i++){
@@ -483,7 +483,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		hStack_->Draw("HIST");
 		hStack_->GetXaxis()->SetTitle(histosForHStack[0]->GetXaxis()->GetTitle());
 		hStack_->GetYaxis()->SetTitle(histosForHStack[0]->GetYaxis()->GetTitle());
-  	if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 7 TeV").c_str());
+  	if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 8 TeV").c_str());
   	if(!text_.IsNull()) text2.DrawLatex(0.5,0.86,text_);
     for(unsigned int i=0;i<histosForOverlay.size();i++){
 	    histosForOverlay[i]->Draw("HIST SAME");
@@ -511,7 +511,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		hStackAreaNorm_->GetXaxis()->SetTitle(histosForHStackAreaNorm[0]->GetXaxis()->GetTitle());
 		hStackAreaNorm_->GetYaxis()->SetTitle(histosForHStackAreaNorm[0]->GetYaxis()->GetTitle());
 		hStackAreaNorm_->GetYaxis()->SetTitleOffset(1.1);
-		if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 7 TeV").c_str());
+		if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 8 TeV").c_str());
 		if(!text_.IsNull()) text2.DrawLatex(0.5,0.86,text_);
 		for(unsigned int i=0;i<histosForOverlayAreaNorm.size();i++){
 		   histosForOverlayAreaNorm[i]->Draw("HIST SAME");
@@ -522,7 +522,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		hStackAreaNorm_->Draw("HIST");
 		hStackAreaNorm_->GetXaxis()->SetTitle(histosForHStackAreaNorm[0]->GetXaxis()->GetTitle());
 		hStackAreaNorm_->GetYaxis()->SetTitle(histosForHStackAreaNorm[0]->GetYaxis()->GetTitle());
-    if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 7 TeV").c_str());
+    if (hData_) text.DrawLatex(0.13,0.967,("CMS, "+s.str()+" fb^{-1} at #sqrt{s} = 8 TeV").c_str());
     if(!text_.IsNull()) text2.DrawLatex(0.5,0.86,text_);
 		for(unsigned int i=0;i<histosForOverlayAreaNorm.size();i++){
 		   histosForOverlayAreaNorm[i]->Draw("HIST SAME");
