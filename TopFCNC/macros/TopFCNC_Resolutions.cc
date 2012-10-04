@@ -75,6 +75,8 @@ int main (int argc, char *argv[])
   //Global variable
   TRootEvent* event = 0;
   TopFCNC_GenEvt *GenEvent = 0;
+  
+  Bool_t debug = false;
 
   ResolutionFit *resFitMuons     = new ResolutionFit("Muon");
   ResolutionFit *resFitElectrons = new ResolutionFit("Electron");
@@ -112,10 +114,12 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////
   ////////////////// 1D histograms  //////////////////////////////////
   ////////////////////////////////////////////////////////////////////
-  histo1D["DR_muon_MC_vs_RECO"] = new TH1F("DR_muon_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
-  histo1D["DR_elec_MC_vs_RECO"] = new TH1F("DR_elec_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
-  histo1D["DR_qjets_MC_vs_RECO"] = new TH1F("DR_qjets_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
-  histo1D["DR_ljets_MC_vs_RECO"] = new TH1F("DR_ljets_MC_vs_RECO",";#Delta R;#events",100,0,0.005);
+  histo1D["DR_muon_MC_vs_RECO"] = new TH1F("DR_muon_MC_vs_RECO",";#Delta R;#events",500,0,0.05);
+  histo1D["DR_elec_MC_vs_RECO"] = new TH1F("DR_elec_MC_vs_RECO",";#Delta R;#events",500,0,0.05);
+
+  histo1D["DR_bjets_MC_vs_RECO"] = new TH1F("DR_bjets_MC_vs_RECO",";#Delta R;#events",500,0,0.1);
+  histo1D["DR_qjets_MC_vs_RECO"] = new TH1F("DR_qjets_MC_vs_RECO",";#Delta R;#events",500,0,0.1);
+  histo1D["DR_ljets_MC_vs_RECO"] = new TH1F("DR_ljets_MC_vs_RECO",";#Delta R;#events",500,0,0.1);
 
   histo1D["DiMuonMass"] = new TH1F("DiMuonMass",";m_{ll};#events",320,50,130);
   histo1D["DiElecMass"] = new TH1F("DiElecMass",";m_{ll};#events",320,50,130);
@@ -179,7 +183,7 @@ int main (int argc, char *argv[])
 	    vector<TRootMCParticle*> mcParticles = treeLoader.LoadMCPart(ievt);
 
 	    Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-	    selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1); //Pt,Eta,EMF,n90Hits,fHPD,dRJetElectron,dRJetMuon
+	    selection.setJetCuts(15.,2.5,0.01,1.,0.98,0.3,0.1); //Pt,Eta,EMF,n90Hits,fHPD,dRJetElectron,dRJetMuon
     	selection.setDiMuonCuts(15,2.4,0.20,999.); //Et,Eta,RelIso,d0
   	  selection.setDiElectronCuts(15,2.5,0.15,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
 
@@ -191,8 +195,13 @@ int main (int argc, char *argv[])
       GenEvent = new TopFCNC_GenEvt();
       // reconstruct top fcnc event
       GenEvent->ReconstructEvt(mcParticles);
+      if(debug) cout<<"[DEBUG] Number of MC particles : "<<mcParticles.size()<<endl;
       // match jets to top fcnc partons
       GenEvent->MatchJetsToPartons(selectedJets);
+      if(debug) cout<<"[DEBUG] Number of selected jets : "<<selectedJets.size()<<endl;
+
+      if(debug) cout<<"[DEBUG] W leptonic decay channel (0:None, 1:Muon, 2:Elec, 3:Tau) : "<<GenEvent->wLeptonicChannel()<<endl;
+      if(debug) cout<<"[DEBUG] Z leptonic decay channel (0:None, 1:Muon, 2:Elec, 3:Tau) : "<<GenEvent->zLeptonicChannel()<<endl;
 
       if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon){
         // match muons to top fcnc Z decay products
@@ -201,6 +210,7 @@ int main (int argc, char *argv[])
         histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
         histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
         histo1D["DiMuonMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
+        if(debug) cout<<"[DEBUG] lept DR histograms filled (Muon channel)"<<endl;
       }
       else if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
         // match electrons to top fcnc Z decay products
@@ -209,17 +219,28 @@ int main (int argc, char *argv[])
         histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
         histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
         histo1D["DiElecMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
+        if(debug) cout<<"[DEBUG] lept DR histograms filled (Elec channel)"<<endl;
       }
+
+      if(debug) cout<<"[DEBUG] jet DR histograms about to be filled"<<endl;
 
       histo1D["DR_bjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchBFromTop());
       histo1D["DR_qjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQFromTop());
 
-      histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
-      histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
+      if(GenEvent->wLeptonicChannel() == TopFCNC_GenEvt::kNone){
+        histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
+        histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
+      }
 
-      histo1D["WMass_Had_Decay"]   ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()).M());
-      histo1D["TopMass_Had_Decay"] ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()+GenEvent->matchedB()).M());
-      histo1D["TopMass_Fcnc_Decay"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()+GenEvent->matchedQ()).M());
+      if(debug) cout<<"[DEBUG] jet DR histograms filled"<<endl;
+
+      if(GenEvent->wLeptonicChannel() == TopFCNC_GenEvt::kNone){
+        histo1D["WMass_Had_Decay"]   ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()).M());
+        histo1D["TopMass_Had_Decay"] ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()+GenEvent->matchedB()).M());
+      }
+      if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon || GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
+        histo1D["TopMass_Fcnc_Decay"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()+GenEvent->matchedQ()).M());
+      }
 
       GenEvent->FillResolutions(resFitMuons, resFitElectrons, resFitBJets, resFitQJets, resFitLightJets);
 

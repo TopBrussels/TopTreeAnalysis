@@ -8,93 +8,93 @@ void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParti
   zLeptonicChannel_ = kNone;
 
   for(unsigned int i=0; i<mcParticles.size(); i++){
-	if( mcParticles[i]->status() != 3) continue;
-	if( fabs(mcParticles[i]->type()) == 6 ){
-		if( fabs(mcParticles[i]->dauOneId()) == 24 ) {   smDecayTop_ = *mcParticles[i]; continue; }
-		else if( fabs(mcParticles[i]->dauOneId()) == 23 ) { fcncDecayTop_ = *mcParticles[i]; continue; }
-		else {
-			cerr << "Cannot assign top quark according to its decay..." << endl;
-			exit(1);
-		}
-	}
+	  if( mcParticles[i]->status() != 3) continue;
+	  if( fabs(mcParticles[i]->type()) == 6 ){
+		  if( fabs(mcParticles[i]->dauOneId()) == 24 ) {   smDecayTop_ = *mcParticles[i]; continue; }
+		  else if( fabs(mcParticles[i]->dauOneId()) == 23 ) { fcncDecayTop_ = *mcParticles[i]; continue; }
+		  else {
+		  	cerr << "Cannot assign top quark according to its decay..." << endl;
+		  	exit(1);
+		  }
+  	}
 
-	if( fabs(mcParticles[i]->motherType()) == 6 )
-	{
-		if( fabs(mcParticles[i]->type()) == 24 ){
-			W_ = *mcParticles[i];
-			continue;
-		}
-		else if( fabs(mcParticles[i]->type()) ==  5 ){
-			B_ = *mcParticles[i];
-			continue;
-		}
-		else if( fabs(mcParticles[i]->type()) == 23 ){
-			Z_ = *mcParticles[i];
-			continue;
-		}
-		else if( fabs(mcParticles[i]->type()) >= 1  && fabs(mcParticles[i]->type()) <= 4 ){
-			Q_ = *mcParticles[i];
-			continue;
-		}
+  	if( fabs(mcParticles[i]->motherType()) == 6 )
+  	{
+	  	if( fabs(mcParticles[i]->type()) == 24 ){
+	  		W_ = *mcParticles[i];
+		  	continue;
+		  }
+		  else if( fabs(mcParticles[i]->type()) ==  5 ){
+			  B_ = *mcParticles[i];
+			  continue;
+		  }
+		  else if( fabs(mcParticles[i]->type()) == 23 ){
+			  Z_ = *mcParticles[i];
+			  continue;
+		  }
+		  else if( fabs(mcParticles[i]->type()) >= 1  && fabs(mcParticles[i]->type()) <= 4 ){
+		  	Q_ = *mcParticles[i];
+		  	continue;
+		  }
 /*
 		else {
 			cerr << "Cannot assign top quark decay product. Type =" << mcParticles[i]->type() << endl;
 			exit(1);
 		}
 */
-	}
-	else if( fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == 6 ){
-		if( fabs(mcParticles[i]->type()) >= 1  && fabs(mcParticles[i]->type()) <= 4 ){
-			if(quark1FromW_.P() == 0){
-				quark1FromW_ = *mcParticles[i];
-				continue;
-			}
-			else{
-				quark2FromW_ = *mcParticles[i];
-				continue;
-			}
-		}
-		else if( fabs(mcParticles[i]->type()) == 11 || fabs(mcParticles[i]->type()) == 13 || fabs(mcParticles[i]->type()) == 15 ){
-			if(      fabs(mcParticles[i]->type()) == 11 ) wLeptonicChannel_ = kElec;
-			else if( fabs(mcParticles[i]->type()) == 13 ) wLeptonicChannel_ = kMuon;
-			else if( fabs(mcParticles[i]->type()) == 15 ) wLeptonicChannel_ = kTau;
-
-			leptonFromW_ = *mcParticles[i];
-			continue;
-		}
-		else if( fabs(mcParticles[i]->type()) == 12 || fabs(mcParticles[i]->type()) == 14 || fabs(mcParticles[i]->type()) == 16 ){
-			neutrino_ = *mcParticles[i];
-			continue;
-		}
-/*
-		else {
-			cerr << "Cannot assign W boson decay. Type =" << mcParticles[i]->type() << endl;
-			exit(1);
-		}
-*/
-	}
-	else if( fabs(mcParticles[i]->motherType()) == 23 && fabs(mcParticles[i]->grannyType()) == 6 ){
-		if( fabs(mcParticles[i]->type()) == 11 || fabs(mcParticles[i]->type()) == 13 || fabs(mcParticles[i]->type()) == 15 ){
-			if(      fabs(mcParticles[i]->type()) == 11 ) zLeptonicChannel_ = kElec;
-			else if( fabs(mcParticles[i]->type()) == 13 ) zLeptonicChannel_ = kMuon;
-			else if( fabs(mcParticles[i]->type()) == 15 ) zLeptonicChannel_ = kTau;
-
-			if(lepton1FromZ_.E() == 0){
-				lepton1FromZ_ = *mcParticles[i];
-				continue;
-			}
-			else{
-				lepton2FromZ_ = *mcParticles[i];
-				continue;
-			}
-		}
-/*
-		else {
-			cerr << "Cannot assign Z boson decay. Type =" << mcParticles[i]->type() << endl;
-			exit(1);
-		}
-*/
-	}
+  	}
+  	else if( fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == 6 ){
+  		if( fabs(mcParticles[i]->type()) >= 1  && fabs(mcParticles[i]->type()) <= 4 ){
+  			if(quark1FromW_.P() == 0){
+  				quark1FromW_ = *mcParticles[i];
+  				continue;
+  			}
+  			else{
+  				quark2FromW_ = *mcParticles[i];
+  				continue;
+  			}
+  		}
+  		else if( fabs(mcParticles[i]->type()) == 11 || fabs(mcParticles[i]->type()) == 13 || fabs(mcParticles[i]->type()) == 15 ){
+  			if(      fabs(mcParticles[i]->type()) == 11 ) wLeptonicChannel_ = kElec;
+  			else if( fabs(mcParticles[i]->type()) == 13 ) wLeptonicChannel_ = kMuon;
+  			else if( fabs(mcParticles[i]->type()) == 15 ) wLeptonicChannel_ = kTau;
+  
+  			leptonFromW_ = *mcParticles[i];
+  			continue;
+  		}
+  		else if( fabs(mcParticles[i]->type()) == 12 || fabs(mcParticles[i]->type()) == 14 || fabs(mcParticles[i]->type()) == 16 ){
+  			neutrino_ = *mcParticles[i];
+  			continue;
+  		}
+  /*
+  		else {
+  			cerr << "Cannot assign W boson decay. Type =" << mcParticles[i]->type() << endl;
+  			exit(1);
+  		}
+  */
+  	}
+  	else if( fabs(mcParticles[i]->motherType()) == 23 && fabs(mcParticles[i]->grannyType()) == 6 ){
+  		if( fabs(mcParticles[i]->type()) == 11 || fabs(mcParticles[i]->type()) == 13 || fabs(mcParticles[i]->type()) == 15 ){
+  			if(      fabs(mcParticles[i]->type()) == 11 ) zLeptonicChannel_ = kElec;
+  			else if( fabs(mcParticles[i]->type()) == 13 ) zLeptonicChannel_ = kMuon;
+  			else if( fabs(mcParticles[i]->type()) == 15 ) zLeptonicChannel_ = kTau;
+  
+  			if(lepton1FromZ_.E() == 0){
+  				lepton1FromZ_ = *mcParticles[i];
+  				continue;
+  			}
+  			else{
+  				lepton2FromZ_ = *mcParticles[i];
+  				continue;
+  			}
+  		}
+  /*
+  		else {
+  			cerr << "Cannot assign Z boson decay. Type =" << mcParticles[i]->type() << endl;
+  			exit(1);
+  		}
+  */
+  	}
   }
 }
 

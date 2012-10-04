@@ -71,14 +71,14 @@ class TopFCNC_GenEvt : public TObject
 
     void FillResolutions(ResolutionFit* resFitMuons, ResolutionFit* resFitElectrons, ResolutionFit* resFitBJets, ResolutionFit* resFitQJets, ResolutionFit* resFitLightJets);
     
-    Float_t DR_MatchLepton1FromZ() const { return matchedLepton1FromZ_.DeltaR(lepton1FromZ_);}
-    Float_t DR_MatchLepton2FromZ() const { return matchedLepton2FromZ_.DeltaR(lepton2FromZ_);}
+    Float_t DR_MatchLepton1FromZ() const { return (matchedLepton1FromZ_.E()!=0&&lepton1FromZ_.E()!=0 ? matchedLepton1FromZ_.DeltaR(lepton1FromZ_) : -1);}
+    Float_t DR_MatchLepton2FromZ() const { return (matchedLepton2FromZ_.E()!=0&&lepton2FromZ_.E()!=0 ? matchedLepton2FromZ_.DeltaR(lepton2FromZ_) : -1);}
 
-    Float_t DR_MatchQuark1FromW()  const { return matchedQuark1FromW_.DeltaR(quark1FromW_);}
-    Float_t DR_MatchQuark2FromW()  const { return matchedQuark2FromW_.DeltaR(quark2FromW_);}
+    Float_t DR_MatchQuark1FromW()  const { return (matchedQuark1FromW_.E()!=0&&quark1FromW_.E()!=0 ? matchedQuark1FromW_.DeltaR(quark1FromW_) : -1);}
+    Float_t DR_MatchQuark2FromW()  const { return (matchedQuark2FromW_.E()!=0&&quark2FromW_.E()!=0 ? matchedQuark2FromW_.DeltaR(quark2FromW_) : -1);}
 
-    Float_t DR_MatchBFromTop()     const { return matchedB_.DeltaR(B_);}
-    Float_t DR_MatchQFromTop()     const { return matchedQ_.DeltaR(Q_);}
+    Float_t DR_MatchBFromTop()     const { return (matchedB_.E()!=0 && B_.E()!=0 ? matchedB_.DeltaR(B_) : -1);}
+    Float_t DR_MatchQFromTop()     const { return (matchedQ_.E()!=0 && Q_.E()!=0 ? matchedQ_.DeltaR(Q_) : -1);}
     
 	protected:
 		LeptonType zLeptonicChannel_;
