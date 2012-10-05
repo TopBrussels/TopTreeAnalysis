@@ -169,20 +169,19 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}
-      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
-      else if (dataSetName == "tt_m"){          sprintf(name, "tt_m");          xlweight = lumi*225.197/7576270; 	isTop = true;}  //massive bin decay
+      if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}//
+      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}//
+      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} //
       else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
-      else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} 
-      else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} 
-      else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} 
-      else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} 
-      else if (dataSetName == "wz"){         	sprintf(name, "wz");         	xlweight = lumi*22.44/8080197; 		} 
-      else if (dataSetName == "zz"){         	sprintf(name, "zz");         	xlweight = lumi*9.03/9799902; 		} 
-      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
-      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	} 
-      else if (dataSetName == "wjets"){  	sprintf(name, "wjets");  	xlweight = lumi*37509/18036994; 	} 
+      else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} //
+      else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} //
+      else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} //
+      else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} //
+      else if (dataSetName == "wz"){         	sprintf(name, "wz");         	xlweight = lumi*22.44/8080197; 		} //
+      else if (dataSetName == "zz"){         	sprintf(name, "zz");         	xlweight = lumi*9.03/9799902; 		} //
+      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} //
+      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	} //
+      else if (dataSetName == "wjets"){  	sprintf(name, "wjets");  	xlweight = lumi*37509/18036994; 	} // 
           
 	  
 	  
@@ -490,15 +489,19 @@ int main(int argc, char* argv[]) {
 		
 	      // Select Objects -> Cuts
 	      selection.setJetCuts(20.,5,0.01,1.,0.98,0.3,0.1); //2.5 before, now 5
+	      //selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
               selection.setDiMuonCuts(20,2.4,0.20,0.02);
+	      //selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
               selection.setDiElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
               selection.setLooseMuonCuts(10,2.5,0.2);
               selection.setLooseElectronCuts(15,2.5,0.2,0.);
 		
 	      //Select Objects 
 	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
+	     // vector<TRootMuon*> selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
 	      vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
+	      //vector<TRootElectron*> selectedElectrons = selection.GetSelectedElectrons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons();
 	             
