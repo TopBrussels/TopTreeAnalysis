@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
   // Luminosity and xml files
   double lumi = 0;
   if (RunA){
-    if      (mode == 0){ 	 lumi = 706.039;  	xmlfile ="twemu.xml";}
+    if      (mode == 0){ 	 lumi = 807.137;  	xmlfile ="twemu.xml";}
     else if (mode == 1){	 lumi = 1000;  		xmlfile = "twmumu.xml";}
     else if (mode == 2){	 lumi = 1000;  		xmlfile = "twee.xml";}
   } else {
@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}//
+      if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}//
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} //
       else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
@@ -372,6 +372,7 @@ int main(int argc, char* argv[]) {
 	
       } else cout << "[Info:] Standard setup " << endl;
       cout << "[Info:] " << datasets[d]->NofEvtsToRunOver() << " total events" << endl;
+      if (runHLT) cout << "[Info:] You have the HLT activated, this might be slower than the usual. " << endl;
       if ((!RunA && RunB) || (RunA && RunB))   cout << "[Warning:] You are using a Run range that the code is not ready for, either fix the code or run over A only " << endl;
       
       for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
