@@ -25,6 +25,7 @@
 #include "TPaveStats.h"
 #include "TRandom3.h"
 #include "TFractionFitter.h"
+#include "TStyle.h"
 
 #include "TopTreeProducer/interface/TRootJet.h"
 

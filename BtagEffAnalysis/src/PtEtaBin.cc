@@ -718,6 +718,12 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
 	histo1D["TH1Sng_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	name = ""; GiveName(&name); name+="TH1Bkg_Var0_TTbar"; 
 	histo1D["TH1Bkg_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
+    
+    // for c contamination
+    name = ""; GiveName(&name); name+="TH1CSng_Var0_TTbar"; 
+	histo1D["TH1CSng_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
+	name = ""; GiveName(&name); name+="TH1CBkg_Var0_TTbar"; 
+	histo1D["TH1CBkg_Var0_TTbar"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
 	
 	name = ""; GiveName(&name); name+="TH1Data_Var0_TTbar_bTagL"; 
 	histo1D["TH1Data_Var0_TTbar_bTagL"] = new TH1D(name,name,nFitBins,lowRangeVar0,upRangeVar0);
@@ -1290,6 +1296,9 @@ void PtEtaBin::FillXStemplates(double weight, string dataSetName, int partonFlav
             
 			if (fabs(partonFlavour)==5) histo1D["TH1Sng_Var0_TTbar"]->Fill(controlVar0,weight);
 			else                        histo1D["TH1Bkg_Var0_TTbar"]->Fill(controlVar0,weight);
+            
+            if (fabs(partonFlavour)==4) histo1D["TH1CSng_Var0_TTbar"]->Fill(controlVar0,weight);
+			else                        histo1D["TH1CBkg_Var0_TTbar"]->Fill(controlVar0,weight);
             
             if (btag > btagCuts[0]) {
                 histo1D["TH1Data_Var0_TTbar_bTagL"]->Fill(controlVar0,weight);
@@ -2991,12 +3000,14 @@ void PtEtaBin::loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi
             h_7TeV[(string)name] = (TH1D*) ftmp2->Get(name)->Clone();
             //cout << name << " " << h[(string)name]->GetBinContent(8) << " scale " << lumi/lumi7Tev << endl;
             
-            h_7TeV[(string)name]->Scale(lumi/lumi7Tev);
+            h_7TeV[(string)name]->Scale((lumi/lumi7Tev));//*(36257.2/31314));
             //h_7TeV[(string)name]->Scale(10);
             
             h_7TeV[(string)name]->SetDirectory(0);
             
         }
+        
+        //36257.2/31314
         
         ftmp2->Close();
         
@@ -3291,8 +3302,15 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	int nb=fitHistos["TH1Bkg_TTbar"]->Integral(0,fitHistos["TH1Bkg_TTbar"]->GetNbinsX()+1);
 	
 	float fractionBtotal=(float)b/((float)b+(float)nb);
+    
+    int c=histo1D["TH1CSng_Var0_TTbar"]->Integral(0,histo1D["TH1CSng_Var0_TTbar"]->GetNbinsX()+1);
+    int nc=histo1D["TH1CBkg_Var0_TTbar"]->Integral(0,histo1D["TH1CBkg_Var0_TTbar"]->GetNbinsX()+1);
 	
-	if (debug_ > 0) cout << "!!! b " << b << " nb " << nb << endl;
+    float fractionCtotal=(float)c/((float)c+(float)nc);
+
+	if (debug_ > 0) cout << "# jets " <<  histo1D["TH1Data_Var0_TTbar"]->Integral(0,histo1D["TH1Data_Var0_TTbar"]->GetNbinsX()+1) << endl;
+	if (debug_ > 0) cout << "!!! b " << b << " nb " << nb << " G_b " << fractionBtotal << endl;
+	if (debug_ > 0) cout << "!!! c " << c << " nc " << nc << " G_c " << fractionCtotal << endl;
 	
 	int nb_btagL=fitHistos["TH1Bkg_TTbar_bTagL"]->Integral(0,fitHistos["TH1Bkg_TTbar_bTagL"]->GetNbinsX()+1);
 	int nb_btagM=fitHistos["TH1Bkg_TTbar_bTagM"]->Integral(0,fitHistos["TH1Bkg_TTbar_bTagM"]->GetNbinsX()+1);
@@ -5767,8 +5785,14 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 
         //TH1* result = fit->GetPlot();
         
+        double ttscale = ttbar->Integral()*(lumi_/templateLumi_);
         ttbar->Scale((data->Integral()*fttb)/ttbar->Integral());
+        cout << "SF(ttbar) = " << ttbar->Integral()/ttscale << endl;
+        
+        double bkgscale = vvmc->Integral()*(lumi_/templateLumi_);
         vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
+        cout << "SF(bkg) = " << vvmc->Integral()/bkgscale << endl;
+
         vvdata->Scale((data->Integral()*fqcd)/vvdata->Integral());
         
         //ttbar->Scale(ttbar->Integral()-150/ttbar->Integral());
@@ -5776,6 +5800,137 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 
         TH1D* result = (TH1D*) ttbar->Clone();
         result->Add(vvmc,1);
+        result->Add(vvdata,1);
+        
+        // SETUP THE SAME ROOT STYLE SETTINGS AS USED IN THE STACKPLOT
+        // For the canvas:
+        gStyle->SetCanvasBorderMode(0);
+        gStyle->SetCanvasColor(0); // must be kWhite but I dunno how to do that in PyROOT
+        gStyle->SetCanvasDefH(600); //Height of canvas
+        gStyle->SetCanvasDefW(600); //Width of canvas
+        gStyle->SetCanvasDefX(0);   //POsition on screen
+        gStyle->SetCanvasDefY(0);
+        
+        
+        // For the Pad:
+        gStyle->SetPadBorderMode(0);
+        // gStyle->SetPadBorderSize(Width_t size = 1);
+        gStyle->SetPadColor(0); // kWhite
+        gStyle->SetPadGridX(0); //false
+        gStyle->SetPadGridY(0); //false
+        gStyle->SetGridColor(0);
+        gStyle->SetGridStyle(3);
+        gStyle->SetGridWidth(1);
+        
+        // For the frame:
+        gStyle->SetFrameBorderMode(0);
+        gStyle->SetFrameBorderSize(1);
+        gStyle->SetFrameFillColor(0);
+        gStyle->SetFrameFillStyle(0);
+        gStyle->SetFrameLineColor(1);
+        gStyle->SetFrameLineStyle(1);
+        gStyle->SetFrameLineWidth(1);
+        
+        // For the histo:
+        // gStyle->SetHistFillColor(1);
+        // gStyle->SetHistFillStyle(0);
+        gStyle->SetHistLineColor(1);
+        gStyle->SetHistLineStyle(0);
+        gStyle->SetHistLineWidth(1);
+        // gStyle->SetLegoInnerR(Float_t rad = 0.5);
+        // gStyle->SetNumberContours(Int_t number = 20);
+        
+        gStyle->SetEndErrorSize(2);
+        //gStyle->SetErrorMarker(20);   /// I COMMENTED THIS OUT
+        //gStyle->SetErrorX(0.);
+        
+        //gStyle->SetMarkerStyle(20);
+        
+        
+        //For the fit/function:
+        gStyle->SetOptFit(1011);
+        gStyle->SetFitFormat("5.4g");
+        gStyle->SetFuncColor(2);
+        gStyle->SetFuncStyle(1);
+        gStyle->SetFuncWidth(1);
+        
+        //For the date:
+        gStyle->SetOptDate(0);
+        // gStyle->SetDateX(Float_t x = 0.01);
+        // gStyle->SetDateY(Float_t y = 0.01);
+        
+        // For the statistics box:
+        /*gStyle->SetOptFile(0);
+        gStyle->SetOptStat(0); // To display the mean and RMS:   SetOptStat("mr");
+        gStyle->SetStatColor(0); // kWhite
+        gStyle->SetStatFont(42);
+        //gStyle->SetStatFontSize(0.025);
+        gStyle->SetStatFontSize(0.04);
+        gStyle->SetStatTextColor(1);
+        gStyle->SetStatFormat("6.4g");
+        gStyle->SetStatBorderSize(1);
+        gStyle->SetStatH(0.1);
+        gStyle->SetStatW(0.15);*/
+        // gStyle->SetStatStyle(Style_t style = 1001);
+        // gStyle->SetStatX(Float_t x = 0);
+        // gStyle->SetStatY(Float_t y = 0);
+        
+        // Margins:
+        gStyle->SetPadTopMargin(0.07);
+        gStyle->SetPadBottomMargin(0.13);
+        gStyle->SetPadLeftMargin(0.16);
+        //gStyle->SetPadRightMargin(0.12);
+        gStyle->SetPadRightMargin(0.03);
+        
+        // For the Global title:
+        
+        gStyle->SetOptTitle(0);
+        gStyle->SetTitleFont(42);
+        gStyle->SetTitleColor(1);
+        gStyle->SetTitleTextColor(1);
+        gStyle->SetTitleFillColor(10);
+        gStyle->SetTitleFontSize(0.05);
+        // gStyle->SetTitleH(0); // Set the height of the title box
+        // gStyle->SetTitleW(0); // Set the width of the title box
+        // gStyle->SetTitleX(0); // Set the position of the title box
+        // gStyle->SetTitleY(0.985); // Set the position of the title box
+        // gStyle->SetTitleStyle(Style_t style = 1001);
+        // gStyle->SetTitleBorderSize(2);
+        
+        // For the axis titles:
+        
+        gStyle->SetTitleColor(1, "XYZ");
+        gStyle->SetTitleFont(42, "XYZ");
+        gStyle->SetTitleSize(0.06, "XYZ");
+        // gStyle->SetTitleXSize(Float_t size = 0.02); // Another way to set the size?
+        // gStyle->SetTitleYSize(Float_t size = 0.02);
+        gStyle->SetTitleXOffset(0.9);
+        gStyle->SetTitleYOffset(1.25);
+        // gStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
+        
+        // For the axis labels:
+        
+        gStyle->SetLabelColor(1, "XYZ");
+        gStyle->SetLabelFont(42, "XYZ");
+        gStyle->SetLabelOffset(0.007, "XYZ");
+        gStyle->SetLabelSize(0.05, "XYZ");
+        
+        // For the axis:
+        
+        /*gStyle->SetAxisColor(1, "XYZ");
+        gStyle->SetStripDecimals(1); // kTRUE
+        gStyle->SetTickLength(0.03, "XYZ");
+        gStyle->SetNdivisions(510, "XYZ");
+        gStyle->SetPadTickX(1);  // To get tick marks on the opposite side of the frame
+        gStyle->SetPadTickY(1);*/
+        
+        // Change for log plots:
+        gStyle->SetOptLogx(0);
+        gStyle->SetOptLogy(0);
+        gStyle->SetOptLogz(0);
+        
+        // Postscript options:
+        gStyle->SetPaperSize(20.,20.);
         
         TCanvas* pom = new TCanvas(MCPlot.c_str(),MCPlot.c_str());
         
@@ -5786,16 +5941,16 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         gPad->SetGridx(0);
         gPad->SetGridy(0);
         
-        data->GetXaxis()->SetTitle("m_{#mu j} (GeV)");
-        ttbar->GetXaxis()->SetTitle("m_{#mu j} (GeV)");
-        vvmc->GetXaxis()->SetTitle("m_{#mu j} (GeV)");
-        result->GetXaxis()->SetTitle("m_{#mu j} (GeV)");
+        data->GetXaxis()->SetTitle("M_{#mub} (GeV)");
+        ttbar->GetXaxis()->SetTitle("M_{#mub} (GeV)");
+        vvmc->GetXaxis()->SetTitle("M_{#mub} (GeV)");
+        result->GetXaxis()->SetTitle("M_{#mub} (GeV)");
         //cout << data_postfix_ << endl; exit(1);
         if (fitMode == 0 && data_postfix_ == "_El") {
-            data->GetXaxis()->SetTitle("m_{ej} (GeV)");
-            ttbar->GetXaxis()->SetTitle("m_{ej} (GeV)");
-            vvmc->GetXaxis()->SetTitle("m_{ej} (GeV)");
-            result->GetXaxis()->SetTitle("m_{ej} (GeV)");
+            data->GetXaxis()->SetTitle("M_{eb} (GeV)");
+            ttbar->GetXaxis()->SetTitle("M_{eb} (GeV)");
+            vvmc->GetXaxis()->SetTitle("M_{eb} (GeV)");
+            result->GetXaxis()->SetTitle("M_{eb} (GeV)");
         }
         else if (fitMode == 1) {
             data->GetXaxis()->SetTitle("M3 (GeV)");
@@ -5804,19 +5959,23 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
             result->GetXaxis()->SetTitle("M3 (GeV)");
         }
         else if (fitMode == 2) {
-            data->GetXaxis()->SetTitle("(m_{#mu j},M3)");
-            ttbar->GetXaxis()->SetTitle("(m_{#mu j},M3)");
-            vvmc->GetXaxis()->SetTitle("(m_{#mu j},M3)");
-            result->GetXaxis()->SetTitle("(m_{#mu j},M3)");
+            data->GetXaxis()->SetTitle("(M_{#mub},M3)");
+            ttbar->GetXaxis()->SetTitle("(M_{#mub},M3)");
+            vvmc->GetXaxis()->SetTitle("(M_{#mub},M3)");
+            result->GetXaxis()->SetTitle("(M_{#mub},M3)");
         }
         
         
-        data->GetYaxis()->SetTitle("# Events");
-        ttbar->GetYaxis()->SetTitle("# Events");
-        vvmc->GetYaxis()->SetTitle("# Events");
-        result->GetYaxis()->SetTitle("# Events");
-        
-        data->SetLineColor(kBlack);
+        data->GetYaxis()->SetTitle("Events/10 GeV");
+        ttbar->GetYaxis()->SetTitle("Events/10 GeV");
+        vvmc->GetYaxis()->SetTitle("Events/10 GeV");
+        result->GetYaxis()->SetTitle("Events/10 GeV");
+        result->GetYaxis()->SetTitleOffset(1.25);
+
+        result->GetXaxis()->SetLabelSize(0.04);
+        result->GetYaxis()->SetLabelSize(0.04);
+
+        /*data->SetLineColor(kBlack);
         data->SetMarkerColor(kBlack);    
         data->Draw("E");
         result->SetLineColor(kBlue);
@@ -5830,27 +5989,70 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         vvmc->Draw("same hist");
         vvdata->SetLineColor(kOrange);
         vvdata->SetLineStyle(kDashed);
+        vvdata->Draw("same hist");*/
+        
+        
+        
+        result->SetFillColor(kRed+1);
+        result->Draw("hist");
+        
+        vvmc->SetFillColor(kGreen-3);
+        vvmc->Add(vvdata,1);
+        vvmc->Draw("same hist");
+        
+        vvdata->SetFillColor(kYellow);
         vvdata->Draw("same hist");
         
-        TLegend *leg1 = new TLegend(0.55,0.53,0.898,0.89);
+        data->SetLineColor(kBlack);
+        data->SetMarkerColor(kBlack);    
+        data->Draw("same E");
         
-        leg1->AddEntry(data,"Data", "P"); 
-        leg1->AddEntry(result,"t#bar{t} + Background","L"); 
-        leg1->AddEntry(ttbar,"t#bar{t}", "L"); 
-        leg1->AddEntry(vvdata,"Multijet ", "L"); 
+        /*TLegend *leg1 = new TLegend(0.55,0.53,0.898,0.89);
+         
+         leg1->AddEntry(data,"Data", "P"); 
+         leg1->AddEntry(result,"t#bar{t} + Background","L"); 
+         leg1->AddEntry(ttbar,"t#bar{t}", "L"); 
+         leg1->AddEntry(vvdata,"Multijet ", "L"); 
+         leg1->AddEntry(vvmc,"Background", "L"); 
+         
+         stringstream f; f<<fit->GetChisquare()/fit->GetNDF();
+         string fitProb = "Fit Chi2/ndf = "+f.str();
+         TH1F* dummy = new TH1F("dummy","dummy",1,0,1); 
+         dummy->SetLineColor(kWhite); dummy->SetMarkerColor(kWhite); 
+         leg1->AddEntry(dummy,fitProb.c_str(), "P"); 
+         
+         leg1->Draw();*/
+        
+        TLegend *leg1 = new TLegend(0.55,0.53,0.898,0.89);
+         
+         leg1->AddEntry(data,"Data", "LP"); 
+        /*leg1->AddEntry(result,"t#bar{t}", "L"); 
         leg1->AddEntry(vvmc,"Background", "L"); 
+        leg1->AddEntry(vvdata,"Multijet ", "L"); */
+        leg1->AddEntry(result,"t#bar{t}", "f"); 
+        leg1->AddEntry(vvmc,"Background", "f"); 
+        //leg1->AddEntry(vvdata,"Multijet ", "f"); 
 
-        stringstream f; f<<fit->GetChisquare()/fit->GetNDF();
-        string fitProb = "Fit Chi2/ndf = "+f.str();
-        TH1F* dummy = new TH1F("dummy","dummy",1,0,1); 
-		dummy->SetLineColor(kWhite); dummy->SetMarkerColor(kWhite); 
-        leg1->AddEntry(dummy,fitProb.c_str(), "P"); 
-
-        leg1->Draw();
+        stringstream f; f<<pround(100,fit->GetChisquare()/fit->GetNDF());
+         string fitProb = "Fit #chi^{2}/ndf = "+f.str();
+         TH1F* dummy = new TH1F("dummy","dummy",1,0,1); 
+         dummy->SetLineColor(kWhite); dummy->SetMarkerColor(kWhite); 
+         leg1->AddEntry(dummy,fitProb.c_str(), "P"); 
+        
+        leg1->SetShadowColor(0);
+        leg1->SetFillColor(0);
+        leg1->SetLineColor(0);
+        leg1->SetX1NDC(.75);
+        leg1->SetX2NDC(.90);  
+        leg1->SetY1NDC(.60);
+        leg1->SetY2NDC(.90);
+         
+         leg1->Draw();
         
         pom->Update();
         
-        TPaveStats* sb = (TPaveStats*)data->GetListOfFunctions()->FindObject("stats");
+        //TPaveStats* sb = (TPaveStats*)data->GetListOfFunctions()->FindObject("stats");
+        TPaveStats* sb = (TPaveStats*)result->GetListOfFunctions()->FindObject("stats");
         sb->SetTextColor(kWhite);
         sb->SetLineColor(kWhite);
         sb->SetX1NDC(.99);
@@ -5875,17 +6077,33 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
             
             stringstream srlum; srlum << rlum;
             
-            TLatex* text = new TLatex(0.10,0.955,("CMS Preliminary "+srlum.str()+" fb^{-1} at #sqrt{s}=8TeV").c_str());
+            /*TLatex* text = new TLatex(0.10,0.955,("CMS Preliminary "+srlum.str()+" fb^{-1} at #sqrt{s}=8TeV").c_str());
             
             text->SetTextSize(0.05);
             
             text->SetNDC();
             
-            text->Draw();   
+            text->Draw();   */
+            
+            // Draw the CMS line
+            
+            TLatex* latex = new TLatex();
+            latex->SetNDC();
+            latex->SetTextSize(0.04);
+            latex->SetTextAlign(31); // align right
+            latex->DrawLatex(0.45, 0.95, "CMS Preliminary");
+            
+            TLatex* latex2 = new TLatex();
+            latex2->SetNDC();
+            latex2->SetTextSize(0.04);
+            latex2->SetTextAlign(31); // align right
+            latex2->DrawLatex(0.87, 0.95, (srlum.str() + " fb^{-1} at #sqrt{s} = 8 TeV").c_str());
+
             
         }
         
         pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".png").c_str());
+        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".pdf").c_str());
         pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".root").c_str());
         FitPlotPaths.push_back(savePath+MCPlot+"_channel"+data_postfix_+".png");
         
