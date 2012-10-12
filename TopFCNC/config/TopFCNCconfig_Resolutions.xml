@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <datasets>
 <!-- LOCAL FILES -->
-<!--
-<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="5000" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE_StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504_21092012_122612_TOPTREE_1_1_tgl.root"/>
--->
-<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="5000" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE/StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504/21092012_122612/TOPTREE/21092012_122612_TOPTREE_*.root"/>
 
+<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="5000" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/TTbar_FCNC_*.root"/>
+
+<!--
+<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="200000" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE/StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504/21092012_122612/TOPTREE/21092012_122612_TOPTREE_*.root"/>
+-->
 </datasets>
 
 <analysis>
-<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" loadTrackMET="0" TrackMETCollection=""/>
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patMETsPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJets" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="1" MCParticlesCollection="MCParticles" loadTrackMET="0" TrackMETCollection=""/>
 </analysis>
 
