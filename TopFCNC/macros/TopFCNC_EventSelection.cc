@@ -47,6 +47,11 @@ struct HighestCVSBtag{
     }
 };
 
+double effSF_Id_Run2012(double eta, double pt);
+double effSF_Iso04_Run2012(double eta, double pt);
+double effSF_TrgMu8_Run2012(double eta, double pt);
+double effSF_TrgMu17_Run2012(double eta, double pt);
+
 int main (int argc, char *argv[])
 {
   int doJESShift = 0; // 0: off 1: minus 2: plus
@@ -64,16 +69,16 @@ int main (int argc, char *argv[])
   int doPUShift = 0; //0: off (except nominal PU reweighting) 1: minus 2: plus
   cout << "doPUShift: " << doPUShift << endl;
 
-/*https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
-Tagger name  	            WP name WP Discr cut
-TrackCountingHighPur 	    TCHPT 	3.41
-JetProbability 	          JPL 	  0.275
-JetProbability 	          JPM 	  0.545
-JetProbability 	          JPT 	  0.790
-CombinedSecondaryVertex 	CSVL 	  0.244
-CombinedSecondaryVertex 	CSVM 	  0.679
-CombinedSecondaryVertex 	CSVT 	  0.898
-*/
+  /*https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
+  Tagger name  	            WP name WP Discr cut
+  TrackCountingHighPur 	    TCHPT 	3.41
+  JetProbability 	          JPL 	  0.275
+  JetProbability 	          JPM 	  0.545
+  JetProbability 	          JPT 	  0.790
+  CombinedSecondaryVertex 	CSVL 	  0.244
+  CombinedSecondaryVertex 	CSVM 	  0.679
+  CombinedSecondaryVertex 	CSVT 	  0.898
+  */
   float btagcut     = 0.679;
 	float Zmass       = 91.2;
 	float Zwindowsize = 30.;
@@ -179,8 +184,6 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   string rootFileName ("TopFCNC"+postfix+channelpostfix+comments+"_Plots.root");
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
 
-  //TFile *effSF = TFile::Open("MuonEfficiencies2011_42X_DataMC.root");
-
   //vector of objects
   cout << " - Variable declaration ..." << endl;
   vector < TRootVertex* >   vertex;
@@ -191,25 +194,8 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 
   //Global variable
   TRootEvent* event = 0;
-  //TKey *key = 0;
-/*
-  key = (TKey*) effSF->GetListOfKeys()->At(95);
-  TGraphAsymmErrors* effSF_Id_RunA_Eta_less1p2  = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-  key = (TKey*) effSF->GetListOfKeys()->At(98);
-  TGraphAsymmErrors* effSF_Id_RunA_Eta_more1p2  = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-  key = (TKey*) effSF->GetListOfKeys()->At(104);
-  TGraphAsymmErrors* effSF_Id_RunB_Eta_less1p2  = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-  key = (TKey*) effSF->GetListOfKeys()->At(107);
-  TGraphAsymmErrors* effSF_Id_RunB_Eta_more1p2  = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-*/
-/*
-  TGraphAsymmErrors* effSF_Iso_RunA_Eta_less1p2 = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-  TGraphAsymmErrors* effSF_Iso_RunA_Eta_more1p2 = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-  TGraphAsymmErrors* effSF_Iso_RunB_Eta_less1p2 = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-  TGraphAsymmErrors* effSF_Iso_RunB_Eta_more1p2 = (TGraphAsymmErrors*)key->ReadObj()->Clone();
-*/
-//  TEfficiency* effSF_Trig=
-
+  Float_t     LeptIdSF = 0;
+  Float_t     LeptIsoSF= 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -220,28 +206,30 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   ////////////////// MultiSample plots  //////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
-  MSPlot["RhoCorrection"]              = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
-  MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
+  MSPlot["RhoCorrection"]                     = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
+  MSPlot["NbOfVertices"]                      = new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
 
-  MSPlot["1stLeadingLeptonPt"]           = new MultiSamplePlot(datasets, "1stLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
-  MSPlot["2ndLeadingLeptonPt"]           = new MultiSamplePlot(datasets, "2ndLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["LeptonDzero"]                       = new MultiSamplePlot(datasets, "LeptonDzero", 500, -0.02, 0.02, "d_{0} [cm]");
 
-  MSPlot["3rdLeadingMuonPt"]             = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 300, 0, 150, "p_{T} [GeV/c]");
-  MSPlot["3rdLeadingElectronPt"]         = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["1stLeadingLeptonPt"]                = new MultiSamplePlot(datasets, "1stLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["2ndLeadingLeptonPt"]                = new MultiSamplePlot(datasets, "2ndLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
 
-  MSPlot["1stLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
-  MSPlot["2ndLeadingLeptonRelIsolation"] = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingMuonPt"]                  = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["3rdLeadingElectronPt"]              = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 300, 0, 150, "p_{T} [GeV/c]");
 
-  MSPlot["3rdLeadingMuonRelIsolation"]     = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 100, 0, 0.5, "RelIso");
-  MSPlot["3rdLeadingElectronRelIsolation"] = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["1stLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["2ndLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
 
-  MSPlot["NbOfIsolatedMuons"]          = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
-  MSPlot["NbOfIsolatedElectrons"]      = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
+  MSPlot["3rdLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 100, 0, 0.5, "RelIso");
 
-  MSPlot["DiLeptonInvMass"]            = new MultiSamplePlot(datasets, "DiLeptonInvMass", 400, 50, 130, "m_{ll}");
+  MSPlot["NbOfIsolatedMuons"]                 = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
+  MSPlot["NbOfIsolatedElectrons"]             = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
 
-  MSPlot["NbOfExtraIsolatedMuons"]     = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
-  MSPlot["NbOfExtraIsolatedElectrons"] = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
+  MSPlot["DiLeptonInvMass"]                   = new MultiSamplePlot(datasets, "DiLeptonInvMass", 400, 50, 130, "m_{ll}");
+
+  MSPlot["NbOfExtraIsolatedMuons"]            = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
+  MSPlot["NbOfExtraIsolatedElectrons"]        = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
 
   MSPlot["NbOfSelectedJets_Before3rdLeptCut"] = new MultiSamplePlot(datasets, "NbOfSelectedJets_Before3rdLeptCut", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_mm_ch"]            = new MultiSamplePlot(datasets, "NbOfSelectedJets_mm_ch",  15, 0, 15, "Nb. of jets");
@@ -349,6 +337,10 @@ CombinedSecondaryVertex 	CSVT 	  0.898
   ////////////////////////////////////////////////////////////////////
 
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",50,0,4);
+  for (unsigned int d = 0; d < datasets.size(); d++){
+  	histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
+  	histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
+  }
 /*
   for (unsigned int d = 0; d < datasets.size(); d++){
 	histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
@@ -592,7 +584,7 @@ CombinedSecondaryVertex 	CSVT 	  0.898
     //////////////////////////////////////////////////////////// Loop on events //////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    int itrigger = -1, previousRun = -1;
+    int itrigger1 = -1, itrigger2 = -1, previousRun = -1;
     int fourIsoLeptCounter = 0;
       
     int start = 0;
@@ -643,27 +635,35 @@ CombinedSecondaryVertex 	CSVT 	  0.898
             Trigger HLT_Mu13_Mu8_v16 available for runs 190645-193621
             Trigger HLT_Mu17_Mu8_v16 available for runs 190645-193621
 				    ------------------------------------------------------------------*/
-				    if(currentRun >= 190645 && currentRun <= 193621)
-					    itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v16"), currentRun, iFile);
+				    if(currentRun >= 190645 && currentRun <= 193621){
+					    itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v16"), currentRun, iFile);
+					    itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v9"), currentRun, iFile);
+					  }
 				    /*--------------------------------------------------------------------
-				    Sub-Total integrated luminosity = 782,2(/pb)
-				        Total integrated luminosity = 782,2(/pb)
+				    Sub-Total integrated luminosity = 778,2(/pb)
+				        Total integrated luminosity = 778,2(/pb)
 				    ------------------------------------------------------------------*/
 
 				    /*------------------------------------------------------------------
 				    Dataset : DoubleMu/Run2012B-13Jul2012-v4
 				    --------------------------------------------------------------------
 				    ------------------------------------------------------------------*/
-            else if (currentRun >= 193806 && currentRun <= 196027)
-              itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
-            else if (currentRun >= 196046 && currentRun <= 196531)
-              itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
+            else if (currentRun >= 193806 && currentRun <= 196027){
+              itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
+              itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
+              // int. lumi = 3446/pb
+            }
+            else if (currentRun >= 196046 && currentRun <= 196531){
+              itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
+              itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v11"), currentRun, iFile);
+              // int. lumi = 939.288/pb
+            }
 				    /*--------------------------------------------------------------------
-				    Sub-Total integrated luminosity = XXX,XXX(/pb)
-				        Total integrated luminosity = XXX,XXX(/pb)
+				    Sub-Total integrated luminosity = 4385.3(/pb)
+				        Total integrated luminosity = 5163.5(/pb)
 				    ------------------------------------------------------------------*/
 									   
-  		      if(itrigger == 9999)
+  		      if(itrigger1 == 9999 && itrigger2 == 9999)
 				    {
     		      cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
     		      exit(1);
@@ -672,19 +672,26 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 	   		  }
 	   		  else 
 	   		  {
-				    if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
-				    else itrigger = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
-    
-  				  if(itrigger == 9999)
+				    if(dataSetName != "ttbar_fcnc"){
+				      itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
+				      itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
+				    }
+				    else{
+				      itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
+				      itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v11"), currentRun, iFile);
+            }
+  				  if(itrigger1 == 9999 || itrigger2 == 9999)
 				    {
     			    cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
               exit(1);
             }
-            cout<<"Trigger bit nr : "<<itrigger<<endl;
+            cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
+            cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
           }
 		    } //end if diMuon
 		    else if(diElectron)
 		    {
+		      itrigger2 = -1;
 			    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
 			    {
 				    /*------------------------------------------------------------------
@@ -692,11 +699,14 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 				    --------------------------------------------------------------------
     				------------------------------------------------------------------*/
 				    if(currentRun >=190645  && currentRun <= 190738)
-					    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v15", currentRun);
+					    itrigger1 = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v15", currentRun);
+					    // Int. lumi. = 91.063/pb
 				    else if(currentRun >= 191043 && currentRun <= 191411)
-					    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v16", currentRun);
+					    itrigger1 = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v16", currentRun);
+					    // Int. lumi. = 266.980/pb
 				    else if(currentRun >= 191695 && currentRun <= 193621)
-					    itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
+					    itrigger1 = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
+					    // Int. lumi. = 347.429/pb
 				    /*--------------------------------------------------------------------
 				    Sub-Total integrated luminosity = XXX,XXX(/pb)
 				        Total integrated luminosity = XXX,XXX(/pb)
@@ -714,15 +724,15 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 			    }
 	   		  else 
 	   		  {
-				    if(dataSetName != "ttbar_fcnc") itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17"), currentRun, iFile);
-				    else itrigger = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v18"), currentRun, iFile);
+				    if(dataSetName != "ttbar_fcnc") itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17"), currentRun, iFile);
+				    else itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v18"), currentRun, iFile);
     
-            if(itrigger == 9999)
+            if(itrigger1 == 9999)
 				    {
     			    cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
     			    exit(1);
 				    }
-				    cout<<"Trigger bit nr : "<<itrigger<<endl;
+				    cout<<"Trigger bit nr : "<<itrigger1<<endl;
 			    }
 		    } //end if diElectron
 	    } //end previousRun != currentRun
@@ -733,23 +743,25 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 
 	    // Apply Jet Corrections on-the-fly
 	    //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
+/*
 	    if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
 		    jetTools->correctJets(init_jets,event->kt6PFJets_rho(),true); //last boolean: isData (needed for L2L3Residual...)
 	    else
 		    jetTools->correctJets(init_jets,event->kt6PFJets_rho(),false); //last boolean: isData (needed for L2L3Residual...)
 	    //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
 
+*/
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    //////////////////////////////////////////// Type I MET corrections: (Only for |eta| <=4.7 ) //////////////////////////////////////////////
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 	    //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
 	    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
 		    jetTools->correctMETTypeOne(init_jets,mets[0],true);
 	    else
 		    jetTools->correctMETTypeOne(init_jets,mets[0],false);
 	    //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-
+*/
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////// Jet energy smearing and systematic uncertainty ///////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -825,7 +837,7 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 	selecTableDiElMu.Fill(d,1,scaleFactor);
 		
 	// Apply trigger selection
-	trigged = treeLoader.EventTrigged (itrigger);
+	trigged = (treeLoader.EventTrigged (itrigger1) || treeLoader.EventTrigged (itrigger2));
 
 	if(!trigged)		   continue;
 	selecTableDiMu.Fill(d,2,scaleFactor);
@@ -868,6 +880,18 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 	//vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
 	//vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
 
+  // Apply muon Id/Iso/Trg SF
+  if(diMuon){
+    scaleFactor *= effSF_Id_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
+    scaleFactor *= effSF_Id_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+
+    scaleFactor *= effSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
+    scaleFactor *= effSF_Iso04_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+
+    scaleFactor *= effSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
+    scaleFactor *= effSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+  }
+
 	// Apply primary vertex selection
 	bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
   if(!isGoodPV) continue;
@@ -889,12 +913,16 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 	MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	if(diMuon){
+	  histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
+	  histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->d0(),selectedMuons_NoIso[1]->Phi());
 		MSPlot["1stLeadingLeptonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["2ndLeadingLeptonPt"]->Fill(selectedMuons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["1stLeadingLeptonRelIsolation"]->Fill(selectedMuons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(selectedMuons_NoIso[1]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 	}
 	else if(diElectron){
+	  histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[0]->d0(),selectedElectrons_NoIso[0]->Phi());
+	  histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[1]->d0(),selectedElectrons_NoIso[1]->Phi());
 		MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["1stLeadingLeptonRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
@@ -1428,4 +1456,287 @@ CombinedSecondaryVertex 	CSVT 	  0.898
 
   return 0;
 }
-
+double effSF_Id_Run2012(double eta, double pt){
+  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
+    if( pt >= 10 && pt < 20)
+      return 1.00747;
+    else if( pt >= 20 && pt < 25)
+      return 1.0102;
+    else if( pt >= 25 && pt < 30)
+      return 0.999714;
+    else if( pt >= 30 && pt < 35)
+      return 0.991798;
+    else if( pt >= 35 && pt < 40)
+      return 0.989783;
+    else if( pt >= 40 && pt < 50)
+      return 0.987796;
+    else if( pt >= 50 && pt < 60)
+      return 0.995079;
+    else if( pt >= 60 && pt < 90)
+      return 0.990791;
+    else if( pt >= 90 && pt < 140)
+      return 0.99111;
+    else if( pt >= 140 && pt < 500)
+      return 1.01688;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+    if( pt >= 10 && pt < 20)
+      return 1.02897;
+    else if( pt >= 20 && pt < 25)
+      return 1.00923;
+    else if( pt >= 25 && pt < 30)
+      return 0.993101;
+    else if( pt >= 30 && pt < 35)
+      return 0.988653;
+    else if( pt >= 35 && pt < 40)
+      return 0.989246;
+    else if( pt >= 40 && pt < 50)
+      return 0.986642;
+    else if( pt >= 50 && pt < 60)
+      return 0.991663;
+    else if( pt >= 60 && pt < 90)
+      return 0.994594;
+    else if( pt >= 90 && pt < 140)
+      return 0.957334;
+    else if( pt >= 140 && pt < 500)
+      return 0.876914;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+    if( pt >= 10 && pt < 20)
+      return 1.04513;
+    else if( pt >= 20 && pt < 25)
+      return 1.00195;
+    else if( pt >= 25 && pt < 30)
+      return 0.99624;
+    else if( pt >= 30 && pt < 35)
+      return 0.998091;
+    else if( pt >= 35 && pt < 40)
+      return 0.995041;
+    else if( pt >= 40 && pt < 50)
+      return 0.995362;
+    else if( pt >= 50 && pt < 60)
+      return 0.995984;
+    else if( pt >= 60 && pt < 90)
+      return 0.974529;
+    else if( pt >= 90 && pt < 140)
+      return 0.959219;
+    else if( pt >= 140 && pt < 500)
+      return 1.01609;
+    else
+      return 1;
+  }
+}
+double effSF_Iso04_Run2012(double eta, double pt){
+  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
+    if( pt >= 10 && pt < 20)
+      return 0.967563;
+    else if( pt >= 20 && pt < 25)
+      return 0.990809;
+    else if( pt >= 25 && pt < 30)
+      return 1.0029;
+    else if( pt >= 30 && pt < 35)
+      return 1.00061;
+    else if( pt >= 35 && pt < 40)
+      return 0.999133;
+    else if( pt >= 40 && pt < 50)
+      return 0.99914;
+    else if( pt >= 50 && pt < 60)
+      return 0.999507;
+    else if( pt >= 60 && pt < 90)
+      return 1.00458;
+    else if( pt >= 90 && pt < 140)
+      return 0.999191;
+    else if( pt >= 140 && pt < 500)
+      return 1.00421;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+    if( pt >= 10 && pt < 20)
+      return 0.973839;
+    else if( pt >= 20 && pt < 25)
+      return 0.990743;
+    else if( pt >= 25 && pt < 30)
+      return 1.00316;
+    else if( pt >= 30 && pt < 35)
+      return 1.00558;
+    else if( pt >= 35 && pt < 40)
+      return 1.00145;
+    else if( pt >= 40 && pt < 50)
+      return 0.999834;
+    else if( pt >= 50 && pt < 60)
+      return 1.00084;
+    else if( pt >= 60 && pt < 90)
+      return 1.00294;
+    else if( pt >= 90 && pt < 140)
+      return 0.995513;
+    else if( pt >= 140 && pt < 500)
+      return 0.985999;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+    if( pt >= 10 && pt < 20)
+      return 0.983218;
+    else if( pt >= 20 && pt < 25)
+      return 0.996806;
+    else if( pt >= 25 && pt < 30)
+      return 1.00645;
+    else if( pt >= 30 && pt < 35)
+      return 1.00497;
+    else if( pt >= 35 && pt < 40)
+      return 1.0019;
+    else if( pt >= 40 && pt < 50)
+      return 1.00078;
+    else if( pt >= 50 && pt < 60)
+      return 1.00091;
+    else if( pt >= 60 && pt < 90)
+      return 1.00086;
+    else if( pt >= 90 && pt < 140)
+      return 0.995858;
+    else if( pt >= 140 && pt < 500)
+      return 1.0017;
+    else
+      return 1;
+  }
+}
+double effSF_TrgMu8_Run2012(double eta, double pt){
+  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
+    if( pt >= 10 && pt < 20)
+      return 0.997657;
+    else if( pt >= 20 && pt < 30)
+      return 0.990708;
+    else if( pt >= 30 && pt < 35)
+      return 0.989016;
+    else if( pt >= 35 && pt < 40)
+      return 0.989852;
+    else if( pt >= 40 && pt < 50)
+      return 0.989148;
+    else if( pt >= 50 && pt < 60)
+      return 0.988999;
+    else if( pt >= 60 && pt < 90)
+      return 0.98839;
+    else if( pt >= 90 && pt < 140)
+      return 0.98725;
+    else if( pt >= 140 && pt < 500)
+      return 0.989903;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+    if( pt >= 10 && pt < 20)
+      return 1.00496;
+    else if( pt >= 20 && pt < 30)
+      return 0.990941;
+    else if( pt >= 30 && pt < 35)
+      return 0.986394;
+    else if( pt >= 35 && pt < 40)
+      return 0.986699;
+    else if( pt >= 40 && pt < 50)
+      return 0.98872;
+    else if( pt >= 50 && pt < 60)
+      return 0.985978;
+    else if( pt >= 60 && pt < 90)
+      return 0.980763;
+    else if( pt >= 90 && pt < 140)
+      return 0.987128;
+    else if( pt >= 140 && pt < 500)
+      return 0.954924;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 1.2 && fabs(eta) < 2.4 ){
+    if( pt >= 10 && pt < 20)
+      return 0.994495;
+    else if( pt >= 20 && pt < 30)
+      return 0.992625;
+    else if( pt >= 30 && pt < 35)
+      return 0.989671;
+    else if( pt >= 35 && pt < 40)
+      return 0.988672;
+    else if( pt >= 40 && pt < 50)
+      return 0.989098;
+    else if( pt >= 50 && pt < 60)
+      return 0.984751;
+    else if( pt >= 60 && pt < 90)
+      return 0.990953;
+    else if( pt >= 90 && pt < 140)
+      return 0.975961;
+    else if( pt >= 140 && pt < 500)
+      return 0.99754;
+    else
+      return 1;
+  }
+}
+double effSF_TrgMu17_Run2012(double eta, double pt){
+  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
+    if( pt >= 10 && pt < 20)
+      return 0.987431;
+    else if( pt >= 20 && pt < 30)
+      return 0.990293;
+    else if( pt >= 30 && pt < 35)
+      return 0.988535;
+    else if( pt >= 35 && pt < 40)
+      return 0.98961;
+    else if( pt >= 40 && pt < 50)
+      return 0.988796;
+    else if( pt >= 50 && pt < 60)
+      return 0.988964;
+    else if( pt >= 60 && pt < 90)
+      return 0.988338;
+    else if( pt >= 90 && pt < 140)
+      return 0.986894;
+    else if( pt >= 140 && pt < 500)
+      return 0.98723;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+    if( pt >= 10 && pt < 20)
+      return 1.0148;
+    else if( pt >= 20 && pt < 30)
+      return 0.987789;
+    else if( pt >= 30 && pt < 35)
+      return 0.984216;
+    else if( pt >= 35 && pt < 40)
+      return 0.984829;
+    else if( pt >= 40 && pt < 50)
+      return 0.987931;
+    else if( pt >= 50 && pt < 60)
+      return 0.985025;
+    else if( pt >= 60 && pt < 90)
+      return 0.977625;
+    else if( pt >= 90 && pt < 140)
+      return 0.98885;
+    else if( pt >= 140 && pt < 500)
+      return 0.954924;
+    else
+      return 1;
+  }
+  if( fabs(eta) >= 1.2 && fabs(eta) < 2.4 ){
+    if( pt >= 10 && pt < 20)
+      return 1.00149;
+    else if( pt >= 20 && pt < 30)
+      return 0.998639;
+    else if( pt >= 30 && pt < 35)
+      return 0.992417;
+    else if( pt >= 35 && pt < 40)
+      return 0.990839;
+    else if( pt >= 40 && pt < 50)
+      return 0.989054;
+    else if( pt >= 50 && pt < 60)
+      return 0.98503;
+    else if( pt >= 60 && pt < 90)
+      return 0.990908;
+    else if( pt >= 90 && pt < 140)
+      return 0.973882;
+    else if( pt >= 140 && pt < 500)
+      return 1.00649;
+    else
+      return 1;
+  }
+}
