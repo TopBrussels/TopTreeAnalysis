@@ -136,6 +136,7 @@ int main (int argc, char *argv[])
 	cout << " --> Using the diMuon channel..." << endl;
 	channelpostfix = "_DiMuTrigger";
 	xmlFileName = "../config/myTopFCNCconfig_Muon.xml";
+	//xmlFileName = "../config/TopFCNCconfig_EventSelection_Muon.xml";
   }
   else if(diElectron){
 	cout << " --> Using the diElectron channel..." << endl;
@@ -795,7 +796,7 @@ int main (int argc, char *argv[])
 
 	// scale factor for the event
 	float scaleFactor = 1.;
-
+/*
 	if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
 	{
 
@@ -810,6 +811,9 @@ int main (int argc, char *argv[])
 
 	}
 	else{
+*/
+	if(dataSetName != "Data" && dataSetName != "data" && dataSetName != "DATA")
+	{
 		// Apply pile-up reweighting
     double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
    	scaleFactor *= lumiWeight;
@@ -880,18 +884,6 @@ int main (int argc, char *argv[])
 	//vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
 	//vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
 
-  // Apply muon Id/Iso/Trg SF
-  if(diMuon){
-    scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-    scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
-
-    scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
-    scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
-
-    scaleFactor *= MuEffSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Trigger SF
-    scaleFactor *= MuEffSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Trigger SF
-  }
-
 	// Apply primary vertex selection
 	bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
   if(!isGoodPV) continue;
@@ -902,9 +894,17 @@ int main (int argc, char *argv[])
 	selecTableTriEl.Fill(d,3,scaleFactor);
 	selecTableDiElMu.Fill(d,3,scaleFactor);
 
-	// Select events with at least two leptons
+	// Select events with at least two leptons and apply muon Id/Iso/Trg SF
 	if(diMuon){
 		if(selectedMuons_NoIso.size()<2) continue;
+    scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
+    scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+
+    scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
+    scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
+
+    scaleFactor *= MuEffSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Trigger SF
+    scaleFactor *= MuEffSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Trigger SF
 	}
 	else if(diElectron){
 		if(selectedElectrons_NoIso.size()<2) continue;
