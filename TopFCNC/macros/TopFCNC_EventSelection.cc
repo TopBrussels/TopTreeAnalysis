@@ -47,10 +47,10 @@ struct HighestCVSBtag{
     }
 };
 
-double effSF_Id_Run2012(double eta, double pt);
-double effSF_Iso04_Run2012(double eta, double pt);
-double effSF_TrgMu8_Run2012(double eta, double pt);
-double effSF_TrgMu17_Run2012(double eta, double pt);
+double MuEffSF_Id_Run2012(double eta, double pt);
+double MuEffSF_Iso04_Run2012(double eta, double pt);
+double MuEffSF_TrgMu8_Run2012(double eta, double pt);
+double MuEffSF_TrgMu17_Run2012(double eta, double pt);
 
 int main (int argc, char *argv[])
 {
@@ -882,14 +882,14 @@ int main (int argc, char *argv[])
 
   // Apply muon Id/Iso/Trg SF
   if(diMuon){
-    scaleFactor *= effSF_Id_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-    scaleFactor *= effSF_Id_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+    scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
+    scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
 
-    scaleFactor *= effSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-    scaleFactor *= effSF_Iso04_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+    scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
+    scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
 
-    scaleFactor *= effSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-    scaleFactor *= effSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+    scaleFactor *= MuEffSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Trigger SF
+    scaleFactor *= MuEffSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Trigger SF
   }
 
 	// Apply primary vertex selection
@@ -1456,7 +1456,7 @@ int main (int argc, char *argv[])
 
   return 0;
 }
-double effSF_Id_Run2012(double eta, double pt){
+double MuEffSF_Id_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
       return 1.00747;
@@ -1530,7 +1530,7 @@ double effSF_Id_Run2012(double eta, double pt){
       return 1;
   }
 }
-double effSF_Iso04_Run2012(double eta, double pt){
+double MuEffSF_Iso04_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
       return 0.967563;
@@ -1604,7 +1604,7 @@ double effSF_Iso04_Run2012(double eta, double pt){
       return 1;
   }
 }
-double effSF_TrgMu8_Run2012(double eta, double pt){
+double MuEffSF_TrgMu8_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
       return 0.997657;
@@ -1672,7 +1672,7 @@ double effSF_TrgMu8_Run2012(double eta, double pt){
       return 1;
   }
 }
-double effSF_TrgMu17_Run2012(double eta, double pt){
+double MuEffSF_TrgMu17_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
       return 0.987431;
