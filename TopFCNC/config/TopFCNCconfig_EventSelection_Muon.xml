@@ -24,9 +24,9 @@
  <d name="wjets"    title="W\rightarrow l\nu"             add="1" color="413" ls="1" lw="2" normf="1" xsection="XXX" PreselEff="XXX" NofPSEvts="1"  filenames=""/>
 -->
 
-<d name="ttjets"   title="t\bar{t}" add="1" color="633"  ls="1"  lw="2" normf="1" xsection="234" PreselEff="0.007567303" NofPSEvts="52394" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/TTJets_MassiveBinDECAY_TopTreeID_1967_Skim_DoubleMuPt20_26092012_162858_1to50.root"/>
+<d name="ttjets"   title="t\bar{t}" add="1" color="633"  ls="1"  lw="2" normf="1" xsection="234" PreselEff="0.007567303" NofPSEvts="52394" filenames="/user_mnt/user/ghammad/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeProducer/skimmer/TTJets_MassiveBinDECAY_TopTreeID_1967_Skim_DoubleMuPt20_26092012_162858_1to50.root"/>
 
-<d name="zjets"   title="Z/\gamma^{*}\rightarrow ll" add="1" color="858"  ls="1"  lw="2" normf="1" xsection="3532.71" PreselEff="0.132544432" NofPSEvts="-1" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/DYJetsToLL_M-50_TopTreeID_1980_Skim_DoubleMuPt20_26092012_161858_*to*.root"/>
+<d name="zjets"   title="Z/\gamma^{*}\rightarrow ll" add="1" color="858"  ls="1"  lw="2" normf="1" xsection="3532.71" PreselEff="0.132544432" NofPSEvts="-1" filenames="/user_mnt/user/ghammad/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeProducer/skimmer/DYJetsToLL_M-50_TopTreeID_1980_Skim_DoubleMuPt20_26092012_161858_*to*.root"/>
 <!--
  <d name="Z_Jets_m10to50" title="Z/\gamma^{*}\rightarrow ll  (10<m_{ll}<50)" add="1"   color="868" ls="1"  lw="2" normf="1" xsection="XXX" PreselEff="XXX"  NofPSEvts="-1"  filenames=""/>
 -->
