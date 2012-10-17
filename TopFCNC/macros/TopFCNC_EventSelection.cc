@@ -122,7 +122,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   string channelpostfix = "";
-  string comments = "_Run2012A";
+  string comments = "_Run2012B";
   string xmlFileName = "";
 
   bool diElectron = false; // use diElectron channel?
@@ -652,7 +652,7 @@ int main (int argc, char *argv[])
             else if (currentRun >= 193806 && currentRun <= 196027){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
-              // int. lumi = 3446/pb
+              // int. lumi = 3401/pb
             }
             else if (currentRun >= 196046 && currentRun <= 196531){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
@@ -660,8 +660,8 @@ int main (int argc, char *argv[])
               // int. lumi = 939.288/pb
             }
 				    /*--------------------------------------------------------------------
-				    Sub-Total integrated luminosity = 4385.3(/pb)
-				        Total integrated luminosity = 5163.5(/pb)
+				    Sub-Total integrated luminosity = 4340.3(/pb)
+				        Total integrated luminosity = 5118.5(/pb)
 				    ------------------------------------------------------------------*/
 									   
   		      if(itrigger1 == 9999 && itrigger2 == 9999)
