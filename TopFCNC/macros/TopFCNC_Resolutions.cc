@@ -7,6 +7,7 @@
 
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
+#include "TopTreeProducer/interface/TRootGenEvent.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
 #include "../Selection/interface/SelectionTable.h"
 #include "../Content/interface/AnalysisEnvironment.h"
@@ -57,6 +58,7 @@ int main (int argc, char *argv[])
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
 
+  string prefix = "";
   string postfix = "_Resolutions"; // to relabel the names of the output file
 
   //Output ROOT file
@@ -73,9 +75,11 @@ int main (int argc, char *argv[])
   vector < TRootMET* >      mets;
 
   //Global variable
+  TRootGenEvent* topGenEvent = 0;
   TRootEvent* event = 0;
   TopFCNC_GenEvt *GenEvent = 0;
-  
+
+  Bool_t writePlots = false;
   Bool_t debug = false;
 
   ResolutionFit *resFitMuons     = new ResolutionFit("Muon");
@@ -179,6 +183,8 @@ int main (int argc, char *argv[])
 
 	    // load Event
 	    event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
+      // load GenEvent
+      if(datasets[d]->Name().find("TTJets")!=string::npos) topGenEvent = treeLoader.LoadGenEvent(ievt);
       // load MCParticles
 	    vector<TRootMCParticle*> mcParticles = treeLoader.LoadMCPart(ievt);
 
@@ -285,17 +291,19 @@ int main (int argc, char *argv[])
   	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
 
-  resFitMuons->WritePlots(fout, true, pathPNG+"resFit_Muon/");
-  resFitMuons->WriteResolutions("muonReso.root");
-  resFitElectrons->WritePlots(fout, true, pathPNG+"resFit_Electron/");
-  resFitElectrons->WriteResolutions("electronReso.root");
+  if(writePlots){
+    resFitMuons->WritePlots(fout, true, pathPNG+"resFit_Muon/");
+    resFitElectrons->WritePlots(fout, true, pathPNG+"resFit_Electron/");
+    resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
+    resFitQJets->WritePlots(fout, true, pathPNG+"resFit_QJet/");
+    resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
+  }
 
-  resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
-  resFitBJets->WriteResolutions("bJetReso.root");
-  resFitQJets->WritePlots(fout, true, pathPNG+"resFit_QJet/");
-  resFitQJets->WriteResolutions("qJetReso.root");
-  resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
-  resFitLightJets->WriteResolutions("lightJetReso.root");
+  resFitMuons->WriteResolutions((prefix+"muonReso.root").c_str());
+  resFitElectrons->WriteResolutions((prefix+"electronReso.root").c_str());
+  resFitBJets->WriteResolutions((prefix+"bJetReso.root").c_str());
+  resFitQJets->WriteResolutions((prefix+"qJetReso.root").c_str());
+  resFitLightJets->WriteResolutions((prefix+"lightJetReso.root").c_str());
 
   //delete  
   delete fout;

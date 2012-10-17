@@ -2,11 +2,8 @@
 <datasets>
 <!-- LOCAL FILES -->
 
-<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="5000" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/TTbar_FCNC_*.root"/>
+<d name="TTbar_FCNC" title="FCNC" add="1" color="2" ls="1" lw="2" normf="1" xsection="1.0" NofEvts="-1" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE/StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504/21092012_122612/TOPTREE/21092012_122612_TOPTREE_*"/>
 
-<!--
-<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="200000" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE/StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504/21092012_122612/TOPTREE/21092012_122612_TOPTREE_*.root"/>
--->
 </datasets>
 
 <analysis>
