@@ -36,6 +36,11 @@ map<string,TH2F*> histo2D;
 /// MultiSamplePlot
 map<string,MultiSamplePlot*> MSPlot;
 
+struct jetMatching {
+  int jet;
+  int genJet;
+};
+
 int main (int argc, char *argv[])
 {
   bool doPF2PAT = false;
@@ -118,9 +123,19 @@ int main (int argc, char *argv[])
   
   // Define the plots
   MSPlot["nSelectedJets"] = new MultiSamplePlot(datasets, "nSelectedJets", 20, -0.5, 19.5, "Nr. of Selected Jets");
-  MSPlot["JetPt"] = new MultiSamplePlot(datasets, "JetPt", 100, 0, 2000, "P_{T} of the Selected Jets");
+  MSPlot["JetPt"] = new MultiSamplePlot(datasets, "JetPt", 100, 0, 2000, "P_{T}^{jet}");
   
   histo1D["JetPt"] = new TH1F("JetPt","JetPt",100,0,100);
+  histo1D["MatchedJetPt"] = new TH1F("MatchedJetPt", "MatchedJetPt", 100, 0, 2000);
+  histo1D["MatchedJetEta"] = new TH1F("MatchedJetEta", "MatchedJetEta", 100, -5, 5);
+  histo1D["MatchedBJetPt"] = new TH1F("MatchedBJetPt", "MatchedBJetPt", 100, 0, 2000);
+  histo1D["MatchedBJetEta"] = new TH1F("MatchedBJetEta", "MatchedBJetEta", 100, -5, 5);
+  histo1D["MatchedCJetPt"] = new TH1F("MatchedCJetPt", "MatchedCJetPt", 100, 0, 2000);
+  histo1D["MatchedCJetEta"] = new TH1F("MatchedCJetEta", "MatchedCJetEta", 100, -5, 5);
+  histo1D["MatchedGluonJetPt"] = new TH1F("MatchedGluonJetPt", "MatchedGluonJetPt", 100, 0, 2000);
+  histo1D["MatchedGluonJetEta"] = new TH1F("MatchedGluonJetEta", "MatchedGluonJetEta", 100, -5, 5);
+  histo1D["MatchedLightJetPt"] = new TH1F("MatchedLightJetPt", "MatchedLightJetPt", 100, 0, 2000);
+  histo1D["MatchedLightJetEta"] = new TH1F("MatchedLightJetEta", "MatchedLightJetEta", 100, -5, 5);
   
   ////////////////////////////////////
   /// Selection table
@@ -141,35 +156,23 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
   
-  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
-  bool ResolutionsClosure = false;
+  ResolutionFit *resFitLightJets = new ResolutionFit("LightJet_JES");
+  ResolutionFit *resFitBJets = new ResolutionFit("BJet_JES");
+  ResolutionFit *resFitCJets = new ResolutionFit("CJet_JES");
+  ResolutionFit *resFitGluonJets = new ResolutionFit("GluonJet_JES");
+  ResolutionFit *resFitIncl = new ResolutionFit("Incl_JES");
+  ResolutionFit *resFitB = new ResolutionFit("BJet_Bbar_JES");
+  ResolutionFit *resFitBbar = new ResolutionFit("BJet_B_JES");
+  ResolutionFit *resFitBGSP = new ResolutionFit("BJet_GSP_JES");
+  ResolutionFit *resFitBFEX = new ResolutionFit("BJet_FEX_JES");
+  ResolutionFit *resFitBFCR = new ResolutionFit("BJet_FCR_JES");
+  ResolutionFit *resFitBJPM = new ResolutionFit("BJet_JPM_JES");
+  ResolutionFit *resFitBCSVM = new ResolutionFit("BJet_CSVM_JES");
+  ResolutionFit *resFitBSoftLepM = new ResolutionFit("BJet_SoftLepM_JES");
+  ResolutionFit *resFitInclJPM = new ResolutionFit("Incl_JPM_JES");
+  ResolutionFit *resFitInclCSVM = new ResolutionFit("Incl_CSVM_JES");
+  ResolutionFit *resFitInclSoftLepM = new ResolutionFit("Incl_SoftLepM_JES");
   
-  ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
-  if(CalculateResolutions)
-  {
-    resFitLightJets = new ResolutionFit("LightJet");
-    resFitBJets = new ResolutionFit("BJet");
-    resFitBJets_B = new ResolutionFit("BJet_B");
-    resFitBJets_Bbar = new ResolutionFit("BJet_Bbar");
-    if(ResolutionsClosure)
-    {
-      resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
-      resFitBJets->LoadResolutions("resolutions/bJetReso.root");
-      resFitBJets_B->LoadResolutions("resolutions/bJetReso.root");
-      resFitBJets_Bbar->LoadResolutions("resolutions/bJetReso.root");
-    }
-  }
-  else
-  {
-    resFitLightJets = new ResolutionFit("LightJet");
-    resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
-    resFitLightJetsL7 = new ResolutionFit("LightJetL7");
-    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_AfterL7.root");
-    resFitBJets = new ResolutionFit("BJet");
-    resFitBJets->LoadResolutions("resolutions/bJetReso.root");
-    resFitBJetsL7 = new ResolutionFit("BJetL7");
-    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_AfterL7.root");
-  }
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
   
@@ -217,8 +220,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
 
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 5000; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 50000; ievt++)
     {
       if(ievt%1000 == 0)
         std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
@@ -283,7 +286,7 @@ int main (int argc, char *argv[])
       
       //Declare selection instance    
       Selection selection(init_jets, init_muons, init_electrons, mets);
-      selection.setJetCuts(30.,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
       
       bool trigged = false;
 //      trigged = treeLoader.EventTrigged (itrigger);
@@ -320,7 +323,7 @@ int main (int argc, char *argv[])
       // Now do something with those events!
       MSPlot["nSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
       
-      vector<TLorentzVector> mcPartTLV, jetsTLV, genJetsTLV;
+      vector<TLorentzVector> jetsTLV, genJetsTLV;
       for(size_t iJet=0; iJet<selectedJets.size(); iJet++)
       {
         TRootJet* jet = selectedJets[iJet];
@@ -332,44 +335,100 @@ int main (int argc, char *argv[])
       for(size_t iGenJet=0; iGenJet<genjets.size(); iGenJet++)
         genJetsTLV.push_back(*genjets[iGenJet]);
       
+      int nB3 = 0, nBbar3 = 0, nB2 = 0;
       for(size_t iPart=0; iPart<mcParticles.size(); iPart++)
       {
         TRootMCParticle* part = mcParticles[iPart];
-        if( part->status() != 3 ) continue;
-        if( part->motherType() == 2212 ) continue;
-//        cout << part->Eta() << " " << part->Pt() << " | " << part->status() << " | " << part->type() << " | granny: " << part->grannyType() << " mother: " << part->motherType() << " | nDau: " << part->nDau() << "  " << part->dauOneId() << " " << part->dauTwoId() << " " << part->dauThreeId() << " " << part->dauFourId() << endl;
-        mcPartTLV.push_back(*part);
+        if( part->status() == 2 && fabs(part->type()) == 5 ) nB2++;
+        else if( part->status() == 3 )
+        {
+          if( part->type() == +5 ) nB3++;
+          else if( part->type() == -5 ) nBbar3++;
+        }
       }
       
-      JetPartonMatching matchingJetParton = JetPartonMatching(mcPartTLV, jetsTLV, 2, true, true, 0.3);
       JetPartonMatching matchingJetGenJet = JetPartonMatching(genJetsTLV, jetsTLV, 2, true, true, 0.3);
-      JetPartonMatching matchingGenJetParton = JetPartonMatching(mcPartTLV, genJetsTLV, 2, true, true, 0.3);
-      
-      vector< pair<unsigned int, unsigned int> > JetPartonPair, JetGenJetPair, GenJetPartonPair; // First one is jet number, second one is mcParticle number
-      for(unsigned int i=0; i<mcPartTLV.size(); i++)
-      {
-        int matchedJetNumber = matchingJetParton.getMatchForParton(i, 0);
-        if(matchedJetNumber != -1)
-          JetPartonPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );
-        matchedJetNumber = matchingGenJetParton.getMatchForParton(i, 0);
-        if(matchedJetNumber != -1)
-          GenJetPartonPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );
-      }
+      vector<jetMatching> matching;
       for(unsigned int i=0; i<genJetsTLV.size(); i++)
       {
         int matchedJetNumber = matchingJetGenJet.getMatchForParton(i, 0);
         if(matchedJetNumber != -1)
-          JetGenJetPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );
+        {
+          jetMatching tmpMatch;
+          tmpMatch.jet = matchedJetNumber;
+          tmpMatch.genJet = i;
+          matching.push_back(tmpMatch);
+        }
       }
-
       
+      // Find the b-production mechanism (GSP, FEX or FCR) 
+      // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/SchieferD/UniversalTreeMaker/src/MCBProdAnalyzer.cc?view=markup
+      string bProdMech = "";
+      if( nB3 > 0 && nBbar3 > 0 ) bProdMech = "FCR";
+      else if( nB3+nBbar3 > 0 ) bProdMech = "FEX";
+      else if( nB2 > 1 ) bProdMech = "GSP";
       
-      
-      
-      
-      
-      
-      
+      for(size_t i=0; i<matching.size(); i++)
+      {
+        if( jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) > 0.3 )
+        { // Check if the matching went fine
+          cout << "Problem with matching!!!  i: " << i << "  | "  << matching[i].jet << " " << matching[i].genJet << " " << jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) << endl;
+        }
+        TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[matching[i].jet]);
+        
+        // Fill some plots for all the matched jets.
+        histo1D["MatchedJetPt"]->Fill(pfJet->Pt());
+        histo1D["MatchedJetEta"]->Fill(pfJet->Eta());
+        resFitIncl->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        
+        if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
+          resFitInclJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+          resFitInclCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
+          resFitInclSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        
+        if( fabs(pfJet->partonFlavour()) == 5 )
+        {
+          histo1D["MatchedBJetPt"]->Fill(pfJet->Pt());
+          histo1D["MatchedBJetEta"]->Fill(pfJet->Eta());
+          resFitBJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          
+          if(bProdMech == "FCR") resFitBFCR->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          else if(bProdMech == "FEX") resFitBFEX->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          else if(bProdMech == "GSP") resFitBGSP->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          
+          if( pfJet->partonFlavour() == 5 )
+            resFitB->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          else if( pfJet->partonFlavour() == -5 )
+            resFitBbar->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          
+          if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
+            resFitBJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+            resFitBCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
+            resFitBSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        }
+        else if( fabs(pfJet->partonFlavour()) == 4 )
+        {
+          histo1D["MatchedCJetPt"]->Fill(pfJet->Pt());
+          histo1D["MatchedCJetEta"]->Fill(pfJet->Eta());
+          resFitCJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        }
+        else if( fabs(pfJet->partonFlavour()) == 21 )
+        {
+          histo1D["MatchedGluonJetPt"]->Fill(pfJet->Pt());
+          histo1D["MatchedGluonJetEta"]->Fill(pfJet->Eta());
+          resFitGluonJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        }
+        else if( fabs(pfJet->partonFlavour()) <= 3 && pfJet->partonFlavour() != 0 )
+        {
+          histo1D["MatchedLightJetPt"]->Fill(pfJet->Pt());
+          histo1D["MatchedLightJetEta"]->Fill(pfJet->Eta());
+          resFitLightJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        }
+      }
     }				//loop on events
     cout<<endl;
 
@@ -394,26 +453,44 @@ int main (int argc, char *argv[])
   // Writing
   //////////////////
   if (verbose > 1)
-  	cout << " - Writing outputs to the files ..." << endl;
+  	cout << " - Writing resolution stuff ..." << endl;
+
   // Fill the resolution histograms and calculate the resolutions
-  if(CalculateResolutions)
-  {
-    mkdir((pathPNG+"resFit_LightJet/").c_str(),0777);
-    mkdir((pathPNG+"resFit_BJet/").c_str(),0777);
-    mkdir((pathPNG+"resFit_BJet_B/").c_str(),0777);
-    mkdir((pathPNG+"resFit_BJet_Bbar/").c_str(),0777);
+  mkdir((pathPNG+"resFit_LightJet/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet/").c_str(),0777);
+  mkdir((pathPNG+"resFit_CJet/").c_str(),0777);
+  mkdir((pathPNG+"resFit_GluonJet/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_B/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_Bbar/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_FCR/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_FEX/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_GSP/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_JPM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_CSVM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_SoftLeptM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_JPM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_CSVM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_SoftLeptM/").c_str(),0777);
   
-//    resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
-//    resFitLightJets->WriteResolutions("lightJetReso.root");
-//    resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
-//    resFitBJets->WriteResolutions("bJetReso.root");
-//    resFitBJets_B->WritePlots(fout, true, pathPNG+"resFit_BJet_B/");
-//    resFitBJets_B->WriteResolutions("bJetReso_B.root");
-//    resFitBJets_Bbar->WritePlots(fout, true, pathPNG+"resFit_BJet_Bbar/");
-//    resFitBJets_Bbar->WriteResolutions("bJetReso_Bbar.root");
-  }
+  resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
+  resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
+  resFitCJets->WritePlots(fout, true, pathPNG+"resFit_CJet/");
+  resFitGluonJets->WritePlots(fout, true, pathPNG+"resFit_GluonJet/");
+  resFitIncl->WritePlots(fout, true, pathPNG+"resFit_Incl/");
+  resFitB->WritePlots(fout, true, pathPNG+"resFit_BJet_B/");
+  resFitBbar->WritePlots(fout, true, pathPNG+"resFit_BJet_Bbar/");
+  resFitBFCR->WritePlots(fout, true, pathPNG+"resFit_BJet_FCR/");
+  resFitBFEX->WritePlots(fout, true, pathPNG+"resFit_BJet_FEX/");
+  resFitBGSP->WritePlots(fout, true, pathPNG+"resFit_BJet_GSP/");
+  resFitBJPM->WritePlots(fout, true, pathPNG+"resFit_BJet_JPM/");
+  resFitBCSVM->WritePlots(fout, true, pathPNG+"resFit_BJet_CSVM/");
+  resFitBSoftLepM->WritePlots(fout, true, pathPNG+"resFit_BJet_SoftLeptM/");
+  resFitInclJPM->WritePlots(fout, true, pathPNG+"resFit_Incl_JPM/");
+  resFitInclCSVM->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVM/");
+  resFitInclSoftLepM->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepM/");
   
-  cout << "Writing the histograms..." << endl;
+  cout << " - Writing the histograms ..." << endl;
   // 1D 
   TDirectory* th1dir = fout->mkdir("1D_histograms");
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
