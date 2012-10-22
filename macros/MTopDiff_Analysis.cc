@@ -78,8 +78,9 @@ int main (int argc, char *argv[])
   float LuminosityMu = 4974, LuminosityEl = 4967;
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = true; // false:  files are created but no events are filled
-  bool useOnlyLowestChi2 = true;
+  bool writeASCIIstuff = false; // false:  files are created but no events are filled
+  bool useOnlyHighestWeight = false;
+  if(writeASCIIstuff) useOnlyHighestWeight = false;
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
@@ -100,7 +101,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -110,7 +111,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-30to80_EMEnriched_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-80to170_EMEnriched_Nominal_SemiLep.root");
       
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
@@ -266,11 +267,6 @@ int main (int argc, char *argv[])
   }
   
   //MSPlots
-  MSPlot["nPV_CSVvalue_1SSVHE_mu"] = new MultiSamplePlot(datasetsSemiMu,"nPV_CSVvalue_1SSVHE_mu",40,-0.5,39.5,"Number of PV, before chi2 cuts, 1 SSVHE","Nr. of events");
-  MSPlot["nPV_CSVvalue_1SSVHE_el"] = new MultiSamplePlot(datasetsSemiEl,"nPV_CSVvalue_1SSVHE_el",40,-0.5,39.5,"Number of PV, before chi2 cuts, 1 SSVHE","Nr. of events");
-  MSPlot["nPV_CSVvalue_2SSVHE_mu"] = new MultiSamplePlot(datasetsSemiMu,"nPV_CSVvalue_2SSVHE_mu",40,-0.5,39.5,"Number of PV, before chi2 cuts, 2 SSVHE","Nr. of events");
-  MSPlot["nPV_CSVvalue_2SSVHE_el"] = new MultiSamplePlot(datasetsSemiEl,"nPV_CSVvalue_2SSVHE_el",40,-0.5,39.5,"Number of PV, before chi2 cuts, 2 SSVHE","Nr. of events");
-  
   MSPlot["nPV_beforechi2_mu"] = new MultiSamplePlot(datasetsSemiMu,"nPV_beforechi2_mu",40,-0.5,39.5,"Number of PV, before chi2 cuts","Nr. of events");
   MSPlot["nPV_beforechi2_el"] = new MultiSamplePlot(datasetsSemiEl,"nPV_beforechi2_el",40,-0.5,39.5,"Number of PV, before chi2 cuts","Nr. of events");
   MSPlot["nPV_mu"] = new MultiSamplePlot(datasetsSemiMu,"nPV_mu",40,-0.5,39.5,"Number of PV","Nr. of events");
@@ -325,7 +321,7 @@ int main (int argc, char *argv[])
   MSPlot["nBtags"] = new MultiSamplePlot(datasetsSemiMu,"nBtags",5,-0.5,4.5,"Nr. of b-tagged jets","Nr. of events");
   MSPlot["leptonCharge"] = new MultiSamplePlot(datasetsSemiMu,"leptonCharge",3,-1.5,1.5,"leptonCharge","Nr. of events");
   
-  MSPlot["etaTop"] = new MultiSamplePlot(datasetsSemiMu,"etaTop",20,-2.5,2.5,"#eta_{top}","Nr. of events");
+  MSPlot["etaTop"] = new MultiSamplePlot(datasetsSemiMu,"etaTop",40,-4,4,"#eta_{top}","Nr. of events");
   MSPlot["PtTop"] = new MultiSamplePlot(datasetsSemiMu,"PtTop",50,0,500,"#P_{T, top}","Nr. of events");
   MSPlot["etaBjet"] = new MultiSamplePlot(datasetsSemiMu,"etaBjet",20,-2.5,2.5,"#eta_{b-jet}","Nr. of events");
   MSPlot["PtBjet"] = new MultiSamplePlot(datasetsSemiMu,"PtBjet",50,0,250,"#P_{T, b-jet}","Nr. of events");
@@ -495,12 +491,13 @@ int main (int argc, char *argv[])
   // load ideogram cfg stuff
   string ideogramParameterFilename("resolutions/ideogramConfig");
   ideogram::MassLikelihoodWriter writer(ideogramParameterFilename);
+  ideogram::MassLikelihoodWriter writerHighestWeight("resolutions/ideogramConfigMaxWeight");
   Double_t maxChi2 = writer.initialParameter->GetValue("maxChi2",(Double_t) -1.0);
   Double_t bTagCut = writer.initialParameter->GetValue("bTagCut",(Double_t) -1.0);
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
   Double_t pTjetCut = 30.;
-  Int_t nBtagCut = -1;
+  Int_t nBtagCut = 1;
   Int_t nJetCut = 9999;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
@@ -611,9 +608,9 @@ int main (int argc, char *argv[])
       outFileNameLikelihoodSemiEl += "_"+nr;
     }
     ofstream outFileLikelihoodSemiMu((outFileNameLikelihoodSemiMu+".txt").c_str());
-    ofstream outFileLikelihoodSemiMuSplitted((outFileNameLikelihoodSemiMu+"_Splitted.txt").c_str());
+    ofstream outFileLikelihoodSemiMuSplitted((outFileNameLikelihoodSemiMu+"_HighestWeight.txt").c_str());
     ofstream outFileLikelihoodSemiEl((outFileNameLikelihoodSemiEl+".txt").c_str());
-    ofstream outFileLikelihoodSemiElSplitted((outFileNameLikelihoodSemiEl+"_Splitted.txt").c_str());
+    ofstream outFileLikelihoodSemiElSplitted((outFileNameLikelihoodSemiEl+"_HighestWeight.txt").c_str());
     
     outFileLikelihoodSemiMu << headerMu << endl;
     outFileLikelihoodSemiMu << "Start of event-by-event info " << endl << endl;
@@ -754,49 +751,28 @@ int main (int argc, char *argv[])
       MSPlot["nPV_beforechi2"+leptonDecay]->Fill(monster->nPV(), dataSet, true, monster->eventWeight()*lumiWeight);
       MSPlot["RelPFISo"+leptonDecay]->Fill(monster->leptonPFRelIso(), dataSet, true, monster->eventWeight()*lumiWeight);
       
-      if(nBtags >= 1)
-        MSPlot["nPV_CSVvalue_1SSVHE"+leptonDecay]->Fill(monster->nPV(), dataSet, true, monster->eventWeight()*lumiWeight);
-      if(nBtags >= 2)
-        MSPlot["nPV_CSVvalue_2SSVHE"+leptonDecay]->Fill(monster->nPV(), dataSet, true, monster->eventWeight()*lumiWeight);
-
-      
       // Extra mTop and sigma(mTop) from fitresults
       vector<float> mTop, sigmaMtop, minChi2, bTagWeight, etaTop, PtTop, etaBjet, PtBjet;
       vector<int> hadrBindex, light1index, light2index;
       int nFinalCombis=0; // final means after chi2<10 cut
       int mcCombiIndex = -1;
-      double lowestChi2 = 99999;
-      for(unsigned int iCombi=0; iCombi<12; iCombi++)
+      int bestCombi = highestWeightCombi(monster, maxChi2, bTagCut, bTagEff, misTagRate);
+      for(int iCombi=0; iCombi<12; iCombi++)
       {
-        unsigned int* combi = monster->mvaResult(iCombi);
-        bool goodCombi = hadrJetsMVAMatched(monster, iCombi);
-        if(goodCombi) mcCombiIndex = nFinalCombis;
-        
-        float mTopFit = monster->mTopFit(iCombi);
-        float sigmaMTopFit = monster->sigmaMTopFit(iCombi);
-        float chi2MTopFit = monster->chi2MTopFit(iCombi);
-        
-//        if( chi2MTopFit < 99999 ) // 99999 means no mTopFit value was calculated, see FullKinFit.cc
-        if( chi2MTopFit < maxChi2 )
+        if(!useOnlyHighestWeight || iCombi == bestCombi)
         {
-          nFinalCombis++;
-          if( !useOnlyLowestChi2 || ( useOnlyLowestChi2 && chi2MTopFit < lowestChi2 ) )
+          unsigned int* combi = monster->mvaResult(iCombi);
+          bool goodCombi = hadrJetsMVAMatched(monster, iCombi);
+          if(goodCombi) mcCombiIndex = nFinalCombis;
+          
+          float mTopFit = monster->mTopFit(iCombi);
+          float sigmaMTopFit = monster->sigmaMTopFit(iCombi);
+          float chi2MTopFit = monster->chi2MTopFit(iCombi);
+          
+  //        if( chi2MTopFit < 99999 ) // 99999 means no mTopFit value was calculated, see FullKinFit.cc
+          if( chi2MTopFit < maxChi2 )
           {
-            if(useOnlyLowestChi2)
-            {
-              lowestChi2 = chi2MTopFit;
-              light1index.clear();
-              light2index.clear();
-              hadrBindex.clear();
-              mTop.clear();
-              sigmaMtop.clear();
-              minChi2.clear();
-              etaTop.clear();
-              PtTop.clear();
-              etaBjet.clear();
-              PtBjet.clear();
-              bTagWeight.clear();
-            }
+            nFinalCombis++;
             light1index.push_back(combi[0]);
             light2index.push_back(combi[1]);
             hadrBindex.push_back(combi[2]);
@@ -1005,15 +981,19 @@ int main (int argc, char *argv[])
         {
           if(writeASCIIstuff)
           {
-            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, useOnlyLowestChi2);
+            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, false, bestCombi);
             if(applyChi2Cut(eventMu, maxChi2))
             {
               setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
 //              cout << eventMu << endl;
               writer(outFileLikelihoodSemiMu,eventMu);
-              std::vector<ideogram::MassFitInfoEvent> splittedEvent = splitJetCombis(eventMu);
-              for(size_t iCombi = 0; iCombi<splittedEvent.size(); iCombi++)
-                writer(outFileLikelihoodSemiMuSplitted, splittedEvent[iCombi]);
+            }
+            
+            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
+            if(applyChi2Cut(eventMu, maxChi2))
+            {
+              setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
+              writerHighestWeight(outFileLikelihoodSemiMuSplitted,eventMu);
             }
           }
           
@@ -1040,15 +1020,19 @@ int main (int argc, char *argv[])
         {
           if(writeASCIIstuff)
           {
-            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, useOnlyLowestChi2);
+            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, false, bestCombi);
             if(applyChi2Cut(eventEl, maxChi2))
             {
               setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
 //              cout << eventEl << endl;
               writer(outFileLikelihoodSemiEl,eventEl);
-              std::vector<ideogram::MassFitInfoEvent> splittedEvent = splitJetCombis(eventEl);
-              for(size_t iCombi = 0; iCombi<splittedEvent.size(); iCombi++)
-                writer(outFileLikelihoodSemiElSplitted, splittedEvent[iCombi]);
+            }
+            
+            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
+            if(applyChi2Cut(eventEl, maxChi2))
+            {
+              setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
+              writerHighestWeight(outFileLikelihoodSemiElSplitted,eventEl);
             }
           }
           
