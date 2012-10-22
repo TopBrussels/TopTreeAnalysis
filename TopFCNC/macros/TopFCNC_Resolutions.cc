@@ -166,7 +166,9 @@ int main (int argc, char *argv[])
     treeLoader.LoadDataset (datasets[d], anaEnv);
 		
     string dataSetName = datasets[d]->Name();	
-    
+
+    prefix = dataSetName;
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////// Loop on events //////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,13 +279,32 @@ int main (int argc, char *argv[])
         Int_t HadQ1_idx = matching.getMatchForParton(2,0);
         Int_t HadQ2_idx = matching.getMatchForParton(3,0);
 
-        if(LepB_idx!=-1)  resFitBJets->Fill(&selectedJetsTLV[LepB_idx],&mcParticlesTLV[0]);
-        if(HadB_idx!=-1)  resFitBJets->Fill(&selectedJetsTLV[HadB_idx],&mcParticlesTLV[1]);
-        if(HadQ1_idx!=-1) resFitQJets->Fill(&selectedJetsTLV[HadQ1_idx],&mcParticlesTLV[2]);
-        if(HadQ2_idx!=-1) resFitQJets->Fill(&selectedJetsTLV[HadQ2_idx],&mcParticlesTLV[3]);
-
-        if(topGenEvent->isSemiLeptonic(TRootGenEvent::kMuon)) resFitMuons->Fill(selectedMuons[0],&lepton);
-        if(topGenEvent->isSemiLeptonic(TRootGenEvent::kElec)) resFitElectrons->Fill(selectedElectrons[0],&lepton);
+        if(LepB_idx!=-1){
+          resFitBJets->Fill(&selectedJetsTLV[LepB_idx],&mcParticlesTLV[0]);
+          histo1D["DR_bjets_MC_vs_RECO"]->Fill(selectedJetsTLV[LepB_idx].DeltaR(mcParticlesTLV[0]));
+        }
+        if(HadB_idx!=-1){
+          resFitBJets->Fill(&selectedJetsTLV[HadB_idx],&mcParticlesTLV[1]);
+          histo1D["DR_bjets_MC_vs_RECO"]->Fill(selectedJetsTLV[HadB_idx].DeltaR(mcParticlesTLV[1]));
+        }
+        if(HadQ1_idx!=-1){
+          resFitLightJets->Fill(&selectedJetsTLV[HadQ1_idx],&mcParticlesTLV[2]);
+          resFitQJets->Fill(&selectedJetsTLV[HadQ1_idx],&mcParticlesTLV[2]);
+          histo1D["DR_ljets_MC_vs_RECO"]->Fill(selectedJetsTLV[HadQ1_idx].DeltaR(mcParticlesTLV[2]));
+        }
+        if(HadQ2_idx!=-1){
+          resFitLightJets->Fill(&selectedJetsTLV[HadQ2_idx],&mcParticlesTLV[3]);
+          resFitQJets->Fill(&selectedJetsTLV[HadQ2_idx],&mcParticlesTLV[3]);
+          histo1D["DR_ljets_MC_vs_RECO"]->Fill(selectedJetsTLV[HadQ2_idx].DeltaR(mcParticlesTLV[3]));
+        }
+        if(topGenEvent->isSemiLeptonic(TRootGenEvent::kMuon)){
+          resFitMuons->Fill(selectedMuons[0],&lepton);
+          histo1D["DR_muon_MC_vs_RECO"]->Fill(selectedMuons[0]->DeltaR(lepton));
+        }
+        if(topGenEvent->isSemiLeptonic(TRootGenEvent::kElec)){
+          resFitElectrons->Fill(selectedElectrons[0],&lepton);
+          histo1D["DR_elec_MC_vs_RECO"]->Fill(selectedElectrons[0]->DeltaR(lepton));
+        }
 
       }
 	    //delete selection;
@@ -328,18 +349,18 @@ int main (int argc, char *argv[])
   }
 
   if(writePlots){
-    resFitMuons->WritePlots(fout, true, pathPNG+"resFit_Muon/");
-    resFitElectrons->WritePlots(fout, true, pathPNG+"resFit_Electron/");
-    resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
-    resFitQJets->WritePlots(fout, true, pathPNG+"resFit_QJet/");
-    resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
+    resFitMuons->WritePlots(fout, true, pathPNG+prefix+"_resFit_Muon/");
+    resFitElectrons->WritePlots(fout, true, pathPNG+prefix+"_resFit_Electron/");
+    resFitBJets->WritePlots(fout, true, pathPNG+prefix+"_resFit_BJet/");
+    resFitQJets->WritePlots(fout, true, pathPNG+prefix+"_resFit_QJet/");
+    resFitLightJets->WritePlots(fout, true, pathPNG+prefix+"_resFit_LightJet/");
   }
 
-  resFitMuons->WriteResolutions((prefix+"muonReso.root").c_str());
-  resFitElectrons->WriteResolutions((prefix+"electronReso.root").c_str());
-  resFitBJets->WriteResolutions((prefix+"bJetReso.root").c_str());
-  resFitQJets->WriteResolutions((prefix+"qJetReso.root").c_str());
-  resFitLightJets->WriteResolutions((prefix+"lightJetReso.root").c_str());
+  resFitMuons->WriteResolutions((prefix+"_muonReso.root").c_str());
+  resFitElectrons->WriteResolutions((prefix+"_electronReso.root").c_str());
+  resFitBJets->WriteResolutions((prefix+"_bJetReso.root").c_str());
+  resFitQJets->WriteResolutions((prefix+"_qJetReso.root").c_str());
+  resFitLightJets->WriteResolutions((prefix+"_lightJetReso.root").c_str());
 
   //delete  
   delete fout;
