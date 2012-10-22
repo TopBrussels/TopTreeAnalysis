@@ -81,6 +81,8 @@ int main (int argc, char *argv[])
 
   Bool_t writePlots = false;
   Bool_t debug = false;
+  
+  int JetPartonMatchingAlgo = 2;
 
   ResolutionFit *resFitMuons     = new ResolutionFit("Muon");
   ResolutionFit *resFitElectrons = new ResolutionFit("Electron");
@@ -183,8 +185,6 @@ int main (int argc, char *argv[])
 
 	    // load Event
 	    event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-      // load GenEvent
-      if(datasets[d]->Name().find("TTJets")!=string::npos) topGenEvent = treeLoader.LoadGenEvent(ievt);
       // load MCParticles
 	    vector<TRootMCParticle*> mcParticles = treeLoader.LoadMCPart(ievt);
 
@@ -197,61 +197,97 @@ int main (int argc, char *argv[])
 	    vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
 	    vector<TRootElectron*> selectedElectrons   = selection.GetSelectedDiElectrons();
 
-      // instanciate topfcnc object
-      GenEvent = new TopFCNC_GenEvt();
-      // reconstruct top fcnc event
-      GenEvent->ReconstructEvt(mcParticles);
-      if(debug) cout<<"[DEBUG] Number of MC particles : "<<mcParticles.size()<<endl;
-      // match jets to top fcnc partons
-      GenEvent->MatchJetsToPartons(selectedJets);
-      if(debug) cout<<"[DEBUG] Number of selected jets : "<<selectedJets.size()<<endl;
+      if(datasets[d]->Name().find("TTbar_FCNC")!=string::npos){
+        // instanciate topfcnc object
+        GenEvent = new TopFCNC_GenEvt();
+        // reconstruct top fcnc event
+        GenEvent->ReconstructEvt(mcParticles);
+        if(debug) cout<<"[DEBUG] Number of MC particles : "<<mcParticles.size()<<endl;
+        // match jets to top fcnc partons
+        GenEvent->MatchJetsToPartons(selectedJets,JetPartonMatchingAlgo);
+        if(debug) cout<<"[DEBUG] Number of selected jets : "<<selectedJets.size()<<endl;
+  
+        if(debug) cout<<"[DEBUG] W leptonic decay channel (0:None, 1:Muon, 2:Elec, 3:Tau) : "<<GenEvent->wLeptonicChannel()<<endl;
+        if(debug) cout<<"[DEBUG] Z leptonic decay channel (0:None, 1:Muon, 2:Elec, 3:Tau) : "<<GenEvent->zLeptonicChannel()<<endl;
+  
+        if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon){
+          // match muons to top fcnc Z decay products
+          GenEvent->MatchLeptonsToZ(selectedMuons,JetPartonMatchingAlgo);
+          // fill corresponding histograms
+          histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
+          histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
+          histo1D["DiMuonMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
+          if(debug) cout<<"[DEBUG] lept DR histograms filled (Muon channel)"<<endl;
+        }
+        else if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
+          // match electrons to top fcnc Z decay products
+          GenEvent->MatchLeptonsToZ(selectedElectrons,JetPartonMatchingAlgo);
+          // fill corresponding histograms
+          histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
+          histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
+          histo1D["DiElecMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
+          if(debug) cout<<"[DEBUG] lept DR histograms filled (Elec channel)"<<endl;
+        }
 
-      if(debug) cout<<"[DEBUG] W leptonic decay channel (0:None, 1:Muon, 2:Elec, 3:Tau) : "<<GenEvent->wLeptonicChannel()<<endl;
-      if(debug) cout<<"[DEBUG] Z leptonic decay channel (0:None, 1:Muon, 2:Elec, 3:Tau) : "<<GenEvent->zLeptonicChannel()<<endl;
+        if(debug) cout<<"[DEBUG] jet DR histograms about to be filled"<<endl;
 
-      if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon){
-        // match muons to top fcnc Z decay products
-        GenEvent->MatchLeptonsToZ(selectedMuons);
-        // fill corresponding histograms
-        histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
-        histo1D["DR_muon_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
-        histo1D["DiMuonMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
-        if(debug) cout<<"[DEBUG] lept DR histograms filled (Muon channel)"<<endl;
+        histo1D["DR_bjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchBFromTop());
+        histo1D["DR_qjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQFromTop());
+
+        if(GenEvent->wLeptonicChannel() == TopFCNC_GenEvt::kNone){
+          histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
+          histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
+        }
+
+        if(debug) cout<<"[DEBUG] jet DR histograms filled"<<endl;
+
+        if(GenEvent->wLeptonicChannel() == TopFCNC_GenEvt::kNone){
+          histo1D["WMass_Had_Decay"]   ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()).M());
+          histo1D["TopMass_Had_Decay"] ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()+GenEvent->matchedB()).M());
+        }
+        if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon || GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
+          histo1D["TopMass_Fcnc_Decay"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()+GenEvent->matchedQ()).M());
+        }
+
+        GenEvent->FillResolutions(resFitMuons, resFitElectrons, resFitBJets, resFitQJets, resFitLightJets);
       }
-      else if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
-        // match electrons to top fcnc Z decay products
-        GenEvent->MatchLeptonsToZ(selectedElectrons);
-        // fill corresponding histograms
-        histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton1FromZ());
-        histo1D["DR_elec_MC_vs_RECO"]->Fill(GenEvent->DR_MatchLepton2FromZ());
-        histo1D["DiElecMass"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()).M());
-        if(debug) cout<<"[DEBUG] lept DR histograms filled (Elec channel)"<<endl;
+ 
+      else if(datasets[d]->Name().find("TTJets")!=string::npos){
+        // load GenEvent
+        topGenEvent = treeLoader.LoadGenEvent(ievt);
+        if(!topGenEvent) continue;
+
+        TLorentzVector lepton;
+        vector<TLorentzVector> mcParticlesTLV, selectedJetsTLV;
+        for(unsigned int i=0; i<selectedJets.size(); i++) selectedJetsTLV.push_back(*selectedJets[i]);
+
+        if(topGenEvent->isSemiLeptonic()){
+			    mcParticlesTLV.push_back(topGenEvent->leptonicDecayB());
+			    mcParticlesTLV.push_back(topGenEvent->hadronicDecayB());
+			    mcParticlesTLV.push_back(topGenEvent->hadronicDecayQuark());
+			    mcParticlesTLV.push_back(topGenEvent->hadronicDecayQuarkBar());
+			    lepton = topGenEvent->lepton();
+			  }
+        JetPartonMatching matching = JetPartonMatching(mcParticlesTLV, selectedJetsTLV, JetPartonMatchingAlgo, true, true, 0.3);
+        if(debug && matching.getNumberOfAvailableCombinations() != 1)
+      cerr << "matching.getNumberOfAvailableCombinations() = "<<matching.getNumberOfAvailableCombinations()<<"  This should be equal to 1 !!!"<<endl;
+
+        Int_t LepB_idx  = matching.getMatchForParton(0,0);
+        Int_t HadB_idx  = matching.getMatchForParton(1,0);
+        Int_t HadQ1_idx = matching.getMatchForParton(2,0);
+        Int_t HadQ2_idx = matching.getMatchForParton(3,0);
+
+        if(LepB_idx!=-1)  resFitBJets->Fill(&selectedJetsTLV[LepB_idx],&mcParticlesTLV[0]);
+        if(HadB_idx!=-1)  resFitBJets->Fill(&selectedJetsTLV[HadB_idx],&mcParticlesTLV[1]);
+        if(HadQ1_idx!=-1) resFitQJets->Fill(&selectedJetsTLV[HadQ1_idx],&mcParticlesTLV[2]);
+        if(HadQ2_idx!=-1) resFitQJets->Fill(&selectedJetsTLV[HadQ2_idx],&mcParticlesTLV[3]);
+
+        if(topGenEvent->isSemiLeptonic(TRootGenEvent::kMuon)) resFitMuons->Fill(selectedMuons[0],&lepton);
+        if(topGenEvent->isSemiLeptonic(TRootGenEvent::kElec)) resFitElectrons->Fill(selectedElectrons[0],&lepton);
+
       }
-
-      if(debug) cout<<"[DEBUG] jet DR histograms about to be filled"<<endl;
-
-      histo1D["DR_bjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchBFromTop());
-      histo1D["DR_qjets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQFromTop());
-
-      if(GenEvent->wLeptonicChannel() == TopFCNC_GenEvt::kNone){
-        histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark1FromW());
-        histo1D["DR_ljets_MC_vs_RECO"]->Fill(GenEvent->DR_MatchQuark2FromW());
-      }
-
-      if(debug) cout<<"[DEBUG] jet DR histograms filled"<<endl;
-
-      if(GenEvent->wLeptonicChannel() == TopFCNC_GenEvt::kNone){
-        histo1D["WMass_Had_Decay"]   ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()).M());
-        histo1D["TopMass_Had_Decay"] ->Fill((GenEvent->matchedQuark1FromW()+GenEvent->matchedQuark2FromW()+GenEvent->matchedB()).M());
-      }
-      if(GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kMuon || GenEvent->zLeptonicChannel() == TopFCNC_GenEvt::kElec){
-        histo1D["TopMass_Fcnc_Decay"]->Fill((GenEvent->matchedLepton1FromZ()+GenEvent->matchedLepton2FromZ()+GenEvent->matchedQ()).M());
-      }
-
-      GenEvent->FillResolutions(resFitMuons, resFitElectrons, resFitBJets, resFitQJets, resFitLightJets);
-
 	    //delete selection;
-	    delete GenEvent;
+	    if(GenEvent) delete GenEvent;
 
     }//loop on events
     
