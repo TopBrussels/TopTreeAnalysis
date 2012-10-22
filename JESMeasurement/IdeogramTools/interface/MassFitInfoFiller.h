@@ -14,8 +14,10 @@
 
 void fillMassFitInfoHeader(Dataset* dataSet, ideogram::MassFitInfoHeader& header, bool isSemiMu, bool containsPDFsyst);
 
-void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHeader& header, ideogram::MassFitInfoEvent& event, float PUweight, float PUup, float PUdown, bool onlyLowestChi2);
+void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHeader& header, ideogram::MassFitInfoEvent& event, float PUweight, float PUup, float PUdown, bool onlyHighestWeight, int bestCombi);
 
-void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event, bool onlyLowestChi2);
+void fillMassFitResult(LightMonster* monster, ideogram::MassFitInfoEvent& event, bool onlyHighestWeight, int bestCombi);
+
+int highestWeightCombi(LightMonster* monster, double chi2Cut, double bTagCut, double bTagEff, double misTagRate); // gives index of highest weight combi
 
 #endif
