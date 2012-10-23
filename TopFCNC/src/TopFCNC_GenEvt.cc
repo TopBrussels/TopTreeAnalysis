@@ -2,7 +2,7 @@
 
 //ClassImp(TopFCNC_GenEvt);
 
-void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles){
+void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles, bool debug){
 
   wLeptonicChannel_ = kNone;
   zLeptonicChannel_ = kNone;
@@ -108,6 +108,7 @@ void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParti
   */
   	}
   }
+  //if(debug) cout<<(*this)<<endl;
 }
 
 void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
@@ -117,8 +118,6 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 		exit(1);
 	}
 
-	JetPartonMatching *myJetPartonMatcher = 0;
-
 	std::vector<TLorentzVector> partons;
 	std::vector<TLorentzVector> tljets;
 
@@ -126,12 +125,7 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 	{
 		tljets.push_back((TLorentzVector)*jets[i]);
 	}
-/*
-  quark1FromW_    = 0;
-  quark2FromW_ = 0;
-  B_ = 0;
-  Q_ = 0;
-*/
+
 	if(wLeptonicChannel_ == kNone)// dileptonic event tt->Wb+Zq->qqb+llq
 	{
 		partons.push_back(quark1FromW_);
@@ -144,25 +138,32 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 		partons.push_back(B_);
 		partons.push_back(Q_);
 	}
-	myJetPartonMatcher = new JetPartonMatching(partons,tljets,algorithm,useMaxDist,useDeltaR,maxDist);
-	//myJetPartonMatcher->print();
+	
+	JetPartonMatching myJetPartonMatcher = JetPartonMatching(partons,tljets,algorithm,useMaxDist,useDeltaR,maxDist);
+	//myJetPartonMatcher.print();
+
 	if(wLeptonicChannel_ == kNone){ // dileptonic event tt->Wb+Zq->qqb+llq
-		matchedQuark1FromW_ = (myJetPartonMatcher->getMatchForParton(0,0)>-1 ? *jets[myJetPartonMatcher->getMatchForParton(0,0)] : TRootJet());
-		matchedQuark2FromW_ = (myJetPartonMatcher->getMatchForParton(1,0)>-1 ? *jets[myJetPartonMatcher->getMatchForParton(1,0)] : TRootJet());
-		matchedB_           = (myJetPartonMatcher->getMatchForParton(2,0)>-1 ? *jets[myJetPartonMatcher->getMatchForParton(2,0)] : TRootJet());
-		matchedQ_           = (myJetPartonMatcher->getMatchForParton(3,0)>-1 ? *jets[myJetPartonMatcher->getMatchForParton(3,0)] : TRootJet());
+	  HadQ1Idx_ = myJetPartonMatcher.getMatchForParton(0,0);
+	  HadQ2Idx_ = myJetPartonMatcher.getMatchForParton(1,0);
+	  HadBIdx_  = myJetPartonMatcher.getMatchForParton(2,0);
+	  HadQIdx_  = myJetPartonMatcher.getMatchForParton(3,0);
+
+		if(HadQ1Idx_ !=-1 ) matchedQuark1FromW_ = *jets[HadQ1Idx_];
+		if(HadQ2Idx_ !=-1 ) matchedQuark2FromW_ = *jets[HadQ2Idx_];
+		if(HadBIdx_  !=-1 ) matchedB_           = *jets[HadBIdx_];
+		if(HadQIdx_  !=-1 ) matchedQ_           = *jets[HadQIdx_];
 	}
 	else{
-		matchedB_ = (myJetPartonMatcher->getMatchForParton(0,0)>-1 ? *jets[myJetPartonMatcher->getMatchForParton(0,0)] : TRootJet());
-		matchedQ_ = (myJetPartonMatcher->getMatchForParton(1,0)>-1 ? *jets[myJetPartonMatcher->getMatchForParton(1,0)] : TRootJet());
+	  HadBIdx_  = myJetPartonMatcher.getMatchForParton(0,0);
+	  HadQIdx_  = myJetPartonMatcher.getMatchForParton(1,0);
+	  
+		if(HadBIdx_  !=-1 ) matchedB_           = *jets[HadBIdx_];
+		if(HadQIdx_  !=-1 ) matchedQ_           = *jets[HadQIdx_];
 	}
-	if(myJetPartonMatcher) delete myJetPartonMatcher;
 }
 
 void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootMuon*> &leptons, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
  
-	JetPartonMatching *myLeptonMatcher = 0;
-
 	std::vector<TLorentzVector> genlept;
 	std::vector<TLorentzVector> tleptons;
 
@@ -174,18 +175,19 @@ void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootMuon*> &leptons, con
   genlept.push_back(lepton1FromZ_);
   genlept.push_back(lepton2FromZ_);
 
-	myLeptonMatcher = new JetPartonMatching(genlept,tleptons,algorithm,useMaxDist,useDeltaR,maxDist);
+	JetPartonMatching myLeptonMatcher = JetPartonMatching(genlept,tleptons,algorithm,useMaxDist,useDeltaR,maxDist);
 
-  if(myLeptonMatcher->getMatchForParton(0,0)>-1) matchedLepton1FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(0,0)];
-  if(myLeptonMatcher->getMatchForParton(1,0)>-1) matchedLepton2FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(1,0)];
+  Lep1Idx_ = myLeptonMatcher.getMatchForParton(0,0);
+  Lep2Idx_ = myLeptonMatcher.getMatchForParton(1,0);
+  
+  if(Lep1Idx_ != -1) matchedLepton1FromZ_ = *leptons[Lep1Idx_];
+  if(Lep2Idx_ != -1) matchedLepton2FromZ_ = *leptons[Lep2Idx_];
 
-	matchedZ_ = matchedLepton1FromZ_+matchedLepton2FromZ_;
-
+  if(Lep1Idx_ != -1 && Lep2Idx_ != -1)
+  	matchedZ_ = matchedLepton1FromZ_+matchedLepton2FromZ_;
 }
 void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
  
-	JetPartonMatching *myLeptonMatcher = 0;
-
 	std::vector<TLorentzVector> genlept;
 	std::vector<TLorentzVector> tleptons;
 
@@ -196,36 +198,37 @@ void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons,
   genlept.push_back(lepton1FromZ_);
   genlept.push_back(lepton2FromZ_);
 
-	myLeptonMatcher = new JetPartonMatching(genlept,tleptons,algorithm,useMaxDist,useDeltaR,maxDist);
+	JetPartonMatching myLeptonMatcher = JetPartonMatching(genlept,tleptons,algorithm,useMaxDist,useDeltaR,maxDist);
 
-  if(myLeptonMatcher->getMatchForParton(0,0)>-1) matchedLepton1FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(0,0)];
-  if(myLeptonMatcher->getMatchForParton(1,0)>-1) matchedLepton2FromZ_ = *leptons[myLeptonMatcher->getMatchForParton(1,0)];
+  Lep1Idx_ = myLeptonMatcher.getMatchForParton(0,0);
+  Lep2Idx_ = myLeptonMatcher.getMatchForParton(1,0);
 
-	matchedZ_ = matchedLepton1FromZ_+matchedLepton2FromZ_;
+  if(Lep1Idx_ != -1) matchedLepton1FromZ_ = *leptons[Lep1Idx_];
+  if(Lep2Idx_ != -1) matchedLepton2FromZ_ = *leptons[Lep2Idx_];
 
+  if(Lep1Idx_ != -1 && Lep2Idx_ != -1)
+  	matchedZ_ = matchedLepton1FromZ_+matchedLepton2FromZ_;
 }
 
 void TopFCNC_GenEvt::FillResolutions(ResolutionFit* resFitMuons, ResolutionFit* resFitElectrons, ResolutionFit* resFitBJets, ResolutionFit* resFitQJets, ResolutionFit* resFitLightJets){
 
-  if(foundZ_)
+  if(zLeptonicChannel_ == kMuon)
   {
-    if(zLeptonicChannel_ == kMuon)
-    {
-      resFitMuons->Fill(&matchedLepton1FromZ_,&lepton1FromZ_);
-      resFitMuons->Fill(&matchedLepton2FromZ_,&lepton2FromZ_);
-    }
-    else if(zLeptonicChannel_ == kElec)
-    {
-      resFitElectrons->Fill(&matchedLepton1FromZ_,&lepton1FromZ_);
-      resFitElectrons->Fill(&matchedLepton2FromZ_,&lepton2FromZ_);
-    }
+    if(Lep1Idx_ != -1) resFitMuons->Fill(&matchedLepton1FromZ_,&lepton1FromZ_);
+    if(Lep2Idx_ != -1) resFitMuons->Fill(&matchedLepton2FromZ_,&lepton2FromZ_);
   }
-  resFitBJets->Fill(&matchedB_,&B_);
-  resFitQJets->Fill(&matchedQ_,&Q_);
+  else if(zLeptonicChannel_ == kElec)
+  {
+    if(Lep1Idx_ != -1) resFitElectrons->Fill(&matchedLepton1FromZ_,&lepton1FromZ_);
+    if(Lep2Idx_ != -1) resFitElectrons->Fill(&matchedLepton2FromZ_,&lepton2FromZ_);
+  }
+
+  if(HadBIdx_ != -1) resFitBJets->Fill(&matchedB_,&B_);
+  if(HadQIdx_ != -1) resFitQJets->Fill(&matchedQ_,&Q_);
+
 	if(wLeptonicChannel_ == kNone) // dileptonic event tt->Wb+Zq->qqb+llq
 	{
-		resFitLightJets->Fill(&matchedQuark1FromW_,&quark1FromW_);
-		resFitLightJets->Fill(&matchedQuark2FromW_,&quark2FromW_);
+		if(HadQ1Idx_ != -1) resFitLightJets->Fill(&matchedQuark1FromW_,&quark1FromW_);
+		if(HadQ2Idx_ != -1) resFitLightJets->Fill(&matchedQuark2FromW_,&quark2FromW_);
   }
 }
-

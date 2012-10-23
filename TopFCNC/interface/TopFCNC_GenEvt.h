@@ -27,9 +27,12 @@ class TopFCNC_GenEvt : public TObject
 			TObject(),
 			zLeptonicChannel_(kNone),
 			wLeptonicChannel_(kNone),
-			foundZ_(false)
-//			isDiLeptonic_(false),
-//			isTriLeptonic_(false)
+      Lep1Idx_(-1),
+      Lep2Idx_(-1),
+      HadBIdx_(-1),
+      HadQIdx_(-1),
+      HadQ1Idx_(-1),
+      HadQ2Idx_(-1)
 			{;}
 		~TopFCNC_GenEvt(){;}
 
@@ -57,36 +60,48 @@ class TopFCNC_GenEvt : public TObject
 
 		const TRootJet matchedB()             const { return matchedB_;}
 		const TRootJet matchedQ()             const { return matchedQ_;}
-		const TRootJet matchedQuark1FromW()    const { return matchedQuark1FromW_;}
-		const TRootJet matchedQuark2FromW() const { return matchedQuark2FromW_;}
+		const TRootJet matchedQuark1FromW()   const { return matchedQuark1FromW_;}
+		const TRootJet matchedQuark2FromW()   const { return matchedQuark2FromW_;}
 
 		const TRootParticle matchedLepton1FromZ() const { return matchedLepton1FromZ_;}
 		const TRootParticle matchedLepton2FromZ() const { return matchedLepton2FromZ_;}
 		const TRootParticle matchedZ()            const { return matchedZ_;}
 
-		void ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles);
+		void ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles, bool debug = false);
 		void MatchJetsToPartons(const std::vector<TRootJet*> &jets, const int algorithm = JetPartonMatching::totalMinDist, const bool useMaxDist = true, const bool useDeltaR = true, const double maxDist = 0.3);
 		void MatchLeptonsToZ(const std::vector<TRootMuon*>     &leptons, const int algorithm = JetPartonMatching::totalMinDist, const bool useMaxDist = true, const bool useDeltaR = true, const double maxDist = 0.1);
 		void MatchLeptonsToZ(const std::vector<TRootElectron*> &leptons, const int algorithm = JetPartonMatching::totalMinDist, const bool useMaxDist = true, const bool useDeltaR = true, const double maxDist = 0.1);
 
     void FillResolutions(ResolutionFit* resFitMuons, ResolutionFit* resFitElectrons, ResolutionFit* resFitBJets, ResolutionFit* resFitQJets, ResolutionFit* resFitLightJets);
     
-    Float_t DR_MatchLepton1FromZ() const { return (matchedLepton1FromZ_.E()!=0&&lepton1FromZ_.E()!=0 ? matchedLepton1FromZ_.DeltaR(lepton1FromZ_) : -1);}
-    Float_t DR_MatchLepton2FromZ() const { return (matchedLepton2FromZ_.E()!=0&&lepton2FromZ_.E()!=0 ? matchedLepton2FromZ_.DeltaR(lepton2FromZ_) : -1);}
+    Float_t DR_MatchLepton1FromZ() const { return (Lep1Idx_ !=-1 && lepton1FromZ_.E() !=0 ? matchedLepton1FromZ_.DeltaR(lepton1FromZ_) : -1);}
+    Float_t DR_MatchLepton2FromZ() const { return (Lep2Idx_ !=-1 && lepton2FromZ_.E() !=0 ? matchedLepton2FromZ_.DeltaR(lepton2FromZ_) : -1);}
 
-    Float_t DR_MatchQuark1FromW()  const { return (matchedQuark1FromW_.E()!=0&&quark1FromW_.E()!=0 ? matchedQuark1FromW_.DeltaR(quark1FromW_) : -1);}
-    Float_t DR_MatchQuark2FromW()  const { return (matchedQuark2FromW_.E()!=0&&quark2FromW_.E()!=0 ? matchedQuark2FromW_.DeltaR(quark2FromW_) : -1);}
+    Float_t DR_MatchQuark1FromW()  const { return (HadQ1Idx_ !=-1 && quark1FromW_.E() !=0 ? matchedQuark1FromW_.DeltaR(quark1FromW_) : -1);}
+    Float_t DR_MatchQuark2FromW()  const { return (HadQ2Idx_ !=-1 && quark2FromW_.E() !=0 ? matchedQuark2FromW_.DeltaR(quark2FromW_) : -1);}
 
-    Float_t DR_MatchBFromTop()     const { return (matchedB_.E()!=0 && B_.E()!=0 ? matchedB_.DeltaR(B_) : -1);}
-    Float_t DR_MatchQFromTop()     const { return (matchedQ_.E()!=0 && Q_.E()!=0 ? matchedQ_.DeltaR(Q_) : -1);}
-    
+    Float_t DR_MatchBFromTop()     const { return (HadBIdx_ !=-1 && B_.E()!=0 ? matchedB_.DeltaR(B_) : -1);}
+    Float_t DR_MatchQFromTop()     const { return (HadQIdx_ !=-1 && Q_.E()!=0 ? matchedQ_.DeltaR(Q_) : -1);}
+/*
+		friend std::ostream& operator<< (std::ostream& stream, const TopFCNC_GenEvt& GenEvt)
+		{
+			stream << "*******************************" << endl;
+			stream << "TopFCNC_GenEvt " << endl;
+			stream << "- SM decay top quark : " << smDecayTop_ << endl;
+			stream << "- FCNC decay top quark : " << fcncDecayTop_ << endl;
+			return stream;
+		};
+*/    
 	protected:
 		LeptonType zLeptonicChannel_;
 		LeptonType wLeptonicChannel_;
 
-    Bool_t foundZ_;
-//		Bool_t isDiLeptonic_;
-//		Bool_t isTriLeptonic_;
+    Int_t Lep1Idx_;
+    Int_t Lep2Idx_;
+    Int_t HadBIdx_;
+    Int_t HadQIdx_;
+    Int_t HadQ1Idx_;
+    Int_t HadQ2Idx_;
 
 		TRootMCParticle smDecayTop_;
 		TRootMCParticle W_;
