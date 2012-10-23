@@ -36,6 +36,22 @@ map<string,TH2F*> histo2D;
 // MultiSamplePlot
 map<string,MultiSamplePlot*> MSPlot;
 
+struct HighestCVSBtag{
+    bool operator()( TRootJet* j1, TRootJet* j2 ) const{
+    	return j1->btag_combinedSecondaryVertexBJetTags() > j2->btag_combinedSecondaryVertexBJetTags();
+    }
+};
+/*https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
+  Tagger name  	            WP name WP Discr cut
+  TrackCountingHighPur 	    TCHPT 	3.41
+  JetProbability 	          JPL 	  0.275
+  JetProbability 	          JPM 	  0.545
+  JetProbability 	          JPT 	  0.790
+  CombinedSecondaryVertex 	CSVL 	  0.244
+  CombinedSecondaryVertex 	CSVM 	  0.679
+  CombinedSecondaryVertex 	CSVT 	  0.898
+*/
+
 int main (int argc, char *argv[])
 {
 
@@ -65,6 +81,8 @@ int main (int argc, char *argv[])
   string channelpostfix = (UseMuChannel ? "_DiMuonTrigger" : "_DiElecTrigger");
   string comments = "_Run2012A";
   string rootFileName ("TopFCNC"+postfix+channelpostfix+comments+".root");
+  string treepath = "/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/TopFCNC_EventSelection_DiMuTrigger_Run2012A_Trees/"
+  string resopath = "/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/"
 
   Float_t Luminosity = -1.;
   Float_t EventWeight = 1.;
@@ -72,15 +90,15 @@ int main (int argc, char *argv[])
   vector<Dataset*> dataSets; // needed for MSPlots
   vector<string>   inputFiles;
   
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Data.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_tbar_tWch_DR.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_t_tWch_DR.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ww.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_wz.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_zz.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_TTjets.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Z_Jets.root");
-  inputFiles.push_back("../rootfiles/TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttbar_fcnc.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Data.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_tbar_tWch_DR.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_t_tWch_DR.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ww.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_wz.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_zz.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_TTjets.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Z_Jets.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttbar_fcnc.root");
 
   for(unsigned int iDataSet=0; iDataSet<inputFiles.size(); iDataSet++)
   {
@@ -109,21 +127,21 @@ int main (int argc, char *argv[])
   ResolutionFit *resFitLeptons = 0;
   if(UseMuChannel){
     resFitLeptons = new ResolutionFit("Muon");
-    resFitLeptons->LoadResolutions("../rootfiles/muonReso_FromZJets.root");
+    resFitLeptons->LoadResolutions(resopath+"muonReso_FromZJets.root");
   }
   else{
     resFitLeptons = new ResolutionFit("Electron");
-    resFitLeptons->LoadResolutions("../rootfiles/electronReso_FromZJets.root");
+    resFitLeptons->LoadResolutions(resopath+"electronReso_FromZJets.root");
   }
   
   ResolutionFit *resFitBJets = new ResolutionFit("BJet");
-  resFitBJets->LoadResolutions("../rootfiles/bJetReso.root");
+  resFitBJets->LoadResolutions(resopath+"bJetReso.root");
 
   ResolutionFit *resFitQJets = new ResolutionFit("BJet");
-  resFitQJets->LoadResolutions("../rootfiles/qJetReso.root");
+  resFitQJets->LoadResolutions(resopath+"qJetReso.root");
 
   ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
-  resFitLightJets->LoadResolutions("../rootfiles/lightJetReso.root");
+  resFitLightJets->LoadResolutions(resopath+"lightJetReso.root");
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +160,22 @@ int main (int argc, char *argv[])
   MSPlot["KinFit_HadWMass"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass",120,50,110,"m_{W} [Gev/c^{2}]");
   MSPlot["KinFit_HadTopMass"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
+
+  MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_AtLeast1Btag_CSVM",100,0,1,"Prob.");
+  MSPlot["KinFit_Chi2_AtLeast1Btag_CSVM"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_AtLeast1Btag_CSVM",500,0,100,"#chi^{2}");
+  MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVM",100,0,1,"#chi^{2}/Ndf");
+
+  MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVM"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_AtLeast1Btag_CSVM",120,50,110,"m_{W} [Gev/c^{2}]");
+  MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_AtLeast1Btag_CSVM",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
+  MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_AtLeast1Btag_CSVM",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
+
+  MSPlot["KinFit_Prob_NoBtag_CVSL"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_NoBtag_CVSL",100,0,1,"Prob.");
+  MSPlot["KinFit_Chi2_NoBtag_CVSL"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_NoBtag_CVSL",500,0,100,"#chi^{2}");
+  MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_NoBtag_CVSL",100,0,1,"#chi^{2}/Ndf");
+
+  MSPlot["KinFit_HadWMass_NoBtag_CVSL"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_NoBtag_CVSL",120,50,110,"m_{W} [Gev/c^{2}]");
+  MSPlot["KinFit_HadTopMass_NoBtag_CVSL"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_NoBtag_CVSL",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
+  MSPlot["KinFit_FcncTopMass_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_NoBtag_CVSL",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
 
   ////////////////////////////////////////////////////////////////////
   ////////////////// 1D histograms  //////////////////////////////////
@@ -194,6 +228,17 @@ int main (int argc, char *argv[])
     topFCNC_KinFit->SetVerbosity(false);
     topFCNC_KinFit->SetFitVerbosity(false);
 
+    double topMass = 172.5;
+    //if(dataSet->Name().find("Data") == 0 || dataSet->Name().find("data") == 0 || dataSet->Name().find("DATA") == 0 )
+    //  topMass = 173.3;
+    // Top quark mass LHC average = 172.6 GeV/c²
+    double kin_prob        = -1.;
+    double kin_chi2        = -1.;
+    double kin_chi2ByNdf   = -1.;
+    double kin_hadWmass    = -1.;
+    double kin_hadtopmass  = -1.;
+    double kin_fcnctopmass = -1.;
+
     for(int iEvt=0; iEvt<nEvent; iEvt++)
     {
       inTree->GetEvent(iEvt);
@@ -203,22 +248,58 @@ int main (int argc, char *argv[])
 
       if(!topFCNC_Evt->isDiLeptonic()) continue;
       
-      topFCNC_KinFit->FitEvent(topFCNC_Evt);//, float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5/173.3 MC vs data);
+      //, float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5/173.3 MC vs data);
+      topFCNC_KinFit->FitEvent(topFCNC_Evt,80.4,91.2,topMass);
 
       topFCNC_Evt->ReconstructEvt();
 
       EventWeight = Luminosity*topFCNC_Evt->eventWeight();
-      
-      MSPlot["KinFit_Prob"]->Fill(topFCNC_KinFit->GetProb(), dataSet, true, EventWeight);
-      MSPlot["KinFit_Chi2"]->Fill(topFCNC_KinFit->GetChi2(), dataSet, true, EventWeight);
-      if(topFCNC_KinFit->GetNdof()!=0)
-        MSPlot["KinFit_ReducedChi2"]->Fill(topFCNC_KinFit->GetChi2()/topFCNC_KinFit->GetNdof(), dataSet, true, EventWeight);
 
-      MSPlot["KinFit_HadWMass"]   ->Fill(topFCNC_Evt->W().M(), dataSet, true, EventWeight);
-      MSPlot["KinFit_HadTopMass"] ->Fill(topFCNC_Evt->smDecayTop().M(), dataSet, true, EventWeight);
-      MSPlot["KinFit_FcncTopMass"]->Fill(topFCNC_Evt->fcncDecayTop().M(), dataSet, true, EventWeight);
+      kin_prob        = topFCNC_KinFit->GetProb();
+      kin_chi2        = topFCNC_KinFit->GetChi2();
+      if(topFCNC_KinFit->GetNdof()!=0)
+        kin_chi2ByNdf   = kin_chi2/topFCNC_KinFit->GetNdof();
+      kin_hadWmass    = topFCNC_Evt->W().M();
+      kin_hadtopmass  = topFCNC_Evt->smDecayTop().M();
+      kin_fcnctopmass = topFCNC_Evt->fcncDecayTop().M();
+      
+      MSPlot["KinFit_Prob"]->Fill(kin_prob, dataSet, true, EventWeight);
+      MSPlot["KinFit_Chi2"]->Fill(kin_chi2, dataSet, true, EventWeight);
+      if(topFCNC_KinFit->GetNdof()!=0)
+        MSPlot["KinFit_ReducedChi2"]->Fill(kin_chi2ByNdf, dataSet, true, EventWeight);
+
+      MSPlot["KinFit_HadWMass"]   ->Fill(kin_hadWmass, dataSet, true, EventWeight);
+      MSPlot["KinFit_HadTopMass"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
+      MSPlot["KinFit_FcncTopMass"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
+
+      vector<TRootJet> selectedJets = topFCNC_Evt->selectedJets();
+      sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+      double bdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
+
+      if(bdisc>0.679){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!
+        MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]->Fill(kin_prob, dataSet, true, EventWeight);
+        MSPlot["KinFit_Chi2_AtLeast1Btag_CSVM"]->Fill(kin_chi2, dataSet, true, EventWeight);
+        if(topFCNC_KinFit->GetNdof()!=0)
+          MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"]->Fill(kin_chi2ByNdf, dataSet, true, EventWeight);
+
+        MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVM"]   ->Fill(kin_hadWmass, dataSet, true, EventWeight);
+        MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
+        MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
+      }
+      else if(bisc<0.244){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!!!!!
+        MSPlot["KinFit_Prob_NoBtag_CVSL"]->Fill(kin_prob, dataSet, true, EventWeight);
+        MSPlot["KinFit_Chi2_NoBtag_CVSL"]->Fill(kin_chi2, dataSet, true, EventWeight);
+        if(topFCNC_KinFit->GetNdof()!=0)
+          MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"]->Fill(kin_chi2ByNdf, dataSet, true, EventWeight);
+
+        MSPlot["KinFit_HadWMass_NoBtag_CVSL"]   ->Fill(kin_hadWmass, dataSet, true, EventWeight);
+        MSPlot["KinFit_HadTopMass_NoBtag_CVSL"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
+        MSPlot["KinFit_FcncTopMass_NoBtag_CVSL"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
+      }
 
     } // loop on events
+    
+    delete topFCNC_KinFit;
   } // loop on datasets
 
   fout->cd();
