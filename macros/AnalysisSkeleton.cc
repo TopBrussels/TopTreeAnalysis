@@ -56,7 +56,7 @@ int main (int argc, char *argv[])
   /////////////////////
 
   //xml file
-  string xmlFileName ="../config/myWtbCouplings.xml";
+  string xmlFileName ="../config/myBTAGconfig.xml";
   //xmlFileName ="../config/myBTAGconfig_newcalib.xml";
   //string xmlFileName ="../config/myBTAGconfig_fall11.xml";
 
