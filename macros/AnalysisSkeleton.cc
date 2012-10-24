@@ -56,7 +56,7 @@ int main (int argc, char *argv[])
   /////////////////////
 
   //xml file
-  string xmlFileName ="../config/myBTAGconfig.xml";
+  string xmlFileName ="../config/myWtbCouplings.xml";
   //xmlFileName ="../config/myBTAGconfig_newcalib.xml";
   //string xmlFileName ="../config/myBTAGconfig_fall11.xml";
 
@@ -530,8 +530,8 @@ int main (int argc, char *argv[])
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
 
       selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
-      selection.setMuonCuts(26,2.1,0.12,0,0.2,0.3,1,1,5);
-      selection.setElectronCuts(30,2.5,0.1,0.02,0.,1,0.3);
+      selection.setMuonCuts(26.,2.1,0.12,0,0.2,0.3,1,1.,5,1);
+      selection.setElectronCuts(30.,2.5,0.1,0.02,0.,1.,0.3,0);
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setLooseElectronCuts(20,2.5,0.2,0.); // semiMu looseElectron cuts
 
