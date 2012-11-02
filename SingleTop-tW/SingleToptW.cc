@@ -198,7 +198,7 @@ int main(int argc, char* argv[]) {
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
       char myTexFile[300];
-      sprintf(myTexFile,"info_run_lumi_event_%d_%s.txt", mode, name);
+      sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida(myTexFile);
       
       
@@ -234,7 +234,7 @@ int main(int argc, char* argv[]) {
       
       //I think this is not used!
       JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
-      if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
+     // if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
     
       // true means redo also the L1
       JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); 
@@ -536,12 +536,12 @@ int main(int argc, char* argv[]) {
 		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
+		  
+		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		    
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
-		      
-		    salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 
 		      
 		    // Low mll cut (all final states)
