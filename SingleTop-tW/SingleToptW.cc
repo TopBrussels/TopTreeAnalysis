@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
   bool Pu3D = false;
   
   //b-tag scale factor
-  bool scaleFactor = true;
+  bool scaleFactor = false;
   
   // Systematic Calculations
   bool JESPlus= false;
@@ -489,20 +489,16 @@ int main(int argc, char* argv[]) {
 	      cutflow_raw->Fill(3);
 		
 	      // Select Objects -> Cuts
-	      selection.setJetCuts(20.,5,0.01,1.,0.98,0.3,0.1); //2.5 before, now 5
-	      //selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
-              selection.setDiMuonCuts(20,2.4,0.20,0.02);
-	      //selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
-              selection.setDiElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
+	      selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+              selection.setDiMuonCuts(20,2.4,0.20,999.);
+              selection.setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1);
               selection.setLooseMuonCuts(10,2.5,0.2);
-              selection.setLooseElectronCuts(15,2.5,0.2,0.);
+              selection.setLooseElectronCuts(15,2.5,0.2,0.); 
 		
 	      //Select Objects 
 	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
-	     // vector<TRootMuon*> selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
 	      vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
-	      //vector<TRootElectron*> selectedElectrons = selection.GetSelectedElectrons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons();
 	             

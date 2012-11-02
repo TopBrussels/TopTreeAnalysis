@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <datasets>
 
- <!--- <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR/*.root"/> 
- --->
- <d name="data_a" title="data_a" add="1" filenames="/user/rebeca/Files/Summer12_53X_emu/data_RunA/*.root"/> 
- 
+<d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR/*.root"/> 
+
 </datasets>
 
 <analysis>
