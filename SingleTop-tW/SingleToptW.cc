@@ -533,12 +533,18 @@ int main(int argc, char* argv[]) {
 		  cutflow_raw->Fill(4);
 		  // Loose lepton veto
 		  bool leptonVeto = false;
-		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
+		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() < 2) leptonVeto = true;
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
-		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
+		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() < 3) leptonVeto = true;
 		  
 		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		    
+		 /* if (  event->lumiBlockId() == 6  && event->eventId() == 1558 && mode == 0){
+		   cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
+		     TRootElectron* electron = (TRootElectron*) selectedElectrons[0];
+		     cout << electron->superClusterEta() << endl;
+		  
+		  }*/
+		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
