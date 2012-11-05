@@ -290,7 +290,7 @@ void ResolutionFit::FillPFJets(TRootPFJet *jet, TLorentzVector *mcParticle)
       ptHisto_[iEta]->Fill(jet->Pt());
     }
   }
-  Fill(jet, mcParticle);
+  if(mcParticle) Fill(jet, mcParticle);
 }
 
 void ResolutionFit::Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle)

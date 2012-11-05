@@ -8,7 +8,11 @@
 <datasets>
 <!-- SM samples -->
 
+<d name="Data" title="Data" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="1" filenames="/home/stijn/TopTreeAnalysis/CMSSW_53X_v1_patch1/Samples/Data_Jet_2012A_13July2012ReReco_Id2087/TopTree_Skimmed_*.root"/>
+
+<!--
 <d name="QCD_Flat_pythia6" title="QCD Flat pythia6" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="1" filenames="/home/stijn/TopTreeAnalysis/CMSSW_53X_v1_patch1/Samples/QCD_Flat_53X/TopTree_Skimmed_*.root"/>
+-->
 
 </datasets>
 

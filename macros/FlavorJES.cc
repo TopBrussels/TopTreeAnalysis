@@ -166,12 +166,26 @@ int main (int argc, char *argv[])
   ResolutionFit *resFitBGSP = new ResolutionFit("BJet_GSP_JES");
   ResolutionFit *resFitBFEX = new ResolutionFit("BJet_FEX_JES");
   ResolutionFit *resFitBFCR = new ResolutionFit("BJet_FCR_JES");
+  
+  ResolutionFit *resFitBJPL = new ResolutionFit("BJet_JPL_JES");
+  ResolutionFit *resFitBCSVL = new ResolutionFit("BJet_CSVL_JES");
+  ResolutionFit *resFitBSoftLepL = new ResolutionFit("BJet_SoftLepL_JES");
   ResolutionFit *resFitBJPM = new ResolutionFit("BJet_JPM_JES");
   ResolutionFit *resFitBCSVM = new ResolutionFit("BJet_CSVM_JES");
   ResolutionFit *resFitBSoftLepM = new ResolutionFit("BJet_SoftLepM_JES");
+  ResolutionFit *resFitBJPT = new ResolutionFit("BJet_JPT_JES");
+  ResolutionFit *resFitBCSVT = new ResolutionFit("BJet_CSVT_JES");
+  ResolutionFit *resFitBSoftLepT = new ResolutionFit("BJet_SoftLepT_JES");
+
+  ResolutionFit *resFitInclJPL = new ResolutionFit("Incl_JPL_JES");
+  ResolutionFit *resFitInclCSVL = new ResolutionFit("Incl_CSVL_JES");
+  ResolutionFit *resFitInclSoftLepL = new ResolutionFit("Incl_SoftLepL_JES");
   ResolutionFit *resFitInclJPM = new ResolutionFit("Incl_JPM_JES");
   ResolutionFit *resFitInclCSVM = new ResolutionFit("Incl_CSVM_JES");
   ResolutionFit *resFitInclSoftLepM = new ResolutionFit("Incl_SoftLepM_JES");
+  ResolutionFit *resFitInclJPT = new ResolutionFit("Incl_JPT_JES");
+  ResolutionFit *resFitInclCSVT = new ResolutionFit("Incl_CSVT_JES");
+  ResolutionFit *resFitInclSoftLepT = new ResolutionFit("Incl_SoftLepT_JES");
   
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
@@ -216,7 +230,7 @@ int main (int argc, char *argv[])
     //	Loop on events
     ////////////////////////////////////
     
-    int itrigger = -1, itriggerSemiEl = -1, previousRun = -1;
+    int itrigger_40 = -1, itrigger_80 = -1, itrigger_140 = -1, itrigger_200 = -1, itrigger_260 = -1, itrigger_320 = -1, itrigger_400 = -1, previousRun = -1;
     if (verbose > 1)
       cout << "	Loop over events " << endl;
 
@@ -256,17 +270,79 @@ int main (int argc, char *argv[])
       {
         previousRun = currentRun;
         
-        // semi-muon
-        if(dataSetName.find("Data_MuHad") == 0 || dataSetName.find("data_MuHad") == 0 || dataSetName.find("DATA_MuHad") == 0 )
+        if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
-          if( event->runId() <= 161176 )
-            itrigger = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v1"), currentRun, iFile);
+          if( event->runId() >= 190645 && event->runId() <= 190738 )
+          {
+            itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v3"), currentRun, iFile);
+            itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v3"), currentRun, iFile);
+            itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v3"), currentRun, iFile);
+            itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v3"), currentRun, iFile);
+            itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v3"), currentRun, iFile);
+            itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v3"), currentRun, iFile);
+            itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v3"), currentRun, iFile);
+          }
+          else if( event->runId() >= 191046 && event->runId() <= 191411 )
+          {
+            itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v4"), currentRun, iFile);
+            itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v4"), currentRun, iFile);
+            itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v4"), currentRun, iFile);
+            itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v4"), currentRun, iFile);
+            itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v4"), currentRun, iFile);
+            itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v4"), currentRun, iFile);
+            itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v4"), currentRun, iFile);
+          }
+          else if( event->runId() >= 191695 && event->runId() <= 196531 )
+          {
+            itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v5"), currentRun, iFile);
+            itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v5"), currentRun, iFile);
+            itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v5"), currentRun, iFile);
+            itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v5"), currentRun, iFile);
+            itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v5"), currentRun, iFile);
+            itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v5"), currentRun, iFile);
+            itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v5"), currentRun, iFile);
+          }
+          else if( event->runId() >= 198049 && event->runId() <= 199608 )
+          {
+            itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v6"), currentRun, iFile);
+            itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v6"), currentRun, iFile);
+            itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v6"), currentRun, iFile);
+            itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v6"), currentRun, iFile);
+            itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v6"), currentRun, iFile);
+            itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v6"), currentRun, iFile);
+            itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v6"), currentRun, iFile);
+          }
+          else if( event->runId() >= 199698 && event->runId() <= 202504 )
+          {
+            itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v7"), currentRun, iFile);
+            itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v8"), currentRun, iFile);
+            itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v8"), currentRun, iFile);
+            itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v8"), currentRun, iFile);
+            itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v8"), currentRun, iFile);
+            itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v8"), currentRun, iFile);
+            itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v8"), currentRun, iFile);
+          }
+          else if( event->runId() >= 202972 && event->runId() <= 203002 )
+          {
+            itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v8"), currentRun, iFile);
+            itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v9"), currentRun, iFile);
+            itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v9"), currentRun, iFile);
+            itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v9"), currentRun, iFile);
+            itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v9"), currentRun, iFile);
+            itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v9"), currentRun, iFile);
+            itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v9"), currentRun, iFile);
+          }
+          else cout << "Unknown run for HLT stuff:  " << event->runId() << "  !!!!! " << endl;
         }
         else
         {
-          itrigger = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v2"), currentRun);
-      	  if (itrigger == 9999)
-      	    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun); // Fall11 44X Chamonix
+          itrigger_40 = treeLoader.iTrigger (string ("HLT_PFJet40_v5"), currentRun, iFile);
+          itrigger_80 = treeLoader.iTrigger (string ("HLT_PFJet80_v5"), currentRun, iFile);
+          itrigger_140 = treeLoader.iTrigger (string ("HLT_PFJet140_v5"), currentRun, iFile);
+          itrigger_200 = treeLoader.iTrigger (string ("HLT_PFJet200_v5"), currentRun, iFile);
+          itrigger_260 = treeLoader.iTrigger (string ("HLT_PFJet260_v5"), currentRun, iFile);
+          itrigger_320 = treeLoader.iTrigger (string ("HLT_PFJet320_v5"), currentRun, iFile);
+          itrigger_400 = treeLoader.iTrigger (string ("HLT_PFJet400_v5"), currentRun, iFile);
         }
       }
       // Apply Jet Corrections on-the-fly
@@ -288,9 +364,45 @@ int main (int argc, char *argv[])
       Selection selection(init_jets, init_muons, init_electrons, mets);
       selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
       
-      bool trigged = false;
-//      trigged = treeLoader.EventTrigged (itrigger);
-      trigged = true;
+      float PtCutLeadingJet = 20.;
+      bool trigged_40 = false, trigged_80 = false, trigged_140 = false, trigged_200 = false, trigged_260 = false, trigged_320 = false, trigged_400 = false;
+      if(treeLoader.EventTrigged (itrigger_40))
+      {
+        trigged_40 = true;
+        PtCutLeadingJet = 60.;
+      }
+      else if(treeLoader.EventTrigged (itrigger_80))
+      {
+        trigged_80 = true;
+        PtCutLeadingJet = 111.;
+      }
+      else if(treeLoader.EventTrigged (itrigger_140))
+      {
+        trigged_140 = true;
+        PtCutLeadingJet = 187.;
+      }
+      else if(treeLoader.EventTrigged (itrigger_200))
+      {
+        trigged_200 = true;
+        PtCutLeadingJet = 250.;
+      }
+      else if(treeLoader.EventTrigged (itrigger_260))
+      {
+        trigged_260 = true;
+        PtCutLeadingJet = 320.;
+      }
+      else if(treeLoader.EventTrigged (itrigger_320))
+      {
+        trigged_320 = true;
+        PtCutLeadingJet = 393.;
+      }
+      else if(treeLoader.EventTrigged (itrigger_400))
+      {
+        trigged_400 = true;
+        PtCutLeadingJet = 475.;
+      }
+      bool trigged = (trigged_40 || trigged_80 || trigged_140 || trigged_200 || trigged_260 || trigged_320 || trigged_400);
+      
       bool isGoodPV = selection.isPVSelected(vertex, 4, 24, 2.);
       
       vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
@@ -306,19 +418,15 @@ int main (int argc, char *argv[])
           selecTable.Fill(d,2,scaleFactor*lumiWeight);
           if( selectedJets.size() >= 1 )
           {
-            eventSelected = true;
+            if( selectedJets[0]->Pt() > PtCutLeadingJet )
+            {
+              eventSelected = true;
+            }
           }
         }
       }
       
       if( ! eventSelected ) continue;
-      
-      vector<TRootMCParticle*> mcParticles;
-      if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) )
-      {
-        mcParticles = treeLoader.LoadMCPart(ievt, false);
-        sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
-      }
       
       // Now do something with those events!
       MSPlot["nSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
@@ -332,101 +440,166 @@ int main (int argc, char *argv[])
         jetsTLV.push_back(*jet);
       }
       
-      for(size_t iGenJet=0; iGenJet<genjets.size(); iGenJet++)
-        genJetsTLV.push_back(*genjets[iGenJet]);
-      
-      int nB3 = 0, nBbar3 = 0, nB2 = 0;
-      for(size_t iPart=0; iPart<mcParticles.size(); iPart++)
+      vector<TRootMCParticle*> mcParticles;
+      if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) // if MC
       {
-        TRootMCParticle* part = mcParticles[iPart];
-        if( part->status() == 2 && fabs(part->type()) == 5 ) nB2++;
-        else if( part->status() == 3 )
-        {
-          if( part->type() == +5 ) nB3++;
-          else if( part->type() == -5 ) nBbar3++;
-        }
-      }
-      
-      JetPartonMatching matchingJetGenJet = JetPartonMatching(genJetsTLV, jetsTLV, 2, true, true, 0.3);
-      vector<jetMatching> matching;
-      for(unsigned int i=0; i<genJetsTLV.size(); i++)
-      {
-        int matchedJetNumber = matchingJetGenJet.getMatchForParton(i, 0);
-        if(matchedJetNumber != -1)
-        {
-          jetMatching tmpMatch;
-          tmpMatch.jet = matchedJetNumber;
-          tmpMatch.genJet = i;
-          matching.push_back(tmpMatch);
-        }
-      }
-      
-      // Find the b-production mechanism (GSP, FEX or FCR) 
-      // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/SchieferD/UniversalTreeMaker/src/MCBProdAnalyzer.cc?view=markup
-      string bProdMech = "";
-      if( nB3 > 0 && nBbar3 > 0 ) bProdMech = "FCR";
-      else if( nB3+nBbar3 > 0 ) bProdMech = "FEX";
-      else if( nB2 > 1 ) bProdMech = "GSP";
-      
-      for(size_t i=0; i<matching.size(); i++)
-      {
-        if( jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) > 0.3 )
-        { // Check if the matching went fine
-          cout << "Problem with matching!!!  i: " << i << "  | "  << matching[i].jet << " " << matching[i].genJet << " " << jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) << endl;
-        }
-        TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[matching[i].jet]);
+        mcParticles = treeLoader.LoadMCPart(ievt, false);
+        sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
         
-        // Fill some plots for all the matched jets.
-        histo1D["MatchedJetPt"]->Fill(pfJet->Pt());
-        histo1D["MatchedJetEta"]->Fill(pfJet->Eta());
-        resFitIncl->FillPFJets(pfJet, genjets[matching[i].genJet]);
+        for(size_t iGenJet=0; iGenJet<genjets.size(); iGenJet++)
+          genJetsTLV.push_back(*genjets[iGenJet]);
         
-        if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
-          resFitInclJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
-        if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
-          resFitInclCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
-        if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
-          resFitInclSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
-        
-        if( fabs(pfJet->partonFlavour()) == 5 )
+        int nB3 = 0, nBbar3 = 0, nB2 = 0;
+        for(size_t iPart=0; iPart<mcParticles.size(); iPart++)
         {
-          histo1D["MatchedBJetPt"]->Fill(pfJet->Pt());
-          histo1D["MatchedBJetEta"]->Fill(pfJet->Eta());
-          resFitBJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          TRootMCParticle* part = mcParticles[iPart];
+          if( part->status() == 2 && fabs(part->type()) == 5 ) nB2++;
+          else if( part->status() == 3 )
+          {
+            if( part->type() == +5 ) nB3++;
+            else if( part->type() == -5 ) nBbar3++;
+          }
+        }
+        
+        JetPartonMatching matchingJetGenJet = JetPartonMatching(genJetsTLV, jetsTLV, 2, true, true, 0.3);
+        vector<jetMatching> matching;
+        for(unsigned int i=0; i<genJetsTLV.size(); i++)
+        {
+          int matchedJetNumber = matchingJetGenJet.getMatchForParton(i, 0);
+          if(matchedJetNumber != -1)
+          {
+            jetMatching tmpMatch;
+            tmpMatch.jet = matchedJetNumber;
+            tmpMatch.genJet = i;
+            matching.push_back(tmpMatch);
+          }
+        }
+        
+        // Find the b-production mechanism (GSP, FEX or FCR) 
+        // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/SchieferD/UniversalTreeMaker/src/MCBProdAnalyzer.cc?view=markup
+        string bProdMech = "";
+        if( nB3 > 0 && nBbar3 > 0 ) bProdMech = "FCR";
+        else if( nB3+nBbar3 > 0 ) bProdMech = "FEX";
+        else if( nB2 > 1 ) bProdMech = "GSP";
+      
+        for(size_t i=0; i<matching.size(); i++)
+        {
+          if( jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) > 0.3 )
+          { // Check if the matching went fine
+            cout << "Problem with matching!!!  i: " << i << "  | "  << matching[i].jet << " " << matching[i].genJet << " " << jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) << endl;
+          }
+          TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[matching[i].jet]);
           
-          if(bProdMech == "FCR") resFitBFCR->FillPFJets(pfJet, genjets[matching[i].genJet]);
-          else if(bProdMech == "FEX") resFitBFEX->FillPFJets(pfJet, genjets[matching[i].genJet]);
-          else if(bProdMech == "GSP") resFitBGSP->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          // Fill some plots for all the matched jets.
+          histo1D["MatchedJetPt"]->Fill(pfJet->Pt());
+          histo1D["MatchedJetEta"]->Fill(pfJet->Eta());
+          resFitIncl->FillPFJets(pfJet, genjets[matching[i].genJet]);
           
-          if( pfJet->partonFlavour() == 5 )
-            resFitB->FillPFJets(pfJet, genjets[matching[i].genJet]);
-          else if( pfJet->partonFlavour() == -5 )
-            resFitBbar->FillPFJets(pfJet, genjets[matching[i].genJet]);
-          
+          if( pfJet->btag_jetProbabilityBJetTags() > 0.275 )
+            resFitInclJPL->FillPFJets(pfJet, genjets[matching[i].genJet]);
           if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
-            resFitBJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            resFitInclJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_jetProbabilityBJetTags() > 0.790 )
+            resFitInclJPT->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.244 )
+            resFitInclCSVL->FillPFJets(pfJet, genjets[matching[i].genJet]);
           if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
-            resFitBCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            resFitInclCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.898 )
+            resFitInclCSVT->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_softElectronByIP3dBJetTags() > 1.35 || pfJet->btag_softMuonBJetTags() > 0.343 )
+            resFitInclSoftLepL->FillPFJets(pfJet, genjets[matching[i].genJet]);
           if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
-            resFitBSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            resFitInclSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          if( pfJet->btag_softElectronByIP3dBJetTags() > 4.25 || pfJet->btag_softMuonBJetTags() > 0.437 )
+            resFitInclSoftLepT->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          
+          if( fabs(pfJet->partonFlavour()) == 5 )
+          {
+            histo1D["MatchedBJetPt"]->Fill(pfJet->Pt());
+            histo1D["MatchedBJetEta"]->Fill(pfJet->Eta());
+            resFitBJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            
+            if(bProdMech == "FCR") resFitBFCR->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            else if(bProdMech == "FEX") resFitBFEX->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            else if(bProdMech == "GSP") resFitBGSP->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            
+            if( pfJet->partonFlavour() == 5 )
+              resFitB->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            else if( pfJet->partonFlavour() == -5 )
+              resFitBbar->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            
+            if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
+              resFitBJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+              resFitBCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
+              resFitBSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            
+            if( pfJet->btag_jetProbabilityBJetTags() > 0.275 )
+              resFitBJPL->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
+              resFitBJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_jetProbabilityBJetTags() > 0.790 )
+              resFitBJPT->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.244 )
+              resFitBCSVL->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+              resFitBCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.898 )
+              resFitBCSVT->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_softElectronByIP3dBJetTags() > 1.35 || pfJet->btag_softMuonBJetTags() > 0.343 )
+              resFitBSoftLepL->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
+              resFitBSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
+            if( pfJet->btag_softElectronByIP3dBJetTags() > 4.25 || pfJet->btag_softMuonBJetTags() > 0.437 )
+              resFitBSoftLepT->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          }
+          else if( fabs(pfJet->partonFlavour()) == 4 )
+          {
+            histo1D["MatchedCJetPt"]->Fill(pfJet->Pt());
+            histo1D["MatchedCJetEta"]->Fill(pfJet->Eta());
+            resFitCJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          }
+          else if( fabs(pfJet->partonFlavour()) == 21 )
+          {
+            histo1D["MatchedGluonJetPt"]->Fill(pfJet->Pt());
+            histo1D["MatchedGluonJetEta"]->Fill(pfJet->Eta());
+            resFitGluonJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          }
+          else if( fabs(pfJet->partonFlavour()) <= 3 && pfJet->partonFlavour() != 0 )
+          {
+            histo1D["MatchedLightJetPt"]->Fill(pfJet->Pt());
+            histo1D["MatchedLightJetEta"]->Fill(pfJet->Eta());
+            resFitLightJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          }
         }
-        else if( fabs(pfJet->partonFlavour()) == 4 )
+      }
+      else // if Data
+      {
+        for(size_t iJet=0; iJet<selectedJets.size(); iJet++)
         {
-          histo1D["MatchedCJetPt"]->Fill(pfJet->Pt());
-          histo1D["MatchedCJetEta"]->Fill(pfJet->Eta());
-          resFitCJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
-        }
-        else if( fabs(pfJet->partonFlavour()) == 21 )
-        {
-          histo1D["MatchedGluonJetPt"]->Fill(pfJet->Pt());
-          histo1D["MatchedGluonJetEta"]->Fill(pfJet->Eta());
-          resFitGluonJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
-        }
-        else if( fabs(pfJet->partonFlavour()) <= 3 && pfJet->partonFlavour() != 0 )
-        {
-          histo1D["MatchedLightJetPt"]->Fill(pfJet->Pt());
-          histo1D["MatchedLightJetEta"]->Fill(pfJet->Eta());
-          resFitLightJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
+          TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[iJet]);
+          
+          resFitIncl->FillPFJets(pfJet, 0);
+          if( pfJet->btag_jetProbabilityBJetTags() > 0.275 )
+            resFitInclJPL->FillPFJets(pfJet, 0);
+          if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
+            resFitInclJPM->FillPFJets(pfJet, 0);
+          if( pfJet->btag_jetProbabilityBJetTags() > 0.790 )
+            resFitInclJPT->FillPFJets(pfJet, 0);
+          if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.244 )
+            resFitInclCSVL->FillPFJets(pfJet, 0);
+          if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+            resFitInclCSVM->FillPFJets(pfJet, 0);
+          if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.898 )
+            resFitInclCSVT->FillPFJets(pfJet, 0);
+          if( pfJet->btag_softElectronByIP3dBJetTags() > 1.35 || pfJet->btag_softMuonBJetTags() > 0.343 )
+            resFitInclSoftLepL->FillPFJets(pfJet, 0);
+          if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
+            resFitInclSoftLepM->FillPFJets(pfJet, 0);
+          if( pfJet->btag_softElectronByIP3dBJetTags() > 4.25 || pfJet->btag_softMuonBJetTags() > 0.437 )
+            resFitInclSoftLepT->FillPFJets(pfJet, 0);
         }
       }
     }				//loop on events
@@ -466,12 +639,26 @@ int main (int argc, char *argv[])
   mkdir((pathPNG+"resFit_BJet_FCR/").c_str(),0777);
   mkdir((pathPNG+"resFit_BJet_FEX/").c_str(),0777);
   mkdir((pathPNG+"resFit_BJet_GSP/").c_str(),0777);
+  
+  mkdir((pathPNG+"resFit_BJet_JPL/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_CSVL/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_SoftLeptL/").c_str(),0777);
   mkdir((pathPNG+"resFit_BJet_JPM/").c_str(),0777);
   mkdir((pathPNG+"resFit_BJet_CSVM/").c_str(),0777);
   mkdir((pathPNG+"resFit_BJet_SoftLeptM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_JPT/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_CSVT/").c_str(),0777);
+  mkdir((pathPNG+"resFit_BJet_SoftLeptT/").c_str(),0777);
+  
+  mkdir((pathPNG+"resFit_Incl_JPL/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_CSVL/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_SoftLeptL/").c_str(),0777);
   mkdir((pathPNG+"resFit_Incl_JPM/").c_str(),0777);
   mkdir((pathPNG+"resFit_Incl_CSVM/").c_str(),0777);
   mkdir((pathPNG+"resFit_Incl_SoftLeptM/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_JPT/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_CSVT/").c_str(),0777);
+  mkdir((pathPNG+"resFit_Incl_SoftLeptT/").c_str(),0777);
   
   resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
   resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
@@ -483,12 +670,26 @@ int main (int argc, char *argv[])
   resFitBFCR->WritePlots(fout, true, pathPNG+"resFit_BJet_FCR/");
   resFitBFEX->WritePlots(fout, true, pathPNG+"resFit_BJet_FEX/");
   resFitBGSP->WritePlots(fout, true, pathPNG+"resFit_BJet_GSP/");
+  
+  resFitBJPL->WritePlots(fout, true, pathPNG+"resFit_BJet_JPL/");
+  resFitBCSVL->WritePlots(fout, true, pathPNG+"resFit_BJet_CSVL/");
+  resFitBSoftLepL->WritePlots(fout, true, pathPNG+"resFit_BJet_SoftLeptL/");
   resFitBJPM->WritePlots(fout, true, pathPNG+"resFit_BJet_JPM/");
   resFitBCSVM->WritePlots(fout, true, pathPNG+"resFit_BJet_CSVM/");
   resFitBSoftLepM->WritePlots(fout, true, pathPNG+"resFit_BJet_SoftLeptM/");
+  resFitBJPT->WritePlots(fout, true, pathPNG+"resFit_BJet_JPT/");
+  resFitBCSVT->WritePlots(fout, true, pathPNG+"resFit_BJet_CSVT/");
+  resFitBSoftLepT->WritePlots(fout, true, pathPNG+"resFit_BJet_SoftLeptT/");
+  
+  resFitInclJPL->WritePlots(fout, true, pathPNG+"resFit_Incl_JPL/");
+  resFitInclCSVL->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVL/");
+  resFitInclSoftLepL->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepL/");
   resFitInclJPM->WritePlots(fout, true, pathPNG+"resFit_Incl_JPM/");
   resFitInclCSVM->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVM/");
   resFitInclSoftLepM->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepM/");
+  resFitInclJPT->WritePlots(fout, true, pathPNG+"resFit_Incl_JPT/");
+  resFitInclCSVT->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVT/");
+  resFitInclSoftLepT->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepT/");
   
   cout << " - Writing the histograms ..." << endl;
   // 1D 
