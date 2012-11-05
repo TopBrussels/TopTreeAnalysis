@@ -91,6 +91,8 @@ class Selection{
   void setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId, float DistVzPVz, float DRJets, int MaxMissingHits);
   void setLooseElectronCuts();
   void setLooseElectronCuts(float Pt, float Eta, float RelIso, float MVAId);
+  void setLooseDiElectronCuts();
+  void setLooseDiElectronCuts(float Pt, float Eta, float RelIso);
   void setMuonCuts();
   void setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, float d0, float DRJets, int NMatchedStations, float DistVzPVz, int NTrackerLayersWithMeas, int NValidPixelHits);
   void setDiMuonCuts();
@@ -119,6 +121,8 @@ class Selection{
   std::vector<TRootElectron*> GetSelectedDiElectrons(float EtThr, float EtaThr, float ElectronRelIso) const;
   std::vector<TRootElectron*> GetSelectedLooseElectrons(bool vbtfid = false) const;
   std::vector<TRootElectron*> GetSelectedLooseElectrons(float EtThr, float EtaThr, float ElectronRelIso, bool vbtfid = false) const;
+  std::vector<TRootElectron*> GetSelectedLooseDiElectrons() const;
+  std::vector<TRootElectron*> GetSelectedLooseDiElectrons(float EtThr, float EtaThr, float ElectronRelIso) const;
 
   std::vector<TRootElectron*> GetSelectedElectronsInvIso(float ElectronRelIso, TRootVertex* vertex) const;
   std::vector<TRootElectron*> GetSelectedElectronsInvIso(float ElectronRelIso, TRootVertex* vertex, vector<TRootJet*>& selJets) const;

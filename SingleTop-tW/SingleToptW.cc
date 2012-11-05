@@ -200,6 +200,8 @@ int main(int argc, char* argv[]) {
       char myTexFile[300];
       sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida(myTexFile);
+      sprintf(myTexFile,"info_run_lumi_event_%d_%s.txt", mode, name);
+      ofstream salida2(myTexFile);
       
       
       // Objects
@@ -234,7 +236,7 @@ int main(int argc, char* argv[]) {
       
       //I think this is not used!
       JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
-     // if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
+      // if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
     
       // true means redo also the L1
       JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); 
@@ -474,14 +476,14 @@ int main(int argc, char* argv[]) {
               selection.setDiMuonCuts(20,2.4,0.20,999.);
               selection.setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1);
               selection.setLooseMuonCuts(10,2.5,0.2);
-              selection.setLooseElectronCuts(15,2.5,0.2,0.); 
+              selection.setLooseDiElectronCuts(15,2.5,0.2); 
 		
 	      //Select Objects 
 	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
 	      vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
-	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons();
+	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
 	             
 		
 	      // Tight lepton selection
@@ -533,23 +535,23 @@ int main(int argc, char* argv[]) {
 		  cutflow_raw->Fill(4);
 		  // Loose lepton veto
 		  bool leptonVeto = false;
-		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() < 2) leptonVeto = true;
+		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
-		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() < 3) leptonVeto = true;
+		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
 		  
 		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		 /* if (  event->lumiBlockId() == 6  && event->eventId() == 1558 && mode == 0){
-		   cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
+		  /* if (  event->lumiBlockId() == 6  && event->eventId() == 1558 && mode == 0){
+		     cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
 		     TRootElectron* electron = (TRootElectron*) selectedElectrons[0];
-		     cout << electron->superClusterEta() << endl;
+		     cout << electron->Eta() << endl;
 		  
-		  }*/
+		     }*/
 		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
 
-		      
+		    salida2 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		    // Low mll cut (all final states)
 		    TLorentzVector pair = lepton0 + lepton1;   
 		    if (pair.M() > 20){
