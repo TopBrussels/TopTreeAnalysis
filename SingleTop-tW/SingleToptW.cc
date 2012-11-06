@@ -540,6 +540,7 @@ int main(int argc, char* argv[]) {
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
 		  
 		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+		 
 		  /* if (  event->lumiBlockId() == 6  && event->eventId() == 1558 && mode == 0){
 		     cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
 		     TRootElectron* electron = (TRootElectron*) selectedElectrons[0];

@@ -444,7 +444,6 @@ std::vector<TRootMuon*> Selection::GetSelectedDiMuons(float PtThr, float EtaThr,
        && muons[i]->Pt()>PtThr 
        && fabs(muons[i]->Eta())<EtaThr 
        && reliso < MuonRelIso 
-       && fabs(muons[i]->d0()) <Muond0Cut_
        ) {
       selectedMuons.push_back(muons[i]);
     }
@@ -705,7 +704,8 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float PtThr, float
   {
     TRootElectron* el = (TRootElectron*) electrons[i];
     // PF relative isolation with dBeta correction:
-    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt();
+    float RelIso = (el->chargedHadronIso() + max( 0.0, el->neutralHadronIso() + el->photonIso() - 0.5*el->puChargedHadronIso() ) ) / el->Pt(); //dbeta
+   
 
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
       if ( fabs(el->d0()) < Electrond0Cut_)
@@ -758,6 +758,7 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseDiElectrons(float PtThr, 
 
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
     	if ( RelIso < ElectronRelIso )
+	 if (el->mvaTrigId() > 0)
 	  selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
