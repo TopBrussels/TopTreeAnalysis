@@ -372,9 +372,23 @@ int main (int argc, char *argv[])
   
  //4.9/fb recalib JP
   
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_down.root", "pileup", "pileup");
+  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S7.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/nominal.root", "pileup", "pileup");
+  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S7.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S7.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_down.root", "pileup", "pileup");*/
+
+  // 5.1/fb with new S10 pileup scenario
+
+  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/nominal.root", "pileup", "pileup");
+  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/sys_down.root", "pileup", "pileup");
+  */
+
+  // 11.6/fb with new S10 pileup scenario
+
+  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
+  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");
+  
 
   //reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
   //reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
@@ -408,8 +422,8 @@ int main (int argc, char *argv[])
 
     // temp fix for pfmet name in stijn's ElectronHad sample
 
-    if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 )
-	anaEnv.METCollection = "PFMET_patMETsPF2PAT";
+    //if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 )
+    //anaEnv.METCollection = "PFMET_patMETsPF2PAT";
     
     if(dataSetName.find("InvIso") != string::npos) {
 	anaEnv.METCollection = anaEnv.METCollection+"NoLeptonCleaning";
@@ -469,7 +483,9 @@ int main (int argc, char *argv[])
     //OLD
     //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
     //NEW
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
     
     // true means redo also the L1
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
@@ -536,6 +552,7 @@ int main (int argc, char *argv[])
       res->cd();
       
       TF1* WmassFit = (TF1*)res->Get("hadronicRecoWMass_Fitted");
+      //TF1* WmassFit = (TF1*)res->Get("hadronicRecoWMass-REW_Fitted");
       
       if (WmassFit) {
 	
@@ -546,6 +563,7 @@ int main (int argc, char *argv[])
       }
 
       TF1* TopmassFit = (TF1*)res->Get("hadronicRecoTopMass_Fitted");
+      //TF1* TopmassFit = (TF1*)res->Get("hadronicRecoTopMass-REW_Fitted");
       
       if (TopmassFit) {
 	
@@ -578,7 +596,7 @@ int main (int argc, char *argv[])
     int nTagged_nonb=0;
 
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-      //for (unsigned int ievt = 0; ievt < 20000; ievt++)
+      //for (unsigned int ievt = 0; ievt < 10000; ievt++)
     {
       
       vector < TRootVertex* > vertex;
@@ -588,6 +606,8 @@ int main (int argc, char *argv[])
       vector < TRootJet* > init_jets;
       vector < TRootMET* > mets;
       vector < TRootGenJet* > genjets;
+
+      //cout << mets[400]->Pt();
       
       nEvents[d]++;
             
@@ -737,34 +757,12 @@ int main (int argc, char *argv[])
 	
 	//semi-mu
 	if(dataSetName.find("Data_Mu") == 0 || dataSetName.find("data_Mu") == 0 || dataSetName.find("DATA_Mu") == 0) {
-
-	  // 2.3/fb 
-	  /*if( event->runId() <= 190738 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
-	  else if( event->runId() >= 191057 && event->runId() <= 191411 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
-	  else if( event->runId() >= 191695 && event->runId() <= 191810 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-	  else if( event->runId() >= 191830 && event->runId() <= 193557 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-	  else if( event->runId() >= 193575 && event->runId() <= 193621 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-	  else if( event->runId() >= 193998 && event->runId() <= 194076 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
-	  else if( event->runId() >= 194108 && event->runId() <= 194225 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
-	  else if( event->runId() >= 194270 && event->runId() <= 194479 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-	  else if( event->runId() >= 194480 && event->runId() <= 194644 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-	  else if( event->runId() >= 194691 && event->runId() <= 195016 )
-	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);*/
 	  
 	  // 2.7/fb recalib 
 	  if( event->runId() <= 190738 )
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
 
-	  else if( event->runId() >= 191046 && event->runId() <= 191411 )
+	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
 
 	  else if( event->runId() >= 191695 && event->runId() <= 193621 )
@@ -774,8 +772,19 @@ int main (int argc, char *argv[])
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
 
 	  //else if( event->runId() >= 194270 && event->runId() <= 195396 ) // end for TOP-12-006-PAS
+	  //  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+
 	  else if( event->runId() >= 194270 && event->runId() <= 196531 )
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+
+	  else if( event->runId() >= 198049 && event->runId() <= 199608)
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
+	  
+	  else if( event->runId() >= 199698 && event->runId() <= 202504)
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
+
+	  else if( event->runId() >= 202972 && event->runId() <= 203002)
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v4"), currentRun, iFile);
 
 	  else {
 	    cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
@@ -827,7 +836,7 @@ int main (int argc, char *argv[])
 	  if( event->runId() <= 190738 )
 	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
 	  
-	  else if( event->runId() >= 191046 && event->runId() <= 191411 )
+	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
 	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
 	  
 	  else if( event->runId() >= 191695 && event->runId() <= 193621 )
@@ -836,9 +845,20 @@ int main (int argc, char *argv[])
 	  else if( event->runId() >= 193834 && event->runId() <= 194225 )
 	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
 	  	  
-	  else if( event->runId() >= 194270 && event->runId() <= 195396)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+	  //else if( event->runId() >= 194270 && event->runId() <= 195396) // END OF TOP_12_006 ICHEP DATASET
+	  //  itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
 	  
+	  else if( event->runId() >= 194270 && event->runId() <= 196531)
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+
+	  else if( event->runId() >= 198049 && event->runId() <= 199608)
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
+
+	  else if( event->runId() >= 199698 && event->runId() <= 202504)
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
+	  
+	  else if( event->runId() >= 202972 && event->runId() <= 203002)
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet30_v4"), currentRun, iFile);	  
 	  else { 
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
 	    exit(1);
@@ -976,16 +996,16 @@ int main (int argc, char *argv[])
 	  //cout << "ol" << endl;
 	  if (selectedJetsNoMu[0]->Pt() < 45) selectedJetsNoMu.clear();
 	  if (selectedJetsNoMu[1]->Pt() < 45) selectedJetsNoMu.clear();
-	  if (selectedJetsNoMu[2]->Pt() < 35) selectedJetsNoMu.clear();
-	  if (selectedJetsNoMu[3]->Pt() < 35) selectedJetsNoMu.clear();
+	  if (selectedJetsNoMu[2]->Pt() < 40) selectedJetsNoMu.clear();
+	  if (selectedJetsNoMu[3]->Pt() < 40) selectedJetsNoMu.clear();
 	}
 
 	if (selectedJetsNoEl.size() >= 4) {
 	  //cout << "ol" << endl;
 	  if (selectedJetsNoEl[0]->Pt() < 45) selectedJetsNoEl.clear();
 	  if (selectedJetsNoEl[1]->Pt() < 45) selectedJetsNoEl.clear();
-	  if (selectedJetsNoEl[2]->Pt() < 35) selectedJetsNoEl.clear();
-	  if (selectedJetsNoEl[3]->Pt() < 35) selectedJetsNoEl.clear();
+	  if (selectedJetsNoEl[2]->Pt() < 40) selectedJetsNoEl.clear();
+	  if (selectedJetsNoEl[3]->Pt() < 40) selectedJetsNoEl.clear();
 	}
 
 	//selectedJetsNoMu = selection.GetSelectedJets(true);
@@ -1003,8 +1023,8 @@ int main (int argc, char *argv[])
 	  //cout << "ol" << endl;
 	  if (selectedJets[0]->Pt() < 45) selectedJets.clear();
 	  if (selectedJets[1]->Pt() < 45) selectedJets.clear();
-	  if (selectedJets[2]->Pt() < 35) selectedJets.clear();
-	  if (selectedJets[3]->Pt() < 35) selectedJets.clear();
+	  if (selectedJets[2]->Pt() < 40) selectedJets.clear();
+	  if (selectedJets[3]->Pt() < 40) selectedJets.clear();
 	}
 
 	//selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);	
@@ -1878,6 +1898,7 @@ int main (int argc, char *argv[])
 	NTuple->setE((*(selectedJets[Permutation[3]])).E());
 	NTuple->setEta((*(selectedJets[Permutation[3]])).Eta());//commented for deltaR
 	NTuple->setWeight(1/(datasets[d]->EquivalentLumi()));
+
 	NTuple->setScaleFactor3D(scaleFactor);
 	NTuple->setScaleFactor(scaleFactorOLDREW);
 
@@ -1921,6 +1942,7 @@ int main (int argc, char *argv[])
 	//Setting some extra variables which could help reducing the amount of background:
 	
 	NTuple->setnJets(selectedJets.size());
+	NTuple->setMET(mets[0]->Et());
 	NTuple->setBtag_trackCountingHighEffBJetTags_hadb((*(selectedJets[Permutation[2]])).btag_trackCountingHighEffBJetTags());
 	
 	
