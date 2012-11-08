@@ -416,8 +416,35 @@ int main (int argc, char *argv[])
 	
 	//semi-mu
 	if(dataSetName.find("Data_Mu") == 0 || dataSetName.find("data_Mu") == 0 || dataSetName.find("DATA_Mu") == 0) {
-
+	  
 	  if( event->runId() <= 190738 )
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
+
+         else if( event->runId() >= 191043 && event->runId() <= 191411 )
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
+
+         else if( event->runId() >= 191695 && event->runId() <= 193621 )
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
+
+         else if( event->runId() >= 193834 && event->runId() <= 194225 )
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
+
+         //else if( event->runId() >= 194270 && event->runId() <= 195396 ) // end for TOP-12-006-PAS
+         //  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+
+         else if( event->runId() >= 194270 && event->runId() <= 196531 )
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+
+         else if( event->runId() >= 198049 && event->runId() <= 199608)
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
+         
+         else if( event->runId() >= 199698 && event->runId() <= 202504)
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
+
+         else if( event->runId() >= 202972 && event->runId() <= 203002)
+           itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v4"), currentRun, iFile);
+
+	  /*if( event->runId() <= 190738 )
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
 
 	  else if( event->runId() >= 191046 && event->runId() <= 191411 )
@@ -430,7 +457,7 @@ int main (int argc, char *argv[])
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
 
 	  else if( event->runId() >= 194270 && event->runId() <= 196531 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);*/
 
 	  else {
 	    cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
@@ -701,6 +728,7 @@ int main (int argc, char *argv[])
        //MSPlot["Selected_Events_pT_jet4"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet4", 30, 0, 600, "p_{T} (GeV)");
        MSPlot["Selected_Events_pT_4leadingjets"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_4leadingjets"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
        MSPlot["Selected_Events_pT_alljets"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_alljets"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
+       MSPlot["NofSelectedJets"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "NofSelectedJets"+leptonFlav, 10, 0, 10, "Number of Jets");
      }
      
      MSPlot["Selected_Events_pT_jet1"+leptonFlav]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
@@ -716,6 +744,8 @@ int main (int argc, char *argv[])
 	 MSPlot["Selected_Events_pT_4leadingjets"+leptonFlav]->Fill(selectedJets[q]->Pt(), datasets[d], true, Luminosity*scaleFactor);
        
      }
+     
+     MSPlot["NofSelectedJets"+leptonFlav]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 
 
      ///////////////////////////////////////
@@ -786,3 +816,4 @@ int main (int argc, char *argv[])
     
     return 0;
 }
+
