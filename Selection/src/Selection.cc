@@ -710,7 +710,7 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons(float PtThr, float
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
       if ( fabs(el->d0()) < Electrond0Cut_)
         if (el->passConversion())
-          if (el->mvaTrigId() > ElectronMVAId_)
+          if (el->mvaNonTrigId() > ElectronMVAId_)
             if(el->missingHits() <=  ElectronMaxMissingHitsCut_)
               if ( RelIso < ElectronRelIso )
                 selectedElectrons.push_back(electrons[i]);
@@ -758,7 +758,7 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseDiElectrons(float PtThr, 
 
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
     	if ( RelIso < ElectronRelIso )
-	 if (el->mvaTrigId() > 0)
+	 if (el->mvaNonTrigId() > 0)
 	  selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
@@ -766,7 +766,7 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseDiElectrons(float PtThr, 
 }
 
 std::vector<TRootElectron*> Selection::GetSelectedLooseDiElectrons() const{
-  return GetSelectedLooseDiElectrons(ElectronEtThreshold_, ElectronEtaThreshold_, ElectronRelIso_);
+  return GetSelectedLooseDiElectrons(ElectronLooseEtThreshold_, ElectronLooseEtaThreshold_, ElectronLooseRelIso_);
 }
 
 

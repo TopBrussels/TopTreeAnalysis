@@ -470,7 +470,7 @@ int main(int argc, char* argv[]) {
 	    if(isGoodPV){
 	      cutflow->Fill(3, weight);
 	      cutflow_raw->Fill(3);
-		
+	
 	      // Select Objects -> Cuts
 	      selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
               selection.setDiMuonCuts(20,2.4,0.20,999.);
@@ -484,13 +484,56 @@ int main(int argc, char* argv[]) {
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
-	             
+	   
+	   	       for(unsigned int i=0; i<init_electrons.size(); i++){
+		         //  float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
+	  // cout << i  << ": " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->mvaNonTrigId() <<  endl;
+if (init_electrons[i]->mvaTrigId() != init_electrons[i]->mvaNonTrigId() ) cout << "Good News everyone! " << endl;
+	  }	
+	   
+	       for(unsigned int i=0; i<looseElectrons.size(); i++){
+		         //  float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
+	  // cout << i  << ": " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->mvaNonTrigId() <<  endl;
+if (looseElectrons[i]->Pt() <20) cout << "Good News everyone! " << looseElectrons[i]->Pt()<< endl;
+	  }
+	   
+		 if (  event->lumiBlockId() == 1104  && event->eventId() == 331025 ){
+		//  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+		     cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
+		   /*  TRootElectron* muon1 = (TRootElectron*) selectedElectrons[0];
+		     TRootElectron* muon2 = (TRootElectron*) selectedElectrons[1];
+		     float reliso = (muon1->chargedHadronIso() + max( 0.0, muon1->neutralHadronIso() + muon1->photonIso() - 0.5*muon1->puChargedHadronIso() ) ) / muon1->Pt(); // dBeta corrected
+		     cout << "pt \t eta \t reliso " << endl;
+		     cout << muon1->Pt() << ", " << muon1->Eta() << ", " << reliso << endl;
+		     reliso = (muon2->chargedHadronIso() + max( 0.0, muon2->neutralHadronIso() + muon2->photonIso() - 0.5*muon2->puChargedHadronIso() ) ) / muon2->Pt(); // dBeta corrected
+		     
+		     cout << muon2->Pt() << ", " << muon2->Eta() << ", " << reliso << endl;
+		     */
+		     cout << "Electrons" << endl;
+		       for(unsigned int i=0; i<init_electrons.size(); i++){
+		           float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
+	   cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
+	    <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
+
+	  }	
+		  		     cout << "Muons" << endl;
+
+		   for(unsigned int i=0; i<init_muons.size(); i++){
+	         float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
+	   cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
+
+	  }	
+		  
+		     }
 		
+	   
+	   
 	      // Tight lepton selection
 	      bool leptonSelection = false;
 	      if 	(mode == 0 && selectedElectrons.size()== 1 && selectedMuons.size()== 1) leptonSelection = true;
 	      else if 	(mode == 1 && selectedElectrons.size()== 0 && selectedMuons.size()== 2) leptonSelection = true;
 	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
+
 		
 	      if (leptonSelection) {
 		  
@@ -541,12 +584,8 @@ int main(int argc, char* argv[]) {
 		  
 		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		 
-		  /* if (  event->lumiBlockId() == 6  && event->eventId() == 1558 && mode == 0){
-		     cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
-		     TRootElectron* electron = (TRootElectron*) selectedElectrons[0];
-		     cout << electron->Eta() << endl;
-		  
-		     }*/
+		
+		
 		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
