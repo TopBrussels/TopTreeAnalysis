@@ -1,4 +1,5 @@
 // isis.marina.van.parijs@cern.ch
+//  based on SingleTop-tW.cc of rebeca  
 //
 // Summer12 round
 // 8 Tev
@@ -261,6 +262,107 @@ int main(int argc, char* argv[]) {
     AnalysisEnvironment anaEnv; 
     AnalysisEnvironmentLoader anaLoad(anaEnv, xmlfile.c_str()); 
     new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv); 
+    
+    
+    /////////////////////////////////
+    ///  LOADING OF THE DATASETS  ///  
+    /////////////////////////////////    
+    // Load a toptree
+    TTreeLoader treeLoader; 
+    
+    //make a vector containing all the datasets
+    vector <Dataset*> datasets;
+    
+    //WHAT DOES THIS DO ???
+    treeLoader.LoadDatasets (datasets, xmlfile.c_str());
+    
+    
+    
+    /////////////////////////////////
+    ///  START OF THE ANALYSIS    ///  
+    ///////////////////////////////// 
+    
+    // Do the analysis for every dataset in the vector with name datasets containing the datasets as elements
+    for(unsigned int d = 0; d < datasets.size(); d++){
+    	// Take the dataset on place d in the vector
+	treeLoader.LoadDataset (datasets[d], anaEnv); 
+	
+	// Take the name of the chosen dataset
+	string dataSetName = datasets[d]->Name(); 	
+	 
+	//Define variables 
+	bool isData = false;    // To make the division between data an MC
+	bool isTop = false;     // To make the division between top pair MC and single top MC, this is needed for the btagging SF
+	double xlweight;        // To define the reweighting of the MC compared to the data, if this is 1, then no reweighting is applied. 
+	                        // The reweighting is done as follows: 
+				//       xlweight = (cross-section x luminosity)/number of events in the toptree before the skimming
+				//This number of events is given in the mail that you receive with the urls of the skimmed toptrees (so you have to save these numbers)
+	
+	
+	// Define the cross sections and weights for every data set
+	// sprintf makes the string you call name contain data 
+	if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
+        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
+        else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
+        else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} 
+        else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} 
+        else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} 
+        else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} 
+        else if (dataSetName == "wz"){         	sprintf(name, "wz");         	xlweight = lumi*22.44/8080197; 		} 
+        else if (dataSetName == "zz"){         	sprintf(name, "zz");         	xlweight = lumi*9.03/9799902; 		} 
+        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} 
+        else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	        } 
+        else if (dataSetName == "wjets"){  	sprintf(name, "wjets");  	xlweight = lumi*37509/18036994; 	}  
+	
+	// Define the output rootfiles 
+	char rootFileName[100];
+      
+        if  (isRAW){                         sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name);}
+        else if(!isData && JESPlus){         sprintf(rootFileName,"outputs/JESsysUp_%d_%s.root", mode, name);}
+        else if (!isData && JESMinus){       sprintf(rootFileName,"outputs/JESsysDown_%d_%s.root", mode, name);}
+        else if (!isData && JERMinus){       sprintf(rootFileName,"outputs/JERsysDown_%d_%s.root", mode, name);}
+        else if (!isData && JERPlus){        sprintf(rootFileName,"outputs/JERsysUp_%d_%s.root", mode, name);}
+        else if (!isData && SFplus){         sprintf(rootFileName,"outputs/SFsysUp_%d_%s.root", mode, name);}
+        else if (!isData && SFminus){        sprintf(rootFileName,"outputs/SFsysDown_%d_%s.root", mode, name);}
+        else if (!isData && unclusteredUp){  sprintf(rootFileName,"outputs/METsysUp_%d_%s.root", mode, name);}
+        else if (!isData && unclusteredDown){sprintf(rootFileName,"outputs/METsysDown_%d_%s.root", mode, name);}
+        else if (!isData && PUsysUp){        sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);}
+        else if (!isData && PUsysDown){      sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);}
+        else if (!isData && !reweightPU){    sprintf(rootFileName,"outputs/out_noPU_%d_%s.root", mode, name);}
+        else if (!isData && Pu3D){           sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);}
+        else{                                sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);}
+      
+     /* [6:18:20 PM] Isis  Van Parijs: what does this one does then
+[6:18:21 PM] Isis  Van Parijs: sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name)
+[6:18:48 PM] Rebeca Gonzalez Suarez: this one makes the rootfile
+[6:18:51 PM] Rebeca Gonzalez Suarez: to be called
+[6:19:21 PM] Rebeca Gonzalez Suarez: outputs/naked_(0,1 or 2, the mode)_(the name of the sample).root
+[6:19:28 PM] Rebeca Gonzalez Suarez: for example if you are looking at emu (0)
+[6:19:30 PM] Rebeca Gonzalez Suarez: damn!
+[6:19:33 PM] Rebeca Gonzalez Suarez: ( 0 )
+[6:19:35 PM] Rebeca Gonzalez Suarez: and data
+[6:19:46 PM] Rebeca Gonzalez Suarez: it will be called outputs/naked_0_data.root */
+
+      
+        char myTexFile[300];
+        sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
+        ofstream salida(myTexFile);
+        sprintf(myTexFile,"lepveto_run_lumi_event_%d_%s.txt", mode, name);
+        ofstream salida2(myTexFile);
+        sprintf(myTexFile,"met_run_lumi_event_%d_%s.txt", mode, name);
+        ofstream salida3(myTexFile);
+        sprintf(myTexFile,"jet_run_lumi_event_%d_%s.txt", mode, name);
+        ofstream salida4(myTexFile);
+        sprintf(myTexFile,"bt_run_lumi_event_%d_%s.txt", mode, name);
+        ofstream salida5(myTexFile);
+    
+    
+    
+    
+    
+    
+    } 
+    
     
     
     
