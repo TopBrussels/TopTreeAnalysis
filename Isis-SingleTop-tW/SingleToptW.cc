@@ -48,13 +48,14 @@ int main(int argc, char* argv[]) {
   // By defaul, emu channel
   
   int  mode = 0; 
+  double lumi = 1000;
   string xmlfile ="twemu.xml";
   
   bool reweightPU = true;
   bool Pu3D = false;
   
   //b-tag scale factor
-  bool scaleFactor = true;
+  bool scaleFactor = false;
   
   // Systematic Calculations
   bool JESPlus= false;
@@ -78,9 +79,6 @@ int main(int argc, char* argv[]) {
   // Run HLT
   bool runHLT = false;
   
-  //Run A or B 2012 (both will also work, but so far, we test A)
-  bool RunA = false;
-  bool RunB = false;
   
   cout << "[Info:] start of the 2012 Data analysis with Summer12 Monte Carlo " << endl;
   
@@ -129,17 +127,11 @@ int main(int argc, char* argv[]) {
   }   
   
   // Luminosity and xml files
-  double lumi = 0;
-  if (RunA){
-    if      (mode == 0){ 	 lumi = 807.137;  	xmlfile ="twemu.xml";}
-    else if (mode == 1){	 lumi = 1000;  		xmlfile = "twmumu.xml";}
-    else if (mode == 2){	 lumi = 1000;  		xmlfile = "twee.xml";}
-  } else {
-    if      (mode == 0){ 	 lumi = 5085.246;  xmlfile ="twemu.xml";}
-    else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
-    else if (mode == 2){	 lumi = 5103.58;  xmlfile = "twee.xml";}
+  if      (mode == 0){ 	 lumi = 5085.246;  xmlfile ="twemu.xml";}
+  else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
+  else if (mode == 2){	 lumi = 5103.58;  xmlfile = "twee.xml";}
  
-  }
+ 
    
   // Analysis environment
   TTree *configTree = new TTree("configTree","configuration Tree");
@@ -169,7 +161,6 @@ int main(int argc, char* argv[]) {
       double xlweight;
       
       // cross sections and weights
-      if (dataSetName == "data_a"){		sprintf(name, "data_a");  	xlweight = 1; 				isData = true;}
       if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}//
       else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} //
       else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
@@ -206,6 +197,19 @@ int main(int argc, char* argv[]) {
       else if (!isData && Pu3D) sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
+      char myTexFile[300];
+      sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
+      ofstream salida(myTexFile);
+      sprintf(myTexFile,"lepveto_run_lumi_event_%d_%s.txt", mode, name);
+      ofstream salida2(myTexFile);
+      sprintf(myTexFile,"met_run_lumi_event_%d_%s.txt", mode, name);
+      ofstream salida3(myTexFile);
+      sprintf(myTexFile,"jet_run_lumi_event_%d_%s.txt", mode, name);
+      ofstream salida4(myTexFile);
+      sprintf(myTexFile,"bt_run_lumi_event_%d_%s.txt", mode, name);
+      ofstream salida5(myTexFile);
+      
+      
       // Objects
       vector < TRootVertex* > vertex;
       vector < TRootMuon* > init_muons;
@@ -215,14 +219,16 @@ int main(int argc, char* argv[]) {
       vector < TRootMET* > mets;
       vector<TRootGenJet*> genjets;
        
-      // Jets
+      
+      // Jets TO BE CHECKED!!!!
+      
       vector<JetCorrectorParameters> vCorrParam;
-
+      
       // Create the JetCorrectorParameter objects, the order does not matter.
       // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
-      JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L3Absolute.txt");
-      JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
-      JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
+      JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
+      JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
+      JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
 
       //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
       vCorrParam.push_back(*L1JetPar);
@@ -230,15 +236,20 @@ int main(int argc, char* argv[]) {
       vCorrParam.push_back(*L3JetPar);
 
       if(!isData) { // DATA!
-	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
-	vCorrParam.push_back(*ResJetCorPar);
-      }
-      JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
+	vCorrParam.push_back(*ResJetCorPar);	
+      } 
+      
+      //I think this is not used!
+      JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
+      // if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
     
       // true means redo also the L1
       JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); 
        
-      // Lumi re-weighting Michael Style
+      
+      
+      // Lumi re-weighting  TO CHECK 
       LumiReWeighting LumiWeights;
       LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB_new.root", "pileup", "pileup");
 
@@ -247,17 +258,7 @@ int main(int argc, char* argv[]) {
       reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
 
 
-      //3D Pile-Up reweighting  
-      Lumi3DReWeighting Lumi3DWeights;
-      Lumi3DWeights =  Lumi3DReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB_new.root", "pileup", "pileup");
 
-      if(PUsysDown) Lumi3DWeights.weight3D_init(0.92);	
-      else if(PUsysUp) Lumi3DWeights.weight3D_init(1.08);
-      else Lumi3DWeights.weight3D_init(1.0);
-
-
-      cout << "[Info:] Initialized all LumiReWeighting" << endl;
-    
       TFile *fout = new TFile (rootFileName, "RECREATE");
       
       TRootEvent* event = 0;
@@ -285,7 +286,6 @@ int main(int argc, char* argv[]) {
       // Branches of the output Tree
       double xlWeight; 
       double puweight;
-      double puweight3D;
       double rawWeight;
       
       double lum;
@@ -320,7 +320,6 @@ int main(int argc, char* argv[]) {
       
       myTree->Branch("xlWeight", &xlWeight, "xlWeight/D");
       myTree->Branch("puweight", &puweight, "puweight/D");
-      myTree->Branch("puweight3D", &puweight3D, "puweight3D/D");
       myTree->Branch("rawWeight", &rawWeight, "rawWeight/D");
       
       myTree->Branch("lum", &lum, "lum/D");
@@ -368,12 +367,10 @@ int main(int argc, char* argv[]) {
 	if (!scaleFactor && !isData) cout << "[Warning:] You are NOT applying the b-tagging SF " << endl;
 	if (PUsysUp) cout <<"[Warning:] PU up " << endl;
 	if (PUsysDown) cout <<"[Warning:] PU down " << endl;
-	if (Pu3D) cout << "[Warning:] 3D pileup reweighting " << endl;
 	
       } else cout << "[Info:] Standard setup " << endl;
       cout << "[Info:] " << datasets[d]->NofEvtsToRunOver() << " total events" << endl;
       if (runHLT) cout << "[Info:] You have the HLT activated, this might be slower than the usual. " << endl;
-      if ((!RunA && RunB) || (RunA && RunB))   cout << "[Warning:] You are using a Run range that the code is not ready for, either fix the code or run over A only " << endl;
       
       for (int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
 	{
@@ -389,30 +386,22 @@ int main(int argc, char* argv[]) {
 	  }
 	 
 	  // Applying Pile-Up re-weighting
-	  double lumiWeight3D = 1.0;
 	  double lumiWeight = 1.0;
 	  if (!isData ){
-	  
-	    lumiWeight3D = Lumi3DWeights.weight3D(event->nPu(-1),event->nPu(0),event->nPu(+1));
 	    lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
 	    if(PUsysDown) lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
             else if(PUsysUp) lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
-	      
-	    pileup_weights_3D->Fill(lumiWeight3D);
 	    pileup_weights->Fill(lumiWeight);
+	    if (reweightPU) weight *=lumiWeight;
 	    
-	    if (reweightPU){
-	      if(Pu3D)weight *= lumiWeight3D;
-	      else weight *=lumiWeight;
-	    }
 	  }
 	   
-	  // JER
+	  // JER (All MC)
 	  if (JERMinus)jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
 	  else if (JERPlus) jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "plus",false);
 	  else jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "nominal",false);
 
-          // JES
+          // JES (Systematic only)
 	  if (JESPlus) jetTools->correctJetJESUnc(init_jets_corrected, "minus",1);
 	  else if (JESMinus) jetTools->correctJetJESUnc(init_jets_corrected, "plus",1);
 	   
@@ -487,31 +476,60 @@ int main(int argc, char* argv[]) {
 	    if(isGoodPV){
 	      cutflow->Fill(3, weight);
 	      cutflow_raw->Fill(3);
-		
+	
 	      // Select Objects -> Cuts
-	      selection.setJetCuts(20.,5,0.01,1.,0.98,0.3,0.1); //2.5 before, now 5
-	      //selection.setMuonCuts(20,2.4,0.20,0,0.02,0.3,1,1,5);
-              selection.setDiMuonCuts(20,2.4,0.20,0.02);
-	      //selection.setElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
-              selection.setDiElectronCuts(20,2.5,0.15,0.02,0.,1,0.3);
+	      selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+              selection.setDiMuonCuts(20,2.4,0.20,999.);
+              selection.setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1);
               selection.setLooseMuonCuts(10,2.5,0.2);
-              selection.setLooseElectronCuts(15,2.5,0.2,0.);
+              selection.setLooseDiElectronCuts(15,2.5,0.2); 
 		
 	      //Select Objects 
 	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
-	     // vector<TRootMuon*> selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
 	      vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
-	      //vector<TRootElectron*> selectedElectrons = selection.GetSelectedElectrons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
-	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons();
-	             
+	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
+	   
+	
+	      /*
+		if (  event->lumiBlockId() == 1104  && event->eventId() == 331025 ){
+		//  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+		cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
+		TRootElectron* muon1 = (TRootElectron*) selectedElectrons[0];
+		TRootElectron* muon2 = (TRootElectron*) selectedElectrons[1];
+		float reliso = (muon1->chargedHadronIso() + max( 0.0, muon1->neutralHadronIso() + muon1->photonIso() - 0.5*muon1->puChargedHadronIso() ) ) / muon1->Pt(); // dBeta corrected
+		cout << "pt \t eta \t reliso " << endl;
+		cout << muon1->Pt() << ", " << muon1->Eta() << ", " << reliso << endl;
+		reliso = (muon2->chargedHadronIso() + max( 0.0, muon2->neutralHadronIso() + muon2->photonIso() - 0.5*muon2->puChargedHadronIso() ) ) / muon2->Pt(); // dBeta corrected
+		     
+		cout << muon2->Pt() << ", " << muon2->Eta() << ", " << reliso << endl;
+		     
+		cout << "Electrons" << endl;
+		for(unsigned int i=0; i<init_electrons.size(); i++){
+		float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
+		cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
+		<<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
+
+		}	
+		cout << "Muons" << endl;
+
+		for(unsigned int i=0; i<init_muons.size(); i++){
+		float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
+		cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
+
+		}	
+		  
+		}
 		
+	      */
+	   
 	      // Tight lepton selection
 	      bool leptonSelection = false;
 	      if 	(mode == 0 && selectedElectrons.size()== 1 && selectedMuons.size()== 1) leptonSelection = true;
 	      else if 	(mode == 1 && selectedElectrons.size()== 0 && selectedMuons.size()== 2) leptonSelection = true;
 	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
+
 		
 	      if (leptonSelection) {
 		  
@@ -559,11 +577,17 @@ int main(int argc, char* argv[]) {
 		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
-		    
+		  
+		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+		 
+		
+		
+		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
-		      
+
+		    salida2 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		    // Low mll cut (all final states)
 		    TLorentzVector pair = lepton0 + lepton1;   
 		    if (pair.M() > 20){
@@ -575,7 +599,6 @@ int main(int argc, char* argv[]) {
 		      xlWeight = weight;
 			
 		      puweight =  lumiWeight;
-		      puweight3D =  lumiWeight3D;
 		      rawWeight = xlweight;
 					
 		      npu = event->nPu(0);
@@ -710,6 +733,8 @@ int main(int argc, char* argv[]) {
 			if (met_pt > 30 || mode == 0){
 			  cutflow->Fill(7, weight);
 			  cutflow_raw->Fill(7);
+			  salida3 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+
 			  
 			  // Filling all the regions
 			  if (nJets !=0){
@@ -739,10 +764,14 @@ int main(int argc, char* argv[]) {
 			    
 			  // Filling the signal region
 			  if(nJets == 1){
+			    salida4 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+
 			    TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			    cutflow->Fill(8, weight);
 			    cutflow_raw->Fill(8);
 			    if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
+			      salida5 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+
 			      cutflow->Fill(9,weight);
 			      cutflow_raw->Fill(9);
 			      double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
