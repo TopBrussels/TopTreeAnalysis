@@ -4,6 +4,8 @@
 // Summer12 round
 // 8 Tev
 
+// This is a program that runs over the toptrees
+
 #include "TStyle.h"
 #include <cmath>
 #include <fstream>
@@ -233,7 +235,7 @@ int main(int argc, char* argv[]) {
     }
     
     
-    // Configuration of the output format 
+    // Configuration of the output format this takes the configurations of the xml file 
        // Make a top tree with the name: set configurations, you can call this tree with configTree
        //   A TTree object has a header with a name and a title. It consists of a list of independent branches (TBranch). Each branch has its own definition and list of buffers.
     TTree *configTree = new TTree("configTree", "configuration tree"); 
@@ -255,7 +257,7 @@ int main(int argc, char* argv[]) {
     
       
     /////////////////////////////////
-    ///    Analysis environment   ///     HOW DOES THIS WORK ??? 
+    ///    Analysis environment   ///     
     /////////////////////////////////    
     
     //Create an analysisenvironment
@@ -273,7 +275,7 @@ int main(int argc, char* argv[]) {
     //make a vector containing all the datasets
     vector <Dataset*> datasets;
     
-    //Load the xmlfiles in dataset, each xml file is one element of the vector datasets (IS THIS CORRECT ??? )
+    //Load the xmlfiles in dataset, each sample in the xml file is an element of the vector datasets (IS THIS CORRECT ??? )
     treeLoader.LoadDatasets (datasets, xmlfile.c_str());
     
     
@@ -343,18 +345,18 @@ int main(int argc, char* argv[]) {
 
         // Define information output files 
 	//    ==> ofstream output(myTexFile)
-    	//        This writes the output file stream to myTexFile, these files are stored in the same directory as this code, so Isis-SingleTop-tW
-	//     WHAT IS WRITTEN IN THESE FILES
+    	//        This writes the output file stream to myTexFile, these files are stored in the directory information
+	//     WHAT IS WRITTEN IN THESE FILES???
         char myTexFile[300];
-        sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
+        sprintf(myTexFile,"information/lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
         ofstream OutPut(myTexFile);
-        sprintf(myTexFile,"lepveto_run_lumi_event_%d_%s.txt", mode, name);
+        sprintf(myTexFile,"information/lepveto_run_lumi_event_%d_%s.txt", mode, name);
         ofstream OutPut2(myTexFile);
-        sprintf(myTexFile,"met_run_lumi_event_%d_%s.txt", mode, name);
+        sprintf(myTexFile,"information/met_run_lumi_event_%d_%s.txt", mode, name);
         ofstream OutPut3(myTexFile);
-        sprintf(myTexFile,"jet_run_lumi_event_%d_%s.txt", mode, name);
+        sprintf(myTexFile,"information/jet_run_lumi_event_%d_%s.txt", mode, name);
         ofstream salida4(myTexFile);
-        sprintf(myTexFile,"bt_run_lumi_event_%d_%s.txt", mode, name);
+        sprintf(myTexFile,"information/bt_run_lumi_event_%d_%s.txt", mode, name);
         ofstream OutPut5(myTexFile);
 	
 	
@@ -372,17 +374,105 @@ int main(int argc, char* argv[]) {
 	
 	
 	/////////////////////////////////
-	///    Pile Up reweighting    ///
-	///////////////////////////////// 
+	///    Pile Up reweighting    ///     HOW DOES THIS REWEIGHTING WORK? I know you divide MC histo with data Histo for resulting normalizing factor, but how to get these histos? 
+	////////////////////////////////      where are they given? 
+	
+	 
 	LumiReWeighting LumiWeights; 
-	LumiWeights = LumiReweighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup"); 
+	LumiWeights = LumiReWeighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup");  // THIS WRITES STUFF (2x), what is this??
 	
-	//systematics 
+	//systematics    WHAT DOES THIS DO? 
 	reweight::PoissonMeanShifter PShiftDown_= reweight::PoissonMeanShifter(-0.6); 
-	reweight::Poisso,MeanShifter PShiftUp_= reweight::PoissonMeanShifter(0.6); 
+	reweight::PoissonMeanShifter PShiftUp_= reweight::PoissonMeanShifter(0.6); 
 	
 	
 	
+	////////////////////////////////
+	/// INITALISATION JEC Factors //    This isn't applied so I won't write these in my code 
+	////////////////////////////////
+	
+	
+	
+	
+	////////////////////////////////
+	///        ROOTSTUFF          //    
+	////////////////////////////////
+	// Open the created rootfiles and RECREATE:  create a new file, if the file already exists it will be overwritten. 
+	// rootFileName is created before with sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name), so rootfiles were created with the name outputs/naked_modeName_sampleName.root
+	// eg: if you are looking at emu (0) and data, it was called naked_0_data.root and placed in the directory  outputs
+	TFile *fout = new TFile (rootFileName, "RECREATE"); 
+	
+	//Make an event
+	TRootEvent* event = 0; 
+	
+	
+	
+	////////////////////////////////
+	///        HISTOGRAMS         //    
+	////////////////////////////////
+	map <string,TH1F> histo1D; 
+	map <string, TH2F> histo2D; 
+	
+	// Definition of the histograms
+	TH1F* cutflow = new TH1F("cutflow", "The cutflow", 31, -0.5,30.5);     // A 1 dimensional histo with reference cutflow, title "The cutflow", 31 bins, starting from -0.5 till 30.5
+										// This shows the influence of every selection the number of events, reweighted
+	TH1F* cutflow_raw = new TH1F("cutflow_raw", "The raw cutflow", 31,-0.5, 30.5); // same but not reweighted 
+	TH1F* Regions = new TH1F ("Regions" ," The different regions", 40,0,40); // for example  according to number of jets and b-tagged jets
+	
+	TH1F* pileup_weights = new TH1F("pileup_weights", "The calculated PU weights", 1000,0,10); 
+	TH1F* pileup_weights3D = new TH1F("pileup_weights3D", "The calculated 3DPU weights", 1000,0,10); 
+	
+	
+	
+	 //Create structure to store sum of squares of weights:   if histogram is already filled, the sum of squares of weights is filled with the existing bin contents. 
+	 //							  The error per bin will be computed as sqrt(sum of squares of weight) for each bin
+	cutflow->Sumw2(); 
+	cutflow_raw->Sumw2(); 
+	Regions->Sumw2();  
+	
+	pileup_weights->Sumw2(); 
+	pileup_weights3D->Sumw2(); 
+	
+	
+	
+	////////////////////////////////
+	///    CREATION OUTPUT TREE   //    
+	////////////////////////////////
+	// Variables to put as branches in the toptree
+	double xlWeight; 
+	double puweight; 
+	double rawWeight; 
+	
+	double lum; 
+	
+	int npu; 
+	int nvertex; 
+	
+	double metPt; 
+	double metPx; 
+	double metPy; 
+	
+	std::vector<double> *ptLepton; 
+	std::vector<double> *pxLepton; 
+	std::vector<double> *pyLepton; 
+	std::vector<double> *pzLepton; 
+	std::vector<double> *eLepton; 
+	std::vector<double> *qLepton; 
+	
+	
+	std::vector<double> *ptJet; 
+	std::vector<double> *pxJet; 
+	std::vector<double> *pyJet; 
+	std::vector<double> *pzJet; 
+	std::vector<double> *eJet; 
+	std::vector<double> *qJet;  
+	std::vector<double> *btJPBJet; 
+	std::vector<double> *btBJPBJet; 
+	std::vector<double> *btCSVBJet; 
+	std::vector<double> *btCSVBmvaJet; 
+	
+	
+	// Make the output tree and set the different branches
 	
     
     
