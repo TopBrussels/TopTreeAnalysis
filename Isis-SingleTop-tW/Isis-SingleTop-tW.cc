@@ -273,7 +273,7 @@ int main(int argc, char* argv[]) {
     //make a vector containing all the datasets
     vector <Dataset*> datasets;
     
-    //WHAT DOES THIS DO ???
+    //Load the xmlfiles in dataset, each xml file is one element of the vector datasets (IS THIS CORRECT ??? )
     treeLoader.LoadDatasets (datasets, xmlfile.c_str());
     
     
@@ -289,8 +289,10 @@ int main(int argc, char* argv[]) {
 	
 	// Take the name of the chosen dataset
 	string dataSetName = datasets[d]->Name(); 	
-	 
-	//Define variables 
+	
+	/////////////////////////////////
+	///        DECLARATIONS       ///
+	///////////////////////////////// 
 	bool isData = false;    // To make the division between data an MC
 	bool isTop = false;     // To make the division between top pair MC and single top MC, this is needed for the btagging SF
 	double xlweight;        // To define the reweighting of the MC compared to the data, if this is 1, then no reweighting is applied. 
@@ -301,6 +303,8 @@ int main(int argc, char* argv[]) {
 	
 	// Define the cross sections and weights for every data set
 	// sprintf makes the string you call name contain data 
+	char name[100];
+	
 	if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}
         else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
@@ -315,10 +319,13 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "wjets"){  	sprintf(name, "wjets");  	xlweight = lumi*37509/18036994; 	}  
 	
 	// Define the output rootfiles 
+	//  ==>  sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name)
+        //       This makes the rootfile to be called outputs/naked_modeName_sampleName.root
+	//       eg: if you are looking at emu (0) and data, it will be called naked_0_data.root and placed in the directory 
 	char rootFileName[100];
       
         if  (isRAW){                         sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name);}
-        else if(!isData && JESPlus){         sprintf(rootFileName,"outputs/JESsysUp_%d_%s.root", mode, name);}
+        else if (!isData && JESPlus){        sprintf(rootFileName,"outputs/JESsysUp_%d_%s.root", mode, name);}
         else if (!isData && JESMinus){       sprintf(rootFileName,"outputs/JESsysDown_%d_%s.root", mode, name);}
         else if (!isData && JERMinus){       sprintf(rootFileName,"outputs/JERsysDown_%d_%s.root", mode, name);}
         else if (!isData && JERPlus){        sprintf(rootFileName,"outputs/JERsysUp_%d_%s.root", mode, name);}
@@ -332,29 +339,50 @@ int main(int argc, char* argv[]) {
         else if (!isData && Pu3D){           sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);}
         else{                                sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);}
       
-     /* [6:18:20 PM] Isis  Van Parijs: what does this one does then
-[6:18:21 PM] Isis  Van Parijs: sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name)
-[6:18:48 PM] Rebeca Gonzalez Suarez: this one makes the rootfile
-[6:18:51 PM] Rebeca Gonzalez Suarez: to be called
-[6:19:21 PM] Rebeca Gonzalez Suarez: outputs/naked_(0,1 or 2, the mode)_(the name of the sample).root
-[6:19:28 PM] Rebeca Gonzalez Suarez: for example if you are looking at emu (0)
-[6:19:30 PM] Rebeca Gonzalez Suarez: damn!
-[6:19:33 PM] Rebeca Gonzalez Suarez: ( 0 )
-[6:19:35 PM] Rebeca Gonzalez Suarez: and data
-[6:19:46 PM] Rebeca Gonzalez Suarez: it will be called outputs/naked_0_data.root */
 
-      
+
+        // Define information output files 
+	//    ==> ofstream output(myTexFile)
+    	//        This writes the output file stream to myTexFile
         char myTexFile[300];
         sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
-        ofstream salida(myTexFile);
+        ofstream OutPut(myTexFile);
         sprintf(myTexFile,"lepveto_run_lumi_event_%d_%s.txt", mode, name);
-        ofstream salida2(myTexFile);
+        ofstream OutPut2(myTexFile);
         sprintf(myTexFile,"met_run_lumi_event_%d_%s.txt", mode, name);
-        ofstream salida3(myTexFile);
+        ofstream OutPut3(myTexFile);
         sprintf(myTexFile,"jet_run_lumi_event_%d_%s.txt", mode, name);
         ofstream salida4(myTexFile);
         sprintf(myTexFile,"bt_run_lumi_event_%d_%s.txt", mode, name);
-        ofstream salida5(myTexFile);
+        ofstream OutPut5(myTexFile);
+	
+	
+	// Define the objects
+	// ==> vector <kind> V
+	//     This defines a vector V with elements of sort kind
+		
+	vector <TRootVertex*>   vertex; 
+	vector <TRootMuon*>     initial_muons; 
+	vector <TRootElectron*> initial_electrons; 
+	vector <TRootJet*>      initial_jets; 
+	vector <TRootJet*>      initial_jets_corrected; 
+	vector <TRootMET*>      mets; 
+	vector <TRootGenJet*>   genjets;
+	
+	
+	/////////////////////////////////
+	///    Pile Up reweighting    ///
+	///////////////////////////////// 
+	LumiReWeighting LumiWeights; 
+	LumiWeights = LumiReweighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup"); 
+	
+	//systematics 
+	reweight::PoissonMeanShifter PShiftDown_= reweight::PoissonMeanShifter(-0.6); 
+	reweight::Poisso,MeanShifter PShiftUp_= reweight::PoissonMeanShifter(0.6); 
+	
+	
+	
+	
     
     
     
