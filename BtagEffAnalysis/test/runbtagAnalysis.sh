@@ -9,9 +9,9 @@ dobin="noutbin" # not used
 
 for chicut in 6; do # GOOD
 
-#for chicut in 3 4 5 6 7 8 9 10; do
+#for chicut in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23; do
 
-#for chicut in 14 15 16 17 18; do
+#for chicut in 15 16 17 18 19; do
 #
 iFbias=-1 # only MC
 
@@ -68,24 +68,26 @@ iFbias=-1 # only MC
     
     
     #FILENAME="info_bias_"$i"_and_bg_"$j".txt" 
-    FILENAME="info.txt" 
+    FILENAME="info$(date +%s).txt" 
     
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../..:../../TMVA/lib/:/Users/michael/lib
-    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../..:../../TMVA/lib/:/Users/michael/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../..:../../TMVA/lib/:/Users/michael/lib:/user/mmaes/lib
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../..:../../TMVA/lib/:/Users/michael/lib:/user/mmaes/lib
 
     #echo g++ -m64 -L `pwd` -l Toto -l bTagAnalysis -l TopTreeAna -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
     #echo g++ -m64 -L../../ -L../../TMVA/lib/ -lTopTreeAnaContent -lTopTreeAna -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
     #echo g++ -m64 -L../../ -lBtagAnalysis -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement 
 
-    g++ -m64 -I../../../ -I../../ -I.. -L/Users/michael/lib -lBtagAnalysis52 -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement
+    g++ -m64 -I../../../ -I../../ -I.. -L/user/mmaes/lib -L/Users/michael/lib -lBtagAnalysis53 -I `root-config --incdir` `root-config --libs` mybTagMeasurement.C -o mybTagMeasurement
     #The value on the 4th position will tell you how much of the background you will remove (exact value from a list in mybTagMeasurement)
 
     ### For testing Fbias=true
 	
 	if [ $? == "0" ];then	
 		echo ./mybTagMeasurement 2 $chiSqCut $iFbias -1 -1 $INBIN $OUTBIN $* | tee $DIRNAME/$FILENAME 
-		./mybTagMeasurement 2 $chiSqCut $iFbias -1 -1 $INBIN $OUTBIN $* | tee $DIRNAME/$FILENAME 
-    fi
+    ./mybTagMeasurement 2 $chiSqCut 0 $iFbias -1 -1 $INBIN $OUTBIN $* | tee $DIRNAME/$FILENAME 
+
+
+fi
 	####################    
 
     ### For runnin individual samples

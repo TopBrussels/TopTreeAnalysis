@@ -17,16 +17,29 @@ TString *inName = new TString("./TTrees/");
 //double chisqCut[28]={1.,1.5,2.,2.5,3.,3.5,4.,4.5,5.,5.5,6.,6.5,7.,7.5,8.,8.5,9.,9.5,10.,15.,20.,30.,50.,9999999999.,100.,500.,1000.,5000.,};
 //double chisqCut[24]={1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,15.,20.,25.,30.,40.,50.,60.,70.,85.,100.,500.,1000.,5000.,9999999999.};
 //double chisqCut[24]={2.,3.,4.,5.,6.,7.,8.,9.,10.,15.,20.,25.,30.,35.,40.,45.,50.,55.,60.,70.,80.,90.,100.,9999999999.};
-double chisqCut[24]={30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130,140,150,160,170,180,190,200,220,240,260,300,350,9999999999.};
+double chisqCut[24]={30.,40.,50.,60.,70.,80.,125.,100.,110.,120.,130,140,150,160,170,180,190,200,220,240,260,300,350,9999999999.};
+
+//double chisqCut[24]={30.,40.,50.,60.,70.,80.,90.,100.,150.,200.,250,300,350,400,450,500,600,700,800,900,1000,2000,3000,5000};
 
 int verbosity=0; //default
 
 int nSystematic=0; //default (nominal samples) 
 
-int leftlimit = 50;
-int centerleftlimit = 140;
-int centerrightlimit = 140;
-int rightlimit = 240;
+// GOOD
+/*int leftlimit = 50;
+ int centerleftlimit = 140;
+ int centerrightlimit = 140;
+ int rightlimit = 240;*/
+
+ /*int leftlimit = 70;
+  int centerleftlimit = 170;
+  int centerrightlimit = 170;
+  int rightlimit = 320;*/ 
+
+int leftlimit = 70;
+int centerleftlimit = 170;
+int centerrightlimit = 170;
+int rightlimit = 300;
 
 
 /*int leftlimit = 50;
@@ -77,7 +90,7 @@ int doJESsample=6;*/
 
 TString *outName = new TString("DATA_"); //for this one not yet in btag eff. in pteta-bin
 
-int runSamples[11]={0,1,2,3,4,5,6,7,8,9};         // to run on fastsim ttbar, single top and W/Zjets madgraph samples/
+int runSamples[15]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};         // to run on fastsim ttbar, single top and W/Zjets madgraph samples/
 int nRunSamples=10;
 
 //int runSamples[1]={7};      // to run on fullsim ttbar, single top and W/Zjets madgraph samples
@@ -127,13 +140,13 @@ int nRunSamples=6;
 int doJESsample=6;
 */
 
-float desiredIntLum=400; 
+float desiredIntLum=30000.0; 
 
 //float desiredIntLum=4568.68; 
 
 int nPseudoExp=1;//= is there to run on all data
 bool doPseudoExp=false; //to do the pseudo-exps
-
+int nBtag=-1;
 
 /*double desiredIntLum=1000;
 int nPseudoExp=3000;
@@ -237,8 +250,8 @@ bool do2D=false; //to tod do the reweighing in 2D for the left-right pt/eta rewe
 bool do2Dcontrol=true; //to do the reweighing in 2D for the signal-control pt/eta reweighing 
 
 //bool doPtEtaBin=false; //to do the measurement in bins of pt/eta
-bool doPtEtaBin=true; //to do the measurement in bins of pt/eta
-double chisqCutApplied=14;
+bool doPtEtaBin=false; //to do the measurement in bins of pt/eta
+double chisqCutApplied=6;
 
 //-------- execution of the module
 
@@ -266,23 +279,27 @@ int main(int argc, char* argv[]){
   chisqCutNumber=chisqCutApplied;
   chisqCutNumber=atoi(argv[2]);
   //doJESsample=atoi(argv[3]);
-  inFbias=atoi(argv[3]);
-  inBackgroundFraction=atoi(argv[4]);
-  inRunSample=atoi(argv[5]);
-  inBin=atoi(argv[6]);
-  outBin=atoi(argv[7]);
+    int fitMode=atoi(argv[3]);
+  inFbias=atoi(argv[4]);
+  inBackgroundFraction=atoi(argv[5]);
+  inRunSample=atoi(argv[6]);
+  inBin=atoi(argv[7]);
+  outBin=atoi(argv[8]);
 	 
- 	if (argc == 9)
-		nSystematic = (int)atoi(argv[8]);
+ 	if (argc == 10)
+		nSystematic = (int)atoi(argv[9]);
 	
-	else if (argc > 9) {
+	else if (argc > 10) {
 		
-		doPseudoExp = (bool)atoi(argv[8]);
+		doPseudoExp = (bool)atoi(argv[9]);
 		
 		if (doPseudoExp) {
-			desiredIntLum = atof(argv[9]);
-			nPseudoExp = atoi(argv[10]);
+			desiredIntLum = atof(argv[10]);
+			nPseudoExp = atoi(argv[11]);
 		}
+        
+        if (doPseudoExp && argc > 12)
+            nBtag = atoi(argv[12]);
 	}
 	
   cout << "chiSquare Cut Number: " << chisqCutNumber << endl;
@@ -358,7 +375,9 @@ int main(int argc, char* argv[]){
 	cout << "desired lumi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << desiredIntLum << endl;
   myNTupleAnalyzer myAnalyzer(inName,outName,runSamples,tmp_nRunSamples,chisqCut[(int) chisqCutNumber],inBin,outBin,desiredIntLum,nPseudoExp,doPseudoExp);
     
+    chisqCut[(int) chisqCutNumber]=175;
     myNTupleAnalyzer myAnalyzer2(inName,outName,runSamples,tmp_nRunSamples,chisqCut[(int) chisqCutNumber],inBin,outBin,desiredIntLum,nPseudoExp,doPseudoExp);
+    //myNTupleAnalyzer myAnalyzer2(inName,outName,runSamples,tmp_nRunSamples,750.0,inBin,outBin,desiredIntLum,nPseudoExp,doPseudoExp);
 
   if(doFbiasTest){ myAnalyzer.setFMCBias(Biases[inFbias]); }
   if(doBackgroundFraction) myAnalyzer.setBackgroundFraction(backgroundFraction[inBackgroundFraction]);
@@ -398,7 +417,7 @@ int main(int argc, char* argv[]){
   //myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF);
 
     //int decay=1;
-    int fitMode=0; // choose fit variable -> 0: m_lj 1: M3 2: 2D fit of (m_lj,M3)
+    //fitMode=0; // choose fit variable -> 0: m_lj 1: M3 2: 2D fit of (m_lj,M3)
  
     /*if (decay==1) {
         
@@ -413,17 +432,17 @@ int main(int argc, char* argv[]){
     
   //int *percentiles = new int(3);
     //mu+jets
-    //myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,0,fitMode);
+    myAnalyzer.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,0,fitMode,nBtag);
     
-    cout << "Warning: E+jets selected, changing left and right defs" << endl;
+    //cout << "Warning: E+jets selected, changing left and right defs" << endl;
 
-    /*leftlimit = 50;
-    centerleftlimit = 160;
-    centerrightlimit = 160;
-    rightlimit = 230;*/
+    //leftlimit = 70;
+    //centerleftlimit = 150;
+    //centerrightlimit = 150;
+    //rightlimit = 250;
     //e+jets
     
-    myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode);
+    //myAnalyzer2.run(verbosity, leftlimit, centerleftlimit, centerrightlimit, rightlimit, doSCreweigh, doTwoLights,useFit, do2D, do2Dcontrol,doPtEtaBin,doJESchange,tempFactor,doNewF,leftlimitperc,centerlimitperc,rightlimitperc,1.,doFfromMC,nSystematic,1,fitMode,nBtag);
   
   //  myAnalyzer.getPercentiles(percentiles);
   //cout << percentiles[0] << " " << percentiles[1] << " " << percentiles [2]<< endl;

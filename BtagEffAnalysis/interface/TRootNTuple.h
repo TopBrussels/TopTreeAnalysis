@@ -61,6 +61,7 @@ public:
 	  ,ptMuon_(-999.)
 	  ,EMuon_(-999.)
 	  ,etaMuon_(-999.)
+	  ,mvaTrigID_(-999.)
 	  ,delRlj_(-999.)
 	  ,partonFlavourControl_(-999)
 	  ,partonFlavourControl2_(-999)
@@ -109,6 +110,7 @@ public:
 	  ,delPhitt_(-999.)
 	  ,etafifth_(-999.)
 	  ,ptfifth_(-999.)
+	  ,MET_(-999.)
 	  {;}
 	  
 	  
@@ -165,6 +167,7 @@ public:
 	Double_t ptMuon() const { return ptMuon_;}
 	Double_t EMuon() const { return EMuon_;}
 	Double_t etaMuon() const { return etaMuon_;}
+	Double_t mvaTrigID() const {return mvaTrigID_;}
 	Double_t delRlj() const { return delRlj_;}  
 	Int_t partonFlavourControl() const { return partonFlavourControl_;}
 	Int_t partonFlavourControl2() const { return partonFlavourControl2_;}
@@ -200,6 +203,7 @@ public:
 	Bool_t R_inHad() {return R_inHad_;}
 	Bool_t R_or_lepb_inHad() {return R_or_lepb_inHad_;}
 	Bool_t allMatched() {return allMatched_;}
+	Double_t MET() {return MET_;}
 	
 	//some extra info for further event selection
 	Double_t btag_trackCountingHighEffBJetTags_hadb() const { return btag_trackCountingHighEffBJetTags_hadb_;}
@@ -278,6 +282,7 @@ public:
 	void setPtMuon(Double_t ptMuon) {ptMuon_=ptMuon;}
 	void setEMuon(Double_t EMuon) {EMuon_=EMuon;}
 	void setEtaMuon(Double_t etaMuon) {etaMuon_=etaMuon;}
+	void setmvaTrigID(Double_t i) {mvaTrigID_=i;}
 	void setDelRlj(Double_t delRlj) {delRlj_=delRlj;}  
 	void setPartonFlavourControl(Int_t partonFlavourControl) { partonFlavourControl_=partonFlavourControl;}
 	void setPartonFlavourControl2(Int_t partonFlavourControl2) { partonFlavourControl2_=partonFlavourControl2;}
@@ -334,6 +339,7 @@ public:
 	void setid1(Int_t id1) { id1_ = id1;}
 	void setid2(Int_t id2) { id2_ = id2;}
 	
+	void setMET(Double_t MET) { MET_ = MET; } 
 	
 private:
 
@@ -387,6 +393,7 @@ private:
 	Double_t ptMuon_;
 	Double_t EMuon_;
 	Double_t etaMuon_;
+	Double_t mvaTrigID_;
 	Double_t delRlj_;
 	Int_t partonFlavourControl_;
 	Int_t partonFlavourControl2_;
@@ -435,7 +442,7 @@ private:
 	Double_t delPhitt_;
 	Double_t etafifth_;
 	Double_t ptfifth_;
-
+	Double_t MET_;
 	// for PDF unc
 
 	Float_t x1_;

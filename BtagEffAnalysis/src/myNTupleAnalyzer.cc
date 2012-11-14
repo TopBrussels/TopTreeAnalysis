@@ -13,7 +13,7 @@ double getPtWeight(TFile* f, std::string plot, double pt_jet) {
         
         for (int i=1; i<hist->GetNbinsX(); i++) {
             if (hist->GetBinLowEdge(i) <= pt_jet && hist->GetBinLowEdge(i+1) > pt_jet)
-                if (hist->GetBinContent(i) < 20)
+                //if (hist->GetBinContent(i) < 20)
                     return hist->GetBinContent(i);
         }
     }
@@ -39,9 +39,10 @@ float round(float depth, float n)
     return d;
 }
 
-float getNomVal(std::string data_postfix,std::string prop,string niwp) {
+float getNomVal(std::string data_postfix, int fitM,std::string prop,string niwp) {
     
-    string filename="systematics/"+prop+"_WP"+niwp+"_channel"+data_postfix+".nominal";
+    stringstream fitMode; fitMode << fitM;
+    string filename="systematics/"+prop+"_WP"+niwp+"_channel"+data_postfix+"_fitMode"+fitMode.str()+".nominal";
     //cout << filename << endl;
 	string line;
 	ifstream myfile (filename.c_str());
@@ -58,16 +59,18 @@ float getNomVal(std::string data_postfix,std::string prop,string niwp) {
 	
 }
 
-float getNomVal(std::string data_postfix,std::string prop,int niwp) {
+float getNomVal(std::string data_postfix, int fitM ,std::string prop,int niwp) {
     stringstream p; p<<niwp;
-    return getNomVal(data_postfix,prop,p.str());
+    return getNomVal(data_postfix,fitM,prop,p.str());
 }
 
-void setNomVal(std::string data_postfix,std::string prop,int iwp,float val) {
+void setNomVal(std::string data_postfix, int fitM ,std::string prop,int iwp,float val) {
     
     stringstream niwp; niwp << iwp;
     
-    string filename="systematics/"+prop+"_WP"+niwp.str()+"_channel"+data_postfix+".nominal";
+    stringstream fitMode; fitMode << fitM;
+
+    string filename="systematics/"+prop+"_WP"+niwp.str()+"_channel"+data_postfix+"_fitMode"+fitMode.str()+".nominal";
 	
     ofstream myfile (filename.c_str());
     
@@ -318,7 +321,9 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	
     //nTTbarBeforeRefSel = 1203372; // summer12 temp sample
     
-    nTTbarBeforeRefSel = 6442045; // summer12 final sample
+    //nTTbarBeforeRefSel = 6442045; // summer12 final sample
+    
+    nTTbarBeforeRefSel = 6784910; // summer12_DR53X final sample
 	
     nTTbarAfterRefSel = 0;
     
@@ -334,11 +339,11 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	//	cout << runSamples_[i] << endl;
 	//}
 	
-    nTaggers=7;
+    nTaggers=8;
     //nTaggers=3;
 	
-	if (doPseudoExp) nTaggers=1;
-	
+    if (doPseudoExp) nTaggers=1;
+    
 	nWP=nTaggers*3;
 	
 	for(int i=0; i<nWP; i++){
@@ -488,7 +493,7 @@ void myNTupleAnalyzer::setBackgroundFraction(double fraction){
 
 //change in and out names to accept from function
 
-int nrFiles = 11;
+int nrFiles = 15;
 
 TString inRootFile[20];
 
@@ -545,10 +550,15 @@ bool doPtEtaBin=false;
 //bool doPtEtaBin=true;
 
 // MLB binning
-const int nBinsVar0=50;
+/*const int nBinsVar0=50;
 //const int nBinsVar0=500;
 const double lowRangeVar0=0;
-const double upRangeVar0=500;
+const double upRangeVar0=500;*/
+
+int nBinsVar0=50;
+//const int nBinsVar0=500;
+double lowRangeVar0=0;
+double upRangeVar0=500;
 
 // binning btaggers (fix binning)
 
@@ -568,7 +578,7 @@ int nBinsBtag[8]={25,25,25,25,25,25,25,25};
 double lowRangeBtag[8]={-10,-10,0,0,0,0,0,0};
 double upRangeBtag[8]={30,30,3,8,8,8,1,1};
 
-double wpArray[24]={1.7,3.3,10.2,1.19,1.93,3.41,0.275,0.545,0.790,1.33,2.55,3.74,0.00,1.74,3.05,0.00,0.00,2.0,0.244,0.679,0.898,0.00,0.00,0.00}; // old ordering
+double wpArray[24]={1.7,3.3,10.2,1.19,1.93,3.41,0.275,0.545,0.790,1.33,2.55,3.74,0.00,1.74,3.05,0.00,0.00,2.0,0.244,0.679,0.898,0.244,0.679,0.898}; // old ordering
 int taggerArray[24]={0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7};
  
 
@@ -674,11 +684,34 @@ TH1D * ptBin;
 
 //int main(int argc, char* argv[]){
 
-void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, int centerrightlimit, int rightlimit, bool doSCreweigh, bool doTwoLights, bool useFit, bool do2D, bool do2Dcontrol, bool doPtEtaBin, bool doJESchange, double JESfactor, bool doNewF, double leftlimitperc, double centerlimitperc, double rightlimitperc, double runNb, bool doFfromMC, int nSystematic,int decay,int fitMode){ //decay 0: semimu 1: semiel
+void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, int centerrightlimit, int rightlimit, bool doSCreweigh, bool doTwoLights, bool useFit, bool do2D, bool do2Dcontrol, bool doPtEtaBin, bool doJESchange, double JESfactor, bool doNewF, double leftlimitperc, double centerlimitperc, double rightlimitperc, double runNb, bool doFfromMC, int nSystematic,int decay,int fitMode,int nBtag_){ //decay 0: semimu 1: semiel
 	
 	bool doOnlyMSPlot = false;
     
     bool btagonly = false;
+    
+    bool doBiasStudy=true;
+
+    bool doFBiasStudy=false;
+    
+    if (!doPseudoExp_) doBiasStudy=false;
+    if (!doPseudoExp_) doFBiasStudy=false;
+    
+    if (doBiasStudy && doFBiasStudy) {
+        cout << "doBiasStudy and doFBiasStudy cannot both be true" << endl;
+        exit(1);
+    }
+
+	double left_min=leftlimit;
+    double left_max=leftlimit+1;
+	double mid_min=120;
+    double mid_max=200;
+    double right_max=400;
+    double bias_step=5;
+    
+    double F_min=2;
+    double F_max=2002;
+    double F_step=25;
     
     // reweighing of enriched pt to data
     
@@ -687,6 +720,44 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     
     bool doCorrectForBias=false; // should not be turned on to obtain results
     bool doBtagSFonData=false; // should not be turned on to obtain results
+    
+    int nBtag = nBtag_;
+
+    if (doPseudoExp_ && nBtag != -1) {        
+        
+        nTaggers=1;
+        
+        nWP=3;
+        
+        stringstream np; np << nBtag;
+        
+        if (decay == 0)
+            outRootNamePseudoExp = "NTupleAnalyzed_pseudoExp_tagger_"+np.str()+"_channel_Mu.root";
+        else if (decay == 1)
+            outRootNamePseudoExp = "NTupleAnalyzed_pseudoExp_tagger_"+np.str()+"_channel_El.root";
+
+        cout << "wpArray before: " << wpArray[0] << " " << wpArray[1] << " " << wpArray[2] << endl;
+        cout << "taggerArray before: " << taggerArray[0] << " " << taggerArray[1] << " " << taggerArray[2] << endl;
+        cout << "btag ranges before: " << nBinsBtag[0] << " " << lowRangeBtag[0] << " " << upRangeBtag[0] << endl;
+        wpArray[0]=wpArray[3*nBtag];
+        wpArray[1]=wpArray[(3*nBtag)+1];
+        wpArray[2]=wpArray[(3*nBtag)+2];
+
+        //taggerArray[0]=taggerArray[3*nBtag];
+        //taggerArray[1]=taggerArray[(3*nBtag)+1];
+        //taggerArray[2]=taggerArray[(3*nBtag)+2];
+        
+        nBinsBtag[0]=nBinsBtag[nBtag];
+        upRangeBtag[0]=upRangeBtag[nBtag];
+        lowRangeBtag[0]=lowRangeBtag[nBtag];
+        
+        cout << "wpArray after: " << wpArray[0] << " " << wpArray[1] << " " << wpArray[2] << endl;
+        cout << "taggerArray after: " << taggerArray[0] << " " << taggerArray[1] << " " << taggerArray[2] << endl;
+        cout << "btag ranges before: " << nBinsBtag[0] << " " << lowRangeBtag[0] << " " << upRangeBtag[0] << endl;
+
+        //exit(1);
+        
+    }
 		
 	cout << "++nSystematic: " << nSystematic << endl; // started as systematic sample switcher, but is now more generally used to switch between sample setups.
 	string sampleType = "";
@@ -743,32 +814,56 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     //nTaggers=1;
     //nWP=3;
     
-    nRunSamples_=7;
+    nRunSamples_=13;
+    //nRunSamples_=1;
+    inRootFile[0] = "BtagTree_TTbarJets";
+    inRootFile[1] = "BtagTree_ST_tW_t";
+    inRootFile[2] = "BtagTree_ST_tW_tbar";
+    inRootFile[3] = "BtagTree_ST_t_t";
+    inRootFile[4] = "BtagTree_ST_t_tbar";
+    inRootFile[5] = "BtagTree_ZJets_1jets";
+    inRootFile[6] = "BtagTree_ZJets_2jets";
+    inRootFile[7] = "BtagTree_ZJets_3jets";
+    inRootFile[8] = "BtagTree_ZJets_4jets";
+    inRootFile[9] = "BtagTree_WJets_1jets";
+    inRootFile[10] = "BtagTree_WJets_2jets";
+    inRootFile[11] = "BtagTree_WJets_3jets";
+    inRootFile[12] = "BtagTree_WJets_4jets";
+
+    // tmp disabled Z+Xjets because one of the syst files failed
+    /*nRunSamples_=10;
     inRootFile[0] = "BtagTree_TTbarJets";
     inRootFile[1] = "BtagTree_ST_tW_t";
     inRootFile[2] = "BtagTree_ST_tW_tbar";
     inRootFile[3] = "BtagTree_ST_t_t";
     inRootFile[4] = "BtagTree_ST_t_tbar";
     inRootFile[5] = "BtagTree_ZJets";
-    inRootFile[6] = "BtagTree_WJets";
-    
+    inRootFile[6] = "BtagTree_WJets_1jets";
+    inRootFile[7] = "BtagTree_WJets_2jets";
+    inRootFile[8] = "BtagTree_WJets_3jets";
+    inRootFile[9] = "BtagTree_WJets_4jets";*/
+
     /*nRunSamples_=3;
     inRootFile[0] = "BtagTree_TTbarJets";
     inRootFile[1] = "BtagTree_ZJets";
     inRootFile[2] = "BtagTree_WJets";
 */
     //inRootFile[0] = "BtagTree_WJets_JESMinus";
-        
+    
+    // RE-ENABLE
+    
+    /*
     //if (decay==1) {
         inRootFile[nRunSamples_] = "BtagTree_Data"+data_postfix+"_InvIso";
         //inRootFile[nRunSamples_] = "BtagTree_Data_Mu_InvIso";
         nRunSamples_++;
     //}
+    */
     
-    if (nSystematic>0) {
+    /*if (nSystematic>0) {
         nTaggers=3;
         nWP=nTaggers*3;
-    }
+    }*/
 
 	switch (nSystematic) {
 		case -2:
@@ -778,10 +873,19 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			//inRootFile[0] = "BtagTree_Data1fb";
             doCorrectForBias=false;
             doBtagSFonData=false;
+            reweigh_to_data=false;
+			break;
+        case -9:
+			sampleType="Data";
+			nRunSamples_=1;
+			inRootFile[0] = "BtagTree_Data"+data_postfix;
+			//inRootFile[0] = "BtagTree_Data1fb";
+            doCorrectForBias=true;
+            doBtagSFonData=false;
 			break;
 		case -3:
 			doOnlyMSPlot=true;
-			nRunSamples_=8;
+			nRunSamples_=14;
 			sampleType="MSPLotProduction";
             
             //if (decay==1) { // for now no data-driven qcd for muon
@@ -792,19 +896,38 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             
             //nRunSamples_=8;
             //i=0;
-            i++;
-			inRootFile[i] = "BtagTree_ZJets";
-			i++;inRootFile[i] = "BtagTree_WJets";
+            //i++;
+			//inRootFile[i] = "BtagTree_ZJets";
+			//i++;inRootFile[i] = "BtagTree_WJets";
+			i++;inRootFile[i] = "BtagTree_ZJets_1jets";
+			i++;inRootFile[i] = "BtagTree_ZJets_2jets";
+            i++;inRootFile[i] = "BtagTree_ZJets_3jets";
+			i++;inRootFile[i] = "BtagTree_ZJets_4jets";
+            
+            i++;inRootFile[i] = "BtagTree_WJets_1jets";
+			i++;inRootFile[i] = "BtagTree_WJets_2jets";
+            i++;inRootFile[i] = "BtagTree_WJets_3jets";
+			i++;inRootFile[i] = "BtagTree_WJets_4jets";
+            //nRunSamples_--;
+            
             i++;inRootFile[i] = "BtagTree_ST_t_t";
             i++;inRootFile[i] = "BtagTree_ST_t_tbar";
             i++;inRootFile[i] = "BtagTree_ST_tW_t";
             i++;inRootFile[i] = "BtagTree_ST_tW_tbar";
 			i++;inRootFile[i] = "BtagTree_TTbarJets";
 			i++;inRootFile[i] = "BtagTree_Data"+data_postfix;
+            
 			
             //if (decay==1) 
             //datasets_color.push_back(kYellow); // multijet
 			datasets_color.push_back(kAzure-2); // ZJets
+			datasets_color.push_back(kAzure-2); // ZJets
+			datasets_color.push_back(kAzure-2); // ZJets
+			datasets_color.push_back(kAzure-2); // ZJets
+
+			datasets_color.push_back(kGreen-3); // WJets
+			datasets_color.push_back(kGreen-3); // WJets
+			datasets_color.push_back(kGreen-3); // WJets
 			datasets_color.push_back(kGreen-3); // WJets
 			
 			datasets_color.push_back(kMagenta); // ST t
@@ -821,11 +944,18 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			datasets_color.push_back(kRed-7); // TT
 			datasets_color.push_back(kRed+1); // TT
 			datasets_color.push_back(kBlack); // Data
+			datasets_color.push_back(0); // Data
 
 			//datasets_title.push_back("QCD");
             //if (decay==1) 
             //datasets_title.push_back("multijet");
 			datasets_title.push_back("Z/#gamma*#rightarrowl^{+}l^{-}");
+			datasets_title.push_back("Z/#gamma*#rightarrowl^{+}l^{-}");
+			datasets_title.push_back("Z/#gamma*#rightarrowl^{+}l^{-}");
+			datasets_title.push_back("Z/#gamma*#rightarrowl^{+}l^{-}");
+			datasets_title.push_back("W#rightarrowl#nu");
+			datasets_title.push_back("W#rightarrowl#nu");
+			datasets_title.push_back("W#rightarrowl#nu");
 			datasets_title.push_back("W#rightarrowl#nu");
 			datasets_title.push_back("SingleTop t");
 			datasets_title.push_back("SingleTop t");
@@ -839,6 +969,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             
 		case 0:
 			sampleType="nominal";
+            reweigh_to_data=false;
 			/*nRunSamples_=7;
 			inRootFile[0] = "BtagTree_TTbarJets";
 			inRootFile[1] = "BtagTree_ST_SingleTop_tChannel_t";
@@ -866,19 +997,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
   
         case -8: // apply pt-rew to data
 			sampleType="nominal-datarew";
-            reweigh_to_data=true;
+            reweigh_to_data=false;
             doCorrectForBias=true;
-			nRunSamples_=8;
-			inRootFile[0] = "BtagTree_TTbarJets_SemiMuon";
-			inRootFile[1] = "BtagTree_TTbarJets_Other";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[5] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[6] = "BtagTree_ZJets";
-			inRootFile[7] = "BtagTree_WJets";
-			inRootFile[8] = "BtagTree_QCD";
-			inRootFile[9] = "BtagTree_Data";
 			
 			break;
 
@@ -1122,27 +1242,27 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		case 21:
 			sampleType="RightReg-nominal";
 			
-			leftlimit=50;
-			centerleftlimit=140;
-			rightlimit=240;
+			leftlimit=70;
+			centerleftlimit=170;
+			rightlimit=300;
 			
 			break;
 		
 		case 22:
 			sampleType="RightReg-smaller";
 						
-			leftlimit=50;
-			centerleftlimit=140;
-			rightlimit=190;
+			leftlimit=70;
+			centerleftlimit=170;
+			rightlimit=250;
 			
 			break;
 			
 		case 23:
 			sampleType="RightReg-bigger";
 						
-			leftlimit=50;
-			centerleftlimit=140;
-			rightlimit=290;
+			leftlimit=70;
+			centerleftlimit=170;
+			rightlimit=350;
 			
 			break;
 			
@@ -1229,6 +1349,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		cout << "nTaggers    : " << nTaggers << endl;
 		cout << "doPtEtaBin is    : " << doPtEtaBin << endl;
 		cout << "doPseudoExp_ is   : " << doPseudoExp_ << endl; 
+		cout << "doBiasStudy is   : " << doBiasStudy << endl; 
+		cout << "doFBiasStudy is   : " << doFBiasStudy << endl; 
+        cout << "nBtag    : " << nBtag << endl;
 		cout << "doSCreweigh is   : " << doSCreweigh << endl;
 		cout << "doTwoLights is   : " << doTwoLights << endl;
 		cout << "useFit is        : " << useFit << endl;
@@ -1273,6 +1396,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 
 	vector<float> v_scaleFactor;
 	vector<float> v_njets;
+	vector<double> v_met;
+	vector<double> v_mvaTrigId;
 	vector<double*> v_bTag;
 	vector<double> v_matchChiSquare;
 	
@@ -1317,8 +1442,32 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 	
 	bool rescalednTTbarBeforeRefsel=false;
     
-    TFile* ptrewfile = new TFile("datamc-ptrew.root","READ");
+    TFile* ptrewfile;
+    if (decay == 0)
+        ptrewfile = new TFile("datamc-ptrew_mu.root","READ");
+    else if (decay == 1)
+        ptrewfile = new TFile("datamc-ptrew_el.root","READ");
+
     TFile* tempkle = new TFile("PVREW.root","READ");
+    
+    ifstream badev("AllBadHCALLaser.txt");
+    
+    vector<string> bad_event;
+    /*while (!badev.eof()) {
+        
+        string ev_;
+        
+        badev >> ev_;
+        
+        bad_event.push_back(ev_);
+        
+        //cout << ev_ << endl;
+        
+    }*/
+    badev.close();
+    
+    //cout << bad_event.size() << endl;
+
     
 	for (int iRootFile=0; iRootFile<nrFiles; iRootFile++){
 				
@@ -1361,7 +1510,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		
 		Int_t nEvent = tree_->GetEntries();
 		if(verbosity_>3) cout << "+----> nEvent " << nEvent << endl;
-        
+                
                                 
 		//////////////////////////////
 		// read PDF stuff if needed //
@@ -1405,42 +1554,78 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				//exit(1);
 			}			
 		}
-        				
+    
 		for(int ev=0; ev < nEvent; ev++){  
             
 			float weight = 0;
 			float weightfactor=1;
             
 			tree_->GetEvent(ev); 
+
+            //if (fabs(NTuple->partonFlavour()) == 5 && NTuple->mlj() > 170) continue;
+            //if (fabs(NTuple->partonFlavour()) != 5) continue;
+            
+            //if (fabs(NTuple->eta()) < 0.5 && NTuple->mlj() > 140) continue;
+            
+            //if (decay == 1)
+            //    if (NTuple->MET() < 40)
+            //        continue;   
+            
+            //if (decay == 1 && NTuple->mvaTrigID() < 0.8) continue;
+            
+            if (decay == 1 && NTuple->MET() <= 40) continue;
+            //if (decay == 1 && NTuple->ptMuon() < 40) continue;
+            //if (decay == 1 && NTuple->mvaTrigID() < 0.5) continue;
             
             // get the muon+jets events
             if (decay==0 && !NTuple->semiMu()) continue;
             //get the electron+jets events
             if (decay==1 && !NTuple->semiEl()) continue;
             
-            ////////////////////////////////
-            // TEMPORARY FIX SINGLETOP XS //
-            ////////////////////////////////
-            
-            //cout << "pom" << NTuple->dataSetName() << " " << 1./NTuple->weight() << endl;
-            if (NTuple->dataSetName().find("ST_tW") != string::npos) {
-                double newl = NTuple->weight()*(11.1/22.3546);
-                NTuple->setWeight(newl);
-            }
-            if (NTuple->dataSetName().find("ST_t_t") != string::npos) {
-                double newl = NTuple->weight()*(56.4/55.531);
-                NTuple->setWeight(newl);
-            }
-            if (NTuple->dataSetName().find("ST_t_tbar") != string::npos) {
-                double newl = NTuple->weight()*(30.7/30.0042);
-                NTuple->setWeight(newl);
-            }
-            
             if (NTuple->dataSetName().find("InvIso") != string::npos)
                 NTuple->setDataSetName("multijet");
+            
+            if (NTuple->dataSetName().find("WJets_4jets_") != string::npos)
+                NTuple->setDataSetName("WJets_4jets");
+            if (NTuple->dataSetName().find("WJets_3jets_") != string::npos)
+                NTuple->setDataSetName("WJets_3jets");
+            if (NTuple->dataSetName().find("WJets_2jets_") != string::npos)
+                NTuple->setDataSetName("WJets_2jets");
+            if (NTuple->dataSetName().find("WJets_1jets_") != string::npos)
+                NTuple->setDataSetName("WJets_1jets");
+            if (doOnlyMSPlot && NTuple->dataSetName().find("WJets_") != string::npos)
+                NTuple->setDataSetName("W_"+NTuple->dataSetName());
 
-            if (NTuple->dataSetName().find("Data") == 0 || NTuple->dataSetName().find("data") == 0 || NTuple->dataSetName().find("DATA") == 0)
+            if (NTuple->dataSetName().find("ZJets_4jets_") != string::npos)
+                NTuple->setDataSetName("ZJets_4jets");
+            if (NTuple->dataSetName().find("ZJets_3jets_") != string::npos)
+                NTuple->setDataSetName("ZJets_3jets");
+            if (NTuple->dataSetName().find("ZJets_2jets_") != string::npos)
+                NTuple->setDataSetName("ZJets_2jets");
+            if (NTuple->dataSetName().find("ZJets_1jets_") != string::npos)
+                NTuple->setDataSetName("ZJets_1jets");
+            if (doOnlyMSPlot && NTuple->dataSetName().find("ZJets_") != string::npos)
+                NTuple->setDataSetName("Z_"+NTuple->dataSetName());
+
+            if (NTuple->dataSetName().find("Data") == 0 || NTuple->dataSetName().find("data") == 0 || NTuple->dataSetName().find("DATA") == 0) {
+             
                 NTuple->setDataSetName("Data");
+                
+                stringstream r; r<<NTuple->runId();
+                stringstream t; t<<NTuple->lumiBlockId();
+                stringstream u; u<<NTuple->eventId();
+                
+                string ev = r.str()+":"+t.str()+":"+u.str();
+                
+                //cout << ev << endl;
+                
+                int pos = std::find(bad_event.begin(),bad_event.end(),ev)-bad_event.begin();
+                
+                if (pos < bad_event.size()) {
+                    cout << ev << " " << pos << endl;
+                    continue;
+                }
+            }
             
             // split ttbar signal and ttbar other
             
@@ -1512,12 +1697,16 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     present=true;
                 
 				if (!present) {
+
 					datasets.push_back(new Dataset(NTuple->dataSetName(),datasets_title[nCol],false,datasets_color[nCol],1,1,1,-1));
-					
+                    
                     datasets[datasets.size()-1]->SetEquivalentLuminosity((1./NTuple->weight()));
+                    
+                    //continue;
 
 					nCol++;
 				}
+
 			}
 
 			if (nSelected_.find(NTuple->dataSetName()) == nSelected_.end()) {
@@ -1584,16 +1773,18 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 //exit(1);
             //}
             
-            if (decay==0) {
-                weight=weight*getIsoMu20Weight(NTuple->ptMuon(),NTuple->nPV())*1.00*0.999; // Muon trig leg , jet leg, muon ID
-                //weight_nonrew=weight_nonrew*getIsoMu20Weight(NTuple->ptMuon(),NTuple->nPV())*1.00*0.999; // Muon trig leg , jet leg, muon ID
-                //weight=weight-0.032;
-            } else if (decay==1) {
-                //weight=weight*0.988*1.000*0.998;
-                weight=weight*0.988*1.000*1.005;
-                //weight_nonrew=weight_nonrew*0.987*1.000*0.998;
-                
-            }
+            /*if (NTuple->dataSetName().find("Data") != 0 && NTuple->dataSetName().find("data") != 0 && NTuple->dataSetName().find("DATA") != 0) {
+                if (decay==0) {
+                    weight=weight*getIsoMu20Weight(NTuple->ptMuon(),NTuple->nPV())*1.00*0.999; // Muon trig leg , jet leg, muon ID
+                    //weight_nonrew=weight_nonrew*getIsoMu20Weight(NTuple->ptMuon(),NTuple->nPV())*1.00*0.999; // Muon trig leg , jet leg, muon ID
+                    //weight=weight-0.032;
+                } else if (decay==1) {
+                    //weight=weight*0.988*1.000*0.998;
+                    weight=weight*0.988*1.000*1.005;
+                    //weight_nonrew=weight_nonrew*0.987*1.000*0.998;
+                    
+                }
+            }*/
             
             //cout << NTuple->dataSetName() << " " << weight << " " << NTuple->scalefactor() <<  endl;
 
@@ -1659,7 +1850,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             if (datasetName.find("multijet") != string::npos) {
                 
                 weight=1;
-                
+                                
                 /*if (NTuple->runId() <= 165633) // noniso triggers
                     weight=0.98*0.126; // trigger bin scale factor * mc yield factor
                 else if (NTuple->runId() >= 165970 && NTuple->runId() < 175860 ) // iso trigger
@@ -1748,8 +1939,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				nSelected_[NTuple->dataSetName()][5]++;
 			}
 			
-			if(!doOnlyMSPlot && NTuple->chiSq()>matchChiSquareCut_) continue; // TURN ME ON
-			
+			if(!doOnlyMSPlot && !doFBiasStudy && NTuple->chiSq()>matchChiSquareCut_) continue; // TURN ME ON
+            
             //if(NTuple->chiSq()>matchChiSquareCut_) continue;
 
 			if (NTuple->dataSetName().find("TTbarJets") == 0 && !rescalednTTbarBeforeRefsel) {
@@ -1779,9 +1970,12 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			
             if (!doOnlyMSPlot) {
             
-                if (fitMode == 0 && NTuple->mlj() > upRangeVar0) continue; // TURN ME ON
-                else if (fitMode == 1 && NTuple->m3() > 800) continue;
+                //if (fitMode == 0 && NTuple->mlj() > upRangeVar0) continue; // TURN ME ON
+                //else if (fitMode == 1 && NTuple->m3() > 800) continue;
                 
+                if (NTuple->mlj() > upRangeVar0) continue;
+                
+                //if (NTuple->mlj() > upRangeVar0 || NTuple->m3() > 800) continue;
                 //else if (fitMode == 2 && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
                 
             }
@@ -1852,7 +2046,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                 if (!reweigh_left_to_all && reweigh_to_data && NTuple->dataSetName()!="Data") {
                     //cout << "broooooooooooooooooooool" << endl; exit(1);
-                    if ( (NTuple->mlj() > leftlimit_ && NTuple->mlj() < centerleftlimit_) || (NTuple->mlj() > centerrightlimit_ && NTuple->mlj() < rightlimit_) )
+                    //if ( (NTuple->mlj() > leftlimit_ && NTuple->mlj() < centerleftlimit_) || (NTuple->mlj() > centerrightlimit_ && NTuple->mlj() < rightlimit_) )
                         ptw=getPtWeight(ptrewfile,"pT_weight_allmc_alldata",NTuple->pt());
                     
                     
@@ -1861,8 +2055,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     if ( (NTuple->mljControl2() > leftlimit_ && NTuple->mljControl2() < centerleftlimit_) || (NTuple->mljControl2() > centerrightlimit_ && NTuple->mljControl2() < rightlimit_) )                      
                         ptwC2=getPtWeight(ptrewfile,"pT_weight_CS_allmc_alldata",NTuple->ptControl2());
                 */
-                    //ptwC1=ptw;
-                    //ptwC2=ptw;
+                    ptwC1=ptw;
+                    ptwC2=ptw;
                 } 
                 
                 //cout << ptw << " " << ptwC1 << endl;
@@ -1916,7 +2110,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			if (doOnlyMSPlot || doPseudoExp_) v_scaleFactor.push_back(NTuple->scalefactor());
             
             if (doOnlyMSPlot) v_njets.push_back(NTuple->nJets());
+            if (doOnlyMSPlot) v_met.push_back(NTuple->MET());
+            
+            //cout << NTuple->MET() << endl;
+            
+            if (doOnlyMSPlot) v_mvaTrigId.push_back(NTuple->mvaTrigID());
 			
+            //cout << NTuple->MET() << endl;
+            
 			double* bTag = new double[11];
 			/*bTag[0] = NTuple->btag_trackCountingHighEffBJetTags();
 			 bTag[1] = NTuple->btag_trackCountingHighPurBJetTags();
@@ -1949,11 +2150,16 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             bTag[3] = NTuple->Btag(6); // JBP
             bTag[4] = NTuple->Btag(2); // SSVHE 0 8
             bTag[5] = NTuple->Btag(3); // SSVHP 0 8
+            
             bTag[6] = NTuple->Btag(4); // CSV
-            bTag[7] = NTuple->Btag(5); // CSVMVA
+            
+            bTag[7] = NTuple->Btag(8); // CSV retrained
             bTag[8] = NTuple->Btag(0);
             bTag[9] = NTuple->Btag(0);
             bTag[10] = NTuple->Btag(0);
+            
+            if (doPseudoExp_ && nBtag != -1)
+                bTag[0] = bTag[nBtag];
              
 			v_bTag.push_back(bTag);
 			
@@ -1970,6 +2176,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 v_etaMuon.push_back(NTuple->etaMuon());
                 
             }
+
 			v_etaControl.push_back(fabs(NTuple->etaControl()));
 			v_ptControl.push_back(NTuple->ptControl());
 			v_partonFlavourControl.push_back(NTuple->partonFlavourControl());
@@ -2093,6 +2300,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         MSPlot["Eta_lepbCand_btag"] = new MultiSamplePlot(datasets, "Eta_lepbCand_btag", 50, -5, 5, "#eta^{b cand} (GeV)");
         
         MSPlot["Eta_WjetCand1"] = new MultiSamplePlot(datasets, "Eta_WjetCand1", 50, -5, 5, "#eta^{lightjetcand1} (GeV)");
+        
         MSPlot["Eta_WjetCand1_btag"] = new MultiSamplePlot(datasets, "Eta_WjetCand1_btag", 50, -5, 5, "#eta^{lightjetcand1} (GeV)");
         
         MSPlot["Eta_WjetCand2"] = new MultiSamplePlot(datasets, "Eta_WjetCand2", 50, -5, 5, "#eta^{lightjetcand2} (GeV)");
@@ -2111,16 +2319,20 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             MSPlot["MLB_BTV_btag"] = new MultiSamplePlot(datasets, "MLB_BTV_btag", 25, 0, 500, "M_{#mub} (GeV)","Events / 20 GeV");
             MSPlot["MLB_FourJets"] = new MultiSamplePlot(datasets, "MLB_FourJets", 50, 0, 500, "M_{#mub} (GeV)","Events / 10 GeV");
             MSPlot["MLB_FourJets_btag"] = new MultiSamplePlot(datasets, "MLB_FourJets_btag", 50, 0, 500, "M_{#mub} (GeV)","Events / 10 GeV");
-            MSPlot["MLB"] = new MultiSamplePlot(datasets, "MLB", 50, 0, 500, "M_{#mub} (GeV)","Events / 10 GeV");
-            MSPlot["MLB_btag"] = new MultiSamplePlot(datasets, "MLB_btag", 50, 0, 500, "M_{#mub} (GeV)","Events / 10 GeV");
+            MSPlot["MLB"] = new MultiSamplePlot(datasets, "MLB", 75, 0, 1200, "M_{#mub} (GeV)","Events / 10 GeV");
+            MSPlot["MLB_btag"] = new MultiSamplePlot(datasets, "MLB_btag", 75, 0, 1200, "M_{#mub} (GeV)","Events / 10 GeV");
+            MSPlot["MLB_MET"] = new MultiSamplePlot(datasets, "MLB_MET", 75, 0, 1200, "M_{#mub} (GeV)","Events / 10 GeV");
+            MSPlot["MLB_btag_MET"] = new MultiSamplePlot(datasets, "MLB_btag_MET", 75, 0, 1200, "M_{#mub} (GeV)","Events / 10 GeV");
 
         } else {
             MSPlot["MLB_BTV"] = new MultiSamplePlot(datasets, "MLB_BTV", 25, 0, 500, "M_{eb} (GeV)","Events / 20 GeV");
             MSPlot["MLB_BTV_btag"] = new MultiSamplePlot(datasets, "MLB_BTV_btag", 25, 0, 500, "M_{eb} (GeV)","Events / 20 GeV");
             MSPlot["MLB_FourJets"] = new MultiSamplePlot(datasets, "MLB_FourJets", 50, 0, 500, "M_{eb} (GeV)","Events / 10 GeV");
             MSPlot["MLB_FourJets_btag"] = new MultiSamplePlot(datasets, "MLB_FourJets_btag", 50, 0, 500, "M_{eb} (GeV)","Events / 10 GeV");
-            MSPlot["MLB"] = new MultiSamplePlot(datasets, "MLB", 50, 0, 500, "M_{eb} (GeV)","Events / 10 GeV");
-            MSPlot["MLB_btag"] = new MultiSamplePlot(datasets, "MLB_btag", 50, 0, 500, "M_{eb} (GeV)","Events / 10 GeV");
+            MSPlot["MLB"] = new MultiSamplePlot(datasets, "MLB", 75, 0, 1200, "M_{eb} (GeV)","Events / 10 GeV");
+            MSPlot["MLB_btag"] = new MultiSamplePlot(datasets, "MLB_btag", 75, 0, 1200, "M_{eb} (GeV)","Events / 10 GeV");
+            MSPlot["MLB_MET"] = new MultiSamplePlot(datasets, "MLB_MET", 75, 0, 1200, "M_{eb} (GeV)","Events / 10 GeV");
+            MSPlot["MLB_btag_MET"] = new MultiSamplePlot(datasets, "MLB_btag_MET", 75, 0, 1200, "M_{eb} (GeV)","Events / 10 GeV");
         }
         
         MSPlot["M3_BTV"] = new MultiSamplePlot(datasets, "M3_BTV", 25, 0, 500, "m3 (GeV)","Events / 20 GeV");
@@ -2139,6 +2351,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         
         MSPlot["PUWeight"] = new MultiSamplePlot(datasets, "PUWeight", 50, 0, 5, "PUWeight");
 
+        MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 80, 0, 800, "MET");
+        MSPlot["MET_btag"] = new MultiSamplePlot(datasets, "MET_btag", 80, 0, 800, "MET_btag");
+
+        MSPlot["MVATrigID"] = new MultiSamplePlot(datasets, "MVATrigID", 15, 0, 1.5, "MVATrigID");
+        
         TH2D* TCHEtrueb_vs_PUWeight= new TH2D("TCHEtrueb_vs_PUWeight","TCHE_vs_PUWeight;Disc;PU weight",50,-10,30,50,0,5);
         
         TH2D* TCHEtrueb_vs_nPV= new TH2D("TCHEtrueb_vs_nPV","TCHEtrueb_vs_nPV;Disc;nPV",50,-10,30,36,-0.5,35);
@@ -2177,11 +2394,38 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         TH2D* MLB_VS_pT_MC = new TH2D("MLB_VS_pT_MC","MLB_VS_pT_MC;M_{#mub} (GeV);p_{T} (GeV/c)",(centerleftlimit_-leftlimit_)/10,leftlimit_,centerleftlimit_,50,0,500);
         TH2D* MLB_VS_pT_DATA = new TH2D("MLB_VS_pT_DATA","MLB_VS_pT_DATA;M_{#mub} (GeV);p_{T} (GeV/c)",(centerleftlimit_-leftlimit_)/10,leftlimit_,centerleftlimit_,50,0,500);
         
+        TH2D* MLB_VS_pTbCand = new TH2D("MLB_VS_pTbCand","MLB_VS_pTbCand;M_{#mub} (GeV);p_{T}^{bCand} (GeV/c)",75,0,500,80,0,800);
+        
+        TH2D* MLB_VS_ETAbCand = new TH2D("MLB_VS_ETAbCand","MLB_VS_ETAbCand;M_{#mub} (GeV);#eta^{bCand}",75,0,500,40,-4,4);   
+        
+        TH2D* MLB_VS_pTlCand = new TH2D("MLB_VS_pTlCand","MLB_VS_pTlCand;M_{#mub} (GeV);p_{T}^{lCand} (GeV/c)",75,0,500,80,0,800);
+        
+        TH2D* MLB_VS_ETAlCand = new TH2D("MLB_VS_ETAlCand","MLB_VS_ETAlCand;M_{#mub} (GeV);#eta^{lCand}",75,0,500,40,-4,4);   
+        
+        TH2D* MLB_VS_chi2bCand = new TH2D("MLB_VS_chi2bCand","MLB_VS_chi2bCand;M_{#mub} (GeV);#chi^{2}_{bCand}",75,0,500,50,0,200);
+                
+        TH2D* MLB_VS_chi2lCand = new TH2D("MLB_VS_chi2lCand","MLB_VS_chi2lCand;M_{#mub} (GeV);#chi^{2}_{lCand}",75,0,500,50,0,200);
+
+        TH2D* MLB_VS_TCHE = new TH2D("MLB_VS_TCHE","MLB_VS_TCHE;M_{#mub} (GeV);bDisc",75,0,500,25,-10,30);
+        TH2D* MLB_VS_TCHE_l = new TH2D("MLB_VS_TCHE_l","MLB_VS_TCHE;M_{#mub} (GeV);bDisc",75,0,500,25,-10,30);
+        TH2D* MLB_VS_TCHE_b = new TH2D("MLB_VS_TCHE_b","MLB_VS_TCHE;M_{#mub} (GeV);bDisc",75,0,500,25,-10,30);
+        TH2D* MLB_VS_JP = new TH2D("MLB_VS_JP","MLB_VS_CSV;M_{#mub} (GeV);bDisc",75,0,500,25,0,3);
+        TH2D* MLB_VS_JP_l = new TH2D("MLB_VS_JP_l","MLB_VS_CSV;M_{#mub} (GeV);bDisc",75,0,500,25,0,3);
+        TH2D* MLB_VS_JP_b = new TH2D("MLB_VS_JP_b","MLB_VS_CSV;M_{#mub} (GeV);bDisc",75,0,500,25,0,3);
+        TH2D* MLB_VS_CSV = new TH2D("MLB_VS_CSV","MLB_VS_CSV;M_{#mub} (GeV);bDisc",75,0,500,25,-1,1);
+        TH2D* MLB_VS_CSV_l = new TH2D("MLB_VS_CSV_l","MLB_VS_CSV;M_{#mub} (GeV);bDisc",75,0,500,25,-1,1);
+        TH2D* MLB_VS_CSV_b = new TH2D("MLB_VS_CSV_b","MLB_VS_CSV;M_{#mub} (GeV);bDisc",75,0,500,25,-1,1);
+
+
+        TH1D* MET_right_bCand = new TH1D("MET_right_bCand","MET_right_bCand;MET;#events",80,0,800);
+        TH1D* MET_right_lCand = new TH1D("MET_right_lCand","MET_right_lCand;MET;#events",80,0,800);
+        
         int nBinsPT=50;
         double firstPT=0;
         double lastPT=500;
         
         TH1D* pT_MC = new TH1D("pT_MC","pT_MC;p_{T} (GeV/c)",nBinsPT,firstPT,lastPT);
+        TH1D* pT_MC_Rew = new TH1D("pT_MC_Rew","pT_MC_Rew;p_{T} (GeV/c)",nBinsPT,firstPT,lastPT);
         TH1D* pT_DATA = new TH1D("pT_DATA","pT_DATA;p_{T} (GeV/c)",nBinsPT,firstPT,lastPT);
         TH1D* pT_MC_CS = new TH1D("pT_MC_CS","pT_MC;p_{T} (GeV/c)",nBinsPT,firstPT,lastPT);
         TH1D* pT_DATA_CS = new TH1D("pT_DATA_CS","pT_DATA;p_{T} (GeV/c)",nBinsPT,firstPT,lastPT);
@@ -2208,6 +2452,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         TH1D* pTDepl_DATARew_CS = new TH1D("pTDepl_DATARew_CS","pT_DATA;p_{T} (GeV/c)",nBinsPT,firstPT,lastPT);
         
         pT_MC->Sumw2();
+        pT_MC_Rew->Sumw2();
         pTEnr_MC->Sumw2();
         pTEnr_MCRew->Sumw2();
         pTEnr_MCRew_enrdata->Sumw2();
@@ -2241,7 +2486,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         double scaleFactor_btag=0;
 		for (unsigned int n=0;n<v_weight.size();n++) {
             
-            if (decay==0) {
+            // REENABLE IF UPDATED SF's are available
+            
+            /*if (decay==0) {
                 v_scaleFactor[n]=v_scaleFactor[n]*getIsoMu20Weight(v_ptMuon[n],v_npv[n])*1.00*0.999; // Muon trig leg , jet leg, muon ID
                 //weight_nonrew=weight_nonrew*getIsoMu20Weight(NTuple->ptMuon(),NTuple->nPV())*1.00*0.999; // Muon trig leg , jet leg, muon ID
                 //weight=weight-0.032;
@@ -2250,7 +2497,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 v_scaleFactor[n]=v_scaleFactor[n]*0.988*1.000*1.005;
                 //weight_nonrew=weight_nonrew*0.987*1.000*0.998;
                 
-            }
+            }*/
 
             /*double sftt=1;
             double sfbkg=1;
@@ -2549,6 +2796,15 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 
                 MSPlot["nJets"]->Fill(v_njets[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
                 if (v_bTag[n][2] > 0.545) MSPlot["nJets_btag"]->Fill(v_njets[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                
+                MSPlot["MET"]->Fill(v_met[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
+                if (v_bTag[n][2] > 0.545) MSPlot["MET_btag"]->Fill(v_met[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
+                
+                //cout << v_met[n] << endl;
+                
+                MSPlot["MVATrigID"]->Fill(v_mvaTrigId[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
+
+
             }
             
             MSPlot["BestJetCombChi2"]->Fill(v_matchChiSquare[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
@@ -2561,7 +2817,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             MSPlot["bTagger_TCHE"]->Fill(v_bTag[n][0], datasets[d], true, dataLum_*v_scaleFactor[n]);   
 
             if (MSPlot.find("bTagger_CSV") == MSPlot.end())
-                MSPlot["bTagger_CSV"] = new MultiSamplePlot(datasets, "bTagger_CSV", 40, 0, 2, "CSV discriminant"); 
+                MSPlot["bTagger_CSV"] = new MultiSamplePlot(datasets, "bTagger_CSV", 40, -1.5, 2, "CSV discriminant"); 
             MSPlot["bTagger_CSV"]->Fill(v_bTag[n][6], datasets[d], true, dataLum_*v_scaleFactor[n]);   
             
 
@@ -2570,7 +2826,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 
 				if (v_bTagControl[n] < 3 && v_bTagControl2[n] < 3) {
 					MLBCS_MC->Fill(v_controlVar[n],v_weight[n]);					
-					MLBCS_MC->Fill(v_controlVar2[n],v_weight[n]);					
+					MLBCS_MC->Fill(v_controlVar2[n],v_weight[n]);
 				}
 
 			} else {
@@ -2588,6 +2844,10 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 MSPlot["MLB2"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
             MSPlot["MLB"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 			MSPlot["MLB_BTV"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
+                if (v_met[n]>40) {
+                    MSPlot["MLB_MET"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                }
+
             if (v_njets[n] == 4)
                 MSPlot["MLB_FourJets"]->Fill(v_var[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
 			MSPlot["M3_BTV"]->Fill(v_varb[n], datasets[d], true, dataLum_*v_scaleFactor[n]);
@@ -2611,20 +2871,57 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 
 			//if (v_bTag[n][0] > 3.3) { // TCHEM
             //if (v_bTag[n][6] > 0.679) { // CSVM
-            if (v_bTag[n][2] > 0.545) { // JPM
-				MSPlot["MLB_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
-				MSPlot["MLB_BTV_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
-                if (v_njets[n] == 4)
-                    MSPlot["MLB_FourJets_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
-				MSPlot["M3_BTV_btag"]->Fill(v_varb[n], datasets[d], true, dataLum_*scaleFactor_btag);
-            }
+                if (v_bTag[n][2] > 0.545) { // JPM
+                    MSPlot["MLB_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                    if (v_met[n]>40) {
+                        MSPlot["MLB_btag_MET"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                    }
+                    MSPlot["MLB_BTV_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                    if (v_njets[n] == 4)
+                        MSPlot["MLB_FourJets_btag"]->Fill(v_var[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                    MSPlot["M3_BTV_btag"]->Fill(v_varb[n], datasets[d], true, dataLum_*scaleFactor_btag);
+                }
             }
             
             if (v_dataSetName[n] != "data" && v_dataSetName[n] != "Data" && v_dataSetName[n] != "DATA") {
                 
                 MLB_VS_pT_MC->Fill(v_var[n],v_pt[n],MCWeight);
                 
+                if (v_matchChiSquare[n]<matchChiSquareCut_) {
+                    MLB_VS_TCHE->Fill(v_var[n],v_bTag[n][0],MCWeight);
+                    MLB_VS_CSV->Fill(v_var[n],v_bTag[n][7],MCWeight);
+                    MLB_VS_JP->Fill(v_var[n],v_bTag[n][2],MCWeight);
+                    
+                    if (fabs(v_partonFlavour[n]) == 5) {
+                        MLB_VS_pTbCand->Fill(v_var[n],v_pt[n],MCWeight);
+                        MLB_VS_ETAbCand->Fill(v_var[n],v_eta[n],MCWeight);
+                        MLB_VS_chi2bCand->Fill(v_var[n],v_matchChiSquare[n],MCWeight);
+                        MLB_VS_TCHE_b->Fill(v_var[n],v_bTag[n][0],MCWeight);
+                        MLB_VS_CSV_b->Fill(v_var[n],v_bTag[n][7],MCWeight);
+                        MLB_VS_JP_b->Fill(v_var[n],v_bTag[n][2],MCWeight);
+
+                    } else {
+                        MLB_VS_pTlCand->Fill(v_var[n],v_pt[n],MCWeight);
+                        MLB_VS_ETAlCand->Fill(v_var[n],v_eta[n],MCWeight);
+                        MLB_VS_chi2lCand->Fill(v_var[n],v_matchChiSquare[n],MCWeight);
+                        MLB_VS_TCHE_l->Fill(v_var[n],v_bTag[n][0],MCWeight);
+                        MLB_VS_CSV_l->Fill(v_var[n],v_bTag[n][7],MCWeight);
+                        MLB_VS_JP_l->Fill(v_var[n],v_bTag[n][2],MCWeight);
+
+                    }
+                    
+                    if (v_var[n] > centerrightlimit_ && v_var[n] < rightlimit_) {
+                        if (fabs(v_partonFlavour[n]) == 5) {
+                            MET_right_bCand->Fill(v_met[n],MCWeight);
+                        } else {
+                            MET_right_lCand->Fill(v_met[n],MCWeight);
+                        }
+                    }
+                }
+                
                 pT_MC->Fill(v_pt[n],MCWeight);
+                pT_MC_Rew->Fill(v_pt[n],MCWeight*getPtWeight(ptrewfile,"pT_weight_allmc_alldata",v_pt[n]));
+                
                 pV_MC->Fill(v_npv[n],MCWeight);
                 pV_MC_rew->Fill(v_npv[n],MCWeight*getPtWeight(ptrewfile,"pV_weight",v_npv[n]));
                 
@@ -2901,6 +3198,61 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         MLB_VS_pT_MC->Write();
         MLB_VS_pT_DATA->Write();
         
+        MLB_VS_pTbCand->Write();
+        MLB_VS_ETAbCand->Write();
+        MLB_VS_pTlCand->Write();
+        MLB_VS_ETAlCand->Write();
+        MLB_VS_chi2bCand->Write();
+        MLB_VS_chi2lCand->Write();
+        
+        MLB_VS_TCHE->Write();
+        MLB_VS_TCHE_l->Write();
+        MLB_VS_TCHE_b->Write();
+        MLB_VS_CSV->Write();
+        MLB_VS_CSV_l->Write();
+        MLB_VS_CSV_b->Write();
+        MLB_VS_JP->Write();
+        MLB_VS_JP_l->Write();
+        MLB_VS_JP_b->Write();
+        
+        TProfile* MLB_VS_TCHE_profile = (TProfile*) MLB_VS_TCHE->ProfileX("MLB_VS_TCHE_profile");
+        TProfile* MLB_VS_TCHE_l_profile = (TProfile*) MLB_VS_TCHE_l->ProfileX("MLB_VS_TCHE_l_profile");
+        TProfile* MLB_VS_TCHE_b_profile = (TProfile*) MLB_VS_TCHE_b->ProfileX("MLB_VS_TCHE_b_profile");
+        TProfile* MLB_VS_CSV_profile = (TProfile*) MLB_VS_CSV->ProfileX("MLB_VS_CSV_profile");
+        TProfile* MLB_VS_CSV_l_profile = (TProfile*) MLB_VS_CSV_l->ProfileX("MLB_VS_CSV_l_profile");
+        TProfile* MLB_VS_CSV_b_profile = (TProfile*) MLB_VS_CSV_b->ProfileX("MLB_VS_CSV_b_profile");
+        TProfile* MLB_VS_JP_profile = (TProfile*) MLB_VS_JP->ProfileX("MLB_VS_JP_profile");
+        TProfile* MLB_VS_JP_l_profile = (TProfile*) MLB_VS_JP_l->ProfileX("MLB_VS_JP_l_profile");
+        TProfile* MLB_VS_JP_b_profile = (TProfile*) MLB_VS_JP_b->ProfileX("MLB_VS_JP_b_profile");
+
+        MLB_VS_TCHE_profile->Write();
+        MLB_VS_TCHE_l_profile->Write();
+        MLB_VS_TCHE_b_profile->Write();
+        MLB_VS_CSV_profile->Write();
+        MLB_VS_CSV_l_profile->Write();
+        MLB_VS_CSV_b_profile->Write();
+        MLB_VS_JP_profile->Write();
+        MLB_VS_JP_l_profile->Write();
+        MLB_VS_JP_b_profile->Write();
+        
+        TProfile* profile_bcandpt = (TProfile*) MLB_VS_pTbCand->ProfileX("TPRofile_MLB_VS_pTbCand");
+        TProfile* profile_bcandeta = (TProfile*) MLB_VS_ETAbCand->ProfileX("TPRofile_MLB_VS_ETAbCand");
+        TProfile* profile_lcandpt = (TProfile*) MLB_VS_pTlCand->ProfileX("TPRofile_MLB_VS_pTlCand");
+        TProfile* profile_lcandeta = (TProfile*) MLB_VS_ETAlCand->ProfileX("TPRofile_MLB_VS_ETAlCand");
+
+        TProfile* profile_bcandchi2 = (TProfile*) MLB_VS_chi2bCand->ProfileX("TPRofile_MLB_VS_chi2bCand");
+        TProfile* profile_lcandchi2 = (TProfile*) MLB_VS_chi2lCand->ProfileX("TPRofile_MLB_VS_chi2lCand");
+
+        profile_bcandpt->Write();
+        profile_bcandeta->Write();
+        profile_lcandpt->Write();
+        profile_lcandeta->Write();
+        profile_bcandchi2->Write();
+        profile_lcandchi2->Write();
+        
+        MET_right_bCand->Write();
+        MET_right_lCand->Write();
+        
         TCHEtrueb_vs_PUWeight->Write();
         TCHEtrueb_vs_nPV->Write();
         TCHEtruenonb_vs_nPV->Write();
@@ -2947,6 +3299,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         pV_DATA->Write();
         
         pT_MC->Write();
+        pT_MC_Rew->Write();
         pT_DATA->Write();
         
         pT_MC_CS->Write();
@@ -3224,11 +3577,16 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				
 				rangesbTag[nt].clear();
 				
-				stringstream t; t << nt;
+				stringstream t; 
+                if (doPseudoExp_ && nBtag != -1)
+                    t << nBtag;
+                else
+                    t << nt;
+                
 				string filename = "binning/tagger_"+t.str()+"_channel"+data_postfix+".bins";
-				
+                
 				cout << "+--> Reading variable bins for tagger " << nt << " from " << filename << endl;
-				
+				//exit(1);
 				fstream bins(filename.c_str(), ios::in);
 				
 				while(!bins.eof()) {
@@ -3259,9 +3617,74 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 	}
     
     //exit(1);
-			
-	for(int iPE=0; iPE<nPseudoExp_; iPE++){  
-		
+        
+    vector<double> pexp_left;
+    vector<double> pexp_mid;
+    vector<double> pexp_right;
+    vector<double> pexp_f;
+    
+    if (doPseudoExp_ && doBiasStudy) {
+        
+        double step = bias_step;
+        
+        //step=10;
+        
+        for (double c=left_min; c<left_max; c+=step) {
+            for (double a=mid_min; a<mid_max; a+=step) {
+                for (double b=a+10; b<right_max; b+=step) {
+                    cout << c << " " << a << " " << b << endl;
+                    //for (int p=0; p<5;p++) {
+                    pexp_left.push_back(c);
+                    pexp_mid.push_back(a);
+                    pexp_right.push_back(b);
+                //}
+                }
+            }
+        }
+        
+        if (step == 5) {
+            
+            nBinsVar0=100;
+            lowRangeVar0=0;
+            upRangeVar0=500;
+            
+        }
+        
+        cout << endl << pexp_f.size() << " -- " << pexp_left.size() << " " << pexp_mid.size() << " " << pexp_right.size() << endl;
+        
+        nPseudoExp_ = pexp_mid.size();
+        
+        //nPseudoExp_ = 10;
+        
+    }
+    
+    if (doPseudoExp_ && doFBiasStudy) {
+        for (double a=F_min; a<F_max; a+=F_step) {
+            pexp_f.push_back(a);
+            cout << a << endl;
+        }
+        cout << endl << pexp_f.size() << " -- " << pexp_left.size() << " " << pexp_mid.size() << " " << pexp_right.size() << endl;
+        
+        nPseudoExp_ = pexp_f.size();
+
+    }
+    //exit(1);
+    
+	for(int iPE=0; iPE<nPseudoExp_; iPE++){
+        
+        //cout << "here" << endl;
+        
+        if (doPseudoExp_ && doBiasStudy) {
+            leftlimit_ = pexp_left[iPE];
+            centerleftlimit_ = pexp_mid[iPE];
+            centerrightlimit_ = pexp_mid[iPE];
+            rightlimit_ = pexp_right[iPE];
+		}
+        if (doPseudoExp_ && doFBiasStudy) {
+            matchChiSquareCut_=pexp_f[iPE];
+            //matchChiSquareCut_=100.0;
+        }
+        
 		std::map<int,vector<double> > FitForXSResults;
 		
 		//initialize the skipEvent array
@@ -3304,173 +3727,6 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		
 		for (int loop=-1; loop<2; loop++) {
 			
-			double lowShift=0.;
-			double upShift=8.;
-			double stepShift=0.5;
-						
-			if (loop == -3 && !doPseudoExp_ && sampleType.find("nominal") != string::npos) { // define the templates
-				
-				// let's fill our templates to test which shift needs to be applied to left right definition
-				
-				for (double shift=lowShift; shift <= upShift; shift+=stepShift) {
-					
-					stringstream s; s<<shift;
-					if (MLj_shift_templates.find(shift) == MLj_shift_templates.end())
-						MLj_shift_templates[shift] = new TH1D((s.str()).c_str(),((s.str())+"GeV/c2 shift").c_str(),nBinsVar0,lowRangeVar0,upRangeVar0);
-					
-					stringstream t; t<<-shift;
-					if (MLj_shift_templates.find(-shift) == MLj_shift_templates.end())
-						MLj_shift_templates[-shift] = new TH1D((t.str()).c_str(),((t.str())+"GeV/c2 shift").c_str(),nBinsVar0,lowRangeVar0,upRangeVar0);
-				
-				}
-				
-				
-				for (int n=0;n<v_var.size(); n++)
-				// fill templates to fit mlj window shift
-					if (nSystematic == 0)
-						for (std::map<double,TH1D*>::const_iterator it=MLj_shift_templates.begin(); it != MLj_shift_templates.end(); ++it) {
-							it->second->Fill(v_var[n]+it->first,v_weight[n]);
-						}
-					 
-				if(verbosity_>1) cout << "+--> Pseudo-Experiment " << iPE << " Defined and filled templates to fit mlb window shift" << endl;
-				
-				TFile* out = new TFile("MLB_Window_Templates.root","RECREATE");
-				
-				for (std::map<double,TH1D*>::const_iterator it=MLj_shift_templates.begin(); it != MLj_shift_templates.end(); ++it)
-					it->second->Write();
-				
-				out->Close();
-				
-				delete out;
-				
-				if(verbosity_>1) cout << "+--> Pseudo-Experiment " << iPE << " Writing templates to fit mlb window shift" << endl;
-				
-				
-			}
-			
-			if (loop == -3 && sampleType.find("nominal") == string::npos) {// load the templates
-				
-				TFile* in = new TFile("MLB_Window_Templates.root","READ");
-
-				for (double shift=lowShift; shift <= upShift; shift+=stepShift) {
-					
-					stringstream s; s<<shift;
-					MLj_shift_templates[shift] = (TH1D*) (in->Get((s.str()).c_str()))->Clone();
-					
-					if (!MLj_shift_templates[shift]) {	
-						cout << "ERROR: No template found for mlb shift " << shift << ", please rerun nominal sample" << endl;
-						exit(1);
-					}
-					
-					cout << "Shift " << shift << " " << MLj_shift_templates[shift]->Integral() << endl;
-					
-					if (shift == 0) continue;
-					
-					stringstream t; t<<-shift;
-					MLj_shift_templates[-shift] = (TH1D*) (in->Get((t.str()).c_str()))->Clone();
-					
-					if (!MLj_shift_templates[-shift]) {	
-						cout << "ERROR: No template found for mlb shift " << -shift << ", please rerun nominal sample" << endl;
-						exit(1);
-					}
-					
-					
-				}
-				
-				//in->Close();
-				//delete in;
-				
-				if(verbosity_>1) cout << "+--> Pseudo-Experiment " << iPE << " Finished loading nominal templates to fit mlb window shift" << endl;
-
-			}
-			
-			if (loop == -2) { // do the fits
-				
-				for (int n=0;n<v_var.size(); n++) { // Fill Data
-					template_fit_data->Fill(v_var[n],v_weight[n]);
-					if (v_ptControl[n] > 30)
-						template_fit_cs_data->Fill(v_controlVar[n],v_weight[n]);
-					if (v_ptControl2[n] > 30)
-						template_fit_cs_data->Fill(v_controlVar2[n],v_weight[n]);
-				}
-				cout << (int)((upShift*2)/stepShift) << endl;
-				
-				TH1D* chi2fits = new TH1D("chi2fits","chi2fits;Shift (GeV/c2);#Delta#chi^{2}",(int)(((upShift+(stepShift/2))-(-upShift-(stepShift/2)))/stepShift),-upShift-(stepShift/2),upShift+(stepShift/2));
-				
-				for (std::map<double,TH1D*>::const_iterator it=MLj_shift_templates.begin(); it != MLj_shift_templates.end(); ++it) {
-				
-					RooRealVar mlb("mlb","M_{#mub} (GeV)",500);
-					
-					cout << it->second->GetDimension() << endl;
-					
-					RooDataHist mlbHist("mlbHist","mlbHist",mlb,it->second);
-					RooHistPdf mlbPDF("ttPDF","ttPDF",mlb,mlbHist);
-					
-					RooRealVar N( "N", "N_{all}",1000,0,1000000);
-									
-					RooAddPdf model("model","model",RooArgList(mlbPDF),RooArgList(N));
-					
-					RooDataHist dataHist("dataHist","dataHist",mlb,template_fit_data);
-					
-					model.fitTo(dataHist,RooFit::SumW2Error(false), RooFit::PrintLevel(-3), RooFit::Verbose(false),RooFit::Extended(true));
-					
-					RooPlot* plot = mlb.frame();
-					dataHist.plotOn(plot);
-					model.plotOn(plot);					
-					
-					cout << "  ++>> Result for shift " << it->first << " -> N = " << N.getVal() << " Chi2 = " << plot->chiSquare(1) << endl;
-					
-					chi2fits->Fill(it->first,plot->chiSquare(1));
-					
-				}
-				
-				double min = chi2fits->GetBinContent(chi2fits->GetMinimumBin());
-				
-				for (unsigned int b=0; b<chi2fits->GetNbinsX(); b++)
-					chi2fits->SetBinContent(b,chi2fits->GetBinContent(b)-min);
-				
-				TF1* parabola = new TF1("parabola","pol3",chi2fits->GetBinCenter(chi2fits->GetMinimumBin()-5),chi2fits->GetBinCenter(chi2fits->GetMinimumBin()+5));
-				
-				chi2fits->Fit(parabola,"RQ");
-				
-				cout << parabola->GetMinimumX() << endl;
-				
-				/*if (nSystematic != 0) {
-					cout << "New left-right definitions using new fit method" << endl;
-					cout << "Left Limit: " << leftlimit_ << " -> " << round(1,leftlimit_+parabola->GetMinimumX()) << endl;
-					cout << "Center Limit: " << centerleftlimit_ << " -> " << round(1,centerleftlimit_+parabola->GetMinimumX()) << endl;
-					cout << "Right Limit: " << rightlimit_ << " -> " << round(1,rightlimit_+parabola->GetMinimumX()) << endl;
-				
-					leftlimit_ = round(1,leftlimit_+parabola->GetMinimumX());
-					centerleftlimit_ = round(1,centerleftlimit_+parabola->GetMinimumX());
-					rightlimit_ = round(1,rightlimit_+parabola->GetMinimumX());
-					
-				}*/
-				
-				//if (nSystematic) global_shift = parabola->GetMinimumX();
-
-				TFile* out = new TFile("test.root","RECREATE");
-				
-				out->cd();
-				
-				chi2fits->Write();
-				
-				parabola->Write();
-				
-				template_fit_data->Write();
-				template_fit_cs_data->Write();
-				
-				out->Close();
-				
-				delete out;
-				
-				delete chi2fits;
-				
-				if(verbosity_>1) cout << "+--> Pseudo-Experiment " << iPE << " Finished all template fits for mlb window shift" << endl;
-
-				
-			}
-					
 			if (loop == -1) {
 				
 				//exit(1);
@@ -3497,7 +3753,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						v_skipEvents.push_back(false);
 					}
 
-					if(doPseudoExp_){
+					//if(doPseudoExp_ && iPE == 0){ // FIXME REMOVE iPE == 0
+                    
+					if((doPseudoExp_ && !doBiasStudy && !doFBiasStudy) || (doPseudoExp_ && (doBiasStudy || doFBiasStudy) && iPE == 0)){ 
 						
 						random = rndm->Uniform(1); 
 						
@@ -3510,6 +3768,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						if(random>v_weight[n]) {
 							v_skipEvents[n]=true;
 						}
+                        
 					}
 					
 					/*random = rndm->Uniform(1);
@@ -3524,6 +3783,10 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 							v_skipEvents[a]=true;*/
 
 					if (v_skipEvents[n]) continue;
+                    
+                    string title = "PEXP_check_exp";
+                    
+                    if (doFBiasStudy && v_matchChiSquare[n] > matchChiSquareCut_) continue;
 				
 					//cout << "n: " << n << endl;
 					
@@ -3556,6 +3819,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         
                     }
 					// fill signal sample
+                    
 					aContainer->FillSignalSamplePlots(weight,weight_nonrew,v_partonFlavour[n],v_lepb_is[n][2],v_lepb_is[n][3],v_matchChiSquare[n],v_bTag[n],WPMap,v_pt[n],v_eta[n],v_var[n]+global_shift,v_varb[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_);
 					
 					// fill control sample
@@ -3736,6 +4000,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			chiSQCutEff = chiSQCutEff_nom; 
 			MLBCutEff = MLBCutEff_nom;
 			refSelEff = refSelEff_nom;
+            
+            //chiSQCutEff = chiSQCutEff_sample;
+			//MLBCutEff = MLBCutEff_sample;
+			//refSelEff = refSelEff_sample;
+
 			
 			//if (datasetName == "Data") // FIXME : get new value
                 //refSelEff=refSelEff*0.98544968;// lepton ID and muon eff SF
@@ -3815,50 +4084,50 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                 /*if (sampleType.find("Data") != string::npos) {
                 
-                    setNomVal(data_postfix,"DATA_eff_meas_fdata",iwp,results[8]);
-                    setNomVal(data_postfix,"DATA_ueff_meas_fdata",iwp,results[9]);
+                    setNomVal(data_postfix,fitMode,"DATA_eff_meas_fdata",iwp,results[8]);
+                    setNomVal(data_postfix,fitMode,"DATA_ueff_meas_fdata",iwp,results[9]);
                     
                     if (data_postfix=="_El") {
                         results[8] = getNomVal("_Mu","DATA_eff_meas_fdata",iwp);
                         results[9] = getNomVal("_Mu","DATA_ueff_meas_fdata",iwp);
                     }
                     
-                    //results[8] = getNomVal(data_postfix,"eff_true",iwp);
-                    //results[9] = getNomVal(data_postfix,"ueff_true",iwp);
+                    //results[8] = getNomVal(data_postfix,fitMode,"eff_true",iwp);
+                    //results[9] = getNomVal(data_postfix,fitMode,"ueff_true",iwp);
                 
                 }*/
                 
                 if (sampleType.find("nominal") != string::npos) {
                  
-                    setNomVal(data_postfix,"eff_true",iwp,results[0]);
-                    setNomVal(data_postfix,"ueff_true",iwp,results[1]);
+                    setNomVal(data_postfix,fitMode,"eff_true",iwp,results[0]);
+                    setNomVal(data_postfix,fitMode,"ueff_true",iwp,results[1]);
                     
-                    setNomVal(data_postfix,"eff_meas_fmc",iwp,results[6]);
-                    setNomVal(data_postfix,"ueff_meas_fmc",iwp,results[7]);
+                    setNomVal(data_postfix,fitMode,"eff_meas_fmc",iwp,results[6]);
+                    setNomVal(data_postfix,fitMode,"ueff_meas_fmc",iwp,results[7]);
                     
-                    setNomVal(data_postfix,"eff_meas_fdata",iwp,results[8]);
-                    setNomVal(data_postfix,"ueff_meas_fdata",iwp,results[9]);
+                    setNomVal(data_postfix,fitMode,"eff_meas_fdata",iwp,results[8]);
+                    setNomVal(data_postfix,fitMode,"ueff_meas_fdata",iwp,results[9]);
                     
-                //} else if (( nSystematic > 6 && nSystematic < 21 ) || nSystematic > 100) {
-                } else if (nSystematic > 0) {
+                } else if (( nSystematic > 6 && nSystematic < 21 ) || nSystematic > 100) {
+                //} else if (nSystematic > 0) {
                 
-                    results[0] = getNomVal(data_postfix,"eff_true",iwp);
-                    results[1] = getNomVal(data_postfix,"ueff_true",iwp);
+                    results[0] = getNomVal(data_postfix,fitMode,"eff_true",iwp);
+                    results[1] = getNomVal(data_postfix,fitMode,"ueff_true",iwp);
                     
-                    results[6] = getNomVal(data_postfix,"eff_meas_fmc",iwp);
-                    results[7] = getNomVal(data_postfix,"ueff_meas_fmc",iwp);
+                    results[6] = getNomVal(data_postfix,fitMode,"eff_meas_fmc",iwp);
+                    results[7] = getNomVal(data_postfix,fitMode,"ueff_meas_fmc",iwp);
                     
-                    results[8] = getNomVal(data_postfix,"eff_meas_fdata",iwp);
-                    results[9] = getNomVal(data_postfix,"ueff_meas_fdata",iwp);
+                    results[8] = getNomVal(data_postfix,fitMode,"eff_meas_fdata",iwp);
+                    results[9] = getNomVal(data_postfix,fitMode,"ueff_meas_fdata",iwp);
                     
                 
                 } else if (datasetName == "Data" && doBtagSFonData) {
                     
                     cout << "Never set doBtagSFonData to true" << endl;
                     exit(1);
-                    double sf = results[8]/getNomVal(data_postfix,"eff_meas_fdata",iwp);
+                    double sf = results[8]/getNomVal(data_postfix,fitMode,"eff_meas_fdata",iwp);
                     
-                    setNomVal(data_postfix,"sf_for_data",iwp,sf);
+                    setNomVal(data_postfix,fitMode,"sf_for_data",iwp,sf);
                     
                     cout << "Applying measured btag SF for data of " << sf << endl;
                     
@@ -3874,14 +4143,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                     if (verbosity_ > 0) cout << "Storing measured btag eff bias of " << round(100,biasforcorr.first*100) << "+-" << round(100,biasforcorr.second*100) << endl;
                     
-                    setNomVal(data_postfix,"biascorr",iwp,biasforcorr.first);
+                    setNomVal(data_postfix,fitMode,"biascorr",iwp,biasforcorr.first);
                     
                 }
                 
                 if (datasetName == "Data" && doCorrectForBias) {
                     
                     stringstream p; p<<iwp;
-                    double bias = getNomVal(data_postfix,"biascorr",p.str());
+                    double bias = getNomVal(data_postfix,fitMode,"biascorr",p.str());
                     cout << "Correcting data measured btag eff for known bias of " << bias << endl;
                     cout << "E_b = " << results[8] << endl;
                     if (bias > 0)
@@ -3935,7 +4204,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 
                 /*if (datasetName == "Data" && doBtagSFonData) {
                                         
-                    double sf = getNomVal(data_postfix,"sf_for_data",iwp);
+                    double sf = getNomVal(data_postfix,fitMode,"sf_for_data",iwp);
                     
                     cout << "Removing measured btag SF for data of " << sf << endl;
                     
@@ -4251,10 +4520,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						f2D->Close();
 						
 					}*/
-					
-					c1->SaveAs(("2DMeasurement/"+title+"_channel"+data_postfix+".png").c_str());
-					c1->SaveAs(("2DMeasurement/"+title+"_channel"+data_postfix+".pdf").c_str());
-					c1->SaveAs(("2DMeasurement/"+title+"_channel"+data_postfix+".root").c_str());
+					stringstream fitM; fitM<<fitMode;
+                    
+					c1->SaveAs(("2DMeasurement/"+title+"_channel"+data_postfix+"_fitMode"+fitM.str()+".png").c_str());
+					c1->SaveAs(("2DMeasurement/"+title+"_channel"+data_postfix+"_fitMode"+fitM.str()+".pdf").c_str());
+					c1->SaveAs(("2DMeasurement/"+title+"_channel"+data_postfix+"_fitMode"+fitM.str()+".root").c_str());
 					
 					//exit(1);
 					
@@ -4370,18 +4640,24 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			ofstream resultsFile;
 			ofstream btagANtableFile;
 			ofstream btagRESFile;
+			ofstream xsRESFile;
 			ofstream xsANtableFile;
 			
 			stringstream cut; cut << matchChiSquareCut_;
+			stringstream fitm; fitm << fitMode;
 			
-			string resultsFileName = "2DBtagEff_XS_analysisResults_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_channel"+data_postfix+".tex";
+			string resultsFileName = "2DBtagEff_XS_analysisResults_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_fitMode"+fitm.str()+"_channel"+data_postfix+".tex";
+			//string btagANtableFileName = "BTAG_ANTables_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_fitMode"+fitm.str()+"_channel"+data_postfix+".tex";
 			string btagANtableFileName = "BTAG_ANTables_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_channel"+data_postfix+".tex";
+			//string btagRESFileName = "BTAG_RESULTS_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_fitMode"+fitm.str()+"_channel"+data_postfix+".txt";
 			string btagRESFileName = "BTAG_RESULTS_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_channel"+data_postfix+".txt";
-			string xsANtableFileName = "XS_ANTables_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_channel"+data_postfix+".tex";
+			string xsRESFileName = "XS_RESULTS_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_fitMode"+fitm.str()+"_channel"+data_postfix+".txt";
+			string xsANtableFileName = "XS_ANTables_chisqCut"+cut.str()+"_sampleType_"+sampleType+"_fitMode"+fitm.str()+"_channel"+data_postfix+".tex";
 			
 			resultsFile.open (resultsFileName.c_str(), ios::out | ios::trunc );
 			btagANtableFile.open (btagANtableFileName.c_str(), ios::out | ios::trunc );
 			btagRESFile.open (btagRESFileName.c_str(), ios::out | ios::trunc );
+			xsRESFile.open (xsRESFileName.c_str(), ios::out | ios::trunc );
 			xsANtableFile.open (xsANtableFileName.c_str(), ios::out | ios::trunc );
 			
 			resultsFile << "\\documentclass[landscape,14pt]{article}\n";
@@ -4485,8 +4761,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     discName="Combined Secondary Vertex tagger";
                     sdiscName="CSV";
                 } else if (taggerArray[iwp] == 7) {
-                    discName="Combined Secondary Vertex MVA tagger";
-                    sdiscName="CSVMVA";
+                    discName="Combined Secondary Vertex tagger (Retrained)";
+                    sdiscName="CSVRetrained";
                 } else if (taggerArray[iwp] == 2) {
                     discName="Jet Probability tagger";
                     sdiscName="JP";
@@ -4501,7 +4777,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				if (datasetName == "Data")
 					discName += " (Results on Collision data) ";
                 
-                string chan="Unknownsh c";
+                string chan="Unknown";
                 
                 if (decay==0) chan="$\\mu$+jets";
                 else if (decay==1) chan="e+jets";
@@ -4614,7 +4890,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				// TABLE WITH XS MEASUREMENT INFORMATION 
 				
 				resultsFile << "\\subsection{Results on ($\\epsilon_{b},\\sigma_{t\\bar{t}}$)}\n";
-				
+                resultsFile << "\\vspace{-7mm}\n";
 				resultsFile << "\\begin{center}\n";
 				resultsFile << "\t$\\begin{array}{cc}\n";
 
@@ -4745,6 +5021,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						
 					}
                     
+                    xsRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][16] << " " << infoForPDF[niwp][17] << " " << infoForPDF[niwp][4] << " " << infoForPDF[niwp][5] << " " << infoForPDF[niwp][2] << " " << infoForPDF[niwp][3] << "\n"; //method
+					
+                    
                     stringstream countwp; countwp<<niwp;
                     TString effname="eff_WP_"+countwp.str();
                     TH1D* effHisto = new TH1D(effname,sampleType.c_str(),8,-0.5,7.5);
@@ -4804,9 +5083,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					if (discwp[2] == 0 && PlotFileNames[file].find("TCut") != -1) continue;
 					
 					if (file != PlotFileNames.size()-1)
-						resultsFile << "\\includegraphics[width=0.19\\textwidth]{"<<PlotFileNames[file]<<"} &\n";
+						resultsFile << "\\includegraphics[width=0.18\\textwidth]{"<<PlotFileNames[file]<<"} &\n";
 					else 
-						resultsFile << "\\includegraphics[width=0.19\\textwidth]{"<<PlotFileNames[file]<<"} \\\\ \n";
+						resultsFile << "\\includegraphics[width=0.18\\textwidth]{"<<PlotFileNames[file]<<"} \\\\ \n";
 					
 				}
 				
@@ -4819,18 +5098,19 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					if (wpArray[niwp] == 0) continue;
 					
 					stringstream wp; wp << niwp;
-					
+                    stringstream fitm; fitm << fitMode;
+
 					//cout << PlotFileNames[file] << endl;"2DMeasurement/"+title+"_channel"+data_postfix+".png"
-					string filename = "2DMeasurement/2DMeasurement_FDATA_XS_btag_IWP_"+wp.str()+"_channel"+data_postfix+".png";
+					string filename = "2DMeasurement/2DMeasurement_FDATA_XS_btag_IWP_"+wp.str()+"_channel"+data_postfix+"_fitMode"+fitm.str()+".png";
 					
 					if (niwp != nWP-1) {
 						if (taggerArray[niwp+1] == lastTagger) {
-							resultsFile << "\\includegraphics[width=0.19\\textwidth]{"<<filename<<"} &\n";
+							resultsFile << "\\includegraphics[width=0.18\\textwidth]{"<<filename<<"} &\n";
 						} else {
-							resultsFile << "\\includegraphics[width=0.19\\textwidth]{"<<filename<<"} \\\\\n";
+							resultsFile << "\\includegraphics[width=0.18\\textwidth]{"<<filename<<"} \\\\\n";
 						}
 					} else {
-						resultsFile << "\\includegraphics[width=0.19\\textwidth]{"<<filename<<"} \\\\\n";
+						resultsFile << "\\includegraphics[width=0.18\\textwidth]{"<<filename<<"} \\\\\n";
 					}
 				}
 				
@@ -4866,6 +5146,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			btagANtableFile.close();
 			btagRESFile.close();
 
+			xsRESFile.close();
+
             /*if (sampleType.find("Data") != string::npos) {
 				ofstream Eb; Eb.open("Eb.data", ios::out );
 				Eb << infoForPDF[0][4];
@@ -4882,9 +5164,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     biasEpsF.first = round(100,biasEpsF.first*100);
                     biasEpsF.second = round(100,biasEpsF.second*100);
                     
-                    //float dataEb = getNomVal(data_postfix,"Eb.data");
+                    //float dataEb = getNomVal(data_postfix,fitMode,"Eb.data");
                     
-                    ofstream F; F.open(("systematics/F_WP"+p.str()+"_channel"+data_postfix+".nominal").c_str(), ios::out );
+                    /*ofstream F; F.open(("systematics/F_WP"+p.str()+"_channel"+data_postfix+".nominal").c_str(), ios::out );
                     ofstream Eb; Eb.open(("systematics/Eb_WP"+p.str()+"_channel"+data_postfix+".nominal").c_str(), ios::out );
                     ofstream XS; XS.open(("systematics/XS_WP"+p.str()+"_channel"+data_postfix+".nominal").c_str(), ios::out );
                     ofstream uF; uF.open(("systematics/uF_WP"+p.str()+"_channel"+data_postfix+".nominal").c_str(), ios::out );
@@ -4907,9 +5189,18 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     
                     F.close(); Eb.close(); XS.close();
                     uF.close(); uEb.close(); uXS.close();
-                    SF.close();
+                    SF.close();*/
                     
-                    ofstream csv; csv.open(("systematics/systematics_results_WP"+p.str()+"_channel"+data_postfix+".csv").c_str(), ios::out | ios::app );
+                    setNomVal(data_postfix,fitMode,"F",niwp,infoForPDF[niwp][6]);
+                    setNomVal(data_postfix,fitMode,"Eb",niwp,biasEpsF.first);
+                    setNomVal(data_postfix,fitMode,"XS",niwp,infoForPDF[niwp][2]);
+                    setNomVal(data_postfix,fitMode,"uF",niwp,infoForPDF[niwp][7]);
+                    setNomVal(data_postfix,fitMode,"uEb",niwp,biasEpsF.second);
+                    setNomVal(data_postfix,fitMode,"uXS",niwp,infoForPDF[niwp][3]);
+                    setNomVal(data_postfix,fitMode,"SF",niwp,infoForPDF[niwp][4]/infoForPDF[niwp][16]);
+
+                    stringstream fitm; fitm << fitMode;
+                    ofstream csv; csv.open(("systematics/systematics_results_WP"+p.str()+"_channel"+data_postfix+"_fitMode"+fitm.str()+".csv").c_str(), ios::out | ios::app );
                     
                     
                     if (nWP > 1) {
@@ -4931,11 +5222,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     biasEpsF.first = round(100,biasEpsF.first*100);
                     biasEpsF.second = round(100,biasEpsF.second*100);
                     
-                    float nomF = getNomVal(data_postfix,"F",p.str()); float nomEb = getNomVal(data_postfix,"Eb",p.str()); float nomXS = getNomVal(data_postfix,"XS",p.str()); 
-                    float nomuF = getNomVal(data_postfix,"uF",p.str()); float nomuEb = getNomVal(data_postfix,"uEb",p.str()); float nomuXS = getNomVal(data_postfix,"uXS",p.str()); 
+                    float nomF = getNomVal(data_postfix,fitMode,"F",p.str()); float nomEb = getNomVal(data_postfix,fitMode,"Eb",p.str()); float nomXS = getNomVal(data_postfix,fitMode,"XS",p.str()); 
+                    float nomuF = getNomVal(data_postfix,fitMode,"uF",p.str()); float nomuEb = getNomVal(data_postfix,fitMode,"uEb",p.str()); float nomuXS = getNomVal(data_postfix,fitMode,"uXS",p.str()); 
                     
-                    //float dataEb = getNomVal(data_postfix,"Eb.data");
-                    float nomSF = getNomVal(data_postfix,"SF",p.str());
+                    //float dataEb = getNomVal(data_postfix,fitMode,"Eb.data");
+                    float nomSF = getNomVal(data_postfix,fitMode,"SF",p.str());
                     
                     float diffF = infoForPDF[niwp][6]-nomF;
                     //float diffEb = infoForPDF[niwp][4]-nomEb;
@@ -4952,7 +5243,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     float diffEb = biasEpsF.first-nomEb;
                     float udiffEb = sqrt(pow(nomuEb,2)+pow(biasEpsF.second,2));
                     
-                    ofstream csv; csv.open(("systematics/systematics_results_WP"+p.str()+"_channel"+data_postfix+".csv").c_str(), ios::out | ios::app );
+                    stringstream fitm; fitm << fitMode;
+                    ofstream csv; csv.open(("systematics/systematics_results_WP"+p.str()+"_channel"+data_postfix+"_fitMode"+fitm.str()+".csv").c_str(), ios::out | ios::app );
                     
                     if (nWP > 1) {
                         csv << sampleType << " " << sampleSel << " " << infoForPDF[niwp][6] << " " << infoForPDF[niwp][7] << " " << diffF << " " << udiffF << " ";
@@ -5189,6 +5481,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					//if(verbosity_>1) cout << "DOING PSEUDOEXP!!!!!!!!!!!!!!!!!" << endl;
 					aContainer->GetWPEff(true,doSCreweigh,wpArray[iwp],taggerArray[iwp],wpEffArray,doPseudoExp_,true,0,0,false,runNb);
 					stringstream s; s << wpArray[iwp];
+                    
 					string title = "Efficiency_PseudoExps_WP_"+s.str();
 					
 					if (pullHistos.find(title) == pullHistos.end())
@@ -5206,8 +5499,79 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					if (pullHistos2D.find(title) == pullHistos2D.end())
 						pullHistos2D[title] = new TH2D(title.c_str(),(title+";#hat{#epsilon}_{b};#delta#hat{#epsilon}_{b}").c_str(),80,0,8,80,0,8);
 					pullHistos2D[title]->Fill(wpEffArray[8],wpEffArray[9]);
-					
-					
+                    
+                    // bias Eff(Fdata,ShapeData) vs Eff(Fmc,ShapeData)
+                    title = "EffBias_VS_centerLimit_rightlimit_WP_"+s.str();
+                    
+                    if (pullHistos2D.find(title) == pullHistos2D.end())
+						pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                    pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,(wpEffArray[8]-wpEffArray[6])/wpEffArray[6]);
+                    
+                    /*title = "3DEffBias_VS_centerLimit_rightlimit_WP_"+s.str();
+                    
+                    if (pullHistos3D.find(title) == pullHistos3D.end())
+						pullHistos3D[title] = new TH3D(title.c_str(),(title+";Left Limit;CenterLimit;Right Limit").c_str(),(left_max-left_min)/bias_step,left_min,left_max,(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                    pullHistos3D[title]->Fill(leftlimit_,centerleftlimit_,rightlimit_,(wpEffArray[8]-wpEffArray[6])/wpEffArray[6]);
+                    */
+                    
+                    // bias Eff(Fdata,ShapeData) vs Eff(True)
+                    if (doBiasStudy) {
+                        title = "EffBiasTrue_VS_centerLimit_rightlimit_WP_"+s.str();
+                        
+                        if (pullHistos2D.find(title) == pullHistos2D.end())
+                            pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                        pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,(wpEffArray[8]-wpEffArray[0])/wpEffArray[0]);
+                        
+                        // bias Eff(Fmc,ShapeData) vs Eff(True)
+                        title = "EffMCBiasTrue_VS_centerLimit_rightlimit_WP_"+s.str();
+                        
+                        if (pullHistos2D.find(title) == pullHistos2D.end())
+                            pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                        pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,(wpEffArray[6]-wpEffArray[0])/wpEffArray[0]);
+                        
+                        // bias Eff(Fmc,ShapeMC) vs Eff(True)
+                        title = "EffMC_ShapeMC_BiasTrue_VS_centerLimit_rightlimit_WP_"+s.str();
+                        
+                        if (pullHistos2D.find(title) == pullHistos2D.end())
+                            pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                        pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,(wpEffArray[18]-wpEffArray[0])/wpEffArray[0]);
+                        
+                        // bias Eff(Fdata,ShapeMC) vs Eff(True)
+                        title = "Eff_SchapeMC_BiasTrue_VS_centerLimit_rightlimit_WP_"+s.str();
+                        
+                        if (pullHistos2D.find(title) == pullHistos2D.end())
+                            pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                        pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,(wpEffArray[20]-wpEffArray[0])/wpEffArray[0]);
+                        
+                        title = "FBias_VS_centerLimit_rightlimit_WP_"+s.str();
+                        
+                        if (pullHistos2D.find(title) == pullHistos2D.end())
+                            pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                        pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,(wpEffArray[14]-wpEffArray[10])/wpEffArray[10]);
+                        
+                        title = "Binning_Xcheck_centerLimit_rightlimit_WP_"+s.str();
+                        
+                        if (pullHistos2D.find(title) == pullHistos2D.end())
+                            pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),(mid_max-mid_min)/bias_step,mid_min,mid_max,(right_max-mid_min-20)/bias_step,mid_min+20,right_max);
+                        pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_);
+                    }
+                    
+                    if (doFBiasStudy) {
+                        
+                        title = "FBias_VS_chi2cut_WP_"+s.str();
+                        
+                        if (pullHistos.find(title) == pullHistos.end())
+                            pullHistos[title] = new TH1D(title.c_str(),(title+";Chi2 cut;Bias F").c_str(),(F_max-F_min)/F_step,F_min,F_max);
+                        pullHistos[title]->Fill(matchChiSquareCut_,(wpEffArray[14]-wpEffArray[10])/wpEffArray[10]);
+                        
+
+                        
+                    }
+                         
+					                    
+                    //cout << centerleftlimit << " " << rightlimit << endl; exit(1);
+					//cout << (wpEffArray[8]-wpEffArray[6])/wpEffArray[6] << endl; exit(1);
+                    
 					bTagPseudoExpResults[wpArray[iwp]].push_back(std::pair<float,float>(wpEffArray[8],wpEffArray[9]));
 					
 					if(verbosity_>1) cout << "*********************" << wpEffArray[8] << " +- " << wpEffArray[9] << endl;
@@ -5518,6 +5882,18 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			cout << "+> Of the " << nTot << " experiments, " << nNeg << " gave a negative pull (" << (double)nNeg/(double)nTot << "%)" << endl;
 			
 			cout << endl;
+            
+            /*title = "EffBias_VS_centerLimit_rightlimit_WP_"+s.str();
+            
+            double avgEffBias=0;
+            for (int res=0;res<bTagEffBiasResults.size();res++)
+                avgEffBias+=bTagEffBiasResults[res];
+            avgEffBias=avgEffBias/bTagEffBiasResults.size();
+            
+            if (pullHistos2D.find(title) == pullHistos2D.end())
+                pullHistos2D[title] = new TH2D(title.c_str(),(title+";CenterLimit;Right Limit").c_str(),16,120,200,52,140,600);
+            pullHistos2D[title]->Fill(centerleftlimit_,rightlimit_,avgEffBias);*/
+
 			
 		}
 		
@@ -5649,6 +6025,15 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 	}
 	
 	for(std::map<std::string,TH2D*>::const_iterator it = pullHistos2D.begin(); it != pullHistos2D.end(); it++) {
+		
+		it->second->Write();
+		
+		//cout << "++> Writing " << it->first << endl;
+		
+		//delete pullHistos[it->first];
+	}
+    
+    for(std::map<std::string,TH3D*>::const_iterator it = pullHistos3D.begin(); it != pullHistos3D.end(); it++) {
 		
 		it->second->Write();
 		

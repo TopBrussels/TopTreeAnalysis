@@ -7,14 +7,14 @@
     string filetmp="";
     
     string toSave = "";
-        
-    double lumi_error = 0.045;
+    
+    double lumi_error = 0.044;
     double ttbar_error = 0.15;
     double other_error = 0.30;
     
     ttbar_error = 0;
     other_error = 0;    
-
+    
     double btagSF=1;
     double ubtagSF=1;
     
@@ -22,8 +22,8 @@
     
     while (!t.eof()) {
         
-// << t.readline() << endl;
-
+        // << t.readline() << endl;
+        
         t >> filetmp >> lumiPlot >> btagSF >> ubtagSF >> plotName >> toSave;
         
     }
@@ -31,8 +31,9 @@
     cout << filetmp << " " << lumiPlot << " " << btagSF << " " << ubtagSF << " " << plotName << endl;
     
     TString fileName = filetmp.c_str();
-
-    ttbar_error=sqrt((ttbar_error*ttbar_error)+(ubtagSF*ubtagSF));
+    
+    //ttbar_error=sqrt((ttbar_error*ttbar_error)+(ubtagSF*ubtagSF));
+    //other_error=ttbar_error;
     
     //plotName="nPV";
     //fileName = "BtaggingOutput.root";
@@ -43,7 +44,7 @@
     //plotName="bTagger_TCHE";
     
     //lumiPlot="2.14";
-
+    
     // RUN ME WITH OPTIONS -n and -l!!
     
     // SET THE TDRStyle
@@ -202,8 +203,26 @@
     TH1D* h4 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_t_tbar").c_str());   
     TH1D* h5 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_tW_t").c_str());
     TH1D* h6 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ST_tW_tbar").c_str());
-    TH1D* h7 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_WJets").c_str());
-    TH1D* h8 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ZJets").c_str());
+    //TH1D* h7 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_WJets").c_str());
+    TH1D* h7a = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_W_WJets_1jets").c_str());
+    TH1D* h7b = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_W_WJets_2jets").c_str());
+    TH1D* h7c = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_W_WJets_3jets").c_str());
+    TH1D* h7d = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_W_WJets_4jets").c_str()); 
+    TH1D* h7 = (TH1D*) h7a->Clone();
+    h7->Add(h7b);
+    h7->Add(h7c);
+    h7->Add(h7d);
+
+    //TH1D* h8 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_ZJets").c_str());
+    TH1D* h8a = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Z_ZJets_1jets").c_str());
+    TH1D* h8b = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Z_ZJets_2jets").c_str());
+    TH1D* h8c = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Z_ZJets_3jets").c_str());
+    TH1D* h8d = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Z_ZJets_4jets").c_str());
+    TH1D* h8 = (TH1D*) h8a->Clone();
+    h8->Add(h8b);
+    h8->Add(h8c);
+    h8->Add(h8d);
+
     TH1D* h9 = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_multijet").c_str());
     
     h1->SetBinContent(h1->GetNbinsX(),h1->GetBinContent(h1->GetNbinsX())+h1->GetBinContent(h1->GetNbinsX()+1));
@@ -215,48 +234,80 @@
     h7->SetBinContent(h1->GetNbinsX(),h7->GetBinContent(h1->GetNbinsX())+h7->GetBinContent(h7->GetNbinsX()+1));
     h8->SetBinContent(h1->GetNbinsX(),h8->GetBinContent(h1->GetNbinsX())+h8->GetBinContent(h8->GetNbinsX()+1));
     if (h9) h9->SetBinContent(h1->GetNbinsX(),h9->GetBinContent(h1->GetNbinsX())+h9->GetBinContent(h9->GetNbinsX()+1));
-
-    h1->SetBinContent(h1->GetNbinsX()+1,0);
-    h2->SetBinContent(h2->GetNbinsX()+1,0);
-    h3->SetBinContent(h3->GetNbinsX()+1,0);
-    h4->SetBinContent(h4->GetNbinsX()+1,0);
-    h5->SetBinContent(h5->GetNbinsX()+1,0);
-    h6->SetBinContent(h6->GetNbinsX()+1,0);
-    h7->SetBinContent(h7->GetNbinsX()+1,0);
-    h8->SetBinContent(h8->GetNbinsX()+1,0);
-    if (h9) h9->SetBinContent(h9->GetNbinsX()+1,0);
-
-    TH1D* added = (TH1D*) h1->Clone();
-    added->Sumw2();
-    added->Add(h2);
-    added->Add(h3);
-    added->Add(h4);
-    added->Add(h5);
-    added->Add(h6);
-    added->Add(h7);
-    added->Add(h8);
-    if (h9) added->Add(h9);
-    
-    TH1D* hmc = (TH1D*) h1->Clone();
-    hmc->Add(hmc,h2,1.,1.);
-    hmc->Add(hmc,h3,1.,1.);
-    hmc->Add(hmc,h4,1.,1.);
-    hmc->Add(hmc,h5,1.,1.);
-    hmc->Add(hmc,h6,1.,1.);
-    hmc->Add(hmc,h7,1.,1.);
-    hmc->Add(hmc,h8,1.,1.);
-    if (h9) hmc->Add(hmc,h9,1.,1.);
-    hmc->SetName("hmc");
-    
-    // GET THE DATA TH1
-    
-    TH1D* data = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Data").c_str());
         
-    data->Scale(data->Integral()/(data->Integral()*btagSF));
+        h1->SetBinContent(h1->GetNbinsX()+1,0);
+        h2->SetBinContent(h2->GetNbinsX()+1,0);
+        h3->SetBinContent(h3->GetNbinsX()+1,0);
+        h4->SetBinContent(h4->GetNbinsX()+1,0);
+        h5->SetBinContent(h5->GetNbinsX()+1,0);
+        h6->SetBinContent(h6->GetNbinsX()+1,0);
+        h7->SetBinContent(h7->GetNbinsX()+1,0);
+        h8->SetBinContent(h8->GetNbinsX()+1,0);
+        if (h9) h9->SetBinContent(h9->GetNbinsX()+1,0);
+            
+            TH1D* added = (TH1D*) h1->Clone();
+            added->Sumw2();
+            added->Add(h2);
+            added->Add(h3);
+            added->Add(h4);
+            added->Add(h5);
+            added->Add(h6);
+            added->Add(h7);
+            added->Add(h8);
+            if (h9) added->Add(h9);
+                
+                TH1D* hmc = (TH1D*) h1->Clone();
+                hmc->Add(hmc,h2,1.,1.);
+                hmc->Add(hmc,h3,1.,1.);
+                hmc->Add(hmc,h4,1.,1.);
+                hmc->Add(hmc,h5,1.,1.);
+                hmc->Add(hmc,h6,1.,1.);
+                hmc->Add(hmc,h7,1.,1.);
+                hmc->Add(hmc,h8,1.,1.);
+                if (h9) hmc->Add(hmc,h9,1.,1.);
+                    hmc->SetName("hmc");
+                    
+                    // GET THE DATA TH1
+                    
+                    TH1D* data = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Data").c_str());
+                    
+                    data->Scale(data->Integral()/(data->Integral()*btagSF));
+                    
+                    // GET THE LEGEND
+                    
+                    TLegend* legend;// = (TLegend*) f->Get(("MultiSamplePlot_"+plotName+"/leg").c_str());
     
-    // GET THE LEGEND
+    //tmp fix
     
-    TLegend* legend = (TLegend*) f->Get(("MultiSamplePlot_"+plotName+"/leg").c_str());
+    legend = new TLegend(0.7,0.58,0.94,0.89);
+ 
+    
+    legend->AddEntry(data,"Data","L E");
+    
+    h1->SetFillColor(kRed+1);   
+    h2->SetFillColor(kRed-7);   
+    h3->SetFillColor(kMagenta);   
+    h8->SetFillColor(kAzure-2);   
+    h7->SetFillColor(kGreen-3);   
+    
+    legend->AddEntry(h1,"t#bar{t} signal"," F");
+    legend->AddEntry(h2,"t#bar{t} other","F");
+    legend->AddEntry(h3,"Single-Top","F");
+
+    legend->AddEntry(h7,"W#rightarrowl#nu","F");
+    legend->AddEntry(h8,"Z/#gamma*#rightarrowl^{+}l^{-}","F");
+
+    /*datasets_title.push_back("Z/#gamma*#rightarrowl^{+}l^{-}");
+     datasets_title.push_back("W#rightarrowl#nu");
+     datasets_title.push_back("SingleTop t");
+     datasets_title.push_back("SingleTop t");
+     datasets_title.push_back("SingleTop tW");
+     datasets_title.push_back("SingleTop tW");
+     datasets_title.push_back("t#bar{t} other");
+     datasets_title.push_back("t#bar{t} signal");
+     datasets_title.push_back("Data");*/
+    
+    
     legend->SetShadowColor(0);
     legend->SetFillColor(0);
     legend->SetLineColor(0);
@@ -275,18 +326,18 @@
     pad->SetFillColor(0);
     pad->SetFillStyle(0);
     pad->SetGridy(1);
-
+    
     ratio->SetMarkerStyle(20);
     ratio->SetMaximum( 1.5 );
     ratio->SetMinimum(0.5);
     ratio->GetXaxis().SetLabelSize(0.04);
     ratio->GetYaxis().SetLabelSize(0.04);
     ratio->GetXaxis().SetTitle(stack->GetXaxis()->GetTitle());
-    ratio->GetYaxis().SetTitle("");
-    ratio->GetYaxis().SetTitleSize(0.03);
+    ratio->GetYaxis().SetTitle("Ratio");
+    //ratio->GetYaxis().SetTitleSize(0.03);
     ratio->SetMarkerSize(0.7);
     ratio->GetYaxis().SetNdivisions(5);
-
+    
     
     // BUILD THE LUMIERROR PLOT
     
@@ -301,18 +352,21 @@
         double st_t_tb_error = h4->GetBinContent(ilum+1)*other_error;
         double st_tW_t_error = h5->GetBinContent(ilum+1)*other_error;
         double st_tW_tb_error = h6->GetBinContent(ilum+1)*other_error;
-    
-       // cout << "nTTbar in bin " << ilum+1 << " " <<  << endl;
+        double btag_error = hmc->GetBinContent(ilum)*ubtagSF;
+        // cout << "nTTbar in bin " << ilum+1 << " " <<  << endl;
         
-        lumiband->SetBinError(ilum+1,sqrt(pow(l_error,2)+pow(tt_error,2)+pow(w_error,2)+pow(z_error,2)+pow(st_t_t_error,2)+pow(st_t_tb_error,2)+pow(st_tW_t_error,2)+pow(st_tW_tb_error,2)));
+        lumiband->SetBinError(ilum+1,sqrt(pow(l_error,2)+pow(tt_error,2)+pow(w_error,2)+pow(z_error,2)+pow(st_t_t_error,2)+pow(st_t_tb_error,2)+pow(st_tW_t_error,2)+pow(st_tW_tb_error,2)+pow(btag_error,2)));
         //lumiband.GetBinContent(ilum+1)*lumi_error;
     }
     lumiband->SetFillStyle(3004);
     lumiband->SetFillColor(1);
     lumiband->SetMarkerStyle(1);
     
-    legend->AddEntry( lumiband , "Uncertainty" , "f");
-    
+    if (ubtagSF > 0)
+        legend->AddEntry( lumiband , "Luminosity+b tagging" , "f");
+    else
+        legend->AddEntry( lumiband , "Luminosity" , "f");
+
     
     // DRAW THE PLOT
     
@@ -334,34 +388,34 @@
     legend->Draw();
     
     if (plotName.find("BestJetCombChi2") != string::npos) gPad->SetLogy();
-
-    pad->Draw();
-    pad->cd(0);
-    ratio->Draw("e");
-    
-    // Draw the CMS line
-    
-    TLatex* latex = new TLatex();
-    latex->SetNDC();
-    latex->SetTextSize(0.04);
-    latex->SetTextAlign(31); // align right
-    latex->DrawLatex(0.45, 0.95, "CMS Preliminary");
-    
-    TLatex* latex2 = new TLatex();
-    latex2->SetNDC();
-    latex2->SetTextSize(0.04);
-    latex2->SetTextAlign(31); // align right
-    latex2->DrawLatex(0.87, 0.95, (lumiPlot + " fb^{-1} at #sqrt{s} = 8 TeV").c_str());
-
-    
-    // SAVE PLOT
-    
-    c->Draw();
-    
-    if (toSave != "NONE") {
-        c->SaveAs(toSave.c_str());
-        gApplication->Terminate();
-    }
+        
+        pad->Draw();
+        pad->cd(0);
+        ratio->Draw("e");
+        
+        // Draw the CMS line
+        
+        TLatex* latex = new TLatex();
+        latex->SetNDC();
+        latex->SetTextSize(0.04);
+        latex->SetTextAlign(31); // align right
+        latex->DrawLatex(0.45, 0.95, "CMS Preliminary");
+        
+        TLatex* latex2 = new TLatex();
+        latex2->SetNDC();
+        latex2->SetTextSize(0.04);
+        latex2->SetTextAlign(31); // align right
+        latex2->DrawLatex(0.87, 0.95, (lumiPlot + " fb^{-1} at #sqrt{s} = 8 TeV").c_str());
+        
+        
+        // SAVE PLOT
+        
+        c->Draw();
+        
+        if (toSave != "NONE") {
+            c->SaveAs(toSave.c_str());
+            gApplication->Terminate();
+        }
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.png").c_str());
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.pdf").c_str());
     //c->SaveAs(("DATAMCPlot_MLB_BTVStyle.root").c_str());
@@ -369,15 +423,15 @@
     // SAVE RATIO
     
     /*TFile* ratiofile = new TFile("STACK_RATIO.root","RECREATE");
-    
-    ratiofile->cd();
-    
-    ratio->SetName("ratio");
-    
-    ratio->Write();
-    
-    ratiofile->Close();
-    
-    delete ratiofile;*/
+     
+     ratiofile->cd();
+     
+     ratio->SetName("ratio");
+     
+     ratio->Write();
+     
+     ratiofile->Close();
+     
+     delete ratiofile;*/
     
 }

@@ -1,13 +1,15 @@
 {
 
-  string lumi="2.7";
+  string lumi="11.9";
 
-  int nDisc=2;
+  int nDisc=7;
   //SETTINGS
 
   Float_t line_x1_L = 0.;
   Float_t line_x1_M = 0.;
   Float_t line_x1_T = 0.;
+    
+    Float_t syst=0.00;
 
   switch (nDisc) {
   
@@ -27,6 +29,7 @@
     line_x1_L = 0.275;
     line_x1_M = 0.545;
     line_x1_T = 0.790;
+    syst=0.02;
     break;
 
   case 3: // FOR JBP
@@ -39,6 +42,14 @@
     line_x1_L = 0.24;
     line_x1_M = 0.68;
     line_x1_T = 0.9;
+    syst=0.018;
+    break;
+
+  case 7: //for CSV        
+    line_x1_L = 0.24;
+    line_x1_M = 0.68;
+    line_x1_T = 0.9;
+    syst=0.018;
     break;
 
   default:
@@ -80,10 +91,13 @@
     
     double maxdown = 100;
     
+    if (nDisc ==2)
+        nBin=nBin-2;
+    
     for (unsigned int i=0; i<nBin; i++) {
         
       if (eff->GetBinCenter(i+1) > line_x1_T) {
-	nBin=i+1;
+	//nBin=i+1;
 	//continue;
       }
         
@@ -107,8 +121,8 @@
         float ub = effMC->GetBinError(i+1);
         
         float uSF = sqrt((pow(ua,2)/pow(b,2))+((pow(a,2)*pow(ub,2))/pow(b,4)));
-        gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(0.00,2)+pow(uSF,2));
-        gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(0.00,2)+pow(uSF,2));
+        gr_ratio_y_err_up[i] =  gr_ratio_y[i]+sqrt(pow(syst,2)+pow(uSF,2));
+        gr_ratio_y_err_down[i] =  gr_ratio_y[i]-sqrt(pow(syst,2)+pow(uSF,2));
 
 	/*if (gr_ratio_y_err_up[i] == gr_ratio_y[i] && i < 2) {
 
@@ -152,6 +166,9 @@
     multi_graph->SetMaximum(1.1);
     multi_graph.SetMinimum(0.05);
     
+    if (nDisc == 2 || nDisc == 3)
+        multi_graph.SetMinimum(-0.05);
+
     multi_graph->Draw("A");
     
     multi_graph->GetYaxis()->SetTitle("b-tag Efficiency");
@@ -163,8 +180,13 @@
     
     //multi_graph->GetXaxis()->SetLimits(eff->GetBinCenter(2) - diff , eff->GetBinCenter(eff->GetNbinsX()) + diff);
     
-    TLegend* leg= new TLegend(0.156878,0.389717,0.534672,0.578527);
-    
+        TLegend* leg;
+        
+    if (nDisc == 2 || nDisc == 3)
+        leg= new TLegend(1-0.156878,1-0.389717,1-0.534672,1-0.578527);
+    else
+        leg= new TLegend(0.156878,0.389717,0.534672,0.578527);
+
     leg->AddEntry(graph_MC,"Monte Carlo Truth","l");
     leg->AddEntry(graph_nom,"Measured Value","lp");
     
@@ -253,9 +275,15 @@
     line_L_2->Draw("SAME <|");
     line_L_3->Draw("SAME <|");
     
-    canvas->SaveAs("eff-data-mc-CSV.pdf");
-    canvas->SaveAs("eff-data-mc-CSV.C");
-    canvas->SaveAs("eff-data-mc-CSV.root");
+        if (nDisc == 6) {
+            canvas->SaveAs("eff-data-mc-CSV.pdf");
+            canvas->SaveAs("eff-data-mc-CSV.C");
+            canvas->SaveAs("eff-data-mc-CSV.root");
+        } else if (nDisc == 2) {
+            canvas->SaveAs("eff-data-mc-JP.pdf");
+            canvas->SaveAs("eff-data-mc-JP.C");
+            canvas->SaveAs("eff-data-mc-JP.root");
+        }
     // make a text file with the results for BTV
     
     ofstream nums("eff-data-mc-CSV.txt", ios::trunc);

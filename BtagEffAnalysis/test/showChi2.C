@@ -14,7 +14,7 @@
   colors[2] = 4;
   colors[3] = 5;
 
-  Double_t cut = -1;
+  Double_t cut = 90;
 
   cout << "Displaying cut value " << cut << endl;
 

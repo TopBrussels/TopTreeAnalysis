@@ -153,4 +153,6 @@ corr->SetTextColor(kRed);
   c2->Draw();
 
   c2->SaveAs("PEXP_2D.pdf");
+
+gApplication->Terminate();
 }

@@ -104,7 +104,8 @@ public:
 			 bool doFfromMC,
 			 int nSystematic,
 			 int decay,
-			 int fitMode);
+			 int fitMode,
+			 int nBtag_);
 	void getEff(double*);
 	void getEffVal(double*);
 	void getEffMCVal(double*);
@@ -245,6 +246,7 @@ private:
 	
 	std::map<string,TH1D*> pullHistos;
 	std::map<string,TH2D*> pullHistos2D;
+	std::map<string,TH3D*> pullHistos3D;
 	
 	std::map<string,TH2D*> XSHistos;
 	
@@ -252,6 +254,7 @@ private:
 	
 	std::map<string,vector<float> > bTagPseudoExpResultsForF;
 	std::map<string,vector<float> > bTagPseudoExpResultsForXS;
+	std::vector<float> bTagEffBiasResults;
 	
 	double nTTbarBeforeChiSq;
 	double nTTbarAfterChiSq;

@@ -210,12 +210,21 @@ PtEtaBin::PtEtaBin(int debug, int nVar1, int nVar0, int nBdisc, double ptbinlow,
   TH1Data_BtagEffMCMeasuredLR = NULL;
   TH1Data_BtagEffMeasuredLRDiff = NULL;
   TH1Data_BtagEffMCMeasuredLRDiff = NULL;
-  TH1Data_BtagMeasuredRR = NULL;
-  TH1Data_BtagMCMeasuredRR = NULL;
-  TH1Data_BtagEffMeasuredRR = NULL;
-  TH1Data_BtagEffMCMeasuredRR = NULL;
-  TH1Data_BtagEffMeasuredRRDiff = NULL;
-  TH1Data_BtagEffMCMeasuredRRDiff = NULL;
+ 
+    TH1Data_BtagMeasuredRR = NULL;
+    TH1Data_BtagMCMeasuredRR = NULL;
+    TH1Data_BtagShapeMC_MeasuredRR = NULL;
+    TH1Data_BtagMC_ShapeMC_MeasuredRR = NULL;
+    
+    TH1Data_BtagEffMeasuredRR = NULL;
+    TH1Data_BtagEffMCMeasuredRR = NULL;
+    TH1Data_BtagEffShapeMC_MeasuredRR = NULL;
+    TH1Data_BtagEffMC_ShapeMC_MeasuredRR = NULL;
+    
+    TH1Data_BtagEffMeasuredRRDiff = NULL;
+    TH1Data_BtagEffMCMeasuredRRDiff = NULL;
+    TH1Data_BtagEffShapeMC_MeasuredRRDiff = NULL;
+    TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff = NULL;
 
   //cout << "done constructot PtEtaBin"<< endl;
 }
@@ -364,10 +373,18 @@ PtEtaBin::~PtEtaBin(){
   delete TH1Data_BtagEffMCMeasuredRR;
   delete TH1Data_BtagEffMeasuredRRDiff;
   delete TH1Data_BtagEffMCMeasuredRRDiff;
-	
+    
+    delete TH1Data_BtagMC_ShapeMC_MeasuredRR;
+    delete TH1Data_BtagShapeMC_MeasuredRR;
+	delete TH1Data_BtagEffMC_ShapeMC_MeasuredRR;
+    delete TH1Data_BtagEffShapeMC_MeasuredRR;
+    delete TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff;
+    delete TH1Data_BtagEffShapeMC_MeasuredRRDiff;
+    
 	delete TH1Data_Pt_Left;
 	delete TH1Sng_Pt_Left;
 	delete TH1Data_Pt_Right;
+	delete TH1Data_Pt_RightReweigh;
 	delete TH1Data_Pt_Control;
 	
 	
@@ -646,6 +663,9 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
 	GiveName(&titleData_Pt_Right); titleData_Pt_Right+="TH1Data_Pt_Right"; 
 	TH1Data_Pt_Right = new TH1D(titleData_Pt_Right,titleData_Pt_Right,100,0,500);
 
+    GiveName(&titleData_Pt_RightReweigh); titleData_Pt_RightReweigh+="TH1Data_Pt_RightReweigh"; 
+	TH1Data_Pt_RightReweigh = new TH1D(titleData_Pt_RightReweigh,titleData_Pt_RightReweigh,100,0,500);
+
 	GiveName(&titleData_Pt_Control); titleData_Pt_Control+="TH1Data_Pt_Control"; 
 	TH1Data_Pt_Control = new TH1D(titleData_Pt_Control,titleData_Pt_Control,100,0,500);
 	
@@ -813,6 +833,16 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
 	histo1D["TH1Data_M3_WJets_bTagM"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
     name = ""; GiveName(&name); name+="TH1Data_M3_WJets_bTagT"; 
 	histo1D["TH1Data_M3_WJets_bTagT"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+    
+    /* QCD */
+    name = ""; GiveName(&name); name+="TH1Data_M3_multijet"; 
+	histo1D["TH1Data_M3_multijet"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+	name = ""; GiveName(&name); name+="TH1Data_M3_multijet_bTagL"; 
+	histo1D["TH1Data_M3_multijet_bTagL"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+	name = ""; GiveName(&name); name+="TH1Data_M3_multijet_bTagM"; 
+	histo1D["TH1Data_M3_multijet_bTagM"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
+    name = ""; GiveName(&name); name+="TH1Data_M3_multijet_bTagT"; 
+	histo1D["TH1Data_M3_multijet_bTagT"] = new TH1D(name,name,nBinsM3,minM3,maxM3);
 
     /* background */
     name = ""; GiveName(&name); name+="TH1Data_M3_VVMC"; 
@@ -857,8 +887,18 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
 	histo2D["TH2Data_MLB_M3_WJets_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagT"; 
 	histo2D["TH2Data_MLB_M3_WJets_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
-
     
+    // QCD
+    
+    name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet"; 
+	histo2D["TH2Data_MLB_M3_multijet"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+    name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagL"; 
+	histo2D["TH2Data_MLB_M3_multijet_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagM"; 
+	histo2D["TH2Data_MLB_M3_multijet_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagT"; 
+	histo2D["TH2Data_MLB_M3_multijet_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+
     // bkg
 	
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC"; 
@@ -1221,10 +1261,10 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 	
 	
 	
-	if(lowCutVar0!=TH1Data_Var0->GetXaxis()->GetBinLowEdge(lowerBin_)) cout << "a ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 does is not agree with binning " << lowCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinLowEdge(lowerBin_) <<  endl;
-	if(centralLowCutVar0!=TH1Data_Var0->GetXaxis()->GetBinUpEdge(centralLowBin_)) cout << "b ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 does is not agree with binning " << centralLowCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinLowEdge(centralLowBin_) << endl;
-	if(centralUpCutVar0!=TH1Data_Var0->GetXaxis()->GetBinUpEdge(centralUpBin_)) cout << "c ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 does is not agree with binning " << centralUpCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinLowEdge(centralUpBin_) << endl;
-	if(upCutVar0!=TH1Data_Var0->GetXaxis()->GetBinUpEdge(upperBin_)) cout << "d ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 does is not agree with binning " << upCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinUpEdge(upperBin_) << endl;
+	if(lowCutVar0!=TH1Data_Var0->GetXaxis()->GetBinLowEdge(lowerBin_)) cout << "a ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 " << lowCutVar0 << " does not agree with binning " << lowCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinLowEdge(lowerBin_) <<  endl;
+	if(centralLowCutVar0!=TH1Data_Var0->GetXaxis()->GetBinUpEdge(centralLowBin_)) cout << "b ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 " << lowCutVar0 << " does not agree with binning " << centralLowCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinLowEdge(centralLowBin_) << endl;
+	if(centralUpCutVar0!=TH1Data_Var0->GetXaxis()->GetBinUpEdge(centralUpBin_)) cout << "c ERROR PtEtaBin::FillSignalSamplePlots lowCutVar0 " << lowCutVar0 << " does not agree with binning " << centralUpCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinLowEdge(centralUpBin_) << endl;
+	if(upCutVar0!=TH1Data_Var0->GetXaxis()->GetBinUpEdge(upperBin_)) cout << "d ERROR PtEtaBin::FillSignalSamplePlots upCutVar0 " << upCutVar0 << " does not agree with binning " << upCutVar0 << " " << TH1Data_Var0->GetXaxis()->GetBinUpEdge(upperBin_) << endl;
 	
 	//   cout << "+----> Bin : " << lowerBin_ << " " << centralLowBin_ << " " << centralUpBin_ << " " << upperBin_ << " " << endl;
 	
@@ -1358,23 +1398,23 @@ void PtEtaBin::FillXStemplates(double weight, string dataSetName, int partonFlav
             
 			//cout << "pom " << controlVar0 << " " << weight << endl;
 			histo1D["TH1Data_Var0_multijet"]->Fill(controlVar0,weight);
-            histo2D["TH2Data_MLB_M3_VVMC"]->Fill(controlVar0,m3,weight);
-            histo1D["TH1Data_M3_VVMC"]->Fill(m3,weight);
+            histo2D["TH2Data_MLB_M3_multijet"]->Fill(controlVar0,m3,weight);
+            histo1D["TH1Data_M3_multijet"]->Fill(m3,weight);
             if (btag > btagCuts[0]) {
                 histo1D["TH1Data_Var0_multijet_bTagL"]->Fill(controlVar0,weight);
-                histo2D["TH2Data_MLB_M3_VVMC_bTagL"]->Fill(controlVar0,m3,weight);
-                histo1D["TH1Data_M3_VVMC_bTagL"]->Fill(m3,weight);
+                histo2D["TH2Data_MLB_M3_multijet_bTagL"]->Fill(controlVar0,m3,weight);
+                histo1D["TH1Data_M3_multijet_bTagL"]->Fill(m3,weight);
             }
             if (btag > btagCuts[1]) {
                 histo1D["TH1Data_Var0_multijet_bTagM"]->Fill(controlVar0,weight);
-                histo2D["TH2Data_MLB_M3_VVMC_bTagM"]->Fill(controlVar0,m3,weight);
-                histo1D["TH1Data_M3_VVMC_bTagM"]->Fill(m3,weight);
+                histo2D["TH2Data_MLB_M3_multijet_bTagM"]->Fill(controlVar0,m3,weight);
+                histo1D["TH1Data_M3_multijet_bTagM"]->Fill(m3,weight);
                 
             }
             if (btag > btagCuts[2]) {
                 histo1D["TH1Data_Var0_multijet_bTagT"]->Fill(controlVar0,weight);
-                histo2D["TH2Data_MLB_M3_VVMC_bTagT"]->Fill(controlVar0,m3,weight);
-                histo1D["TH1Data_M3_VVMC_bTagT"]->Fill(m3,weight);
+                histo2D["TH2Data_MLB_M3_multijet_bTagT"]->Fill(controlVar0,m3,weight);
+                histo1D["TH1Data_M3_multijet_bTagT"]->Fill(m3,weight);
             }
 		}
         
@@ -1999,7 +2039,8 @@ void PtEtaBin::MakeXRatioPlot(bool useFit){
     //    TFData_LeftRight1DXFit = new TF1(titleData_LeftRight1DXFit_,"expo",30,300);
     //TFData_LeftRight1DXFit = new TF1(titleData_LeftRight1DXFit_,"exp([0]+[1]*x)+[2]*x",30,300);
     
-	TFData_LeftRight1DXFit = new TF1(titleData_LeftRight1DXFit_,"exp([0]+[1]*x)+[2]",31,300);
+      //TFData_LeftRight1DXFit = new TF1(titleData_LeftRight1DXFit_,"exp([0]+[1]*x)+[2]",31,300);
+      TFData_LeftRight1DXFit = new TF1(titleData_LeftRight1DXFit_,"exp([0]+[1]*x)+[2]",41,300);
     TFData_LeftRight1DXFit->SetParameter(0,1.016);
     TFData_LeftRight1DXFit->SetParameter(1,-0.014);
     TFData_LeftRight1DXFit->SetParameter(2,0.25);
@@ -2564,6 +2605,8 @@ void PtEtaBin::FillReweighRight(bool do2D, bool useFit, double weight, int parto
 	  TH2Data_Right1DYReweigh->Fill(bTag,weight);
 	  if(fabs(partonFlavour)==5) TH2Sng_Right1DYReweigh->Fill(bTag,weight);
 	  if(fabs(partonFlavour)!=5) TH2Bkg_Right1DYReweigh->Fill(bTag,weight);
+        TH1Data_Pt_RightReweigh->Fill(var1,weight);
+
 	} else {
 	  cout << etabinlow_ << " " << etabinup_ << "  - " << var2 << endl;
 	}
@@ -2606,6 +2649,7 @@ void PtEtaBin::FillReweighRight(bool do2D, bool useFit, double weight, int parto
       TH2Data_Left1DYReweigh->Fill(bTag+shift,weight);
       if(fabs(partonFlavour)==5) TH2Sng_Left1DYReweigh->Fill(bTag+shift,weight);
       if(fabs(partonFlavour)!=5) TH2Bkg_Left1DYReweigh->Fill(bTag+shift,weight);
+        
       
     }
   }
@@ -2738,15 +2782,18 @@ void PtEtaBin::GetLRratio(bool dofitprint, bool doPrint, double FMCBias, bool do
   leftNonBReweighe_      = 0;
   rightNonBReweighe_     = 0;
 
-  leftNonB_      = TH1Data_ControlVar->Integral(lowerBin_,centralLowBin_);
-  rightNonB_     = TH1Data_ControlVar->Integral(centralUpBin_+1,upperBin_);
+    //leftNonB_      = TH1Data_ControlVar->Integral(lowerBin_,centralLowBin_);
+    //rightNonB_     = TH1Data_ControlVar->Integral(centralUpBin_+1,upperBin_);
+    leftNonB_      = TH1Bkg_Var0->Integral(lowerBin_,centralLowBin_);
+    rightNonB_     = TH1Bkg_Var0->Integral(centralUpBin_+1,upperBin_);
+    
   leftNonBMC_      = TH1Bkg_Var0->Integral(lowerBin_,centralLowBin_);
  
   //rightNonBMC_     = TH1Bkg_Var0->Integral(centralUpBin_+1,upperBin_);
 	rightNonBMC_     = TH2Bkg_Right1DYReweigh->Integral(0,TH2Bkg_Right1DYReweigh->GetNbinsX()+1);
 	//rightNonBMC_     = TH2Bkg_Right1DY->Integral(0,TH2Bkg_Right1DY->GetNbinsX()+1);
 	
-  leftNonBReweigh_      = TH1Data_ControlVarReweigh->Integral(lowerBin_,centralLowBin_);
+    leftNonBReweigh_      = TH1Data_ControlVarReweigh->Integral(lowerBin_,centralLowBin_);
   rightNonBReweigh_     = TH1Data_ControlVarReweigh->Integral(centralUpBin_+1,upperBin_);
 	
   //cout << "~~~~~~~~~~~~~~~~~~~~~~~ ControlVarReweigh BinContent " << TH1Data_ControlVarReweigh->GetBinContent(20) << "  -->Fix this difference!!" << endl;
@@ -2782,6 +2829,7 @@ void PtEtaBin::GetLRratio(bool dofitprint, bool doPrint, double FMCBias, bool do
   F_        = leftNonB_/rightNonB_;
   FMC_      = leftNonBMC_/rightNonBMC_;
   FReweigh_ = leftNonBReweigh_/rightNonBReweigh_;
+    
 	
 	//FReweigh_ = 1.08;
 
@@ -2807,6 +2855,11 @@ void PtEtaBin::GetLRratio(bool dofitprint, bool doPrint, double FMCBias, bool do
 
   }
 
+        //testje
+    /*FMC_ = FReweigh_;
+    FMCe_ = FReweighe_;
+    F_ = FReweigh_;
+    Fe_ = FReweighe_;*/
 
   if(debug_>1) cout << "+--> ====================================================================+ "<< endl;
   
@@ -2879,8 +2932,10 @@ bool PtEtaBin::findTemplates(string chi2cut,int mode, string data_postfix) {
 	GiveName(&filename); 
     TString filename2=""; 
 	GiveName(&filename2); 
-	
-	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".root";
+    
+    stringstream fitm; fitm << mode;
+
+	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+"_fitMode"+fitm.str()+".root";
 	
 	TFile* ftmp = new TFile(filename,"READ");
 	
@@ -2920,8 +2975,10 @@ void PtEtaBin::loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi
     TString filename2=""; 
 	GiveName(&filename2); 
 	
-	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".root";
-	filename2="FitTemplates/"+filename2+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".txt";
+    stringstream fitm; fitm << mode;
+
+	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+"_fitMode"+fitm.str()+".root";
+	filename2="FitTemplates/"+filename2+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+"_fitMode"+fitm.str()+".txt";
 	
     //filename="7TeV_FitTemplates/nDisc_6_ptbinlow_0_etabinlow_-9990__Chi2Cut_90_XSFitTemplates_channel_Mu.root";
 
@@ -2953,7 +3010,7 @@ void PtEtaBin::loadTemplates(std::map<string,TH1D*> &h, double &lumi, string chi
     
     lum.close();
     
-    bool load7TeV = true;
+    bool load7TeV = false;
     
     if (load7TeV) {
         ///////////////////////
@@ -3063,9 +3120,11 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
 	GiveName(&filename); 
     TString filename2=""; 
 	GiveName(&filename2); 
+    
+    stringstream fitm; fitm << mode;
 	
-	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".root";
-	filename2="FitTemplates/"+filename2+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+".txt";
+	filename="FitTemplates/"+filename+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+"_fitMode"+fitm.str()+".root";
+	filename2="FitTemplates/"+filename2+"_Chi2Cut_"+chi2cut+"_XSFitTemplates_channel"+data_postfix+"_fitMode"+fitm.str()+".txt";
 
     if (debug_ > 0) cout << "doMLJTemplateFit:: Writing Mlj templates to " << filename << endl;
     
@@ -3171,6 +3230,12 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
         a="TH1Data_WJets_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_WJets_bTagM"],a);        
         a="TH1Data_WJets_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_WJets_bTagT"],a);
         
+        // QCD
+        a="TH1Data_multijet"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_multijet"],a);
+        a="TH1Data_multijet_bTagL"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_multijet_bTagL"],a);
+        a="TH1Data_multijet_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_multijet_bTagM"],a);
+        a="TH1Data_multijet_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_multijet_bTagT"],a);
+        
         // bkg 
         
         a="TH1Data_VVMC"; histContainer[a]=copyTemplate(histo1D["TH1Data_M3_VVMC"],a);
@@ -3193,6 +3258,12 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
         a="TH1Data_WJets_bTagM"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_WJets_bTagM"],a);        
         a="TH1Data_WJets_bTagT"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_WJets_bTagT"],a);
         
+        // QCD
+        a="TH1Data_multijet"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_multijet"],a);
+        a="TH1Data_multijet_bTagL"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_multijet_bTagL"],a);
+        a="TH1Data_multijet_bTagM"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_multijet_bTagM"],a);
+        a="TH1Data_multijet_bTagT"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_multijet_bTagT"],a);
+
         // bkg 
         
         a="TH1Data_VVMC"; histContainer[a]=copyTemplate(histo2D["TH2Data_MLB_M3_VVMC"],a);
@@ -3463,33 +3534,60 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
 
   GiveName(&titleData_BtagEffMeasuredRR_); titleData_BtagEffMeasuredRR_+="TH1Data_BtagEffMeasuredRR";
   GiveName(&titleData_BtagMeasuredRR_); titleData_BtagMeasuredRR_+="TH1Data_BtagMeasuredRR";
-  GiveName(&titleData_BtagEffMCMeasuredRR_); titleData_BtagEffMCMeasuredRR_+="TH1Data_BtagEffMCMeasuredRR";
-  GiveName(&titleData_BtagMCMeasuredRR_); titleData_BtagMCMeasuredRR_+="TH1Data_BtagMCMeasuredRR";
-  
+    GiveName(&titleData_BtagEffMCMeasuredRR_); titleData_BtagEffMCMeasuredRR_+="TH1Data_BtagEffMCMeasuredRR";
+    GiveName(&titleData_BtagMCMeasuredRR_); titleData_BtagMCMeasuredRR_+="TH1Data_BtagMCMeasuredRR";  
+    
+    GiveName(&titleData_BtagEffMC_ShapeMC_MeasuredRR_); titleData_BtagEffMC_ShapeMC_MeasuredRR_+="TH1Data_BtagEffMC_ShapeMC_MeasuredRR";
+    GiveName(&titleData_BtagMC_ShapeMC_MeasuredRR_); titleData_BtagMC_ShapeMC_MeasuredRR_+="TH1Data_BtagMC_ShapeMC_MeasuredRR";
+    
+    GiveName(&titleData_BtagEffShapeMC_MeasuredRR_); titleData_BtagEffShapeMC_MeasuredRR_+="TH1Data_BtagEffShapeMC_MeasuredRR";
+    GiveName(&titleData_BtagShapeMC_MeasuredRR_); titleData_BtagShapeMC_MeasuredRR_+="TH1Data_BtagShapeMC_MeasuredRR";
+    
   if(!varBinSize_){
     TH1Data_BtagEffMeasuredRR = new TH1D(titleData_BtagEffMeasuredRR_,titleData_BtagEffMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
     TH1Data_BtagMeasuredRR = new TH1D(titleData_BtagMeasuredRR_,titleData_BtagMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
-    TH1Data_BtagEffMCMeasuredRR = new TH1D(titleData_BtagEffMCMeasuredRR_,titleData_BtagEffMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
-    TH1Data_BtagMCMeasuredRR = new TH1D(titleData_BtagMCMeasuredRR_,titleData_BtagMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      TH1Data_BtagEffMCMeasuredRR = new TH1D(titleData_BtagEffMCMeasuredRR_,titleData_BtagEffMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      TH1Data_BtagMCMeasuredRR = new TH1D(titleData_BtagMCMeasuredRR_,titleData_BtagMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      
+      TH1Data_BtagEffMC_ShapeMC_MeasuredRR = new TH1D(titleData_BtagEffMC_ShapeMC_MeasuredRR_,titleData_BtagEffMC_ShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      TH1Data_BtagMC_ShapeMC_MeasuredRR = new TH1D(titleData_BtagMC_ShapeMC_MeasuredRR_,titleData_BtagMC_ShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+
+  
+      TH1Data_BtagEffShapeMC_MeasuredRR = new TH1D(titleData_BtagEffShapeMC_MeasuredRR_,titleData_BtagEffShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      TH1Data_BtagShapeMC_MeasuredRR = new TH1D(titleData_BtagMC_ShapeMC_MeasuredRR_,titleData_BtagShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+
   }
   if(varBinSize_){
     TH1Data_BtagEffMeasuredRR = new TH1D(titleData_BtagEffMeasuredRR_,titleData_BtagEffMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
     TH1Data_BtagMeasuredRR = new TH1D(titleData_BtagMeasuredRR_,titleData_BtagMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
-    TH1Data_BtagEffMCMeasuredRR = new TH1D(titleData_BtagEffMCMeasuredRR_,titleData_BtagEffMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
-    TH1Data_BtagMCMeasuredRR = new TH1D(titleData_BtagMCMeasuredRR_,titleData_BtagMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
-  }
+      TH1Data_BtagEffMCMeasuredRR = new TH1D(titleData_BtagEffMCMeasuredRR_,titleData_BtagEffMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+      TH1Data_BtagMCMeasuredRR = new TH1D(titleData_BtagMCMeasuredRR_,titleData_BtagMCMeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+      
+      TH1Data_BtagEffMC_ShapeMC_MeasuredRR = new TH1D(titleData_BtagEffMC_ShapeMC_MeasuredRR_,titleData_BtagEffMC_ShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+      TH1Data_BtagMC_ShapeMC_MeasuredRR = new TH1D(titleData_BtagMC_ShapeMC_MeasuredRR_,titleData_BtagMC_ShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+
+      TH1Data_BtagEffShapeMC_MeasuredRR = new TH1D(titleData_BtagEffShapeMC_MeasuredRR_,titleData_BtagEffShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+      TH1Data_BtagShapeMC_MeasuredRR = new TH1D(titleData_BtagShapeMC_MeasuredRR_,titleData_BtagShapeMC_MeasuredRR_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+}
   
   //diff plots
   GiveName(&titleData_BtagEffMeasuredRRDiff_); titleData_BtagEffMeasuredRRDiff_+="TH1Data_BtagEffMeasuredRRDiff";
-  GiveName(&titleData_BtagEffMCMeasuredRRDiff_); titleData_BtagEffMCMeasuredRRDiff_+="TH1Data_BtagEffMCMeasuredRRDiff";
+    GiveName(&titleData_BtagEffMCMeasuredRRDiff_); titleData_BtagEffMCMeasuredRRDiff_+="TH1Data_BtagEffMCMeasuredRRDiff";
+    GiveName(&titleData_BtagEffShapeMC_MeasuredRRDiff_); titleData_BtagEffShapeMC_MeasuredRRDiff_+= "TH1Data_BtagEffShapeMC_MeasuredRRDiff";
+    GiveName(&titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_); titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_+= "TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff";
   
   if(!varBinSize_){
     TH1Data_BtagEffMeasuredRRDiff = new TH1D(titleData_BtagEffMeasuredRRDiff_,titleData_BtagEffMeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
     TH1Data_BtagEffMCMeasuredRRDiff = new TH1D(titleData_BtagEffMCMeasuredRRDiff_,titleData_BtagEffMCMeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff = new TH1D(titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_,titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+      TH1Data_BtagEffShapeMC_MeasuredRRDiff = new TH1D(titleData_BtagEffShapeMC_MeasuredRRDiff_,titleData_BtagEffShapeMC_MeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),TH1Data_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Data_BtagAll->GetXaxis()->GetBinUpEdge(TH1Data_BtagAll->GetXaxis()->GetNbins()));
+
   }
   if(varBinSize_){
     TH1Data_BtagEffMeasuredRRDiff = new TH1D(titleData_BtagEffMeasuredRRDiff_,titleData_BtagEffMeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
     TH1Data_BtagEffMCMeasuredRRDiff = new TH1D(titleData_BtagEffMCMeasuredRRDiff_,titleData_BtagEffMCMeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+      TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff = new TH1D(titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_,titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+      TH1Data_BtagEffShapeMC_MeasuredRRDiff = new TH1D(titleData_BtagEffShapeMC_MeasuredRRDiff_,titleData_BtagEffShapeMC_MeasuredRRDiff_,TH1Data_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
   }
 
   TH1Data_BtagEffMeasuredRR->Sumw2();
@@ -3498,9 +3596,112 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
   TH1Data_BtagMCMeasuredRR->Sumw2();
   TH1Data_BtagEffMeasuredRRDiff->Sumw2();
   TH1Data_BtagEffMCMeasuredRRDiff->Sumw2();
-  
+    
+    TH1Data_BtagShapeMC_MeasuredRR->Sumw2();
+    TH1Data_BtagEffShapeMC_MeasuredRR->Sumw2();
+    TH1Data_BtagMC_ShapeMC_MeasuredRR->Sumw2();
+    TH1Data_BtagEffMC_ShapeMC_MeasuredRR->Sumw2();
+    TH1Data_BtagEffShapeMC_MeasuredRRDiff->Sumw2();
+    TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff->Sumw2();
+    
+    if (((string)titleData_BtagEffMeasuredRRDiff_).find("nDisc_7") != string::npos) {
+        cout << titleData_BtagEffMeasuredRRDiff_ << endl;
+        
+        double w[100];
+        w[0]=0.792508;
+        w[1]=0.434324;
+        w[2]=1.17795;
+        w[3]=1.15057;
+        w[4]=1.02902;
+        w[5]=1.04176;
+        w[6]=1.03702;
+        w[7]=0.828485;
+        w[8]=0.750401;
+        w[9]=0.77243;
+        w[10]=0.826643;
+        w[11]=0.814294;
+        w[12]=0.922471;
+        w[13]=0.960505;
+        w[14]=0.864035;
+        w[15]=0.982579;
+        w[16]=0.922193;
+        w[17]=0.946188;
+        w[18]=0.933306;
+        w[19]=0.912001;
+        w[20]=1.04092;
+        w[21]=1.1877;
+        w[22]=1.11757;
+        w[23]=1.05655;
+        w[24]=1.1435;
+        
+        double w_ss[100];
+        w_ss[0]=0.861313;
+        w_ss[1]=0;
+        w_ss[2]=1.19854;
+        w_ss[3]=1.10203;
+        w_ss[4]=0.999377;
+        w_ss[5]=1.00652;
+        w_ss[6]=0.983845;
+        w_ss[7]=0.880869;
+        w_ss[8]=0.904883;
+        w_ss[9]=0.849013;
+        w_ss[10]=0.958258;
+        w_ss[11]=0.921886;
+        w_ss[12]=0.953792;
+        w_ss[13]=0.952152;
+        w_ss[14]=0.830546;
+        w_ss[15]=1.10515;
+        w_ss[16]=0.878504;
+        w_ss[17]=0.902129;
+        w_ss[18]=0.836276;
+        w_ss[19]=1.15925;
+        w_ss[20]=1.15903;
+        w_ss[21]=1.3983;
+        w_ss[22]=1.10204;
+        w_ss[23]=1.34781;
+        w_ss[24]=1.223;
+        
+        double w_cs[100];
+        w_cs[0]=1.13386;
+        w_cs[1]=0;
+        w_cs[2]=0.595414;
+        w_cs[3]=0.877307;
+        w_cs[4]=0.919263;
+        w_cs[5]=0.862696;
+        w_cs[6]=1.12907;
+        w_cs[7]=0.932574;
+        w_cs[8]=0.909232;
+        w_cs[9]=0.842244;
+        w_cs[10]=0.853889;
+        w_cs[11]=0.822262;
+        w_cs[12]=0.927505;
+        w_cs[13]=1.08009;
+        w_cs[14]=0.923439;
+        w_cs[15]=0.85881;
+        w_cs[16]=1.05027;
+        w_cs[17]=1.08009;
+        w_cs[18]=1.34814;
+        w_cs[19]=1.11323;
+        w_cs[20]=1.0473;
+        w_cs[21]=1.22355;
+        w_cs[22]=1.29081;
+        w_cs[23]=1.276;
+        w_cs[24]=1.44094;
+
+        for (int b=0; b<TH2Data_Right1DYReweigh->GetNbinsX(); b++) {
+            w[b]=w_cs[b];
+            
+            TH2Sng_Right1DYReweigh->SetBinContent(b,w[b]*TH2Sng_Right1DYReweigh->GetBinContent(b));
+            TH2Bkg_Right1DYReweigh->SetBinContent(b,w[b]*TH2Bkg_Right1DYReweigh->GetBinContent(b));
+            TH2Data_Right1DYReweigh->SetBinContent(b,w[b]*TH2Data_Right1DYReweigh->GetBinContent(b));
+        }
+
+    }
+    
   if(!doShift_){
-    EffCalculation(doSCreweigh, TH2Data_Left1DY,TH2Data_Right1DYReweigh,TH1Data_BtagMeasuredRR,TH1Data_BtagEffMeasuredRR,TH1Data_BtagMCMeasuredRR,TH1Data_BtagEffMCMeasuredRR);
+      EffCalculation(doSCreweigh, TH2Data_Left1DY,TH2Data_Right1DYReweigh,TH1Data_BtagMeasuredRR,TH1Data_BtagEffMeasuredRR,TH1Data_BtagMCMeasuredRR,TH1Data_BtagEffMCMeasuredRR);
+      
+      EffCalculation(doSCreweigh, TH2Data_Left1DY,TH2Bkg_Right1DYReweigh,TH1Data_BtagShapeMC_MeasuredRR,TH1Data_BtagEffShapeMC_MeasuredRR,TH1Data_BtagMC_ShapeMC_MeasuredRR,TH1Data_BtagEffMC_ShapeMC_MeasuredRR);
   }
 
   if(doShift_){
@@ -3516,7 +3717,10 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
 	exit(0);
 */
   DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMeasuredRR,TH1Data_BtagEffMeasuredRRDiff);
-  DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMCMeasuredRR,TH1Data_BtagEffMCMeasuredRRDiff);
+    DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMCMeasuredRR,TH1Data_BtagEffMCMeasuredRRDiff);
+
+    DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffShapeMC_MeasuredRR,TH1Data_BtagEffShapeMC_MeasuredRRDiff);
+    DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMC_ShapeMC_MeasuredRR,TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff);
 
 }
 
@@ -3531,18 +3735,31 @@ void PtEtaBin::CoutWPEff(bool RRincluded, bool doSCreweigh, double wp, double* W
     if(fabs(wp-TH1Data_BtagEffMeasuredRR->GetXaxis()->GetBinLowEdge(i))<0.0001){
       wpFound=true; 
 
-      double bused=TH1Data_BtagMeasured->Integral(0,TH1Data_BtagMeasured->GetNbinsX()+1);
+      //mtopdouble bused=TH1Data_BtagMeasured->Integral(0,TH1Data_BtagMeasured->GetNbinsX()+1);
+        
+        double bias_fmc = (TH1Data_BtagEffMCMeasured->GetBinContent(i)-TH1Sng_BtagEffMC->GetBinContent(i))/TH1Sng_BtagEffMC->GetBinContent(i);
+        double bias_fdata = (TH1Data_BtagEffMeasured->GetBinContent(i)-TH1Sng_BtagEffMC->GetBinContent(i))/TH1Sng_BtagEffMC->GetBinContent(i);
+        
+        double bias_rr_fmc = (TH1Data_BtagEffMCMeasuredRR->GetBinContent(i)-TH1Sng_BtagEffMC->GetBinContent(i))/TH1Sng_BtagEffMC->GetBinContent(i);
+        double bias_rr_fdata = (TH1Data_BtagEffMeasuredRR->GetBinContent(i)-TH1Sng_BtagEffMC->GetBinContent(i))/TH1Sng_BtagEffMC->GetBinContent(i);
+
+        double bias_rr_fmc_shapemc = (TH1Data_BtagEffMC_ShapeMC_MeasuredRR->GetBinContent(i)-TH1Sng_BtagEffMC->GetBinContent(i))/TH1Sng_BtagEffMC->GetBinContent(i);
+        double bias_rr_fdata_shapemc = (TH1Data_BtagEffShapeMC_MeasuredRR->GetBinContent(i)-TH1Sng_BtagEffMC->GetBinContent(i))/TH1Sng_BtagEffMC->GetBinContent(i);
 
       cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " FMC_ " << FMC_ << " \\pm " << FMCe_ << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " F_ " << F_ << " \\pm " << Fe_ << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " #b's used " << bused << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " FReweigh_ " << FReweigh_ << " \\pm " << FReweighe_ << endl;
+      //cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " F_ " << F_ << " \\pm " << Fe_ << endl;
+      //cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " #b's used " << bused << endl;
+      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " Fdata_ " << FReweigh_ << " \\pm " << FReweighe_ << endl;
       cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (All): " << TH1Sng_BtagEffAll->GetBinContent(i) << " \\pm " << TH1Sng_BtagEffAll->GetBinError(i) << endl;
       cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (MC): " << TH1Sng_BtagEffMC->GetBinContent(i) << " \\pm " << TH1Sng_BtagEffMC->GetBinError(i) << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (FMC) : " << TH1Data_BtagEffMCMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasured->GetBinError(i) << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (Fdata) : " << TH1Data_BtagEffMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMeasured->GetBinError(i) << endl;
-      if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+FMC) : " << TH1Data_BtagEffMCMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasuredRR->GetBinError(i) << endl;
-      if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+Fdata) : " << TH1Data_BtagEffMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMeasuredRR->GetBinError(i) << endl;
+      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (FMC) : " << TH1Data_BtagEffMCMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasured->GetBinError(i) << " (bias wrt truth : " << bias_fmc << ")" << endl;
+      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (Fdata) : " << TH1Data_BtagEffMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMeasured->GetBinError(i) << " (bias wrt truth : " << bias_fdata << ")" << endl;
+      if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+FMC+ShapeData) : " << TH1Data_BtagEffMCMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasuredRR->GetBinError(i) << " (bias wrt truth : " << bias_rr_fmc << ")" << endl;
+      if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+Fdata+ShapeData) : " << TH1Data_BtagEffMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMeasuredRR->GetBinError(i) << " (bias wrt truth : " << bias_rr_fdata << ")" << endl;
+        
+        if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+FMC+ShapeMC) : " << TH1Data_BtagEffMC_ShapeMC_MeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMC_ShapeMC_MeasuredRR->GetBinError(i) << " (bias wrt truth : " << bias_rr_fmc_shapemc << ")" << endl;
+        if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+Fdata+ShapeMC) : " << TH1Data_BtagEffShapeMC_MeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffShapeMC_MeasuredRR->GetBinError(i) << " (bias wrt truth : " << bias_rr_fdata_shapemc << ")" << endl;
+
    
     }
   }
@@ -3590,12 +3807,20 @@ void PtEtaBin::GetWPEff(bool RRincluded, bool doSCreweigh, double wp, double* WP
       WParray[13] = Fe_;
       WParray[14] = FReweigh_;
       WParray[15] = FReweighe_;
-      WParray[16] = 0;
+      /*WParray[16] = 0;
       WParray[17] = 0;
       WParray[18] = TFData_LeftRight1DXFit->GetParameter(0);
       WParray[19] = 0;
       WParray[20] = TFData_LeftRight1DXFit->GetParameter(1);
-      WParray[21] = 0;
+      WParray[21] = 0;*/
+        WParray[16] = TFData_LeftRight1DXFit->GetParameter(0);
+        WParray[17] = TFData_LeftRight1DXFit->GetParameter(1);
+
+        if(RRincluded) WParray[18] = TH1Data_BtagEffMC_ShapeMC_MeasuredRR->GetBinContent(i);
+        if(RRincluded) WParray[19] = TH1Data_BtagEffMC_ShapeMC_MeasuredRR->GetBinError(i);
+        if(RRincluded) WParray[20] = TH1Data_BtagEffShapeMC_MeasuredRR->GetBinContent(i);
+        if(RRincluded) WParray[21] = TH1Data_BtagEffShapeMC_MeasuredRR->GetBinError(i);
+        
       //extend with parameters of SCreweigh-fit (or do this unfitted)
 		
 		//cout << "-------------++++++++++++++++++ " << WParray[8] << endl;
@@ -4127,6 +4352,7 @@ void PtEtaBin::WriteSignalSamplePlots(){
 	TH1Data_Pt_Left->Write();
 	TH1Sng_Pt_Left->Write();
     TH1Data_Pt_Right->Write();
+    TH1Data_Pt_RightReweigh->Write();
 	TH1Data_Pt_Control->Write();
 }
 
@@ -4346,12 +4572,20 @@ void PtEtaBin::WriteEffPlotsRR(){
   TH2Sng_Left1DYReweighRatio->Write(); 
   TH2Bkg_Left1DYReweighRatio->Write(); 
 
-  TH1Data_BtagMeasuredRR->Write();
-  TH1Data_BtagMCMeasuredRR->Write();
-  TH1Data_BtagEffMeasuredRR->Write();
-  TH1Data_BtagEffMCMeasuredRR->Write();	
-  TH1Data_BtagEffMeasuredRRDiff->Write();
-  TH1Data_BtagEffMCMeasuredRRDiff->Write();
+    TH1Data_BtagMeasuredRR->Write();
+    TH1Data_BtagMCMeasuredRR->Write();
+    TH1Data_BtagShapeMC_MeasuredRR->Write();
+    TH1Data_BtagMC_ShapeMC_MeasuredRR->Write();
+    
+    TH1Data_BtagEffMeasuredRR->Write();
+    TH1Data_BtagEffMCMeasuredRR->Write();	
+    TH1Data_BtagEffShapeMC_MeasuredRR->Write();	
+    TH1Data_BtagEffMC_ShapeMC_MeasuredRR->Write();	
+  
+    TH1Data_BtagEffMeasuredRRDiff->Write();
+    TH1Data_BtagEffMCMeasuredRRDiff->Write();
+    TH1Data_BtagEffShapeMC_MeasuredRRDiff->Write();
+    TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff->Write();
 }
 
 void PtEtaBin::WriteHistosToRootFile(bool w1, bool w2, bool w3, bool w4, bool w5, bool w6, bool w7, bool w8, bool w9, bool w10, bool w11, bool dow5cout){
@@ -5552,6 +5786,8 @@ double PtEtaBin::getmlj_R_SigmaMCVal(){return TH1Bkg_R_Var0->GetRMS();}
 
 vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1D* data,TString PrefixPlot) {
     
+    bool fitQCD=false;
+    
     vector<float> results;
 
     /*results.push_back(5000);
@@ -5559,8 +5795,10 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     results.push_back(2500);
     results.push_back(1250);
     
-    return results;
-    *///ttbar->Rebin(2);
+    
+    return results;*/
+    
+    //ttbar->Rebin(2);
     //vvmc->Rebin(2);
     //data->Rebin(2);
     
@@ -5578,6 +5816,13 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
 
     }*/
     
+    /*results.push_back(5000);
+    results.push_back(1000);	
+    results.push_back(2500);
+    results.push_back(1250);
+    
+    return results;*/
+
     if (fitMode != 0 && ((string)PrefixPlot).find("NOCUT") != string::npos) {
         cout << "Skipping this for now " << PrefixPlot << endl;
         
@@ -5607,15 +5852,24 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     vvmc->Add(vvdata);
 */
-    TObjArray *mc = new TObjArray(2);        // MC histograms are put in this array
+    
+    //ttbar->Scale((ttbar->Integral()*1.05)/ttbar->Integral());
+    
+    TObjArray *mc;
+    
+    if (fitQCD)
+        mc = new TObjArray(3);        // MC histograms are put in this array
+    else
+        mc = new TObjArray(2);        // MC histograms are put in this array
+
     mc->Add(ttbar);
     mc->Add(vvmc);
-    mc->Add(vvdata); // QCD
+    if (fitQCD) mc->Add(vvdata); // QCD
     
     TFractionFitter* fit = new TFractionFitter(data, mc); // initialise
     fit->Constrain(0,0.0,2.0);               // constrain fraction 1 to be between 0 and 1
     fit->Constrain(1,0.0,2.0);               // constrain fraction 2 to be between 0 and 1
-    fit->Constrain(2,0.0,2.0);               // constrain fraction 2 to be between 0 and 1
+    if (fitQCD) fit->Constrain(2,0.0,2.0);               // constrain fraction 2 to be between 0 and 1
     //if (data->GetNbinsX() < 100) // temp fix to disable this limit for the unrolled case
     
     //if (fitMode == 0)  
@@ -5634,7 +5888,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         cout << "performing fit again "<< PrefixPlot << endl;
         fit->Constrain(0,0.0,1.0);               // constrain fraction 1 to be between 0 and 1
         fit->Constrain(1,0.0,1.0);               // constrain fraction 2 to be between 0 and 1
-        fit->Constrain(2,0.0,1.0);               // constrain fraction 2 to be between 0 and 1
+        if (fitQCD) fit->Constrain(2,0.0,1.0);               // constrain fraction 2 to be between 0 and 1
 
         status = fit->Fit();               // perform the fit
         //cout << "fit performed" << endl;  
@@ -5645,47 +5899,58 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     fit->GetResult(0,fttb,efttb);
     fit->GetResult(1,fbkg,efbkg);
-    fit->GetResult(2,fqcd,efqcd);
+    if (fitQCD) fit->GetResult(2,fqcd,efqcd);
    
     // cout << fttb << " " << efttb << endl;
     //efttb=efttb*0.7;
-    
-    double ep1=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(0,0));
-    double ep2=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(1,1));
-    double ep3=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(2,2));
-    
-    double cov=fit->GetFitter()->GetCovarianceMatrixElement(0,1);
-    double cov2=fit->GetFitter()->GetCovarianceMatrixElement(0,2);
-    double cov3=fit->GetFitter()->GetCovarianceMatrixElement(1,2);
-    
-    // 2 parameter fit
-    /*double d1=(1/(fttb+fbkg))-(fttb/pow(fttb+fbkg,2));
-     double d2=fttb/pow(fttb+fbkg,2);
-     
-     double t1 = pow(d1,2) * pow(ep1,2);
-     double t2 = pow(d2,2) * pow(ep2,2);
-     
-     double t3 = -2*cov*d1*d2;
-     
-     double efttb_fixed = sqrt(t1+t2+t3);
-    */
-    
-    // 3 parameter fit
-    double d1=(1/(fttb+fbkg+fqcd))-(fttb/pow(fttb+fbkg+fqcd,2));
-    double d2=fttb/pow(fttb+fbkg+fqcd,2);
-    double d3=fttb/pow(fttb+fbkg+fqcd,2);
-     
-    double t1 = pow(d1,2) * pow(ep1,2);
-    double t2 = pow(d2,2) * pow(ep2,2);
-    double t3 = pow(d3,2) * pow(ep3,2);
-     
-    double tcov1 = 2*cov*d1*(d2*d2);
-    double tcov2 = 2*cov2*d1*(d3*d3);
-    double tcov3 = 2*cov3*(d2*d2)*(d3*d3);
-     
-    double efttb_fixed = sqrt(t1+t2+t3+tcov1+tcov2+tcov3);
-    
-    efttb = efttb_fixed;
+
+    if (!fitQCD) {
+        
+        double ep1=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(0,0));
+        double ep2=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(1,1));
+        
+        double cov=fit->GetFitter()->GetCovarianceMatrixElement(0,1);
+        
+        // 2 parameter fit
+        double d1=(1/(fttb+fbkg))-(fttb/pow(fttb+fbkg,2));
+        double d2=fttb/pow(fttb+fbkg,2);
+        
+        double t1 = pow(d1,2) * pow(ep1,2);
+        double t2 = pow(d2,2) * pow(ep2,2);
+        
+        double t3 = -2*cov*d1*d2;
+        
+        double efttb_fixed = sqrt(t1+t2+t3);
+        
+        efttb = efttb_fixed;
+                
+    } else {
+        
+        double ep1=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(0,0));
+        double ep2=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(1,1));
+        double ep3=sqrt(fit->GetFitter()->GetCovarianceMatrixElement(2,2));
+        
+        double cov=fit->GetFitter()->GetCovarianceMatrixElement(0,1);
+        double cov2=fit->GetFitter()->GetCovarianceMatrixElement(0,2);
+        double cov3=fit->GetFitter()->GetCovarianceMatrixElement(1,2);
+        
+        // 3 parameter fit
+        double d1=(1/(fttb+fbkg+fqcd))-(fttb/pow(fttb+fbkg+fqcd,2));
+        double d2=fttb/pow(fttb+fbkg+fqcd,2);
+        double d3=fttb/pow(fttb+fbkg+fqcd,2);
+        
+        double t1 = pow(d1,2) * pow(ep1,2);
+        double t2 = pow(d2,2) * pow(ep2,2);
+        double t3 = pow(d3,2) * pow(ep3,2);
+        
+        double tcov1 = 2*cov*d1*(d2*d2);
+        double tcov2 = 2*cov2*d1*(d3*d3);
+        double tcov3 = 2*cov3*(d2*d2)*(d3*d3);
+        
+        double efttb_fixed = sqrt(t1+t2+t3+tcov1+tcov2+tcov3);
+        
+        efttb = efttb_fixed;
+    }
     
     // QCD stat unc 
     
@@ -5718,19 +5983,22 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     if (debug_>1) cout << "Doing template fit for L=" << lumi_ << ", the templates where created with L=" << templateLumi_ << " (ttbar: " << ttbar->Integral() << ", VV: " << vvmc->Integral() << ", QCD: " << vvdata->Integral() << ", Data: " << data->Integral() << ")" << endl;
     if (debug_>1) cout << "nTTbar fitted: " << fttb*data->Integral() << " +- " << efttb*data->Integral() << endl;
     if (debug_>1) cout << "nBKG fitted: " << fbkg*data->Integral() << " +- " << efbkg*data->Integral() << endl;
-    if (debug_>1) cout << "nQCD fitted: " << fqcd*data->Integral() << " +- " << efqcd*data->Integral() << endl;
+    if (debug_>1 && fitQCD) cout << "nQCD fitted: " << fqcd*data->Integral() << " +- " << efqcd*data->Integral() << endl;
 
     if (debug_>1) cout << "fTTbar fitted: " << fttb << " +- " << efttb << endl;
     if (debug_>1) cout << "fBKG fitted: " << fbkg << " +- " << efbkg << endl;
-    if (debug_>1) cout << "fQCD fitted: " << fqcd << " +- " << efqcd << endl;
+    if (debug_>1 && fitQCD) cout << "fQCD fitted: " << fqcd << " +- " << efqcd << endl;
     
     if (debug_>1) {
-    
+        //cout << "still here2" << endl;
+  
         cout << endl << "Covariance matrix: " << endl << endl;
     
-        for (int o=0;o<3;o++) {
+        int max=3;
+        if(!fitQCD) max=2;
+        for (int o=0;o<max;o++) {
             cout << "( ";
-            for (int p=0;p<3;p++) {
+            for (int p=0;p<max;p++) {
                 cout << fit->GetFitter()->GetCovarianceMatrixElement(o,p) << " ";
             }
             cout << ")" << endl;
@@ -5758,8 +6026,9 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         GiveName(&crosscheck);
         
         stringstream sys; sys << nSystematic_;
-        
-        crosscheck="FitOutput/nSystematic_"+sys.str()+"_"+crosscheck+"_actual_fithistos_channel"+data_postfix_+"_"+PrefixPlot+".root";
+        stringstream fitm; fitm << fitMode;
+                
+        crosscheck="FitOutput/nSystematic_"+sys.str()+"_"+crosscheck+"_actual_fithistos_channel"+data_postfix_+"_fitMode"+fitm.str()+"_"+PrefixPlot+".root";
         
         TFile* fcross = new TFile(crosscheck,"RECREATE");
         
@@ -5767,7 +6036,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         
         ttbar->Write();
         vvmc->Write();
-        vvdata->Write();
+        if (vvdata) vvdata->Write();
 		data->Write();
         
         fcross->Close();
@@ -5793,14 +6062,14 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
         cout << "SF(bkg) = " << vvmc->Integral()/bkgscale << endl;
 
-        vvdata->Scale((data->Integral()*fqcd)/vvdata->Integral());
+        if (fitQCD) vvdata->Scale((data->Integral()*fqcd)/vvdata->Integral());
         
         //ttbar->Scale(ttbar->Integral()-150/ttbar->Integral());
         //vvmc->Scale(150);
 
         TH1D* result = (TH1D*) ttbar->Clone();
         result->Add(vvmc,1);
-        result->Add(vvdata,1);
+        if (fitQCD) result->Add(vvdata,1);
         
         // SETUP THE SAME ROOT STYLE SETTINGS AS USED IN THE STACKPLOT
         // For the canvas:
@@ -6000,8 +6269,8 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         vvmc->Add(vvdata,1);
         vvmc->Draw("same hist");
         
-        vvdata->SetFillColor(kYellow);
-        vvdata->Draw("same hist");
+        if (fitQCD) vvdata->SetFillColor(kYellow);
+        if (fitQCD) vvdata->Draw("same hist");
         
         data->SetLineColor(kBlack);
         data->SetMarkerColor(kBlack);    
@@ -6031,7 +6300,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         leg1->AddEntry(vvdata,"Multijet ", "L"); */
         leg1->AddEntry(result,"t#bar{t}", "f"); 
         leg1->AddEntry(vvmc,"Background", "f"); 
-        //leg1->AddEntry(vvdata,"Multijet ", "f"); 
+        if (fitQCD) leg1->AddEntry(vvdata,"Multijet ", "f"); 
 
         stringstream f; f<<pround(100,fit->GetChisquare()/fit->GetNDF());
          string fitProb = "Fit #chi^{2}/ndf = "+f.str();
@@ -6102,10 +6371,10 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
             
         }
         
-        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".png").c_str());
-        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".pdf").c_str());
-        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+".root").c_str());
-        FitPlotPaths.push_back(savePath+MCPlot+"_channel"+data_postfix_+".png");
+        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+"_fitMode"+fitm.str()+".png").c_str());
+        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+"_fitMode"+fitm.str()+".pdf").c_str());
+        pom->SaveAs((savePath+MCPlot+"_channel"+data_postfix_+"_fitMode"+fitm.str()+".root").c_str());
+        FitPlotPaths.push_back(savePath+MCPlot+"_channel"+data_postfix_+"_fitMode"+fitm.str()+".png");
         
         delete dummy;
 

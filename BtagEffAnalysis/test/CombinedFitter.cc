@@ -171,7 +171,9 @@ std::pair<double,double> combinedFitter (int iWP, string nSystematic, bool silen
     double effbtag_el = (g_el*eb_el)+((1-g_el)*eq_el);
     double effsel_el = h_el["eff"]->GetBinContent(2)*h_el["eff"]->GetBinContent(3)*h_el["eff"]->GetBinContent(4);
     
-
+    cout << eq_mu << " " << eq_el << endl;
+    
+    //exit(1);
     // shift the W+jets shape to look like PDF rew one
     
     /*for (int b=0; b<h_mu["Background"]->GetNbinsX();b++) {
@@ -196,6 +198,7 @@ std::pair<double,double> combinedFitter (int iWP, string nSystematic, bool silen
         h_el["Background"]->SetBinContent(b,warr[b]*h_el["Background"]->GetBinContent(b));
         
     }*/
+       
     
     for (int i=1; i<h_tmpl["Data"]->GetNbinsX()+1; i++) {
     
@@ -207,25 +210,46 @@ std::pair<double,double> combinedFitter (int iWP, string nSystematic, bool silen
             //if (!silent) cout << "effsel = " << effsel << endl;
             
             double ttbarcont = h_mu["TTbar"]->GetBinContent(i);
-
-            h_tmpl["Data"]->SetBinContent(i,h_mu["Data"]->GetBinContent(i));
+            double wcont = h_mu["Background"]->GetBinContent(i);
+            double datacont = h_mu["Data"]->GetBinContent(i);
+            double qcdcont = h_mu["QCD"]->GetBinContent(i);
+            
+            h_tmpl["Data"]->SetBinContent(i,datacont);
             h_tmpl["TTbar"]->SetBinContent(i,ttbarcont);
-            h_tmpl["Background_mu"]->SetBinContent(i,h_mu["Background"]->GetBinContent(i));
-            h_tmpl["QCD_mu"]->SetBinContent(i,h_mu["QCD"]->GetBinContent(i));
+            h_tmpl["Background_mu"]->SetBinContent(i,wcont);
+            h_tmpl["QCD_mu"]->SetBinContent(i,qcdcont);
             
         } else {
-                        
+            
+            /*double attbarcont = h_mu["TTbar"]->GetBinContent(i-h_mu["Data"]->GetNbinsX());
+            
+            h_tmpl["Data"]->SetBinContent(i,h_mu["Data"]->GetBinContent(i-h_mu["Data"]->GetNbinsX()));
+            h_tmpl["TTbar"]->SetBinContent(i,attbarcont);
+            h_tmpl["Background_el"]->SetBinContent(i,h_mu["Background"]->GetBinContent(i-h_mu["Data"]->GetNbinsX()));
+            h_tmpl["QCD_el"]->SetBinContent(i,h_mu["QCD"]->GetBinContent(i-h_mu["Data"]->GetNbinsX()));
+            
+            continue;*/
+                                    
             //if (!silent) cout << "el " << i << endl;
             
-            double ttbarcont = h_el["TTbar"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
-            double wcont = h_el["Background"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
+            //double ttbarcont = h_el["TTbar"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
+            //double wcont = h_el["Background"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
+            //double datacont = h_el["Data"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
+            //double qcdcont = h_el["QCD"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
+            
+            double ttbarcont = h_el["TTbar"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el);
+            double wcont = h_el["Background"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el);
             double datacont = h_el["Data"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
             double qcdcont = h_el["QCD"]->GetBinContent(i-h_mu["Data"]->GetNbinsX())*(effsel_mu/effsel_el)*(effbtag_mu/effbtag_el)*(lum_mu/lum_el);
+            
 
             h_tmpl["Data"]->SetBinContent(i,datacont);
             h_tmpl["TTbar"]->SetBinContent(i,ttbarcont);
+            
             h_tmpl["Background_el"]->SetBinContent(i,wcont);
             h_tmpl["QCD_el"]->SetBinContent(i,qcdcont);
+            //h_tmpl["Background_mu"]->SetBinContent(i,wcont);
+            //h_tmpl["QCD_mu"]->SetBinContent(i,qcdcont);
             
             /*double ttbarcont = h_el["TTbar"]->GetBinContent(i-h_mu["Data"]->GetNbinsX());
             
@@ -236,6 +260,16 @@ std::pair<double,double> combinedFitter (int iWP, string nSystematic, bool silen
         }
     
     }
+        
+    TFile* fouta = new TFile("CombinedFitHistos_beforefit.root","RECREATE");
+    
+    fouta->cd();
+    if (!silent) {
+        for (std::map<string,TH1D*>::const_iterator it=h_tmpl.begin();it!=h_tmpl.end();++it)
+            it->second->Write();
+        
+    }
+    fouta->Close();
     
     // now do the Fit with TFractionFitter
     
@@ -249,12 +283,12 @@ std::pair<double,double> combinedFitter (int iWP, string nSystematic, bool silen
     
     // TFRACTIONFITTER
     
-    TObjArray *mc = new TObjArray(2);        // MC histograms are put in this array
+    TObjArray *mc = new TObjArray(5);        // MC histograms are put in this array
     mc->Add(h_tmpl["TTbar"]);
     mc->Add(h_tmpl["Background_mu"]);
     mc->Add(h_tmpl["Background_el"]);
-    mc->Add(h_tmpl["QCD_mu"]);
-    mc->Add(h_tmpl["QCD_el"]);
+    //mc->Add(h_tmpl["QCD_mu"]);
+    //mc->Add(h_tmpl["QCD_el"]);
     
     TFractionFitter* fit = new TFractionFitter(h_tmpl["Data"], mc); // initialise
     fit->Constrain(0,0.,1.0);               // constrain fraction 1 to be between 0 and 1
@@ -345,9 +379,13 @@ std::pair<double,double> combinedFitter (int iWP, string nSystematic, bool silen
     if (!silent) cout << "Fit Chi2/NDF = " << fit->GetChisquare()/fit->GetNDF() << endl;
     
     if (!silent) cout << endl << "****** XS calculation parameters ******"<<endl;
-    if (!silent) cout << "eff(b-tag cut) = " << effbtag_mu << endl;
-    if (!silent) cout << "eff(sel) = " << effsel_mu << endl;
-    
+    if (!silent) cout << "mu eff(b-tag cut) = " << effbtag_mu << endl;
+    if (!silent) cout << "mu eff(sel) = " << effsel_mu << endl;
+    if (!silent) cout << "mu lumi = " << lum_mu << endl;
+    if (!silent) cout << "el eff(b-tag cut) = " << effbtag_el << endl;
+    if (!silent) cout << "el eff(sel) = " << effsel_el << endl;
+    if (!silent) cout << "el lumi = " << lum_el << endl;
+
     if (!silent) cout << endl << "****** XS result ******"<<endl;
 
     vector<double> uncvals;

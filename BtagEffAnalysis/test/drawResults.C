@@ -50,9 +50,9 @@
 	plots[k][1]="0"; // canvas number
 	plots[k][2]="0"; // logy?
 	plots[k][3]="1"; // NORMALIZE TO 1?
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0"; // plot name
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0"; // plot name
 	plots[k][5]="b jets"; // plot title
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
 	plots[k][7]="Non-b jets";
 	k++;
 	
@@ -60,9 +60,9 @@
 	plots[k][1]="0";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagAll";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagAll";
 	plots[k][5]="b jets";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_BtagAll";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_BtagAll";
 	plots[k][7]="Non-b jets";
 	k++;
 	
@@ -70,7 +70,7 @@
 	plots[k][1]="0";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1SoverSB_Var0";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1SoverSB_Var0";
 	plots[k][5]="";
 	k++;
 	
@@ -78,7 +78,7 @@
 	plots[k][1]="0";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
 	plots[k][5]="";
 	k++;
 	
@@ -88,9 +88,9 @@
 	plots[k][1]="1";
 	plots[k][2]="1";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH2Data_Right1DY";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH2Data_Right1DY";
 	plots[k][5]="Right";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH2Data_Right1DYReweigh";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH2Data_Right1DYReweigh";
 	plots[k][7]="RightReweigh";
 	k++;
 	
@@ -98,11 +98,11 @@
 	plots[k][1]="1";
 	plots[k][2]="1";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagAll";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagAll";
 	plots[k][5]="All";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH2Data_Left1DY";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH2Data_Left1DY";
 	plots[k][7]="Left";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH2Data_Right1DY";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH2Data_Right1DY";
 	plots[k][9]="Right";
 	k++;
 	
@@ -110,7 +110,7 @@
 	plots[k][1]="1";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH2Data_LeftRight1DX";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH2Data_LeftRight1DX";
 	plots[k][5]="";
 	k++;
 	
@@ -118,7 +118,7 @@
 	plots[k][1]="1";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH2Data_SignalControlVar12_";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH2Data_SignalControlVar12_";
 	plots[k][5]="";
 	k++;
 	
@@ -126,9 +126,9 @@
 	plots[k][1]="1";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar";
 	plots[k][5]="Control sample all";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
 	plots[k][7]="Signal sample non-b";
 	k++;
 	
@@ -136,9 +136,9 @@
 	plots[k][1]="1";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh";
 	plots[k][5]="Reweighted Control sample all";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
 	plots[k][7]="Signal sample non-b";
 	k++;
 	
@@ -148,9 +148,9 @@
 	plots[k][1]="2";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasured";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasured";
 	plots[k][5]="Measured";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasured";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasured";
 	plots[k][7]="MC";
 	k++;
 	
@@ -158,11 +158,11 @@
 	plots[k][1]="2";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasured";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasured";
 	plots[k][7]="Method";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasured";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasured";
 	plots[k][9]="Method(F_{MC})";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
 	plots[k][5]="MC";
 	k++;
 	
@@ -170,7 +170,7 @@
 	plots[k][1]="2";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredDiff";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredDiff";
 	plots[k][5]="";
 	k++;
 	
@@ -178,7 +178,7 @@
 	plots[k][1]="2";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredDiff";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredDiff";
 	plots[k][5]="";
 	k++;
 	
@@ -188,9 +188,9 @@
 	plots[k][1]="3";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR";
 	plots[k][5]="Measured";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasuredRR";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasuredRR";
 	plots[k][7]="MC";
 	k++;
 	
@@ -198,11 +198,11 @@
 	plots[k][1]="3";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR";
 	plots[k][7]="Method";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredRR";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredRR";
 	plots[k][9]="Method(F_{MC})";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
 	plots[k][5]="MC";
 	k++;
 	
@@ -210,7 +210,7 @@
 	plots[k][1]="3";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRRDiff";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRRDiff";
 	plots[k][5]="";
 	k++;
 	
@@ -218,9 +218,9 @@
 	plots[k][1]="3";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredRRDiff";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredRRDiff";
 	plots[k][5]="MC";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRRDiff";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRRDiff";
 	plots[k][7]="Data";
 	k++;
 	
@@ -230,9 +230,9 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
 	plots[k][5]="VV MC Template";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	plots[k][7]="Control Sample";
 	k++;
 	
@@ -240,9 +240,9 @@
 	 plots[k][1]="4";
 	 plots[k][2]="0";
 	 plots[k][3]="1";
-	 plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVTTotherMC";
+	 plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVTTotherMC";
 	 plots[k][5]="VV+ttother MC Template";
-	 plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	 plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	 plots[k][7]="Control Sample";
 	 k++;
 	 
@@ -250,9 +250,9 @@
 	 plots[k][1]="4";
 	 plots[k][2]="0"; 
 	 plots[k][3]="1";
-	 plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	 plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	 plots[k][7]="Control Sample";
-	 plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbarOther";
+	 plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbarOther";
 	 plots[k][5]="t#bar{t} other MC Template";
 	 k++;
 	 
@@ -260,9 +260,9 @@
 	 plots[k][1]="4";
 	 plots[k][2]="0";
 	 plots[k][3]="1";
-	 plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
+	 plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
 	 plots[k][7]="VV MC Template";
-	 plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar";
+	 plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar";
 	 plots[k][5]="t#bar{t} MC Template";
 	 k++;*/
 	
@@ -270,11 +270,11 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
 	plots[k][5]="VV MC Template";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagL";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagL";
 	plots[k][7]="VV+btagL MC Template";
-	//plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	//plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	//plots[k][9]="Control Sample";
 	k++;
 	
@@ -282,9 +282,9 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagM";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagM";
 	plots[k][5]="VV+btagM MC Template";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	plots[k][7]="Control Sample";
 	k++;
 	
@@ -292,9 +292,9 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagT";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagT";
 	plots[k][5]="VV+btagT MC Template";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	plots[k][7]="Control Sample";
 	k++;
 	
@@ -302,11 +302,11 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar_bTagL";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar_bTagL";
 	plots[k][5]="t#bar{t}+bTagL MC Template";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar_bTagT";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar_bTagT";
 	plots[k][7]="t#bar{t}+bTagM MC Template";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar_bTagM";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar_bTagM";
 	plots[k][9]="t#bar{t}+bTagT MC Template";
 	k++;
 	
@@ -314,11 +314,11 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagL";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagL";
 	plots[k][5]="VV+btagL MC Template";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagT";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagT";
 	plots[k][7]="VV+btagM MC Template";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagM";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC_bTagM";
 	plots[k][9]="VV+btagT MC Template";
 	k++;
 	
@@ -326,11 +326,11 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagL";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagL";
 	plots[k][5]="Data + bTagL";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagT";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagT";
 	plots[k][7]="Data + bTagM";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagM";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagM";
 	plots[k][9]="Data + bTagT";
 	k++;
 	
@@ -338,11 +338,11 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVMC";
 	plots[k][7]="VV MC Template";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar";
 	plots[k][5]="t#bar{t} MC Template";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0";
 	plots[k][9]="Data";  
 	k++;
 	
@@ -350,11 +350,11 @@
 	plots[k][1]="4";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVData";
 	plots[k][7]="VV Data Template";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbar";
 	plots[k][5]="t#bar{t} MC Template";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0";
 	plots[k][9]="Data";  
 	k++;
 	
@@ -362,9 +362,9 @@
 	 plots[k][1]="4";
 	 plots[k][2]="0";
 	 plots[k][3]="1";
-	 plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVTTotherMC";
+	 plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_VVTTotherMC";
 	 plots[k][7]="VV+ttother MC Template";
-	 plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbarSemiMu";
+	 plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_TTbarSemiMu";
 	 plots[k][5]="t#bar{t}-semi#mu MC Template";
 	 k++;*/
 	
@@ -372,11 +372,11 @@
 	 plots[k][1]="5";
 	 plots[k][2]="0";
 	 plots[k][3]="1";
-	 plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar";
+	 plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar";
 	 plots[k][5]="Data";
-	 plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_ControlVar";
+	 plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_ControlVar";
 	 plots[k][7]="Signal";
-	 plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_ControlVar";
+	 plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_ControlVar";
 	 plots[k][9]="Background";
 	 k++;
 	 
@@ -384,7 +384,7 @@
 	 plots[k][1]="5";
 	 plots[k][2]="0";
 	 plots[k][3]="1";
-	 plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Pt_Control";
+	 plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Pt_Control";
 	 plots[k][5]="";
 	 k++;*/
 	
@@ -392,9 +392,9 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0";
 	plots[k][5]="Pure bjets SS";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0_bTagL";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0_bTagL";
 	plots[k][7]="pure bjets SS + btag";
 	k++;
 */
@@ -403,11 +403,11 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0_bTagL";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0_bTagL";
 	plots[k][5]="Sng";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0_bTagL";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0_bTagL";
 	plots[k][7]="Bkg";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagL";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0_bTagL";
 	plots[k][9]="Data";
 	k++;
 	
@@ -415,11 +415,11 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_Var0";
 	plots[k][5]="Sng";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
 	plots[k][7]="Bkg";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_Var0";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_Var0";
 	plots[k][9]="Data";
 	k++;
 */
@@ -428,9 +428,9 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar_TTBar";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar_TTBar";
 	plots[k][5]="t#bar{t} Control Sample";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar_VVMC";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar_VVMC";
 	plots[k][7]="non-t#bar{t} Control Sample";
 	k++;
 	
@@ -439,9 +439,9 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh_TTBar";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh_TTBar";
 	plots[k][5]="t#bar{t} Control Sample Reweighted";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh_VVMC";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh_VVMC";
 	plots[k][7]="non-t#bar{t} Control Sample Reweighted";
 	k++;*/
 	
@@ -449,11 +449,11 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagAll";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagAll";
 	plots[k][5]="MC Truth";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasuredRR";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasuredRR";
 	plots[k][7]="Method";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR";
 	plots[k][9]="Method (Fdata)";
 	k++;
 	
@@ -461,11 +461,11 @@
 	plots[k][1]="5";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagAll";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagAll";
 	plots[k][5]="MC Truth";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasuredRR";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMCMeasuredRR";
 	plots[k][7]="Method";
-	plots[k][8]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR";
+	plots[k][8]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR";
 	plots[k][9]="Method (Fdata)";
 	k++;
 	
@@ -546,9 +546,9 @@
 	plots[k][1]="6";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC";
 	plots[k][5]="True";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasured";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasured";
 	plots[k][7]="Measured";
 	
 	k++;
@@ -557,7 +557,7 @@
 	plots[k][1]="6";
 	plots[k][2]="0";
 	plots[k][3]="0";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredDiff";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredDiff";
 	plots[k][5]="Bias";
 	k++;
 
@@ -584,9 +584,9 @@
 	plots[k][1]="7";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffAll";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffAll";
 	plots[k][5]="MC Truth";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredRR ";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMCMeasuredRR ";
 	plots[k][7]="Method";
 	k++;
 	
@@ -594,9 +594,9 @@
 	plots[k][1]="7";
 	plots[k][2]="0";
 	plots[k][3]="1";
-	plots[k][6]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh";
+	plots[k][6]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVarReweigh";
 	plots[k][7]="Control sample";
-	plots[k][4]="Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
+	plots[k][4]="Variable_1_0/Discriminator_7/nDisc_7_ptbinlow_0_etabinlow_-9990_TH1Bkg_Var0";
 	plots[k][5]="Signal sample non-b";
 	k++;*/
 	

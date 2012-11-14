@@ -288,10 +288,12 @@ private:
 	TH1D * TH1Data_Pt_Left;
 	TH1D * TH1Sng_Pt_Left;
 	TH1D * TH1Data_Pt_Right;
+	TH1D * TH1Data_Pt_RightReweigh;
 	TH1D * TH1Data_Pt_Control;
 	TString titleData_Pt_Left;
 	TString titleSng_Pt_Left;
 	TString titleData_Pt_Right;
+	TString titleData_Pt_RightReweigh;
 	TString titleData_Pt_Control;
 
 
@@ -600,18 +602,33 @@ private:
 
   TH1D * TH1Data_BtagMeasuredRR;//RR aka Right region b-tag plot Reweighted
   TString titleData_BtagMeasuredRR_;
-  TH1D * TH1Data_BtagMCMeasuredRR;
-  TString titleData_BtagMCMeasuredRR_;
+    TH1D * TH1Data_BtagShapeMC_MeasuredRR;
+    TString titleData_BtagShapeMC_MeasuredRR_;
+    
+    TH1D * TH1Data_BtagMCMeasuredRR;
+    TString titleData_BtagMCMeasuredRR_;
+    TH1D * TH1Data_BtagMC_ShapeMC_MeasuredRR;
+    TString titleData_BtagMC_ShapeMC_MeasuredRR_;
   
   TH1D * TH1Data_BtagEffMeasuredRR;
   TString titleData_BtagEffMeasuredRR_;
-  TH1D * TH1Data_BtagEffMCMeasuredRR;
-  TString titleData_BtagEffMCMeasuredRR_;
+    TH1D * TH1Data_BtagEffShapeMC_MeasuredRR;
+    TString titleData_BtagEffShapeMC_MeasuredRR_;
+    
+    TH1D * TH1Data_BtagEffMCMeasuredRR;
+    TString titleData_BtagEffMCMeasuredRR_;
+    TH1D * TH1Data_BtagEffMC_ShapeMC_MeasuredRR;
+    TString titleData_BtagEffMC_ShapeMC_MeasuredRR_;
 
   TH1D * TH1Data_BtagEffMeasuredRRDiff;
   TString titleData_BtagEffMeasuredRRDiff_;
-  TH1D * TH1Data_BtagEffMCMeasuredRRDiff;
-  TString titleData_BtagEffMCMeasuredRRDiff_;
+    TH1D * TH1Data_BtagEffShapeMC_MeasuredRRDiff;
+    TString titleData_BtagEffShapeMC_MeasuredRRDiff_;
+    
+    TH1D * TH1Data_BtagEffMCMeasuredRRDiff;
+    TString titleData_BtagEffMCMeasuredRRDiff_;
+    TH1D * TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff;
+    TString titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_;
 	
 	std::map<std::string, float> EffCalcDetails_;
 	

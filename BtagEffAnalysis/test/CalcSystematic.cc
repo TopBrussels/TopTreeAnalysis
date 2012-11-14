@@ -107,7 +107,7 @@ void printAssymSystematics(std::string type, std::map<std::string, std::vector<d
     	
 	for (std::map<std::string, std::vector<double> >::iterator it = systematics.begin(); it != systematics.end(); ++it) {
 		
-        if (it->second[0] == 0 && it->second[1] == 0) continue;
+        //if (it->second[0] == 0 && it->second[1] == 0) continue;
         
 		if (it->second.size() > 2)
 			cout << "Error, " << it->first << " has more than two values. This is unexpected!" << endl;
@@ -276,7 +276,7 @@ int main (int argc, char* argv[]) {
         
         //if (sys.type.find("JES") == string::npos) continue;
         
-        string title = "Method bias";
+        /*string title = "Method bias";
         if (systematics_eb.find(title) == systematics_eb.end()) {
             if (sys.nomdiffeb >= sys.unomdiffeb) {
                 systematics_eb[title].push_back(sys.nomdiffeb);
@@ -287,7 +287,7 @@ int main (int argc, char* argv[]) {
                 systematics_SF[title].push_back(sys.unomdiffeb);                
             }
             //cout << "lol" << endl;
-        }
+        }*/
         
 		//pdfunc
 		if (sys.type.find("PDF-Uncert") != string::npos) {
@@ -652,10 +652,10 @@ int main (int argc, char* argv[]) {
     
     // use 2011 values!!!
     
-    if (chan == "Mu") {
-        /*systematics_xs["UE"].push_back(nomxs*(1.7/161.4));
-        systematics_xs_ass["UE"].push_back(nomxs*(1.7/161.4));
-        systematics_xs_ass["UE"].push_back(-nomxs*(1.7/161.4));*/
+    /*if (chan == "Mu") {
+        //systematics_xs["UE"].push_back(nomxs*(1.7/161.4));
+        //systematics_xs_ass["UE"].push_back(nomxs*(1.7/161.4));
+        //systematics_xs_ass["UE"].push_back(-nomxs*(1.7/161.4));
         
         systematics_xs_ass["PDF Uncertainties"].clear();
         systematics_xs_ass["PDF Uncertainties"].push_back(nomxs*(0.015));
@@ -692,7 +692,9 @@ int main (int argc, char* argv[]) {
         systematics_xs_ass["QCD Normalization"].push_back((1/225.2)*nomxs);
         systematics_xs_ass["QCD Normalization"].push_back((1/225.2)*nomxs);
         
-    } else if (chan == "El") {
+    } 
+    
+    else if (chan == "El") {
         
         systematics_xs_ass["btag"].push_back(nomxs*(0.075));
         systematics_xs_ass["btag"].push_back(nomxs*(0.075));
@@ -720,7 +722,8 @@ int main (int argc, char* argv[]) {
         systematics_xs_ass["QCD Normalization"].push_back((2/223.2)*nomxs);
 
         
-    } else if (chan == "Comb") {
+    } 
+    else if (chan == "Comb") {
         
         systematics_xs_ass["btag"].push_back(nomxs*(0.075));
         systematics_xs_ass["btag"].push_back(nomxs*(0.075));
@@ -748,7 +751,7 @@ int main (int argc, char* argv[]) {
         systematics_xs_ass["QCD Normalization"].push_back((2/223.2)*nomxs);
 
         
-    }
+    }*/
     //systematics_xs["Luminosity"].push_back(159.5*0.04);
     //systematics_xs_ass["Luminosity"].push_back(159.5*0.04);
     //systematics_xs_ass["Luminosity"].push_back(-159.5*0.04);
