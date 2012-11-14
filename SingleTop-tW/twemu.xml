@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <datasets>
 
-<d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR/*.root"/> 
+<!-- <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR/*.root"/> --->
+  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR_new/*.root"/> 
 
 </datasets>
 
