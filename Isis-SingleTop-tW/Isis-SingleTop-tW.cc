@@ -343,7 +343,8 @@ int main(int argc, char* argv[]) {
 
         // Define information output files 
 	//    ==> ofstream output(myTexFile)
-    	//        This writes the output file stream to myTexFile
+    	//        This writes the output file stream to myTexFile, these files are stored in the same directory as this code, so Isis-SingleTop-tW
+	//     WHAT IS WRITTEN IN THESE FILES
         char myTexFile[300];
         sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
         ofstream OutPut(myTexFile);
