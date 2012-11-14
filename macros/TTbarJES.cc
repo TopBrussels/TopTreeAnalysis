@@ -187,13 +187,26 @@ int main (int argc, char *argv[])
   histo1D["FourthJetPtTriggered"] = new TH1F("FourthJetPtTriggered","FourthJetPtTriggered",100,0,100);
   histo1D["AlignSystSF"] = new TH1F("AlignSystSF","AlignSystSF",200,-.001,.001);
   
-  histo1D["dRMin"] = new TH1F("dRMin","dRMin",120,0.,3.);
-  histo1D["jetArea"] = new TH1F("jetArea","jetArea",120,0.4,1.);
-  histo1D["nParticlesInJet"] = new TH1F("nParticlesInJet","nParticlesInJet",70,-0.5,69.5);
-  histo1D["mW_dRsmall"] = new TH1F("mW_dRsmall","mW_dRsmall",100,0,200);
-  histo1D["mW_dRlarge"] = new TH1F("mW_dRlarge","mW_dRlarge",100,0,200);
-  histo1D["mTop_dRsmall"] = new TH1F("mTop_dRsmall","mTop_dRsmall",100,0,300);
-  histo1D["mTop_dRlarge"] = new TH1F("mTop_dRlarge","mTop_dRlarge",100,0,300);
+  histo1D["nJets"] = new TH1F("nJets","nJets",10,-0.5,9.5);
+  histo1D["dRMin"] = new TH1F("dRMin","dRMin",50,0.5,3.);
+  histo1D["dRLights"] = new TH1F("dRLights","dRLights",50,0.5,3.5);
+  histo1D["MinDRLightB"] = new TH1F("MinDRLightB","MinDRLightB",50,0.5,3.5);
+  histo1D["MET"] = new TH1F("MET","MET",50,0,250);
+  histo1D["HT"] = new TH1F("HT","HT",50,0,800);
+  histo1D["mTTbar"] = new TH1F("mTTbar","mTTbar",50,200,1000);
+  histo1D["PtTTbar"] = new TH1F("PtTTbar","PtTTbar",50,0,200);
+  histo1D["nBtags"] = new TH1F("nBtags","nBtags",5,-0.5,4.5);
+  histo1D["PtTop"] = new TH1F("PtTop","PtTop",50,0,400);
+  histo1D["EtaTop"] = new TH1F("EtaTop","EtaTop",50,-5,5);
+  histo1D["PtBjet"] = new TH1F("PtBjet","PtBjet",50,30,280);
+  histo1D["EtaBjet"] = new TH1F("EtaBjet","EtaBjet",50,-2.5,2.5);
+  histo1D["jetArea"] = new TH1F("jetArea","jetArea",50,0.5,1.);
+  histo1D["nParticlesInJet"] = new TH1F("nParticlesInJet","nParticlesInJet",60,-0.5,59.5);
+  histo1D["nChargedParticles"] = new TH1F("nChargedParticles","nChargedParticles",35,-0.5,34.5);
+  histo1D["mW_dRsmall"] = new TH1F("mW_dRsmall","mW_dRsmall",50,0,200);
+  histo1D["mW_dRlarge"] = new TH1F("mW_dRlarge","mW_dRlarge",50,0,200);
+  histo1D["mTop_dRsmall"] = new TH1F("mTop_dRsmall","mTop_dRsmall",50,0,300);
+  histo1D["mTop_dRlarge"] = new TH1F("mTop_dRlarge","mTop_dRlarge",50,0,300);
   
   int nBinsJet = 12;
   float binningDR[13] = {0.5, 0.65, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.9, 2.5};
@@ -410,8 +423,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 100000; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 100000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -779,6 +792,21 @@ int main (int argc, char *argv[])
       
       if ( !TrainMVA && !CalculateResolutions )
       {
+        int nBtags = 0;
+        vector<float> bTagTCHE, bTagTCHP, bTagSSVHE, bTagSSVHP;
+        vector<TLorentzVector> otherSelectedJets;
+        for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
+        {
+          otherSelectedJets.push_back( *selectedJets[iJet] );
+          bTagTCHE.push_back(selectedJets[iJet]->btag_trackCountingHighEffBJetTags());
+          bTagTCHP.push_back(selectedJets[iJet]->btag_trackCountingHighPurBJetTags());
+          bTagSSVHE.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags());
+          bTagSSVHP.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighPurBJetTags());
+          if( selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74 ) nBtags++;
+        }
+        
+        if(nBtags < 1) continue;
+        
         //get the MC matched jet combination, not the MVA best matched
 	      vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
         int hadrBJetIndex = mcJetCombi[2], lightJet1Index = mcJetCombi[0], lightJet2Index = mcJetCombi[1], leptBJetIndex = mcJetCombi[3];
@@ -825,71 +853,116 @@ int main (int argc, char *argv[])
               float lightCorr2 = 1 - resFitLightJets->EtCorrection(&matchedPFJetsGenJets[1]);
               float bCorr = 1 - resFitBJets->EtCorrection(&matchedPFJetsGenJets[2]);
               
-              // Now do something with the fully matched events.....
-              float dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
-              if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMin ) dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
-              if( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) < dRMin ) dRMin = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
-              
-              histo1D["dRMin"]->Fill(dRMin);
-              for(size_t i=0; i<matchedJets.size(); i++)
-                histo1D["jetArea"]->Fill(matchedJets[i]->jetArea());
-              
-              if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < 1. )
-                histo1D["mW_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
-              else
-                histo1D["mW_dRlarge"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
-              
-              if(dRMin < 1.)
-                histo1D["mTop_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2+matchedPFJetsGenJets[2]*bCorr).M() );
-              else
-                histo1D["mTop_dRlarge"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2+matchedPFJetsGenJets[2]*bCorr).M() );
-              
-//              float mTopNoFitL7 = ( selectedJets[combi[0]]*lightCorr1 + selectedJets[combi[1]]*lightCorr2 + selectedJets[combi[2]]*bCorr ).M();
-              
-              float dRMinLight1 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
-              if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMinLight1)
-                dRMinLight1 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
-              
-              float dRMinLight2 = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
-              if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < dRMinLight2)
-                dRMinLight2 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
-              
-              float dRMinHadrB = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
-              if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMinHadrB)
-                dRMinHadrB = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
-              
-              for(size_t i=0; i<nBinsJet; i++)
+              if(matchedPFJetsGenJets[0].DeltaR(matchedQuarks[0]) < 0.3 && matchedPFJetsGenJets[1].DeltaR(matchedQuarks[1]) < 0.3 && matchedPFJetsGenJets[2].DeltaR(matchedQuarks[2]) < 0.3 && matchedPFJetsGenJets[3].DeltaR(matchedQuarks[3]) < 0.3)
               {
-                stringstream ss; ss << i;
-                if( dRMinLight1 > binningDR[i] && dRMinLight1 <= binningDR[i+1] )
-                  histo1D["lightJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[0].Pt() / matchedQuarks[0].Pt() );
-                if( dRMinLight2 > binningDR[i] && dRMinLight2 <= binningDR[i+1] )
-                  histo1D["lightJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[1].Pt() / matchedQuarks[1].Pt() );
-                if( dRMinHadrB > binningDR[i] && dRMinHadrB <= binningDR[i+1] )
-                  histo1D["bJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[2].Pt() / matchedQuarks[2].Pt() );
+                // Now do something with the fully matched events.....
+                float dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
+                if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMin ) dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
+                if( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) < dRMin ) dRMin = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
                 
-                for(size_t j=0; j<3; j++)
+                histo1D["dRMin"]->Fill(dRMin);
+                histo1D["nJets"]->Fill(selectedJets.size());
+                for(size_t i=0; i<matchedJets.size(); i++)
+                  histo1D["jetArea"]->Fill(matchedJets[i]->jetArea());
+                
+                if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < 1. )
+                  histo1D["mW_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
+                else
+                  histo1D["mW_dRlarge"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
+                
+                if(dRMin < 1.)
+                  histo1D["mTop_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2+matchedPFJetsGenJets[2]*bCorr).M() );
+                else
+                  histo1D["mTop_dRlarge"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2+matchedPFJetsGenJets[2]*bCorr).M() );
+                
+  //              float mTopNoFitL7 = ( selectedJets[combi[0]]*lightCorr1 + selectedJets[combi[1]]*lightCorr2 + selectedJets[combi[2]]*bCorr ).M();
+                
+                float dRMinLight1 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
+                if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMinLight1)
+                  dRMinLight1 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
+                
+                float dRMinLight2 = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
+                if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < dRMinLight2)
+                  dRMinLight2 = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
+                
+                float dRMinHadrB = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
+                if(matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMinHadrB)
+                  dRMinHadrB = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
+                
+                for(size_t i=0; i<nBinsJet; i++)
                 {
-                  if( matchedJets[j]->jetArea() > binningJetArea[i] && matchedJets[j]->jetArea() <= binningJetArea[i+1] )
+                  stringstream ss; ss << i;
+                  if( dRMinLight1 > binningDR[i] && dRMinLight1 <= binningDR[i+1] )
+                    histo1D["lightJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[0].Pt() / matchedQuarks[0].Pt() );
+                  if( dRMinLight2 > binningDR[i] && dRMinLight2 <= binningDR[i+1] )
+                    histo1D["lightJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[1].Pt() / matchedQuarks[1].Pt() );
+                  if( dRMinHadrB > binningDR[i] && dRMinHadrB <= binningDR[i+1] )
+                    histo1D["bJetResp_DR_"+ss.str()]->Fill( matchedPFJetsGenJets[2].Pt() / matchedQuarks[2].Pt() );
+                  
+                  for(size_t j=0; j<3; j++)
                   {
-                    if(j<2) histo1D["lightJetResp_Area_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
-                    else histo1D["bJetResp_Area_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
-                  }
-                  float nPart = pfJets[j]->chargedMultiplicity()+pfJets[j]->neutralMultiplicity()+pfJets[j]->muonMultiplicity();
-                  if( nPart > binningNpart[i] && nPart <= binningNpart[i+1] )
-                  {
-                    if(j<2) histo1D["lightJetResp_nPart_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
-                    else  histo1D["bJetResp_nPart_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                    if( matchedJets[j]->jetArea() > binningJetArea[i] && matchedJets[j]->jetArea() <= binningJetArea[i+1] )
+                    {
+                      if(j<2) histo1D["lightJetResp_Area_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                      else histo1D["bJetResp_Area_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                    }
+                    float nPart = pfJets[j]->chargedMultiplicity()+pfJets[j]->neutralMultiplicity()+pfJets[j]->muonMultiplicity();
+                    if( nPart > binningNpart[i] && nPart <= binningNpart[i+1] )
+                    {
+                      if(j<2) histo1D["lightJetResp_nPart_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                      else  histo1D["bJetResp_nPart_"+ss.str()]->Fill( matchedPFJetsGenJets[j].Pt() / matchedQuarks[j].Pt() );
+                    }
                   }
                 }
+                
+                for(size_t i=0; i<pfJets.size(); i++)
+                {
+                  histo1D["nParticlesInJet"]->Fill( pfJets[i]->chargedMultiplicity()+pfJets[i]->neutralMultiplicity()+pfJets[i]->muonMultiplicity() );
+                  histo1D["nChargedParticles"]->Fill(pfJets[i]->chargedMultiplicity());
+                }
+                
+                histo1D["dRLights"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) );
+                if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) )
+                  histo1D["MinDRLightB"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) );
+                else histo1D["MinDRLightB"]->Fill( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) );
+                histo1D["MET"]->Fill(mets[0]->Pt());
+                float ht = 0;
+                for(size_t i=0; i<selectedJets.size(); i++)
+                  ht += selectedJets[i]->Pt();
+                histo1D["HT"]->Fill(ht);
+                
+                //calculate pz neutrino (for mttbar)
+                TLorentzVector lepton;
+                if(eventSelectedSemiMu) lepton = *selectedMuons[0];
+                else lepton = *selectedElectrons[0];
+                
+                double M_W  = 80.4;
+                double M_mu =  0.10566;
+                double pznu = 0.;
+                
+                double a = M_W*M_W - M_mu*M_mu + 2.0*lepton.Px()*mets[0]->Px() + 2.0*lepton.Py()*mets[0]->Py();
+                double A = 4.0*(pow(lepton.E(),2)- pow(lepton.Pz(),2));
+                double B = -4.0*a*lepton.Pz();
+                double C = 4.0*pow(lepton.E(),2)*(pow(mets[0]->Px(),2) + pow(mets[0]->Py(),2)) - a*a;
+                double tmproot = B*B - 4.0*A*C;
+                
+                if(tmproot < 0) pznu = - B/(2*A); // take real part for complex roots
+                else
+                {
+                  double tmpsol1 = (-B + TMath::Sqrt(tmproot))/(2.0*A);
+                  double tmpsol2 = (-B - TMath::Sqrt(tmproot))/(2.0*A);
+                  pznu = TMath::Abs(tmpsol1)<TMath::Abs(tmpsol2) ? tmpsol1 : tmpsol2;
+                }
+                TLorentzVector met(mets[0]->Px(), mets[0]->Py(), pznu, sqrt(mets[0]->Px()*mets[0]->Px() + mets[0]->Py()*mets[0]->Py() + pznu*pznu ) );
+                
+                histo1D["mTTbar"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]+matchedPFJetsGenJets[3]+lepton+met).M() );
+                histo1D["PtTTbar"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]+matchedPFJetsGenJets[3]+lepton+met).Pt() );
+                histo1D["nBtags"]->Fill(nBtags);
+                histo1D["PtTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).Pt() );
+                histo1D["EtaTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).Eta() );
+                histo1D["PtBjet"]->Fill( matchedPFJetsGenJets[2].Pt() );
+                histo1D["EtaBjet"]->Fill( matchedPFJetsGenJets[2].Eta() );
               }
-              
-              for(size_t i=0; i<pfJets.size(); i++)
-                histo1D["nParticlesInJet"]->Fill( pfJets[i]->chargedMultiplicity()+pfJets[i]->neutralMultiplicity()+pfJets[i]->muonMultiplicity() );
-              
-              
-              
-              
             }
           }
         }
@@ -944,17 +1017,7 @@ int main (int argc, char *argv[])
             delete histo;
           }
         }
-        vector<float> bTagTCHE, bTagTCHP, bTagSSVHE, bTagSSVHP;
-        vector<TLorentzVector> otherSelectedJets;
-        for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
-        {
-          otherSelectedJets.push_back( *selectedJets[iJet] );
-          bTagTCHE.push_back(selectedJets[iJet]->btag_trackCountingHighEffBJetTags());
-          bTagTCHP.push_back(selectedJets[iJet]->btag_trackCountingHighPurBJetTags());
-          bTagSSVHE.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags());
-          bTagSSVHP.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighPurBJetTags());
-        }
-
+        
         if(measureTopMassDifference)
         {
           // check top quark masses and which top is decaying hadronically
@@ -1168,9 +1231,9 @@ int main (int argc, char *argv[])
   //Write histograms
   fout->cd();
   th1dir->cd();
-
+  
   fout->cd();
-
+  
 	for(std::map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
 	{
 		TH1F *temp = it->second;
