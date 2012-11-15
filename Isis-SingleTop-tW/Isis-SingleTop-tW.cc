@@ -390,8 +390,32 @@ int main(int argc, char* argv[]) {
 	////////////////////////////////
 	/// INITALISATION JEC Factors //    This isn't applied so I won't write these in my code 
 	////////////////////////////////
-	
-	
+	/*vector<JetCorrectorParameters> vCorrParam;
+      
+      	// Create the JetCorrectorParameter objects, the order does not matter.
+      	// YYYY is the first part of the txt files: usually the global tag from which they are retrieved
+      	JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
+      	JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
+      	JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
+
+      	//  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+      	vCorrParam.push_back(*L1JetPar);
+      	vCorrParam.push_back(*L2JetPar);
+      	vCorrParam.push_back(*L3JetPar);
+
+      	if(!isData) { // DATA!
+		JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
+		vCorrParam.push_back(*ResJetCorPar);	
+      	} 
+      
+      	//I think this is not used!
+      		JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
+      	// if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
+    
+      	// true means redo also the L1
+      		JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); 
+       
+	*/
 	
 	
 	////////////////////////////////
@@ -472,8 +496,146 @@ int main(int argc, char* argv[]) {
 	std::vector<double> *btCSVBmvaJet; 
 	
 	
-	// Make the output tree and set the different branches
+	// Make the output tree 
+	TTree* myTree  = new TTree("myTree", " "); 
 	
+	// Set the branches for the doubles
+	myTree -> Branch("xlWeight", &xlWeight, "xlWeight/D");      // Make a branch with name xlWeight, on location xlWeight, with WHAT IS XlWeight/D???
+	myTree -> Branch("puweight", &puweight, "puweight/D"); 
+	myTree -> Branch("rawWeight", &rawWeight, "rawWeight/D"); 
+	
+	myTree -> Branch("lum", &lum, "lum/D");
+	
+	myTree -> Branch("npu", &npu, "npu/D");
+	myTree -> Branch("nvertex", &nvertex, "nvertex/D");
+	
+	myTree -> Branch("metPt", &metPt, "metPt/D");
+	myTree -> Branch("metPx", &metPx, "metPx/D");
+	myTree -> Branch("metPy", &metPy, "metPy/D");
+	
+	// Set the branches for the vectors 
+	myTree->Branch("ptLepton","std::vector<double>",&ptLepton);   // Make a branch with name ptLepton, from type vector(double), on loaction ptLepton
+        myTree->Branch("pxLepton","std::vector<double>",&pxLepton);
+        myTree->Branch("pyLepton","std::vector<double>",&pyLepton);
+        myTree->Branch("pzLepton","std::vector<double>",&pzLepton);
+        myTree->Branch("eLepton","std::vector<double>",&eLepton);
+        myTree->Branch("qLepton","std::vector<double>",&qLepton);
+      
+        myTree->Branch("ptJet","std::vector<double>",&ptJet);
+        myTree->Branch("pxJet","std::vector<double>",&pxJet);
+        myTree->Branch("pyJet","std::vector<double>",&pyJet);
+        myTree->Branch("pzJet","std::vector<double>",&pzJet);
+        myTree->Branch("eJet","std::vector<double>",&eJet);
+        myTree->Branch("qJet","std::vector<double>",&qJet);
+        myTree->Branch("btJPBJet","std::vector<double>",&btJPBJet);
+        myTree->Branch("btBJPBJet","std::vector<double>",&btBJPBJet);
+        myTree->Branch("btCSVBJet","std::vector<double>",&btCSVBJet);
+        myTree->Branch("btCSVBmvaJet","std::vector<double>",&btCSVBmvaJet);
+	
+	
+	////////////////////////////////
+	///    INFORMATION FOR USER  ///    
+	////////////////////////////////
+	cout << "[Info:] output rootfile named " << rootFileName << endl; 
+      	cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
+      
+      	if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus || unclusteredUp || unclusteredDown 
+	  || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D) {
+		cout << "[Warning:] Non-standard options, ignore if you did it conciously" << endl;
+		
+		if (JERPlus) cout << "[Warning:] JER systematics on, plus" << endl;
+		if (JERMinus) cout << "[Warning:] JER systematics on, minus" << endl;
+		if (JESPlus) cout << "[Warning:] JES systematics on, plus" << endl;
+		if (JESMinus) cout << "[Warning:] JES systematics on, minus" << endl;
+		if (SFplus) cout <<"[Warning:] SF up 10% " << endl;
+		if (SFminus) cout <<"[Warning:]  SF down 10% " << endl;
+		if (unclusteredUp) cout <<"[Warning:] unclustered MET up 10% " << endl;
+		if (unclusteredDown) cout <<"[Warning:] unclustered MET down 10% " << endl;
+		if (!reweightPU && !isData) cout << "[Warning:] You are NOT applying PU re-weighting " << endl;
+		if (!scaleFactor && !isData) cout << "[Warning:] You are NOT applying the b-tagging SF " << endl;
+		if (PUsysUp) cout <<"[Warning:] PU up " << endl;
+		if (PUsysDown) cout <<"[Warning:] PU down " << endl;
+	
+      	} 
+	else{
+		cout << "[Info:] Standard setup " << endl;
+	}
+	
+      	cout << "[Info:] " << datasets[d]->NofEvtsToRunOver() << " total events" << endl;
+      	if (runHLT) cout << "[Info:] You have the HLT activated, this might be slower than the usual. " << endl;
+	
+	////////////////////////////////
+	///    LOOP OVER THE EVENTS  ///    
+	////////////////////////////////
+	for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++){
+		if(ievent%500==0){
+			std::cout << "Processing the " << ievent << "th event" << flush << "\r";        // << flush << "\r" means this line will be overwritten next time 
+		}
+		
+			
+		//Load the event from the toptree
+		event = treeLoader.LoadEvent (ievent, vertex, initial_muons, initial_electrons, initial_jets_corrected, mets); 
+		
+		
+		
+		//For the jet energy resolution of the simulation, we need generated jets. So we only need to add to the MC datasets
+		if(!isData){
+			genjets =treeLoader.LoadGenJet(ievent, false); 
+			sort(genjets.begin(),genjets.end(),HighestPt());
+		}
+		
+		////////////////////////////////
+		//APPLYING THE PU reweighting///    
+		////////////////////////////////
+		//Declare the reweighting
+		double weight = xlweight;
+		double lumiWeight = 1.0; 
+		
+		//The PU reweighting is only done for MC datasets 
+		if(!isData){
+			lumiWeight = LumiWeights.ITweight( (int) event -> nTruePU() );
+			
+			// If one wants the PU reweighting scaled down   ==> WHY WOULD SOMEONE WANT THIS?
+			if(PUsysDown){
+				lumiWeight*PShiftDown_.ShiftWeight(event ->nPu(0));     // Why not event->nTruePU() like in michael's code? 
+			}
+			
+			// If one wants the PU reweighting scaled up
+			if(PUsysUp){
+				lumiWeight*PShiftUp_.ShiftWeight(event ->nPu(0)); 
+			}
+			
+			//If PU reweighting is turned on
+			if(reweightPU){
+				weight *= lumiWeight;      // HOW COME THIS IS NOT WITH HISTO'S? 
+			}
+		}
+		
+		////////////////////////////////
+		///  JES (Jet Energy Scale)  ///     
+		///        SYSTEMATICS       ///      Isn't applied, ready for use later   ==> commented
+		//////////////////////////////// 
+		/*
+		// If the JES systematics are on, minus
+		if(JESPlus){
+			jetTools->correctJetJESUnc(initial_jets_corrected, "minus", 1); 
+		}
+		// If the JES systematics are on, plus
+		else if(JESMinus){
+			jetTools->correctJetJESUnc(initial_jets_corrected, "plus", 1); 
+		}
+		*/
+		
+		////////////////////////////////
+		///    JER(JE Resolution)    ///     The jet energy resolution in the MC is better than the one from the real data.
+		///       SMEARING           ///     Smear the MC energy resolution in order to mimic the one from data.       
+		////////////////////////////////
+		
+	
+	
+	
+	}
+      
     
     
     
@@ -486,6 +648,7 @@ int main(int argc, char* argv[]) {
     
     
     // To display how long it took for the program to run
+    cout << "*******************************************************************************************" << endl; 
     cout << "It took you " << ((double)clock() - start) /CLOCKS_PER_SEC << " to run the program" << endl; 
   
 }
