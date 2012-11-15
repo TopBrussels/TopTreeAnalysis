@@ -187,22 +187,50 @@ int main (int argc, char *argv[])
   histo1D["FourthJetPtTriggered"] = new TH1F("FourthJetPtTriggered","FourthJetPtTriggered",100,0,100);
   histo1D["AlignSystSF"] = new TH1F("AlignSystSF","AlignSystSF",200,-.001,.001);
   
-  histo1D["nJets"] = new TH1F("nJets","nJets",10,-0.5,9.5);
+  histo1D["mTop"] = new TH1F("mTop","mTop",100,100,250);
+  histo1D["nJets"] = new TH1F("nJets","nJets",7,3.5,10.5);
+  histo2D["nJets_VS_mTop"] = new TH2F("nJets_VS_mTop","nJets_VS_mTop",7,3.5,10.5,100,100,250);
   histo1D["dRMin"] = new TH1F("dRMin","dRMin",50,0.5,3.);
+  histo2D["dRMin_VS_mTop"] = new TH2F("dRMin_VS_mTop","dRMin_VS_mTop",50,0.5,3.,100,100,250);
   histo1D["dRLights"] = new TH1F("dRLights","dRLights",50,0.5,3.5);
+  histo2D["dRLights_VS_mTop"] = new TH2F("dRLights_VS_mTop","dRLights_VS_mTop",50,0.5,3.5,100,100,250);
   histo1D["MinDRLightB"] = new TH1F("MinDRLightB","MinDRLightB",50,0.5,3.5);
+  histo2D["MinDRLightB_VS_mTop"] = new TH2F("MinDRLightB_VS_mTop","MinDRLightB_VS_mTop",50,0.5,3.5,100,100,250);
   histo1D["MET"] = new TH1F("MET","MET",50,0,250);
+  histo2D["MET_VS_mTop"] = new TH2F("MET_VS_mTop","MET_VS_mTop",50,0,250,100,100,250);
   histo1D["HT"] = new TH1F("HT","HT",50,0,800);
+  histo2D["HT_VS_mTop"] = new TH2F("HT_VS_mTop","HT_VS_mTop",50,0,800,100,100,250);
   histo1D["mTTbar"] = new TH1F("mTTbar","mTTbar",50,200,1000);
+  histo2D["mTTbar_VS_mTop"] = new TH2F("mTTbar_VS_mTop","mTTbar_VS_mTop",50,200,1000,100,100,250);
   histo1D["PtTTbar"] = new TH1F("PtTTbar","PtTTbar",50,0,200);
+  histo2D["PtTTbar_VS_mTop"] = new TH2F("PtTTbar_VS_mTop","PtTTbar_VS_mTop",50,0,200,100,100,250);
   histo1D["nBtags"] = new TH1F("nBtags","nBtags",5,-0.5,4.5);
+  histo2D["nBtags_VS_mTop"] = new TH2F("nBtags_VS_mTop","nBtags_VS_mTop",5,-0.5,4.5,100,100,250);
   histo1D["PtTop"] = new TH1F("PtTop","PtTop",50,0,400);
+  histo2D["PtTop_VS_mTop"] = new TH2F("PtTop_VS_mTop","PtTop_VS_mTop",50,0,400,100,100,250);
   histo1D["EtaTop"] = new TH1F("EtaTop","EtaTop",50,-5,5);
+  histo2D["EtaTop_VS_mTop"] = new TH2F("EtaTop_VS_mTop","EtaTop_VS_mTop",50,-5,5,100,100,250);
   histo1D["PtBjet"] = new TH1F("PtBjet","PtBjet",50,30,280);
+  histo2D["PtBjet_VS_mTop"] = new TH2F("PtBjet_VS_mTop","PtBjet_VS_mTop",50,30,280,100,100,250);
   histo1D["EtaBjet"] = new TH1F("EtaBjet","EtaBjet",50,-2.5,2.5);
-  histo1D["jetArea"] = new TH1F("jetArea","jetArea",50,0.5,1.);
+  histo2D["EtaBjet_VS_mTop"] = new TH2F("EtaBjet_VS_mTop","EtaBjet_VS_mTop",50,-2.5,2.5,100,100,250);
+  
+  histo1D["jetAreaBjet"] = new TH1F("jetAreaBjet","jetAreaBjet",50,0.5,1.);
+  histo2D["jetAreaBjet_VS_mTop"] = new TH2F("jetAreaBjet_VS_mTop","jetAreaBjet_VS_mTop",50,0.5,1.,100,100,250);
+  histo1D["jetAreaTotal"] = new TH1F("jetAreaTotal","jetAreaTotal",50,1.5,3.);
+  histo2D["jetAreaTotal_VS_mTop"] = new TH2F("jetAreaTotal_VS_mTop","jetAreaTotal_VS_mTop",50,1.5,3.,100,100,250);
+  histo1D["nParticlesBJet"] = new TH1F("nParticlesBJet","nParticlesBJet",60,-0.5,59.5);
+  histo2D["nParticlesBJet_VS_mTop"] = new TH2F("nParticlesBJet_VS_mTop","nParticlesBJet_VS_mTop",60,-0.5,59.5,100,100,250);
+  histo1D["nParticlesTotal"] = new TH1F("nParticlesTotal","nParticlesTotal",50,-29.5,129.5);
+  histo2D["nParticlesTotal_VS_mTop"] = new TH2F("nParticlesTotal_VS_mTop","nParticlesTotal_VS_mTop",50,-29.5,129.5,100,100,250);
+  histo1D["nChargedBJet"] = new TH1F("nChargedBJet","nChargedBJet",35,-0.5,34.5);
+  histo2D["nChargedBJet_VS_mTop"] = new TH2F("nChargedBJet_VS_mTop","nChargedBJet_VS_mTop",35,-0.5,34.5,100,100,250);
+  histo1D["nChargedTotal"] = new TH1F("nChargedTotal","nChargedTotal",60,5.5,65.5);
+  histo2D["nChargedTotal_VS_mTop"] = new TH2F("nChargedTotal_VS_mTop","nChargedTotal_VS_mTop",60,5.5,65.5,100,100,250);
+  
   histo1D["nParticlesInJet"] = new TH1F("nParticlesInJet","nParticlesInJet",60,-0.5,59.5);
   histo1D["nChargedParticles"] = new TH1F("nChargedParticles","nChargedParticles",35,-0.5,34.5);
+  histo1D["jetArea"] = new TH1F("jetArea","jetArea",50,0.5,1.);
   histo1D["mW_dRsmall"] = new TH1F("mW_dRsmall","mW_dRsmall",50,0,200);
   histo1D["mW_dRlarge"] = new TH1F("mW_dRlarge","mW_dRlarge",50,0,200);
   histo1D["mTop_dRsmall"] = new TH1F("mTop_dRsmall","mTop_dRsmall",50,0,300);
@@ -856,14 +884,23 @@ int main (int argc, char *argv[])
               if(matchedPFJetsGenJets[0].DeltaR(matchedQuarks[0]) < 0.3 && matchedPFJetsGenJets[1].DeltaR(matchedQuarks[1]) < 0.3 && matchedPFJetsGenJets[2].DeltaR(matchedQuarks[2]) < 0.3 && matchedPFJetsGenJets[3].DeltaR(matchedQuarks[3]) < 0.3)
               {
                 // Now do something with the fully matched events.....
+                float mTop = (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).M();
+                histo1D["mTop"]->Fill(mTop);
+                
                 float dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] );
                 if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < dRMin ) dRMin = matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] );
                 if( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) < dRMin ) dRMin = matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] );
                 
                 histo1D["dRMin"]->Fill(dRMin);
+                histo2D["dRMin_VS_mTop"]->Fill(dRMin, mTop);
                 histo1D["nJets"]->Fill(selectedJets.size());
+                histo2D["nJets_VS_mTop"]->Fill(selectedJets.size(), mTop);
                 for(size_t i=0; i<matchedJets.size(); i++)
                   histo1D["jetArea"]->Fill(matchedJets[i]->jetArea());
+                histo1D["jetAreaBjet"]->Fill( matchedJets[2]->jetArea() );
+                histo2D["jetAreaBjet_VS_mTop"]->Fill( matchedJets[2]->jetArea(), mTop);
+                histo1D["jetAreaTotal"]->Fill( matchedJets[0]->jetArea()+matchedJets[1]->jetArea()+matchedJets[2]->jetArea() );
+                histo2D["jetAreaTotal_VS_mTop"]->Fill( matchedJets[0]->jetArea()+matchedJets[1]->jetArea()+matchedJets[2]->jetArea(), mTop);
                 
                 if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) < 1. )
                   histo1D["mW_dRsmall"]->Fill( (matchedPFJetsGenJets[0]*lightCorr1+matchedPFJetsGenJets[1]*lightCorr2).M() );
@@ -917,19 +954,37 @@ int main (int argc, char *argv[])
                 
                 for(size_t i=0; i<pfJets.size(); i++)
                 {
-                  histo1D["nParticlesInJet"]->Fill( pfJets[i]->chargedMultiplicity()+pfJets[i]->neutralMultiplicity()+pfJets[i]->muonMultiplicity() );
+                  histo1D["nParticlesInJet"]->Fill( pfJets[i]->nConstituents() );
                   histo1D["nChargedParticles"]->Fill(pfJets[i]->chargedMultiplicity());
                 }
+                histo1D["nParticlesBJet"]->Fill( pfJets[2]->nConstituents() );
+                histo2D["nParticlesBJet_VS_mTop"]->Fill( pfJets[2]->nConstituents(), mTop);
+                histo1D["nParticlesTotal"]->Fill( pfJets[0]->nConstituents()+pfJets[1]->nConstituents()+pfJets[2]->nConstituents() );
+                histo2D["nParticlesTotal_VS_mTop"]->Fill( pfJets[0]->nConstituents()+pfJets[1]->nConstituents()+pfJets[2]->nConstituents(), mTop);
+                histo1D["nChargedBJet"]->Fill( pfJets[2]->chargedMultiplicity() );
+                histo2D["nChargedBJet_VS_mTop"]->Fill( pfJets[2]->chargedMultiplicity(), mTop);
+                histo1D["nChargedTotal"]->Fill( pfJets[0]->chargedMultiplicity()+pfJets[1]->chargedMultiplicity()+pfJets[2]->chargedMultiplicity() );
+                histo2D["nChargedTotal_VS_mTop"]->Fill( pfJets[0]->chargedMultiplicity()+pfJets[1]->chargedMultiplicity()+pfJets[2]->chargedMultiplicity(), mTop);
                 
                 histo1D["dRLights"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ) );
+                histo2D["dRLights_VS_mTop"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[1] ), mTop);
                 if( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) < matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) )
+                {
                   histo1D["MinDRLightB"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ) );
-                else histo1D["MinDRLightB"]->Fill( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) );
+                  histo2D["MinDRLightB_VS_mTop"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ), mTop);
+                }
+                else
+                {
+                  histo1D["MinDRLightB"]->Fill( matchedPFJetsGenJets[2].DeltaR( matchedPFJetsGenJets[1] ) );
+                  histo2D["MinDRLightB_VS_mTop"]->Fill( matchedPFJetsGenJets[0].DeltaR( matchedPFJetsGenJets[2] ), mTop);
+                }
                 histo1D["MET"]->Fill(mets[0]->Pt());
+                histo2D["MET_VS_mTop"]->Fill(mets[0]->Pt(), mTop);
                 float ht = 0;
                 for(size_t i=0; i<selectedJets.size(); i++)
                   ht += selectedJets[i]->Pt();
                 histo1D["HT"]->Fill(ht);
+                histo2D["HT_VS_mTop"]->Fill(ht, mTop);
                 
                 //calculate pz neutrino (for mttbar)
                 TLorentzVector lepton;
@@ -956,12 +1011,19 @@ int main (int argc, char *argv[])
                 TLorentzVector met(mets[0]->Px(), mets[0]->Py(), pznu, sqrt(mets[0]->Px()*mets[0]->Px() + mets[0]->Py()*mets[0]->Py() + pznu*pznu ) );
                 
                 histo1D["mTTbar"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]+matchedPFJetsGenJets[3]+lepton+met).M() );
+                histo2D["mTTbar_VS_mTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]+matchedPFJetsGenJets[3]+lepton+met).M(), mTop);
                 histo1D["PtTTbar"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]+matchedPFJetsGenJets[3]+lepton+met).Pt() );
+                histo2D["PtTTbar_VS_mTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]+matchedPFJetsGenJets[3]+lepton+met).Pt(), mTop);
                 histo1D["nBtags"]->Fill(nBtags);
+                histo2D["nBtags_VS_mTop"]->Fill(nBtags, mTop);
                 histo1D["PtTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).Pt() );
+                histo2D["PtTop_VS_mTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).Pt(), mTop);
                 histo1D["EtaTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).Eta() );
+                histo2D["EtaTop_VS_mTop"]->Fill( (matchedPFJetsGenJets[0]+matchedPFJetsGenJets[1]+matchedPFJetsGenJets[2]).Eta(), mTop);
                 histo1D["PtBjet"]->Fill( matchedPFJetsGenJets[2].Pt() );
+                histo2D["PtBjet_VS_mTop"]->Fill( matchedPFJetsGenJets[2].Pt(), mTop);
                 histo1D["EtaBjet"]->Fill( matchedPFJetsGenJets[2].Eta() );
+                histo2D["EtaBjet_VS_mTop"]->Fill( matchedPFJetsGenJets[2].Eta(), mTop);
               }
             }
           }
