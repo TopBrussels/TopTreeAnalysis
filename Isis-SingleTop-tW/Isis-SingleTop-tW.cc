@@ -387,10 +387,10 @@ int main(int argc, char* argv[]) {
 	
 	
 	
-	////////////////////////////////
-	/// INITALISATION JEC Factors //    This isn't applied so I won't write these in my code 
-	////////////////////////////////
-	/*vector<JetCorrectorParameters> vCorrParam;
+	////////////////////////////////////
+	/// INITALISATION JEC/JER Factors //    This isn't applied for JEC, but needed for JER  ==> HOW DOES THIS SECTION WORK? 
+	////////////////////////////////////
+	vector<JetCorrectorParameters> vCorrParam;
       
       	// Create the JetCorrectorParameter objects, the order does not matter.
       	// YYYY is the first part of the txt files: usually the global tag from which they are retrieved
@@ -403,7 +403,7 @@ int main(int argc, char* argv[]) {
       	vCorrParam.push_back(*L2JetPar);
       	vCorrParam.push_back(*L3JetPar);
 
-      	if(!isData) { // DATA!
+      	if(!isData) { 
 		JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
 		vCorrParam.push_back(*ResJetCorPar);	
       	} 
@@ -415,7 +415,7 @@ int main(int argc, char* argv[]) {
       	// true means redo also the L1
       		JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); 
        
-	*/
+	
 	
 	
 	////////////////////////////////
@@ -609,7 +609,7 @@ int main(int argc, char* argv[]) {
 			if(reweightPU){
 				weight *= lumiWeight;      // HOW COME THIS IS NOT WITH HISTO'S? 
 			}
-		}
+		} // closing loop for PU reweighting for MC
 		
 		////////////////////////////////
 		///  JES (Jet Energy Scale)  ///     
@@ -630,19 +630,107 @@ int main(int argc, char* argv[]) {
 		///    JER(JE Resolution)    ///     The jet energy resolution in the MC is better than the one from the real data.
 		///       SMEARING           ///     Smear the MC energy resolution in order to mimic the one from data.       
 		////////////////////////////////
+		if(JERMinus){
+			jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "minus", false); // false means don't use old numbers, but new ones
+		}
+		else if(JERPlus){
+			jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "plus", false); // false means don't use old numbers, but new ones
+		}
+		else{
+			jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
+		}
+		
+		////////////////////////////////
+		///      TRIGGER SETUP       ///
+		////////////////////////////////
+		bool trigged = false; 
+		
+		//If the HLT is applied 
+		if(runHLT){
+			int currentRun = event->runId(); 
+			bool itrigger = false; 
+			bool isecondtrigger = false; 
+			
+			//The HLT is only used for data
+			if(isData){
+				//The HLT path is dependent of the mode, these paths are the several steps or software modules. Each module performs a well defined task 
+				// such as reconstruction of physics objects, making intermediate decisions, triggering more refined reconstructions in subsequent modules, 
+				// or calculating the final decision for that trigger path.
+				if(mode == 0){
+					itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+					isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+	      			} 
+				else if (mode == 1){
+					itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v16", currentRun);
+					isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_TkMu8_v9", currentRun);
+	      			} 
+				else if (mode == 2){
+					itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
+	      			}
+	    		} // closing the HLT for data loop
+			
+			//For the MC, there is no triggerpath
+			else {
+				itrigger = true;      // WHY?
+	      			isecondtrigger = true;
+	    		} // closing the HLT for MC
+			
+			//if one of the triggers is used, the trigging is set on true   ==> WHAT IS HAPPENING? THESE STATEMENTS MAKE NO SENSE
+	    		if (itrigger || isecondtrigger){ 
+				trigged = true;
+			 } 
+			 else{
+			 	trigged = true;
+			}	
+		} // closing the HLT run loop
+		
+		
+		////////////////////////////////
+		///        SELECTION         ///
+		////////////////////////////////
+		Selection selection(initial_jets_corrected, initial_muons,initial_electrons,mets); 
+		
+		//----------------------------------------------------------------
+		//Cut on primary vertex ==> WHY IS THIS USELESS FOR SINGLE TOP? 
+		//-----------------------------------------------------------------
+		bool isGoodPV = false; 
+		isGoodPV = selection.isPVSelected(vertex,4,24,2.);   // Look in class Selection for explanation: Here the function isPVselected is defined as
+									// 	bool Selection::isPVSelected(const std::vector<TRootVertex*>& vertex, int NdofCut, float Zcut, float RhoCut){
+ 	 								//		if(vertex.size()==0) return false;
+  									//		float Rho = sqrt(vertex[0]->x()*vertex[0]->x()+vertex[0]->y()*vertex[0]->y());
+  									//		if(!vertex[0]->isFake() && vertex[0]->ndof()>NdofCut && abs(vertex[0]->z())<Zcut && Rho<RhoCut) return true;
+  									//		return false;
+									//	}
+	
+	
+		//is useless for single top  ==> WHY? 
+		isGoodPV = true; 
+		
+		//--------------------------------------------------------------
+		// Set up of the unclustered MET systematic    ==> WHAT IS THIS?
+		//---------------------------------------------------------------
+		
+		
+		
+		
+		
 		
 	
-	
-	
-	}
+	} // Closing the loop over the events in one dataset
       
     
     
     
     
-    
-    
-    } 
+	////////////////////////////////
+	///   ROOTSTUFF:output files ///    
+	////////////////////////////////
+	// Write the recreated rootfiles 
+	// rootFileName is created before with sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name), so rootfiles were created with the name outputs/naked_modeName_sampleName.root
+	// eg: if you are looking at emu (0) and data, it was called naked_0_data.root and placed in the directory  outputs    
+    	fout->Write(); 
+	fout->Close(); 
+    }  // closing the loop over the datasets 
     
     
     
