@@ -27,6 +27,8 @@ vector<Dataset*> datasets, string PlotName, int Nbins, float Min, float Max, str
 	hCanvasStackLogY_ = 0;
 	hCanvasStackAreaNorm_ = 0;
 	hCanvasStackAreaNormLogY_ = 0;
+  hErrorPlus_ = 0;
+  hErrorMinus_ = 0;
 	hStack_ = 0;
  	hStackAreaNorm_ = 0;
 	maxY_ = -1;
@@ -60,6 +62,8 @@ MultiSamplePlot::MultiSamplePlot(vector<Dataset*> datasets, string PlotName, int
 	hCanvasStackLogY_ = 0;
 	hCanvasStackAreaNorm_ = 0;
 	hCanvasStackAreaNormLogY_ = 0;
+  hErrorPlus_ = 0;
+  hErrorMinus_ = 0;
 	hStack_ = 0;
 	hStackAreaNorm_ = 0;
 	maxY_ = -1;
@@ -79,6 +83,8 @@ MultiSamplePlot::MultiSamplePlot(vector<pair<TH1F*,Dataset*> > vec){
 	hCanvasStackLogY_ = 0;
 	hCanvasStackAreaNorm_ = 0;
 	hCanvasStackAreaNormLogY_ = 0;
+  hErrorPlus_ = 0;
+  hErrorMinus_ = 0;
 	hStack_ = 0;
 	hStackAreaNorm_ = 0;
 	maxY_ = -1;
@@ -155,7 +161,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
     }
 	  delete tmpInfile;
   }
-  
+  //cout<<"So far, so good : 1"<<endl;
+
 	int dataPlotID=-1;
 	float integralData = 0;
 	float integralMC = 0;
@@ -221,6 +228,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		  }
 	  }
   }
+  //cout<<"So far, so good : 2"<<endl;
 
 	for(unsigned int i=0;i<plots_.size();i++){
 		TH1F* histo = (TH1F*) plots_[i].first->Clone();
@@ -303,7 +311,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		datasets.push_back(dataSet);
 		histos2.push_back(histo);
 	}
-    
+  //cout<<"So far, so good : 3"<<endl;
+  
 	if ( dataPlotID != -1 ){
 		//integralData = plots_[dataPlotID].first->Integral(1,plots_[dataPlotID].first->GetNbinsX());
 		integralData = plots_[dataPlotID].first->Integral(0,plots_[dataPlotID].first->GetNbinsX()+1);
@@ -311,6 +320,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 			if (dataPlotID != (int)i) integralMC += plots_[i].first->Integral(1,plots_[i].first->GetNbinsX());
 		}
 	}
+  //cout<<"So far, so good : 4"<<endl;
   
 	//Fill the first canvas
 	string name;
@@ -364,6 +374,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 			}
 		}
 	}
+  //cout<<"So far, so good : 5"<<endl;
 	
 	//Fill the first canvas
 	//hStack_ = THStackCreator(histos2, datasets, leg_);
@@ -418,6 +429,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 	  hCanvasStackLogY_->SetCanvasSize(1000, 800);
 	  hCanvasStackLogY_->SetBottomMargin(0.3);
   }
+  //cout<<"So far, so good : 6"<<endl;
+  
 	stringstream s; s.precision(2); s << lumi_/1000;
 	TLatex text;
   text.SetNDC(true);
@@ -440,6 +453,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
       hStack_->GetXaxis()->SetLabelSize(0);
       hStack_->GetXaxis()->SetTitleSize(0);
     }
+    //cout<<"So far, so good : 7"<<endl;
+
 		hStack_->GetXaxis()->SetTitle(histosForHStack[0]->GetXaxis()->GetTitle());
 		hStack_->GetYaxis()->SetTitle(histosForHStack[0]->GetYaxis()->GetTitle());
 		hStack_->GetYaxis()->SetTitleOffset(1.1);
@@ -477,7 +492,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		   histosForOverlay[i]->Draw("HIST SAME");
 		}
 		//histo_errors->Draw("E3SAME");
-		
+    //cout<<"So far, so good : 8"<<endl;
+
 		hCanvasStackLogY_->cd();
 		hCanvasStackLogY_->SetLogy();
 		hStack_->Draw("HIST");
@@ -500,6 +516,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 	  hCanvasStackAreaNormLogY_->SetCanvasSize(1000, 800);
     hCanvasStackAreaNormLogY_->SetBottomMargin(0.3);
   }
+  //cout<<"So far, so good : 9"<<endl;
+
 	if(hStackAreaNorm_){
 		hCanvasStackAreaNorm_->cd();
 		hStackAreaNorm_->Draw("HIST");
@@ -528,6 +546,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		   histosForOverlayAreaNorm[i]->Draw("HIST SAME");
 		}
 	}
+  //cout<<"So far, so good : 10"<<endl;
 
 	float ymax = 0;
 	if(hStack_) ymax = 1.3*hStack_->GetMaximum();
@@ -552,6 +571,8 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
     ratio->GetYaxis()->SetTitleOffset(1.15);
     ratio->SetMarkerSize(1.);
     ratio->GetYaxis()->SetNdivisions(5);
+
+    //cout<<"So far, so good : 11"<<endl;
     
     TPad* pad = new TPad("pad", "pad", 0.0, 0.0, 1.0, 1.0);
     pad->SetTopMargin(0.7);
@@ -564,17 +585,20 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		if(hStack_)	
 	  {
 	    hData_->Draw("same E");
+//      cout<<"So far, so good : 11-1"<<endl;
 	    if(addRatio)
 	    {
         pad->Draw();
         pad->cd(0);
         ratio->Draw("e");
+//        cout<<"So far, so good : 11-2"<<endl;
         if(hErrorPlus_)
         {
           hErrorPlus_->Draw("C");
           hErrorMinus_->Draw("C");
         }
       }
+//      cout<<"So far, so good : 11-3"<<endl;
     }
 		else hData_->Draw("E");
 		hCanvasStackLogY_->cd();
@@ -595,6 +619,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
       }
     }
 		else hData_->Draw("E");
+//    cout<<"So far, so good : 12"<<endl;
 		
     TH1F* ratioAreaNorm = (TH1F*) hData_->Clone();
     if(hStackAreaNorm_)	ratioAreaNorm->Divide(addedMCAreaNorm);
@@ -663,7 +688,7 @@ void MultiSamplePlot::Draw(bool addRandomPseudoData, string label, bool mergeTT,
 		if(hStack_ && ymax < 1.3*(hData_->GetMaximum())) ymax = 1.3*(hData_->GetMaximum());
 		if(hStackAreaNorm_ && ymaxAreaNorm < 1.3*(hData_->GetMaximum())) ymaxAreaNorm = 1.3*(hData_->GetMaximum());
 	}
-
+//  cout<<"So far, so good : 13"<<endl;
 	if(addRandomPseudoData){
 		ROOT::Math::Random<ROOT::Math::GSLRngMT> *rand = new ROOT::Math::Random<ROOT::Math::GSLRngMT>();
 		for(int i=0;i<Nbins_;i++) hRandomPseudoData_->SetBinContent(i+1,rand->Poisson(SummedBins[i]));
