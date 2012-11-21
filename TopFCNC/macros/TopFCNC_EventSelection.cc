@@ -122,7 +122,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   string channelpostfix = "";
-  string comments = "_Run2012B";
+  string comments = "_Run2012A";
   string xmlFileName = "";
 
   bool diElectron = false; // use diElectron channel?
@@ -229,7 +229,22 @@ int main (int argc, char *argv[])
 
   MSPlot["DiLeptonInvMass"]                   = new MultiSamplePlot(datasets, "DiLeptonInvMass", 400, 50, 130, "m_{ll}");
   MSPlot["DiLeptonSystPt"]                    = new MultiSamplePlot(datasets, "DiLeptonSystPt", 400, 0, 400, "p_{T}^{ll} [GeV/c]");
-  MSPlot["DiLeptonDR"]                        = new MultiSamplePlot(datasets, "DiLeptonDR", 400, 0, 4, "#Delta R(l^+l^-)");
+  MSPlot["DiLeptonDR"]                        = new MultiSamplePlot(datasets, "DiLeptonDR", 400, 0, 10, "#Delta R(l^{+}l^{-})");
+
+  MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_mm_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystPt_AtLeastTwoJets_mmm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_mmm_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystPt_AtLeastTwoJets_mme_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_mme_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+
+  MSPlot["DiLeptonSystPt_AtLeastFourJets_ee_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_ee_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystPt_AtLeastTwoJets_eee_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_eee_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystPt_AtLeastTwoJets_eem_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_eem_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+
+  MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastFourJets_mm_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
+  MSPlot["DiLeptonDR_AtLeastTwoJets_mmm_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastTwoJets_mmm_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
+  MSPlot["DiLeptonDR_AtLeastTwoJets_mme_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastTwoJets_mme_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
+  MSPlot["DiLeptonDR_AtLeastFourJets_ee_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastFourJets_ee_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
+  MSPlot["DiLeptonDR_AtLeastTwoJets_eee_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastTwoJets_eee_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
+  MSPlot["DiLeptonDR_AtLeastTwoJets_eem_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastTwoJets_eem_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
 
   MSPlot["NbOfExtraIsolatedMuons"]            = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfExtraIsolatedElectrons"]        = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -255,22 +270,7 @@ int main (int argc, char *argv[])
   MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_ee_ch", 30, 0, 30, "Nb. of vertices");
   MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eem_ch", 30, 0, 30, "Nb. of vertices");
   MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eee_ch", 30, 0, 30, "Nb. of vertices");
-/*
-  MSPlot["BdiscBJetCand_mm_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_ee_ch_CVS"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_mm_ch_JP"]            = new MultiSamplePlot(datasets, "BdiscBJetCand_mm_ch_JP",  50, 0, 1, "JP b-disc.");
-  MSPlot["BdiscBJetCand_ee_ch_JP"]            = new MultiSamplePlot(datasets, "BdiscBJetCand_ee_ch_JP",  50, 0, 1, "JP b-disc.");
 
-  MSPlot["BdiscBJetCand_mme_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_eee_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_mme_ch_JP"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mme_ch_JP",  50, 0, 1, "JP b-disc.");
-  MSPlot["BdiscBJetCand_eee_ch_JP"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_eee_ch_JP",  50, 0, 1, "JP b-disc.");
-
-  MSPlot["BdiscBJetCand_mmm_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_eem_ch_CVS"]          = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["BdiscBJetCand_mmm_ch_JP"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_mmm_ch_JP",  50, 0, 1, "JP b-disc.");
-  MSPlot["BdiscBJetCand_eem_ch_JP"]           = new MultiSamplePlot(datasets, "BdiscBJetCand_eem_ch_JP",  50, 0, 1, "JP b-disc.");
-*/
   MSPlot["HighestBdisc_mm_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_ee_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_mm_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_JP",  50, 0, 1, "JP b-disc.");
@@ -292,48 +292,11 @@ int main (int argc, char *argv[])
   MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
-/*
-  MSPlot["Mtt_mm_ch"]                         = new MultiSamplePlot(datasets, "Mtt_mm_ch",  50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_mme_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mme_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mtt_mmm_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_ee_ch"]                         = new MultiSamplePlot(datasets, "Mtt_ee_ch",  50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_eee_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eee_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
-  MSPlot["Mtt_eem_ch"]                        = new MultiSamplePlot(datasets, "Mtt_eem_ch", 50, 0, 1000, "m_{t#bar{t}} [GeV/c^{2}]");
 
-  MSPlot["Mzq_mm_ch"]                         = new MultiSamplePlot(datasets, "Mzq_mm_ch",  50, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_mme_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mme_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_mmm_ch"]                        = new MultiSamplePlot(datasets, "Mzq_mmm_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_ee_ch"]                         = new MultiSamplePlot(datasets, "Mzq_ee_ch",  50, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_eee_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eee_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
-  MSPlot["Mzq_eem_ch"]                        = new MultiSamplePlot(datasets, "Mzq_eem_ch", 50, 80, 300, "m_{Zq} [GeV/c^{2}]");
-
-  MSPlot["MassChi2_mm_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_mm_ch",  20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_mmm_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mmm_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_mme_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_mme_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_ee_ch"]                    = new MultiSamplePlot(datasets, "MassChi2_ee_ch",  20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_eem_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eem_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_eee_ch"]                   = new MultiSamplePlot(datasets, "MassChi2_eee_ch", 20, 0, 20, "\\chi^{2}");
-
-  MSPlot["MassChi2_SM_mm_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_mm_ch",  20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_mmm_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mmm_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_mme_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_mme_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_ee_ch"]                 = new MultiSamplePlot(datasets, "MassChi2_SM_ee_ch",  20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_eem_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eem_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_SM_eee_ch"]                = new MultiSamplePlot(datasets, "MassChi2_SM_eee_ch", 20, 0, 20, "\\chi^{2}");
-
-  MSPlot["MassChi2_FCNC_mm_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_mm_ch",  20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_mmm_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mmm_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_mme_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_mme_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_ee_ch"]               = new MultiSamplePlot(datasets, "MassChi2_FCNC_ee_ch",  20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_eem_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eem_ch", 20, 0, 20, "\\chi^{2}");
-  MSPlot["MassChi2_FCNC_eee_ch"]              = new MultiSamplePlot(datasets, "MassChi2_FCNC_eee_ch", 20, 0, 20, "\\chi^{2}");
-*/
   MSPlot["TriLeptonInvMass_mmm_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mmm_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
   MSPlot["TriLeptonInvMass_mme_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mme_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
   MSPlot["TriLeptonInvMass_eem_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eem_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
   MSPlot["TriLeptonInvMass_eee_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_eee_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
-//  MSPlot["NbOfLooseMuon"]     = new MultiSamplePlot(datasets, "NbOfLooseMuon", 10, 0, 10, "Nb. of loose muons");
-//  MSPlot["NbOfLooseElectron"] = new MultiSamplePlot(datasets, "NbOfLooseElectron", 10, 0, 10, "Nb. of loose electrons");
 
   ////////////////////////////////////////////////////////////////////
   ////////////////// 1D histograms  //////////////////////////////////
@@ -344,13 +307,6 @@ int main (int argc, char *argv[])
   	histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
   	histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
   }
-/*
-  for (unsigned int d = 0; d < datasets.size(); d++){
-	histo2D[("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
-	histo2D[("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mmm_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
-	histo2D[("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str()] = new TH2F(("MET_vs_Mzq_mme_ch_"+datasets[d]->Name()).c_str(),"MET:m_{zq}",50,0,200,50,80,300);
-  }
-*/
   cout << " - Declared histograms ..." <<  endl;
 	
   ////////////////////////////////////////////////////////////////////
@@ -1012,11 +968,11 @@ int main (int argc, char *argv[])
       float DiLeptonDR = 4;
       if(diMuon){
         DiLeptonSystPt = (*selectedMuons[idx_Z_1] + *selectedMuons[idx_Z_2]).Pt();
-        DiLeptonDR     =   selectedMuons[idx_Z_1]->DeltaR(*selectedMuons[idx_Z_2])
+        DiLeptonDR     =   selectedMuons[idx_Z_1]->DeltaR(*selectedMuons[idx_Z_2]);
       }
       else if(diElectron){
         DiLeptonSystPt = (*selectedElectrons[idx_Z_1] + *selectedElectrons[idx_Z_2]).Pt();
-        DiLeptonDR     =   selectedElectrons[idx_Z_1]->DeltaR(*selectedElectrons[idx_Z_2])
+        DiLeptonDR     =   selectedElectrons[idx_Z_1]->DeltaR(*selectedElectrons[idx_Z_2]);
       }
       MSPlot["DiLeptonSystPt"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonDR"]    ->Fill(DiLeptonDR,     datasets[d], true, Luminosity*scaleFactor);
@@ -1081,11 +1037,14 @@ int main (int argc, char *argv[])
    		    MSPlot["ThirdLeadingJetPt_mm_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 					selecTableDiMu.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
-     		    MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-     		    MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 						selecTableDiMu.Fill(d,10,scaleFactor);
 
-						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
+     		    MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+     		    MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
+            
+            sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
@@ -1117,8 +1076,11 @@ int main (int argc, char *argv[])
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
-        MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableDiMuEl.Fill(d,8,scaleFactor);
+
+        MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonDR_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonSystPt_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
   			if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor);//at least 3 jets
 
 				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
@@ -1152,8 +1114,11 @@ int main (int argc, char *argv[])
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
-		    MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableTriMu.Fill(d,8,scaleFactor);
+
+		    MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonDR_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonSystPt_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
   			if(selectedJets.size()>2) selecTableTriMu.Fill(d,9,scaleFactor); //at least 3 jets
 
 				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
@@ -1192,9 +1157,12 @@ int main (int argc, char *argv[])
 		      MSPlot["ThirdLeadingJetPt_ee_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 					selecTableDiEl.Fill(d,9,scaleFactor);
 					if(selectedJets.size()>3){ //at least 4 jets
+						selecTableDiEl.Fill(d,10,scaleFactor);
+
 		        MSPlot["FourthLeadingJetPt_ee_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
      		    MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-						selecTableDiEl.Fill(d,10,scaleFactor);
+            MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
 
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
@@ -1225,8 +1193,11 @@ int main (int argc, char *argv[])
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
-		    MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableDiElMu.Fill(d,8,scaleFactor);
+
+		    MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonDR_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonSystPt_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
 				if(selectedJets.size()>2) selecTableDiElMu.Fill(d,9,scaleFactor); //at least 3 jets
 
 				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
@@ -1260,8 +1231,11 @@ int main (int argc, char *argv[])
 			if(selectedJets.size()>1){ //at least 2 jets
 		    MSPlot["SecondLeadingJetPt"]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		    if(applyAsymmJetPtCut && selectedJets[1]->Pt()<JetPtCuts[1]) continue;
-		    MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 				selecTableTriEl.Fill(d,8,scaleFactor);
+
+		    MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonDR_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["DiLeptonSystPt_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
 				if(selectedJets.size()>2) selecTableTriEl.Fill(d,9,scaleFactor); //at least 3 jets
 
 				sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
@@ -1364,7 +1338,7 @@ int main (int argc, char *argv[])
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
 	  name += comments;
-	  temp->Draw(false, name, true, true, true, true, true,1,false); // merge TT/QCD/W/Z/ST/
+	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	  temp->Write(fout, name, true, pathPNG, "pdf");
   }
@@ -1402,73 +1376,73 @@ int main (int argc, char *argv[])
 double MuEffSF_Id_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 1.00747;
+      return 0.981239;
     else if( pt >= 20 && pt < 25)
-      return 1.0102;
+      return 0.98043;
     else if( pt >= 25 && pt < 30)
-      return 0.999714;
+      return 0.991182;
     else if( pt >= 30 && pt < 35)
-      return 0.991798;
+      return 0.988984;
     else if( pt >= 35 && pt < 40)
-      return 0.989783;
+      return 0.990422;
     else if( pt >= 40 && pt < 50)
-      return 0.987796;
+      return 0.988821;
     else if( pt >= 50 && pt < 60)
-      return 0.995079;
+      return 0.989954;
     else if( pt >= 60 && pt < 90)
-      return 0.990791;
+      return 0.989478;
     else if( pt >= 90 && pt < 140)
-      return 0.99111;
+      return 1.00023;
     else if( pt >= 140 && pt < 500)
-      return 1.01688;
+      return 0.985242;
     else
       return 1;
   }
   if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 1.02897;
+      return 0.936552;
     else if( pt >= 20 && pt < 25)
-      return 1.00923;
+      return 0.995381;
     else if( pt >= 25 && pt < 30)
-      return 0.993101;
+      return 0.991899;
     else if( pt >= 30 && pt < 35)
-      return 0.988653;
+      return 0.990177;
     else if( pt >= 35 && pt < 40)
-      return 0.989246;
+      return 0.990865;
     else if( pt >= 40 && pt < 50)
-      return 0.986642;
+      return 0.986703;
     else if( pt >= 50 && pt < 60)
-      return 0.991663;
+      return 0.990343;
     else if( pt >= 60 && pt < 90)
-      return 0.994594;
+      return 0.985462;
     else if( pt >= 90 && pt < 140)
-      return 0.957334;
+      return 0.999933;
     else if( pt >= 140 && pt < 500)
-      return 0.876914;
+      return 0.922726;
     else
       return 1;
   }
   if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 1.04513;
+      return 1.00304;
     else if( pt >= 20 && pt < 25)
-      return 1.00195;
+      return 0.998942;
     else if( pt >= 25 && pt < 30)
-      return 0.99624;
+      return 0.996901;
     else if( pt >= 30 && pt < 35)
-      return 0.998091;
+      return 0.997486;
     else if( pt >= 35 && pt < 40)
-      return 0.995041;
+      return 0.994566;
     else if( pt >= 40 && pt < 50)
-      return 0.995362;
+      return 0.996159;
     else if( pt >= 50 && pt < 60)
-      return 0.995984;
+      return 0.997451;
     else if( pt >= 60 && pt < 90)
-      return 0.974529;
+      return 0.996516;
     else if( pt >= 90 && pt < 140)
-      return 0.959219;
+      return 1.03286;
     else if( pt >= 140 && pt < 500)
-      return 1.01609;
+      return 1.05323;
     else
       return 1;
   }
@@ -1476,73 +1450,73 @@ double MuEffSF_Id_Run2012(double eta, double pt){
 double MuEffSF_Iso04_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.967563;
+      return 0.922624;
     else if( pt >= 20 && pt < 25)
-      return 0.990809;
+      return 0.976962;
     else if( pt >= 25 && pt < 30)
-      return 1.0029;
+      return 0.997654;
     else if( pt >= 30 && pt < 35)
-      return 1.00061;
+      return 0.997849;
     else if( pt >= 35 && pt < 40)
-      return 0.999133;
+      return 0.998674;
     else if( pt >= 40 && pt < 50)
-      return 0.99914;
+      return 0.998288;
     else if( pt >= 50 && pt < 60)
-      return 0.999507;
+      return 0.998246;
     else if( pt >= 60 && pt < 90)
-      return 1.00458;
+      return 0.99948;
     else if( pt >= 90 && pt < 140)
-      return 0.999191;
+      return 1.00003;
     else if( pt >= 140 && pt < 500)
-      return 1.00421;
+      return 0.996181;
     else
       return 1;
   }
   if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 0.973839;
+      return 0.948552;
     else if( pt >= 20 && pt < 25)
-      return 0.990743;
+      return 0.981943;
     else if( pt >= 25 && pt < 30)
-      return 1.00316;
+      return 0.996887;
     else if( pt >= 30 && pt < 35)
-      return 1.00558;
+      return 0.999591;
     else if( pt >= 35 && pt < 40)
-      return 1.00145;
+      return 1.00033;
     else if( pt >= 40 && pt < 50)
-      return 0.999834;
+      return 0.999218;
     else if( pt >= 50 && pt < 60)
-      return 1.00084;
+      return 0.998999;
     else if( pt >= 60 && pt < 90)
-      return 1.00294;
+      return 0.99905;
     else if( pt >= 90 && pt < 140)
-      return 0.995513;
+      return 0.997391;
     else if( pt >= 140 && pt < 500)
-      return 0.985999;
+      return 1.00422;
     else
       return 1;
   }
   if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 0.983218;
+      return 0.970175;
     else if( pt >= 20 && pt < 25)
-      return 0.996806;
+      return 0.989697;
     else if( pt >= 25 && pt < 30)
-      return 1.00645;
+      return 1.0003;
     else if( pt >= 30 && pt < 35)
-      return 1.00497;
+      return 1.00058;
     else if( pt >= 35 && pt < 40)
-      return 1.0019;
+      return 1.00088;
     else if( pt >= 40 && pt < 50)
-      return 1.00078;
+      return 0.999595;
     else if( pt >= 50 && pt < 60)
-      return 1.00091;
+      return 0.999906;
     else if( pt >= 60 && pt < 90)
-      return 1.00086;
+      return 0.999467;
     else if( pt >= 90 && pt < 140)
-      return 0.995858;
+      return 0.997148;
     else if( pt >= 140 && pt < 500)
-      return 1.0017;
+      return 0.997978;
     else
       return 1;
   }
@@ -1550,67 +1524,73 @@ double MuEffSF_Iso04_Run2012(double eta, double pt){
 double MuEffSF_TrgMu8_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.997657;
-    else if( pt >= 20 && pt < 30)
-      return 0.990708;
+      return 0.991061;
+    else if( pt >= 20 && pt < 25)
+      return 0.988522;
+    else if( pt >= 25 && pt < 30)
+      return 0.98938;
     else if( pt >= 30 && pt < 35)
-      return 0.989016;
+      return 0.987832;
     else if( pt >= 35 && pt < 40)
-      return 0.989852;
+      return 0.989023;
     else if( pt >= 40 && pt < 50)
-      return 0.989148;
+      return 0.988155;
     else if( pt >= 50 && pt < 60)
-      return 0.988999;
+      return 0.987275;
     else if( pt >= 60 && pt < 90)
-      return 0.98839;
+      return 0.989316;
     else if( pt >= 90 && pt < 140)
-      return 0.98725;
+      return 0.990073;
     else if( pt >= 140 && pt < 500)
-      return 0.989903;
+      return 0.982128;
     else
       return 1;
   }
   if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 1.00496;
-    else if( pt >= 20 && pt < 30)
-      return 0.990941;
+      return 1.00247;
+    else if( pt >= 20 && pt < 25)
+      return 0.98477;
+    else if( pt >= 25 && pt < 30)
+      return 0.985676;
     else if( pt >= 30 && pt < 35)
-      return 0.986394;
+      return 0.983014;
     else if( pt >= 35 && pt < 40)
-      return 0.986699;
+      return 0.983788;
     else if( pt >= 40 && pt < 50)
-      return 0.98872;
+      return 0.983716;
     else if( pt >= 50 && pt < 60)
-      return 0.985978;
+      return 0.985706;
     else if( pt >= 60 && pt < 90)
-      return 0.980763;
+      return 0.982735;
     else if( pt >= 90 && pt < 140)
-      return 0.987128;
+      return 0.982356;
     else if( pt >= 140 && pt < 500)
-      return 0.954924;
+      return 0.963695;
     else
       return 1;
   }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.4 ){
+  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 0.994495;
-    else if( pt >= 20 && pt < 30)
-      return 0.992625;
+      return 1.00883;
+    else if( pt >= 20 && pt < 25)
+      return 1.00035;
+    else if( pt >= 25 && pt < 30)
+      return 0.993731;
     else if( pt >= 30 && pt < 35)
-      return 0.989671;
+      return 0.990587;
     else if( pt >= 35 && pt < 40)
-      return 0.988672;
+      return 0.987497;
     else if( pt >= 40 && pt < 50)
-      return 0.989098;
+      return 0.985698;
     else if( pt >= 50 && pt < 60)
-      return 0.984751;
+      return 0.98527;
     else if( pt >= 60 && pt < 90)
-      return 0.990953;
+      return 0.983774;
     else if( pt >= 90 && pt < 140)
-      return 0.975961;
+      return 0.971552;
     else if( pt >= 140 && pt < 500)
-      return 0.99754;
+      return 1.00464;
     else
       return 1;
   }
@@ -1618,67 +1598,73 @@ double MuEffSF_TrgMu8_Run2012(double eta, double pt){
 double MuEffSF_TrgMu17_Run2012(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.987431;
-    else if( pt >= 20 && pt < 30)
-      return 0.990293;
+      return 0.991061;
+    else if( pt >= 20 && pt < 25)
+      return 0.988522;
+    else if( pt >= 25 && pt < 30)
+      return 0.98938;
     else if( pt >= 30 && pt < 35)
-      return 0.988535;
+      return 0.987832;
     else if( pt >= 35 && pt < 40)
-      return 0.98961;
+      return 0.989023;
     else if( pt >= 40 && pt < 50)
-      return 0.988796;
+      return 0.988155;
     else if( pt >= 50 && pt < 60)
-      return 0.988964;
+      return 0.987275;
     else if( pt >= 60 && pt < 90)
-      return 0.988338;
+      return 0.989316;
     else if( pt >= 90 && pt < 140)
-      return 0.986894;
+      return 0.990073;
     else if( pt >= 140 && pt < 500)
-      return 0.98723;
+      return 0.982128;
     else
       return 1;
   }
   if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 1.0148;
-    else if( pt >= 20 && pt < 30)
-      return 0.987789;
+      return 1.00247;
+    else if( pt >= 20 && pt < 25)
+      return 0.98477;
+    else if( pt >= 25 && pt < 30)
+      return 0.985676;
     else if( pt >= 30 && pt < 35)
-      return 0.984216;
+      return 0.983014;
     else if( pt >= 35 && pt < 40)
-      return 0.984829;
+      return 0.983788;
     else if( pt >= 40 && pt < 50)
-      return 0.987931;
+      return 0.983716;
     else if( pt >= 50 && pt < 60)
-      return 0.985025;
+      return 0.985706;
     else if( pt >= 60 && pt < 90)
-      return 0.977625;
+      return 0.982735;
     else if( pt >= 90 && pt < 140)
-      return 0.98885;
+      return 0.982356;
     else if( pt >= 140 && pt < 500)
-      return 0.954924;
+      return 0.963695;
     else
       return 1;
   }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.4 ){
+  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 1.00149;
-    else if( pt >= 20 && pt < 30)
-      return 0.998639;
+      return 1.00883;
+    else if( pt >= 20 && pt < 25)
+      return 1.00035;
+    else if( pt >= 25 && pt < 30)
+      return 0.993731;
     else if( pt >= 30 && pt < 35)
-      return 0.992417;
+      return 0.990587;
     else if( pt >= 35 && pt < 40)
-      return 0.990839;
+      return 0.987497;
     else if( pt >= 40 && pt < 50)
-      return 0.989054;
+      return 0.985698;
     else if( pt >= 50 && pt < 60)
-      return 0.98503;
+      return 0.98527;
     else if( pt >= 60 && pt < 90)
-      return 0.990908;
+      return 0.983774;
     else if( pt >= 90 && pt < 140)
-      return 0.973882;
+      return 0.971552;
     else if( pt >= 140 && pt < 500)
-      return 1.00649;
+      return 1.00464;
     else
       return 1;
   }
