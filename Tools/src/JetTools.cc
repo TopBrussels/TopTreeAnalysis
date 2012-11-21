@@ -198,7 +198,7 @@ void JetTools::correctJetJER(TRootJet* inJet, TRootGenJet* inGenJet, string dire
   float ptscale = max(0.0, ( inJet->Pt() + deltapt) / inJet->Pt() );
   if(ptscale > 0.0)
     inJet->SetPxPyPzE(inJet->Px()*ptscale, inJet->Py()*ptscale, inJet->Pz()*ptscale, inJet->E()*ptscale);
-  else inJet->SetPxPyPzE(1., 1., 1., 1.); // This jet should not pass any event selection
+  else inJet->SetPxPyPzE(0.001, 0.001, 0.001, 0.001); // This jet should not pass any event selection
 }
 
 void JetTools::correctJetJER(vector<TRootJet*> inJets, vector<TRootGenJet*> inGenJets, string direction, bool oldnumbers)
