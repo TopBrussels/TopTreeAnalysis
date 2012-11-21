@@ -38,7 +38,6 @@ class JetTools
     void correctJets(vector<TRootJet*> inJets, vector<TRootVertex*> PVs, bool isData = false);
     void correctJet(TRootJet* inJet, float rhoPU, bool isData = false);
     void correctJets(vector<TRootJet*> inJets, float rhoPU, bool isData = false);
-
     
     // Jet correctors for JES systematic
     void correctJetJESUnc(TRootJet* inJet, string direction, float nSigma = 1); // direction = plus or minus
