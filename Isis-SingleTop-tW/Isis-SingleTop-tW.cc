@@ -319,6 +319,9 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506;        } 
         else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214;          } 
         else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*37509/18036994;         }  
+	//else if (dataSetName == "zjets1"){       sprintf(name, "zjets1");         xlweight = ??;        }
+	//else if (dataSetName == "zjets_lowmll1"){       sprintf(name, "zjets_lowmll1");         xlweight = ??;        }
+	//else if (dataSetName == "wjets1"){       sprintf(name, "wjets_1");         xlweight = ??;        }
         
         // Define the output rootfiles 
         //  ==>  sprintf(rootFileName,"outputs/naked_%d_%s.root", mode, name)
