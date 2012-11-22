@@ -32,33 +32,14 @@ class TopFCNC_Evt : public TObject
       xParton2_(-1.),
       factorizationScale_(-1.),
       nPV_(0),
-/*
-      nPUBXm1_(0),
-      nPU_(0),
-      nPUBXp1_(0),
-*/
       nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(kNone),
 			wLeptonicChannel_(kNone),
 			isDiLeptonic_(false),
 			isTriLeptonic_(false),
-/*
-			wMass_(80.4),
-			zMass_(91.2),
-			topMass_(170.),
-			hadWMassResol_(10.),
-			hadTopMassResol_(17.4),
-			lepWMassResol_(20.),
-			lepZMassResol_(4.),
-			lepTopMassResol_(17.2),
-			fcncTopMassResol_(10.),
-			massChi2_(-999.),
-			massChi2_SM_(-999.),
-			massChi2_FCNC_(-999.),
-*/
 			verbose_(false)
-			{;}
+	  {;}
 
 		TopFCNC_Evt(LeptonType type) :
 			TObject(),
@@ -71,33 +52,14 @@ class TopFCNC_Evt : public TObject
       xParton2_(-1.),
       factorizationScale_(-1.),
       nPV_(0),
-/*
-      nPUBXm1_(0),
-      nPU_(0),
-      nPUBXp1_(0),
-*/
       nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(type),
 			wLeptonicChannel_(kNone),
 			isDiLeptonic_(true),
 			isTriLeptonic_(false),
-/*
-			wMass_(80.4),
-			zMass_(91.2),
-			topMass_(170.),
-			hadWMassResol_(10.),
-			hadTopMassResol_(17.4),
-			lepWMassResol_(20.),
-			lepZMassResol_(4.),
-			lepTopMassResol_(17.2),
-			fcncTopMassResol_(10.),
-			massChi2_(-999.),
-			massChi2_SM_(-999.),
-			massChi2_FCNC_(-999.),
-*/
 			verbose_(false)
-			{;}
+	  {;}
 
 		TopFCNC_Evt(LeptonType type1, LeptonType type2) :
 			TObject(),
@@ -110,33 +72,14 @@ class TopFCNC_Evt : public TObject
       xParton2_(-1.),
       factorizationScale_(-1.),
       nPV_(0),
-/*
-      nPUBXm1_(0),
-      nPU_(0),
-      nPUBXp1_(0),
-*/
       nTruePU_(-1.),
       eventWeight_(1.),
 			zLeptonicChannel_(type1),
 			wLeptonicChannel_(type2),
 			isDiLeptonic_(false),
 			isTriLeptonic_(true),
-/*
-			wMass_(80.4),
-			zMass_(91.2),
-			topMass_(170.),
-			hadWMassResol_(10.),
-			hadTopMassResol_(17.4),
-			lepWMassResol_(20.),
-			lepZMassResol_(4.),
-			lepTopMassResol_(17.2),
-			fcncTopMassResol_(10.),
-			massChi2_(-999.),
-			massChi2_SM_(-999.),
-			massChi2_FCNC_(-999.),
-*/
 			verbose_(false)
-			{;}
+		{;}
 
 		TopFCNC_Evt(const TopFCNC_Evt& evt) :
 			TObject(evt),
@@ -149,11 +92,6 @@ class TopFCNC_Evt : public TObject
       xParton2_(evt.xParton2_),
       factorizationScale_(evt.factorizationScale_),
       nPV_(evt.nPV_),
-/*
-      nPUBXm1_(evt.nPUBXm1_),
-      nPU_(evt.nPU_),
-      nPUBXp1_(evt.nPUBXp1_),
-*/
       nTruePU_(evt.nTruePU_),
       eventWeight_(evt.eventWeight_),
 			zLeptonicChannel_(evt.zLeptonicChannel_),
@@ -176,22 +114,8 @@ class TopFCNC_Evt : public TObject
 			ISR_(evt.ISR_),
 			smDecayTopRadiation_(evt.smDecayTopRadiation_),
 			fcncDecayTopRadiation_(evt.fcncDecayTopRadiation_),
-/*
-			wMass_(evt.wMass_),
-			zMass_(evt.zMass_),
-			topMass_(evt.topMass_),
-			hadWMassResol_(evt.hadWMassResol_),
-			hadTopMassResol_(evt.hadTopMassResol_),
-			lepWMassResol_(evt.lepWMassResol_),
-			lepZMassResol_(evt.lepZMassResol_),
-			lepTopMassResol_(evt.lepTopMassResol_),
-			fcncTopMassResol_(evt.fcncTopMassResol_),
-			massChi2_(evt.massChi2_),
-			massChi2_SM_(evt.massChi2_SM_),
-			massChi2_FCNC_(evt.massChi2_FCNC_),
-*/
 			verbose_(evt.verbose_)
-			{;}
+		{;}
 	
 		~TopFCNC_Evt(){;}
 
@@ -208,11 +132,6 @@ class TopFCNC_Evt : public TObject
     const Float_t factorizationScale() const { return factorizationScale_;}
 
     const UInt_t  nPV()     const { return nPV_;}
-/*
-    const UInt_t  nPUBXm1() const { return nPUBXm1_;}
-    const UInt_t  nPU()     const { return nPU_;}
-    const UInt_t  nPUBXp1() const { return nPUBXp1_;}
-*/
     const Float_t nTruePU() const { return nTruePU_;}
 
     const Float_t eventWeight() const { return eventWeight_;}
@@ -246,22 +165,7 @@ class TopFCNC_Evt : public TObject
 		const std::vector<TRootJet> fcncDecayTopRadiation()    const { return fcncDecayTopRadiation_;}
 		
 		const TRootMET met() const { return met_;}
-/*
-		const Float_t WMass()   const { return wMass_; }
-		const Float_t ZMass()   const { return zMass_; }
-		const Float_t TopMass() const { return topMass_; }
 
-		const Float_t HadWMassResol()    const { return hadWMassResol_   ; }
-		const Float_t HadTopMassResol()  const { return hadTopMassResol_ ; }
-		const Float_t LepWMassResol()    const { return lepWMassResol_   ; }
-		const Float_t LepZMassResol()    const { return lepZMassResol_   ; }
-		const Float_t LepTopMassResol()  const { return lepTopMassResol_ ; }
-		const Float_t FcncTopMassResol() const { return fcncTopMassResol_; }
-
-		const Float_t MassChi2()      const { return massChi2_; }
-		const Float_t MassChi2_SM()   const { return massChi2_SM_; }
-		const Float_t MassChi2_FCNC() const { return massChi2_FCNC_; }
-*/
     void SetEventID(UInt_t eventID)         { eventID_ = eventID; }
     void SetRunID(UInt_t runID)             { runID_ = runID; }
     void SetLumiBlockID(UInt_t lumiBlockID) { lumiBlockID_ = lumiBlockID; }
@@ -274,11 +178,6 @@ class TopFCNC_Evt : public TObject
     void SetFactorizationScale(Float_t factorizationScale) { factorizationScale_ = factorizationScale; }
 
     void SetnPV(UInt_t nPV)         { nPV_ = nPV; }
-/*
-    void SetnPUBXm1(UInt_t nPUBXm1) { nPUBXm1_ = nPUBXm1; }
-    void SetnPU(UInt_t nPU)         { nPU_ = nPU; }
-    void SetnPUBXp1(UInt_t nPUBXp1) { nPUBXp1_ = nPUBXp1; }
-*/
     void SetnTruePU(Float_t nTruePU){ nTruePU_ = nTruePU; }
 
     void SetEventWeight(Float_t eventWeight) { eventWeight_ = eventWeight;}
@@ -346,18 +245,7 @@ class TopFCNC_Evt : public TObject
 		void SetISR(std::vector<TRootJet> ISR){ISR_ = ISR;}
 		void SetSmDecayTopRadiation(std::vector<TRootJet> smDecayTopRadiation){ smDecayTopRadiation_ = smDecayTopRadiation; }
 		void SetFcncDecayTopRadiation(std::vector<TRootJet> fcncDecayTopRadiation){ fcncDecayTopRadiation_ = fcncDecayTopRadiation; }
-/*
-		void SetWMass(Float_t wMass){ wMass_ = wMass; }
-		void SetZMass(Float_t zMass){ zMass_ = zMass; }
-		void SetTopMass(Float_t topMass){ topMass_ = topMass; }
 
-		void SetHadWMassResol(Float_t hadWMassResol)       { hadWMassResol_    = hadWMassResol; }
-		void SetHadTopMassResol(Float_t hadTopMassResol)   { hadTopMassResol_  = hadTopMassResol; }
-		void SetLepWMassResol(Float_t lepWMassResol)       { lepWMassResol_    = lepWMassResol; }
-		void SetLepZMassResol(Float_t lepZMassResol)       { lepZMassResol_    = lepZMassResol; }
-		void SetLepTopMassResol(Float_t lepTopMassResol)   { lepTopMassResol_  = lepTopMassResol; }
-		void SetFcncTopMassResol(Float_t fcncTopMassResol) { fcncTopMassResol_ = fcncTopMassResol; }
-*/
 		void SetVerbosity(Bool_t verbose)                  { verbose_ = verbose; }
 
 		void ReconstructEvt()
@@ -382,11 +270,6 @@ class TopFCNC_Evt : public TObject
 			smDecayTop_ = B_ + W_ ;
 			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
 			fcncDecayTop_ = Q_ + Z_ ;
-/*			
-			massChi2_SM_   = pow((W_.M()-wMass_)/hadWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/hadTopMassResol_,2);
-			massChi2_FCNC_ = pow((Z_.M()-zMass_)/lepZMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
-			massChi2_      = pow((W_.M()-wMass_)/hadWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/hadTopMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
-*/
 		}
 
 		void ReconstructTriLeptEvt()
@@ -400,214 +283,8 @@ class TopFCNC_Evt : public TObject
 			smDecayTop_ = B_ + W_ ;
 			Z_ = lepton1FromZ_ + lepton2FromZ_ ;
 			fcncDecayTop_ = Q_ + Z_ ;
-/*
-			massChi2_SM_   = pow((W_.M()-wMass_)/lepWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/lepTopMassResol_,2);
-			massChi2_FCNC_ = pow((Z_.M()-zMass_)/lepZMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
-			massChi2_      = pow((W_.M()-wMass_)/lepWMassResol_,2)+pow((smDecayTop_.M()-topMass_)/lepTopMassResol_,2)+pow((fcncDecayTop_.M()-topMass_)/fcncTopMassResol_,2);
-*/
-		}
-/*
-		void ReconstructDiLeptEvt(const TRootParticle* lept1, const TRootParticle* lept2, const std::vector<TopTree::TRootJet*> &init_jets, bool UseMinChi2 = true)
-		{
-			// Topology to reconstruct : tt-> bW + qZ -> bqq + qll
-			lepton1FromZ_ = *lept1;
-			lepton2FromZ_ = *lept2;
-			selectedJets_.clear();
-			for(UInt_t i=0;i<init_jets.size();++i) selectedJets_.push_back(*init_jets[i]);
-			//std::vector<TRootJet*> jets = init_jets;
-
-			if(UseMinChi2)
-			{
-				UInt_t NofJets = 4 ;
-				if(selectedJets_.size()<NofJets){
-          cout<<"*** Number of selected jets less than four ***"<<endl;
-				  return;
-				}
-				UInt_t *numbers = new UInt_t[selectedJets_.size()];
-				for(UInt_t i=0;i<selectedJets_.size();i++) numbers[i]=i;
-				UInt_t *comb = new UInt_t[NofJets];
-				for(UInt_t i=0;i <NofJets;i++) comb[i]=i;
-				UInt_t *Permutation = new UInt_t[NofJets];
-				for(UInt_t i=0;i<NofJets;i++) Permutation[i]=i;
-
-				double massChi2_tmp_ = 99999999.;
-
-				do
-				{
-					if(verbose_)
-						cout<<"-- Jet combination considered : "<<comb[0]<<"/"<<comb[1]<<"/"<<comb[2]<<"/"<<comb[3]<<endl;
-
-					massChi2_tmp_ = 99999999.;
-
-					do
-					{
-						if(verbose_)
-							cout<<"--- Permutations : "<<comb[0]<<"/"<<comb[1]<<"/"<<comb[2]<<"/"<<comb[3]<<endl;
-
-						quark1FromW_  = selectedJets_[comb[0]];
-						quark2FromW_  = selectedJets_[comb[1]];
-						B_            = selectedJets_[comb[2]];
-						Q_            = selectedJets_[comb[3]];
-						ReconstructDiLeptEvt();
-
-						if(massChi2_ < massChi2_tmp_)
-						{
-							for(UInt_t i=0;i<NofJets;i++) Permutation[i] = comb[i];
-							massChi2_tmp_ = massChi2_ ;
-						}
-					}
-					while(next_permutation(comb,comb+NofJets));
-   			}
-   			while(next_combination(numbers,numbers+selectedJets_.size(),comb,comb+NofJets));
-
-				quark1FromW_ = selectedJets_[Permutation[0]];
-				quark2FromW_ = selectedJets_[Permutation[1]];
-				B_           = selectedJets_[Permutation[2]];
-				Q_           = selectedJets_[Permutation[3]];
-				ReconstructDiLeptEvt();
-
-        delete Permutation;
-        delete comb;
-        delete numbers;
-			}
-			else
-			{
-				// Search for jet pairs with an invariant mass matching the W boson mass.
-				UInt_t W_idx_1 = 0;
-				UInt_t W_idx_2 = 1;
-				Float_t W_massDiff = 99999.;
-				for(UInt_t i=0;i<selectedJets_.size()-1;i++){
-					for(UInt_t j=i+1;j<selectedJets_.size();j++){
-						if(W_massDiff>fabs((selectedJets_[i]+selectedJets_[j]).M()-wMass_)){
-							W_idx_1 = i;
-							W_idx_2 = j;
-							W_massDiff = fabs((selectedJets_[i]+selectedJets_[j]).M()-wMass_);
-						}
-					}
-				}
-				quark1FromW_ = selectedJets_[W_idx_1];
-				quark2FromW_ = selectedJets_[W_idx_2];
-				// Erase W boson jets candidates from the jet list
-				selectedJets_.erase(selectedJets_.begin()+W_idx_2);
-				selectedJets_.erase(selectedJets_.begin()+W_idx_1);
-	
-				Float_t Top_massDiff = 99999.;
-				UInt_t B_idx = 0;
-				UInt_t Q_idx = 0;
-
-				for(UInt_t i=0;i<selectedJets_.size();i++){
-					if(Top_massDiff>fabs((selectedJets_[i]+quark1FromW_+quark2FromW_).M()-topMass_)){
-						B_idx = i;
-						Top_massDiff = fabs((selectedJets_[i]+quark1FromW_+quark2FromW_).M()-topMass_);
-					}
-				}
-				B_ = selectedJets_[B_idx];
-				// Erase b-jet candidates from the jet list
-				selectedJets_.erase(selectedJets_.begin()+B_idx);
-
-				Top_massDiff = 99999.;
-				// Search for the jet giving with the Z candidate an invariant mass close to the top mass
-				for(UInt_t i=0;i<selectedJets_.size();i++){
-					if(Top_massDiff>fabs((selectedJets_[i]+lepton1FromZ_+lepton2FromZ_).M()-topMass_)){
-						Q_idx = i;
-						Top_massDiff = fabs((selectedJets_[i]+lepton1FromZ_+lepton2FromZ_).M()-topMass_);
-					}
-				}
-				Q_ = selectedJets_[Q_idx];
-				ReconstructDiLeptEvt();
-			}
 		}
 
-		void ReconstructTriLeptEvt(const TRootParticle* leptZ1, const TRootParticle* leptZ2, const TRootParticle* leptW, const std::vector<TopTree::TRootJet*> &init_jets, const TRootParticle *MET, bool UseMinChi2 = true)
-		{
-			// Topology to reconstruct : tt-> bW + qZ -> blv + qll
-			lepton1FromZ_ = *leptZ1;
-			lepton2FromZ_ = *leptZ2;
-			leptonFromW_  = *leptW;
-			neutrino_     = *MET;
-			// Recover the kinematics of the neutrino from the MET
-			MEzCalculator MyMEzCalc;
-			MyMEzCalc.SetMET(*MET);
-			MyMEzCalc.SetMuon(*leptW);
-			Float_t MEz = MyMEzCalc.Calculate();
-			neutrino_.SetPz(MEz);
-
-			selectedJets_.clear();
-			for(UInt_t i=0;i<init_jets.size();++i) selectedJets_.push_back(*init_jets[i]);
-			//std::vector<TRootJet*> jets = init_jets;
-
-			if(UseMinChi2)
-			{
-				UInt_t NofJets = 2 ;
-				UInt_t *numbers = new UInt_t[selectedJets_.size()];
-				for(UInt_t i=0;i<selectedJets_.size();i++) numbers[i]=i;
-				UInt_t *comb = new UInt_t[NofJets];
-				for(UInt_t i=0;i <NofJets;i++) comb[i]=i;
-				UInt_t *Permutation = new UInt_t[NofJets];
-				for(UInt_t i=0;i<NofJets;i++) Permutation[i]=i;
-
-				double massChi2_tmp_ = 99999999.;
-
-				do
-				{
-					if(verbose_)
-						cout<<"-- Jet combination considered : "<<comb[0]<<"/"<<comb[1]<<endl;
-
-					massChi2_tmp_ = 99999999.;
-
-					do
-					{
-						if(verbose_)
-							cout<<"--- Permutations : "<<comb[0]<<"/"<<comb[1]<<endl;
-
-						B_             = selectedJets_[comb[0]];
-						Q_             = selectedJets_[comb[1]];
-						ReconstructTriLeptEvt();
-
-						if(massChi2_ < massChi2_tmp_)
-						{
-							for(UInt_t i=0;i<NofJets;i++) Permutation[i] = comb[i];
-							massChi2_tmp_ = massChi2_ ;
-						}
-					}
-					while(next_permutation(comb,comb+NofJets));
-   				}
-   				while(next_combination(numbers,numbers+selectedJets_.size(),comb,comb+NofJets));
-
-				B_             = selectedJets_[Permutation[0]];
-				Q_             = selectedJets_[Permutation[1]];
-				ReconstructTriLeptEvt();
-
-			}
-			else
-			{
-				// Search for the jet giving with the Z candidate an invariant mass close to the top mass
-				Float_t Top_massDiff = 99999.;
-				UInt_t B_idx = 0;
-				UInt_t Q_idx = 0;
-
-				for(UInt_t i=0;i<selectedJets_.size();i++){
-					if(Top_massDiff>fabs((selectedJets_[i]+leptonFromW_+neutrino_).M()-topMass_)){
-						B_idx = i;
-						Top_massDiff = fabs((selectedJets_[i]+leptonFromW_+neutrino_).M()-topMass_);
-					}
-				}
-				B_ = selectedJets_[B_idx];
-				// Erase b-jet candidates from the jet list
-				selectedJets_.erase(selectedJets_.begin()+B_idx);
-
-				Top_massDiff = 99999.;
-				for(UInt_t i=0;i<selectedJets_.size()-1;i++){
-					if(Top_massDiff>fabs((selectedJets_[i]+lepton1FromZ_+lepton2FromZ_).M()-topMass_)){
-						Q_idx = i;
-						Top_massDiff = fabs((selectedJets_[i]+lepton1FromZ_+lepton2FromZ_).M()-topMass_);
-					}
-				}
-				Q_ = selectedJets_[Q_idx];
-				ReconstructTriLeptEvt();
-			}
-	}
-*/	
 		virtual TString typeName() const { return "TopFCNC_Evt"; }
 
 		friend std::ostream& operator<< (std::ostream& stream, const TopFCNC_Evt& fcncEvt)
@@ -635,7 +312,6 @@ class TopFCNC_Evt : public TObject
 			stream << std::endl;
 			stream << "Nof ISR: "<< fcncEvt.ISR().size() << std::endl;
 			stream << "Nof Top radiations: "<< fcncEvt.smDecayTopRadiation().size() + fcncEvt.fcncDecayTopRadiation().size() << std::endl;
-			//stream << "TRootGenEvent - Charge=" << setw(2) << jet.charge() << " (Et,eta,phi)=("<< setw(10) << jet.Et() <<","<< setw(10) << jet.Eta() <<","<< setw(10) << jet.Phi() << ")"
 			return stream;
 		};
 
@@ -691,22 +367,7 @@ class TopFCNC_Evt : public TObject
 		std::vector<TRootJet> fcncDecayTopRadiation_;
 		
 		TRootMET met_;
-/*
-		Float_t wMass_;
-		Float_t zMass_;
-		Float_t topMass_;
 
-		Float_t hadWMassResol_;
-		Float_t hadTopMassResol_;
-		Float_t lepWMassResol_;
-		Float_t lepZMassResol_;
-		Float_t lepTopMassResol_;
-		Float_t fcncTopMassResol_;
-
-		Float_t massChi2_;
-		Float_t massChi2_SM_;
-		Float_t massChi2_FCNC_;
-*/
 		Bool_t verbose_;
 
 		ClassDef (TopFCNC_Evt,2);
