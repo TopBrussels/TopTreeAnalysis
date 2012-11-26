@@ -1320,20 +1320,20 @@ int main (int argc, char *argv[])
 
   //Selection tables
   if(diMuon){ 
-	  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-	  selecTableDiMu.TableCalculator(  false, true, true, true, true);
-	  selecTableDiMuEl.TableCalculator(false, true, true, true, true);
-	  selecTableTriMu.TableCalculator( false, true, true, true, true);
+	  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass)
+	  selecTableDiMu.TableCalculator(  false, true, true, true, true, true);
+	  selecTableDiMuEl.TableCalculator(false, true, true, true, true, true);
+	  selecTableTriMu.TableCalculator( false, true, true, true, true, true);
     //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
 	  selecTableDiMu.Write(  "TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiMu.tex",    true,true,true,true,false,false,true);
 	  selecTableDiMuEl.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiMuElec.tex",true,true,true,true,false,false,true);
 	  selecTableTriMu.Write( "TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_TriMu.tex",   true,true,true,true,false,false,true);
   }
   else if(diElectron){
-	  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-	  selecTableDiEl.TableCalculator(  false, true, true, true, true);
-	  selecTableDiElMu.TableCalculator(false, true, true, true, true);
-	  selecTableTriEl.TableCalculator( false, true, true, true, true);
+	  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass)
+	  selecTableDiEl.TableCalculator(  false, true, true, true, true, true);
+	  selecTableDiElMu.TableCalculator(false, true, true, true, true, true);
+	  selecTableTriEl.TableCalculator( false, true, true, true, true, true);
     //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
 	  selecTableDiEl.Write(  "TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiEl.tex",  true,true,true,true,false,false,true);
 	  selecTableDiElMu.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiElMu.tex",true,true,true,true,false,false,true);
@@ -1346,7 +1346,7 @@ int main (int argc, char *argv[])
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
 	  name += comments;
-	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
+	  temp->Draw(false, name, true, true, true, true, true,1,true,true); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	  temp->Write(fout, name, true, pathPNG, "pdf");
   }
