@@ -37,8 +37,8 @@ map<string,TH2F*> histo2D;
 map<string,MultiSamplePlot*> MSPlot;
 
 struct HighestCVSBtag{
-    bool operator()( TRootJet* j1, TRootJet* j2 ) const{
-    	return j1->btag_combinedSecondaryVertexBJetTags() > j2->btag_combinedSecondaryVertexBJetTags();
+    bool operator()( TRootJet j1, TRootJet j2 ) const{
+    	return j1.btag_combinedSecondaryVertexBJetTags() > j2.btag_combinedSecondaryVertexBJetTags();
     }
 };
 /*https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
@@ -78,11 +78,12 @@ int main (int argc, char *argv[])
 
   //Output ROOT file
   string postfix = "_Analysis";
-  string channelpostfix = (UseMuChannel ? "_DiMuonTrigger" : "_DiElecTrigger");
+  string channelpostfix = (UseMuChannel ? "_DiMuTrigger" : "_DiElecTrigger");
   string comments = "_Run2012A";
   string rootFileName ("TopFCNC"+postfix+channelpostfix+comments+".root");
-  string treepath = "/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/TopFCNC_EventSelection_DiMuTrigger_Run2012A_Trees/"
-  string resopath = "/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/"
+  string treepath = "$HOME/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/TopFCNC_EventSelection_DiMuTrigger_Run2012A_Trees/";
+  string resopath = "$HOME/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/";
+  string resoprefix = "TTbar_FCNC_";
 
   Float_t Luminosity = -1.;
   Float_t EventWeight = 1.;
@@ -91,15 +92,23 @@ int main (int argc, char *argv[])
   vector<string>   inputFiles;
   
   inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Data.root");
+/*
   inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_tbar_tWch_DR.root");
   inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_t_tWch_DR.root");
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ww.root");
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_wz.root");
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_zz.root");
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_TTjets.root");
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_Z_Jets.root");
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttbar_fcnc.root");
-
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_tbar_tch.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ST_t_tch.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_WWJetsTo2L2Nu.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_WZJetsTo2L2Q.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_WZJetsTo3LNu.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ZZJetsTo2L2Nu.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ZZJetsTo2L2Q.root");
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ZZJetsTo4L.root");
+*/
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttjets.root");
+/*
+  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_zjets.root");
+//  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttbar_fcnc.root");
+*/
   for(unsigned int iDataSet=0; iDataSet<inputFiles.size(); iDataSet++)
   {
     TFile* inputFile = new TFile(inputFiles[iDataSet].c_str(),"READ");
@@ -127,21 +136,21 @@ int main (int argc, char *argv[])
   ResolutionFit *resFitLeptons = 0;
   if(UseMuChannel){
     resFitLeptons = new ResolutionFit("Muon");
-    resFitLeptons->LoadResolutions(resopath+"muonReso_FromZJets.root");
+    resFitLeptons->LoadResolutions(resopath+resoprefix+"muonReso.root");
   }
   else{
     resFitLeptons = new ResolutionFit("Electron");
-    resFitLeptons->LoadResolutions(resopath+"electronReso_FromZJets.root");
+    resFitLeptons->LoadResolutions(resopath+resoprefix+"electronReso.root");
   }
   
   ResolutionFit *resFitBJets = new ResolutionFit("BJet");
-  resFitBJets->LoadResolutions(resopath+"bJetReso.root");
+  resFitBJets->LoadResolutions(resopath+resoprefix+"bJetReso.root");
 
-  ResolutionFit *resFitQJets = new ResolutionFit("BJet");
-  resFitQJets->LoadResolutions(resopath+"qJetReso.root");
+  ResolutionFit *resFitQJets = new ResolutionFit("QJet");
+  resFitQJets->LoadResolutions(resopath+resoprefix+"qJetReso.root");
 
   ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
-  resFitLightJets->LoadResolutions(resopath+"lightJetReso.root");
+  resFitLightJets->LoadResolutions(resopath+resoprefix+"lightJetReso.root");
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,12 +213,14 @@ int main (int argc, char *argv[])
     string dataSetName = dataSets[iDataSet]->Name();
     cout << "Processing DataSet: " << dataSetName << endl;
 
-    TFile* inFile = new TFile(inputFiles[iDataSet].c_str(),"READ");
+    TFile* inFile = TFile::Open(inputFiles[iDataSet].c_str());
+    //TFile* inFile = new TFile(inputFiles[iDataSet].c_str(),"READ");
     
-    TTree* inTree = (TTree*) inFile->Get("Tree");
+    TTree* inTree = (TTree*)   inFile->Get("Tree");
     TBranch* m_br = (TBranch*) inTree->GetBranch("TheTopFCNC_Evt");
     
-    int nEvent = 100;//inTree->GetEntries();
+    int nEvent = inTree->GetEntries();
+    cout<< " - number of entries: "<<nEvent<<endl;
     
     TTree* inConfigTree = (TTree*) inFile->Get("configTree");
     TBranch* d_br = (TBranch*) inConfigTree->GetBranch("Dataset");
@@ -247,8 +258,9 @@ int main (int argc, char *argv[])
 		    std::cout<<"Processing the "<<iEvt<<"th event, time = "<< ((double)clock()-start)/CLOCKS_PER_SEC << " ("<<100*(iEvt)/(nEvent)<<"%)"<<flush<<"\r";
 
       if(!topFCNC_Evt->isDiLeptonic()) continue;
+//      cout<<"Nb of selected jets: "<<topFCNC_Evt->selectedJets().size()<<endl;
       
-      //, float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5/173.3 MC vs data);
+      // float WMass = 80.4, float Zmass = 91.2, float topMass = 172.5/173.3 MC vs data);
       topFCNC_KinFit->FitEvent(topFCNC_Evt,80.4,91.2,topMass);
 
       topFCNC_Evt->ReconstructEvt();
@@ -259,6 +271,11 @@ int main (int argc, char *argv[])
       kin_chi2        = topFCNC_KinFit->GetChi2();
       if(topFCNC_KinFit->GetNdof()!=0)
         kin_chi2ByNdf   = kin_chi2/topFCNC_KinFit->GetNdof();
+/*
+      cout<<"HadQ1 properties :"<<topFCNC_Evt->quark1FromW()<<endl;
+      cout<<"HadQ2 properties :"<<topFCNC_Evt->quark2FromW()<<endl;
+      cout<<"Had W properties :"<<topFCNC_Evt->W()<<endl;
+*/
       kin_hadWmass    = topFCNC_Evt->W().M();
       kin_hadtopmass  = topFCNC_Evt->smDecayTop().M();
       kin_fcnctopmass = topFCNC_Evt->fcncDecayTop().M();
@@ -274,7 +291,7 @@ int main (int argc, char *argv[])
 
       vector<TRootJet> selectedJets = topFCNC_Evt->selectedJets();
       sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
-      double bdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
+      double bdisc = selectedJets[0].btag_combinedSecondaryVertexBJetTags();
 
       if(bdisc>0.679){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!
         MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]->Fill(kin_prob, dataSet, true, EventWeight);
@@ -286,7 +303,7 @@ int main (int argc, char *argv[])
         MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
         MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
       }
-      else if(bisc<0.244){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!!!!!
+      else if(bdisc<0.244){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!!!!!
         MSPlot["KinFit_Prob_NoBtag_CVSL"]->Fill(kin_prob, dataSet, true, EventWeight);
         MSPlot["KinFit_Chi2_NoBtag_CVSL"]->Fill(kin_chi2, dataSet, true, EventWeight);
         if(topFCNC_KinFit->GetNdof()!=0)
@@ -308,6 +325,7 @@ int main (int argc, char *argv[])
 	  MultiSamplePlot *temp = it->second;
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
+	  cout<<"Booking MS :"<<name<<endl;
 	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
 	  temp->Write(fout, name, true, pathPNG, "pdf");
