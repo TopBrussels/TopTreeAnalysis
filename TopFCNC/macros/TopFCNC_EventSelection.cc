@@ -215,14 +215,14 @@ int main (int argc, char *argv[])
   MSPlot["1stLeadingLeptonPt"]                = new MultiSamplePlot(datasets, "1stLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
   MSPlot["2ndLeadingLeptonPt"]                = new MultiSamplePlot(datasets, "2ndLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
 
-  MSPlot["3rdLeadingMuonPt"]                  = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 300, 0, 150, "p_{T} [GeV/c]");
-  MSPlot["3rdLeadingElectronPt"]              = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["3rdLeadingMuonPt"]                  = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 50, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["3rdLeadingElectronPt"]              = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 50, 0, 150, "p_{T} [GeV/c]");
 
   MSPlot["1stLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
   MSPlot["2ndLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
 
-  MSPlot["3rdLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 100, 0, 0.5, "RelIso");
-  MSPlot["3rdLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["3rdLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 30, 0, 0.3, "RelIso");
+  MSPlot["3rdLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 30, 0, 0.3, "RelIso");
 
   MSPlot["NbOfIsolatedMuons"]                 = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]             = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -231,11 +231,11 @@ int main (int argc, char *argv[])
   MSPlot["DiLeptonSystPt"]                    = new MultiSamplePlot(datasets, "DiLeptonSystPt", 400, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonDR"]                        = new MultiSamplePlot(datasets, "DiLeptonDR", 400, 0, 10, "#Delta R(l^{+}l^{-})");
 
-  MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_mm_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_mm_ch", 80, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystPt_AtLeastTwoJets_mmm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_mmm_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystPt_AtLeastTwoJets_mme_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_mme_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
 
-  MSPlot["DiLeptonSystPt_AtLeastFourJets_ee_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_ee_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystPt_AtLeastFourJets_ee_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_ee_ch", 80, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystPt_AtLeastTwoJets_eee_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_eee_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystPt_AtLeastTwoJets_eem_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_eem_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
 
@@ -259,10 +259,10 @@ int main (int argc, char *argv[])
 
   MSPlot["FirstLeadingJetPt"]                 = new MultiSamplePlot(datasets, "FirstLeadingJetPt", 100, 0, 500, "Jet p_{T} [GeV/c]");
   MSPlot["SecondLeadingJetPt"]                = new MultiSamplePlot(datasets, "SecondLeadingJetPt", 80, 0, 400, "Jet p_{T} [GeV/c]");
-  MSPlot["ThirdLeadingJetPt_mm_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_mm_ch",  60, 0, 300, "Jet p_{T} [GeV/c]");
-  MSPlot["ThirdLeadingJetPt_ee_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_ee_ch",  60, 0, 300, "Jet p_{T} [GeV/c]");
-  MSPlot["FourthLeadingJetPt_mm_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_mm_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
-  MSPlot["FourthLeadingJetPt_ee_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_ee_ch", 50, 0, 250, "Jet p_{T} [GeV/c]");
+  MSPlot["ThirdLeadingJetPt_mm_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_mm_ch",  50, 0, 200, "Jet p_{T} [GeV/c]");
+  MSPlot["ThirdLeadingJetPt_ee_ch"]           = new MultiSamplePlot(datasets, "ThirdLeadingJetPt_ee_ch",  50, 0, 200, "Jet p_{T} [GeV/c]");
+  MSPlot["FourthLeadingJetPt_mm_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_mm_ch", 50, 0, 150, "Jet p_{T} [GeV/c]");
+  MSPlot["FourthLeadingJetPt_ee_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_ee_ch", 50, 0, 150, "Jet p_{T} [GeV/c]");
 
   MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_mm_ch", 30, 0, 30, "Nb. of vertices");
   MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_mmm_ch", 30, 0, 30, "Nb. of vertices");
@@ -467,8 +467,14 @@ int main (int argc, char *argv[])
   //////////////////////////////////////////////////////// PileUp Reweighting ////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  LumiReWeighting LumiWeights = LumiReWeighting("../pileup/pileup_MC_S10.root", "../pileup/DoubleMu_Run2012A_13Jul_TopTreeID_2013_PileupHistogram.root", "pileup", "pileup");
+  string PileUpFile = "";
+  if( comments.find("run2012A") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012A_13Jul_TopTreeID_2013_PileupHistogram.root" : "../pileup/DoubleElectron_Run2012A_13Jul_TopTreeID_2063_PileupHistogram.root");
+  else if( comments.find("run2012B") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012B_13Jul_TopTreeID_2065_PileupHistogram.root" : "../pileup/DoubleElectron_Run2012B_13Jul_TopTreeID_2085_PileupHistogram.root");
+  else{
+    cerr << "Cannot determine which pile up root should be used. Make sure the string comment is filled correctly." << endl;
+    exit(1);
+  }
+  LumiReWeighting LumiWeights = LumiReWeighting("../pileup/pileup_MC_S10.root", PileUpFile, "pileup", "pileup");
 
   cout << " - Initialized LumiReWeighting stuff" << endl;
   
@@ -629,11 +635,11 @@ int main (int argc, char *argv[])
  	 			    }
 				    //trigged = treeLoader.EventTrigged (itrigger);
 	   		  }
-	   		  else{
+	   		  /*else{
             itrigger1 = -1;
             itrigger2 = -1;
-          }
-	   		  /*{
+          }*/
+	   		  else{
 				    if(dataSetName != "ttbar_fcnc"){
 				      itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
 				      itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
@@ -649,7 +655,7 @@ int main (int argc, char *argv[])
             }
             cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
             cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
-          }*/
+          }
 		    } //end if diMuon
 		    else if(diElectron)
 		    {
@@ -866,14 +872,16 @@ int main (int argc, char *argv[])
 	// Select events with at least two leptons and apply muon Id/Iso/Trg SF
 	if(diMuon){
 		if(selectedMuons_NoIso.size()<2) continue;
+    if(comments.find("2012B") != string::npos){
+      scaleFactor *= MuEffSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Trigger SF
+      scaleFactor *= MuEffSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Trigger SF
+    }
     scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
     scaleFactor *= MuEffSF_Id_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
 
     scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
     scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
 
-    scaleFactor *= MuEffSF_TrgMu17_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Trigger SF
-    scaleFactor *= MuEffSF_TrgMu8_Run2012( selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Trigger SF
 	}
 	else if(diElectron){
 		if(selectedElectrons_NoIso.size()<2) continue;
