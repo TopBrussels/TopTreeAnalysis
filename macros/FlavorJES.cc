@@ -127,7 +127,9 @@ int main (int argc, char *argv[])
   MSPlot["nSelectedJets"] = new MultiSamplePlot(datasets, "nSelectedJets", 20, -0.5, 19.5, "Nr. of Selected Jets");
   MSPlot["JetPt"] = new MultiSamplePlot(datasets, "JetPt", 100, 0, 2000, "P_{T}^{jet}");
   
+  histo1D["nPV"] = new TH1F("nPV","nPV",100,0,100);
   histo1D["JetPt"] = new TH1F("JetPt","JetPt",100,0,100);
+  histo1D["JetEta"] = new TH1F("JetEta","JetEta",100,-5,5);
   histo1D["MatchedJetPt"] = new TH1F("MatchedJetPt", "MatchedJetPt", 100, 0, 2000);
   histo1D["MatchedJetEta"] = new TH1F("MatchedJetEta", "MatchedJetEta", 100, -5, 5);
   histo1D["MatchedBJetPt"] = new TH1F("MatchedBJetPt", "MatchedBJetPt", 100, 0, 2000);
@@ -236,8 +238,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
 
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 5; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 5; ievt++)
     {
       if(ievt%1000 == 0)
         std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
@@ -432,12 +434,14 @@ int main (int argc, char *argv[])
       
       // Now do something with those events!
       MSPlot["nSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+      histo1D["nPV"]->Fill(vertex.size());
       
       vector<TLorentzVector> jetsTLV, genJetsTLV, partonsTLV;
       for(size_t iJet=0; iJet<selectedJets.size(); iJet++)
       {
         TRootJet* jet = selectedJets[iJet];
         histo1D["JetPt"]->Fill(jet->Pt());
+        histo1D["JetEta"]->Fill(jet->Eta());
         MSPlot["JetPt"]->Fill(jet->Pt(), datasets[d], true, Luminosity*scaleFactor);
         jetsTLV.push_back(*jet);
       }
@@ -500,15 +504,12 @@ int main (int argc, char *argv[])
         else if( nB3+nBbar3 > 0 ) bProdMech = "FEX";
         else if( nB2 > 1 ) bProdMech = "GSP";
         
-        cout << "Event!" << endl;
-        
         for(size_t i=0; i<matching.size(); i++)
         {
           if( matching[i].parton < 0 || partonsTLV[matching[i].parton].DeltaR(genJetsTLV[matching[i].genJet]) > 0.3 )
             continue;
           TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[matching[i].jet]);
           int partonId = mcParticlesMatching[matching[i].parton]->type();
-          cout << partonId << " " << mcParticlesMatching[matching[i].parton]->Pt() << " " << partonsTLV[matching[i].parton].Pt() << endl;
           
           // Fill some plots for all the matched jets.
           histo1D["MatchedJetPt"]->Fill(pfJet->Pt());
@@ -696,13 +697,13 @@ int main (int argc, char *argv[])
   
   resFitInclJPL->WritePlots(fout, true, pathPNG+"resFit_Incl_JPL/");
   resFitInclCSVL->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVL/");
-  resFitInclSoftLepL->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepL/");
+  resFitInclSoftLepL->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLeptL/");
   resFitInclJPM->WritePlots(fout, true, pathPNG+"resFit_Incl_JPM/");
   resFitInclCSVM->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVM/");
-  resFitInclSoftLepM->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepM/");
+  resFitInclSoftLepM->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLeptM/");
   resFitInclJPT->WritePlots(fout, true, pathPNG+"resFit_Incl_JPT/");
   resFitInclCSVT->WritePlots(fout, true, pathPNG+"resFit_Incl_CSVT/");
-  resFitInclSoftLepT->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLepT/");
+  resFitInclSoftLepT->WritePlots(fout, true, pathPNG+"resFit_Incl_SoftLeptT/");
   
   cout << " - Writing the histograms ..." << endl;
   // 1D 
