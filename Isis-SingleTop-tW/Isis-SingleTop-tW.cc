@@ -222,7 +222,7 @@ int main(int argc, char* argv[]) {
     
     // xml file, this file contains the rootfiles of the skimmed toptrees
     if( mode == 0){
-        lumi = 5085.246;   // Still to check! 
+        lumi = 4399;   // only run B 13July2012
         xmlfile = "twemu.xml";
     }
     if( mode == 1){
@@ -308,17 +308,19 @@ int main(int argc, char* argv[]) {
         char name[100];
         
         if (dataSetName == "data"){             sprintf(name, "data");          xlweight = 1;                           isData = true;}
-        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6709118;        isTop = true;} 
+        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6883735;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657;            } 
-        else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460;            } 
-        else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/23777;             } 
-        else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/1935071;           } 
-        else if (dataSetName == "ww"){          sprintf(name, "ww");            xlweight = lumi*57.07/9969958;          } 
+        else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/493458;            } 
+        else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/3747576;             } 
+        else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/1905066;           }
+	else if (dataSetName == "s"){           sprintf(name, "s");             xlweight = lumi*3.79/259960;             } 
+        else if (dataSetName == "as"){          sprintf(name, "as");            xlweight = lumi*1.76/139974;           } 
+        else if (dataSetName == "ww"){          sprintf(name, "ww");            xlweight = lumi*54.838/1933232;          } 
         else if (dataSetName == "wz"){          sprintf(name, "wz");            xlweight = lumi*22.44/8080197;          } 
         else if (dataSetName == "zz"){          sprintf(name, "zz");            xlweight = lumi*9.03/9799902;           } 
-        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506;        } 
+        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/29161806;        } 
         else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214;          } 
-        else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*37509/18036994;         }  
+        else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/55649483;         }  
 	//else if (dataSetName == "zjets1"){       sprintf(name, "zjets1");         xlweight = ??;        }
 	//else if (dataSetName == "zjets_lowmll1"){       sprintf(name, "zjets_lowmll1");         xlweight = ??;        }
 	//else if (dataSetName == "wjets1"){       sprintf(name, "wjets_1");         xlweight = ??;        }
@@ -380,12 +382,11 @@ int main(int argc, char* argv[]) {
         
         
         /////////////////////////////////
-        ///    Pile Up reweighting    ///     HOW DOES THIS REWEIGHTING WORK? I know you divide MC histo with data Histo for resulting normalizing factor, but how to get these histos? 
-        ////////////////////////////////      where are they given? 
+        ///    Pile Up reweighting    ///     
         
          
         LumiReWeighting LumiWeights; 
-        LumiWeights = LumiReWeighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup");  // THIS WRITES STUFF (2x), what is this??
+        LumiWeights = LumiReWeighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup");  // gives PU weights per bin
         
         //systematics    WHAT DOES THIS DO? 
         reweight::PoissonMeanShifter PShiftDown_= reweight::PoissonMeanShifter(-0.6); 
@@ -690,8 +691,10 @@ int main(int argc, char* argv[]) {
                                 trigged = true;
                         }       
                 } // closing the HLT run loop
-                
-                
+                else{               
+			trigged = true; 
+		}// HLT makes no difference (CHECK PREVIOUS LOOP)
+		
                 ////////////////////////////////
                 /// SELECTION & CUTFLOW      ///
                 ////////////////////////////////

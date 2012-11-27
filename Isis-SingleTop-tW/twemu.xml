@@ -3,7 +3,9 @@
 
  <!--- <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR/*.root"/> 
  --->
- <d name="data_a" title="data_a" add="1" filenames="/user/rebeca/Files/Summer12_53X_emu/data_RunA/*.root"/> 
+ <!-- <d name="data_a" title="data_a" add="1" filenames="/user/rebeca/Files/Summer12_53X_emu/data_RunA/*.root"/> -->
+  <d name="data" title="data" add="1" filenames="/user/ivanpari/Files/Fall12_1e1mu/MuEGRun2012B/13Jul2012-v1/*.root"/> 
+  
   <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/Fall12_1e1mu/TTbar/*.root"/> 
   <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/Fall12_1e1mu/T_tw_DR/*.root"/> 
   <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/Fall12_1e1mu/Tbar_tw_DR/*.root"/> 

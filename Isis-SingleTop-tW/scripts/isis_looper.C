@@ -44,9 +44,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   char newRootFile[300];
   double lumi = luminosity; 
-  if (mode == 0 )        lumi = 5085.246; 
-  else if ( mode == 1)   lumi = 1000;
-  else if ( mode == 2)   lumi = 5103.58;
+  if (mode == 0 )        lumi = 4399; 
+  else if ( mode == 1)   lumi = 1000; // to check 
+  else if ( mode == 2)   lumi = 5103.58; // to check 
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
  
   TFile f_var(newRootFile, "UPDATE");

@@ -32,7 +32,7 @@ void plotmaker(int mode = 0){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  if (mode == 0) labelcms2->AddText("5.1 fb^{-1}, e#mu channel  ");
+  if (mode == 0) labelcms2->AddText("4.4 fb^{-1}, e#mu channel  ");
   if (mode == 1) labelcms2->AddText("5.1 fb^{-1}, #mu#mu channel  ");
   if (mode == 2) labelcms2->AddText("5.1 fb^{-1}, ee channel  ");
   
@@ -60,9 +60,9 @@ void plotmaker(int mode = 0){
   char myRootFile[300];
   double lumi = 1000;
   
-  if (mode == 0 )        lumi = 5085.246; 
-  else if ( mode == 1)   lumi = 1000;
-  else if ( mode == 2)   lumi = 1000;
+  if (mode == 0 )        lumi = 4399; 
+  else if ( mode == 1)   lumi = 1000; // to check 
+  else if ( mode == 2)   lumi = 1000;  // to check 
   
   
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
@@ -71,15 +71,15 @@ void plotmaker(int mode = 0){
   cout << myRootFile << endl;
   
   const int nProcess = 8;
-   const int nPlots = 14;
+   const int nPlots = 11;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
-  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
+  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
 
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex", "pt_max", "pt_min", "nvertex_final", "nvertex_final_purw", "nvertex_final_3D" };
-  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 2, 2, 1, 1, 1};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex", "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of vertex", "# of vertex after cuts PU reweighted", "# of vertex after cuts 3D PU reweighted"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex", "pt_max", "pt_min"  };
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 2, 2};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex", "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]"};
 
 
   TString modeString[3] = {"0", "1", "2"};
