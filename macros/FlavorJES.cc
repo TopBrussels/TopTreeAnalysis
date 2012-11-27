@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
+#include <algorithm>
 
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
@@ -39,6 +40,7 @@ map<string,MultiSamplePlot*> MSPlot;
 struct jetMatching {
   int jet;
   int genJet;
+  int parton;
 };
 
 int main (int argc, char *argv[])
@@ -234,8 +236,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
 
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 50000; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 5; ievt++)
     {
       if(ievt%1000 == 0)
         std::cout<<"Processing the "<<ievt<<"th event" <<flush<<"\r";
@@ -431,7 +433,7 @@ int main (int argc, char *argv[])
       // Now do something with those events!
       MSPlot["nSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
       
-      vector<TLorentzVector> jetsTLV, genJetsTLV;
+      vector<TLorentzVector> jetsTLV, genJetsTLV, partonsTLV;
       for(size_t iJet=0; iJet<selectedJets.size(); iJet++)
       {
         TRootJet* jet = selectedJets[iJet];
@@ -440,7 +442,7 @@ int main (int argc, char *argv[])
         jetsTLV.push_back(*jet);
       }
       
-      vector<TRootMCParticle*> mcParticles;
+      vector<TRootMCParticle*> mcParticles, mcParticlesMatching;
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) // if MC
       {
         mcParticles = treeLoader.LoadMCPart(ievt, false);
@@ -458,6 +460,11 @@ int main (int argc, char *argv[])
           {
             if( part->type() == +5 ) nB3++;
             else if( part->type() == -5 ) nBbar3++;
+            if( part->Pt() > 0.00001 ) // Otherwise:  Warning in <TVector3::PseudoRapidity>: transvers momentum = 0! return +/- 10e10
+            {
+              partonsTLV.push_back(*part);
+              mcParticlesMatching.push_back(part);
+            }
           }
         }
         
@@ -471,8 +478,19 @@ int main (int argc, char *argv[])
             jetMatching tmpMatch;
             tmpMatch.jet = matchedJetNumber;
             tmpMatch.genJet = i;
+            tmpMatch.parton = -1;
             matching.push_back(tmpMatch);
           }
+        }
+        
+        JetPartonMatching matchingJetParton = JetPartonMatching(partonsTLV, jetsTLV, 2, true, true, 0.3);
+        for(unsigned int i=0; i<partonsTLV.size(); i++)
+        {
+          int matchedJetNumber = matchingJetParton.getMatchForParton(i, 0);
+          if(matchedJetNumber != -1)
+            for(unsigned int j=0; j<matching.size(); j++)
+              if(matchedJetNumber == matching[j].jet)
+                matching[j].parton = i;
         }
         
         // Find the b-production mechanism (GSP, FEX or FCR) 
@@ -481,14 +499,16 @@ int main (int argc, char *argv[])
         if( nB3 > 0 && nBbar3 > 0 ) bProdMech = "FCR";
         else if( nB3+nBbar3 > 0 ) bProdMech = "FEX";
         else if( nB2 > 1 ) bProdMech = "GSP";
-      
+        
+        cout << "Event!" << endl;
+        
         for(size_t i=0; i<matching.size(); i++)
         {
-          if( jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) > 0.3 )
-          { // Check if the matching went fine
-            cout << "Problem with matching!!!  i: " << i << "  | "  << matching[i].jet << " " << matching[i].genJet << " " << jetsTLV[matching[i].jet].DeltaR(genJetsTLV[matching[i].genJet]) << endl;
-          }
+          if( matching[i].parton < 0 || partonsTLV[matching[i].parton].DeltaR(genJetsTLV[matching[i].genJet]) > 0.3 )
+            continue;
           TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[matching[i].jet]);
+          int partonId = mcParticlesMatching[matching[i].parton]->type();
+          cout << partonId << " " << mcParticlesMatching[matching[i].parton]->Pt() << " " << partonsTLV[matching[i].parton].Pt() << endl;
           
           // Fill some plots for all the matched jets.
           histo1D["MatchedJetPt"]->Fill(pfJet->Pt());
@@ -514,7 +534,7 @@ int main (int argc, char *argv[])
           if( pfJet->btag_softElectronByIP3dBJetTags() > 4.25 || pfJet->btag_softMuonBJetTags() > 0.437 )
             resFitInclSoftLepT->FillPFJets(pfJet, genjets[matching[i].genJet]);
           
-          if( fabs(pfJet->partonFlavour()) == 5 )
+          if( fabs(partonId) == 5 )
           {
             histo1D["MatchedBJetPt"]->Fill(pfJet->Pt());
             histo1D["MatchedBJetEta"]->Fill(pfJet->Eta());
@@ -524,17 +544,10 @@ int main (int argc, char *argv[])
             else if(bProdMech == "FEX") resFitBFEX->FillPFJets(pfJet, genjets[matching[i].genJet]);
             else if(bProdMech == "GSP") resFitBGSP->FillPFJets(pfJet, genjets[matching[i].genJet]);
             
-            if( pfJet->partonFlavour() == 5 )
+            if( partonId == 5 )
               resFitB->FillPFJets(pfJet, genjets[matching[i].genJet]);
-            else if( pfJet->partonFlavour() == -5 )
+            else if( partonId == -5 )
               resFitBbar->FillPFJets(pfJet, genjets[matching[i].genJet]);
-            
-            if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
-              resFitBJPM->FillPFJets(pfJet, genjets[matching[i].genJet]);
-            if( pfJet->btag_combinedSecondaryVertexBJetTags() > 0.679 )
-              resFitBCSVM->FillPFJets(pfJet, genjets[matching[i].genJet]);
-            if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
-              resFitBSoftLepM->FillPFJets(pfJet, genjets[matching[i].genJet]);
             
             if( pfJet->btag_jetProbabilityBJetTags() > 0.275 )
               resFitBJPL->FillPFJets(pfJet, genjets[matching[i].genJet]);
@@ -555,19 +568,19 @@ int main (int argc, char *argv[])
             if( pfJet->btag_softElectronByIP3dBJetTags() > 4.25 || pfJet->btag_softMuonBJetTags() > 0.437 )
               resFitBSoftLepT->FillPFJets(pfJet, genjets[matching[i].genJet]);
           }
-          else if( fabs(pfJet->partonFlavour()) == 4 )
+          else if( partonId == 4 )
           {
             histo1D["MatchedCJetPt"]->Fill(pfJet->Pt());
             histo1D["MatchedCJetEta"]->Fill(pfJet->Eta());
             resFitCJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
           }
-          else if( fabs(pfJet->partonFlavour()) == 21 )
+          else if( partonId == 21 )
           {
             histo1D["MatchedGluonJetPt"]->Fill(pfJet->Pt());
             histo1D["MatchedGluonJetEta"]->Fill(pfJet->Eta());
             resFitGluonJets->FillPFJets(pfJet, genjets[matching[i].genJet]);
           }
-          else if( fabs(pfJet->partonFlavour()) <= 3 && pfJet->partonFlavour() != 0 )
+          else if( partonId <= 3 && partonId != 0 )
           {
             histo1D["MatchedLightJetPt"]->Fill(pfJet->Pt());
             histo1D["MatchedLightJetEta"]->Fill(pfJet->Eta());
@@ -582,7 +595,7 @@ int main (int argc, char *argv[])
           TRootPFJet* pfJet = jetTools->convertToPFJets(selectedJets[iJet]);
           
           resFitIncl->FillPFJets(pfJet, 0);
-          if( pfJet->btag_jetProbabilityBJetTags() > 0.275 )
+/*          if( pfJet->btag_jetProbabilityBJetTags() > 0.275 )
             resFitInclJPL->FillPFJets(pfJet, 0);
           if( pfJet->btag_jetProbabilityBJetTags() > 0.545 )
             resFitInclJPM->FillPFJets(pfJet, 0);
@@ -599,7 +612,7 @@ int main (int argc, char *argv[])
           if( pfJet->btag_softElectronByIP3dBJetTags() > 1.69 || pfJet->btag_softMuonBJetTags() > 0.356 )
             resFitInclSoftLepM->FillPFJets(pfJet, 0);
           if( pfJet->btag_softElectronByIP3dBJetTags() > 4.25 || pfJet->btag_softMuonBJetTags() > 0.437 )
-            resFitInclSoftLepT->FillPFJets(pfJet, 0);
+            resFitInclSoftLepT->FillPFJets(pfJet, 0);*/
         }
       }
     }				//loop on events
