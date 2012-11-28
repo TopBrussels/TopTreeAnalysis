@@ -50,13 +50,12 @@ int main(int argc, char* argv[]) {
   
   int  mode = 0; 
   double lumi = 1000;
-  string xmlfile ="twemu.xml";
+  string xmlfile ="config/twemu.xml";
   
   bool reweightPU = true;
-  bool Pu3D = false;
   
   //b-tag scale factor
-  bool scaleFactor = false;
+  bool scaleFactor = true;
   
   // Systematic Calculations
   bool JESPlus= false;
@@ -103,7 +102,6 @@ int main(int argc, char* argv[]) {
       cout << "--NoPU: Do not apply pileup re-weighting" << endl;
       cout << "--NoSF: Do not apply b-tag scale factor" << endl;
       cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
-      cout << "--3D: 3D Pileup reweighting" << endl;
       return 0;
     }
     if (argval=="--ee") 	mode = 2;
@@ -123,14 +121,13 @@ int main(int argc, char* argv[]) {
     if (argval=="--NoPU") reweightPU = false;
     if (argval=="--NoSF") scaleFactor = false;
     if (argval=="--RAW") {reweightPU = false; scaleFactor = false; isRAW = true;}
-    if (argval=="--3D") Pu3D = true;
     
   }   
   
   // Luminosity and xml files
-  if      (mode == 0){ 	 lumi = 5085.246;  xmlfile ="twemu.xml";}
-  else if (mode == 1){	 lumi = 1000;  xmlfile = "twmumu.xml";}
-  else if (mode == 2){	 lumi = 5103.58;  xmlfile = "twee.xml";}
+  if      (mode == 0){ 	 lumi = 4399;  xmlfile ="config/twemu.xml";}
+  else if (mode == 1){	 lumi = 1000;  xmlfile = "config/twmumu.xml";}
+  else if (mode == 2){	 lumi = 5103.58;  xmlfile = "config/twee.xml";}
  
  
    
@@ -160,22 +157,22 @@ int main(int argc, char* argv[]) {
       bool isTop = false;
       char name[100];
       double xlweight;
-      
-      // cross sections and weights
-      if (dataSetName == "data"){		sprintf(name, "data");  	xlweight = 1; 				isData = true;}//
-      else if (dataSetName == "tt"){            sprintf(name, "tt");            xlweight = lumi*225.197/6709118; 	isTop = true;} //
-      else if (dataSetName == "twdr"){         	sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657; 		} 
-      else if (dataSetName == "atwdr"){         sprintf(name, "atw_dr");        xlweight = lumi*11.1/493460; 		} //
-      else if (dataSetName == "t"){         	sprintf(name, "t");         	xlweight = lumi*56.4/23777; 		} //
-      else if (dataSetName == "at"){         	sprintf(name, "at");         	xlweight = lumi*30.7/1935071; 		} //
-      else if (dataSetName == "ww"){         	sprintf(name, "ww");         	xlweight = lumi*57.07/9969958; 		} //
-      else if (dataSetName == "wz"){         	sprintf(name, "wz");         	xlweight = lumi*22.44/8080197; 		} //
-      else if (dataSetName == "zz"){         	sprintf(name, "zz");         	xlweight = lumi*9.03/9799902; 		} //
-      else if (dataSetName == "zjets"){         sprintf(name, "zjets");         xlweight = lumi*3532.8/16080506; 	} //
-      else if (dataSetName == "zjets_lowmll"){  sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214; 	} //
-      else if (dataSetName == "wjets"){  	sprintf(name, "wjets");  	xlweight = lumi*37509/18036994; 	} // 
-          
-	  
+     
+      if (dataSetName == "data"){	     sprintf(name, "data");	     xlweight = 1;			     isData = true;}
+      else if (dataSetName == "tt"){	     sprintf(name, "tt");	     xlweight = lumi*225.197/6883735;	     isTop = true;} 
+      else if (dataSetName == "twdr"){	     sprintf(name, "tw_dr");	     xlweight = lumi*11.1/497657;	     } 
+      else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");	     xlweight = lumi*11.1/493458;	     } 
+      else if (dataSetName == "t"){	     sprintf(name, "t");	     xlweight = lumi*56.4/3747576;	       } 
+      else if (dataSetName == "at"){	     sprintf(name, "at");	     xlweight = lumi*30.7/1905066;	     }
+      else if (dataSetName == "s"){	     sprintf(name, "s");	     xlweight = lumi*3.79/259960;	      } 
+      else if (dataSetName == "as"){	     sprintf(name, "as");	     xlweight = lumi*1.76/139974;	    } 
+      else if (dataSetName == "ww"){	     sprintf(name, "ww");	     xlweight = lumi*54.838/1933232;	      } 
+      else if (dataSetName == "wz"){	     sprintf(name, "wz");	     xlweight = lumi*22.44/8080197;	     } 
+      else if (dataSetName == "zz"){	     sprintf(name, "zz");	     xlweight = lumi*9.03/9799902;	     } 
+      else if (dataSetName == "zjets"){       sprintf(name, "zjets");	     xlweight = lumi*3532.8/29161806;	     } 
+      else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214;	     } 
+      else if (dataSetName == "wjets"){       sprintf(name, "wjets");	     xlweight = lumi*36257.2/55649483;         }  
+       
 	  
       //Test file
       else{    	                                sprintf(name, "test");	        xlweight = 1;} 
@@ -195,19 +192,18 @@ int main(int argc, char* argv[]) {
       else if (!isData && PUsysUp) sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);
       else if (!isData && PUsysDown) sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);
       else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/out_noPU_%d_%s.root", mode, name);
-      else if (!isData && Pu3D) sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
       char myTexFile[300];
-      sprintf(myTexFile,"lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
+      sprintf(myTexFile,"events/lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida(myTexFile);
-      sprintf(myTexFile,"lepveto_run_lumi_event_%d_%s.txt", mode, name);
+      sprintf(myTexFile,"events/lepveto_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida2(myTexFile);
-      sprintf(myTexFile,"met_run_lumi_event_%d_%s.txt", mode, name);
+      sprintf(myTexFile,"events/met_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida3(myTexFile);
-      sprintf(myTexFile,"jet_run_lumi_event_%d_%s.txt", mode, name);
+      sprintf(myTexFile,"events/jet_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida4(myTexFile);
-      sprintf(myTexFile,"bt_run_lumi_event_%d_%s.txt", mode, name);
+      sprintf(myTexFile,"events/bt_run_lumi_event_%d_%s.txt", mode, name);
       ofstream salida5(myTexFile);
       
       
@@ -364,7 +360,7 @@ int main(int argc, char* argv[]) {
 	if (SFminus) cout <<"[Warning:]  SF down 10% " << endl;
 	if (unclusteredUp) cout <<"[Warning:] unclustered MET up 10% " << endl;
 	if (unclusteredDown) cout <<"[Warning:] unclustered MET down 10% " << endl;
-	if (!reweightPU && !isData) cout << "[Warning:] You are NOT applying PU re-weighting, we keep it this way for Summer12 " << endl;
+	if (!reweightPU && !isData) cout << "[Warning:] You are NOT applying PU re-weighting" << endl;
 	if (!scaleFactor && !isData) cout << "[Warning:] You are NOT applying the b-tagging SF " << endl;
 	if (PUsysUp) cout <<"[Warning:] PU up " << endl;
 	if (PUsysDown) cout <<"[Warning:] PU down " << endl;
@@ -397,8 +393,8 @@ int main(int argc, char* argv[]) {
 	    
 	  }
 	  
-	
-  if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
+	/*
+	  if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
 	    cout << endl;
 	    cout << "Before JER" << endl;
 	    cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
@@ -415,7 +411,7 @@ int main(int argc, char* argv[]) {
 
 	    }
  
-	  }
+	  }*/
 	   
 	  // JER (All MC)
 	  if (JERMinus)jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
@@ -518,16 +514,16 @@ int main(int argc, char* argv[]) {
 	      if 	(mode == 0 && selectedElectrons.size()== 1 && selectedMuons.size()== 1) leptonSelection = true;
 	      else if 	(mode == 1 && selectedElectrons.size()== 0 && selectedMuons.size()== 2) leptonSelection = true;
 	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
+/*
+	      //cout << "jets" << endl;
+	      for(unsigned int i=0; i<init_jets_corrected.size(); i++){
+		if (init_jets_corrected[i]->Pt() == 0) cout << "HERE\t" <<event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 
-		//cout << "jets" << endl;
-		for(unsigned int i=0; i<init_jets_corrected.size(); i++){
-		  if (init_jets_corrected[i]->Pt() == 0) cout << "HERE\t" <<event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+	      }
+	*/ 
 
-		}
-	 
-
-
-	       if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
+	      /*
+	      if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
 		cout << endl;
 		cout << "After JER" << endl;
 		cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
@@ -544,7 +540,7 @@ int main(int argc, char* argv[]) {
 
 		}
  
-	      }
+		}*/
 	      /*
 		if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
 		//  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
@@ -610,7 +606,7 @@ int main(int argc, char* argv[]) {
 		  q1 = electron1->charge();
 		}
 		  
-		  
+		/* 
 		if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
 		  //  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		  cout << "HERE I AM! -> lep sel" << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
@@ -630,7 +626,7 @@ int main(int argc, char* argv[]) {
 
 		  }	
 		  
-		}
+		  }*/
 		  
 		if (charge){
 		  cutflow->Fill(4, weight);
@@ -643,34 +639,34 @@ int main(int argc, char* argv[]) {
 		  
 		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		 
-		/*
-		  if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
+		  /*
+		    if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
 		    //  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		    cout << "HERE I AM! -> opposite charge" << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
 		
 		    cout << "Electrons" << endl;
 		    for(unsigned int i=0; i<init_electrons.size(); i++){
-		      float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
-		      cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
-			   <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
+		    float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
+		    cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
+		    <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
 
 		    }	
 		    cout << "Muons" << endl;
 
 		    for(unsigned int i=0; i<init_muons.size(); i++){
-		      float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
-		      cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
+		    float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
+		    cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
 
 		    }	
 		  
-		  }*/
+		    }*/
 		
 		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
 
-
+		    /*
 		    if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
 		      //  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		      cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
@@ -692,7 +688,7 @@ int main(int argc, char* argv[]) {
 		  
 		    }
 		
-	      
+		    */
 	   
 
 		    salida2 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
