@@ -350,7 +350,7 @@ int main(int argc, char* argv[]) {
       cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
       
       if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus || unclusteredUp || unclusteredDown 
-	  || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D) {
+	  || !reweightPU || !scaleFactor || PUsysUp || PUsysDown ) {
 	cout << "[Warning:] Non-standard options, ignore if you did it conciously" << endl;
 	if (JERPlus) cout << "[Warning:] JER systematics on, plus" << endl;
 	if (JERMinus) cout << "[Warning:] JER systematics on, minus" << endl;
