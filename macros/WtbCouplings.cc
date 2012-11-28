@@ -43,7 +43,7 @@ int main (int argc, char *argv[])
   clock_t start = clock();
 
   cout << "********************************************************" << endl;
-  cout << " Beginning of the program for creating the BTag Trees ! " << endl;
+  cout << " Beginning of the programme for anomalous couplings ! " << endl;
   cout << "********************************************************" << endl;
 
   //SetStyle if needed
@@ -132,7 +132,7 @@ int main (int argc, char *argv[])
     if( dataSetName.find("QCD") == 0 ) datasets[d]->SetColor(kYellow);
     if( dataSetName.find("TT") == 0 ) datasets[d]->SetColor(kRed+1);
     if( dataSetName.find("TTbarJets_Other") == 0 ) datasets[d]->SetColor(kRed-7);
-    if( dataSetName.find("WJets") == 0 )
+    if( dataSetName.find("W_Jets") == 0 )
     {
       datasets[d]->SetTitle("W#rightarrowl#nu");
       datasets[d]->SetColor(kGreen-3);
@@ -591,6 +591,21 @@ int main (int argc, char *argv[])
 
       bool eventselectedSemiMu = false;
       bool eventselectedSemiEl = false;
+      
+      if (MSPlot.find("Selected_Events_pT_Muon_Btag_cut") == MSPlot.end()){
+        MSPlot["Selected_Events_pT_Muon_Btag_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon_Btag_cut", 22, 0, 440, "p_{T} (GeV)"); 
+				MSPlot["Selected_Events_relIso_Muon_Btag_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon_Btag_cut", 20, 0, 0.2, "relIso");
+        MSPlot["Selected_Events_reliso03_Muon_Btag_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon_Btag_cut", 40, 0, 1, "reliso03");
+	  		MSPlot["MET_Pt_Btag_cut"] = new MultiSamplePlot(datasets,"MET_Pt_Btag_cut", 300, 0, 600, "p_{T} (GeV)");
+				MSPlot["Selected_Events_pT_Muon_Btag_MET_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon_Btag_MET_cut", 22, 0, 440, "p_{T} (GeV)");
+       	MSPlot["Selected_Events_relIso_Muon_Btag_MET_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon_Btag_MET_cut", 20, 0, 0.2, "relIso");
+      	MSPlot["Selected_Events_reliso03_Muon_Btag_MET_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon_Btag_MET_cut", 40, 0, 1, "reliso03");
+			  MSPlot["MET_Pt_Btag_MET_cut"] = new MultiSamplePlot(datasets,"MET_Pt_Btag_MET_cut", 300, 0, 600, "p_{T} (GeV)");
+				MSPlot["Selected_Events_pT_Muon_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon_Btag_MET_MuPt_cut", 22, 0, 440, "p_{T} (GeV)");
+       	MSPlot["Selected_Events_relIso_Muon_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon_Btag_MET_MuPt_cut", 20, 0, 0.2, "relIso");
+      	MSPlot["Selected_Events_reliso03_Muon_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon_Btag_MET_MuPt_cut", 40, 0, 1, "reliso03");
+			  MSPlot["MET_Pt_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasets,"MET_Pt_Btag_MET_MuPt_cut", 300, 0, 600, "p_{T} (GeV)");
+			}
 
     selecTableSemiMu.Fill(d,0,scaleFactor);
       // semi-mu selection
@@ -612,6 +627,60 @@ int main (int argc, char *argv[])
 		       selecTableSemiEl.Fill(d,8,scaleFactor);
 		       if( selectedJets.size()>=4 ) {
 			 selecTableSemiEl.Fill(d,9,scaleFactor);
+			 
+			 bool oneBtaggedJet = false;
+			 for (unsigned int i=0; i < selectedJets.size(); i++) {
+			   if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.244) {
+			     oneBtaggedJet = true;
+			     break;
+			   }
+			 }
+			 if (oneBtaggedJet) {
+			   /*if (MSPlot.find("Selected_Events_pT_Muon_Btag_cut") == MSPlot.end()){
+						MSPlot["Selected_Events_pT_Muon_Btag_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon_Btag_cut", 22, 0, 440, "p_{T} (GeV)");
+						MSPlot["Selected_Events_relIso_Muon_Btag_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon_Btag_cut", 20, 0, 0.2, "relIso");
+						MSPlot["Selected_Events_reliso03_Muon_Btag_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon_Btag_cut", 40, 0, 1, "reliso03");
+			     	MSPlot["MET_Pt_Btag_cut"] = new MultiSamplePlot(datasets,"MET_Pt_Btag_cut", 300, 0, 600, "p_{T} (GeV)");
+			   }*/
+			       
+			   MSPlot["Selected_Events_pT_Muon_Btag_cut"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+			   float muon_relIso = (selectedMuons[0]->chargedHadronIso() + max( 0.0, selectedMuons[0]->neutralHadronIso() + selectedMuons[0]->photonIso() - 0.5*selectedMuons[0]->puChargedHadronIso() ) ) / selectedMuons[0]->Pt(); // dBeta corrected
+				 MSPlot["Selected_Events_relIso_Muon_Btag_cut"]->Fill(muon_relIso, datasets[d], true, Luminosity*scaleFactor);
+     	   MSPlot["Selected_Events_reliso03_Muon_Btag_cut"]->Fill(selectedMuons[0]->relativeIso03(), datasets[d], true, Luminosity*scaleFactor);
+			   MSPlot["MET_Pt_Btag_cut"]->Fill(mets[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);
+			 
+			 
+			   if (mets[0]->Pt() > 25) {
+			     /*if (MSPlot.find("Selected_Events_pT_Muon_Btag_MET_cut") == MSPlot.end()){
+			       MSPlot["Selected_Events_pT_Muon_Btag_MET_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon_Btag_MET_cut", 22, 0, 440, "p_{T} (GeV)");
+       		   MSPlot["Selected_Events_relIso_Muon_Btag_MET_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon_Btag_MET_cut", 20, 0, 0.2, "relIso");
+      			 MSPlot["Selected_Events_reliso03_Muon_Btag_MET_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon_Btag_MET_cut", 40, 0, 1, "reliso03");
+			       MSPlot["MET_Pt_Btag_MET_cut"] = new MultiSamplePlot(datasets,"MET_Pt_Btag_MET_cut", 300, 0, 600, "p_{T} (GeV)");
+			     }*/
+			   
+			     MSPlot["Selected_Events_pT_Muon_Btag_MET_cut"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+					 MSPlot["Selected_Events_relIso_Muon_Btag_MET_cut"]->Fill(muon_relIso, datasets[d], true, Luminosity*scaleFactor);
+     		   MSPlot["Selected_Events_reliso03_Muon_Btag_MET_cut"]->Fill(selectedMuons[0]->relativeIso03(), datasets[d], true, Luminosity*scaleFactor);
+			     MSPlot["MET_Pt_Btag_MET_cut"]->Fill(mets[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);
+     
+			     if (selectedMuons[0]->Pt() > 30) {
+			       /*if (MSPlot.find("Selected_Events_pT_Muon_Btag_MET_MuPt_cut") == MSPlot.end()){
+			         MSPlot["Selected_Events_pT_Muon_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon_Btag_MET_MuPt_cut", 22, 0, 440, "p_{T} (GeV)");
+       		     MSPlot["Selected_Events_relIso_Muon_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon_Btag_MET_MuPt_cut", 20, 0, 0.2, "relIso");
+      		   	 MSPlot["Selected_Events_reliso03_Muon_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon_Btag_MET_MuPt_cut", 40, 0, 1, "reliso03");
+			         MSPlot["MET_Pt_Btag_MET_MuPt_cut"] = new MultiSamplePlot(datasets,"MET_Pt_Btag_MET_MuPt_cut", 300, 0, 600, "p_{T} (GeV)");
+			       }*/
+			     
+			       MSPlot["Selected_Events_pT_Muon_Btag_MET_MuPt_cut"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+     	       MSPlot["Selected_Events_relIso_Muon_Btag_MET_MuPt_cut"]->Fill(muon_relIso, datasets[d], true, Luminosity*scaleFactor);
+						 MSPlot["Selected_Events_reliso03_Muon_Btag_MET_MuPt_cut"]->Fill(selectedMuons[0]->relativeIso03(), datasets[d], true, Luminosity*scaleFactor);
+			       MSPlot["MET_Pt_Btag_MET_MuPt_cut"]->Fill(mets[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);
+			     
+			     }
+			   }
+			 }
+			 
+			 
 		eventselectedSemiMu = true;
 	      }
 	    }
@@ -719,7 +788,8 @@ int main (int argc, char *argv[])
        MSPlot["Selected_Events_pT_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_Muon", 22, 0, 440, "p_{T} (GeV)");
        MSPlot["Selected_Events_Eta_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Eta_Muon", 22, 0, 2.2, "Eta");
        MSPlot["Selected_Events_d0_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_d0_Muon", 20, 0, 0.1, "d0");
-       MSPlot["Selected_Events_relIso_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon", 20, 0, 1, "relIso");
+       MSPlot["Selected_Events_relIso_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon", 20, 0, 0.2, "relIso");
+       MSPlot["Selected_Events_reliso03_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_reliso03_Muon", 40, 0, 1, "reliso03");
        MSPlot["Selected_Events_Btag_Values"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Values"+leptonFlav, 30, -1, 2, "BTag value");
        MSPlot["Selected_Events_Btag_Cut"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Cut"+leptonFlav, 20, 0.5, 1.5, "BTag value");
        MSPlot["M2"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "M2"+leptonFlav, 200, 0, 1000, "M2");
@@ -729,12 +799,12 @@ int main (int argc, char *argv[])
        MSPlot["M3noBtag_CSVM"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "M3noBtag_CSVM"+leptonFlav, 200, 0, 1000, "M3");
        MSPlot["M3noBtagLooseCut_CSVM"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "M3noBtagLooseCut_CSVM"+leptonFlav, 200, 0, 1000, "M3");
        MSPlot["M3_CSVM"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "M3_CSVM"+leptonFlav, 200, 0, 1000, "M3");
-       MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPV", 31, -0.5, 30.5, "Nb. of primary vertices");
-       MSPlot["MS_nPV_after_lumiWeight"] = new MultiSamplePlot(datasets, "nPV_after_lumiWeight", 31, -0.5, 30.5, "Nb. of primary vertices");
+       MSPlot["NofPV"] = new MultiSamplePlot(datasets, "NofPV", 31, -0.5, 30.5, "Nb. of primary vertices");
+       MSPlot["NofPV_after_lumiWeight"] = new MultiSamplePlot(datasets, "NofPV_after_lumiWeight", 31, -0.5, 30.5, "Nb. of primary vertices");
        MSPlot["Pileup_Reweighting"+leptonFlav] = new MultiSamplePlot(datasets,"Pileup_Reweighting"+leptonFlav, 40, 0, 20, "lumiWeight");
        MSPlot["MET_Pt"+leptonFlav] = new MultiSamplePlot(datasets,"MET_Pt"+leptonFlav, 300, 0, 600, "p_{T} (GeV)");
        MSPlot["MET_Et"+leptonFlav] = new MultiSamplePlot(datasets,"MET_Et"+leptonFlav, 300, 0, 600, "E_{T} (GeV)");
-       MSPlot["Scalar_Sum_Pt_4leadingjets"+leptonFlav] = new MultiSamplePlot(datasets,"Scalar_Sum_Pt_4leadingjets"+leptonFlav, 100, 0, 1000, "p_{T} (GeV)");
+       MSPlot["Ht_4leadingjets"+leptonFlav] = new MultiSamplePlot(datasets,"Ht_4leadingjets"+leptonFlav, 100, 0, 1000, "H_{T} (GeV)");
        
      }
      
@@ -756,7 +826,11 @@ int main (int argc, char *argv[])
      MSPlot["Selected_Events_pT_Muon"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
      MSPlot["Selected_Events_Eta_Muon"]->Fill(selectedMuons[0]->Eta(), datasets[d], true, Luminosity*scaleFactor);
      MSPlot["Selected_Events_d0_Muon"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
-     MSPlot["Selected_Events_relIso_Muon"]->Fill(selectedMuons[0]->relativeIso03(), datasets[d], true, Luminosity*scaleFactor);
+     
+     float muon_relIso = (selectedMuons[0]->chargedHadronIso() + max( 0.0, selectedMuons[0]->neutralHadronIso() + selectedMuons[0]->photonIso() - 0.5*selectedMuons[0]->puChargedHadronIso() ) ) / selectedMuons[0]->Pt(); // dBeta corrected
+     MSPlot["Selected_Events_relIso_Muon"]->Fill(muon_relIso, datasets[d], true, Luminosity*scaleFactor);
+     MSPlot["Selected_Events_reliso03_Muon"]->Fill(selectedMuons[0]->relativeIso03(), datasets[d], true, Luminosity*scaleFactor);
+
      
      
      float Pt2Max = 0;
@@ -841,15 +915,15 @@ int main (int argc, char *argv[])
        MSPlot["M3_CSVM"+leptonFlav]->Fill(M3_CSVM, datasets[d], true, Luminosity*scaleFactor);
      }
      
-     MSPlot["MS_nPV"]->Fill(vertex.size(),datasets[d], true, Luminosity*1);
-     MSPlot["MS_nPV_after_lumiWeight"]->Fill(vertex.size(),datasets[d], true, Luminosity*scaleFactor);
+     MSPlot["NofPV"]->Fill(vertex.size(),datasets[d], true, Luminosity*1);
+     MSPlot["NofPV_after_lumiWeight"]->Fill(vertex.size(),datasets[d], true, Luminosity*scaleFactor);
      MSPlot["Pileup_Reweighting"+leptonFlav]->Fill(lumiWeight, datasets[d], true, Luminosity*scaleFactor);
      
      MSPlot["MET_Pt"+leptonFlav]->Fill(mets[0]->Pt(),datasets[d], true, Luminosity*scaleFactor);
      MSPlot["MET_Et"+leptonFlav]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
      
      float ScalarSumPt4leadingjets = selectedJets[0]->Pt()+selectedJets[1]->Pt()+selectedJets[2]->Pt()+selectedJets[3]->Pt();
-     MSPlot["Scalar_Sum_Pt_4leadingjets"+leptonFlav]->Fill(ScalarSumPt4leadingjets, datasets[d], true, Luminosity*scaleFactor);
+     MSPlot["Ht_4leadingjets"+leptonFlav]->Fill(ScalarSumPt4leadingjets, datasets[d], true, Luminosity*scaleFactor);
      
     
 
@@ -892,7 +966,7 @@ int main (int argc, char *argv[])
       {
 	MultiSamplePlot *temp = it->second;
 	string name = it->first;
-	temp->Draw(false, name, true, true, true, true, true, 1, false);
+	temp->Draw(false, name, true, true, true, true, true, 1, true);
 	temp->Write(fout, name, true, "DemoPlots/");
       }
     
