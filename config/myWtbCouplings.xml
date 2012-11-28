@@ -9,26 +9,30 @@
 
 <d name="TTbarJets" title="t#bar{t}+jets" add="1" color="4" ls="1" lw="2" normf="1" xsection="225.2" EqLumi="30128.3748" filenames="/user/mmaes/samples/Summer12_DR53X/TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_11092012_172236_TOPTREE/*.root"/>
 
-<!--
+<!-- LAAT WEG!
 <d name="WJets" title="W+jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="36257.2" EqLumi="1052.6605" filenames="/user/mmaes/samples/Summer12_DR53X/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball_Summer12_DR53X-PU_S10_START53_V7A-v1_and_v2/*.root"/>-->
 
-<d name="WJets_4jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="255.2" EqLumi="51728.7931" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_04102012_121407_TOPTREE/*.root"/>
+<d name="W_Jets_4jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="255.2" EqLumi="51728.7931" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_04102012_121407_TOPTREE/*.root"/>
 
-<d name="WJets_3jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="619.0" EqLumi="23719.1244" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_04102012_121357_TOPTREE/*.root"/>
+<d name="W_Jets_3jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="619.0" EqLumi="23719.1244" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_04102012_121357_TOPTREE/*.root"/>
 
 <d name="ZJets" title="t#bar{t}+jets" add="1" color="3" ls="1" lw="2" normf="1" xsection="3503.7" EqLumi="7382.9426" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_DYJetsToLL_M-50_TuneZ2Star_8TeV-madgraph-tarball_Summer12_DR53X-PU_S10_START53_V7A-v1_19092012_125526_TOPTREE/*.root"/>
 
 <d name="ST_t_t" title="t#bar{t}+jets" add="1" color="7" ls="1" lw="2" normf="1" xsection="56.4" EqLumi="66468.6525" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_T_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_11092012_165120_TOPTREE/*.root"/>
 
-<d name="ST_t_tbar" title="t#bar{t}+jets" add="1" color="T" ls="1" lw="2" normf="1" xsection="30.7" EqLumi="62914.9837" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_Tbar_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_11092012_165135_TOPTREE/*.root"/>
+<d name="ST_t_tbar" title="t#bar{t}+jets" add="1" color="7" ls="1" lw="2" normf="1" xsection="30.7" EqLumi="62914.9837" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_Tbar_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_11092012_165135_TOPTREE/*.root"/>
 
 <d name="ST_tW_t" title="t#bar{t}+jets" add="1" color="7" ls="1" lw="2" normf="1" xsection="11.1" EqLumi="44383.5135" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_11092012_165125_TOPTREE/*.root"/>
 
 <d name="ST_tW_tbar" title="t#bar{t}+jets" add="1" color="7" ls="1" lw="2" normf="1" xsection="11.1" EqLumi="43554.7748" filenames="/user/mmaes/samples/Summer12_DR53X/SUMMER12_DR53X_Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_11092012_165140_TOPTREE/*.root"/>
 
+<!-- LAAT WEG!
 <d name="Data_Mu" title="Data (5.1 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1." EqLumi="5145.61" filenames="/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2029/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2034/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2037/*.root"/>
+-->
 
-<!--
+<d name="Data_Mu" title="Data (5.2 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1." EqLumi="5154.388" filenames="/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2029_newJSON/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2034_newJSON/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2037_newJSON/*.root"/>
+
+<!-- LAAT WEG!
 <d name="Data_Mu" title="Data (10.1 fb^{-1})" add="1" color="1" ls="1" lw="2" normf="1" xsection="1." EqLumi="10107.32" filenames="/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2014/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2029/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2034/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2037/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2039/*.root,/user/mmaes/samples/DATA_53X/DATASKIM_53X_TopTreeID_2044/*.root"/>
 -->
 
