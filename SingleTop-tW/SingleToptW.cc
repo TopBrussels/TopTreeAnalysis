@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
 	 
 	  // Applying Pile-Up re-weighting
 	  double lumiWeight = 1.0;
-	  /*
+	  
 	  if (!isData ){
 	    lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
 	    if(PUsysDown) lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
@@ -391,7 +391,7 @@ int main(int argc, char* argv[]) {
 	    pileup_weights->Fill(lumiWeight);
 	    if (reweightPU) weight *=lumiWeight;
 	    
-	  }*/
+	  }
 	  
 	/*
 	  if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
