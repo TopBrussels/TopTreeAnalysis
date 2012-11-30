@@ -248,12 +248,11 @@ int main(int argc, char* argv[]) {
       
       // Lumi re-weighting  TO CHECK 
       LumiReWeighting LumiWeights;
-      LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/Run2012AB_new.root", "pileup", "pileup");
+      LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root", "pileupHistos/pileup_test.root", "pileup", "pileup");
 
       //systematic
       reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
       reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
-
 
 
       TFile *fout = new TFile (rootFileName, "RECREATE");
@@ -384,6 +383,7 @@ int main(int argc, char* argv[]) {
 	 
 	  // Applying Pile-Up re-weighting
 	  double lumiWeight = 1.0;
+	  /*
 	  if (!isData ){
 	    lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
 	    if(PUsysDown) lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
@@ -391,7 +391,7 @@ int main(int argc, char* argv[]) {
 	    pileup_weights->Fill(lumiWeight);
 	    if (reweightPU) weight *=lumiWeight;
 	    
-	  }
+	  }*/
 	  
 	/*
 	  if ( event->lumiBlockId() == 741  && event->eventId() == 222274){

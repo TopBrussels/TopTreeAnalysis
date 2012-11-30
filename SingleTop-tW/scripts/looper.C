@@ -44,9 +44,9 @@ void looper::myLoop(int nsel, int mode, bool silent)
   
   char newRootFile[300];
   double lumi = luminosity; 
-  if (mode == 0 )        lumi = 5085.246; 
+  if (mode == 0 )        lumi = 4399; 
   else if ( mode == 1)   lumi = 1000;
-  else if ( mode == 2)   lumi = 5103.58;
+  else if ( mode == 2)   lumi = 1000;
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
  
   TFile f_var(newRootFile, "UPDATE");
@@ -310,21 +310,6 @@ void looper::myLoop(int nsel, int mode, bool silent)
   histo_R->Sumw2();
   
   
-  // checking pu reweighting
-  sprintf(title,"nvertex_final_%s",plotName);
-  TH1F* histo_nvertex_final = new TH1F( title, " ", 70,   -0.5, 69.5 );
-  histo_nvertex_final->Sumw2();
-  
-  sprintf(title,"nvertex_final_3D_%s",plotName);
-  TH1F* histo_nvertex_final_3D = new TH1F( title, " ", 70,   -0.5, 69.5 );
-  histo_nvertex_final_3D->Sumw2();
-  
-  sprintf(title,"nvertex_final_purw_%s",plotName);
-  TH1F* histo_nvertex_final_purw = new TH1F( title, " ", 70,   -0.5, 69.5 );
-  histo_nvertex_final_purw->Sumw2();
-  
-
-
   sprintf(title,"nvertex_2lep_%s",plotName);
   TH1F* histo_nvertex_2lep = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex_2lep->Sumw2();
@@ -508,11 +493,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 		if (ht > htMin || mode !=0){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
-		  
-		  //Example to access the pu reweighting!
-		  histo_nvertex_final->Fill(nvertex, rawWeight);
-		  histo_nvertex_final_3D->Fill(nvertex, rawWeight*puweight3D);
-		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
+		 
 		  
 		}
 	      }
