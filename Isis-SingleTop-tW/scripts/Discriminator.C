@@ -100,6 +100,10 @@ void Discriminator::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_pt_leading = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_leading->Sumw2();
   
+    sprintf(title,"pt_all_%s",plotName);
+  TH1F* histo_pt_all = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_all->Sumw2();
+  
   
   sprintf(title,"eta_leading_%s",plotName);
   TH1F* histo_eta_leading = new TH1F( title, " ", 101,  -3, 3);
@@ -170,7 +174,10 @@ void Discriminator::myLoop(int nsel, int mode, bool silent)
 		int iJet = -5;
 	        // define number of jets 
 		for (unsigned int i =0; i < ptJet->size(); i ++){ 
-	  		TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
+			TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
+			histo_pt_all->Fill(tempJet.Pt(),xlWeight);
+		
+	  		
 	  		if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	        		iJetn[nJets] = i;
 	    			iJet = i;
@@ -198,6 +205,8 @@ void Discriminator::myLoop(int nsel, int mode, bool silent)
 			
 			TLorentzVector jet_aux(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
 	  		histo_eta_leading->Fill(jet_aux.Eta(), xlWeight);
+			
+			
 		}
 	
 	
