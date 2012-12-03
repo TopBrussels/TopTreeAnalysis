@@ -246,9 +246,9 @@ int main(int argc, char* argv[]) {
        
       
       
-      // Lumi re-weighting  TO CHECK 
+      // Lumi re-weighting 
       LumiReWeighting LumiWeights;
-      LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root", "pileupHistos/pileup_test.root", "pileup", "pileup");
+      LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root", "pileupHistos/run2012B_13Jul.root", "pileup", "pileup");
 
       //systematic
       reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
@@ -390,28 +390,7 @@ int main(int argc, char* argv[]) {
             else if(PUsysUp) lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
 	    pileup_weights->Fill(lumiWeight);
 	    if (reweightPU) weight *=lumiWeight;
-	    
 	  }
-	  
-	/*
-	  if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
-	    cout << endl;
-	    cout << "Before JER" << endl;
-	    cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-	    cout << "MET: " << mets[0]->Pt() << ", Phi: " << mets[0]->Phi() << endl;
- 
-	    cout << "jets" << endl;
-	    for(unsigned int i=0; i<init_jets_corrected.size(); i++){
-	      cout << i  << ": " << init_jets_corrected[i]->Pt() << ", " << init_jets_corrected[i]->Eta() << endl;
-
-	    }
-	    cout << " gen jets" << endl;
-	    for(unsigned int i=0; i<genjets.size(); i++){
-	      cout << i  << ": " << genjets[i]->Pt() << ", " << genjets[i]->Eta() << ", " <<  genjets[i]->Phi() << endl;
-
-	    }
- 
-	  }*/
 	   
 	  // JER (All MC)
 	  if (JERMinus)jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
@@ -514,59 +493,6 @@ int main(int argc, char* argv[]) {
 	      if 	(mode == 0 && selectedElectrons.size()== 1 && selectedMuons.size()== 1) leptonSelection = true;
 	      else if 	(mode == 1 && selectedElectrons.size()== 0 && selectedMuons.size()== 2) leptonSelection = true;
 	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
-/*
-	      //cout << "jets" << endl;
-	      for(unsigned int i=0; i<init_jets_corrected.size(); i++){
-		if (init_jets_corrected[i]->Pt() == 0) cout << "HERE\t" <<event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-
-	      }
-	*/ 
-
-	      /*
-	      if ( event->lumiBlockId() == 741  && event->eventId() == 222274){
-		cout << endl;
-		cout << "After JER" << endl;
-		cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		cout << "MET: " << mets[0]->Pt() << ", Phi: " << mets[0]->Phi() << endl;
- 
-		cout << "jets" << endl;
-		for(unsigned int i=0; i<init_jets_corrected.size(); i++){
-		  cout << i  << ": " << init_jets_corrected[i]->Pt() << ", " << init_jets_corrected[i]->Eta() << endl;
-
-		}
-		cout << " gen jets" << endl;
-		for(unsigned int i=0; i<genjets.size(); i++){
-		  cout << i  << ": " << genjets[i]->Pt() << ", " << genjets[i]->Eta() << ", " <<  genjets[i]->Phi() << endl;
-
-		}
- 
-		}*/
-	      /*
-		if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
-		//  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		cout << "HERE I AM! -> no cuts " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
-		
-		cout << "Electrons" << endl;
-		for(unsigned int i=0; i<init_electrons.size(); i++){
-		float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
-		cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
-		<<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
-		cout << "chargedHadronIso: " << init_electrons[i]->chargedHadronIso() << endl;
-		cout << "neutralHadronIso: " << init_electrons[i]->neutralHadronIso() << endl;
-		cout << "photonIso: " << init_electrons[i]->photonIso() << endl;
-		cout << "puChargedHadronIso: " << init_electrons[i]->puChargedHadronIso() << endl;
-
-		}	
-		cout << "Muons" << endl;
-
-		for(unsigned int i=0; i<init_muons.size(); i++){
-		float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
-		cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
-
-		}	
-		  
-		}
-	      */
 		
 	      if (leptonSelection) {
 		  
@@ -606,28 +532,6 @@ int main(int argc, char* argv[]) {
 		  q1 = electron1->charge();
 		}
 		  
-		/* 
-		if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
-		  //  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		  cout << "HERE I AM! -> lep sel" << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
-		
-		  cout << "Electrons" << endl;
-		  for(unsigned int i=0; i<init_electrons.size(); i++){
-		    float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
-		    cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
-			 <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
-
-		  }	
-		  cout << "Muons" << endl;
-
-		  for(unsigned int i=0; i<init_muons.size(); i++){
-		    float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
-		    cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
-
-		  }	
-		  
-		  }*/
-		  
 		if (charge){
 		  cutflow->Fill(4, weight);
 		  cutflow_raw->Fill(4);
@@ -638,60 +542,13 @@ int main(int argc, char* argv[]) {
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
 		  
 		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		 
-		  /*
-		    if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
-		    //  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		    cout << "HERE I AM! -> opposite charge" << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
-		
-		    cout << "Electrons" << endl;
-		    for(unsigned int i=0; i<init_electrons.size(); i++){
-		    float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
-		    cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
-		    <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
-
-		    }	
-		    cout << "Muons" << endl;
-
-		    for(unsigned int i=0; i<init_muons.size(); i++){
-		    float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
-		    cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
-
-		    }	
-		  
-		    }*/
-		
 		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
 
-		    /*
-		    if (  event->lumiBlockId() == 930  && event->eventId() == 278867 ){
-		      //  cout << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
-		      cout << "HERE I AM! " << selectedMuons.size() << ", " << selectedElectrons.size() << ", " <<looseMuons.size() << ", " << looseElectrons.size() << endl; 
-		
-		      cout << "Electrons" << endl;
-		      for(unsigned int i=0; i<init_electrons.size(); i++){
-			float reliso = (init_electrons[i]->chargedHadronIso() + max( 0.0, init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - 0.5*init_electrons[i]->puChargedHadronIso() ) ) / init_electrons[i]->Pt();
-			cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << reliso << ", "
-			     <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
-
-		      }	
-		      cout << "Muons" << endl;
-
-		      for(unsigned int i=0; i<init_muons.size(); i++){
-			float reliso = (init_muons[i]->chargedHadronIso() + max( 0.0, init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - 0.5*init_muons[i]->puChargedHadronIso() ) ) / init_muons[i]->Pt();
-			cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << reliso << endl;
-
-		      }	
-		  
-		    }
-		
-		    */
-	   
-
 		    salida2 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+		  
 		    // Low mll cut (all final states)
 		    TLorentzVector pair = lepton0 + lepton1;   
 		    if (pair.M() > 20){
