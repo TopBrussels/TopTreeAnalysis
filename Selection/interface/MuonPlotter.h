@@ -44,7 +44,7 @@ class MuonPlotter{
       TH1F* h_HPTMuon_NChiSq_;/** Normalized Chi² of the global track fit */
       TH1F* h_HPTMuon_d0_;
       TH1F* h_HPTMuon_d0Sig_;
-      TH1F* h_HPTMuon_dB_; /** 2D absolute impact parameter (corrected for the beam-spot) */
+      //TH1F* h_HPTMuon_dB_; /** 2D absolute impact parameter (corrected for the beam-spot) */
       TH1F* h_HPTMuon_DeltaRJets_;/** MinDeltaR(muon,jets) */	
       TH1F* h_HPTMuon_RelIso_;
       //plots for all muons
@@ -58,7 +58,7 @@ class MuonPlotter{
       TH1F* h_AllMuons_NChiSq_;/** Normalized Chi² of the global track fit */
       TH1F* h_AllMuons_d0_;
       TH1F* h_AllMuons_d0Sig_;
-      TH1F* h_AllMuons_dB_; /** 2D absolute impact parameter (corrected for the beam-spot) */
+      //TH1F* h_AllMuons_dB_; /** 2D absolute impact parameter (corrected for the beam-spot) */
       TH1F* h_AllMuons_DeltaRJets_;/** MinDeltaR(muon,jets) */	
       TH1F* h_AllMuons_RelIso_;
 };

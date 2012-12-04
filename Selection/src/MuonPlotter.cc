@@ -25,8 +25,8 @@ MuonPlotter::MuonPlotter (string label)
   h_HPTMuon_d0_->GetXaxis()->SetTitle("d0");
   h_HPTMuon_d0Sig_ = new TH1F ( ("h_HPTMuon_d0Sig_"+label_).c_str(), "d0/#sigma (muon)", 400, 0, 20);
   h_HPTMuon_d0Sig_->GetXaxis()->SetTitle("|d0|/#sigma");
-  h_HPTMuon_dB_ = new TH1F ( ("h_HPTMuon_dB_"+label_).c_str(), "dB (muon)", 250, 0, 0.1);
-  h_HPTMuon_dB_->GetXaxis()->SetTitle("dB");
+  //h_HPTMuon_dB_ = new TH1F ( ("h_HPTMuon_dB_"+label_).c_str(), "dB (muon)", 250, 0, 0.1);
+  //h_HPTMuon_dB_->GetXaxis()->SetTitle("dB");
   h_HPTMuon_DeltaRJets_ = new TH1F ( ("h_HPTMuon_DeltaRJets_"+label_).c_str(), "Min(#DeltaR(#mu,jets))", 35, 0, 3.5);
   h_HPTMuon_DeltaRJets_->GetXaxis()->SetTitle("Min #DeltaR(#mu,jets)");
   h_HPTMuon_RelIso_ = new TH1F( ("h_HPTMuon_RelIso_"+label_).c_str(),"Muon RelIso",50,0,1);
@@ -55,8 +55,8 @@ MuonPlotter::MuonPlotter (string label)
   h_AllMuons_d0_->GetXaxis()->SetTitle("d0");
   h_AllMuons_d0Sig_ = new TH1F ( ("h_AllMuons_d0Sig_"+label_).c_str(), "d0/#sigma (all muons)", 400, 0, 20);
   h_AllMuons_d0Sig_->GetXaxis()->SetTitle("|d0|/#sigma");
-  h_AllMuons_dB_ = new TH1F ( ("h_AllMuons_dB_"+label_).c_str(), "dB (all muons)", 250, 0, 0.1);
-  h_AllMuons_dB_->GetXaxis()->SetTitle("dB");
+  //h_AllMuons_dB_ = new TH1F ( ("h_AllMuons_dB_"+label_).c_str(), "dB (all muons)", 250, 0, 0.1);
+  //h_AllMuons_dB_->GetXaxis()->SetTitle("dB");
   h_AllMuons_DeltaRJets_ = new TH1F ( ("h_AllMuons_DeltaRJets_"+label_).c_str(), "Min(#DeltaR(#mu,jets))", 35, 0, 3.5);
   h_AllMuons_DeltaRJets_->GetXaxis()->SetTitle("Min #DeltaR(#mu,jets)");
   h_AllMuons_RelIso_ = new TH1F( ("h_AllMuons_RelIso_"+label_).c_str(),"All Muons RelIso",50,0,1);
@@ -74,7 +74,7 @@ MuonPlotter::MuonPlotter (const MuonPlotter & mp)
   h_HPTMuon_NChiSq_       = mp.h_HPTMuon_NChiSq_;
   h_HPTMuon_d0_           = mp.h_HPTMuon_d0_;
   h_HPTMuon_d0Sig_        = mp.h_HPTMuon_d0Sig_;
-  h_HPTMuon_dB_           = mp.h_HPTMuon_dB_;
+  //h_HPTMuon_dB_           = mp.h_HPTMuon_dB_;
   h_HPTMuon_DeltaRJets_   = mp.h_HPTMuon_DeltaRJets_;
   h_HPTMuon_RelIso_       = mp.h_HPTMuon_RelIso_;
   //
@@ -88,7 +88,7 @@ MuonPlotter::MuonPlotter (const MuonPlotter & mp)
   h_AllMuons_NChiSq_       = mp.h_AllMuons_NChiSq_;
   h_AllMuons_d0_           = mp.h_AllMuons_d0_;
   h_AllMuons_d0Sig_        = mp.h_AllMuons_d0Sig_;
-  h_AllMuons_dB_           = mp.h_AllMuons_dB_;
+  //h_AllMuons_dB_           = mp.h_AllMuons_dB_;
   h_AllMuons_DeltaRJets_   = mp.h_AllMuons_DeltaRJets_;
   h_AllMuons_RelIso_       = mp.h_AllMuons_RelIso_;
 }
@@ -104,7 +104,7 @@ MuonPlotter::~MuonPlotter ()
   h_HPTMuon_NChiSq_->Delete ();
   h_HPTMuon_d0_->Delete ();
   h_HPTMuon_d0Sig_->Delete ();
-  h_HPTMuon_dB_->Delete ();
+  //h_HPTMuon_dB_->Delete ();
   h_HPTMuon_DeltaRJets_->Delete ();
   h_HPTMuon_RelIso_->Delete();
   //
@@ -118,7 +118,7 @@ MuonPlotter::~MuonPlotter ()
   h_AllMuons_NChiSq_->Delete ();
   h_AllMuons_d0_->Delete ();
   h_AllMuons_d0Sig_->Delete ();
-  h_AllMuons_dB_->Delete ();
+  //h_AllMuons_dB_->Delete ();
   h_AllMuons_DeltaRJets_->Delete ();
   h_AllMuons_RelIso_->Delete();
 }
@@ -134,7 +134,7 @@ MuonPlotter::Fill (vector < TRootMuon > muons, vector < TRootJet > selJets)
     h_HPTMuon_NChiSq_  ->Fill (muons[0].chi2());
     h_HPTMuon_d0_      ->Fill (muons[0].d0 ());
     h_HPTMuon_d0Sig_   ->Fill((muons[0].d0error ()>0 ? fabs(muons[0].d0 ())/muons[0].d0error () : -1));
-    h_HPTMuon_dB_      ->Fill (muons[0].dB ());
+    //h_HPTMuon_dB_      ->Fill (muons[0].dB ());
     if(muons[0].isStandAloneMuon()){
 	h_HPTMuon_Type_->Fill(0);
 					h_HPTMuon_Type_vs_Type_->Fill(0.,0.);
@@ -173,7 +173,7 @@ MuonPlotter::Fill (vector < TRootMuon > muons, vector < TRootJet > selJets)
     h_AllMuons_NChiSq_ ->Fill (muons[i].chi2());
     h_AllMuons_d0_     ->Fill (muons[i].d0 ());
     h_AllMuons_d0Sig_  ->Fill((muons[i].d0error ()>0 ? fabs(muons[i].d0 ())/muons[i].d0error () : -1));
-    h_AllMuons_dB_     ->Fill (muons[i].dB ());
+    //h_AllMuons_dB_     ->Fill (muons[i].dB ());
     if(muons[i].isStandAloneMuon()){
 	h_AllMuons_Type_->Fill(0);
 					h_AllMuons_Type_vs_Type_->Fill(0.,0.);
@@ -225,7 +225,7 @@ MuonPlotter::Write (TFile * fout)
   h_HPTMuon_NChiSq_      ->Write ();
   h_HPTMuon_d0_          ->Write ();
   h_HPTMuon_d0Sig_       ->Write ();
-  h_HPTMuon_dB_          ->Write ();
+  //h_HPTMuon_dB_          ->Write ();
   h_HPTMuon_DeltaRJets_  ->Write ();
   h_HPTMuon_RelIso_      ->Write();
   //
@@ -239,7 +239,7 @@ MuonPlotter::Write (TFile * fout)
   h_AllMuons_NChiSq_      ->Write ();
   h_AllMuons_d0_          ->Write ();
   h_AllMuons_d0Sig_       ->Write ();
-  h_AllMuons_dB_          ->Write ();
+  //h_AllMuons_dB_          ->Write ();
   h_AllMuons_DeltaRJets_  ->Write ();
   h_AllMuons_RelIso_      ->Write();
 }
