@@ -103,7 +103,7 @@ void Selection::setElectronCuts(float Et, float Eta, float RelIso, float d0, flo
 }
 
 void Selection::setElectronCuts() {
-  setElectronCuts(35,2.5,0.1,0.02,0.,1,0.3,0);
+  setElectronCuts(30,2.5,0.1,0.02,0.,1,0.3,0); // refSel 2012 values
 }
 
 
@@ -119,7 +119,7 @@ void Selection::setDiElectronCuts(float Et, float Eta, float RelIso, float d0, f
 }
 
 void Selection::setDiElectronCuts() {
-  setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1);
+  setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1); // refSel 2012 values
 }
 
 
@@ -161,7 +161,7 @@ void Selection::setMuonCuts(float Pt, float Eta, float RelIso, int NValidHits, f
 }
 
 void Selection::setMuonCuts() {
-  setMuonCuts(26,2.1,0.12,10,0.2,0.3,1,0.5,5,0); // 2012 values
+  setMuonCuts(26,2.1,0.12,10,0.2,0.3,1,0.5,5,0); // refSel 2012 values
 }
 
 void Selection::setDiMuonCuts(float Pt, float Eta, float RelIso, float d0) {
@@ -357,14 +357,13 @@ std::vector<TRootMuon*> Selection::GetSelectedMuons(float PtThr, float EtaThr,fl
     //float reliso = (muons[i]->chargedHadronIso()+muons[i]->neutralHadronIso()+muons[i]->photonIso())/muons[i]->Pt();
     float reliso = (muons[i]->chargedHadronIso() + max( 0.0, muons[i]->neutralHadronIso() + muons[i]->photonIso() - 0.5*muons[i]->puChargedHadronIso() ) ) / muons[i]->Pt(); // dBeta corrected
 
-    //cout << muons[i]->puChargedHadronIso() << endl;
-
     //    cout << "mu global:  " << muons[i]->isGlobalMuon() << endl;
     //    cout << "mu tracker:  " << muons[i]->isTrackerMuon() << endl;
     //    cout << "mu globalMuPromptTight:  " << muons[i]->idGlobalMuonPromptTight() << endl;
     //    cout << "mu pT:  " << muons[i]->Pt() << "  cutValue: " << PtThr << endl;
     //    cout << "mu Eta:  " << fabs(muons[i]->Eta()) << "  cutValue: " << EtaThr << endl;
     //    cout << "mu reliso:  " << reliso << "  cutValue: " << MuonRelIso << endl;
+    //    cout << "mu puChargedHad Iso: "<< muons[i]->puChargedHadronIso() << endl;
     //    cout << "mu d0:  " << fabs(muons[i]->d0()) << "  cutValue: " << Muond0Cut_ << endl;
     //    cout << "mu nValidHits:  " << muons[i]->nofValidHits() << "  cutValue: " << MuonNofValidHits_ << endl;
     //    cout << "mu nMatches:  " << muons[i]->nofMatches() << "  cutValue: " << MuonNMatches_ << endl;
@@ -378,8 +377,7 @@ std::vector<TRootMuon*> Selection::GetSelectedMuons(float PtThr, float EtaThr,fl
        && muons[i]->nofValidHits()>MuonNofValidHits_ 
        && muons[i]->nofMatchedStations()>MuonNMatchedStations_ 
        && muons[i]->nofTrackerLayersWithMeasurement() > MuonNTrackerLayersWithMeasurement_
-       && muons[i]->nofValidPixelHits() > MuonNValidPixelHits_
-       ) {
+       && muons[i]->nofValidPixelHits() > MuonNValidPixelHits_) {
       selectedMuons.push_back(muons[i]);
     }
   }
@@ -443,8 +441,8 @@ std::vector<TRootMuon*> Selection::GetSelectedDiMuons(float PtThr, float EtaThr,
     if((muons[i]->isGlobalMuon() || muons[i]->isTrackerMuon())
        && muons[i]->Pt()>PtThr 
        && fabs(muons[i]->Eta())<EtaThr 
-       && reliso < MuonRelIso 
-       ) {
+       && reliso < MuonRelIso )
+    {
       selectedMuons.push_back(muons[i]);
     }
   }
@@ -491,16 +489,16 @@ std::vector<TRootMuon*> Selection::GetSelectedMuonsInvIso(float MuonRelIso, TRoo
   std::vector<TRootMuon*> init_muons = GetSelectedMuons(MuonPtThreshold_,MuonEtaThreshold_,99999.);
   std::vector<TRootMuon*> selectedMuons;
   for(unsigned int i=0;i<init_muons.size();i++)
-    {
-      float mindRMuJet = 999.;
-      for(unsigned int j=0;j<selJets.size();j++) {
-	float dRMuJet = init_muons[i]->DeltaR(*selJets.at(j));
-	if(dRMuJet < mindRMuJet) mindRMuJet = dRMuJet;
-      }
-      float reliso = (init_muons[i]->chargedHadronIso()+init_muons[i]->neutralHadronIso()+init_muons[i]->photonIso())/init_muons[i]->Pt();
-      if ( fabs(init_muons[i]->vz() - vertex->Z()) < MuonDistVzPVz_ && mindRMuJet > MuonDRJetsCut_ && reliso > MuonRelIso )
-	selectedMuons.push_back(init_muons[i]);
+  {
+    float mindRMuJet = 999.;
+    for(unsigned int j=0;j<selJets.size();j++) {
+      float dRMuJet = init_muons[i]->DeltaR(*selJets.at(j));
+      if(dRMuJet < mindRMuJet) mindRMuJet = dRMuJet;
     }
+    float reliso = (init_muons[i]->chargedHadronIso()+init_muons[i]->neutralHadronIso()+init_muons[i]->photonIso())/init_muons[i]->Pt();
+    if ( fabs(init_muons[i]->vz() - vertex->Z()) < MuonDistVzPVz_ && mindRMuJet > MuonDRJetsCut_ && reliso > MuonRelIso )
+      selectedMuons.push_back(init_muons[i]);
+  }
   std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
   return selectedMuons;
 }
@@ -726,8 +724,8 @@ std::vector<TRootElectron*> Selection::GetSelectedDiElectrons() const{
 
 
 
-//
-std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, float EtaThr, float ElectronRelIso, bool vbtfid) const {
+//std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, float EtaThr, float ElectronRelIso, bool vbtfid) const {
+std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, float EtaThr, float ElectronRelIso) const {
   std::vector<TRootElectron*> selectedElectrons;
   for(unsigned int i=0;i<electrons.size();i++){
     TRootElectron* el = (TRootElectron*) electrons[i];
@@ -738,17 +736,18 @@ std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(float PtThr, fl
 
     if(el->Pt() > PtThr && fabs(el->Eta())< EtaThr)
       if (fabs(el->superClusterEta()) < 1.4442 || fabs(el->superClusterEta()) > 1.5660)
-	if (!vbtfid || (vbtfid && el->mvaTrigId()>ElectronLooseMVAId_) )
-	  if ( RelIso < ElectronRelIso )
-	    selectedElectrons.push_back(electrons[i]);
+//        if (!vbtfid || (vbtfid && el->mvaTrigId()>ElectronLooseMVAId_) )
+        if (el->mvaTrigId()>ElectronLooseMVAId_)
+          if ( RelIso < ElectronRelIso )
+            selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
   return selectedElectrons;
 }
 
-std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(bool vbtfid) const {
+/*std::vector<TRootElectron*> Selection::GetSelectedLooseElectrons(bool vbtfid) const {
   return GetSelectedLooseElectrons(ElectronLooseEtThreshold_, ElectronLooseEtaThreshold_, ElectronLooseRelIso_,vbtfid);
-}
+}*/
 
 std::vector<TRootElectron*> Selection::GetSelectedLooseDiElectrons(float PtThr, float EtaThr, float ElectronRelIso) const {
   std::vector<TRootElectron*> selectedElectrons;
@@ -781,14 +780,14 @@ std::vector<TRootElectron*> Selection::GetSelectedElectronsInvIso(float Electron
   std::vector<TRootElectron*> init_electrons = GetSelectedElectrons(ElectronEtThreshold_,ElectronEtaThreshold_,99999.);
   std::vector<TRootElectron*> selectedElectrons;
   for(unsigned int i=0; i<init_electrons.size(); i++)
+  {
+    float mindRElJet = 999.;
+    for(unsigned int j=0; j<selJets.size(); j++)
     {
-      float mindRElJet = 999.;
-      for(unsigned int j=0; j<selJets.size(); j++)
-	{
-	  float dRElJet = init_electrons[i]->DeltaR(*selJets.at(j));
-	  if(dRElJet < mindRElJet) mindRElJet = dRElJet;
-	}
-      float reliso = (init_electrons[i]->chargedHadronIso()+init_electrons[i]->neutralHadronIso()+init_electrons[i]->photonIso())/init_electrons[i]->Pt();
+      float dRElJet = init_electrons[i]->DeltaR(*selJets.at(j));
+      if(dRElJet < mindRElJet) mindRElJet = dRElJet;
+    }
+    float reliso = (init_electrons[i]->chargedHadronIso()+init_electrons[i]->neutralHadronIso()+init_electrons[i]->photonIso())/init_electrons[i]->Pt();
       if( fabs(init_electrons[i]->vz() - vertex->Z()) < ElectronDistVzPVz_ && mindRElJet > ElectronDRJetsCut_ && reliso > ElectronRelIso )
 	selectedElectrons.push_back(init_electrons[i]);
     }
