@@ -195,6 +195,14 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_%s",plotName);
   TH1F* histo_nvertex = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex->Sumw2();
+  
+  sprintf(title,"nloosejets_%s",plotName);
+  TH1F* histo_nloosejets = new TH1F( title, " ", 10,  -0.5, 9.5 );
+  histo_nloosejets->Sumw2();
+  
+  sprintf(title,"nloosejets_bt_%s",plotName);
+  TH1F* histo_nloosejets_bt = new TH1F( title, " ", 10,  -0.5, 9.5 );
+  histo_nloosejets_bt->Sumw2();
  
   
   // 1 jet level
@@ -381,6 +389,8 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	double tempSF = SFval;
 	
 	int SFvalue = int(tempSF*100);
+	int nloose = 0;
+	int nloosebt = 0;
 	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
@@ -397,10 +407,14 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	    } 
 	  } else if (btCSVBJet->at(i) > 0.679 && fabs(tempJet.Eta()) < 2.5){
 	    iSF = rand() % 100;
-	    if (iSF < SFvalue ) nJetsBT++;
+	    if (iSF < SFvalue ){ nJetsBT++; nloosebt++;}
 	  }
+	  
+	  if (ptJet->at(i) <= 30 || fabs(tempJet.Eta()) >= 2.5) nloose++;
 	}
 	
+	histo_nloosejets->Fill(nloose, xlWeight);
+	histo_nloosejets_bt->Fill(nloosebt, xlWeight);
 
 	histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
 	histo_pt_min->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
