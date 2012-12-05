@@ -30,7 +30,7 @@
 #include "../MCInformation/interface/ResolutionFit.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "../MCInformation/interface/Lumi3DReWeighting.h"
+
 #include "../MCInformation/interface/LumiReWeighting.h"
 #include "../macros/Style.C"
 
