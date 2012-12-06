@@ -11,9 +11,6 @@ BTagCosThetaCalculation::~BTagCosThetaCalculation(){
 float BTagCosThetaCalculation::Calculation(TLorentzVector lepton, TLorentzVector Neutrino, TLorentzVector leptonicBJet){
 
   float CosTheta = 999;	  
-  float CosThetaNeg = 999;
-  float CosThetaAtlas = 999;
-  float CosThetaCiemat = 999;
   
   //----------------------------------------------
   //  Calculating cos theta value
@@ -40,7 +37,7 @@ float BTagCosThetaCalculation::Calculation(TLorentzVector lepton, TLorentzVector
     cout << " Event with negative WLept energy!!! (BTagCosThetaCalculation class) Cos theta = " << CosTheta << endl;
   }
   
-  return CosThetaCiemat;	
+  return CosTheta;	
 }        
 
 float BTagCosThetaCalculation::CalcOrigKins(int BLeptonicIndex, int BHadronicIndex,  TLorentzVector muon, vector<TLorentzVector> selectedJets, float MassW, float MassTop){
