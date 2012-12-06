@@ -133,6 +133,8 @@ public:
 	Double_t m3() const { return m3_;}
 	
 	Double_t Btag(unsigned int index) const { return Btag_[index]; }
+	Double_t BtagCS1(unsigned int index) const { return BtagC1_[index]; }
+	Double_t BtagCS2(unsigned int index) const { return BtagC2_[index]; }
 	
 	Double_t pt() const { return pt_;}
 	Double_t E() const { return E_;}
@@ -248,6 +250,8 @@ public:
 	void setM3(Double_t m3) { m3_=m3;}
 	
 	void setBtag(unsigned int index, Double_t btag) { Btag_[index] = btag; }
+	void setBtagCS1(unsigned int index, Double_t btag) { BtagC1_[index] = btag; }
+	void setBtagCS2(unsigned int index, Double_t btag) { BtagC2_[index] = btag; }
 	
 	void setPt(Double_t pt) { pt_=pt;}
 	void setE(Double_t E) { E_=E;}
@@ -358,6 +362,8 @@ private:
 	Double_t m3_;
 	
 	Double_t Btag_[20];
+	Double_t BtagC1_[20];
+	Double_t BtagC2_[20];
 
  
 	Double_t pt_;
