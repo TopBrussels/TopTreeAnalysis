@@ -17,7 +17,8 @@ if [ "${1}" != "" ]; then
   g++ ${LDFLAGS} -I../../../ -I../../ -I.. -L${HOME}/lib -lTopFcncAnalysis53 -I `root-config --incdir` `root-config --libs` ${MACRO} -o ${EXECUTABLE}
 
   if [ -e ${EXECUTABLE} ]; then
-    echo "Done. Will now run the associated executable ${EXECUTABLE}"
+  #  echo "Done. Will now run the associated executable ${EXECUTABLE}"
+    echo "${EXECUTABLE} was sucessfully compiled"
   #./TopFCNC_EventSelection | tee $2
   else
     echo "Compilation failed!"
