@@ -99,6 +99,7 @@ int main (int argc, char *argv[])
     useMassesAndResolutions = true;
 
   double btagcut=3;
+  //btagcut=9999.;
 
   clock_t start = clock();
 
@@ -118,7 +119,8 @@ int main (int argc, char *argv[])
   string xmlFileName ="../config/myBTAGconfig.xml";
   //xmlFileName ="../config/myBTAGconfig_newcalib.xml";
   //string xmlFileName ="../config/myBTAGconfig_fall11.xml";
-  
+  //xmlFileName="../config/testje.xml";
+
   if (systematic == 8)
     xmlFileName ="../config/myBTAGconfig_ttjetsyst.xml";
     //xmlFileName ="../config/myBTAGconfig_ttjetsyst_newcalib.xml";
@@ -385,9 +387,15 @@ int main (int argc, char *argv[])
 
   // 11.6/fb with new S10 pileup scenario
 
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
+  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
   LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");*/
+
+  // 11.6/fb with new S10 pileup scenario
+
+  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun206940/nominal.root", "pileup", "pileup");
+  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun206940/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun206940/sys_down.root", "pileup", "pileup");
   
 
   //reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
@@ -519,6 +527,7 @@ int main (int argc, char *argv[])
     // create a histos map to store histos in the btagfile
 
     map<string,TH1F*> histo1D_btag;
+    map<string,TH1F*> histo1D_syst;
     map<string,TH2F*> histo2D_btag;
     map<string,TGraphErrors*> graphErr_btag;
   
@@ -596,7 +605,7 @@ int main (int argc, char *argv[])
     int nTagged_nonb=0;
 
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-      //for (unsigned int ievt = 0; ievt < 10000; ievt++)
+      //  for (unsigned int ievt = 0; ievt < 10000; ievt++)
     {
       
       vector < TRootVertex* > vertex;
@@ -760,13 +769,13 @@ int main (int argc, char *argv[])
 	  
 	  // 2.7/fb recalib 
 	  if( event->runId() <= 190738 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
 
 	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
 
 	  else if( event->runId() >= 191695 && event->runId() <= 193621 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
 
 	  else if( event->runId() >= 193834 && event->runId() <= 194225 )
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
@@ -783,7 +792,7 @@ int main (int argc, char *argv[])
 	  else if( event->runId() >= 199698 && event->runId() <= 202504)
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
 
-	  else if( event->runId() >= 202972 && event->runId() <= 203002)
+	  else if( event->runId() >= 202972 && event->runId() <= 206940)
 	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v4"), currentRun, iFile);
 
 	  else {
@@ -896,6 +905,18 @@ int main (int argc, char *argv[])
 
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
 
+	/*if (event->eventId() == 5942766) {
+
+	  cout << "bla" << endl;
+	  
+	  for (int j = 0; j < init_jets_corrected.size(); j++) {
+	    
+	    cout << "init jet " << j << " after JER -> Pt: " << init_jets_corrected[j]->Pt() << endl;
+	    
+	  } cout << endl;
+	 
+	  }*/
+
 	if(systematic == 6)
 	  jetTools->correctJetJER(init_jets_corrected, genjets, mets[0], "minus",false); //false means don't use old numbers but newer ones...
 	else if(systematic == 7)
@@ -909,9 +930,9 @@ int main (int argc, char *argv[])
 	//cout << "jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
 	
 	if (systematic == 1)
-	  jetTools->correctJetJESUnc(init_jets_corrected, "minus",1);
+	  jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",1);
 	else if (systematic == 2)
-	  jetTools->correctJetJESUnc(init_jets_corrected, "plus",1);
+	  jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",1);
 	
 	//for (unsigned int j=0;j<init_jets_corrected.size();j++)
 	//cout << "after jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
@@ -1107,8 +1128,27 @@ int main (int argc, char *argv[])
      
      if (!eventselectedSemiMu && !eventselectedSemiEl) continue;
 
-     // get MC QCD yield
+     /*if (event->eventId() == 5942766) {
 
+       cout << "bla" << endl;
+
+       for (int j = 0; j < init_jets_corrected.size(); j++) {
+	 
+	 cout << "init jet " << j << " after JER -> Pt: " << init_jets_corrected[j]->Pt() << endl;
+	 
+       } cout << endl;
+
+       for (int j = 0; j < selectedJets.size(); j++) {
+	 
+	 cout << "selected jet " << j << " after JER -> Pt: " << selectedJets[j]->Pt() << endl;
+	 
+       } cout << endl;
+       
+       exit(1);
+       }*/
+
+     // get MC QCD yield
+     
      if (eventselectedSemiEl && dataSetName.find("QCD") != string::npos) {
        yieldQCD_MC_SemiEl += (LuminosityEl*scaleFactor)/datasets[d]->EquivalentLumi();
      }
@@ -1133,7 +1173,7 @@ int main (int argc, char *argv[])
       else if (systematic == 4)
 	jetTools->correctJetJESUnc(selectedJets, "plus");
 
-      if(dataSetName.find("WJets_TuneZ2_scaledown") == 0) {
+      /*if(dataSetName.find("WJets_TuneZ2_scaledown") == 0) {
 	treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
 
@@ -1159,7 +1199,7 @@ int main (int argc, char *argv[])
 	  //cout << "--- W+Jets scaledown NOT a MU!!!!"<< endl;
 	  //exit(1);
 	//}
-      }
+	}*/
 
       if (eventselectedSemiMu)
 	nSelectedMu++;
@@ -1422,9 +1462,158 @@ int main (int argc, char *argv[])
 	    nTagged_nonb++;
 	}
 
+	//----------------------------//
+	// PLOTS TO CHECK SYSTEMATICS //
+	//----------------------------//
+
+	double systw = (10000./datasets[d]->EquivalentLumi())*scaleFactor;
+
+	if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // when only using one channel
+
+	  systw=1;
+
+	}
+
+	if (histo1D_syst.find("weight") == histo1D_syst.end()) {
+	  histo1D_syst["weight"] = new TH1F("weight_check","weight check;weight;nEvents",100,0,1);
+	}
+	histo1D_syst["weight"]->Fill(systw);
+	
+	//cout << systw << endl;
+
+	// FOR JEC we want to look at mW, trying different definitions
+
+	/* using the chi2 definition */
+
+	float mW_chi2 = (*selectedJets[Permutation[0]]+*selectedJets[Permutation[1]]).M();
+
+	if (histo1D_syst.find("JEC_Wmass_chi2def_mu") == histo1D_syst.end()) {
+	  histo1D_syst["JEC_Wmass_chi2def_mu"] = new TH1F("JEC_Wmass_chi2def_mu","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	  histo1D_syst["JEC_Wmass_chi2def_el"] = new TH1F("JEC_Wmass_chi2def_el","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	}
+	
+	if (eventselectedSemiMu)
+	  histo1D_syst["JEC_Wmass_chi2def_mu"]->Fill(mW_chi2,systw);
+	if (eventselectedSemiEl)
+	  histo1D_syst["JEC_Wmass_chi2def_el"]->Fill(mW_chi2,systw);
+
+	/* using the non-tagged jets in a 2-btag event */
+
+	int nBtags=0;
+	vector<int> notTagged;
+	for (int bt=0;bt<selectedJets.size();bt++) {
+	  if (selectedJets[bt]->btag_jetProbabilityBJetTags() > 0.545)
+	    nBtags++;
+	  else 
+	    notTagged.push_back(bt);
+	}
+
+	if (histo1D_syst.find("JEC_Wmass_doublebtagdef_mu") == histo1D_syst.end()) {
+	  histo1D_syst["JEC_Wmass_doublebtagdef_mu"] = new TH1F("JEC_Wmass_doublebtagdef_mu","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	  histo1D_syst["JEC_Wmass_doublebtagdef_el"] = new TH1F("JEC_Wmass_doublebtagdef_el","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	}
+	
+	//cout << nBtags << " " << notTagged.size() << endl;
+
+	if (nBtags == 2 && notTagged.size()==2) {
+	  for (int l1=0; l1<notTagged.size();l1++) {
+	    for (int l2=0; l2<notTagged.size();l2++) {
+	      if (l1==l2) continue;
+	      if (l1>l2) continue;
+	      
+	      double mw_doublebtag=(*selectedJets[Permutation[l1]]+*selectedJets[Permutation[l2]]).M();
+	      //cout << "     " << l1 << " " << l2 << " " << mw_doublebtag << endl;
+	      if (eventselectedSemiMu)
+		histo1D_syst["JEC_Wmass_doublebtagdef_mu"]->Fill(mw_doublebtag,systw);
+	      if (eventselectedSemiEl)
+		histo1D_syst["JEC_Wmass_doublebtagdef_el"]->Fill(mw_doublebtag,systw);
+	      
+	    }
+	  }
+	}
+
+	notTagged.clear();
+	//if (nBtags == 2 && notTagged.size() > 2) exit(1);
+
+
 	//---------------//
 	// CONTROL PLOTS //
 	//---------------//
+
+	/*if (histo1D_btag.find("CSVTag_SS_Left_mu") == histo1D_btag.end()) {
+	  histo1D_btag["CSVTag_SS_Left_mu"] = new TH1F("CSVTag_SS_Left_mu","CSVTag_SS_Left_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_SS_Right_mu"] = new TH1F("CSVTag_SS_Right_mu","CSVTag_SS_Right_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_SS_Left_b_mu"] = new TH1F("CSVTag_SS_Left_b_mu","CSVTag_SS_Left_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_SS_Right_b_mu"] = new TH1F("CSVTag_SS_Right_b_mu","CSVTag_SS_Right_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_SS_Left_l_mu"] = new TH1F("CSVTag_SS_Left_l_mu","CSVTag_SS_Left_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_SS_Right_l_mu"] = new TH1F("CSVTag_SS_Right_l_mu","CSVTag_SS_Right_Mu;CSV;#events",25,0,1);
+
+	  histo1D_btag["CSVTag_CS_Left_mu"] = new TH1F("CSVTag_CS_Left_mu","CSVTag_CS_Left_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_CS_Right_mu"] = new TH1F("CSVTag_CS_Right_mu","CSVTag_CS_Right_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_CS_Left_b_mu"] = new TH1F("CSVTag_CS_Left_b_mu","CSVTag_CS_Left_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_CS_Right_b_mu"] = new TH1F("CSVTag_CS_Right_b_mu","CSVTag_CS_Right_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_CS_Left_l_mu"] = new TH1F("CSVTag_CS_Left_l_mu","CSVTag_CS_Left_Mu;CSV;#events",25,0,1);
+	  histo1D_btag["CSVTag_CS_Right_l_mu"] = new TH1F("CSVTag_CS_Right_l_mu","CSVTag_CS_Right_Mu;CSV;#events",25,0,1);
+	}
+	if (eventselectedSemiMu && smallestChi2 < 125) {
+
+	  //cout << "ok1" << endl;
+
+	    double mlj = (*selectedJets[3]+*selectedLepton).M();
+	    double mljC1 = (*(selectedJets[Permutation[0]])+*selectedLepton).M();
+	    double mljC2 = (*(selectedJets[Permutation[1]])+*selectedLepton).M();
+
+	    int pflav = selectedJets[Permutation[3]]->partonFlavour();
+	    int pflavC1 = selectedJets[Permutation[0]]->partonFlavour();
+	    int pflavC2 = selectedJets[Permutation[1]]->partonFlavour();
+
+	    if (mlj > 70 && mlj < 170) {
+	      //cout << "ok2" << endl;
+	      histo1D_btag["CSVTag_SS_Left_mu"]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      if (fabs(pflav)==5)
+		histo1D_btag["CSVTag_SS_Left_b_mu"]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      else
+		histo1D_btag["CSVTag_SS_Left_l_mu"]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	    }
+	    else if (mlj > 170 && mlj < 300) {
+	      histo1D_btag["CSVTag_SS_Right_mu"]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      if (fabs(pflav)==5)
+		histo1D_btag["CSVTag_SS_Right_b_mu"]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      else
+		histo1D_btag["CSVTag_SS_Right_l_mu"]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	    }
+
+	    if (mljC1 > 70 && mljC1 < 170) {
+	      histo1D_btag["CSVTag_CS_Left_mu"]->Fill((*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      if (fabs(pflavC1)==5)
+		histo1D_btag["CSVTag_CS_Left_b_mu"]->Fill((*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      else
+		histo1D_btag["CSVTag_CS_Left_l_mu"]->Fill((*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	    }
+	    else if (mljC1 > 170 && mljC1 < 300) {
+	      histo1D_btag["CSVTag_CS_Right_mu"]->Fill((*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      if (fabs(pflavC1)==5)
+		histo1D_btag["CSVTag_CS_Right_b_mu"]->Fill((*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      else
+		histo1D_btag["CSVTag_CS_Right_l_mu"]->Fill((*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	    }
+
+	    if (mljC2 > 70 && mljC2 < 170) {
+	      histo1D_btag["CSVTag_CS_Left_mu"]->Fill((*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      if (fabs(pflavC2)==5)
+		histo1D_btag["CSVTag_CS_Left_b_mu"]->Fill((*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      else
+		histo1D_btag["CSVTag_CS_Left_l_mu"]->Fill((*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	    }
+	    else if (mljC2 > 170 && mljC2 < 300) {
+	      histo1D_btag["CSVTag_CS_Right_mu"]->Fill((*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      if (fabs(pflavC2)==5)
+		histo1D_btag["CSVTag_CS_Right_b_mu"]->Fill((*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	      else
+		histo1D_btag["CSVTag_CS_Right_l_mu"]->Fill((*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+	    }
+	    
+	}*/
 
 	if (histo1D_btag.find("JetCombMinChi2_mu") == histo1D_btag.end()) {
 	  histo1D_btag["JetCombMinChi2_mu"] = new TH1F("JetCombMinChi2_mu","Minimal #Chi^{2} value of the 12 combinations;#Chi^{2};#events",200,0,100);
@@ -1890,6 +2079,35 @@ int main (int argc, char *argv[])
 	if (MSPlot.find("bcand_jetProbabilityBJetTags"+leptonFlav) == MSPlot.end())
 	  MSPlot["bcand_jetProbabilityBJetTags"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "bcand_jetProbabilityBJetTags"+leptonFlav, 50, 0, 3, "Btag Discr");
 	MSPlot["bcand_jetProbabilityBJetTags"+leptonFlav]->Fill((*(selectedJets[Permutation[3]])).btag_jetProbabilityBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+
+	NTuple->setBtag(8,(*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+
+	// CS jet 1
+	NTuple->setBtagCS1(0,(*(selectedJets[Permutation[0]])).btag_trackCountingHighEffBJetTags());
+	NTuple->setBtagCS1(1,(*(selectedJets[Permutation[0]])).btag_trackCountingHighPurBJetTags());
+	NTuple->setBtagCS1(2,(*(selectedJets[Permutation[0]])).btag_simpleSecondaryVertexHighEffBJetTags());
+	NTuple->setBtagCS1(3,(*(selectedJets[Permutation[0]])).btag_simpleSecondaryVertexHighPurBJetTags());
+	NTuple->setBtagCS1(4,(*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexBJetTags());
+	NTuple->setBtagCS1(5,(*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexMVABJetTags());
+	NTuple->setBtagCS1(6,(*(selectedJets[Permutation[0]])).btag_jetBProbabilityBJetTags());
+	NTuple->setBtagCS1(7,(*(selectedJets[Permutation[0]])).btag_jetProbabilityBJetTags());
+	NTuple->setBtagCS1(8,(*(selectedJets[Permutation[0]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+
+	// CS jet 2
+	NTuple->setBtagCS2(0,(*(selectedJets[Permutation[1]])).btag_trackCountingHighEffBJetTags());
+	NTuple->setBtagCS2(1,(*(selectedJets[Permutation[1]])).btag_trackCountingHighPurBJetTags());
+	NTuple->setBtagCS2(2,(*(selectedJets[Permutation[1]])).btag_simpleSecondaryVertexHighEffBJetTags());
+	NTuple->setBtagCS2(3,(*(selectedJets[Permutation[1]])).btag_simpleSecondaryVertexHighPurBJetTags());
+	NTuple->setBtagCS2(4,(*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexBJetTags());
+	NTuple->setBtagCS2(5,(*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexMVABJetTags());
+	NTuple->setBtagCS2(6,(*(selectedJets[Permutation[1]])).btag_jetBProbabilityBJetTags());
+	NTuple->setBtagCS2(7,(*(selectedJets[Permutation[1]])).btag_jetProbabilityBJetTags());
+	NTuple->setBtagCS2(8,(*(selectedJets[Permutation[1]])).btag_combinedSecondaryVertexRetrainedBJetTags());
+
+	if (MSPlot.find("bcand_combinedSecondaryVertexRetrainedBJetTags"+leptonFlav) == MSPlot.end())
+	  MSPlot["bcand_combinedSecondaryVertexRetrainedBJetTags"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "bcand_combinedSecondaryVertexRetrainedBJetTags"+leptonFlav, 50, -1, 2, "Btag Discr");
+	MSPlot["bcand_combinedSecondaryVertexRetrainedBJetTags"+leptonFlav]->Fill((*(selectedJets[Permutation[3]])).btag_combinedSecondaryVertexRetrainedBJetTags(), datasets[d], true, Luminosity*scaleFactor);
+
 	
 	//vector <TRootCaloJet*> selectedCaloJets = convertToCaloJets(selectedJets);
 	
@@ -1928,8 +2146,14 @@ int main (int argc, char *argv[])
 	NTuple->setChiSq(smallestChi2);  
 	NTuple->setPtMuon((*selectedLepton).Pt());   
 	NTuple->setEMuon((*selectedLepton).E());   
-	NTuple->setEtaMuon((*selectedLepton).Eta());  
-	
+	NTuple->setEtaMuon((*selectedLepton).Eta());
+
+	if (eventselectedSemiEl) {
+	  //cout << selectedElectrons[0]->mvaTrigId() << endl;
+	  NTuple->setmvaTrigID(selectedElectrons[0]->mvaTrigId());
+	} else
+	  NTuple->setmvaTrigID(-1);
+
 	NTuple->setLepBlCandMass( (*selectedJets[Permutation[3]]+*selectedLepton).M() );
 	NTuple->setHadTopCandMass( (*selectedJets[Permutation[0]]+*selectedJets[Permutation[1]]+*selectedJets[Permutation[2]]).M() );
 	NTuple->setHadWCandMass( (*selectedJets[Permutation[0]]+*selectedJets[Permutation[1]]).M() );
@@ -2217,6 +2441,20 @@ int main (int argc, char *argv[])
 	  it->second->Write();
 
 	  delete histo2D_btag[it->first];
+      }
+
+      TDirectory* th1dirs = BTreeFile->mkdir("SystPlots");
+
+      for(std::map<std::string,TH1F*>::const_iterator it = histo1D_syst.begin(); it != histo1D_syst.end(); it++) {
+	  TH1F *temp = it->second;
+	  int N = temp->GetNbinsX();
+	  temp->SetBinContent(N,temp->GetBinContent(N)+temp->GetBinContent(N+1));
+	  temp->SetBinContent(N+1,0);
+	  temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries..
+	  th1dirs->cd();
+	  temp->Write();
+
+	  delete histo1D_syst[it->first];
       }
 
       for (std::map<std::string,TGraphErrors*>::const_iterator it = graphErr_btag.begin(); it != graphErr_btag.end(); ++it) {
