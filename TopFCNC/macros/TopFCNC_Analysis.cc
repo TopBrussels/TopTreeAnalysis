@@ -104,7 +104,7 @@ int main (int argc, char *argv[])
   inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ZZJetsTo2L2Q.root");
   inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ZZJetsTo4L.root");
 */
-  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttjets.root");
+  //inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttjets.root");
 /*
   inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_zjets.root");
 //  inputFiles.push_back(treepath+"TopFCNC_EventSelection"+channelpostfix+comments+"_TTree_ttbar_fcnc.root");
@@ -113,14 +113,18 @@ int main (int argc, char *argv[])
   {
     TFile* inputFile = new TFile(inputFiles[iDataSet].c_str(),"READ");
     TTree* inConfigTree = (TTree*) inputFile->Get("configTree");
+
     TBranch* d_br = (TBranch*) inConfigTree->GetBranch("Dataset");
     TClonesArray* tc_dataset = new TClonesArray("Dataset",0);
     d_br->SetAddress(&tc_dataset);
     inConfigTree->GetEvent(0);
+
     Dataset* dataSet = (Dataset*) tc_dataset->At(0);
     dataSets.push_back( (Dataset*) dataSet->Clone() );
+
     if(dataSet->Name().find("Data") == 0 || dataSet->Name().find("data") == 0 || dataSet->Name().find("DATA") == 0 )
       Luminosity = dataSet->EquivalentLumi();
+ 
     delete tc_dataset;
     inputFile->Close();
     delete inputFile;
@@ -152,16 +156,21 @@ int main (int argc, char *argv[])
   ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
   resFitLightJets->LoadResolutions(resopath+resoprefix+"lightJetReso.root");
   
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////// Histograms //////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////
   ///////////////////// MS plots /////////////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
+  MSPlot["KinFit_NbOfBtaggedJets_CSVL"] = new MultiSamplePlot(dataSets,"KinFit_NbOfBtaggedJets_CSVL",10,0,10,"Nb. of b-tagged jets (CSVL)");
+  MSPlot["KinFit_NbOfBtaggedJets_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_NbOfBtaggedJets_CSVM",10,0,10,"Nb. of b-tagged jets (CSVM)");
+  MSPlot["KinFit_NbOfBtaggedJets_CSVT"] = new MultiSamplePlot(dataSets,"KinFit_NbOfBtaggedJets_CSVT",10,0,10,"Nb. of b-tagged jets (CSVT)");
+  
+  // NO BTAG CUT________________________________________________________________________________________
   MSPlot["KinFit_Prob"]        = new MultiSamplePlot(dataSets,"KinFit_Prob",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2",500,0,100,"#chi^{2}");
   MSPlot["KinFit_ReducedChi2"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2",100,0,1,"#chi^{2}/Ndf");
@@ -170,6 +179,24 @@ int main (int argc, char *argv[])
   MSPlot["KinFit_HadTopMass"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
 
+  MSPlot["KinFit_LepZ_Pt"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt",300,0,150,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_Met"]         = new MultiSamplePlot(dataSets,"KinFit_Met",300,0,150,"\\slashE_{T} [Gev/c]");
+
+  // CSV Tight Working point_____________________________________________________________________________
+  MSPlot["KinFit_Prob_AtLeast1Btag_CSVT"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_AtLeast1Btag_CSVT",100,0,1,"Prob.");
+  MSPlot["KinFit_Chi2_AtLeast1Btag_CSVT"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_AtLeast1Btag_CSVT",500,0,100,"#chi^{2}");
+  MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVT"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVT",100,0,1,"#chi^{2}/Ndf");
+  
+  MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVT"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_AtLeast1Btag_CSVT",120,50,110,"m_{W} [Gev/c^{2}]");
+  MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVT"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_AtLeast1Btag_CSVT",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
+  MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVT"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_AtLeast1Btag_CSVT",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
+  
+  MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVT"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_AtLeast1Btag_CSVT",300,0,150,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVT"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_AtLeast1Btag_CSVT",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_Met_AtLeast1Btag_CSVT"]         = new MultiSamplePlot(dataSets,"KinFit_Met_AtLeast1Btag_CSVT",300,0,150,"\\slashE_{T} [Gev/c]");
+
+  // CSV Medium Working point____________________________________________________________________________
   MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_AtLeast1Btag_CSVM",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2_AtLeast1Btag_CSVM"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_AtLeast1Btag_CSVM",500,0,100,"#chi^{2}");
   MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVM",100,0,1,"#chi^{2}/Ndf");
@@ -178,6 +205,11 @@ int main (int argc, char *argv[])
   MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_AtLeast1Btag_CSVM",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_AtLeast1Btag_CSVM",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
 
+  MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVM"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_AtLeast1Btag_CSVM",300,0,150,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVM"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_AtLeast1Btag_CSVM",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_Met_AtLeast1Btag_CSVM"]         = new MultiSamplePlot(dataSets,"KinFit_Met_AtLeast1Btag_CSVM",300,0,150,"\\slashE_{T} [Gev/c]");
+  
+  // CSV Loose Working point (Veto) _____________________________________________________________________
   MSPlot["KinFit_Prob_NoBtag_CVSL"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_NoBtag_CVSL",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2_NoBtag_CVSL"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_NoBtag_CVSL",500,0,100,"#chi^{2}");
   MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_NoBtag_CVSL",100,0,1,"#chi^{2}/Ndf");
@@ -185,11 +217,11 @@ int main (int argc, char *argv[])
   MSPlot["KinFit_HadWMass_NoBtag_CVSL"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_NoBtag_CVSL",120,50,110,"m_{W} [Gev/c^{2}]");
   MSPlot["KinFit_HadTopMass_NoBtag_CVSL"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_NoBtag_CVSL",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_NoBtag_CVSL",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
-
-  ////////////////////////////////////////////////////////////////////
-  ////////////////// 1D histograms  //////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
-
+  
+  MSPlot["KinFit_LepZ_Pt_NoBtag_CVSL"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_NoBtag_CVSL",300,0,150,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR_NoBtag_CVSL"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_NoBtag_CVSL",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_Met_NoBtag_CVSL"]         = new MultiSamplePlot(dataSets,"KinFit_Met_NoBtag_CVSL",300,0,150,"\\slashE_{T} [Gev/c]");
+  
 
   cout << " - Declared histograms ..." <<  endl;
 	
@@ -202,12 +234,29 @@ int main (int argc, char *argv[])
 //  pathPNG = pathPNG +"/"; 	
   mkdir(pathPNG.c_str(),0777);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////// Analysis //////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////
+  //////////////////// Counters //////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////
 
+  vector<vector<double> > Counters(4);  // 0:inclusive, 1:CSVT, 2:CSVM, 3:NoCSVL
+  for(int i=0;i<4;i++){
+    Counters[i] = vector<double>(inputFiles.size());
+  }
+/*
+  double **Counters = new double*[4]; // 0:inclusive, 1:CSVT, 2:CSVM, 3:NoCSVL
+  for(int i=0;i<4;i++){
+    Counters[i] = new double[inputFiles.size()];
+    for(int j=0;inputFiles.size();j++) Counters[i][j] = 0;
+  }
+*/
+  cout << " - Declared counters ..." <<  endl;
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////// Analysis ////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
   for(unsigned int iDataSet=0; iDataSet<inputFiles.size(); iDataSet++)
   {
     string dataSetName = dataSets[iDataSet]->Name();
@@ -249,6 +298,13 @@ int main (int argc, char *argv[])
     double kin_hadWmass    = -1.;
     double kin_hadtopmass  = -1.;
     double kin_fcnctopmass = -1.;
+    double kin_lepZpt      = -1.;
+    double kin_lepDR       = -1.;
+    double kin_met         = -1.;
+    
+    int kin_nbofbtag_csvt = 0;
+    int kin_nbofbtag_csvm = 0;
+    int kin_nbofbtag_csvl = 0;
 
     for(int iEvt=0; iEvt<nEvent; iEvt++)
     {
@@ -265,8 +321,10 @@ int main (int argc, char *argv[])
 
       topFCNC_Evt->ReconstructEvt();
 
-      EventWeight = Luminosity*topFCNC_Evt->eventWeight();
-
+      EventWeight = topFCNC_Evt->eventWeight();
+      
+      Counters[0][iDataSet] += EventWeight;
+      
       kin_prob        = topFCNC_KinFit->GetProb();
       kin_chi2        = topFCNC_KinFit->GetChi2();
       if(topFCNC_KinFit->GetNdof()!=0)
@@ -279,44 +337,99 @@ int main (int argc, char *argv[])
       kin_hadWmass    = topFCNC_Evt->W().M();
       kin_hadtopmass  = topFCNC_Evt->smDecayTop().M();
       kin_fcnctopmass = topFCNC_Evt->fcncDecayTop().M();
+      kin_lepZpt      = topFCNC_Evt->Z().Pt();
+      kin_lepDR       = topFCNC_Evt->lepton1FromZ().DeltaR(topFCNC_Evt->lepton2FromZ());
+      kin_met         = topFCNC_Evt->met().Et();
       
-      MSPlot["KinFit_Prob"]->Fill(kin_prob, dataSet, true, EventWeight);
-      MSPlot["KinFit_Chi2"]->Fill(kin_chi2, dataSet, true, EventWeight);
+      MSPlot["KinFit_Prob"]->Fill(kin_prob, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_Chi2"]->Fill(kin_chi2, dataSet, true, Luminosity*EventWeight);
       if(topFCNC_KinFit->GetNdof()!=0)
-        MSPlot["KinFit_ReducedChi2"]->Fill(kin_chi2ByNdf, dataSet, true, EventWeight);
+        MSPlot["KinFit_ReducedChi2"]->Fill(kin_chi2ByNdf, dataSet, true, Luminosity*EventWeight);
 
-      MSPlot["KinFit_HadWMass"]   ->Fill(kin_hadWmass, dataSet, true, EventWeight);
-      MSPlot["KinFit_HadTopMass"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
-      MSPlot["KinFit_FcncTopMass"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
+      MSPlot["KinFit_HadWMass"]   ->Fill(kin_hadWmass, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_HadTopMass"] ->Fill(kin_hadtopmass, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_FcncTopMass"]->Fill(kin_fcnctopmass, dataSet, true, Luminosity*EventWeight);
+
+      MSPlot["KinFit_LepZ_Pt"]    ->Fill(kin_lepZpt, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_Lep_DR"]     ->Fill(kin_lepDR, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_Met"]        ->Fill(kin_met, dataSet, true, Luminosity*EventWeight);
 
       vector<TRootJet> selectedJets = topFCNC_Evt->selectedJets();
       sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
       double bdisc = selectedJets[0].btag_combinedSecondaryVertexBJetTags();
 
+      kin_nbofbtag_csvl = 0;
+      kin_nbofbtag_csvm = 0;
+      kin_nbofbtag_csvt = 0;
+      for(int i=0; i<selectedJets.size(); i++){
+        int disc_csv = selectedJets[i].btag_combinedSecondaryVertexBJetTags();
+        if(disc_csv<0.244) continue;
+        kin_nbofbtag_csvl++;
+        if(disc_csv<0.679) continue;
+        kin_nbofbtag_csvm++;
+        if(disc_csv<0.898) continue;
+        kin_nbofbtag_csvt++;
+      }
+      MSPlot["KinFit_NbOfBtaggedJets_CSVL"]->Fill(kin_nbofbtag_csvl, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_NbOfBtaggedJets_CSVM"]->Fill(kin_nbofbtag_csvm, dataSet, true, Luminosity*EventWeight);
+      MSPlot["KinFit_NbOfBtaggedJets_CSVT"]->Fill(kin_nbofbtag_csvt, dataSet, true, Luminosity*EventWeight);
+
+      // CSV Medium Working point ___________________________________________________________________________
       if(bdisc>0.679){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!
-        MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]->Fill(kin_prob, dataSet, true, EventWeight);
-        MSPlot["KinFit_Chi2_AtLeast1Btag_CSVM"]->Fill(kin_chi2, dataSet, true, EventWeight);
+        // CSV Tight Working point ___________________________________________________________________________
+        if(bdisc>0.898){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!
+          Counters[1][iDataSet] += EventWeight;
+          MSPlot["KinFit_Prob_AtLeast1Btag_CSVT"]->Fill(kin_prob, dataSet, true, Luminosity*EventWeight);
+          MSPlot["KinFit_Chi2_AtLeast1Btag_CSVT"]->Fill(kin_chi2, dataSet, true, Luminosity*EventWeight);
+          if(topFCNC_KinFit->GetNdof()!=0)
+            MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVT"]->Fill(kin_chi2ByNdf, dataSet, true, Luminosity*EventWeight);
+          
+          MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVT"]   ->Fill(kin_hadWmass, dataSet, true, Luminosity*EventWeight);
+          MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVT"] ->Fill(kin_hadtopmass, dataSet, true, Luminosity*EventWeight);
+          MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVT"]->Fill(kin_fcnctopmass, dataSet, true, Luminosity*EventWeight);
+          MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVT"]    ->Fill(kin_lepZpt, dataSet, true, Luminosity*EventWeight);
+          MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVT"]     ->Fill(kin_lepDR, dataSet, true, Luminosity*EventWeight);
+          MSPlot["KinFit_Met_AtLeast1Btag_CSVT"]        ->Fill(kin_met, dataSet, true, Luminosity*EventWeight);
+        }
+        Counters[2][iDataSet] += EventWeight;
+        MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]->Fill(kin_prob, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_Chi2_AtLeast1Btag_CSVM"]->Fill(kin_chi2, dataSet, true, Luminosity*EventWeight);
         if(topFCNC_KinFit->GetNdof()!=0)
-          MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"]->Fill(kin_chi2ByNdf, dataSet, true, EventWeight);
-
-        MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVM"]   ->Fill(kin_hadWmass, dataSet, true, EventWeight);
-        MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
-        MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
+          MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"]->Fill(kin_chi2ByNdf, dataSet, true, Luminosity*EventWeight);
+        
+        MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVM"]   ->Fill(kin_hadWmass, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"] ->Fill(kin_hadtopmass, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"]->Fill(kin_fcnctopmass, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVM"]    ->Fill(kin_lepZpt, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVM"]     ->Fill(kin_lepDR, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_Met_AtLeast1Btag_CSVM"]        ->Fill(kin_met, dataSet, true, Luminosity*EventWeight);
       }
+      // CSV Loose Working point (Veto) _____________________________________________________________________
       else if(bdisc<0.244){ // DO NOT FORGET THE B-TAGGING SF WHEN MC !!!!!!!!!!
-        MSPlot["KinFit_Prob_NoBtag_CVSL"]->Fill(kin_prob, dataSet, true, EventWeight);
-        MSPlot["KinFit_Chi2_NoBtag_CVSL"]->Fill(kin_chi2, dataSet, true, EventWeight);
+        Counters[3][iDataSet] += EventWeight;
+        MSPlot["KinFit_Prob_NoBtag_CVSL"]->Fill(kin_prob, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_Chi2_NoBtag_CVSL"]->Fill(kin_chi2, dataSet, true, Luminosity*EventWeight);
         if(topFCNC_KinFit->GetNdof()!=0)
-          MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"]->Fill(kin_chi2ByNdf, dataSet, true, EventWeight);
-
-        MSPlot["KinFit_HadWMass_NoBtag_CVSL"]   ->Fill(kin_hadWmass, dataSet, true, EventWeight);
-        MSPlot["KinFit_HadTopMass_NoBtag_CVSL"] ->Fill(kin_hadtopmass, dataSet, true, EventWeight);
-        MSPlot["KinFit_FcncTopMass_NoBtag_CVSL"]->Fill(kin_fcnctopmass, dataSet, true, EventWeight);
+          MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"]->Fill(kin_chi2ByNdf, dataSet, true, Luminosity*EventWeight);
+        
+        MSPlot["KinFit_HadWMass_NoBtag_CVSL"]   ->Fill(kin_hadWmass, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_HadTopMass_NoBtag_CVSL"] ->Fill(kin_hadtopmass, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_FcncTopMass_NoBtag_CVSL"]->Fill(kin_fcnctopmass, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_LepZ_Pt_NoBtag_CVSL"]    ->Fill(kin_lepZpt, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_Lep_DR_NoBtag_CVSL"]     ->Fill(kin_lepDR, dataSet, true, Luminosity*EventWeight);
+        MSPlot["KinFit_Met_NoBtag_CVSL"]        ->Fill(kin_met, dataSet, true, Luminosity*EventWeight);
       }
-
     } // loop on events
     
     delete topFCNC_KinFit;
+    
+    if(iDataSet==0) cout << "/************** Number of selected events ***************/" <<endl;
+    cout << " - Dataset: " << dataSetName << endl;
+    cout << " - inclusive: " << Counters[0][iDataSet] << endl;
+    cout << " - highest b-disc(CSV) > 0.898: " << Counters[1][iDataSet] << endl;
+    cout << " - highest b-disc(CSV) > 0.679: " << Counters[2][iDataSet] << endl;
+    cout << " - highest b-disc(CSV) < 0.244: " << Counters[3][iDataSet] << endl;
+    cout << "/********************************************************/" <<endl;
   } // loop on datasets
 
   fout->cd();
