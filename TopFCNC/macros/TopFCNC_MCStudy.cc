@@ -22,7 +22,7 @@
 #include "../MCInformation/interface/Lumi3DReWeighting.h"
 #include "../TopFCNC/interface/TopFCNC_GenEvt.h"
 
-#include "Style.C"
+#include "../../macros/Style.C"
 
 using namespace std;
 using namespace TopTree;
@@ -97,10 +97,7 @@ int main (int argc, char *argv[])
   //Global variable
   TRootEvent* event = 0;
   TopFCNC_GenEvt* MyTopFCNC_GenEvtCand = 0;
-
-  ResolutionFit *resFitLeptons   = new ResolutionFit("Muon"); //("Electron");
-  ResolutionFit *resFitBJets     = new ResolutionFit("BJet");
-  ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -173,7 +170,8 @@ int main (int argc, char *argv[])
 
 	    Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
 	    selection.setJetCuts(10.,2.4,0.01,1.,0.98,0.3,0.1);
-	    selection.setDiMuonCuts(10,2.4,0.15,10,0.02); //Et,Eta,RelIso,NValidHits,d0
+	   	selection.setDiMuonCuts(15,2.4,0.20,999.); //Et,Eta,RelIso,d0
+  	  selection.setDiElectronCuts(15,2.5,0.15,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
 
 	    vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
 	    vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
@@ -184,15 +182,14 @@ int main (int argc, char *argv[])
 	    MyTopFCNC_GenEvtCand->ReconstructEvt(mcParticles);
 	    MyTopFCNC_GenEvtCand->MatchJetsToPartons(selectedJets);
 	    MyTopFCNC_GenEvtCand->MatchLeptonsToZ(selectedMuons);
-      MyTopFCNC_GenEvtCand->FillResolutions(resFitLeptons, resFitLightJets, resFitBJets);
-  
+      
 	    histo1D["DiLeptonMass"]->Fill(MyTopFCNC_GenEvtCand->matchedZ().M());
 	    if(MyTopFCNC_GenEvtCand->isDiLeptonic()){
 		    histo1D["TopMass_FCNC_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedZ()+MyTopFCNC_GenEvtCand->matchedQ()).M());
-		    if(MyTopFCNC_GenEvtCand->matchedQuarkFromW().E()>0 && MyTopFCNC_GenEvtCand->matchedQuarkBarFromW().E()>0){
-			    histo1D["WMass_Had_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedQuarkFromW()+MyTopFCNC_GenEvtCand->matchedQuarkBarFromW()).M());
+		    if(MyTopFCNC_GenEvtCand->matchedQuark1FromW().E()>0 && MyTopFCNC_GenEvtCand->matchedQuark2FromW().E()>0){
+			    histo1D["WMass_Had_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedQuark1FromW()+MyTopFCNC_GenEvtCand->matchedQuark2FromW()).M());
 			    if(MyTopFCNC_GenEvtCand->matchedB().E()>0)
-				    histo1D["TopMass_Had_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedQuarkFromW()+MyTopFCNC_GenEvtCand->matchedQuarkBarFromW()+MyTopFCNC_GenEvtCand->matchedB()).M());
+				    histo1D["TopMass_Had_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedQuark1FromW()+MyTopFCNC_GenEvtCand->matchedQuark2FromW()+MyTopFCNC_GenEvtCand->matchedB()).M());
 		    }
 	    }
 	    else{
@@ -236,14 +233,6 @@ int main (int argc, char *argv[])
 	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
 	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
-
-  resFitLeptons->WritePlots(fout, true, pathPNG+"resFit_Lepton/");
-  resFitLeptons->WriteResolutions("leptonReso.root");
-  resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
-  resFitLightJets->WriteResolutions("lightJetReso.root");
-  resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
-  resFitBJets->WriteResolutions("bJetReso.root");
-
   //delete  
   delete fout;
 

@@ -79,7 +79,8 @@ int main (int argc, char *argv[])
   CombinedSecondaryVertex 	CSVM 	  0.679
   CombinedSecondaryVertex 	CSVT 	  0.898
   */
-  float btagcut     = 0.679;
+  int   btagAlgo    = 6; //CSV
+  float btagCut     = 0.679;
 	float Zmass       = 91.2;
 	float Zwindowsize = 30.;
 	bool applyAsymmJetPtCut = true;
@@ -256,6 +257,12 @@ int main (int argc, char *argv[])
   MSPlot["NbOfSelectedJets_ee_ch"]            = new MultiSamplePlot(datasets, "NbOfSelectedJets_ee_ch",  15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_eee_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_eee_ch", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedJets_eem_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_eem_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CVS"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastFourJets_mm_ch_CVS", 7, 0, 7, "Nb. of b-tagged jets");
+  MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mme_ch_CVS"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastTwoJets_mme_ch_CVS", 7, 0, 7, "Nb. of b-tagged jets");
+  MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mmm_ch_CVS"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastTwoJets_mmm_ch_CVS", 7, 0, 7, "Nb. of b-tagged jets");
+  MSPlot["NbOfSelectedBJets_AtLeastFourJets_ee_ch_CVS"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastFourJets_ee_ch_CVS", 7, 0, 7, "Nb. of b-tagged jets");
+  MSPlot["NbOfSelectedBJets_AtLeastTwoJets_eee_ch_CVS"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastTwoJets_eee_ch_CVS", 7, 0, 7, "Nb. of b-tagged jets");
+  MSPlot["NbOfSelectedBJets_AtLeastTwoJets_eem_ch_CVS"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastTwoJets_eem_ch_CVS", 7, 0, 7, "Nb. of b-tagged jets");
 
   MSPlot["FirstLeadingJetPt"]                 = new MultiSamplePlot(datasets, "FirstLeadingJetPt", 100, 0, 500, "Jet p_{T} [GeV/c]");
   MSPlot["SecondLeadingJetPt"]                = new MultiSamplePlot(datasets, "SecondLeadingJetPt", 80, 0, 400, "Jet p_{T} [GeV/c]");
@@ -286,12 +293,12 @@ int main (int argc, char *argv[])
   MSPlot["HighestBdisc_mme_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_mme_ch_JP",  50, 0, 1, "JP b-disc.");
   MSPlot["HighestBdisc_eee_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_eee_ch_JP",  50, 0, 1, "JP b-disc.");
   
-  MSPlot["MET_mm_ch"]                         = new MultiSamplePlot(datasets, "MET_mm_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_mme_ch"]                        = new MultiSamplePlot(datasets, "MET_mme_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_mmm_ch"]                        = new MultiSamplePlot(datasets, "MET_mmm_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_ee_ch"]                         = new MultiSamplePlot(datasets, "MET_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_eee_ch"]                        = new MultiSamplePlot(datasets, "MET_eee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_eem_ch"]                        = new MultiSamplePlot(datasets, "MET_eem_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastFourJets_mm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_mm_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastTwoJets_mme_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_mme_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastTwoJets_mmm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_mmm_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastFourJets_ee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastTwoJets_eee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_eee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastTwoJets_eem_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_eem_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
 
   MSPlot["TriLeptonInvMass_mmm_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mmm_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
   MSPlot["TriLeptonInvMass_mme_ch"]           = new MultiSamplePlot(datasets, "TriLeptonInvMass_mme_ch", 160, 50, 130, "m_{lll} [GeV/c^{2}]");
@@ -306,6 +313,8 @@ int main (int argc, char *argv[])
   for (unsigned int d = 0; d < datasets.size(); d++){
   	histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
   	histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
+  	histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),"d_{z}:#phi",500,-25,25,500,0,4);
+  	histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),"d_{z}:#phi",500,-25,25,500,0,4);
   }
   cout << " - Declared histograms ..." <<  endl;
 	
@@ -325,7 +334,7 @@ int main (int argc, char *argv[])
   char zmasscutname[100];
   sprintf(zmasscutname,"$|m_{ll}-m_Z|<%f$ GeV",Zwindowsize);
   char btagcutname[100];
-  sprintf(btagcutname,"$b\\texttt{-}disc \\geq %f$ (CSV)",btagcut);
+  sprintf(btagcutname,"$b\\texttt{-}disc \\geq %f$ (CSV)",btagCut);
 
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : µµ  ////////////////////////////////
@@ -468,15 +477,15 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   string PileUpFile = "";
-  if( comments.find("run2012A") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012A_13Jul_TopTreeID_2013_PileupHistogram.root" : "../pileup/DoubleElectron_Run2012A_13Jul_TopTreeID_2063_PileupHistogram.root");
-  else if( comments.find("run2012B") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012B_13Jul_TopTreeID_2065_PileupHistogram.root" : "../pileup/DoubleElectron_Run2012B_13Jul_TopTreeID_2085_PileupHistogram.root");
+  if( comments.find("2012A") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012A_13Jul_TopTreeID_2013_PileupHistogram.root" : "../pileup/DoubleElectron_Run2012A_13Jul_TopTreeID_2063_PileupHistogram.root");
+  else if( comments.find("2012B") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012B_13Jul_TopTreeID_2065_PileupHistogram.root" : "../pileup/DoubleElectron_Run2012B_13Jul_TopTreeID_2085_PileupHistogram.root");
   else{
     cerr << "Cannot determine which pile up root should be used. Make sure the string comment is filled correctly." << endl;
     exit(1);
   }
   LumiReWeighting LumiWeights = LumiReWeighting("../pileup/pileup_MC_S10.root", PileUpFile, "pileup", "pileup");
 
-  cout << " - Initialized LumiReWeighting stuff" << endl;
+  cout << " - Initialized LumiReWeighting with file : " << PileUpFile << endl;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -892,6 +901,8 @@ int main (int argc, char *argv[])
 	if(diMuon){
 	  histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
 	  histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->d0(),selectedMuons_NoIso[1]->Phi());
+	  histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->dz(),selectedMuons_NoIso[0]->Phi());
+	  histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->dz(),selectedMuons_NoIso[1]->Phi());
 	  for(unsigned int i=0;i<selectedMuons_NoIso.size();i++) MSPlot["LeptonDzero"]->Fill(selectedMuons_NoIso[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["1stLeadingLeptonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["2ndLeadingLeptonPt"]->Fill(selectedMuons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
@@ -901,6 +912,8 @@ int main (int argc, char *argv[])
 	else if(diElectron){
 	  histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[0]->d0(),selectedElectrons_NoIso[0]->Phi());
 	  histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[1]->d0(),selectedElectrons_NoIso[1]->Phi());
+	  histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[0]->dz(),selectedElectrons_NoIso[0]->Phi());
+	  histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[1]->dz(),selectedElectrons_NoIso[1]->Phi());
 		MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 		MSPlot["1stLeadingLeptonRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
@@ -1057,7 +1070,7 @@ int main (int argc, char *argv[])
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 						MSPlot["HighestBdisc_mm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-
+            MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
             // Create TopFCNC_Evt object
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
 						MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]);
@@ -1065,9 +1078,9 @@ int main (int argc, char *argv[])
 						MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
 						MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-						if(highestbtagdisc>btagcut){
+						if(highestbtagdisc>btagCut){
   						selecTableDiMu.Fill(d,11,scaleFactor);
-  						MSPlot["MET_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+  						MSPlot["MET_AtLeastFourJets_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
   				  }
 					}
 				}
@@ -1095,7 +1108,7 @@ int main (int argc, char *argv[])
 				MSPlot["HighestBdisc_mme_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 				MSPlot["HighestBdisc_mme_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-
+        MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mme_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
         // Create TopFCNC_Evt object
   			MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
 				MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]); 
@@ -1105,7 +1118,7 @@ int main (int argc, char *argv[])
 				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
 				MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-				MSPlot["MET_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MET_AtLeastTwoJets_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 
 				invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedElectrons[0]).M();
 				MSPlot["TriLeptonInvMass_mme_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
@@ -1133,6 +1146,7 @@ int main (int argc, char *argv[])
 				MSPlot["HighestBdisc_mmm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 				MSPlot["HighestBdisc_mmm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mmm_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
 
         // Create TopFCNC_Evt object
 				MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
@@ -1143,7 +1157,7 @@ int main (int argc, char *argv[])
 				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
 				MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-				MSPlot["MET_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MET_AtLeastTwoJets_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 
 				invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedExtraMuons[0]).M();
 				MSPlot["TriLeptonInvMass_mmm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
@@ -1177,6 +1191,7 @@ int main (int argc, char *argv[])
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 						MSPlot["HighestBdisc_ee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["NbOfSelectedBJets_AtLeastFourJets_ee_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
 
             // Create TopFCNC_Evt object
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
@@ -1185,7 +1200,7 @@ int main (int argc, char *argv[])
 						MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
 						MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-						MSPlot["MET_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+						MSPlot["MET_AtLeastFourJets_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 					}
 				}
 			}
@@ -1212,6 +1227,7 @@ int main (int argc, char *argv[])
 				MSPlot["HighestBdisc_eem_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 				MSPlot["HighestBdisc_eem_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["NbOfSelectedBJets_AtLeastTwoJets_eem_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
 
         // Create TopFCNC_Evt object
   			MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
@@ -1222,7 +1238,7 @@ int main (int argc, char *argv[])
 				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
 				MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-				MSPlot["MET_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MET_AtLeastTwoJets_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 
 				invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedMuons[0]).M();
 				MSPlot["TriLeptonInvMass_eem_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
@@ -1250,6 +1266,7 @@ int main (int argc, char *argv[])
 				MSPlot["HighestBdisc_eee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 				sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 				MSPlot["HighestBdisc_eee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["NbOfSelectedBJets_AtLeastTwoJets_eee_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
 
         // Create TopFCNC_Evt object
 				MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
@@ -1260,7 +1277,7 @@ int main (int argc, char *argv[])
 				MyTopFCNC_EvtCand->SetNeutrino(*mets[0]);
 				MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-				MSPlot["MET_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["MET_AtLeastTwoJets_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
 
 				invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedExtraElectrons[0]).M();
 				MSPlot["TriLeptonInvMass_eee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);

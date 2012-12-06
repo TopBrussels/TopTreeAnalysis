@@ -81,8 +81,8 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt, float wMass, float zMass
     Ml2(0,0) = pow(resFitLeptons_->EtResolution(&lepton2FromZ), 2);
     Ml2(1,1) = pow(resFitLeptons_->ThetaResolution(&lepton2FromZ), 2);
     Ml2(2,2) = pow(resFitLeptons_->PhiResolution(&lepton2FromZ), 2);
-		    if(verbose_)
-          Ml2.Print();
+    if(verbose_)
+      Ml2.Print();
 
     TFitParticleEtThetaPhiEMomFix *fitLep1   = new TFitParticleEtThetaPhiEMomFix("fitLep1", "fitLep1", &lepton1FromZ, &Ml1);
     TFitParticleEtThetaPhiEMomFix *fitLep2   = new TFitParticleEtThetaPhiEMomFix("fitLep2", "fitLep2", &lepton2FromZ, &Ml2);
