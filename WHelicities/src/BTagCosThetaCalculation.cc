@@ -11,30 +11,36 @@ BTagCosThetaCalculation::~BTagCosThetaCalculation(){
 float BTagCosThetaCalculation::Calculation(TLorentzVector lepton, TLorentzVector Neutrino, TLorentzVector leptonicBJet){
 
   float CosTheta = 999;	  
+  float CosThetaNeg = 999;
+  float CosThetaAtlas = 999;
+  float CosThetaCiemat = 999;
   
   //----------------------------------------------
   //  Calculating cos theta value
   //----------------------------------------------
   
-  //TLorentzVector WLeptonic = (Neutrino+lepton);
-  TRootMCParticle WLeptonic = (Neutrino+lepton);
-  
+  TRootMCParticle WLeptonic = (Neutrino+lepton);  
+  TRootMCParticle TopLeptonic = (Neutrino+lepton+leptonicBJet);
   TLorentzVector TopWRF = (Neutrino+lepton+leptonicBJet);
   TLorentzVector leptWRF = lepton;
 
   //Angle between Top in WRF and lepton in WRF
   TopWRF.Boost(-WLeptonic.BoostVector());
-  leptWRF.Boost (-WLeptonic.BoostVector());
-
+  leptWRF.Boost(-WLeptonic.BoostVector());
+ 
   //Calculating cos:	      
   float ThetaTevatron = ROOT::Math::VectorUtil::Angle( TopWRF, leptWRF );
   CosTheta = -(TMath::Cos(ThetaTevatron));
+  //Cos theta is defined as the angle between the lepton and the reversed direction of the top quark, both boosted to the W-boson rest frame.
+  //Still reversed direction doesn't need to be calculated since angle between lepton and top and between lepton and reversed top is proportional to theta and Pi-theta.
+  //For these the angles the following relation holds: cos(theta) = - cos(Pi-theta) 
+  // --> Hence the need of the minus sign in the CosTheta definition!!
 
   if(WLeptonic.E() < 0.){
     cout << " Event with negative WLept energy!!! (BTagCosThetaCalculation class) Cos theta = " << CosTheta << endl;
   }
   
-  return CosTheta;	
+  return CosThetaCiemat;	
 }        
 
 float BTagCosThetaCalculation::CalcOrigKins(int BLeptonicIndex, int BHadronicIndex,  TLorentzVector muon, vector<TLorentzVector> selectedJets, float MassW, float MassTop){
