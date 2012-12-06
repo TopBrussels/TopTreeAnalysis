@@ -293,10 +293,10 @@ int main (int argc, char *argv[])
   MSPlot["HighestBdisc_mme_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_mme_ch_JP",  50, 0, 1, "JP b-disc.");
   MSPlot["HighestBdisc_eee_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_eee_ch_JP",  50, 0, 1, "JP b-disc.");
   
-  MSPlot["MET_AtLeastFourJets_mm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_mm_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastFourJets_Exactly1BtaggedJet_CSVM_mm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_Exactly1BtaggedJet_CSVM_mm_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_AtLeastTwoJets_mme_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_mme_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_AtLeastTwoJets_mmm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_mmm_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
-  MSPlot["MET_AtLeastFourJets_ee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastFourJets_Exactly1BtaggedJet_CSVM_ee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_Exactly1BtaggedJet_CSVM_ee_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_AtLeastTwoJets_eee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_eee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_AtLeastTwoJets_eem_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastTwoJets_eem_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
 
@@ -417,7 +417,7 @@ int main (int argc, char *argv[])
   CutsSelecTableDiEl.push_back(string("$\\geq$ 2 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 3 jet"));
   CutsSelecTableDiEl.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableDiEl.push_back(string("$b\\texttt{-}disc \\geq 0.7$ (CSV)"));
+  CutsSelecTableDiEl.push_back(string(btagcutname));//"$b\\texttt{-}disc \\geq 0.7$ (CSV)"));
   //CutsSelecTableDiEl.push_back(string("MET > 40 GeV"));
 
 
@@ -699,11 +699,13 @@ int main (int argc, char *argv[])
 		    		------------------------------------------------------------------*/
 
 			    }
+          /*
           else{
             itrigger1 = -1;
             itrigger2 = -1;
           }
-	   		  /*{
+	   		  */
+          else{
 				    if(dataSetName != "ttbar_fcnc") itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17"), currentRun, iFile);
 				    else itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v18"), currentRun, iFile);
     
@@ -713,7 +715,7 @@ int main (int argc, char *argv[])
     			    exit(1);
 				    }
 				    cout<<"Trigger bit nr : "<<itrigger1<<endl;
-			    }*/
+			    }
 		    } //end if diElectron
 	    } //end previousRun != currentRun
 
@@ -1042,6 +1044,7 @@ int main (int argc, char *argv[])
 	MyTopFCNC_EvtCand = 0;
 	double invMass = 0;
 	double highestbtagdisc = 0;
+      int NbOfBtagged = 0;
 	// Select events based on the presence of *exactly one* extra isolated lepton
 	if(diMuon && selectedExtraMuons.size()==0 && selectedElectrons.size()==0){
 		selecTableDiMu.Fill(d,6,scaleFactor);
@@ -1065,12 +1068,14 @@ int main (int argc, char *argv[])
             MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
             
+            NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
+            
             sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_mm_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 						MSPlot["HighestBdisc_mm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-            MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CVS"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
             // Create TopFCNC_Evt object
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
 						MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]);
@@ -1078,9 +1083,9 @@ int main (int argc, char *argv[])
 						MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
 						MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-						if(highestbtagdisc>btagCut){
+						if(NbOfBtagged==1){
   						selecTableDiMu.Fill(d,11,scaleFactor);
-  						MSPlot["MET_AtLeastFourJets_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+  						MSPlot["MET_AtLeastFourJets_Exactly1BtaggedJet_CSVM_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
   				  }
 					}
 				}
@@ -1186,12 +1191,14 @@ int main (int argc, char *argv[])
             MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
 						MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
 
+            NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
+            
 						sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
 						MSPlot["HighestBdisc_ee_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
 						highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
 						sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
 						MSPlot["HighestBdisc_ee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-            MSPlot["NbOfSelectedBJets_AtLeastFourJets_ee_ch_CVS"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["NbOfSelectedBJets_AtLeastFourJets_ee_ch_CVS"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
 
             // Create TopFCNC_Evt object
 						MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec);
@@ -1200,7 +1207,10 @@ int main (int argc, char *argv[])
 						MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
 						MyTopFCNC_EvtCand->SetMET(*mets[0]);
 
-						MSPlot["MET_AtLeastFourJets_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+						if(NbOfBtagged==1){
+  						selecTableDiEl.Fill(d,11,scaleFactor);
+  						MSPlot["MET_AtLeastFourJets_Exactly1BtaggedJet_CSVM_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+  				  }
 					}
 				}
 			}
