@@ -33,6 +33,7 @@ class LightMonster : public TObject
     ,nPUBXm1_(0)
     ,nPU_(0)
     ,nPUBXp1_(0)
+    ,nTruePU_(0)
     ,topMass_(0)
     ,antiTopMass_(0)
     ,selectedSemiMu_(false)
@@ -80,6 +81,7 @@ class LightMonster : public TObject
   unsigned int nPUBXm1() const { return nPUBXm1_; }
   unsigned int nPU() const { return nPU_; }
   unsigned int nPUBXp1() const { return nPUBXp1_; }
+  unsigned int nTruePU() const { return nTruePU_; }
   float topMass() const { return topMass_; }
   float antiTopMass() const { return antiTopMass_; }
   bool selectedSemiMu() const { return selectedSemiMu_; }
@@ -126,6 +128,7 @@ class LightMonster : public TObject
   void setNPUBXm1(unsigned int nPUBXm1) { nPUBXm1_ = nPUBXm1; }
   void setNPU(unsigned int nPU) { nPU_ = nPU; }
   void setNPUBXp1(unsigned int nPUBXp1) { nPUBXp1_ = nPUBXp1; }
+  void setNTruePU(unsigned int nTruePU) { nTruePU_ = nTruePU; }
   void setTopMass(float topMass) { topMass_ = topMass; }
   void setAntiTopMass(float antiTopMass) { antiTopMass_ = antiTopMass; }
   void setSelectedSemiMu(bool selectedSemiMu) { selectedSemiMu_ = selectedSemiMu; }
@@ -187,6 +190,7 @@ class LightMonster : public TObject
   unsigned int nPUBXm1_;
   unsigned int nPU_;
   unsigned int nPUBXp1_;
+  unsigned int nTruePU_;
   float topMass_;
   float antiTopMass_;
   bool selectedSemiMu_;
