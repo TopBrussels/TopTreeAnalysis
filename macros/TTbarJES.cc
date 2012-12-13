@@ -314,8 +314,8 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
   
-  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
-  bool ResolutionsClosure = true;
+  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
+  bool ResolutionsClosure = false;
   
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
   if(CalculateResolutions)
@@ -399,7 +399,7 @@ int main (int argc, char *argv[])
 //      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
 //      vCorrParam.push_back(*ResJetCorPar);
 //    }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
@@ -1028,8 +1028,6 @@ int main (int argc, char *argv[])
             }
           }
         }
-        
-        continue;
         
 				///////////////
 	      // KINFITTER //
