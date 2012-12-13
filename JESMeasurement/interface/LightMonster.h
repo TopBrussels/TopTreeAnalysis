@@ -54,10 +54,7 @@ class LightMonster : public TObject
     ,leptBJet_(0)
     ,MET_()
     ,selectedJets_()
-    ,bTagTCHE_()
-    ,bTagTCHP_()
-    ,bTagSSVHE_()
-    ,bTagSSVHP_()
+    ,bTagCSV_()
     ,lepton_()
     ,leptonCharge_(0)
     ,leptonPFRelIso_(-9999.)
@@ -104,10 +101,7 @@ class LightMonster : public TObject
   TLorentzVector met() const { return MET_; }
   vector<TLorentzVector> selectedJets() const { return selectedJets_; }
   TLorentzVector selectedJet(int i) const { return selectedJets_[i]; }
-  vector<float> bTagTCHE() const { return bTagTCHE_; }
-  vector<float> bTagTCHP() const { return bTagTCHP_; }
-  vector<float> bTagSSVHE() const { return bTagSSVHE_; }
-  vector<float> bTagSSVHP() const { return bTagSSVHP_; }
+  vector<float> bTagCSV() const { return bTagCSV_; }
   TLorentzVector lepton() const { return lepton_; }
   int leptonCharge() const { return leptonCharge_; }
   float leptonPFRelIso() const { return leptonPFRelIso_; }
@@ -164,10 +158,7 @@ class LightMonster : public TObject
   void setLeptBJet(int leptBJet) { leptBJet_ = leptBJet; }
   void setMET(TLorentzVector MET) { MET_ = MET; }
   void setSelectedJets(vector<TLorentzVector> selectedJets) { selectedJets_ = selectedJets; }
-  void setBTagTCHE(vector<float> bTagTCHE) { bTagTCHE_ = bTagTCHE; }
-  void setBTagTCHP(vector<float> bTagTCHP) { bTagTCHP_ = bTagTCHP; }
-  void setBTagSSVHE(vector<float> bTagSSVHE) { bTagSSVHE_ = bTagSSVHE; }
-  void setBTagSSVHP(vector<float> bTagSSVHP) { bTagSSVHP_ = bTagSSVHP; }
+  void setBTagCSV(vector<float> bTagCSV) { bTagCSV_ = bTagCSV; }
   void setLepton(TLorentzVector lepton) { lepton_ = lepton; }
   void setLeptonCharge(int leptonCharge) { leptonCharge_ = leptonCharge; }
   void setLeptonPFRelIso(float leptonPFRelIso) { leptonPFRelIso_ = leptonPFRelIso; }
@@ -211,10 +202,7 @@ class LightMonster : public TObject
   int leptBJet_;
   TLorentzVector MET_;
   vector<TLorentzVector> selectedJets_; // all selected jets
-  vector<float> bTagTCHE_; // indices like selectedJets indices
-  vector<float> bTagTCHP_;
-  vector<float> bTagSSVHE_;
-  vector<float> bTagSSVHP_;
+  vector<float> bTagCSV_; // indices like selectedJets indices
   TLorentzVector lepton_;
   int leptonCharge_;
   float leptonPFRelIso_;
