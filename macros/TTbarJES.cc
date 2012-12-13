@@ -1114,6 +1114,7 @@ int main (int argc, char *argv[])
           lightMonster->setNPUBXm1(event->nPu(-1));
           lightMonster->setNPU(event->nPu(0));
           lightMonster->setNPUBXp1(event->nPu(1));
+          lightMonster->setNTruePU(event->nTruePU());
           lightMonster->setTopMass(topMass);
           lightMonster->setAntiTopMass(antiTopMass);
           lightMonster->setSelectedSemiMu(eventSelectedSemiMu);
