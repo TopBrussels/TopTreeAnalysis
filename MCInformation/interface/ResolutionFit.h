@@ -43,9 +43,9 @@ class ResolutionFit {
     float PhiResolution(TLorentzVector* jet);
     float EtCorrection(TLorentzVector* jet);
     
-  private:
     vector<double> ExtractSigmaMean(TH1* theHisto);
-
+    
+  private:
     string label_;
     
     bool calculatedResolutions_;

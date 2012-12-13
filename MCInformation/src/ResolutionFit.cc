@@ -305,7 +305,7 @@ void ResolutionFit::Fill(TLorentzVector *lorentzVector, TLorentzVector *mcPartic
   {
     for(unsigned int iSel=0; iSel<nPtBins_; iSel++)
     {
-      if( (StijnFlavorJES_ && mcParticle.Pt() > jetPtBinning_[iSel] && mcParticle.Pt() < jetPtBinning_[iSel+1]) || 
+      if( (StijnFlavorJES_ && mcParticle->Pt() > jetPtBinning_[iSel] && mcParticle->Pt() < jetPtBinning_[iSel+1]) || 
         (!StijnFlavorJES_ && tmpJet.Pt() > jetPtBinning_[iSel] && tmpJet.Pt() < jetPtBinning_[iSel+1]) )
       {
 	      if(iEta == 0)

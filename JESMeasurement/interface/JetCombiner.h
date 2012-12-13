@@ -61,7 +61,7 @@ class JetCombiner {
     TLorentzVector GetLightQuark2();
     TLorentzVector GetLeptBQuark();
     void EndJob(); // Do all the stuff which needs to be done after running over all the events has finished (except the plotting stuff)
-    void Write(TFile* fout, bool savePNG = false, string pathPNG = string(""));
+    void Write(TFile* fout, bool savePNG = false, string pathPNG = string(""), bool plotMVAstuff = true);
     
   private:
     map<string, MultiSamplePlot*> MSPlot_;

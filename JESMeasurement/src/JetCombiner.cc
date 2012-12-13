@@ -629,8 +629,6 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
   }
 }
 
-
-
 void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mcParticlesForMatching, const vector<TLorentzVector> selectedJets, const vector<float> bTagValues, const TLorentzVector selectedLepton, bool isSemiLep, float scaleFactor, bool TprimeEvaluation)
 { 
 	//initialize stuff for each event
@@ -898,27 +896,34 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mc
         std::string titleGood = "MaxMVA_"+MVAnames[i]+"_goodcomb";
    	    std::string titleBad = "MaxMVA_"+MVAnames[i]+"_badcomb";
    	    std::string axisTitle = "MVA "+MVAnames[i]+" response";
+				std::string titleMtopGood = "Mtop_forMaxMVA_"+MVAnames[i]+"_goodcomb";
+   	    std::string titleMtopBad = "Mtop_forMaxMVA_"+MVAnames[i]+"_badcomb";
       	    
  	      // check if goodcomb badcomb histo exists, else create it
    	    if (histo1D_.find(titleGood) == histo1D_.end())
    	    {
    	      histo1D_[titleGood] = new TH1F(titleGood.c_str(),axisTitle.c_str(),50,0,1);
    	      histo1D_[titleBad] = new TH1F(titleBad.c_str(),axisTitle.c_str(),50,0,1);
+					histo1D_[titleMtopGood] = new TH1F(titleGood.c_str(),axisTitle.c_str(),50,0,500);
+   	      histo1D_[titleMtopBad] = new TH1F(titleBad.c_str(),axisTitle.c_str(),50,0,500);					
    	    }
 
    	    //cout << MVAnames[i] << " " << MVAResult->first << " " << hadronictopJetsMatched_MVAdef_ << endl;
    	    if ( hadronictopJetsMatched_MVAdef_ )
    	    {
 				  histo1D_[titleGood]->Fill( MVAResult.first );
+					histo1D_[titleMtopGood]->Fill( mTop_maxMVA );
    	    }
 				else if ( hadronictopJetsMatched_MCdef_ )
 				{
    	      histo1D_[titleBad]->Fill( MVAResult.first );
+					histo1D_[titleMtopBad]->Fill( mTop_maxMVA );
       	}
 			}
     }
   }
 }
+
 
 void JetCombiner::FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B, ResolutionFit* resFitBJets_Bbar)
 {
@@ -1053,7 +1058,7 @@ void JetCombiner::EndJob()
   graphAsymmErr_["PtJetCutBadMatchingNoISRFraction"] = GraphRatio(histo1D_["PtJetCut_nEventsAfterBadNoISR"],histo1D_["PtJetCut_nEventsAfter"],"PtJetCutBadMatchingNoISRFraction","cut on p_{T}^{4 leading jets}","Fraction with unmatched (no ISR) in 4 leading jets");
 }
 
-void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
+void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG, bool plotMVAstuff)
 {
   if( !EndJobWasRun_ )
     EndJob();
@@ -1069,7 +1074,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	fout->cd(dirname.c_str());
 	
   // Write MVA distributions
-  if( !trainMVA_ )
+  if( !trainMVA_ && plotMVAstuff )
   {
     map<string,Float_t> MVAVals = computer_->GetMVAValues();
     vector< pair<TGraph*, string> > effpurplots;
@@ -1081,11 +1086,14 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
       string titleGood = "MaxMVA_"+it->first+"_goodcomb";
       string titleBad = "MaxMVA_"+it->first+"_badcomb";
       string titleSemiMuBG = "MaxMVA_"+it->first+"_allSemiMuBGcomb";
-   
+   		string titleMtopGood = "Mtop_forMaxMVA_"+it->first+"_goodcomb";
+      string titleMtopBad = "Mtop_forMaxMVA_"+it->first+"_badcomb";
+			
       if (histo1D_.find(titleGood) != histo1D_.end())
       {
 	      string label = "Maximal MVA value using method: "+it->first;
-	      	      
+	      string label_Mtop = "m_{bW} for the maximal MVA value";
+				
 	      /////////////
 	      // S/(S+B) //
 	      /////////////
@@ -1132,14 +1140,16 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	      cout << "   - MVA method: " << it->first << " ||  Eff for SemiLep-Matched: " << yBadComb[0] << " ||  Eff for All SemiLep: " << yAllSemiMuBGComb[0] << endl;
 	      cout << "                 nGoodCombi: " << histo1D_[titleGood]->GetEffectiveEntries() << " || nBadCombi: " << histo1D_[titleBad]->GetEffectiveEntries() << endl;
 	
-	      //////////////////////////////////////
+				
+				//////////////////////////////////////
 	      // good overlayed with bad jet combi
 	      //////////////////////////////////////
 	      histo1D_[titleGood]->GetXaxis()->SetTitle((it->first+" Response").c_str());
-	      histo1D_[titleBad]->GetXaxis()->SetTitle((it->first+" Response").c_str());
-	
-	      histo1D_[titleGood]->GetYaxis()->SetTitle("# events");
-	      histo1D_[titleBad]->GetYaxis()->SetTitle("# events");
+	      histo1D_[titleBad]->GetXaxis()->SetTitle((it->first+" Response").c_str());	
+	      histo1D_[titleGood]->GetYaxis()->SetTitle("a.u.");
+	      histo1D_[titleBad]->GetYaxis()->SetTitle("a.u.");
+				histo1D_[titleGood]->Scale(1/histo1D_[titleGood]->Integral()); //normalize to unity
+				histo1D_[titleBad]->Scale(1/histo1D_[titleBad]->Integral()); //normalize to unity
 	
 	      histos.push_back(std::pair<TH1F*,std::string>(histo1D_[titleGood],"Good Jet Combinations"));
 	      histos.push_back(std::pair<TH1F*,std::string>(histo1D_[titleBad],"Bad Jet Combinations"));
@@ -1149,9 +1159,28 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
 	
 	      tempCanvas->Write();
 	
+				//same procedure for top mass
+				histos.clear();
+				histo1D_[titleMtopGood]->GetXaxis()->SetTitle("m_{bW} (GeV)");
+	      histo1D_[titleMtopBad]->GetXaxis()->SetTitle("m_{bW} (GeV)");	
+	      histo1D_[titleMtopGood]->GetYaxis()->SetTitle("a.u.");
+	      histo1D_[titleMtopBad]->GetYaxis()->SetTitle("a.u.");
+				histo1D_[titleMtopGood]->Scale(1/histo1D_[titleMtopGood]->Integral()); //normalize to unity
+				histo1D_[titleMtopBad]->Scale(1/histo1D_[titleMtopBad]->Integral()); //normalize to unity
+	
+	      histos.push_back(std::pair<TH1F*,std::string>(histo1D_[titleMtopGood],"Good Jet Combinations"));
+	      histos.push_back(std::pair<TH1F*,std::string>(histo1D_[titleMtopBad],"Bad Jet Combinations"));
+	
+	      TCanvas* tempCanvas_Mtop = TCanvasCreator(histos, "LF",label_Mtop,false);
+	      if(savePNG) tempCanvas_Mtop->SaveAs( (pathPNG+"Mtop_forMaxMVA_"+it->first+".png").c_str() );
+	
+	      tempCanvas_Mtop->Write();
+		
+	
 	      delete tempCanvas;
 	      delete tempCanvas2;
-	
+				delete tempCanvas_Mtop;
+				
 	      histos.clear();
       }
     }
@@ -1183,6 +1212,7 @@ void JetCombiner::Write(TFile* fout, bool savePNG, string pathPNG)
     TCanvas* tempCanvas5 = TCanvasCreator(effpurplotsAllSemiMuBG, effpurtitle.c_str());
     if(savePNG) tempCanvas5->SaveAs( (pathPNG+effpurtitle+".png").c_str() );
     tempCanvas5->Write();
+    cout << "Done with complicated MVA plotting" << endl;
   } // done with MVA plotting
   
   if(savePNG) mkdir( (pathPNG+"MSPlot/").c_str(),0777);
