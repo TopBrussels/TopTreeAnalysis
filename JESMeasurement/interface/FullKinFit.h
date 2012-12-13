@@ -52,8 +52,6 @@ class FullKinFit {
     ResolutionFit *resFitLightJetsL7_; // reso's after L7 corrections
     ResolutionFit *resFitBJetsL7_; // reso's after L7 corrections
     string MVAMethod_;
-    FactorizedJetCorrector *jetCorrLight_;
-    FactorizedJetCorrector *jetCorrB_;
     Dataset* dataset_;
     
     bool measureTopMass_;

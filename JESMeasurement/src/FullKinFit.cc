@@ -35,19 +35,6 @@ FullKinFit::FullKinFit(Dataset* d, ResolutionFit *resFitLightJets, ResolutionFit
   nFinalKinFitJetCombis_ = 0;
   nFinalJetCombis_ = 0;
   
-  if(measureTopMass_ || measureTopMassDiff_)
-  {
-    vector<JetCorrectorParameters> vCorrParamLight;
-    JetCorrectorParameters *JetCorParLight = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L7Parton_qT.txt");
-    vCorrParamLight.push_back(*JetCorParLight);
-    jetCorrLight_ = new FactorizedJetCorrector(vCorrParamLight);
-    
-    vector<JetCorrectorParameters> vCorrParamB;
-    JetCorrectorParameters *JetCorParB = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L7Parton_bT.txt");
-    vCorrParamLight.push_back(*JetCorParB);
-    jetCorrB_ = new FactorizedJetCorrector(vCorrParamLight);
-  }
-  
   dataset_ = d;
   
   if(dataset_)
@@ -81,8 +68,6 @@ FullKinFit::FullKinFit(Dataset* d, ResolutionFit *resFitLightJets, ResolutionFit
   
 FullKinFit::~FullKinFit()
 {
-  if(jetCorrLight_) delete jetCorrLight_;
-  if(jetCorrB_) delete jetCorrB_;
 }
 
 void FullKinFit::SetResFitL7(ResolutionFit *resFitLightJetsL7, ResolutionFit *resFitBJetsL7)
@@ -114,19 +99,8 @@ TH2F* FullKinFit::FitEvent(TRootEvent* event, float WMass, float topMass, bool w
     float mWUnCorr = ( lightJet1 + lightJet2 ).M();
     float mTopUnCorr = ( lightJet1 + lightJet2 + bJet ).M();
 
-//    jetCorrLight_->setJetEta(lightJet1.Eta());
-//    jetCorrLight_->setJetPt(lightJet1.Pt());
-//    float lightCorr1 = jetCorrLight_->getCorrection();
     float lightCorr1 = 1 - resFitLightJets_->EtCorrection(&lightJet1);
-    
-//    jetCorrLight_->setJetEta(lightJet2.Eta());
-//    jetCorrLight_->setJetPt(lightJet2.Pt());
-//    float lightCorr2 = jetCorrLight_->getCorrection();
     float lightCorr2 = 1 - resFitLightJets_->EtCorrection(&lightJet2);
-    
-//    jetCorrB_->setJetEta(bJet.Eta());
-//    jetCorrB_->setJetPt(bJet.Pt());
-//    float bCorr = jetCorrB_->getCorrection();
     float bCorr = 1 - resFitBJets_->EtCorrection(&bJet);
     
 //    cout << lightCorr1 << " " << lightCorr2 << " " << bCorr << endl;
