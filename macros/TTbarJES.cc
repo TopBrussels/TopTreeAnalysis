@@ -799,16 +799,13 @@ int main (int argc, char *argv[])
       if ( !TrainMVA && !CalculateResolutions )
       {
         int nBtags = 0;
-        vector<float> bTagTCHE, bTagTCHP, bTagSSVHE, bTagSSVHP;
+        vector<float> bTagCSV;
         vector<TLorentzVector> otherSelectedJets;
         for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
         {
           otherSelectedJets.push_back( *selectedJets[iJet] );
-          bTagTCHE.push_back(selectedJets[iJet]->btag_trackCountingHighEffBJetTags());
-          bTagTCHP.push_back(selectedJets[iJet]->btag_trackCountingHighPurBJetTags());
-          bTagSSVHE.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags());
-          bTagSSVHP.push_back(selectedJets[iJet]->btag_simpleSecondaryVertexHighPurBJetTags());
-          if( selectedJets[iJet]->btag_simpleSecondaryVertexHighEffBJetTags() > 1.74 ) nBtags++;
+          bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
+          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > 0.679 ) nBtags++;
         }
         
         if(nBtags < 1) continue;
@@ -1136,10 +1133,7 @@ int main (int argc, char *argv[])
           lightMonster->setLeptBJet( leptBJetIndex );
           lightMonster->setMET( *mets[0] );
           lightMonster->setSelectedJets( otherSelectedJets );
-          lightMonster->setBTagTCHE(bTagTCHE);
-          lightMonster->setBTagTCHP(bTagTCHP);
-          lightMonster->setBTagSSVHE(bTagSSVHE);
-          lightMonster->setBTagSSVHP(bTagSSVHP);
+          lightMonster->setBTagCSV(bTagCSV);
           if( eventSelectedSemiMu )
           {
             lightMonster->setLepton( *selectedMuons[0] );
