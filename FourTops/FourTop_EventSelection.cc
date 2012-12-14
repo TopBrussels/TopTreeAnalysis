@@ -1,6 +1,6 @@
 /////////////
 ////////////
-// TODO + COMMENTS
+// TODO + COMMENT
 //1.  Validate  all those electron ID variables...
 //2a. Add JER systematic calculation, using GEN Jets.
 //2b. Add btag scale factor systematic calculation, need to update number for appropriate taggers.
@@ -40,7 +40,7 @@
 #include "../InclFourthGenSearch/interface/InclFourthGenSearchTools.h"
 
 
-#include "interface/FourTopTree.h"
+//#include "interface/FourTopTree.h"
 
 
 
@@ -487,18 +487,18 @@ int main (int argc, char *argv[])
     
     string TreeFileName = "FourTopTree.root";
     
-    TFile* treeFile;
+    //    TFile* treeFile;
     TTree* myFourTopTree;
-    FourTopTree* myBranch_selectedEvents = 0;	
+    //    FourTopTree* myBranch_selectedEvents = 0;	
 
     cout << "INFO: creating FourTopTree file "+TreeFileName << endl;         
     
     bool datadriven = false;
     
     if(!datadriven){
-        treeFile = new TFile(TreeFileName.c_str(),"RECREATE");
-        myFourTopTree = new TTree("FourTopTree;","Tree containing the Four top information");
-        myFourTopTree->Branch("FourTopBranch_selectedEvents","FourTopTree",&myBranch_selectedEvents);
+      // treeFile = new TFile(TreeFileName.c_str(),"RECREATE");
+	//	        myFourTopTree = new TTree("FourTopTree;","Tree containing the Four top information");
+	// myFourTopTree->Branch("FourTopBranch_selectedEvents","FourTopTree",&myBranch_selectedEvents);
     }
     
     
@@ -676,7 +676,7 @@ int main (int argc, char *argv[])
             nCCBar++ ; //ccbar
             }
             else{
-            ttbar_flav =0.; 
+            ttbar_flav =0; 
                 nLLBar++;  //llbar   
             }
             
@@ -931,7 +931,7 @@ int main (int argc, char *argv[])
 	selection.setJetCuts(20.,2.5,0.01,1.,0.98,0,0);//Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
 
 	selection.setElectronCuts(30.,2.5,0.1,0.02,0.,999.,0,1); //Pt,Eta,RelIso,d0,MVAId,DistVzPVz, DRJets, MaxMissingHits
-	selection.setLooseElectronCuts(20,2.5,0.2,0.);
+	//	selection.setLooseElectronCuts(20,2.5,0.2,0.);
 
         
         //for muon + jets channel
@@ -954,7 +954,7 @@ int main (int argc, char *argv[])
 	vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
     vector<TRootJet*>      selectedSoftJets        = selection.GetSelectedJets(20.,2.5, selectedMuons, 0., true); // ApplyJetId
 	vector<TRootMuon*>     selectedLooseMuons     = selection.GetSelectedLooseMuons();
-    vector<TRootElectron*> selectedLooseElectrons = selection.GetSelectedLooseElectrons(); // VBTF ID
+	//    vector<TRootElectron*> selectedLooseElectrons = selection.GetSelectedLooseElectrons(); // VBTF ID
     vector<TRootJet*>      selectedBJets; // B-Jets
     vector<TRootJet*>      selectedLightJets; // light-Jets
 
@@ -981,7 +981,7 @@ int main (int argc, char *argv[])
         
 	  if (nMu ==1){selecTableMu.Fill(d,2,1.) ;
 	    if (selectedLooseMuons.size()==1){  selecTableMu.Fill(d,3,1.);
-	         if (selectedLooseElectrons.size()==0)  {selecTableMu.Fill(d,4,1.);     
+	      //  if (selectedLooseElectrons.size()==0)  {selecTableMu.Fill(d,4,1.);     
 		   if (selectedJets.size() >= 1 && selectedJets[0]->Pt() >45.) {  selecTableMu.Fill(d,5,1.) ;
 		     if (selectedJets.size() >= 2 && selectedJets[1]->Pt() >45.) { selecTableMu.Fill(d,6,1.) ;
 		       if (selectedJets.size() >= 3 && selectedJets[2]->Pt() >45.){  selecTableMu.Fill(d,7,1.) ;
@@ -992,7 +992,7 @@ int main (int argc, char *argv[])
 			   }
         if (nTags >= 1) selecTableMu.Fill(d,9,1.);
 	}
-		}
+			 //	}
 		}
 	      }
 	    }
@@ -1004,7 +1004,7 @@ int main (int argc, char *argv[])
 
 	   if (nEl ==1){selecTableEl.Fill(d,2,1.) ;//one isolated electron
 	     if (selectedLooseMuons.size()==0){  selecTableEl.Fill(d,3,1.);// loose muon veto
-	       if (selectedLooseElectrons.size()==1)  {selecTableEl.Fill(d,4,1.);    // di-lepton veto 
+	       // if (selectedLooseElectrons.size()==1)  {selecTableEl.Fill(d,4,1.);    // di-lepton veto 
 		if( selectedElectrons[0]->passConversion() == true  ){selecTableEl.Fill(d,5,1.); //put conversion rejection cut here
 		  if (selectedJets.size() >= 1 && selectedJets[0]->Pt() >45.) {  selecTableEl.Fill(d,6,1.) ; //1 jet 45
 		    if (selectedJets.size() >= 2 && selectedJets[1]->Pt() >45.) { selecTableEl.Fill(d,7,1.) ; //2 jet 45
@@ -1018,7 +1018,7 @@ int main (int argc, char *argv[])
 	}
 	}
 		}
-	      }
+		  //  }
 	    }
 	  }
 	  }
@@ -1606,7 +1606,7 @@ int main (int argc, char *argv[])
         if(!datadriven)
         {
            
-           myBranch_selectedEvents = new FourTopTree();
+	  //           myBranch_selectedEvents = new FourTopTree();
             //myBranch_selectedEvents->setEventID( 100 );
             //myBranch_selectedEvents->setRunID( 100 );
             //yBranch_selectedEvents->setLumiBlockID( 100 );
@@ -1633,8 +1633,8 @@ int main (int argc, char *argv[])
       
     if (debug) cout <<"setting tree"<<endl;
     //  myInclFourthGenTree->Write();
-      treeFile->Write();
-      treeFile->Close();
+// treeFile->Write();
+//     treeFile->Close();
     //  delete treeFile;
       
     if(jetTools) delete jetTools;
