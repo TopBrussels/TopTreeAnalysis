@@ -528,7 +528,7 @@ int main (int argc, char *argv[])
         previousRun = currentRun;
         
         // semi-muon
-        if(dataSetName.find("Data_MuHad") == 0 || dataSetName.find("data_MuHad") == 0 || dataSetName.find("DATA_MuHad") == 0 )
+        if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
           if( event->runId() <= 190738 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
@@ -557,7 +557,7 @@ int main (int argc, char *argv[])
         else itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun);
         
         // semi-electron
-        if(dataSetName.find("Data_ElectronHad") == 0 || dataSetName.find("data_ElectronHad") == 0 || dataSetName.find("DATA_ElectronHad") == 0 )
+        if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
           if( event->runId() <= 190738 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
