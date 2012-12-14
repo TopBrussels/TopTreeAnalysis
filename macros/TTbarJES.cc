@@ -464,6 +464,7 @@ int main (int argc, char *argv[])
     
     nEvents[d] = 0;
     int itriggerSemiMu = -1, itriggerSemiEl = -1, previousRun = -1;
+    float nBjets = 0, nBjetsBtag = 0, nNonBjets = 0, nNonBjetsBtag = 0;
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
@@ -529,10 +530,22 @@ int main (int argc, char *argv[])
         // semi-muon
         if(dataSetName.find("Data_MuHad") == 0 || dataSetName.find("data_MuHad") == 0 || dataSetName.find("DATA_MuHad") == 0 )
         {
-          if( event->runId() <= 161176 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v1"), currentRun, iFile);
-          else if( event->runId() >= 161217 && event->runId() <= 163261 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_Mu17_TriCentralJet30_v2"), currentRun, iFile);
+          if( event->runId() <= 190738 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
+          else if( event->runId() >= 191046 && event->runId() <= 191411 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
+          else if( event->runId() >= 191695 && event->runId() <= 193621 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
+          else if( event->runId() >= 193834 && event->runId() <= 194225 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v5"), currentRun, iFile);
+          else if( event->runId() >= 194270 && event->runId() <= 196531 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+          else if( event->runId() >= 198049 && event->runId() <= 199608 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
+          else if( event->runId() >= 199698 && event->runId() <= 202504 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
+          else if( event->runId() >= 202972 && event->runId() <= 203002 )
+            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v2"), currentRun, iFile);
           else
             cout << "Unknown run for SemiMu HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiMu == 9999 )
@@ -546,10 +559,20 @@ int main (int argc, char *argv[])
         // semi-electron
         if(dataSetName.find("Data_ElectronHad") == 0 || dataSetName.find("data_ElectronHad") == 0 || dataSetName.find("DATA_ElectronHad") == 0 )
         {
-          if( event->runId() <= 161176 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v1"), currentRun, iFile);
-          else if( event->runId() >= 165088 && event->runId() <= 165633 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v3"), currentRun, iFile);
+          if( event->runId() <= 190738 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
+          else if( event->runId() >= 191046 && event->runId() <= 191411 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
+          else if( event->runId() >= 191695 && event->runId() <= 194225 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
+          else if( event->runId() >= 194270 && event->runId() <= 196531 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+          else if( event->runId() >= 198049 && event->runId() <= 199608 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
+          else if( event->runId() >= 199698 && event->runId() <= 202504 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
+          else if( event->runId() >= 202972 && event->runId() <= 203002 )
+            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet45_35_25_v2"), currentRun, iFile);
           else
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiEl == 9999 )
@@ -805,7 +828,14 @@ int main (int argc, char *argv[])
         {
           otherSelectedJets.push_back( *selectedJets[iJet] );
           bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
-          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > 0.679 ) nBtags++;
+          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+          {
+            nBtags++;
+            if( fabs(selectedJets[iJet]->partonFlavour()) == 5 ) nBjetsBtag++;
+            else nNonBjetsBtag++;
+          }
+          if( fabs(selectedJets[iJet]->partonFlavour()) == 5 ) nBjets++;
+          else nNonBjets++;
         }
         
         if(nBtags < 1) continue;
@@ -1157,6 +1187,8 @@ int main (int argc, char *argv[])
       }// end !TrainMVA && eventSelected
     }				//loop on events
     cout<<endl;
+    
+    cout << "bTagEff = " << nBjetsBtag / nBjets << "   missTagRate = " << nNonBjetsBtag / nNonBjets << endl;
 
     if( !CalculateResolutions ) kinFit->Write(fout, true, pathPNG+"FullKinFit/");
     delete kinFit;
