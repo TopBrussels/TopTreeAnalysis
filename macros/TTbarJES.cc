@@ -468,8 +468,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 100000; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 1000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -754,7 +754,7 @@ int main (int argc, char *argv[])
             {
               MSPlot["nEventsAfterCutsSemiEl"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
               selecTableSemiEl.Fill(d,4,scaleFactor*lumiWeight);
-              if( vetoElectrons.size() == 0 )
+              if( vetoElectrons.size() == 1 )
               {
                 MSPlot["nEventsAfterCutsSemiEl"]->Fill(5, datasets[d], true, Luminosity*scaleFactor);
                 selecTableSemiEl.Fill(d,5,scaleFactor*lumiWeight);
@@ -794,6 +794,8 @@ int main (int argc, char *argv[])
           }
         }
       }
+      
+      continue;
       
       if( ! ( eventSelectedSemiEl || eventSelectedSemiMu ) ) continue;
       
