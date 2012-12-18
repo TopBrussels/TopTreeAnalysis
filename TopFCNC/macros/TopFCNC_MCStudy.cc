@@ -19,7 +19,8 @@
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
 #include "../Reconstruction/interface/MakeBinning.h"
-#include "../MCInformation/interface/Lumi3DReWeighting.h"
+//#include "../MCInformation/interface/Lumi3DReWeighting.h"
+#include "../TopFCNC/interface/TopFCNC_KinFit.h"
 #include "../TopFCNC/interface/TopFCNC_GenEvt.h"
 
 #include "../../macros/Style.C"
@@ -47,6 +48,11 @@ int main (int argc, char *argv[])
   //setMyStyle();
 
   string postfix = "_MCStudy"; // to relabel the names of the output file
+  //string resoprefix = "TTbar_FCNC_";
+  string resoprefix = "Stijns_";
+  
+  string resopath = "$HOME/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/";
+  //string resopath = "$HOME/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/";
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,6 +104,25 @@ int main (int argc, char *argv[])
   TRootEvent* event = 0;
   TopFCNC_GenEvt* MyTopFCNC_GenEvtCand = 0;
   
+  ResolutionFit *resFitMuons = new ResolutionFit("Muon");
+  resFitMuons->LoadResolutions(resopath+resoprefix+"muonReso.root");
+
+  ResolutionFit *resFitElectrons = new ResolutionFit("Electron");
+  resFitElectrons->LoadResolutions(resopath+resoprefix+"electronReso.root");
+  
+  ResolutionFit *resFitBJets = new ResolutionFit("BJet");
+  resFitBJets->LoadResolutions(resopath+resoprefix+"bJetReso.root");
+  
+  ResolutionFit *resFitQJets = new ResolutionFit("QJet");
+  resFitQJets->LoadResolutions(resopath+resoprefix+"qJetReso.root");
+  
+  ResolutionFit *resFitLightJets = new ResolutionFit("LightJet");
+  resFitLightJets->LoadResolutions(resopath+resoprefix+"lightJetReso.root");
+
+  double wMass   =  80.4;
+  double zMass   =  91.2;
+  double topMass = 172.5;
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -116,7 +141,9 @@ int main (int argc, char *argv[])
   histo1D["TopMass_FCNC_Decay_TriLep"] = new TH1F("TopMass_FCNC_Decay_TriLep",";m_{Zq};#events",500,100,250);
   histo1D["TopMass_Had_Decay_TriLep"]  = new TH1F("TopMass_Had_Decay_TriLep",";m_{blv};#events",500,100,250);
   cout << " - Declared histograms ..." <<  endl;
-	
+
+	histo1D["KinFit_Prob_Mu"] = new TH1F("KinFit_Prob_Mu",";#{chi}^2/Ndf;#events",100,0,1);
+	histo1D["KinFit_Prob_El"] = new TH1F("KinFit_Prob_El",";#{chi}^2/Ndf;#events",100,0,1);
   ////////////////////////////////////////////////////////////////////
   ////////////////// Plots  //////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////
@@ -147,6 +174,39 @@ int main (int argc, char *argv[])
     treeLoader.LoadDataset (datasets[d], anaEnv);
 		
     string dataSetName = datasets[d]->Name();	
+
+    TopFCNC_KinFit *topFCNC_KinFit_Mu = new TopFCNC_KinFit(datasets[d], resFitMuons, resFitBJets, resFitQJets, resFitLightJets, wMass, zMass, topMass);
+    TopFCNC_KinFit *topFCNC_KinFit_El = new TopFCNC_KinFit(datasets[d], resFitElectrons, resFitBJets, resFitQJets, resFitLightJets, wMass, zMass, topMass);
+
+    // Add constraints to the kinfitter
+    vector<string> constraints;
+    constraints.push_back("kHadWMass");
+    constraints.push_back("kLepZMass");
+    constraints.push_back("kHadTopMass");
+    constraints.push_back("kFcncTopMass");
+    //constraints.push_back("kEqualTopMasses");
+    //constraints.push_back("kSumPx");
+    //constraints.push_back("kSumPy");
+    
+    topFCNC_KinFit_Mu->SetConstraints(constraints);
+    topFCNC_KinFit_El->SetConstraints(constraints);
+
+    //topFCNC_KinFit->SetMaxNbIter(200);
+    //topFCNC_KinFit->SetMaxDeltaS();
+    //topFCNC_KinFit->SetMaxF();
+    
+    topFCNC_KinFit_Mu->SetVerbosity(false);
+    topFCNC_KinFit_Mu->SetFitVerbosity(0);
+
+    topFCNC_KinFit_El->SetVerbosity(false);
+    topFCNC_KinFit_El->SetFitVerbosity(0);
+    
+    double kin_prob        = -1.;
+    double kin_chi2        = -1.;
+    double kin_chi2ByNdf   = -1.;
+    double kin_hadWmass    = -1.;
+    double kin_hadtopmass  = -1.;
+    double kin_fcnctopmass = -1.;
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////// Loop on events //////////////////////////////////////////////////////////////////
@@ -169,7 +229,7 @@ int main (int argc, char *argv[])
 	    vector<TRootMCParticle*> mcParticles   = treeLoader.LoadMCPart(ievt);
 
 	    Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-	    selection.setJetCuts(10.,2.4,0.01,1.,0.98,0.3,0.1);
+	    selection.setJetCuts(10.,5.,0.01,1.,0.98,0.3,0.1);
 	   	selection.setDiMuonCuts(15,2.4,0.20,999.); //Et,Eta,RelIso,d0
   	  selection.setDiElectronCuts(15,2.5,0.15,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
 
@@ -180,11 +240,31 @@ int main (int argc, char *argv[])
 
 	    MyTopFCNC_GenEvtCand = new TopFCNC_GenEvt();
 	    MyTopFCNC_GenEvtCand->ReconstructEvt(mcParticles);
-	    MyTopFCNC_GenEvtCand->MatchJetsToPartons(selectedJets);
+	    MyTopFCNC_GenEvtCand->MatchJetsToPartons(selectedJets,JetPartonMatching::totalMinDist,true,true,0.5);
 	    MyTopFCNC_GenEvtCand->MatchLeptonsToZ(selectedMuons);
+      
+      TLorentzVector lepton1FromZ = MyTopFCNC_GenEvtCand->lepton1FromZ();
+      //cout << "lepton1FromZ pt = " << lepton1FromZ.Pt() << endl;
+      TLorentzVector lepton2FromZ = MyTopFCNC_GenEvtCand->lepton2FromZ();
+      TLorentzVector q            = MyTopFCNC_GenEvtCand->Q();
+      TLorentzVector quark1FromW  = MyTopFCNC_GenEvtCand->quark1FromW();
+      TLorentzVector quark2FromW  = MyTopFCNC_GenEvtCand->quark2FromW();
+      TLorentzVector b            = MyTopFCNC_GenEvtCand->B();
       
 	    histo1D["DiLeptonMass"]->Fill(MyTopFCNC_GenEvtCand->matchedZ().M());
 	    if(MyTopFCNC_GenEvtCand->isDiLeptonic()){
+
+        if(MyTopFCNC_GenEvtCand->isDiLeptonic(TopFCNC_GenEvt::kMuon)){
+          //topFCNC_KinFit_Mu->FitEvent(MyTopFCNC_GenEvtCand);
+          topFCNC_KinFit_Mu->FitEvent(lepton1FromZ,lepton2FromZ,q,quark1FromW,quark2FromW,b);
+          histo1D["KinFit_Prob_Mu"]->Fill(topFCNC_KinFit_Mu->GetProb());
+        }
+        if(MyTopFCNC_GenEvtCand->isDiLeptonic(TopFCNC_GenEvt::kElec)){
+          //topFCNC_KinFit_El->FitEvent(MyTopFCNC_GenEvtCand);
+          topFCNC_KinFit_El->FitEvent(lepton1FromZ,lepton2FromZ,q,quark1FromW,quark2FromW,b);
+          histo1D["KinFit_Prob_El"]->Fill(topFCNC_KinFit_El->GetProb());
+        }
+
 		    histo1D["TopMass_FCNC_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedZ()+MyTopFCNC_GenEvtCand->matchedQ()).M());
 		    if(MyTopFCNC_GenEvtCand->matchedQuark1FromW().E()>0 && MyTopFCNC_GenEvtCand->matchedQuark2FromW().E()>0){
 			    histo1D["WMass_Had_Decay_DiLep"]->Fill((MyTopFCNC_GenEvtCand->matchedQuark1FromW()+MyTopFCNC_GenEvtCand->matchedQuark2FromW()).M());

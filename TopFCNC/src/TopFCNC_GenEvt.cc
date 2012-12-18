@@ -148,17 +148,17 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 	  HadBIdx_  = myJetPartonMatcher.getMatchForParton(2,0);
 	  HadQIdx_  = myJetPartonMatcher.getMatchForParton(3,0);
 
-		if(HadQ1Idx_ !=-1 ) matchedQuark1FromW_ = *jets[HadQ1Idx_];
-		if(HadQ2Idx_ !=-1 ) matchedQuark2FromW_ = *jets[HadQ2Idx_];
-		if(HadBIdx_  !=-1 ) matchedB_           = *jets[HadBIdx_];
-		if(HadQIdx_  !=-1 ) matchedQ_           = *jets[HadQIdx_];
+		if(HadQ1Idx_ != -1 ) matchedQuark1FromW_ = *jets[HadQ1Idx_];
+		if(HadQ2Idx_ != -1 ) matchedQuark2FromW_ = *jets[HadQ2Idx_];
+		if(HadBIdx_  != -1 ) matchedB_           = *jets[HadBIdx_];
+		if(HadQIdx_  != -1 ) matchedQ_           = *jets[HadQIdx_];
 	}
 	else{
 	  HadBIdx_  = myJetPartonMatcher.getMatchForParton(0,0);
 	  HadQIdx_  = myJetPartonMatcher.getMatchForParton(1,0);
 	  
-		if(HadBIdx_  !=-1 ) matchedB_           = *jets[HadBIdx_];
-		if(HadQIdx_  !=-1 ) matchedQ_           = *jets[HadQIdx_];
+		if(HadBIdx_  != -1 ) matchedB_           = *jets[HadBIdx_];
+		if(HadQIdx_  != -1 ) matchedQ_           = *jets[HadQIdx_];
 	}
 }
 
