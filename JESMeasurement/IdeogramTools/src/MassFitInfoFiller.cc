@@ -24,7 +24,7 @@ void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHead
   event.luminositySection = monster->lumiBlockID();
   event.eventNumber = monster->eventID();
   vector<TLorentzVector> selJets = monster->selectedJets();
-  vector<float> bTag = monster->bTagSSVHE();
+  vector<float> bTag = monster->bTagCSV();
   event.nJet = selJets.size();
   if(header.channel_ == false)
   {
@@ -123,7 +123,7 @@ int highestWeightCombi(LightMonster* monster, double chi2Cut, double bTagCut, do
 {
   double maxWeight = -1;
   int maxWeightCombi = -1;
-  vector<float> bTag = monster->bTagSSVHE();
+  vector<float> bTag = monster->bTagCSV();
   for(unsigned int iCombi=0; iCombi<12; iCombi++)
   {
     if(monster->chi2MTopFit(iCombi) >= chi2Cut) continue;

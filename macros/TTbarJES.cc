@@ -468,8 +468,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 1000; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 1000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -643,10 +643,10 @@ int main (int argc, char *argv[])
       selection.setLooseElectronCuts(20,2.5,0.15,0.);
       
       bool triggedSemiMu = false;
-      if( ! (dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0) )
+      if( ! (dataSetName.find("Data_El") == 0 || dataSetName.find("Data_SingleEl") == 0 ) )
         triggedSemiMu = treeLoader.EventTrigged (itriggerSemiMu);
       bool triggedSemiEl = false;
-      if( ! (dataSetName.find("Data_Mu") == 0 || dataSetName.find("data_Mu") == 0 || dataSetName.find("DATA_Mu") == 0) )
+      if( ! (dataSetName.find("Data_Mu") == 0 || dataSetName.find("Data_SingleMu") == 0 ) )
         triggedSemiEl = treeLoader.EventTrigged (itriggerSemiEl);
       bool isGoodPV = selection.isPVSelected(vertex, 4, 24, 2.);
       
@@ -794,8 +794,6 @@ int main (int argc, char *argv[])
           }
         }
       }
-      
-      continue;
       
       if( ! ( eventSelectedSemiEl || eventSelectedSemiMu ) ) continue;
       
