@@ -179,7 +179,7 @@ int main (int argc, char *argv[])
 
     
   //specify the .xml (containing lists of skimmed toptrees you want to use)
-  xmlFileName = "config/test_dimuon.xml";
+  xmlFileName = "config/test_fullsamples.xml";
 
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
@@ -324,7 +324,7 @@ int main (int argc, char *argv[])
     MSPlot["HT_SelectedJets"] = new MultiSamplePlot(datasets, "HT_SelectedJets", 50, 0, 1500, "HT");
     MSPlot["MHT_SelectedJets"] = new MultiSamplePlot(datasets, "MHT_SelectedJets", 75, 0, 1000, "MHT");
     MSPlot["MHTSig_SelectedJets"] = new MultiSamplePlot(datasets, "MHTSig_SelectedJets", 75, 0, 30, "MHTSig");
-    MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 75, 0, 700, "MET");
+    MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 40, 0, 700, "MET");
     MSPlot["MET_MHT"]= new MultiSamplePlot(datasets, "MET_MHT", 75, 0, 200, "MET_MHT");
     MSPlot["STLep"] = new MultiSamplePlot(datasets, "STLep", 20, 0, 1000, "STLep");
     MSPlot["STJet"] = new MultiSamplePlot(datasets, "STJet", 20, 0, 1000, "STJet");
@@ -337,38 +337,41 @@ int main (int argc, char *argv[])
   // events with X jets and Y b tags, so we declare arrays of MultiSamplePlots, with one 
   //MultiSamplePlot corresponding to each category.
     
-  Int_t minNJets=4, maxNJets=10, minNBJets=1, maxNBJets=5;
+  Int_t minNJets=3, maxNJets=5, minNBJets=0, maxNBJets=3;
 
   for (Int_t q = minNJets; q <= maxNJets; q++){
     for (Int_t p = minNBJets; p<= maxNBJets; p++){
 
     string NJets_str = static_cast<ostringstream*>( &(ostringstream() << q) )->str();
     string NBJets_str = static_cast<ostringstream*>( &(ostringstream() << p) )->str();
-    string HT_Name = "HT_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string HTX_Name = "HTX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string EventMass_Name = "EventMass_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string EventMassX_Name = "EventMassX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string FirstTriJetMass_1BJet_g_Name = "FirstTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string FirstDiJetMass_1BJet_g_Name = "FirstDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string SecondDiJetMass_1BJet_g_Name = "SecondDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string SecondTriJetMass_1BJet_g_Name = "SecondTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string SecondTriJetMass_1BJet_g_chi2_Name = "SecondTriJetMass_1BJet_g_chi2_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string MuMetBMasses_g_Name = "MuMetBMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-    string MuMetMasses_g_Name = "MuMetMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+   // string HT_Name = "HT_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    string MET_Name = "MET_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    string InclMET_Name = "InclMET_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string HTX_Name = "HTX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string EventMass_Name = "EventMass_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string EventMassX_Name = "EventMassX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string FirstTriJetMass_1BJet_g_Name = "FirstTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string FirstDiJetMass_1BJet_g_Name = "FirstDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string SecondDiJetMass_1BJet_g_Name = "SecondDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string SecondTriJetMass_1BJet_g_Name = "SecondTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string SecondTriJetMass_1BJet_g_chi2_Name = "SecondTriJetMass_1BJet_g_chi2_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string MuMetBMasses_g_Name = "MuMetBMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+    //string MuMetMasses_g_Name = "MuMetMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
 
         
-    MSPlot[MuMetMasses_g_Name.c_str() ] = new MultiSamplePlot(datasets, MuMetMasses_g_Name.c_str() , 50, 0, 700, "M_{muMET}");
-    MSPlot[MuMetBMasses_g_Name.c_str() ] = new MultiSamplePlot(datasets, MuMetBMasses_g_Name.c_str() , 50, 0, 700, "M_{muMETb}");
-    MSPlot[HT_Name.c_str() ] = new MultiSamplePlot(datasets, HT_Name.c_str() , 10, 0, 1700, "HT");
-    MSPlot[HTX_Name.c_str() ] = new MultiSamplePlot(datasets, HTX_Name.c_str() , 10, 0, 1200, "HTX");
-    MSPlot[EventMass_Name.c_str() ] = new MultiSamplePlot(datasets, EventMass_Name.c_str() , 10, 0, 2500, "EventMass");
-    MSPlot[EventMassX_Name.c_str() ] = new MultiSamplePlot(datasets, EventMassX_Name.c_str() , 12, 0, 1700, "EventMassX");
-    MSPlot[FirstTriJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, FirstTriJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{bjj}");
-    MSPlot[FirstDiJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, FirstDiJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{jj}");
-    MSPlot[SecondDiJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, SecondDiJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{jj}");
-    MSPlot[SecondTriJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, SecondTriJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{bjj}");
-    MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str() ] = new MultiSamplePlot(datasets, SecondTriJetMass_1BJet_g_chi2_Name.c_str() , 15, 0 ,250 , "#chi^{2}");
-
+    //MSPlot[MuMetMasses_g_Name.c_str() ] = new MultiSamplePlot(datasets, MuMetMasses_g_Name.c_str() , 50, 0, 700, "M_{muMET}");
+    //MSPlot[MuMetBMasses_g_Name.c_str() ] = new MultiSamplePlot(datasets, MuMetBMasses_g_Name.c_str() , 50, 0, 700, "M_{muMETb}");
+    //MSPlot[HT_Name.c_str() ] = new MultiSamplePlot(datasets, HT_Name.c_str() , 10, 0, 1700, "HT");
+    //MSPlot[HTX_Name.c_str() ] = new MultiSamplePlot(datasets, HTX_Name.c_str() , 10, 0, 1200, "HTX");
+    //MSPlot[EventMass_Name.c_str() ] = new MultiSamplePlot(datasets, EventMass_Name.c_str() , 10, 0, 2500, "EventMass");
+    //MSPlot[EventMassX_Name.c_str() ] = new MultiSamplePlot(datasets, EventMassX_Name.c_str() , 12, 0, 1700, "EventMassX");
+    //MSPlot[FirstTriJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, FirstTriJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{bjj}");
+    //MSPlot[FirstDiJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, FirstDiJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{jj}");
+    //MSPlot[SecondDiJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, SecondDiJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{jj}");
+    //MSPlot[SecondTriJetMass_1BJet_g_Name.c_str() ] = new MultiSamplePlot(datasets, SecondTriJetMass_1BJet_g_Name.c_str() , 20, 50 ,300 , "M_{bjj}");
+    //MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str() ] = new MultiSamplePlot(datasets, SecondTriJetMass_1BJet_g_chi2_Name.c_str() , 15, 0 ,250 , "#chi^{2}");
+    MSPlot[MET_Name.c_str() ] = new MultiSamplePlot(datasets, MET_Name.c_str() , 40, 0, 700, "MET");
+    MSPlot[InclMET_Name.c_str() ] = new MultiSamplePlot(datasets, InclMET_Name.c_str() , 40, 0, 700, "MET");
         
 }
 }
@@ -544,16 +547,17 @@ int main (int argc, char *argv[])
     cout <<"Number of events = "<<  end  <<endl;
 
       //flag which controls the output of debugging statements
-    bool debug = true;
+    bool debug = false;
 
     if (verbose > 1) cout << " - Loop over events " << endl;  
       
       int nBBBar, nCCBar, nLLBar;
       nBBBar=  nCCBar = nLLBar = 0;
+      int nSignal, nBackground =0;
       
     for (unsigned int ievt = start; ievt < end; ievt++)
     {  
-
+	
 
 	if(ievt%1000 == 0)
 		std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
@@ -579,6 +583,23 @@ int main (int argc, char *argv[])
     treeLoader.LoadMCEvent(ievt, genEvt_flav, 0, mcParticles_flav,false); 
         
        // cout <<" mc parts "<< mcParticles_flav.size()  <<endl;
+
+	/*double nLept = 0.;
+
+        if(  (dataSetName != "Data" || dataSetName != "data" || dataSetName != "DATA" ) )
+        {
+	     //looping over the vector of mc particles and make cuts on the number of leptons coming from W-bosons on truth-level
+        for(unsigned int p=0; p<mcParticles_flav.size(); p++) {
+          
+            if(mcParticles_flav[p]->status()==3 && abs(mcParticles_flav[p]->type())==13 || abs(mcParticles_flav[p]->type())==11 && abs(mcParticles_flav[p]->motherType())==24) {
+                nLept++;
+	    }
+
+        }
+                        if (nLept !=2.)  continue;
+       
+        }*/
+	
 
         if(  (dataSetName == "TTJets_ll" || dataSetName == "TTJets_cc" || dataSetName == "TTJets_bb" ) )
         {
@@ -717,6 +738,16 @@ int main (int argc, char *argv[])
 
        			else if (dataSetName == "SingleTop_tW_T") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
        			else if (dataSetName == "SingleTop_tW_TBar") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+			
+			
+			////////My added triggers for the new datasets
+			else  if(dataSetName == "WWJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"),currentRun, iFile);
+			else  if(dataSetName == "ZZJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"),currentRun, iFile);
+			else  if(dataSetName == "TTZ") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"),currentRun, iFile);
+			else  if(dataSetName == "WZJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"),currentRun, iFile);
+			else  if(dataSetName == "TTW") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"),currentRun, iFile);
+
+			///////
 
 				else if (dataSetName == "MultiJet") {
                                                                    
@@ -848,7 +879,7 @@ int main (int argc, char *argv[])
 	if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
 	  lumiWeight=1;
 	scaleFactor = scaleFactor*lumiWeight;
-
+	
 	}
 
 	histo1D["lumiWeights"]->Fill(scaleFactor);	
@@ -859,14 +890,14 @@ int main (int argc, char *argv[])
 	// Apply trigger selection
 	trigged = treeLoader.EventTrigged (itrigger);
 	if (debug)cout<<"triggered? Y/N?  "<< trigged  <<endl;
-	if(!trigged)		   continue;
+	//if(!trigged)		   continue;  // This checks if trigger is passed or not
 
 	// Declare selection instance, this class is very convenient for applying generic cuts to 
     // objects (jets, muons, electrons, met)
 	Selection selection(init_jets, init_muons, init_electrons, mets);
 
 	// Define object selection cuts
-	selection.setJetCuts(30.,2.5,0.01,1.,0.98,0,0);//Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
+	selection.setJetCuts(40.,2.5,0.01,1.,0.98,0,0);//Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
 
 	selection.setElectronCuts(20.,2.5,0.1,0.02,0.,999.,0,1); //Pt,Eta,RelIso,d0,MVAId,DistVzPVz, DRJets, MaxMissingHits
 	selection.setLooseElectronCuts(20,2.5,0.2,0.);
@@ -976,7 +1007,7 @@ int main (int argc, char *argv[])
     if (debug) cout <<"Number of Muons, Jets, BJets, JetCut  ===>  "<< selectedMuons.size() <<"  "  << selectedJets.size()   <<"  " <<  selectedBJets.size()   <<endl;
 
 	  //Apply the selection, requring 3 jets, 1 btag, 1 muon, 1 electon. Leptons are required to be same-sign.
-	  if  (  !( selectedJets.size() >= 3 &&    selectedBJets.size() >= 1 &&  nMu == 1 &&  nEl == 1 && (selectedMuons[0]->charge() == selectedElectrons[0]->charge()  )  )) continue; 
+	  if  (  !( selectedJets.size() >= 4 &&    selectedBJets.size() >= 1 &&  nMu == 1 &&  nEl == 1 && (selectedMuons[0]->charge() != selectedElectrons[0]->charge()  )  )) continue; 
 
 	  if (debug) cout<< "Event passed..."<<endl;
         
@@ -1002,14 +1033,20 @@ int main (int argc, char *argv[])
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Order of plotting
 	  // 0. Vertices
-	  // 1. Muons
-	  // 2. Jets: per jet plots, event level variables, jet combinations,discriminants.
+	  // 1. MET
+	  // 2. Muons
+	  // 3. Jets: per jet plots, event level variables, jet combinations,discriminants.
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////Vertices
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////MET
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	MSPlot["MET"]->Fill(mets[0]->Et(), datasets[d], true, Luminosity*scaleFactor);	
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////Muons
@@ -1271,34 +1308,37 @@ int main (int argc, char *argv[])
       for (Int_t c = minNBJets; c<= maxNBJets; c++){
           string NJets_str = static_cast<ostringstream*>( &(ostringstream() << b) )->str();
           string NBJets_str = static_cast<ostringstream*>( &(ostringstream() << c) )->str();
-          string HT_Name = "HT_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string HTX_Name = "HTX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string EventMass_Name = "EventMass_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string EventMassX_Name = "EventMassX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string FirstTriJetMass_1BJet_g_Name = "FirstTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string FirstDiJetMass_1BJet_g_Name = "FirstDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string SecondDiJetMass_1BJet_g_Name = "SecondDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string HT_Name = "HT_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+	  string MET_Name = "MET_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+	  string inclMET_Name = "InclMET_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;	  
+          //string HTX_Name = "HTX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string EventMass_Name = "EventMass_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string EventMassX_Name = "EventMassX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string FirstTriJetMass_1BJet_g_Name = "FirstTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string FirstDiJetMass_1BJet_g_Name = "FirstDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string SecondDiJetMass_1BJet_g_Name = "SecondDiJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
 
-          string MuMetBMasses_g_Name = "MuMetBMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string MuMetMasses_g_Name = "MuMetMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string MuMetBMasses_g_Name = "MuMetBMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string MuMetMasses_g_Name = "MuMetMasses_g_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
 
-          string SecondTriJetMass_1BJet_g_Name = "SecondTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-          string SecondTriJetMass_1BJet_g_chi2_Name = "SecondTriJetMass_1BJet_g_chi2_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string SecondTriJetMass_1BJet_g_Name = "SecondTriJetMass_1BJet_g"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
+          //string SecondTriJetMass_1BJet_g_chi2_Name = "SecondTriJetMass_1BJet_g_chi2_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
           
           
           
-        if(b<6 && c<2){
+        if(b<4 && c<2){
             if(selectedJets.size() == b && selectedBJets.size() == c  ) {
-                MSPlot[HT_Name.c_str() ]->Fill(HT,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[HTX_Name.c_str() ]->Fill(HTX,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[EventMass_Name.c_str() ]->Fill(EventMass,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[EventMassX_Name.c_str() ]->Fill(EventMassX,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[FirstTriJetMass_1BJet_g_Name.c_str()]->Fill(fir_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[FirstDiJetMass_1BJet_g_Name.c_str()]->Fill(fir_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
+             //   MSPlot[HT_Name.c_str() ]->Fill(HT,datasets[d], true, Luminosity*scaleFactor);
+		MSPlot[MET_Name.c_str() ]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+               // MSPlot[HTX_Name.c_str() ]->Fill(HTX,datasets[d], true, Luminosity*scaleFactor);
+               // MSPlot[EventMass_Name.c_str() ]->Fill(EventMass,datasets[d], true, Luminosity*scaleFactor);
+               // MSPlot[EventMassX_Name.c_str() ]->Fill(EventMassX,datasets[d], true, Luminosity*scaleFactor);
+               // MSPlot[FirstTriJetMass_1BJet_g_Name.c_str()]->Fill(fir_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[FirstDiJetMass_1BJet_g_Name.c_str()]->Fill(fir_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
                 //MSPlot[SecondDiJetMass_1BJet_g_Name.c_str()]->Fill(sec_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
 
               //  MSPlot[SecondTriJetMass_1BJet_g_Name.c_str()]->Fill(sec_top_mass_chosen,  datasets[d], true, Luminosity*scaleFactor );
-                MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str()]->Fill(firstchi2_g ,  datasets[d], true, Luminosity*scaleFactor );
+               // MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str()]->Fill(firstchi2_g ,  datasets[d], true, Luminosity*scaleFactor );
                 
             
 
@@ -1306,14 +1346,15 @@ int main (int argc, char *argv[])
                         }
         else{
             if(selectedJets.size() >= b && selectedBJets.size() >= c  ) {
-                MSPlot[HT_Name.c_str() ]->Fill(HT,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[HTX_Name.c_str() ]->Fill(HTX,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[EventMass_Name.c_str() ]->Fill(EventMass,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[EventMassX_Name.c_str() ]->Fill(EventMassX,datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[FirstTriJetMass_1BJet_g_Name.c_str()]->Fill(fir_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-                MSPlot[FirstDiJetMass_1BJet_g_Name.c_str()]->Fill(fir_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[HT_Name.c_str() ]->Fill(HT,datasets[d], true, Luminosity*scaleFactor);
+		MSPlot[MET_Name.c_str() ]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[HTX_Name.c_str() ]->Fill(HTX,datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[EventMass_Name.c_str() ]->Fill(EventMass,datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[EventMassX_Name.c_str() ]->Fill(EventMassX,datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[FirstTriJetMass_1BJet_g_Name.c_str()]->Fill(fir_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
+                //MSPlot[FirstDiJetMass_1BJet_g_Name.c_str()]->Fill(fir_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
                
-                MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str()]->Fill(firstchi2_g ,  datasets[d], true, Luminosity*scaleFactor );
+                //MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str()]->Fill(firstchi2_g ,  datasets[d], true, Luminosity*scaleFactor );
            
 
 
