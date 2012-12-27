@@ -130,27 +130,27 @@ TH2F* FullKinFit::FitEvent(TRootEvent* event, float WMass, float topMass, bool w
   Ml1.Zero(); Ml2.Zero(); Mb.Zero();
   if(measureTopMass_ || measureTopMassDiff_)
   {
-    Ml1(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet1), 2);
-    Ml1(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet1), 2);
-    Ml1(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet1), 2);
-    Ml2(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet2), 2);
-    Ml2(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet2), 2);
-    Ml2(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet2), 2);
-    Mb(0,0) = pow(resFitBJetsL7_->EtResolution(&bJet), 2);
-    Mb(1,1) = pow(resFitBJetsL7_->ThetaResolution(&bJet), 2);
-    Mb(2,2) = pow(resFitBJetsL7_->PhiResolution(&bJet), 2);
+    Ml1(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet1, true), 2);
+    Ml1(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet1, true), 2);
+    Ml1(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet1, true), 2);
+    Ml2(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet2, true), 2);
+    Ml2(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet2, true), 2);
+    Ml2(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet2, true), 2);
+    Mb(0,0) = pow(resFitBJetsL7_->EtResolution(&bJet, true), 2);
+    Mb(1,1) = pow(resFitBJetsL7_->ThetaResolution(&bJet, true), 2);
+    Mb(2,2) = pow(resFitBJetsL7_->PhiResolution(&bJet, true), 2);
   }
   else
   {
-    Ml1(0,0) = pow(resFitLightJets_->EtResolution(&lightJet1), 2);
-    Ml1(1,1) = pow(resFitLightJets_->ThetaResolution(&lightJet1), 2);
-    Ml1(2,2) = pow(resFitLightJets_->PhiResolution(&lightJet1), 2);
-    Ml2(0,0) = pow(resFitLightJets_->EtResolution(&lightJet2), 2);
-    Ml2(1,1) = pow(resFitLightJets_->ThetaResolution(&lightJet2), 2);
-    Ml2(2,2) = pow(resFitLightJets_->PhiResolution(&lightJet2), 2);
-    Mb(0,0) = pow(resFitBJets_->EtResolution(&bJet), 2);
-    Mb(1,1) = pow(resFitBJets_->ThetaResolution(&bJet), 2);
-    Mb(2,2) = pow(resFitBJets_->PhiResolution(&bJet), 2);
+    Ml1(0,0) = pow(resFitLightJets_->EtResolution(&lightJet1, true), 2);
+    Ml1(1,1) = pow(resFitLightJets_->ThetaResolution(&lightJet1, true), 2);
+    Ml1(2,2) = pow(resFitLightJets_->PhiResolution(&lightJet1, true), 2);
+    Ml2(0,0) = pow(resFitLightJets_->EtResolution(&lightJet2, true), 2);
+    Ml2(1,1) = pow(resFitLightJets_->ThetaResolution(&lightJet2, true), 2);
+    Ml2(2,2) = pow(resFitLightJets_->PhiResolution(&lightJet2, true), 2);
+    Mb(0,0) = pow(resFitBJets_->EtResolution(&bJet, true), 2);
+    Mb(1,1) = pow(resFitBJets_->ThetaResolution(&bJet, true), 2);
+    Mb(2,2) = pow(resFitBJets_->PhiResolution(&bJet, true), 2);
   }
   
   if(measureTopMass_ || measureTopMassDiff_)
@@ -330,15 +330,15 @@ float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG
   // prepare the resolutions for the Kinematic Fit
   TMatrixD Ml1(3,3), Ml2(3,3), Mb(3,3);
   Ml1.Zero(); Ml2.Zero(); Mb.Zero();
-  Ml1(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet1), 2);
-  Ml1(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet1), 2);
-  Ml1(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet1), 2);
-  Ml2(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet2), 2);
-  Ml2(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet2), 2);
-  Ml2(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet2), 2);
-  Mb(0,0) = pow(resFitBJetsL7_->EtResolution(&bJet), 2);
-  Mb(1,1) = pow(resFitBJetsL7_->ThetaResolution(&bJet), 2);
-  Mb(2,2) = pow(resFitBJetsL7_->PhiResolution(&bJet), 2);
+  Ml1(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet1, true), 2);
+  Ml1(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet1, true), 2);
+  Ml1(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet1, true), 2);
+  Ml2(0,0) = pow(resFitLightJetsL7_->EtResolution(&lightJet2, true), 2);
+  Ml2(1,1) = pow(resFitLightJetsL7_->ThetaResolution(&lightJet2, true), 2);
+  Ml2(2,2) = pow(resFitLightJetsL7_->PhiResolution(&lightJet2, true), 2);
+  Mb(0,0) = pow(resFitBJetsL7_->EtResolution(&bJet, true), 2);
+  Mb(1,1) = pow(resFitBJetsL7_->ThetaResolution(&bJet, true), 2);
+  Mb(2,2) = pow(resFitBJetsL7_->PhiResolution(&bJet, true), 2);
   
   // mass to start from
   float wJetsSF = WMass/( (lightJet1+lightJet2).M() ); // factor to scale up/down the light jets

@@ -812,9 +812,9 @@ int main (int argc, char *argv[])
       }
       
       if( eventSelectedSemiMu )
-        jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], init_electrons, init_muons, genEvt, scaleFactor);
+        jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedMuons[0], init_electrons, init_muons, genEvt, scaleFactor, false);
       else
-        jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedElectrons[0], init_electrons, init_muons, genEvt, scaleFactor);
+        jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedElectrons[0], init_electrons, init_muons, genEvt, scaleFactor, false);
       
       if(CalculateResolutions && dataSetName.find("TTbarJets") == 0)
         jetCombiner->FillResolutions(resFitLightJets, resFitBJets, resFitBJets_B, resFitBJets_Bbar);
