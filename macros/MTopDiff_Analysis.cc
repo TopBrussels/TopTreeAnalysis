@@ -90,17 +90,17 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
@@ -1022,7 +1022,7 @@ int main (int argc, char *argv[])
         for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++) totalWeight += (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi]);
         
         // PDG reweighing
-        double PDGscale = bestChi2>1.00 ? sqrt(1.00/bestChi2) : 1.00; // inverted factor to weight Signal Term
+        double PDGscale = 1;//bestChi2>1.00 ? sqrt(1.00/bestChi2) : 1.00; // inverted factor to weight Signal Term
         
         // shape study
         for(int iCombi=0; iCombi<mTop.size(); iCombi++)
@@ -1046,7 +1046,7 @@ int main (int argc, char *argv[])
               }
               else
               {
-                histo1D["ttJets_mTopFitted_badcombi"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*PDGscale*(TMath::Exp(-0.5*minChi2[iCombi])*bTagWeight[iCombi]/totalWeight));
+                histo1D["ttJets_mTopFitted_badcombi"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*/*PDGscale*/(TMath::Exp(-0.5*minChi2[iCombi])*bTagWeight[iCombi]/totalWeight));
                 histo1D["ttJets_mTopFitted_badcombi_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight / (double) mTop.size() );
               }
             }
@@ -1152,17 +1152,17 @@ int main (int argc, char *argv[])
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first;
-    temp->showNumberEntries(false);
+    temp->showNumberEntries(true);
     if(name.find("muPlus") < name.size()) temp->addText("#mu^{+}+jets");
     else if(name.find("muMinus") < name.size()) temp->addText("#mu^{-}+jets");
     else if(name.find("elPlus") < name.size()) temp->addText("e^{+}+jets");
     else if(name.find("elMinus") < name.size()) temp->addText("e^{-}+jets");
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
-    temp->Draw(false, name, false, true, true, true, true, 1, true);
-//    temp->Draw(false, name, false, false, false, false, false, 1, true);
+//    temp->Draw(false, name, false, true, true, true, true, 1, true);
+    temp->Draw(false, name, false, false, false, false, false, 1, true);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
-    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
+//    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
 	
 	// 2D
