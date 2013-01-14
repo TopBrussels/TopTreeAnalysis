@@ -28,6 +28,7 @@
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
 #include "../JESMeasurement/interface/LightMonster.h"
+#include "../MCInformation/interface/LumiReWeighting.h"
 #include "Style.C"
 
 using namespace std;
