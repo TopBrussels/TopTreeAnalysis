@@ -325,7 +325,7 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
   
-  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
+  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
   bool ResolutionsClosure = false;
   
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
@@ -555,7 +555,7 @@ int main (int argc, char *argv[])
             exit(-1);
           }
         }
-        else itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun);
+        else itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun);
         
         // semi-electron
         if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
@@ -582,7 +582,7 @@ int main (int argc, char *argv[])
             exit(-1);
           }
         }
-        else itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun);
+        else itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun);
       }
       // Apply Jet Corrections on-the-fly
 //      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
