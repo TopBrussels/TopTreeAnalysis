@@ -30,8 +30,8 @@ class ResolutionFit {
     ResolutionFit(string label);
     ResolutionFit(const ResolutionFit &r);
     ~ResolutionFit();
-    void FillPFJets(TRootPFJet *jet, TLorentzVector *mcParticle);
-    void Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle);
+    void FillPFJets(TRootPFJet *jet, TLorentzVector *mcParticle, float weight=1.);
+    void Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle, float weight=1.);
     void CalculateResolutions();
     void WritePlots(TFile *fout, bool savePNG = false, string pathPNG = string(""));
     void WriteResolutions(string file);

@@ -278,24 +278,24 @@ ResolutionFit::~ResolutionFit()
   }
 }
 
-void ResolutionFit::FillPFJets(TRootPFJet *jet, TLorentzVector *mcParticle)
+void ResolutionFit::FillPFJets(TRootPFJet *jet, TLorentzVector *mcParticle, float weight)
 {
   for(unsigned int iEta=0; iEta<nEtaBins_; iEta++)
   {
     if( fabs(jet->Eta()) >= towerBinning_[iEta] && fabs(jet->Eta()) < towerBinning_[iEta+1] )
     {
-      chfHisto_[iEta]->Fill(jet->Pt(), jet->chargedHadronEnergyFraction());
-      nhfHisto_[iEta]->Fill(jet->Pt(), jet->neutralHadronEnergyFraction());
-      cefHisto_[iEta]->Fill(jet->Pt(), jet->chargedEmEnergyFraction());
-      nefHisto_[iEta]->Fill(jet->Pt(), jet->neutralEmEnergyFraction());
-      cmfHisto_[iEta]->Fill(jet->Pt(), jet->chargedMuEnergyFraction());
-      ptHisto_[iEta]->Fill(jet->Pt());
+      chfHisto_[iEta]->Fill(jet->Pt(), jet->chargedHadronEnergyFraction()*weight);
+      nhfHisto_[iEta]->Fill(jet->Pt(), jet->neutralHadronEnergyFraction()*weight);
+      cefHisto_[iEta]->Fill(jet->Pt(), jet->chargedEmEnergyFraction()*weight);
+      nefHisto_[iEta]->Fill(jet->Pt(), jet->neutralEmEnergyFraction()*weight);
+      cmfHisto_[iEta]->Fill(jet->Pt(), jet->chargedMuEnergyFraction()*weight);
+      ptHisto_[iEta]->Fill(jet->Pt(), weight);
     }
   }
-  if(mcParticle) Fill(jet, mcParticle);
+  if(mcParticle) Fill(jet, mcParticle, weight);
 }
 
-void ResolutionFit::Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle)
+void ResolutionFit::Fill(TLorentzVector *lorentzVector, TLorentzVector *mcParticle, float weight)
 {
   TLorentzVector tmpJet = *lorentzVector;
   float correction = 1;
@@ -312,17 +312,17 @@ void ResolutionFit::Fill(TLorentzVector *lorentzVector, TLorentzVector *mcPartic
       {
 	      if(iEta == 0)
 	      {
-	        StijnFlavorJES_ ? binCenterHistoIncl_[iSel]->Fill( mcParticle->Pt() ) : binCenterHistoIncl_[iSel]->Fill( tmpJet.Pt() );
-	        StijnFlavorJES_ ? resRelHistoIncl_[iSel]->Fill( tmpJet.Pt() / mcParticle->Pt() ) : resRelHistoIncl_[iSel]->Fill( (tmpJet.Et() - mcParticle->Et()) / tmpJet.Et() );
+	        StijnFlavorJES_ ? binCenterHistoIncl_[iSel]->Fill(mcParticle->Pt(), weight) : binCenterHistoIncl_[iSel]->Fill(tmpJet.Pt(), weight);
+	        StijnFlavorJES_ ? resRelHistoIncl_[iSel]->Fill(tmpJet.Pt()/mcParticle->Pt(), weight) : resRelHistoIncl_[iSel]->Fill((tmpJet.Et()-mcParticle->Et())/tmpJet.Et(), weight);
 	      }
 	      if( fabs(tmpJet.Eta()) >= towerBinning_[iEta] && fabs(tmpJet.Eta()) < towerBinning_[iEta+1] )
 	      {
-	        StijnFlavorJES_ ? binCenterHisto_[(iEta*nPtBins_)+iSel]->Fill( mcParticle->Pt() ) : binCenterHisto_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.Pt() );
-          StijnFlavorJES_ ? resHisto_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.Pt() - mcParticle->Pt() ) : resHisto_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.Et() - mcParticle->Et() );
-	        resHistoEta_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.Eta() - mcParticle->Eta() );
-	        resHistoTheta_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.Theta() - mcParticle->Theta() );
-	        resHistoPhi_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.DeltaPhi(*mcParticle) );
-          StijnFlavorJES_ ? resRelHisto_[(iEta*nPtBins_)+iSel]->Fill( tmpJet.Pt() / mcParticle->Pt() ) : resRelHisto_[(iEta*nPtBins_)+iSel]->Fill( (tmpJet.Et() - mcParticle->Et()) / tmpJet.Et() );
+	        StijnFlavorJES_ ? binCenterHisto_[(iEta*nPtBins_)+iSel]->Fill(mcParticle->Pt(), weight) : binCenterHisto_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.Pt(), weight);
+          StijnFlavorJES_ ? resHisto_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.Pt()-mcParticle->Pt(), weight) : resHisto_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.Et()-mcParticle->Et(), weight);
+	        resHistoEta_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.Eta()-mcParticle->Eta(), weight);
+	        resHistoTheta_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.Theta()-mcParticle->Theta(), weight);
+	        resHistoPhi_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.DeltaPhi(*mcParticle), weight);
+          StijnFlavorJES_ ? resRelHisto_[(iEta*nPtBins_)+iSel]->Fill(tmpJet.Pt()/mcParticle->Pt(), weight) : resRelHisto_[(iEta*nPtBins_)+iSel]->Fill((tmpJet.Et()-mcParticle->Et())/tmpJet.Et(), weight);
 	      }
       }
     } //loop over pTbins

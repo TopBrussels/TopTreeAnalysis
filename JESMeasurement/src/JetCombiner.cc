@@ -923,26 +923,26 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TLorentzVector> mc
 }
 
 
-void JetCombiner::FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B, ResolutionFit* resFitBJets_Bbar)
+void JetCombiner::FillResolutions(ResolutionFit* resFitLightJets, ResolutionFit* resFitBJets, ResolutionFit* resFitBJets_B, ResolutionFit* resFitBJets_Bbar, float scaleFactor)
 {
   // Fill the resolution-stuff6for events where the 4 ttbar semi-lep partons are all matched to jets
   if(hadronicWJet1_.first < 9999 && hadronicWJet2_.first < 9999 && hadronicBJet_.first < 9999 && leptonicBJet_.first < 9999)
   {
-    resFitLightJets->Fill(selectedJets_[hadronicWJet1_.first], mcParticlesMatching_[hadronicWJet1_.second]);
-    resFitLightJets->Fill(selectedJets_[hadronicWJet2_.first], mcParticlesMatching_[hadronicWJet2_.second]);
-    resFitBJets->Fill(selectedJets_[hadronicBJet_.first], mcParticlesMatching_[hadronicBJet_.second]);
-    resFitBJets->Fill(selectedJets_[leptonicBJet_.first], mcParticlesMatching_[leptonicBJet_.second]);
+    resFitLightJets->Fill(selectedJets_[hadronicWJet1_.first], mcParticlesMatching_[hadronicWJet1_.second], scaleFactor);
+    resFitLightJets->Fill(selectedJets_[hadronicWJet2_.first], mcParticlesMatching_[hadronicWJet2_.second], scaleFactor);
+    resFitBJets->Fill(selectedJets_[hadronicBJet_.first], mcParticlesMatching_[hadronicBJet_.second], scaleFactor);
+    resFitBJets->Fill(selectedJets_[leptonicBJet_.first], mcParticlesMatching_[leptonicBJet_.second], scaleFactor);
     if( resFitBJets_B && resFitBJets_Bbar )
     {
       if( mcParticlesMatching_[hadronicBJet_.second]->type() == 5 )
       {
-        resFitBJets_B->Fill(selectedJets_[hadronicBJet_.first], mcParticlesMatching_[hadronicBJet_.second]);
-        resFitBJets_Bbar->Fill(selectedJets_[leptonicBJet_.first], mcParticlesMatching_[leptonicBJet_.second]);
+        resFitBJets_B->Fill(selectedJets_[hadronicBJet_.first], mcParticlesMatching_[hadronicBJet_.second], scaleFactor);
+        resFitBJets_Bbar->Fill(selectedJets_[leptonicBJet_.first], mcParticlesMatching_[leptonicBJet_.second], scaleFactor);
       }
       else
       {
-        resFitBJets_B->Fill(selectedJets_[leptonicBJet_.first], mcParticlesMatching_[leptonicBJet_.second]);
-        resFitBJets_Bbar->Fill(selectedJets_[hadronicBJet_.first], mcParticlesMatching_[hadronicBJet_.second]);
+        resFitBJets_B->Fill(selectedJets_[leptonicBJet_.first], mcParticlesMatching_[leptonicBJet_.second], scaleFactor);
+        resFitBJets_Bbar->Fill(selectedJets_[hadronicBJet_.first], mcParticlesMatching_[hadronicBJet_.second], scaleFactor);
       }
     }
   }
