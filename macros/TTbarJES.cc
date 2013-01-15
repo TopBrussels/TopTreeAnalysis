@@ -33,6 +33,7 @@
 
 using namespace std;
 using namespace TopTree;
+using namespace reweight;
 
 /// TGraphAsymmErrors
 map<string,TGraphAsymmErrors*> graphAsymmErr;
@@ -291,17 +292,16 @@ int main (int argc, char *argv[])
   CutsSelecTableSemiEl.push_back(string("Good PV"));
   CutsSelecTableSemiEl.push_back(string("1 selected electron"));
   CutsSelecTableSemiEl.push_back(string("Veto muon"));
-  CutsSelecTableSemiEl.push_back(string("Veto 2nd electron from Z-decay"));
-  CutsSelecTableSemiEl.push_back(string("Conversion veto"));
+  CutsSelecTableSemiEl.push_back(string("Veto 2nd electron"));
   
+  CutsSelecTableSemiMu.push_back(string("$\\geq$ 1 jet"));
+  CutsSelecTableSemiEl.push_back(string("$\\geq$ 1 jet"));
+  CutsSelecTableSemiMu.push_back(string("$\\geq$ 2 jets"));
+  CutsSelecTableSemiEl.push_back(string("$\\geq$ 2 jets"));
+  CutsSelecTableSemiMu.push_back(string("$\\geq$ 3 jets"));
+  CutsSelecTableSemiEl.push_back(string("$\\geq$ 3 jets"));
   CutsSelecTableSemiMu.push_back(string("$\\geq$ 4 jets"));
   CutsSelecTableSemiEl.push_back(string("$\\geq$ 4 jets"));
-  CutsSelecTableSemiMu.push_back(string("1st jet Pt > 45"));
-  CutsSelecTableSemiEl.push_back(string("1st jet Pt > 45"));
-  CutsSelecTableSemiMu.push_back(string("2nd jet Pt > 45"));
-  CutsSelecTableSemiEl.push_back(string("2nd jet Pt > 45"));
-  CutsSelecTableSemiMu.push_back(string("3rd jet Pt > 35"));
-  CutsSelecTableSemiEl.push_back(string("3rd jet Pt > 35"));
   if (verbose > 0)
     cout << " - CutsSelectionTable instantiated ..." << endl;
   SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
@@ -310,6 +310,16 @@ int main (int argc, char *argv[])
   selecTableSemiEl.SetLuminosity(Luminosity);
   if (verbose > 0)
     cout << " - SelectionTable instantiated ..." << endl;
+  
+  ////////////////////////////////////////
+  /// initialize LumiReWeighting stuff ///
+  ////////////////////////////////////////
+  
+  cout << "Initializing LumiReWeighting stuff" << endl;
+  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");
+
   
   /////////////////////////////
   /// ResolutionFit Stuff
@@ -400,7 +410,7 @@ int main (int argc, char *argv[])
 //      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
 //      vCorrParam.push_back(*ResJetCorPar);
 //    }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
@@ -488,23 +498,13 @@ int main (int argc, char *argv[])
       
       // scale factors for the event
       float scaleFactor = 1.;
-      float lumiWeight = 1.;
+      float lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
       if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         lumiWeight = 1;
       
       TRootGenEvent* genEvt = 0;
-      // Load the GenEvent and calculate the branching ratio correction
-      if(dataSetName.find("TTbarJets") == 0)
-      {
-        genEvt = treeLoader.LoadGenEvent(ievt);
-        if( genEvt->isSemiLeptonic() )
-					scaleFactor *= (0.108*9.)*(0.676*1.5);
-			  else if( genEvt->isFullHadronic() )
-			    scaleFactor *= (0.676*1.5)*(0.676*1.5);
-			  else if( genEvt->isFullLeptonic() )
-  		    scaleFactor *= (0.108*9.)*(0.108*9.);
-  		  scaleFactor = 1.;
-      }
+      // Load the GenEvent
+      if(dataSetName.find("TT") == 0) genEvt = treeLoader.LoadGenEvent(ievt);
       
       // Clone the init_jets vector, otherwise the corrections will be removed
       for(unsigned int i=0; i<init_jets_corrected.size(); i++)
@@ -531,7 +531,7 @@ int main (int argc, char *argv[])
         // semi-muon
         if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
-          if( event->runId() <= 190738 )
+/*          if( event->runId() <= 190738 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
           else if( event->runId() >= 191046 && event->runId() <= 191411 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
@@ -547,7 +547,7 @@ int main (int argc, char *argv[])
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
           else if( event->runId() >= 202972 && event->runId() <= 203002 )
             itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v2"), currentRun, iFile);
-          else
+          else*/
             cout << "Unknown run for SemiMu HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiMu == 9999 )
           {
@@ -560,7 +560,7 @@ int main (int argc, char *argv[])
         // semi-electron
         if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
-          if( event->runId() <= 190738 )
+/*          if( event->runId() <= 190738 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
           else if( event->runId() >= 191046 && event->runId() <= 191411 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
@@ -574,7 +574,7 @@ int main (int argc, char *argv[])
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
           else if( event->runId() >= 202972 && event->runId() <= 203002 )
             itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet45_35_25_v2"), currentRun, iFile);
-          else
+          else*/
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiEl == 9999 )
           {
@@ -636,10 +636,10 @@ int main (int argc, char *argv[])
       /////////////////////////////
       
       //Declare selection instance    
-      Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
-      selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
-      selection.setMuonCuts(26,2.1,0.12,10,0.2,0.3,1,0.5,5,0);
-      selection.setElectronCuts(30,2.5,0.1,0.02,0.,1,0.3,0);
+      Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
+      selection.setJetCuts(30.,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setMuonCuts(25,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
+      selection.setElectronCuts(30,2.5,0.1,0.02,0.5,0.3,0); // 30 GeV too low? DR el-jets cleaning still needed?
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setLooseElectronCuts(20,2.5,0.15,0.);
       
@@ -654,22 +654,22 @@ int main (int argc, char *argv[])
       vector<TRootJet*> selectedJets, selectedJetsNoMu, selectedJetsNoEl;
       vector<TRootMuon*> selectedMuons;
       vector<TRootElectron*> selectedElectrons;
-      vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons();
+      vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons(10,2.5,0.2);
       vector<TRootElectron*> vetoElectrons = selection.GetSelectedLooseElectrons(20,2.5,0.15);
       if( systematic == "InvertedIso" )
       {
         vector<TRootMuon*> overlapMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0]);
-        vector<TRootElectron*> overlapElectrons = selection.GetSelectedElectronsInvIso(0.2, vertex[0]);
+        vector<TRootElectron*> overlapElectrons = selection.GetSelectedElectronsInvIso(0.2);
         selectedJetsNoMu = selection.GetSelectedJets(overlapMuons,true);
         selectedJetsNoEl = selection.GetSelectedJets(overlapElectrons,true);
         selectedMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0], selectedJetsNoMu);
-        selectedElectrons = selection.GetSelectedElectronsInvIso(0.2, vertex[0],selectedJetsNoEl);
+        selectedElectrons = selection.GetSelectedElectronsInvIso(0.2, selectedJetsNoEl);
       }
       else // Normal selection
       {
         selectedJets = selection.GetSelectedJets(true);
         selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
-        selectedElectrons = selection.GetSelectedElectrons(vertex[0],selectedJets);
+        selectedElectrons = selection.GetSelectedElectrons(selectedJets);
       }
       
       MSPlot["nPrimaryVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
@@ -706,19 +706,19 @@ int main (int argc, char *argv[])
                 MSPlot["nEventsAfterCutsSemiMu"]->Fill(5, datasets[d], true, Luminosity*scaleFactor);
                 selecTableSemiMu.Fill(d,5,scaleFactor*lumiWeight);
                 if(systematic == "InvertedIso") selectedJets = selectedJetsNoMu;
-                if(selectedJets.size()>=4)
+                if(selectedJets.size()>=1)
                 {
                   MSPlot["nEventsAfterCutsSemiMu"]->Fill(6, datasets[d], true, Luminosity*scaleFactor);
                   selecTableSemiMu.Fill(d,6,scaleFactor*lumiWeight);
-                  if(selectedJets[0]->Pt() >= 45.)
+                  if(selectedJets.size()>=2)
                   {
                     MSPlot["nEventsAfterCutsSemiMu"]->Fill(7, datasets[d], true, Luminosity*scaleFactor);
                     selecTableSemiMu.Fill(d,7,scaleFactor*lumiWeight);
-                    if(selectedJets[1]->Pt() >= 45.)
+                    if(selectedJets.size()>=3)
                     {
                       MSPlot["nEventsAfterCutsSemiMu"]->Fill(8, datasets[d], true, Luminosity*scaleFactor);
                       selecTableSemiMu.Fill(d,8,scaleFactor*lumiWeight);
-                      if(selectedJets[2]->Pt() >= 35.)
+                      if(selectedJets.size()>=4)
                       {
                         histo1D["FourthJetPt"]->Fill(selectedJets[3]->Pt());
                         if(triggedSemiMu) histo1D["FourthJetPtTriggered"]->Fill(selectedJets[3]->Pt());
@@ -759,33 +759,28 @@ int main (int argc, char *argv[])
               {
                 MSPlot["nEventsAfterCutsSemiEl"]->Fill(5, datasets[d], true, Luminosity*scaleFactor);
                 selecTableSemiEl.Fill(d,5,scaleFactor*lumiWeight);
-                if( selection.passConversionRejection(selectedElectrons[0]) )
+                if(systematic == "InvertedIso") selectedJets = selectedJetsNoEl;
+                if( selectedJets.size()>=1 )
                 {
                   MSPlot["nEventsAfterCutsSemiEl"]->Fill(6, datasets[d], true, Luminosity*scaleFactor);
                   selecTableSemiEl.Fill(d,6,scaleFactor*lumiWeight);
-                  if(systematic == "InvertedIso") selectedJets = selectedJetsNoEl;
-                  if( selectedJets.size()>=4 )
+                  if( selectedJets.size()>=2 )
                   {
                     MSPlot["nEventsAfterCutsSemiEl"]->Fill(7, datasets[d], true, Luminosity*scaleFactor);
                     selecTableSemiEl.Fill(d,7,scaleFactor*lumiWeight);
-                    if( selectedJets[0]->Pt()>=45 )
+                    if( selectedJets.size()>=3 )
                     {
                       MSPlot["nEventsAfterCutsSemiEl"]->Fill(8, datasets[d], true, Luminosity*scaleFactor);
                       selecTableSemiEl.Fill(d,8,scaleFactor*lumiWeight);
-                      if( selectedJets[1]->Pt()>=45 )
+                      if( selectedJets.size()>=4 )
                       {
+                        histo1D["FourthJetPt"]->Fill(selectedJets[3]->Pt());
+                        if(triggedSemiEl) histo1D["FourthJetPtTriggered"]->Fill(selectedJets[3]->Pt());
                         MSPlot["nEventsAfterCutsSemiEl"]->Fill(9, datasets[d], true, Luminosity*scaleFactor);
                         selecTableSemiEl.Fill(d,9,scaleFactor*lumiWeight);
-                        if( selectedJets[2]->Pt()>=35 )
-                        {
-                          histo1D["FourthJetPt"]->Fill(selectedJets[3]->Pt());
-                          if(triggedSemiEl) histo1D["FourthJetPtTriggered"]->Fill(selectedJets[3]->Pt());
-                          MSPlot["nEventsAfterCutsSemiEl"]->Fill(10, datasets[d], true, Luminosity*scaleFactor);
-                          selecTableSemiEl.Fill(d,10,scaleFactor*lumiWeight);
-                          eventSelectedSemiEl = true;
-                          float reliso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
-                          MSPlot["SelectedEventsElectronsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
-                        }
+                        eventSelectedSemiEl = true;
+                        float reliso = (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt();
+                        MSPlot["SelectedEventsElectronsRelPFIso"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
                       }
                     }
                   }
