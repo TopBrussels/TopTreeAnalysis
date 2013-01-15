@@ -637,7 +637,7 @@ int main (int argc, char *argv[])
       
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
-      selection.setJetCuts(30.,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setJetCuts(32,2.5,0.01,1.,0.98,0.3,0.1);
       selection.setMuonCuts(25,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
       selection.setElectronCuts(30,2.5,0.1,0.02,0.5,0.3,0); // 30 GeV too low? DR el-jets cleaning still needed?
       selection.setLooseMuonCuts(10,2.5,0.2);
@@ -813,7 +813,7 @@ int main (int argc, char *argv[])
         jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedElectrons[0], init_electrons, init_muons, genEvt, scaleFactor, false);
       
       if(CalculateResolutions && dataSetName.find("TTbarJets") == 0)
-        jetCombiner->FillResolutions(resFitLightJets, resFitBJets, resFitBJets_B, resFitBJets_Bbar);
+        jetCombiner->FillResolutions(resFitLightJets, resFitBJets, resFitBJets_B, resFitBJets_Bbar, scaleFactor*lumiWeight);
       
       if ( !TrainMVA && !CalculateResolutions )
       {
