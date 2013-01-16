@@ -325,7 +325,7 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
   
-  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
+  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
   bool ResolutionsClosure = false;
   
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
@@ -531,23 +531,17 @@ int main (int argc, char *argv[])
         // semi-muon
         if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
-/*          if( event->runId() <= 190738 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
-          else if( event->runId() >= 191046 && event->runId() <= 191411 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
-          else if( event->runId() >= 191695 && event->runId() <= 193621 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-          else if( event->runId() >= 193834 && event->runId() <= 194225 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v5"), currentRun, iFile);
-          else if( event->runId() >= 194270 && event->runId() <= 196531 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-          else if( event->runId() >= 198049 && event->runId() <= 199608 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-          else if( event->runId() >= 199698 && event->runId() <= 202504 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
-          else if( event->runId() >= 202972 && event->runId() <= 203002 )
-            itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v2"), currentRun, iFile);
-          else*/
+          if( event->runId() <= 190738 )
+      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun, iFile);
+      	  else if( event->runId() >= 191043 && event->runId() <= 193621 )
+      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v12"), currentRun, iFile);
+      	  else if( event->runId() >= 193834 && event->runId() <= 196531 )
+      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
+      	  else if( event->runId() >= 198049 && event->runId() <= 199608)
+      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v14"), currentRun, iFile);
+      	  else if( event->runId() >= 199698 && event->runId() <= 208357)
+      	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v15"), currentRun, iFile);
+          else
             cout << "Unknown run for SemiMu HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiMu == 9999 )
           {
@@ -560,21 +554,15 @@ int main (int argc, char *argv[])
         // semi-electron
         if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
         {
-/*          if( event->runId() <= 190738 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
-          else if( event->runId() >= 191046 && event->runId() <= 191411 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
-          else if( event->runId() >= 191695 && event->runId() <= 194225 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
-          else if( event->runId() >= 194270 && event->runId() <= 196531 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-          else if( event->runId() >= 198049 && event->runId() <= 199608 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-          else if( event->runId() >= 199698 && event->runId() <= 202504 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
-          else if( event->runId() >= 202972 && event->runId() <= 203002 )
-            itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet45_35_25_v2"), currentRun, iFile);
-          else*/
+          if( event->runId() <= 190738 )
+      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v8"), currentRun, iFile);
+      	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
+	          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v9"), currentRun, iFile);
+      	  else if( event->runId() >= 191695 && event->runId() <= 196531)
+      	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun, iFile);
+      	  else if( event->runId() >= 198049 && event->runId() <= 208357)
+	          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v11"), currentRun, iFile);
+          else
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
           if( itriggerSemiEl == 9999 )
           {
