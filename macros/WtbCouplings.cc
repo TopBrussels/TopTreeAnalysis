@@ -1499,7 +1499,7 @@ int main (int argc, char *argv[])
          		
    					// define the fitfunction for all parameters (6):
 						// ai = ai0 + ai1*Ep + ai2*sqrt(Ep) its range depends on the parton energy range (hence, the X-axis)
-						TF1 *myfit2 = new TF1("myfit2", "[0]+[1]*x+[2]*sqrt(x)",histo->GetXaxis()->GetXmin(),histo->GetXaxis()->GetXmax() );	
+						TF1 *myfit2 = new TF1("myfit2", "[0]+[1]*sqrt(x)+[2]*x",histo->GetXaxis()->GetXmin(),histo->GetXaxis()->GetXmax() );	
 						//give names to the parameters
 						myfit2->SetParName(0,"ai0");
 						myfit2->SetParName(1,"ai1");
@@ -1533,6 +1533,9 @@ int main (int argc, char *argv[])
 				ofstream myTransferFunctions;
 				string myTransferFunctions_TABLE = "TransferFunctions_TABLE.txt";
 				myTransferFunctions.open(myTransferFunctions_TABLE.c_str());
+				ofstream myTransferFunctionsForMadWeight;
+				string myTransferFunctionsForMadWeight_dat = "transfer_card_user.dat";
+				myTransferFunctionsForMadWeight.open(myTransferFunctionsForMadWeight_dat.c_str());
 				for(int i = 0; i<9; i++){
 					TF1 *TF_par1,*TF_par2,*TF_par3,*TF_par4,*TF_par5,*TF_par6;
 					string name1 = histonames[i]+"_a1_Fitted";
@@ -1559,7 +1562,7 @@ int main (int argc, char *argv[])
   					myTransferFunctions<<"\\centering" << endl;
   					myTransferFunctions<<"\\begin{tabular}{c|ccc}" << endl;
   					myTransferFunctions<<"\\hline" << endl;
-						myTransferFunctions << "Type	& $a_{i0}$ & $a_{i1}$ ($E$) & $a_{i2}$ ($\\sqrt{E}$)" << "\\\\" << endl;
+						myTransferFunctions << "Type	& $a_{i0}$ & $a_{i1}$ ($\\sqrt{E}$) & $a_{i2}$ ($E$)" << "\\\\" << endl;
   					myTransferFunctions<<"\\hline" << endl;
 						myTransferFunctions << "Mean broad gaussian & $a_{10}$ = " << TF_par1->GetParameter(0) << "$\\pm$" << TF_par1->GetParError(0) << " & $a_{11}$ = " << TF_par1->GetParameter(1) << "$\\pm$" << TF_par1->GetParError(1) << " & $a_{12}$ = " << TF_par1->GetParameter(2) << "$\\pm$" << TF_par1->GetParError(2) << "\\\\" << endl;
 						myTransferFunctions << "Width broad gaussian & $a_{20}$ = " << TF_par2->GetParameter(0) << "$\\pm$" << TF_par2->GetParError(0) << " & $a_{21}$ = " << TF_par2->GetParameter(1) << "$\\pm$" << TF_par2->GetParError(1) << " & $a_{22}$ = " << TF_par2->GetParameter(2) << "$\\pm$" << TF_par2->GetParError(2) << "\\\\" << endl;
@@ -1571,10 +1574,56 @@ int main (int argc, char *argv[])
   					myTransferFunctions<<"\\end{tabular}"<<endl;
   					myTransferFunctions<<"\\end{table}"<<endl;
 						myTransferFunctions<< endl;
+
+						if(i==0) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==0) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: b                                         |" << endl;
+						if(i==0) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==3) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==3) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: nonb                                         |" << endl;
+						if(i==3) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: muon                                         |" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==0) myTransferFunctionsForMadWeight<<"BLOCK TF_bjet_E" << endl;
+						if(i==1) myTransferFunctionsForMadWeight<<"BLOCK TF_bjet_THETA" << endl;
+						if(i==2) myTransferFunctionsForMadWeight<<"BLOCK TF_bjet_PHI" << endl;
+						if(i==3) myTransferFunctionsForMadWeight<<"BLOCK TF_nonbjet_E" << endl;
+						if(i==4) myTransferFunctionsForMadWeight<<"BLOCK TF_nonbjet_THETA" << endl;
+						if(i==5) myTransferFunctionsForMadWeight<<"BLOCK TF_nonbjet_PHI" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_InvPt" << endl;
+						if(i==7) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_THETA" << endl;
+						if(i==8) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_PHI" << endl;
+						if(i<6) { //for jets, should also work for electrons if we have them
+							for(int j = 0; j<3; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j) << "  # bias broad gaussian b1=#1+#2*sqrt(E)*#3*E" << endl;
+							for(int j = 3; j<6; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-3) << "  # sigma broad gaussian s1=#4+#5*sqrt(E)*#6*E" << endl;
+							for(int j = 6; j<9; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-6) << "  # constant broad gaussian c1=#7+#8*sqrt(E)*#9*E" << endl;
+							for(int j = 9; j<12; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-9) << "  # bias narrow gaussian b2=#10+#11*sqrt(E)*#12*E" << endl;
+							for(int j = 12; j<15; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-12) << "  # sigma narrow gaussian s2=#13+#14*sqrt(E)*#15*E" << endl;
+							for(int j = 15; j<18; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-15) << "  # constant narrow gaussian c2=#16+#17*sqrt(E)*#18*E" << endl;
+						}else{ //for muon (only difference: paramtrization according to InvPt instead of E -> something textual...)
+							for(int j = 0; j<3; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j) << "  # bias broad gaussian b1=#1+#2*sqrt(InvPt)*#3*InvPt" << endl;
+							for(int j = 3; j<6; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-3) << "  # sigma broad gaussian s1=#4+#5*sqrt(InvPt)*#6*InvPt" << endl;
+							for(int j = 6; j<9; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-6) << "  # constant broad gaussian c1=#7+#8*sqrt(InvPt)*#9*InvPt" << endl;
+							for(int j = 9; j<12; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-9) << "  # bias narrow gaussian b2=#10+#11*sqrt(InvPt)*#12*InvPt" << endl;
+							for(int j = 12; j<15; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-12) << "  # sigma narrow gaussian s2=#13+#14*sqrt(InvPt)*#15*InvPt" << endl;
+							for(int j = 15; j<18; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-15) << "  # constant narrow gaussian c2=#16+#17*sqrt(InvPt)*#18*InvPt" << endl;									}
 					}
 					tf->Close();
 				}
 				myTransferFunctions.close();
+				myTransferFunctionsForMadWeight.close();
 			
 			}	
 			
