@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
+#include <Math/VectorUtil.h>
 
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
@@ -191,9 +192,9 @@ int main (int argc, char *argv[])
   histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
 
 	histo2D["Eparton_vs_Enonbjet"] = new TH2F("Eparton_vs_Enonbjet","Eparton_vs_Enonbjet", 50, 0, 400, 50, 0, 400);
-	histo2D["Eparton_vs_Eparton-Enonbjet"] = new TH2F("Eparton_vs_Eparton-Enonbjet","Eparton_vs_Eparton-Enonbjet", 5, 0, 250, 50, -100, 50);
+	histo2D["Eparton_vs_Eparton-Enonbjet"] = new TH2F("Eparton_vs_Eparton-Enonbjet","Eparton_vs_Eparton-Enonbjet", 4, 0, 250, 50, -100, 100);
 	histo2D["Eparton_vs_Ebjet"] = new TH2F("Eparton_vs_Ebjet","Eparton_vs_Ebjet", 50, 0, 400, 50, 0, 400);
-	histo2D["Eparton_vs_Eparton-Ebjet"] = new TH2F("Eparton_vs_Eparton-Ebjet","Eparton_vs_Eparton-Ebjet", 5, 0, 300, 50, -100, 50);
+	histo2D["Eparton_vs_Eparton-Ebjet"] = new TH2F("Eparton_vs_Eparton-Ebjet","Eparton_vs_Eparton-Ebjet", 4, 0, 300, 50, -100, 100);
 	histo2D["EgenEl_vs_ErecEl"] = new TH2F("EgenEl_vs_ErecEl","EgenEl_vs_ErecEl", 50, 0, 400, 50, 0, 400);
 	histo2D["EgenEl_vs_EgenEl-ErecEl"] = new TH2F("EgenEl_vs_EgenEl-ErecEl","EgenEl_vs_EgenEl-ErecEl", 50, 0, 400, 50, -50, 50);
 	histo2D["InvPtgenMu_vs_InvPtrecMu"] = new TH2F("InvPtgenMu_vs_InvPtrecMu","InvPtgenMu_vs_InvPtrecMu", 50, 0, 0.05, 50, 0, 0.05);
@@ -207,6 +208,14 @@ int main (int argc, char *argv[])
 	histo2D["ThgenEl_vs_ThgenEl-ThrecEl"] = new TH2F("ThgenEl_vs_ThgenEl-ThrecEl","ThgenEl_vs_ThgenEl-ThrecEl", 5, 0.2, 3.0, 60, -0.05, 0.05);
 	histo2D["ThgenMu_vs_ThrecMu"] = new TH2F("ThgenMu_vs_ThrecMu","ThgenMu_vs_ThrecMu", 60, 0, 3.15, 60, 0, 3.15);
 	histo2D["ThgenMu_vs_ThgenMu-ThrecMu"] = new TH2F("ThgenMu_vs_ThgenMu-ThrecMu","ThgenMu_vs_ThgenMu-ThrecMu", 5, 0.2, 3.0, 60, -0.05, 0.05);
+	histo2D["Eparton_vs_Thnonbjet"] = new TH2F("Eparton_vs_Thnonbjet","Eparton_vs_Thnonbjet", 50, 0, 400, 60, 0, 3.15);
+	histo2D["Eparton_vs_Thparton-Thnonbjet"] = new TH2F("Eparton_vs_Thparton-Thnonbjet","Eparton_vs_Thparton-Thnonbjet", 4, 0, 250, 60, -0.15, 0.15);
+	histo2D["Eparton_vs_Thbjet"] = new TH2F("Eparton_vs_Thbjet","Eparton_vs_Thbjet", 50, 0, 400, 60, 0, 3.15);
+	histo2D["Eparton_vs_Thparton-Thbjet"] = new TH2F("Eparton_vs_Thparton-Thbjet","Eparton_vs_Thparton-Thbjet", 4, 0, 300, 60, -0.15, 0.15);
+	histo2D["EgenEl_vs_ThrecEl"] = new TH2F("EgenEl_vs_ThrecEl","EgenEl_vs_ThrecEl", 50, 0, 400, 60, 0, 3.15);
+	histo2D["EgenEl_vs_ThgenEl-ThrecEl"] = new TH2F("EgenEl_vs_ThgenEl-ThrecEl","EgenEl_vs_ThgenEl-ThrecEl", 5, 0, 400, 60, -0.05, 0.05);
+	histo2D["InvPtgenMu_vs_ThrecMu"] = new TH2F("InvPtgenMu_vs_ThrecMu","InvPtgenMu_vs_ThrecMu", 50, 0, 0.05, 60, 0, 3.15);
+	histo2D["InvPtgenMu_vs_ThgenMu-ThrecMu"] = new TH2F("InvPtgenMu_vs_ThgenMu-ThrecMu","InvPtgenMu_vs_ThgenMu-ThrecMu", 5, 0.002, 0.04, 60, -0.05, 0.05);
 
 	histo2D["Phiparton_vs_Phinonbjet"] = new TH2F("Phiparton_vs_Phinonbjet","Phiparton_vs_Phinonbjet", 120, -3.2, 3.2, 120, -3.2, 3.2);
 	histo2D["Phiparton_vs_Phiparton-Phinonbjet"] = new TH2F("Phiparton_vs_Phiparton-Phinonbjet","Phiparton_vs_Phiparton-Phinonbjet", 5, -3.2, 3.2, 120, -0.3, 0.3);
@@ -216,6 +225,14 @@ int main (int argc, char *argv[])
 	histo2D["PhigenEl_vs_PhigenEl-PhirecEl"] = new TH2F("PhigenEl_vs_PhigenEl-PhirecEl","PhigenEl_vs_PhigenEl-PhirecEl", 5, -3.2, 3.2, 120, -0.05, 0.05);
 	histo2D["PhigenMu_vs_PhirecMu"] = new TH2F("PhigenMu_vs_PhirecMu","PhigenMu_vs_PhirecMu", 120, -3.2, 3.2, 120, -3.2, 3.2);
 	histo2D["PhigenMu_vs_PhigenMu-PhirecMu"] = new TH2F("PhigenMu_vs_PhigenMu-PhirecMu","PhigenMu_vs_PhigenMu-PhirecMu", 5, -3.2, 3.2, 120, -0.05, 0.05);
+	histo2D["Eparton_vs_Phinonbjet"] = new TH2F("Eparton_vs_Phinonbjet","Eparton_vs_Phinonbjet", 50, 0, 400, 120, -3.2, 3.2);
+	histo2D["Eparton_vs_Phiparton-Phinonbjet"] = new TH2F("Eparton_vs_Phiparton-Phinonbjet","Eparton_vs_Phiparton-Phinonbjet", 5, 0, 250, 120, -0.3, 0.3);
+	histo2D["Eparton_vs_Phibjet"] = new TH2F("Eparton_vs_Phibjet","Eparton_vs_Phibjet", 50, 0, 400, 120, -3.2, 3.2);
+	histo2D["Eparton_vs_Phiparton-Phibjet"] = new TH2F("Eparton_vs_Phiparton-Phibjet","Eparton_vs_Phiparton-Phibjet", 5, 0, 300, 120, -0.3, 0.3);
+	histo2D["EgenEl_vs_PhirecEl"] = new TH2F("EgenEl_vs_PhirecEl","EgenEl_vs_PhirecEl", 50, 0, 400, 120, -3.2, 3.2);
+	histo2D["EgenEl_vs_PhigenEl-PhirecEl"] = new TH2F("EgenEl_vs_PhigenEl-PhirecEl","EgenEl_vs_PhigenEl-PhirecEl", 5, 0, 400, 120, -0.05, 0.05);
+	histo2D["InvPtgenMu_vs_PhirecMu"] = new TH2F("InvPtgenMu_vs_PhirecMu","InvPtgenMu_vs_PhirecMu", 50, 0, 0.05, 120, -3.2, 3.2);
+	histo2D["InvPtgenMu_vs_PhigenMu-PhirecMu"] = new TH2F("InvPtgenMu_vs_PhigenMu-PhirecMu","InvPtgenMu_vs_PhigenMu-PhirecMu", 5, 0.002, 0.04, 120, -0.05, 0.05);
 
   ////////////////////////////////////
   /// MultiSamplePlot
@@ -366,123 +383,6 @@ int main (int argc, char *argv[])
 			res->Close();
 			delete res;
 		
-		
-			cout << endl;
-			cout << endl;
-			cout << "--- INFO: THE TRANSFER FUNCTIONS ---" << endl;
-		
-			string tf_filename = "PlotsForTransferFunctions.root";
-			TFile* tf = new TFile(tf_filename.c_str(),"READ");
-			tf->cd();
-	
-			cout << "--- b-jet energy transfer function parameterized as: 1.0/(TMath::Sqrt(2*TMath::Pi())*([1]+[2]*[4]))*(TMath::Exp(-TMath::Power((x-[0]),2)/(2*TMath::Power([1],2)))+[2]*TMath::Exp(-TMath::Power((x-[3]),2)/(2*TMath::Power([4],2))))" << endl;
-			TF1* TF_bjetEnergy_par1 = (TF1*)tf->Get("Eparton_vs_Eparton-Ebjet_a1_Fitted");
-			TF1* TF_bjetEnergy_par2 = (TF1*)tf->Get("Eparton_vs_Eparton-Ebjet_a2_Fitted");
-			TF1* TF_bjetEnergy_par3 = (TF1*)tf->Get("Eparton_vs_Eparton-Ebjet_a3_Fitted");
-			TF1* TF_bjetEnergy_par4 = (TF1*)tf->Get("Eparton_vs_Eparton-Ebjet_a4_Fitted");
-			TF1* TF_bjetEnergy_par5 = (TF1*)tf->Get("Eparton_vs_Eparton-Ebjet_a5_Fitted");
-			if (TF_bjetEnergy_par1 && TF_bjetEnergy_par2 && TF_bjetEnergy_par3 && TF_bjetEnergy_par4 && TF_bjetEnergy_par5 ) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Mean first gaussian: a10 = " << TF_bjetEnergy_par1->GetParameter(0) << "+-" << TF_bjetEnergy_par1->GetParError(0) << " a11 = " << TF_bjetEnergy_par1->GetParameter(1) << "+-" << TF_bjetEnergy_par1->GetParError(1) << " a12 =" << TF_bjetEnergy_par1->GetParameter(2) << "+-" << TF_bjetEnergy_par1->GetParError(2) << endl;
-				cout << "Width first gaussian: a20 = " << TF_bjetEnergy_par2->GetParameter(0) << "+-" << TF_bjetEnergy_par2->GetParError(0) << " a21 = " << TF_bjetEnergy_par2->GetParameter(1) << "+-" << TF_bjetEnergy_par2->GetParError(1) << " a22 =" << TF_bjetEnergy_par2->GetParameter(2) << "+-" << TF_bjetEnergy_par2->GetParError(2) << endl;
-				cout << "Ratio: a30 = " << TF_bjetEnergy_par2->GetParameter(0) << "+-" << TF_bjetEnergy_par2->GetParError(0) << " a31 = " << TF_bjetEnergy_par2->GetParameter(1) << "+-" << TF_bjetEnergy_par2->GetParError(1) << " a32 =" << TF_bjetEnergy_par2->GetParameter(2) << "+-" << TF_bjetEnergy_par2->GetParError(2) << endl;
-				cout << "Mean second gaussian: a40 = " << TF_bjetEnergy_par4->GetParameter(0) << "+-" << TF_bjetEnergy_par4->GetParError(0) << " a41 = " << TF_bjetEnergy_par4->GetParameter(1) << "+-" << TF_bjetEnergy_par4->GetParError(1) << " a42 =" << TF_bjetEnergy_par4->GetParameter(2) << "+-" << TF_bjetEnergy_par4->GetParError(2) << endl;
-				cout << "Width second gaussian: a50 = " << TF_bjetEnergy_par5->GetParameter(0) << "+-" << TF_bjetEnergy_par5->GetParError(0) << " a51 = " << TF_bjetEnergy_par5->GetParameter(1) << "+-" << TF_bjetEnergy_par5->GetParError(1) << " a52 =" << TF_bjetEnergy_par5->GetParameter(2) << "+-" << TF_bjetEnergy_par5->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- non-b-jet energy transfer function parameterized as: 1.0/(TMath::Sqrt(2*TMath::Pi())*([1]+[2]*[4]))*(TMath::Exp(-TMath::Power((x-[0]),2)/(2*TMath::Power([1],2)))+[2]*TMath::Exp(-TMath::Power((x-[3]),2)/(2*TMath::Power([4],2))))" << endl;
-			TF1* TF_nonbjetEnergy_par1 = (TF1*)tf->Get("Eparton_vs_Eparton-Enonbjet_a1_Fitted");
-			TF1* TF_nonbjetEnergy_par2 = (TF1*)tf->Get("Eparton_vs_Eparton-Enonbjet_a2_Fitted");
-			TF1* TF_nonbjetEnergy_par3 = (TF1*)tf->Get("Eparton_vs_Eparton-Enonbjet_a3_Fitted");
-			TF1* TF_nonbjetEnergy_par4 = (TF1*)tf->Get("Eparton_vs_Eparton-Enonbjet_a4_Fitted");
-			TF1* TF_nonbjetEnergy_par5 = (TF1*)tf->Get("Eparton_vs_Eparton-Enonbjet_a5_Fitted");
-			if (TF_nonbjetEnergy_par1 && TF_nonbjetEnergy_par2 && TF_nonbjetEnergy_par3 && TF_nonbjetEnergy_par4 && TF_nonbjetEnergy_par5 ) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Mean first gaussian: a10 = " << TF_nonbjetEnergy_par1->GetParameter(0) << "+-" << TF_nonbjetEnergy_par1->GetParError(0) << " a11 = " << TF_nonbjetEnergy_par1->GetParameter(1) << "+-" << TF_nonbjetEnergy_par1->GetParError(1) << " a12 =" << TF_nonbjetEnergy_par1->GetParameter(2) << "+-" << TF_nonbjetEnergy_par1->GetParError(2) << endl;
-				cout << "Width first gaussian: a20 = " << TF_nonbjetEnergy_par2->GetParameter(0) << "+-" << TF_nonbjetEnergy_par2->GetParError(0) << " a21 = " << TF_nonbjetEnergy_par2->GetParameter(1) << "+-" << TF_nonbjetEnergy_par2->GetParError(1) << " a22 =" << TF_nonbjetEnergy_par2->GetParameter(2) << "+-" << TF_nonbjetEnergy_par2->GetParError(2) << endl;
-				cout << "Ratio: a30 = " << TF_nonbjetEnergy_par3->GetParameter(0) << "+-" << TF_nonbjetEnergy_par3->GetParError(0) << " a31 = " << TF_nonbjetEnergy_par3->GetParameter(1) << "+-" << TF_nonbjetEnergy_par3->GetParError(1) << " a32 =" << TF_nonbjetEnergy_par3->GetParameter(2) << "+-" << TF_nonbjetEnergy_par3->GetParError(2) << endl;
-				cout << "Mean second gaussian: a40 = " << TF_nonbjetEnergy_par4->GetParameter(0) << "+-" << TF_nonbjetEnergy_par4->GetParError(0) << " a41 = " << TF_nonbjetEnergy_par4->GetParameter(1) << "+-" << TF_nonbjetEnergy_par4->GetParError(1) << " a42 =" << TF_nonbjetEnergy_par4->GetParameter(2) << "+-" << TF_nonbjetEnergy_par4->GetParError(2) << endl;
-				cout << "Width second gaussian: a50 = " << TF_nonbjetEnergy_par5->GetParameter(0) << "+-" << TF_nonbjetEnergy_par5->GetParError(0) << " a51 = " << TF_nonbjetEnergy_par5->GetParameter(1) << "+-" << TF_nonbjetEnergy_par5->GetParError(1) << " a52 =" << TF_nonbjetEnergy_par5->GetParameter(2) << "+-" << TF_nonbjetEnergy_par5->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- muon 1/pt transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_MuonInvPt_par1 = (TF1*)tf->Get("InvPtgenMu_vs_InvPtgenMu-InvPtrecMu_a1_Fitted");
-			TF1* TF_MuonInvPt_par2 = (TF1*)tf->Get("InvPtgenMu_vs_InvPtgenMu-InvPtrecMu_a2_Fitted");
-			TF1* TF_MuonInvPt_par3 = (TF1*)tf->Get("InvPtgenMu_vs_InvPtgenMu-InvPtrecMu_a3_Fitted");
-			if ( TF_MuonInvPt_par1 && TF_MuonInvPt_par2 && TF_MuonInvPt_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_MuonInvPt_par1->GetParameter(0) << "+-" << TF_MuonInvPt_par1->GetParError(0) << " a11 = " << TF_MuonInvPt_par1->GetParameter(1) << "+-" << TF_MuonInvPt_par1->GetParError(1) << " a12 =" << TF_MuonInvPt_par1->GetParameter(2) << "+-" << TF_MuonInvPt_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_MuonInvPt_par2->GetParameter(0) << "+-" << TF_MuonInvPt_par2->GetParError(0) << " a21 = " << TF_MuonInvPt_par2->GetParameter(1) << "+-" << TF_MuonInvPt_par2->GetParError(1) << " a22 =" << TF_MuonInvPt_par2->GetParameter(2) << "+-" << TF_MuonInvPt_par2->GetParError(2) << endl;
-				cout << "Width gaussian: a30 = " << TF_MuonInvPt_par3->GetParameter(0) << "+-" << TF_MuonInvPt_par3->GetParError(0) << " a31 = " << TF_MuonInvPt_par3->GetParameter(1) << "+-" << TF_MuonInvPt_par3->GetParError(1) << " a32 =" << TF_MuonInvPt_par3->GetParameter(2) << "+-" << TF_MuonInvPt_par3->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- b-jet Theta transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_bjetTheta_par1 = (TF1*)tf->Get("Thparton_vs_Thparton-Thbjet_a1_Fitted");
-			TF1* TF_bjetTheta_par2 = (TF1*)tf->Get("Thparton_vs_Thparton-Thbjet_a2_Fitted");
-			TF1* TF_bjetTheta_par3 = (TF1*)tf->Get("Thparton_vs_Thparton-Thbjet_a3_Fitted");
-			if ( TF_bjetTheta_par1 && TF_bjetTheta_par2 && TF_bjetTheta_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_bjetTheta_par1->GetParameter(0) << "+-" << TF_bjetTheta_par1->GetParError(0) << " a11 = " << TF_bjetTheta_par1->GetParameter(1) << "+-" << TF_bjetTheta_par1->GetParError(1) << " a12 =" << TF_bjetTheta_par1->GetParameter(2) << "+-" << TF_bjetTheta_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_bjetTheta_par2->GetParameter(0) << "+-" << TF_bjetTheta_par2->GetParError(0) << " a21 = " << TF_bjetTheta_par2->GetParameter(1) << "+-" << TF_bjetTheta_par2->GetParError(1) << " a22 =" << TF_bjetTheta_par2->GetParameter(2) << "+-" << TF_bjetTheta_par2->GetParError(2) << endl;
-				cout << "Width gaussian: a30 = " << TF_bjetTheta_par3->GetParameter(0) << "+-" << TF_bjetTheta_par3->GetParError(0) << " a31 = " << TF_bjetTheta_par3->GetParameter(1) << "+-" << TF_bjetTheta_par3->GetParError(1) << " a32 =" << TF_bjetTheta_par3->GetParameter(2) << "+-" << TF_bjetTheta_par3->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- non-b-jet Theta transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_nonbjetTheta_par1 = (TF1*)tf->Get("Thparton_vs_Thparton-Thnonbjet_a1_Fitted");
-			TF1* TF_nonbjetTheta_par2 = (TF1*)tf->Get("Thparton_vs_Thparton-Thnonbjet_a2_Fitted");
-			TF1* TF_nonbjetTheta_par3 = (TF1*)tf->Get("Thparton_vs_Thparton-Thnonbjet_a3_Fitted");
-			if ( TF_nonbjetTheta_par1 && TF_nonbjetTheta_par2 && TF_nonbjetTheta_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_nonbjetTheta_par1->GetParameter(0) << "+-" << TF_nonbjetTheta_par1->GetParError(0) << " a11 = " << TF_nonbjetTheta_par1->GetParameter(1) << "+-" << TF_nonbjetTheta_par1->GetParError(1) << " a12 =" << TF_nonbjetTheta_par1->GetParameter(2) << "+-" << TF_nonbjetTheta_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_nonbjetTheta_par2->GetParameter(0) << "+-" << TF_nonbjetTheta_par2->GetParError(0) << " a21 = " << TF_nonbjetTheta_par2->GetParameter(1) << "+-" << TF_nonbjetTheta_par2->GetParError(1) << " a22 =" << TF_nonbjetTheta_par2->GetParameter(2) << "+-" << TF_nonbjetTheta_par2->GetParError(2) << endl;
-				cout << "Width gaussian: a30 = " << TF_nonbjetTheta_par3->GetParameter(0) << "+-" << TF_nonbjetTheta_par3->GetParError(0) << " a31 = " << TF_nonbjetTheta_par3->GetParameter(1) << "+-" << TF_nonbjetTheta_par3->GetParError(1) << " a32 =" << TF_nonbjetTheta_par3->GetParameter(2) << "+-" << TF_nonbjetTheta_par3->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- muon Theta transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_MuonTheta_par1 = (TF1*)tf->Get("ThgenMu_vs_ThgenMu-ThrecMu_a1_Fitted");
-			TF1* TF_MuonTheta_par2 = (TF1*)tf->Get("ThgenMu_vs_ThgenMu-ThrecMu_a2_Fitted");
-			TF1* TF_MuonTheta_par3 = (TF1*)tf->Get("ThgenMu_vs_ThgenMu-ThrecMu_a3_Fitted");
-			if ( TF_MuonTheta_par1 && TF_MuonTheta_par2 && TF_MuonTheta_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_MuonTheta_par1->GetParameter(0) << "+-" << TF_MuonTheta_par1->GetParError(0) << " a11 = " << TF_MuonTheta_par1->GetParameter(1) << "+-" << TF_MuonTheta_par1->GetParError(1) << " a12 =" << TF_MuonTheta_par1->GetParameter(2) << "+-" << TF_MuonTheta_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_MuonTheta_par2->GetParameter(0) << "+-" << TF_MuonTheta_par2->GetParError(0) << " a21 = " << TF_MuonTheta_par2->GetParameter(1) << "+-" << TF_MuonTheta_par2->GetParError(1) << " a22 =" << TF_MuonTheta_par2->GetParameter(2) << "+-" << TF_MuonTheta_par2->GetParError(2) << endl;
-				cout << "Width gaussian: a30 = " << TF_MuonTheta_par3->GetParameter(0) << "+-" << TF_MuonTheta_par3->GetParError(0) << " a31 = " << TF_MuonTheta_par3->GetParameter(1) << "+-" << TF_MuonTheta_par3->GetParError(1) << " a32 =" << TF_MuonTheta_par3->GetParameter(2) << "+-" << TF_MuonTheta_par3->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- b-jet Phi transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_bjetPhi_par1 = (TF1*)tf->Get("Phiparton_vs_Phiparton-Phibjet_a1_Fitted");
-			TF1* TF_bjetPhi_par2 = (TF1*)tf->Get("Phiparton_vs_Phiparton-Phibjet_a2_Fitted");
-			TF1* TF_bjetPhi_par3 = (TF1*)tf->Get("Phiparton_vs_Phiparton-Phibjet_a3_Fitted");
-			if ( TF_bjetPhi_par1 && TF_bjetPhi_par2 && TF_bjetPhi_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_bjetPhi_par1->GetParameter(0) << "+-" << TF_bjetPhi_par1->GetParError(0) << " a11 = " << TF_bjetPhi_par1->GetParameter(1) << "+-" << TF_bjetPhi_par1->GetParError(1) << " a12 =" << TF_bjetPhi_par1->GetParameter(2) << "+-" << TF_bjetPhi_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_bjetPhi_par2->GetParameter(0) << "+-" << TF_bjetPhi_par2->GetParError(0) << " a21 = " << TF_bjetPhi_par2->GetParameter(1) << "+-" << TF_bjetPhi_par2->GetParError(1) << " a22 =" << TF_bjetPhi_par2->GetParameter(2) << "+-" << TF_bjetPhi_par2->GetParError(2) << endl;
-				cout << "Width gaussian: a30 = " << TF_bjetPhi_par3->GetParameter(0) << "+-" << TF_bjetPhi_par3->GetParError(0) << " a31 = " << TF_bjetPhi_par3->GetParameter(1) << "+-" << TF_bjetPhi_par3->GetParError(1) << " a32 =" << TF_bjetPhi_par3->GetParameter(2) << "+-" << TF_bjetPhi_par3->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- non-b-jet Phi transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_nonbjetPhi_par1 = (TF1*)tf->Get("Phiparton_vs_Phiparton-Phinonbjet_a1_Fitted");
-			TF1* TF_nonbjetPhi_par2 = (TF1*)tf->Get("Phiparton_vs_Phiparton-Phinonbjet_a2_Fitted");
-			TF1* TF_nonbjetPhi_par3 = (TF1*)tf->Get("Phiparton_vs_Phiparton-Phinonbjet_a3_Fitted");
-			if ( TF_nonbjetPhi_par1 && TF_nonbjetPhi_par2 && TF_nonbjetPhi_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_nonbjetPhi_par1->GetParameter(0) << "+-" << TF_nonbjetPhi_par1->GetParError(0) << " a11 = " << TF_nonbjetPhi_par1->GetParameter(1) << "+-" << TF_nonbjetPhi_par1->GetParError(1) << " a12 =" << TF_nonbjetPhi_par1->GetParameter(2) << "+-" << TF_nonbjetPhi_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_nonbjetPhi_par2->GetParameter(0) << "+-" << TF_nonbjetPhi_par2->GetParError(0) << " a21 = " << TF_nonbjetPhi_par2->GetParameter(1) << "+-" << TF_nonbjetPhi_par2->GetParError(1) << " a22 =" << TF_nonbjetPhi_par2->GetParameter(2) << "+-" << TF_nonbjetPhi_par2->GetParError(2) << endl;
-				cout << "WidPhi gaussian: a30 = " << TF_nonbjetPhi_par3->GetParameter(0) << "+-" << TF_nonbjetPhi_par3->GetParError(0) << " a31 = " << TF_nonbjetPhi_par3->GetParameter(1) << "+-" << TF_nonbjetPhi_par3->GetParError(1) << " a32 =" << TF_nonbjetPhi_par3->GetParameter(2) << "+-" << TF_nonbjetPhi_par3->GetParError(2) << endl;
-			}
-			cout << endl;
-			cout << "--- muon Phi transfer function parameterized as: gaus ( [0]*exp(-0.5*(pow(x-[1]/[2],2)))  )" << endl;
-			TF1* TF_MuonPhi_par1 = (TF1*)tf->Get("PhigenMu_vs_PhigenMu-PhirecMu_a1_Fitted");
-			TF1* TF_MuonPhi_par2 = (TF1*)tf->Get("PhigenMu_vs_PhigenMu-PhirecMu_a2_Fitted");
-			TF1* TF_MuonPhi_par3 = (TF1*)tf->Get("PhigenMu_vs_PhigenMu-PhirecMu_a3_Fitted");
-			if ( TF_MuonPhi_par1 && TF_MuonPhi_par2 && TF_MuonPhi_par3) {
-				cout << "Type	" << " independent term " << " E " << " sqrt(E)" << endl;
-				cout << "Const: a10 = " << TF_MuonPhi_par1->GetParameter(0) << "+-" << TF_MuonPhi_par1->GetParError(0) << " a11 = " << TF_MuonPhi_par1->GetParameter(1) << "+-" << TF_MuonPhi_par1->GetParError(1) << " a12 =" << TF_MuonPhi_par1->GetParameter(2) << "+-" << TF_MuonPhi_par2->GetParError(2) << endl;
-				cout << "Mean gaussian: a20 = " << TF_MuonPhi_par2->GetParameter(0) << "+-" << TF_MuonPhi_par2->GetParError(0) << " a21 = " << TF_MuonPhi_par2->GetParameter(1) << "+-" << TF_MuonPhi_par2->GetParError(1) << " a22 =" << TF_MuonPhi_par2->GetParameter(2) << "+-" << TF_MuonPhi_par2->GetParError(2) << endl;
-				cout << "Width gaussian: a30 = " << TF_MuonPhi_par3->GetParameter(0) << "+-" << TF_MuonPhi_par3->GetParError(0) << " a31 = " << TF_MuonPhi_par3->GetParameter(1) << "+-" << TF_MuonPhi_par3->GetParError(1) << " a32 =" << TF_MuonPhi_par3->GetParameter(2) << "+-" << TF_MuonPhi_par3->GetParError(2) << endl;
-			}
-		
-		
 		}
 
 
@@ -629,15 +529,15 @@ int main (int argc, char *argv[])
 						cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
 						exit(1);
 					}
-			 	 	if( itriggerSemiMu == -1 ) {
+			 	 	if( itriggerSemiMu == 9999 ) {
 						cout << "itriggerSemiMu == 9999 for SemiMu HLTpath selection: " << event->runId() << endl;
 						exit(-1);
 					}
 				} else {
 	 			 	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
-			 	 	if (itriggerSemiMu == -1)
+			 	 	if (itriggerSemiMu == 9999)
 			    	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun);
-			  	if (itriggerSemiMu == -1) 
+			  	if (itriggerSemiMu == 9999) 
 			    	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun);
 				}
 
@@ -657,8 +557,8 @@ int main (int argc, char *argv[])
       			cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
 	    			exit(1);
 	  			}
-	  			if( itriggerSemiEl == -1 ) {
-	    		  cout << "itriggerSemiEl == -1 for SemiEl HLTpath selection: " << event->runId() << endl;
+	  			if( itriggerSemiEl == 9999 ) {
+	    		  cout << "itriggerSemiEl == 9999 for SemiEl HLTpath selection: " << event->runId() << endl;
 	   	 	  exit(-1);
 	   		 }
 				} else {
@@ -670,7 +570,7 @@ int main (int argc, char *argv[])
 				}
 			}
 
-			if (itriggerSemiMu == -1 && itriggerSemiEl == -1) {
+			if (itriggerSemiMu == 9999 && itriggerSemiEl == 9999) {
 				cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT IN RUN " << event->runId() << endl;
 				exit(1);
 			}
@@ -865,6 +765,7 @@ int main (int argc, char *argv[])
 
 			vector<TRootMCParticle*> mcParticlesMatching_;
 			int genmuon = -9999; int genelectron = -9999;
+			bool muonmatched = false; bool electronmatched = false;
 			if (!useMassesAndResolutions && dataSetName.find("TTbarJets") == 0 && (isSemiMu || isSemiEl) ) {
 	
 				sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class)     
@@ -978,6 +879,10 @@ int main (int argc, char *argv[])
 			////cout<<"   ------> according to JetCombiner: hadronicWJet1_.first = "<<hadronicWJet1_.first<<", hadronicWJet2_.first = "<<hadronicWJet2_.first<<", hadronicBJet_.first = "<<hadronicBJet_.first<<endl;
 				if(hadronicWJet1_.first < 4 && hadronicWJet2_.first < 4 && hadronicBJet_.first < 4)
 					hadronictopJetsMatched_MCdef_ = true;
+				if(isSemiMu && ROOT::Math::VectorUtil::DeltaR( (TLorentzVector) *mcParticles[genmuon], (TLorentzVector)*selectedMuons[0]) < 0.3)
+					muonmatched =  true;
+				if(isSemiEl && ROOT::Math::VectorUtil::DeltaR( (TLorentzVector)*mcParticles[genelectron], (TLorentzVector)*selectedElectrons[0]) < 0.3)
+					electronmatched = true;
 			}
 
 			/*cout << "isSemiMu: " << isSemiMu;
@@ -1006,7 +911,6 @@ int main (int argc, char *argv[])
 				//cout << "WMass " << WMass << "; TopMass " << TopMass << endl;
 			
 				//if(calculateTransferFunctions){
-					// FIXME: matching needed between generated and reconstructed leptons?
 					
 					//energies
 					histo2D["Eparton_vs_Enonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->E(),selectedJets[hadronicWJet1_.first]->E());
@@ -1017,11 +921,11 @@ int main (int argc, char *argv[])
 					histo2D["Eparton_vs_Eparton-Ebjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->E(),mcParticlesMatching_[hadronicBJet_.second]->E()-selectedJets[hadronicBJet_.first]->E());
 					histo2D["Eparton_vs_Ebjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->E(),selectedJets[leptonicBJet_.first]->E());
 					histo2D["Eparton_vs_Eparton-Ebjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->E(),mcParticlesMatching_[leptonicBJet_.second]->E()-selectedJets[leptonicBJet_.first]->E());
-					if(isSemiEl) {
+					if(isSemiEl && electronmatched) {
 						histo2D["EgenEl_vs_ErecEl"]->Fill(mcParticles[genelectron]->E(),selectedElectrons[0]->E());
 						histo2D["EgenEl_vs_EgenEl-ErecEl"]->Fill(mcParticles[genelectron]->E(),mcParticles[genelectron]->E()-selectedElectrons[0]->E());
 					}
-					if(isSemiMu) {
+					if(isSemiMu && muonmatched) {
 						float InvPtgenMu = 1./mcParticles[genmuon]->Pt();
 						float InvPtrecMu = 1./selectedMuons[0]->Pt();
 						histo2D["InvPtgenMu_vs_InvPtrecMu"]->Fill(InvPtgenMu,InvPtrecMu);
@@ -1038,30 +942,62 @@ int main (int argc, char *argv[])
 					histo2D["Thparton_vs_Thparton-Thbjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->Theta(),mcParticlesMatching_[hadronicBJet_.second]->Theta()-selectedJets[hadronicBJet_.first]->Theta());
 					histo2D["Thparton_vs_Thbjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->Theta(),selectedJets[leptonicBJet_.first]->Theta());
 					histo2D["Thparton_vs_Thparton-Thbjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->Theta(),mcParticlesMatching_[leptonicBJet_.second]->Theta()-selectedJets[leptonicBJet_.first]->Theta());
-					if(isSemiEl) {
+					histo2D["Eparton_vs_Thnonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->E(),selectedJets[hadronicWJet1_.first]->Theta());
+					histo2D["Eparton_vs_Thparton-Thnonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->E(),mcParticlesMatching_[hadronicWJet1_.second]->Theta()-selectedJets[hadronicWJet1_.first]->Theta());
+					histo2D["Eparton_vs_Thnonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->E(),selectedJets[hadronicWJet2_.first]->Theta());
+					histo2D["Eparton_vs_Thparton-Thnonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->E(),mcParticlesMatching_[hadronicWJet2_.second]->Theta()-selectedJets[hadronicWJet2_.first]->Theta());
+					histo2D["Eparton_vs_Thbjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->E(),selectedJets[hadronicBJet_.first]->Theta());
+					histo2D["Eparton_vs_Thparton-Thbjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->E(),mcParticlesMatching_[hadronicBJet_.second]->Theta()-selectedJets[hadronicBJet_.first]->Theta());
+					histo2D["Eparton_vs_Thbjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->E(),selectedJets[leptonicBJet_.first]->Theta());
+					histo2D["Eparton_vs_Thparton-Thbjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->E(),mcParticlesMatching_[leptonicBJet_.second]->Theta()-selectedJets[leptonicBJet_.first]->Theta());
+					if(isSemiEl && electronmatched) {
 						histo2D["ThgenEl_vs_ThrecEl"]->Fill(mcParticles[genelectron]->Theta(),selectedElectrons[0]->Theta());
 						histo2D["ThgenEl_vs_ThgenEl-ThrecEl"]->Fill(mcParticles[genelectron]->Theta(),mcParticles[genelectron]->Theta()-selectedElectrons[0]->Theta());
+						histo2D["EgenEl_vs_ThrecEl"]->Fill(mcParticles[genelectron]->E(),selectedElectrons[0]->Theta());
+						histo2D["EgenEl_vs_ThgenEl-ThrecEl"]->Fill(mcParticles[genelectron]->E(),mcParticles[genelectron]->Theta()-selectedElectrons[0]->Theta());
 					}
-					if(isSemiMu) {
+					if(isSemiMu && muonmatched) {
 						histo2D["ThgenMu_vs_ThrecMu"]->Fill(mcParticles[genmuon]->Theta(),selectedMuons[0]->Theta());
 						histo2D["ThgenMu_vs_ThgenMu-ThrecMu"]->Fill(mcParticles[genmuon]->Theta(),mcParticles[genmuon]->Theta()-selectedMuons[0]->Theta());
+						histo2D["InvPtgenMu_vs_ThrecMu"]->Fill(1./mcParticles[genmuon]->Pt(),selectedMuons[0]->Theta());
+						histo2D["InvPtgenMu_vs_ThgenMu-ThrecMu"]->Fill(1./mcParticles[genmuon]->Pt(),mcParticles[genmuon]->Theta()-selectedMuons[0]->Theta());
 					}
 					
 					histo2D["Phiparton_vs_Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->Phi(),selectedJets[hadronicWJet1_.first]->Phi());
-					histo2D["Phiparton_vs_Phiparton-Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->Phi(),mcParticlesMatching_[hadronicWJet1_.second]->Phi()-selectedJets[hadronicWJet1_.first]->Phi());
 					histo2D["Phiparton_vs_Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->Phi(),selectedJets[hadronicWJet2_.first]->Phi());
-					histo2D["Phiparton_vs_Phiparton-Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->Phi(),mcParticlesMatching_[hadronicWJet2_.second]->Phi()-selectedJets[hadronicWJet2_.first]->Phi());
+					histo2D["Eparton_vs_Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->E(),selectedJets[hadronicWJet1_.first]->Phi());
+					histo2D["Eparton_vs_Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->E(),selectedJets[hadronicWJet2_.first]->Phi());
+					float DeltaPhi_nonbjet1 = ROOT::Math::VectorUtil::DeltaPhi((TLorentzVector)*mcParticlesMatching_[hadronicWJet1_.second],(TLorentzVector)*selectedJets[hadronicWJet1_.first]);
+					histo2D["Phiparton_vs_Phiparton-Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->Phi(),DeltaPhi_nonbjet1);
+					histo2D["Eparton_vs_Phiparton-Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet1_.second]->E(),DeltaPhi_nonbjet1);
+					float DeltaPhi_nonbjet2 = ROOT::Math::VectorUtil::DeltaPhi((TLorentzVector)*mcParticlesMatching_[hadronicWJet2_.second],(TLorentzVector)*selectedJets[hadronicWJet2_.first]);
+					histo2D["Phiparton_vs_Phiparton-Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->Phi(),DeltaPhi_nonbjet2);
+					histo2D["Eparton_vs_Phiparton-Phinonbjet"]->Fill(mcParticlesMatching_[hadronicWJet2_.second]->E(),DeltaPhi_nonbjet2);
+					
 					histo2D["Phiparton_vs_Phibjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->Phi(),selectedJets[hadronicBJet_.first]->Phi());
-					histo2D["Phiparton_vs_Phiparton-Phibjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->Phi(),mcParticlesMatching_[hadronicBJet_.second]->Phi()-selectedJets[hadronicBJet_.first]->Phi());
 					histo2D["Phiparton_vs_Phibjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->Phi(),selectedJets[leptonicBJet_.first]->Phi());
-					histo2D["Phiparton_vs_Phiparton-Phibjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->Phi(),mcParticlesMatching_[leptonicBJet_.second]->Phi()-selectedJets[leptonicBJet_.first]->Phi());
-					if(isSemiEl) { 
+					histo2D["Eparton_vs_Phibjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->E(),selectedJets[hadronicBJet_.first]->Phi());
+					histo2D["Eparton_vs_Phibjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->E(),selectedJets[leptonicBJet_.first]->Phi());
+					float DeltaPhi_bjet1 = ROOT::Math::VectorUtil::DeltaPhi((TLorentzVector)*mcParticlesMatching_[hadronicBJet_.second],(TLorentzVector)*selectedJets[leptonicBJet_.first]);				
+					histo2D["Phiparton_vs_Phiparton-Phibjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->Phi(),DeltaPhi_bjet1);
+					histo2D["Eparton_vs_Phiparton-Phibjet"]->Fill(mcParticlesMatching_[hadronicBJet_.second]->E(),DeltaPhi_bjet1);
+					float DeltaPhi_bjet2 = ROOT::Math::VectorUtil::DeltaPhi((TLorentzVector)*mcParticlesMatching_[leptonicBJet_.second],(TLorentzVector)*selectedJets[leptonicBJet_.first]);				
+					histo2D["Phiparton_vs_Phiparton-Phibjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->Phi(),DeltaPhi_bjet2);
+					histo2D["Eparton_vs_Phiparton-Phibjet"]->Fill(mcParticlesMatching_[leptonicBJet_.second]->E(),DeltaPhi_bjet2);
+
+					if(isSemiEl && electronmatched) { 
 						histo2D["PhigenEl_vs_PhirecEl"]->Fill(mcParticles[genelectron]->Phi(),selectedElectrons[0]->Phi());
-						histo2D["PhigenEl_vs_PhigenEl-PhirecEl"]->Fill(mcParticles[genelectron]->Phi(),mcParticles[genelectron]->Phi()-selectedElectrons[0]->Phi());
+						histo2D["EgenEl_vs_PhirecEl"]->Fill(mcParticles[genelectron]->E(),selectedElectrons[0]->Phi());
+						float DeltaPhi = ROOT::Math::VectorUtil::DeltaPhi((TLorentzVector)*mcParticles[genelectron],(TLorentzVector)*selectedElectrons[0]);
+						histo2D["PhigenEl_vs_PhigenEl-PhirecEl"]->Fill(mcParticles[genelectron]->Phi(),DeltaPhi);
+						histo2D["EgenEl_vs_PhigenEl-PhirecEl"]->Fill(mcParticles[genelectron]->E(),DeltaPhi);
 					}
-					if(isSemiMu) {
+					if(isSemiMu && muonmatched) {
 						histo2D["PhigenMu_vs_PhirecMu"]->Fill(mcParticles[genmuon]->Phi(),selectedMuons[0]->Phi());
-						histo2D["PhigenMu_vs_PhigenMu-PhirecMu"]->Fill(mcParticles[genmuon]->Phi(),mcParticles[genmuon]->Phi()-selectedMuons[0]->Phi());
+						histo2D["InvPtgenMu_vs_PhirecMu"]->Fill(1./mcParticles[genmuon]->Pt(),selectedMuons[0]->Phi());
+						float DeltaPhi = ROOT::Math::VectorUtil::DeltaPhi((TLorentzVector)*mcParticles[genmuon],(TLorentzVector)*selectedMuons[0]);
+						histo2D["PhigenMu_vs_PhigenMu-PhirecMu"]->Fill(mcParticles[genmuon]->Phi(),DeltaPhi);
+						histo2D["InvPtgenMu_vs_PhigenMu-PhirecMu"]->Fill(1./mcParticles[genmuon]->Pt(),DeltaPhi);
 					}
 				//}
 					//cout << "what's up2?" << endl;
@@ -1428,19 +1364,27 @@ int main (int argc, char *argv[])
       	histo2D["Phiparton_vs_Phibjet"]->Write();
       	histo2D["PhigenEl_vs_PhirecEl"]->Write();
       	histo2D["PhigenMu_vs_PhirecMu"]->Write();
+      	histo2D["Eparton_vs_Thnonbjet"]->Write();
+      	histo2D["Eparton_vs_Thbjet"]->Write();
+      	histo2D["EgenEl_vs_ThrecEl"]->Write();
+      	histo2D["InvPtgenMu_vs_ThrecMu"]->Write();
+      	histo2D["Eparton_vs_Phinonbjet"]->Write();
+      	histo2D["Eparton_vs_Phibjet"]->Write();
+      	histo2D["EgenEl_vs_PhirecEl"]->Write();
+      	histo2D["InvPtgenMu_vs_PhirecMu"]->Write();
       	
 				histo2D["Eparton_vs_Eparton-Enonbjet"]->Write();
       	histo2D["Eparton_vs_Eparton-Ebjet"]->Write();
       	histo2D["EgenEl_vs_EgenEl-ErecEl"]->Write();
       	histo2D["InvPtgenMu_vs_InvPtgenMu-InvPtrecMu"]->Write();
-      	histo2D["Thparton_vs_Thparton-Thnonbjet"]->Write();
-      	histo2D["Thparton_vs_Thparton-Thbjet"]->Write();
-      	histo2D["ThgenEl_vs_ThgenEl-ThrecEl"]->Write();
-      	histo2D["ThgenMu_vs_ThgenMu-ThrecMu"]->Write();
-      	histo2D["Phiparton_vs_Phiparton-Phinonbjet"]->Write();
-      	histo2D["Phiparton_vs_Phiparton-Phibjet"]->Write();
-      	histo2D["PhigenEl_vs_PhigenEl-PhirecEl"]->Write();
-      	histo2D["PhigenMu_vs_PhigenMu-PhirecMu"]->Write();
+      	histo2D["Eparton_vs_Thparton-Thnonbjet"]->Write();
+      	histo2D["Eparton_vs_Thparton-Thbjet"]->Write();
+      	histo2D["EgenEl_vs_ThgenEl-ThrecEl"]->Write();
+      	histo2D["InvPtgenMu_vs_ThgenMu-ThrecMu"]->Write();
+      	histo2D["Eparton_vs_Phiparton-Phinonbjet"]->Write();
+      	histo2D["Eparton_vs_Phiparton-Phibjet"]->Write();
+      	histo2D["EgenEl_vs_PhigenEl-PhirecEl"]->Write();
+      	histo2D["InvPtgenMu_vs_PhigenMu-PhirecMu"]->Write();
 				
       	// fit the distributions
 				for (unsigned int f=0; f<12;f++) {
@@ -1453,25 +1397,23 @@ int main (int argc, char *argv[])
 					if (f==1) histo=histo2D["Eparton_vs_Eparton-Ebjet"]; 
 					if (f==2) histo=histo2D["EgenEl_vs_EgenEl-ErecEl"]; 
 					if (f==3) histo=histo2D["InvPtgenMu_vs_InvPtgenMu-InvPtrecMu"]; 
-					if (f==4) histo=histo2D["Thparton_vs_Thparton-Thnonbjet"]; 
-					if (f==5) histo=histo2D["Thparton_vs_Thparton-Thbjet"]; 
-					if (f==6) histo=histo2D["ThgenEl_vs_ThgenEl-ThrecEl"]; 
-					if (f==7) histo=histo2D["ThgenMu_vs_ThgenMu-ThrecMu"]; 
-					if (f==8) histo=histo2D["Phiparton_vs_Phiparton-Phinonbjet"]; 
-					if (f==9) histo=histo2D["Phiparton_vs_Phiparton-Phibjet"]; 
-					if (f==10) histo=histo2D["PhigenEl_vs_PhigenEl-PhirecEl"]; 
-					if (f==11) histo=histo2D["PhigenMu_vs_PhigenMu-PhirecMu"]; 
+					if (f==4) histo=histo2D["Eparton_vs_Thparton-Thnonbjet"]; 
+					if (f==5) histo=histo2D["Eparton_vs_Thparton-Thbjet"]; 
+					if (f==6) histo=histo2D["EgenEl_vs_ThgenEl-ThrecEl"]; 
+					if (f==7) histo=histo2D["InvPtgenMu_vs_ThgenMu-ThrecMu"]; 
+					if (f==8) histo=histo2D["Eparton_vs_Phiparton-Phinonbjet"]; 
+					if (f==9) histo=histo2D["Eparton_vs_Phiparton-Phibjet"]; 
+					if (f==10) histo=histo2D["EgenEl_vs_PhigenEl-PhirecEl"]; 
+					if (f==11) histo=histo2D["InvPtgenMu_vs_PhigenMu-PhirecMu"]; 
 
-	 				if(f==0 || f==1) {
+	 				if(f==0 || f==1 || f==3 || f==4 || f==5|| f==7 || f==8 || f==9 || f==11) {
 						int nbins = histo->GetXaxis()->GetNbins();
 						cout << "nbins: " << nbins << endl;
-						int npar = 5;
-						//float *parsave = new float[5];
-						//myfit->GetParameters(parsave);
+						int npar = 6;
 
 						//Create one histogram for each function parameter -> 5 histograms for each 2D plot
 						TH1D **hlist = new TH1D*[npar];
-						string parnames[5]={"a1","a2","a3","a4","a5"};
+						string parnames[6]={"a1","a2","a3","a4","a5","a6"};
 						string name="";string title="";
 						const TArrayD *bins = histo->GetXaxis()->GetXbins();
 						for (int ipar=0;ipar<npar;ipar++) {
@@ -1487,26 +1429,53 @@ int main (int argc, char *argv[])
 			
 						//Loop on all bins in X, generate a projection along Y
 						int cut = 0; // require a minimum number of bins in the slice to be is filled
-   					for (int bin=0;bin <= nbins+1;bin ++) {
+   					for (int bin=1;bin < nbins+1;bin ++) {
       				string projection_title = string(histo->GetName())+"_sliceXbin"+tostr(bin);
 							TH1D *hp = histo->ProjectionY(projection_title.c_str(),bin,bin,"e");
+							if(bin==nbins) hp = histo->ProjectionY(projection_title.c_str(),bin,bin+1,"e"); //include overflow in last bin
+							if(bin==1) hp = histo->ProjectionY(projection_title.c_str(),bin-1,bin,"e"); //include underflow in first bin
 							if (hp == 0) continue;
 							float nentries = float(hp->GetEntries());
       				if (nentries == 0 || nentries < cut) {delete hp; continue;}
-							//declare the fit function! its range depends on the jet energy range (hence, the Y-axis)
-							TF1 *myfit = new TF1("myfit","1.0/(TMath::Sqrt(2*TMath::Pi())*([1]+[2]*[4]))*(TMath::Exp(-TMath::Power((x-[0]),2)/(2*TMath::Power([1],2)))+[2]*TMath::Exp(-TMath::Power((x-[3]),2)/(2*TMath::Power([4],2))))",-60,50);	
+							//declare the fit function! its range depends on the jet/lepton energy range (hence, the Y-axis)
+							TF1 *myfit = new TF1("myfit","[2]*(TMath::Exp(-TMath::Power((x-[0]),2)/(2*TMath::Power([1],2)))+[5]*TMath::Exp(-TMath::Power((x-[3]),2)/(2*TMath::Power([4],2))))");	
 							//give names to the parameters
 							myfit->SetParName(0,"a1");
 							myfit->SetParName(1,"a2");
 							myfit->SetParName(2,"a3");
 							myfit->SetParName(3,"a4");
 							myfit->SetParName(4,"a5");
+							myfit->SetParName(5,"a6");
 							//set initial values
-							myfit->SetParameter(0, -3);
-							myfit->SetParameter(1, 11);
-							myfit->SetParameter(2, 0.7);
-							myfit->SetParameter(3, -4);
-							myfit->SetParameter(4, 18);
+							if(f==0 || f==1) { // for E transfer function of JETS
+								myfit->SetParameter(0, -8); //central value of first, broad gaussian
+								myfit->SetParameter(1, 18); //sigma value of first, broad gaussian
+								myfit->SetParameter(2, 63); //constant value of first, broad gaussian
+								myfit->SetParameter(3, 0);; //central value of second, narrow gaussian
+								myfit->SetParameter(4, 8.6); //sigma value of second, narrow gaussian
+								myfit->SetParameter(5, 4.1); //constant value of second, narrow gaussian
+							}else if (f==4 || f==5 || f==8 || f==9) { //for theta and phi transfer functions of JETS
+								myfit->SetParameter(0, 0); 		 //central value of first, broad gaussian
+								myfit->SetParameter(1, 0.038); //sigma value of first, broad gaussian
+								myfit->SetParameter(2, 77); 	 //constant value of first, broad gaussian
+								myfit->SetParameter(3, 0.004); //central value of second, narrow gaussian
+								myfit->SetParameter(4, 0.011); //sigma value of second, narrow gaussian
+								myfit->SetParameter(5, 6.5);   //constant value of second, narrow gaussian
+							}else if (f==3) { //for 1/pt transfer function of muons
+								myfit->SetParameter(0, -0.0008); 		 //central value of first, broad gaussian
+								myfit->SetParameter(1, 0.001); //sigma value of first, broad gaussian
+								myfit->SetParameter(2, 24); 	 //constant value of first, broad gaussian
+								myfit->SetParameter(3, -0.0001); //central value of second, narrow gaussian
+								myfit->SetParameter(4, 0.0001); //sigma value of second, narrow gaussian
+								myfit->SetParameter(5, 4);   //constant value of second, narrow gaussian
+							}else if (f==7 || f==11) { //for theta, phi transfer function of muons
+								myfit->SetParameter(0, 0); 		 //central value of first, broad gaussian
+								myfit->SetParameter(1, 0.01); //sigma value of first, broad gaussian
+								myfit->SetParameter(2, 24); 	 //constant value of first, broad gaussian
+								myfit->SetParameter(3, 0); //central value of second, narrow gaussian
+								myfit->SetParameter(4, 0.001); //sigma value of second, narrow gaussian
+								myfit->SetParameter(5, 4);   //constant value of second, narrow gaussian
+							}
 							string func_title = string(histo->GetName())+"_sliceXbin"+tostr(bin)+"_Fitted";
 							myfit->SetName(func_title.c_str()); 
       				hp->Fit(myfit);
@@ -1514,8 +1483,8 @@ int main (int argc, char *argv[])
       				if (npfits > npar && npfits >= cut) {
          				int binOn = bin + 1/2;
          				for (int ipar=0;ipar<npar;ipar++) {
-            			cout << "histo->GetXaxis()->GetBinCenter(binOn): " << histo->GetXaxis()->GetBinCenter(binOn) << endl;
-            			cout << "myfit->GetParameter("<<ipar<<") " << myfit->GetParameter(ipar) << endl;
+            			//cout << "histo->GetXaxis()->GetBinCenter(binOn): " << histo->GetXaxis()->GetBinCenter(binOn) << endl;
+            			//cout << "myfit->GetParameter("<<ipar<<") " << myfit->GetParameter(ipar) << endl;
 									hlist[ipar]->Fill(histo->GetXaxis()->GetBinCenter(binOn),myfit->GetParameter(ipar)); // fill histogram for parameter i
             			hlist[ipar]->SetBinError(histo->GetXaxis()->GetBinCenter(binOn),myfit->GetParError(ipar));
 								}
@@ -1528,17 +1497,13 @@ int main (int argc, char *argv[])
   					}
 						
          		
-   					// define the fitfunction for all 5 parameters:
+   					// define the fitfunction for all parameters (6):
 						// ai = ai0 + ai1*Ep + ai2*sqrt(Ep) its range depends on the parton energy range (hence, the X-axis)
 						TF1 *myfit2 = new TF1("myfit2", "[0]+[1]*x+[2]*sqrt(x)",histo->GetXaxis()->GetXmin(),histo->GetXaxis()->GetXmax() );	
 						//give names to the parameters
 						myfit2->SetParName(0,"ai0");
 						myfit2->SetParName(1,"ai1");
 						myfit2->SetParName(2,"ai2");
-						//set initial values
-						//myfit2->SetParLimits(0, 0.0, 10);
-						//myfit2->SetParLimits(1, -0.5, 0.1);
-						//myfit2->SetParLimits(2, 0.0, 5);
 						
 						for (int ipar=0;ipar<npar;ipar++){
 							int paramname = ipar+1;
@@ -1549,96 +1514,68 @@ int main (int argc, char *argv[])
 							myfit2->Write();
 						}
 						
-   					
-						//delete [] parsave;
    					delete [] hlist;
 						delete myfit2;
-      		}	else if (f >= 2) {
-						
-						int nbins = histo->GetXaxis()->GetNbins();
-						cout << "nbins: " << nbins << endl;
-						int npar = 3;
-
-						//Create one histogram for each function parameter -> 2 histograms for each 2D plot
-						TH1D **hlist = new TH1D*[npar];
-						string parnames[3]={"a1","a2","a3"};
-						string name="";string title="";
-						const TArrayD *bins = histo->GetXaxis()->GetXbins();
-						for (int ipar=0;ipar<npar;ipar++) {
-							name = string(histo->GetName())+ "_" + parnames[ipar]; 
-							title = string(histo->GetName())+ ": Fitted value of " + parnames[ipar] ;
-       				hlist[ipar] = new TH1D(name.c_str(),title.c_str(), nbins,histo->GetXaxis()->GetXmin(),histo->GetXaxis()->GetXmax());
-      				hlist[ipar]->GetXaxis()->SetTitle(histo->GetXaxis()->GetTitle());
-   					}
-			
-						//Loop on all bins in X, generate a projection along Y
-						int cut = 0; // require a minimum number of bins in the slice to be is filled
-   					for (int bin=0;bin <= nbins+1;bin ++) {
-      				string projection_title = string(histo->GetName())+"_sliceXbin"+tostr(bin);
-							TH1D *hp = histo->ProjectionY(projection_title.c_str(),bin,bin,"e");
-							if (hp == 0) continue;
-							float nentries = float(hp->GetEntries());
-      				if (nentries == 0 || nentries < cut) {delete hp; continue;}
-							//declare the fit function! its range depends on the jet energy range (hence, the Y-axis)
-							TF1 *myfit = new TF1("myfit","gaus");	
-							//give names to the parameters
-							myfit->SetParName(0,"a1");
-							myfit->SetParName(1,"a2");
-							myfit->SetParName(2,"a3");
-							//set initial values
-							//myfit->SetParameter(0, -3);
-							//myfit->SetParameter(1, 11);
-							string func_title = string(histo->GetName())+"_sliceXbin"+tostr(bin)+"_Fitted";
-							myfit->SetName(func_title.c_str()); 
-      				hp->Fit(myfit);
-      				int npfits = myfit->GetNumberFitPoints();
-      				if (npfits > npar && npfits >= cut) {
-         				int binOn = bin + 1/2;
-         				for (int ipar=0;ipar<npar;ipar++) {
-            			cout << "histo->GetXaxis()->GetBinCenter(binOn): " << histo->GetXaxis()->GetBinCenter(binOn) << endl;
-            			cout << "myfit->GetParameter("<<ipar<<") " << myfit->GetParameter(ipar) << endl;
-									hlist[ipar]->Fill(histo->GetXaxis()->GetBinCenter(binOn),myfit->GetParameter(ipar)); // fill histogram for parameter i
-            			hlist[ipar]->SetBinError(histo->GetXaxis()->GetBinCenter(binOn),myfit->GetParError(ipar));
-								}
-         				//hchi2->Fill(histo->GetXaxis()->GetBinCenter(binOn),myfit->GetChisquare()/(npfits-npar));
-      				}
-      				hp->Write();
-							myfit->Write();
-							delete hp;
- 							delete myfit;
-  					}
-						
-         		
-   					// define the fitfunction for all 2 parameters:
-						// ai = ai0 + ai1*Ep + ai2*sqrt(Ep) its range depends on the parton energy range (hence, the X-axis)
-						TF1 *myfit2 = new TF1("myfit2", "[0]+[1]*x+[2]*sqrt(x)",histo->GetXaxis()->GetXmin(),histo->GetXaxis()->GetXmax() );	
-						//give names to the parameters
-						myfit2->SetParName(0,"ai0");
-						myfit2->SetParName(1,"ai1");
-						myfit2->SetParName(2,"ai2");
-						//set initial values
-						//myfit2->SetParLimits(0, 0.0, 10);
-						//myfit2->SetParLimits(1, -0.5, 0.1);
-						//myfit2->SetParLimits(2, 0.0, 5);
-						
-						for (int ipar=0;ipar<npar;ipar++){
-							int paramname = ipar+1;
-							string func_title2 = string(histo->GetName())+"_a"+tostr(paramname)+"_Fitted";
-							myfit2->SetName(func_title2.c_str()); 
-							hlist[ipar]->Fit(myfit2);
-							hlist[ipar]->Write();
-							myfit2->Write();
-						}
-						
-   					
-						//delete [] parsave;
-   					delete [] hlist;
-						delete myfit2;
-						
-					}
+      		}	
 				}
+				
 				outfile->Close();
 				
+				cout << endl;
+				cout << endl;
+				cout << "--- INFO: THE TRANSFER FUNCTIONS ARE PUT IN A TABLE  ---" << endl;
+		
+	
+				string histonames[9] = {"Eparton_vs_Eparton-Ebjet","Eparton_vs_Thparton-Thbjet","Eparton_vs_Phiparton-Phibjet","Eparton_vs_Eparton-Enonbjet","Eparton_vs_Thparton-Thnonbjet","Eparton_vs_Phiparton-Phinonbjet","InvPtgenMu_vs_InvPtgenMu-InvPtrecMu","InvPtgenMu_vs_ThgenMu-ThrecMu","InvPtgenMu_vs_PhigenMu-PhirecMu"};
+			
+				string histodescription[9] = {"b-jet energy", "b-jet theta", "b-jet phi", "non-b jet energy", "non-b jet theta", "non-b jet phi", "muon inv. pt", "muon theta", "muon phi",};
+
+				ofstream myTransferFunctions;
+				string myTransferFunctions_TABLE = "TransferFunctions_TABLE.txt";
+				myTransferFunctions.open(myTransferFunctions_TABLE.c_str());
+				for(int i = 0; i<9; i++){
+					TF1 *TF_par1,*TF_par2,*TF_par3,*TF_par4,*TF_par5,*TF_par6;
+					string name1 = histonames[i]+"_a1_Fitted";
+					string name2 = histonames[i]+"_a2_Fitted";
+					string name3 = histonames[i]+"_a3_Fitted";
+					string name4 = histonames[i]+"_a4_Fitted";
+					string name5 = histonames[i]+"_a5_Fitted";
+					string name6 = histonames[i]+"_a6_Fitted";
+			
+					string tf_filename = "PlotsForTransferFunctions.root";
+					TFile* tf = new TFile(tf_filename.c_str(),"READ");
+					tf->cd();
+					TF_par1 = (TF1*)tf->Get(name1.c_str());
+					TF_par2 = (TF1*)tf->Get(name2.c_str());
+					TF_par3 = (TF1*)tf->Get(name3.c_str());
+					TF_par4 = (TF1*)tf->Get(name4.c_str());
+					TF_par5 = (TF1*)tf->Get(name5.c_str());
+					TF_par6 = (TF1*)tf->Get(name6.c_str());
+					if (TF_par1 && TF_par2 && TF_par3 && TF_par4 && TF_par5 && TF_par6) {
+						myTransferFunctions<< endl;
+						myTransferFunctions<<"\\begin{table}" << endl;
+  					myTransferFunctions<<"\\caption{Parameters of the transfer function for the " << histodescription[i]  << "}" << endl;
+  					myTransferFunctions<<"\\label{tab:}" << endl;
+  					myTransferFunctions<<"\\centering" << endl;
+  					myTransferFunctions<<"\\begin{tabular}{c|ccc}" << endl;
+  					myTransferFunctions<<"\\hline" << endl;
+						myTransferFunctions << "Type	& $a_{i0}$ & $a_{i1}$ ($E$) & $a_{i2}$ ($\\sqrt{E}$)" << "\\\\" << endl;
+  					myTransferFunctions<<"\\hline" << endl;
+						myTransferFunctions << "Mean broad gaussian & $a_{10}$ = " << TF_par1->GetParameter(0) << "$\\pm$" << TF_par1->GetParError(0) << " & $a_{11}$ = " << TF_par1->GetParameter(1) << "$\\pm$" << TF_par1->GetParError(1) << " & $a_{12}$ = " << TF_par1->GetParameter(2) << "$\\pm$" << TF_par1->GetParError(2) << "\\\\" << endl;
+						myTransferFunctions << "Width broad gaussian & $a_{20}$ = " << TF_par2->GetParameter(0) << "$\\pm$" << TF_par2->GetParError(0) << " & $a_{21}$ = " << TF_par2->GetParameter(1) << "$\\pm$" << TF_par2->GetParError(1) << " & $a_{22}$ = " << TF_par2->GetParameter(2) << "$\\pm$" << TF_par2->GetParError(2) << "\\\\" << endl;
+						myTransferFunctions << "Constant broad gaussian & $a_{30}$ = " << TF_par2->GetParameter(0) << "$\\pm$" << TF_par2->GetParError(0) << " & $a_{31}$ = " << TF_par2->GetParameter(1) << "$\\pm$" << TF_par2->GetParError(1) << " & $a_{32}$ = " << TF_par2->GetParameter(2) << "$\\pm$" << TF_par2->GetParError(2) << "\\\\" << endl;
+						myTransferFunctions << "Mean narrow gaussian & $a_{40}$ = " << TF_par4->GetParameter(0) << "$\\pm$" << TF_par4->GetParError(0) << " & $a_{41}$ = " << TF_par4->GetParameter(1) << "$\\pm$" << TF_par4->GetParError(1) << " & $a_{42}$ = " << TF_par4->GetParameter(2) << "$\\pm$" << TF_par4->GetParError(2) << "\\\\" << endl;
+						myTransferFunctions << "Width narrow gaussian & $a_{50}$ = " << TF_par5->GetParameter(0) << "$\\pm$" << TF_par5->GetParError(0) << " & $a_{51}$ = " << TF_par5->GetParameter(1) << "$\\pm$" << TF_par5->GetParError(1) << " & $a_{52}$ = " << TF_par5->GetParameter(2) << "$\\pm$" << TF_par5->GetParError(2) << "\\\\" << endl;
+						myTransferFunctions << "Constant narrow gaussian & $a_{60}$ = " << TF_par6->GetParameter(0) << "$\\pm$" << TF_par6->GetParError(0) << " & $a_{61}$ = " << TF_par6->GetParameter(1) << "$\\pm$" << TF_par6->GetParError(1) << " & $a_{62}$ = " << TF_par6->GetParameter(2) << "$\\pm$" << TF_par6->GetParError(2) << "\\\\" << endl;
+  					myTransferFunctions<<"\\hline" << endl;
+  					myTransferFunctions<<"\\end{tabular}"<<endl;
+  					myTransferFunctions<<"\\end{table}"<<endl;
+						myTransferFunctions<< endl;
+					}
+					tf->Close();
+				}
+				myTransferFunctions.close();
+			
 			}	
 			
 	
