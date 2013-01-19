@@ -93,7 +93,7 @@ class MailHandler:
 
 class JobHandler:
 
-    def __init__(self, nJob, name, systematic, crossSection, intLumi, pathPNFS,time):
+    def __init__(self, nJob, name, systematic, crossSection, intLumi, pathPNFS,time,jobNum,start,end):
 
         self.nJob = nJob
         self.pbsFile = ""
@@ -117,6 +117,12 @@ class JobHandler:
 
         self.srmList = "" # container for files needed to be srmcp'd on the WN when using srmcp
 
+        self.start = start
+
+        self.end = end
+
+        self.jobNum = jobNum
+
     def setlog(self,log):
 
         self.log = log
@@ -135,8 +141,10 @@ class JobHandler:
         if not options.local:
             self.workingDir = "/localgrid/"+userName+"/"+options.TaskName+"_"+timestamp+"_job_"+str(self.nJob)
         else:
-            print "NOT YET IMPLEMENTED LOCAL RUNNING"
-            sys.exit(1)
+            if not os.path.exists("./WorkArea"):
+                os.mkdir("./WorkArea")
+                
+            self.workingDir = "./WorkArea/"+options.TaskName+"_"+timestamp+"_job_"+str(self.nJob)
 
         os.mkdir(self.workingDir)
 
@@ -147,7 +155,9 @@ class JobHandler:
         self.log.output(Popen("cp -vfr "+options.WorkingDir+"/PileUpReweighting "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
         self.log.output(Popen("cp -vfr "+options.WorkingDir+"/JECFiles "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
         self.log.output(Popen("cp -vfr /user/mmaes/lib/* "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
-        if self.inputPNFSDir.find("/user/") == 0 and not self.inputPNFSDir.find("/pnfs/") == 0:
+        self.log.output(Popen("cp -vfr ./DownloadSample.sh "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
+        
+        if not options.local and self.inputPNFSDir.find("/user/") == 0 and not self.inputPNFSDir.find("/pnfs/") == 0:
             split = self.srmList.split(",")
             for f in split:
                 self.log.output(Popen("cp -vfr "+self.inputPNFSDir+"/"+f+" "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
@@ -158,7 +168,7 @@ class JobHandler:
 
         if os.path.exists(self.xmlCFG):
             os.remove(self.xmlCFG)
-        
+            
     def createXMLCFG(self):
 
         global options
@@ -183,17 +193,33 @@ class JobHandler:
         file.write("EOF")
         file.close()
 
+        #print self.start
+        #print self.end
+        iFile = 0
         for file in open(fname):
-            if options.usesrmcp or (self.inputPNFSDir.find("/user/") == 0 and not self.inputPNFSDir.find("/pnfs/") == 0):
-                split = file.split("/")
-                dataSetXML+=split[len(split)-1].strip()+","
-                self.srmList+=split[len(split)-1].strip()+","                
-            else:
-                dataSetXML+="dcap://maite.iihe.ac.be"+file.strip()+","
-                
+
+            #print iFile
+            if not file.rfind("EOF") == -1 or (iFile >= self.start and iFile < self.end):
+
+                if options.usesrmcp or ((self.inputPNFSDir.find("/home/mmaes/samples/") == 0 or self.inputPNFSDir.find("/user/") == 0) and not self.inputPNFSDir.find("/pnfs/") == 0):
+                    if not options.local or (options.local and options.usesrmcp and self.inputPNFSDir.find("/pnfs/") == 0) or self.inputPNFSDir.find("/home/mmaes/samples/") == 0:
+                        split = file.split("/")
+                        dataSetXML+=split[len(split)-1].strip()+","                        
+                        self.srmList+=split[len(split)-1].strip()+","
+                    else:
+                        options.usesrmcp=bool(False)
+                        split = file.split("/")
+                        dataSetXML+=self.inputPNFSDir+"/"+split[len(split)-1].strip()+","
+                        #break;
+                else:
+                    dataSetXML+="dcap://maite.iihe.ac.be"+file.strip()+","
+
+            iFile = iFile+1
+            
         os.remove(fname)
 
-        if options.usesrmcp or (self.inputPNFSDir.find("/user/") == 0 and not self.inputPNFSDir.find("/pnfs/") == 0):            
+
+        if options.usesrmcp or ((self.inputPNFSDir.find("/home/mmaes/samples/") == 0 or self.inputPNFSDir.find("/user/") == 0) and not self.inputPNFSDir.find("/pnfs/") == 0):            
             dataSetXML = dataSetXML.split(",EOF,")[0]
             self.srmList = self.srmList.split(",EOF,")[0]
         else:
@@ -201,17 +227,22 @@ class JobHandler:
        
         dataSetXML += "\"/>"
 
+        #print dataSetXML
+
+        #sys.exit(1)
+
+
         self.log.output(dataSetXML)
             
         xmlFile.write(dataSetXML+"\n")
-        
+
         xmlFile.write("</datasets>\n\n")
         xmlFile.write("<analysis>\n")
         if len(self.inputName.split("Data")) > 1 or len(self.inputName.split("data")) > 1 or len(self.inputName.split("DATA")) > 1:
-            xmlFile.write("<a type=\"Collections\" PVCollection=\"PrimaryVertex\" JetType=\"2\" JetCollection=\"PFJets_selectedPatJetsPF2PAT\" METType=\"2\" METCollection=\"PFMET_patMETsPF2PAT\" MuonCollection=\"Muons_selectedPatMuonsPF2PAT\" ElectronCollection=\"Electrons_selectedPatElectronsPF2PAT\" loadGenJetCollection=\"1\" GenJetCollection=\"GenJets_ak5GenJets\" loadGenEventCollection=\"1\" GenEventCollection=\"GenEvent\" loadNPGenEventCollection=\"0\" NPGenEventCollection=\"NPGenEvent\" loadMCParticles=\"1\" MCParticlesCollection=\"MCParticles\" TrackMETCollection=\"\" loadTrackMET=\"0\"/>\n")
+            xmlFile.write("<a type=\"Collections\" PVCollection=\"PrimaryVertex\" JetType=\"2\" JetCollection=\"PFJets_selectedPatJetsPF2PAT\" METType=\"2\" METCollection=\"PFMET_patType1CorrectedPFMetPF2PAT\" MuonCollection=\"Muons_selectedPatMuonsPF2PAT\" ElectronCollection=\"Electrons_selectedPatElectronsPF2PAT\" loadGenJetCollection=\"1\" GenJetCollection=\"GenJets_ak5GenJetsNoNu\" loadGenEventCollection=\"1\" GenEventCollection=\"GenEvent\" loadNPGenEventCollection=\"0\" NPGenEventCollection=\"NPGenEvent\" loadMCParticles=\"1\" MCParticlesCollection=\"MCParticles\" TrackMETCollection=\"\" loadTrackMET=\"0\"/>")
         else:
-            xmlFile.write("<a type=\"Collections\" PVCollection=\"PrimaryVertex\" JetType=\"2\" JetCollection=\"PFJets_selectedPatJetsPF2PAT\" METType=\"2\" METCollection=\"PFMET_patMETsPF2PAT\" MuonCollection=\"Muons_selectedPatMuonsPF2PAT\" ElectronCollection=\"Electrons_selectedPatElectronsPF2PAT\" loadGenJetCollection=\"1\" GenJetCollection=\"GenJets_ak5GenJets\" loadGenEventCollection=\"1\" GenEventCollection=\"GenEvent\" loadNPGenEventCollection=\"0\" NPGenEventCollection=\"NPGenEvent\" loadMCParticles=\"1\" MCParticlesCollection=\"MCParticles\" TrackMETCollection=\"\" loadTrackMET=\"0\"/>\n")
-          
+            xmlFile.write("<a type=\"Collections\" PVCollection=\"PrimaryVertex\" JetType=\"2\" JetCollection=\"PFJets_selectedPatJetsPF2PAT\" METType=\"2\" METCollection=\"PFMET_patType1CorrectedPFMetPF2PAT\" MuonCollection=\"Muons_selectedPatMuonsPF2PAT\" ElectronCollection=\"Electrons_selectedPatElectronsPF2PAT\" loadGenJetCollection=\"1\" GenJetCollection=\"GenJets_ak5GenJetsNoNu\" loadGenEventCollection=\"1\" GenEventCollection=\"GenEvent\" loadNPGenEventCollection=\"0\" NPGenEventCollection=\"NPGenEvent\" loadMCParticles=\"1\" MCParticlesCollection=\"MCParticles\" TrackMETCollection=\"\" loadTrackMET=\"0\"/>")
+            
         xmlFile.write("<a type=\"Selection\" PVertexNdofCut=\"4\" PVertexZCut=\"24.\" PVertexRhoCut=\"2.\" MuonPtCutSR=\"20.\" MuonEtaCutSR=\"2.1\" MuonRelIsoCutSR=\"0.05\" MuonNHitsCutSR=\"10\" MuonD0CutSR=\"0.02\" MuonDRJetsCut=\"0.3\" MuonPtCutVetoSR=\"10.\" MuonEtaCutVetoSR=\"2.5\" MuonRelIsoCutVetoSR=\"0.2\" ElectronPtCut=\"15.\" ElectronEtaCut=\"2.5\" ElectronRelIsoCut=\"0.2\" JetsPtCutSR=\"30.\" JetsEtaCutSR=\"2.4\" applyJetID=\"1\" JetEMFCut=\"0.01\" n90HitsCut=\"1\" fHPDCut=\"0.98\" NofJets=\"4\" NofJetBins=\"2\"/>\n")
         xmlFile.write("<a type=\"Conditions\" isMC=\"1\" MCRound=\"0\" Vars_ByFile=\"0\" VarsFile=\"m0_100_m12_100\" IntToCut=\"4\" Verbose=\"2\" Luminosity=\"9999999\" JES=\"1.\" nPseudoExp=\"0\" nPseudoSession=\"0\" runonTTrees=\"0\" doABCD=\"1\" doVJEstim=\"1\" doVJEstPE=\"1\" doTtJEstim=\"1\" doTemplComp=\"0\" doSystematics=\"0\"/>\n")
         xmlFile.write("<a type=\"CRForTtbarEstimation\" BtagAlgo_ttjEst=\"0\" BtagDiscriCut_ttjEst=\"4.38\" MuonPtCutCR=\"30.\" MuonEtaCutCR=\"2.1\" MuonRelIsoCutCR=\"0.1\" JetsPtCutCR=\"30.\" JetsEtaCutCR=\"2.4\" MblCut=\"160.\" DRBBCut=\"2.3\" HTBBCut=\"500.\" NREvtFraction=\"0.75\"/>\n")
@@ -232,61 +263,68 @@ class JobHandler:
         self.pbsFile = "/localgrid/"+userName+"/"+options.TaskName+"_"+self.inputName+"_"+timestamp+"_job_"+str(self.nJob)+".pbs"
         self.pbsLog = "/localgrid/"+userName+"/"+options.TaskName+"_"+self.inputName+"_"+timestamp+"_job_"+str(self.nJob)+".log"
 
+        if options.local:
+            self.pbsLog=""
+            self.pbsFile=self.workingDir+"/runme.sh"
+
         self.taskName = self.inputName+"_job"+str(self.nJob)+"_"+timestamp
-        
+
         pbs = open(self.pbsFile,"w")
+
+        if not options.local:
+            pbs.write("#! /bin/bash\n")
+            pbs.write("#PBS -l walltime="+self.walltime+"\n")
+            pbs.write("#PBS -r n\n")
+            pbs.write("#PBS -N "+self.taskName+"\n")
+            pbs.write("#PBS -j oe\n")
+            pbs.write("#PBS -k oe\n")
         
-        pbs.write("#! /bin/bash\n")
-        pbs.write("#PBS -l walltime="+self.walltime+"\n")
-        #pbs.write("#PBS -l walltime=07:00:00sh kill\n")
-        pbs.write("#PBS -r n\n")
-        pbs.write("#PBS -N "+self.taskName+"\n")
-        pbs.write("#PBS -j oe\n")
-        pbs.write("#PBS -k oe\n")
-        
-        pbs.write("echo dumping some info on the worker node\n")
-        pbs.write("hostname\n")
-        pbs.write("df -h\n")
-        pbs.write("uptime\n")
-        pbs.write("free\n")
-        pbs.write("ls -l /scratch/\n")
-        pbs.write("export X509_USER_PROXY=/scratch/$PBS_JOBID/PBSJOB/gridProxy\n")
-        pbs.write("export DCACHE_RA_BUFFER=\"250000000\"\n")
+            pbs.write("echo dumping some info on the worker node\n")
+            pbs.write("hostname\n")
+            pbs.write("df -h\n")
+            pbs.write("uptime\n")
+            pbs.write("free\n")
+            pbs.write("ls -l /scratch/\n")
+            pbs.write("export X509_USER_PROXY=/scratch/$PBS_JOBID/PBSJOB/gridProxy\n")
+            pbs.write("export DCACHE_RA_BUFFER=\"250000000\"\n")
+            
         pbs.write("export ROOTSYS=/localgrid/"+userName+"/root\n")
         pbs.write("export PATH=$ROOTSYS/bin:$PATH\n")
         pbs.write("export LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH\n")
         pbs.write("export LD_LIBRARY_PATH=/scratch/$PBS_JOBID/PBSJOB:$LD_LIBRARY_PATH\n")
         pbs.write("echo \"Root Version: $(root-config --version)\"\n")
-        
-        #pbs.write("\nmkdir -v /scratch/$PBS_JOBID/PBSJOB\n")
-        pbs.write("echo moving workingdir to WN scratch\n")
-        pbs.write("\nmv -vf "+self.workingDir+" /scratch/$PBS_JOBID/PBSJOB\n")
-        #pbs.write("rm -vf "+self.workingDir+"\n")
-        
-        pbs.write("cd /scratch/$PBS_JOBID/PBSJOB\n")    
 
+        if not options.local:
+            pbs.write("echo moving workingdir to WN scratch\n")
+            pbs.write("\nmv -vf "+self.workingDir+" /scratch/$PBS_JOBID/PBSJOB\n")
+            pbs.write("cd /scratch/$PBS_JOBID/PBSJOB\n")    
+        
         if not options.usesrmcp:
-            pbs.write("source /jefmount_mnt/jefmount/cmss/slc5_amd64_gcc434/external/dcap/2*/etc/profile.d/init.sh\n") # to fix the fact that the WN's dont have 64bit libdcap
-            
-        elif not self.inputPNFSDir.find("/user/") == 0:
+            if not options.local:
+                pbs.write("source /jefmount_mnt/jefmount/cmss/slc5_amd64_gcc434/external/dcap/2*/etc/profile.d/init.sh\n") # to fix the fact that the WN's dont have 64bit libdcap
+
+        elif self.inputPNFSDir.find("/home/mmaes/samples/") == 0:
+
+            # download files via curl
+
             InputFiles = self.srmList.split(',')
 
-            n=0
-            
             for i in InputFiles:
                 pbs.write("echo \"Downloading file:  "+str(i)+"\"\n")
-                #pbs.write("srmcp srm://maite.iihe.ac.be:8443"+self.inputPNFSDir+str(i)+" file:////scratch/$PBS_JOBID/PBSJOB/"+str(i)+" &\n")
-                pbs.write("dccp dcap://maite.iihe.ac.be"+self.inputPNFSDir+str(i)+" /scratch/$PBS_JOBID/PBSJOB/"+str(i)+" &\n")
-                pbs.write("pid"+str(n)+"=$!\n")
-                if n == 2 or i == InputFiles[len(InputFiles)-1]:
-                    pbs.write("echo Waiting for srmcp instances to end before starting new ones\n")
-                    for r in xrange(n+1):
-                        pbs.write("echo \"--> waiting for PID $pid"+str(r)+"\"\n")
-                        pbs.write("wait $pid"+str(r)+"\n")
-                    n=0
-                else:
-                    n=n+1
 
+                url = "https://mtop.wn.iihe.ac.be/samples/"+self.inputPNFSDir.split('/')[4]+"/"+str(i)
+
+                if not options.local:
+                    #pbs.write("wget --no-check-certificate -O /scratch/$PBS_JOBID/PBSJOB/"+str(i)+" "+url+"\n")
+                    pbs.write("curl -k -o /scratch/$PBS_JOBID/PBSJOB/"+str(i)+" "+url+" 2>&1\n")
+                else:
+                    #pbs.write("wget --no-check-certificate -O ./"+str(i)+" "+url+" 2> output\n")
+                    pbs.write("curl -k -o ./"+str(i)+" "+url+" 2>&1\n")
+            
+        elif not self.inputPNFSDir.find("/user/") == 0:
+
+            pbs.write("sh DownloadSample.sh "+self.inputPNFSDir+" "+self.srmList+"\n")
+            
         #sys.exit(1)
         
         pbs.write("ls -ltr\n\n")
@@ -296,24 +334,27 @@ class JobHandler:
         pbs.write("./BTagTReeCreator "+str(self.systematicOption)+" 0 myBTAGconfig_"+str(self.nJob)+".xml\n")
 
         pbs.write("ls -l BtagTrees/\n")
-        if options.usesrmcp or (self.inputPNFSDir.find("/user/") == 0 and not self.inputPNFSDir.find("/pnfs/") == 0):
-            pbs.write("echo removing locally copied TopTree files before stageout\n")
-            split = self.srmList.split(",")
-            for f in split:
-                pbs.write("rm -v "+f+"\n")
 
-        pbs.write("echo Moving working directory back to localgrid\n")
-        pbs.write("\nmv -f /scratch/$PBS_JOBID/PBSJOB "+self.workingDir+"\n")
+        if not options.local:
+            if options.usesrmcp or (self.inputPNFSDir.find("/user/") == 0 and not self.inputPNFSDir.find("/pnfs/") == 0):
+                pbs.write("echo removing locally copied TopTree files before stageout\n")
+                split = self.srmList.split(",")
+                for f in split:
+                    pbs.write("rm -v "+f+"\n")
+
+        if not options.local:
+            pbs.write("echo Moving working directory back to localgrid\n")
+            pbs.write("\nmv -f /scratch/$PBS_JOBID/PBSJOB "+self.workingDir+"\n")
         pbs.write("echo \"THIS IS THE END\"\n")
         
         pbs.close()
-
+        
     def submitPBSJob (self):
 
         global timestamp
         global userName
 
-        cmd = "cd /localgrid/"+userName+"/; qsub -q localgrid@cream01.iihe.ac.be "+self.pbsFile
+        cmd = "cd /localgrid/"+userName+"/; qsub -q localgrid@cream02.iihe.ac.be "+self.pbsFile
 
         #print cmd
 
@@ -344,7 +385,44 @@ class JobHandler:
         if os.path.exists(self.pbsLog):
             for line in open(self.pbsLog):
                 self.log.output(line.strip())
-            
+
+    def runLocalJob (self):
+
+        global options
+
+        cmd = "cd "+self.workingDir+"; source runme.sh >> output"
+        cmdtail = "tail -f "+self.workingDir+"/output"
+
+        self.log.output("Starting job with command: "+cmd)
+
+        pExe = Popen("cd "+self.workingDir+"; cat runme.sh", shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+
+        self.log.output(pExe.stdout.read())
+        
+        self.log.output("Progress can be tracked with : "+cmdtail)
+
+        pExe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+
+        exit=pExe.poll()
+        while exit == None:
+            exit = pExe.poll()
+            time.sleep(30)
+
+        f=open(self.workingDir+"/done","w")
+        f.write(pExe.stdout.read())
+        f.close()
+        
+        self.log.output("Job has Finished")
+
+        for line in open(self.workingDir+"/output","r"):
+             self.log.output(line.strip())
+
+        #print exit
+        
+        if not exit == 0:
+
+            self.log.output("  --> Seems that the job has failed!!!!!!!")
+
     def process(self):
 
         if not options.local:
@@ -365,17 +443,51 @@ class JobHandler:
 
             self.checkPBSJob()
 
-            self.log.output(Popen("cp -f "+self.workingDir+"/BtagTrees/*.root "+self.resultsDir+"; cp -f "+self.workingDir+"/BtagTrees/*.txt "+self.resultsDir+"; rm -rf "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
+            if self.jobNum == -1:
+
+                self.log.output(Popen("cp -f "+self.workingDir+"/BtagTrees/*.root "+self.resultsDir+"; cp -f "+self.workingDir+"/BtagTrees/*.txt "+self.resultsDir+"; rm -rf "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
+
+            else:
+
+                if not os.path.exists(self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum)):
+                    os.mkdir(self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum))
+
+                self.log.output(Popen("cp -f "+self.workingDir+"/BtagTrees/*.root "+self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum)+"; cp -f "+self.workingDir+"/BtagTrees/*.txt "+self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum)+"; rm -rf "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
 
             # clean up
-        
-            os.remove(self.pbsFile)
+
+            if os.path.exists(self.pbsFile):
+                os.remove(self.pbsFile)
             if os.path.exists(self.pbsLog):
                 os.remove(self.pbsLog)
-
+                
         else:
 
-            print "NOT YET IMPLEMENTED LOCAL RUNNING"
+            self.createXMLCFG()
+            
+            self.setupWorkingDir()
+
+            self.createPBSCFG()
+
+            self.runLocalJob()
+
+            if self.jobNum == -1:
+
+                self.log.output(Popen("cp -f "+self.workingDir+"/BtagTrees/*.root "+self.resultsDir+"; cp -f "+self.workingDir+"/BtagTrees/*.txt "+self.resultsDir+"; rm -rf "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
+
+            else:
+
+                if not os.path.exists(self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum)):
+                    os.mkdir(self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum))
+
+                self.log.output(Popen("cp -f "+self.workingDir+"/BtagTrees/*.root "+self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum)+"; cp -f "+self.workingDir+"/BtagTrees/*.txt "+self.resultsDir+"/"+self.inputName+"_job"+str(self.jobNum)+"; rm -rf "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
+
+            # clean up
+
+            if os.path.exists(self.pbsFile):
+                os.remove(self.pbsFile)
+            if os.path.exists(self.pbsLog):
+                os.remove(self.pbsLog)
             
         return True
 
@@ -493,7 +605,7 @@ optParser.add_option("-o","--log-stdout", action="store_true", dest="stdout",def
 optParser.add_option("-l","--run-local", action="store_true", dest="local",default=bool(False),
                      help="Use local CPUs", metavar="")
 optParser.add_option("","--srmcp", action="store_true", dest="usesrmcp",default=bool(False),
-                     help="Use SRMCP on the WNs to download rootfiles first from SE. If false, libDcap is used.", metavar="")
+                     help="Use SRMCP on the WNs to download rootfiles first from /pnfs. If false, libDcap is used. THIS IS ONLY FOR SAMPLES ON PNFS", metavar="")
 optParser.add_option("-w","--walltime", dest="walltime",default="07:00:00",
                      help="Define the PBS job walltime.", metavar="")
    
@@ -611,13 +723,79 @@ nJobs = int(0)
 
 systematics = [0]
 
-#for i in xrange( int(options.nJobs) ):
 for line in open(options.WorkingDir+"/inputSamples.txt"):
 
     if len(line.split("#")) < 2 and not line.rfind("@SYSTEMATICS:") == -1:
         systematics = ((line.split("@SYSTEMATICS:")[1]).strip()).split(",")
 
-    elif len(line.split("#")) < 2:
+for syst in systematics:
+    for line in open(options.WorkingDir+"/inputSamples.txt"):
+
+        if len(line.split("#")) < 2 and line.rfind("@SYSTEMATICS:") == -1:
+    
+            splitted = line.split(":")
+    
+            if len(splitted) > 1:
+
+                wall = options.walltime
+
+                if len(splitted) > 6:
+                    wall = (splitted[6].strip()).replace("-",":")
+
+                # split samples in different jobs
+                nGroupFiles = -1
+                
+                if len(splitted) > 5:
+                    nGroupFiles = int(splitted[5].strip())
+
+                if splitted[1] != "-1": #data -> no syst
+
+                    dir = splitted[4].split("\n")[0]
+                    cmd = "ls "+dir+"/*.root | wc -l"
+                    nInputFiles = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read()
+
+                    nInputFiles = float(nInputFiles.strip("\n"))
+
+                    if nGroupFiles == -1: nGroupFiles=int(nInputFiles)
+
+                    nCycles = int(nInputFiles/nGroupFiles)
+
+                    if nCycles*nGroupFiles < nInputFiles:
+                        nCycles=nCycles+1
+
+                    #nCycles=1
+
+                    for i in xrange(nCycles):
+
+                        start=i*nGroupFiles
+                    
+                        end=(i+1)*nGroupFiles
+
+                        jobNum = -1
+
+                        if not nGroupFiles == nInputFiles:
+                            jobNum = i
+
+                        if end > nInputFiles:
+                            end=int(nInputFiles)
+                
+                        if i == 0:
+                            
+                            if nCycles > 1:
+                                log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> Systematics switch: "+str(splitted[1])+" <-> Systematic: "+str(syst)+" (nJobs: "+str(nCycles)+")")
+                            else:
+                                log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> Systematics switch: "+str(splitted[1])+" <-> Systematic: "+str(syst))
+
+                        job = JobHandler(nJobs, splitted[0], str(syst), splitted[2], splitted[3], splitted[4].split("\n")[0],wall,jobNum,start,end)
+                        jobsPool.put(job)
+                    
+                        nJobs += 1
+
+# extra loop for the samples where no systematics should be run
+
+for line in open(options.WorkingDir+"/inputSamples.txt"):
+
+    if len(line.split("#")) < 2:
     
         splitted = line.split(":")
     
@@ -625,41 +803,73 @@ for line in open(options.WorkingDir+"/inputSamples.txt"):
 
             wall = options.walltime
 
-            if len(splitted) > 5:
-                wall = (splitted[5].strip()).replace("-",":")
+            if len(splitted) > 6:
+                wall = (splitted[6].strip()).replace("-",":")
 
-            log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> Systematics switch: "+str(splitted[1])+" <-> Systematics list: "+str(systematics))
+            # split samples in different jobs
+            nGroupFiles = -1
+                
+            if len(splitted) > 5:
+                nGroupFiles = int(splitted[5].strip())
 
             if splitted[1] == "-1": #data -> no syst
 
-                job = JobHandler(nJobs, splitted[0], str(0), splitted[2], splitted[3], splitted[4].split("\n")[0],wall)
-        
-                jobsPool.put(job)
+                dir = splitted[4].split("\n")[0]
+                cmd = "ls "+dir+"/*.root | wc -l"
+                nInputFiles = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read()
 
-                nJobs += 1
+                nInputFiles = float(nInputFiles.strip("\n"))
+
+                if nGroupFiles == -1: nGroupFiles=int(nInputFiles)
+
+                nCycles = int(nInputFiles/nGroupFiles)
+
+                if nCycles*nGroupFiles < nInputFiles:
+                    nCycles=nCycles+1
+                        
+                for i in xrange(nCycles):
+
+                    start=i*nGroupFiles
+                    
+                    end=(i+1)*nGroupFiles
+
+                    jobNum = -1
+
+                    if not nGroupFiles == nInputFiles:
+                        jobNum = i
+
+                    if end > nInputFiles:
+                        end=int(nInputFiles)
                 
-            else:
+                    if i == 0:
+                            
+                        if nCycles > 1:
+                            log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> No Systematics (nJobs: "+str(nCycles)+")")
+                        else:
+                            log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> No Systematics")
 
-                for syst in systematics:
-
-                    #print "adding syst"+str(syst)
-
-                    job = JobHandler(nJobs, splitted[0], str(syst), splitted[2], splitted[3], splitted[4].split("\n")[0],wall)
+                    job = JobHandler(nJobs, splitted[0], str(0), splitted[2], splitted[3], splitted[4].split("\n")[0],wall,jobNum,start,end)
                     jobsPool.put(job)
-        
+                    
                     nJobs += 1
-            
+
+#print nJobs
 #sys.exit(1)
 
 # start our threads
 
 workers = []
 #for x in xrange ( int(nJobs) ):
-for x in xrange ( 20 ):
+
+nWorkers = int(nJobs)
+
+if nWorkers > 30: nWorkers=30
+
+for x in xrange ( nWorkers ):
    workers.append(WorkFlow(x))
    workers[x].start()
 
-   time.sleep(10)
+   time.sleep(5)
 
 # check if there are workers still working
 
