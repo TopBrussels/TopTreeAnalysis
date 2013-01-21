@@ -1157,7 +1157,7 @@ float ResolutionFit::EtResolution(TLorentzVector* jet, bool protect)
     if(fabs(jet->Eta()) >= towerBinning_[iEta] && fabs(jet->Eta()) < towerBinning_[iEta+1])
     {
 	    res = bFuncSigma_[iEta]->Eval( jet->Pt() );
-	    if( protect && res < bFuncSigma_[iEta]->Eval( 300. ) )
+	    if( protect && jet->Pt() > 300. && res < bFuncSigma_[iEta]->Eval( 300. ) )
 	      res = bFuncSigma_[iEta]->Eval( 300. );
 	    if( jet->Pt() > bFuncSigma_[iEta]->GetMaximumX() )
 	      res = bFuncSigma_[iEta]->GetMaximum();
@@ -1178,7 +1178,7 @@ float ResolutionFit::EtaResolution(TLorentzVector* jet, bool protect)
     if(fabs(jet->Eta()) >= towerBinning_[iEta] && fabs(jet->Eta()) < towerBinning_[iEta+1])
     {
       res = bFuncEtaSigma_[iEta]->Eval( jet->Pt() );
-	    if( protect && res < bFuncEtaSigma_[iEta]->Eval( 300. ) )
+	    if( protect && jet->Pt() > 300. && res < bFuncEtaSigma_[iEta]->Eval( 300. ) )
         res = bFuncEtaSigma_[iEta]->Eval( 300. );
     }
   return res;
@@ -1197,7 +1197,7 @@ float ResolutionFit::ThetaResolution(TLorentzVector* jet, bool protect)
     if(fabs(jet->Eta()) >= towerBinning_[iEta] && fabs(jet->Eta()) < towerBinning_[iEta+1])
     {
       res = bFuncThetaSigma_[iEta]->Eval( jet->Pt() );
-	    if( protect && res < bFuncThetaSigma_[iEta]->Eval( 300. ) )
+	    if( protect && jet->Pt() > 300. && res < bFuncThetaSigma_[iEta]->Eval( 300. ) )
         res = bFuncThetaSigma_[iEta]->Eval( 300. );
     }
   return res;
@@ -1216,7 +1216,7 @@ float ResolutionFit::PhiResolution(TLorentzVector* jet, bool protect)
     if(fabs(jet->Eta()) >= towerBinning_[iEta] && fabs(jet->Eta()) < towerBinning_[iEta+1])
     {
       res = bFuncPhiSigma_[iEta]->Eval( jet->Pt() );
-	    if( protect && res < bFuncPhiSigma_[iEta]->Eval( 300. ) )
+	    if( protect && jet->Pt() > 300. && res < bFuncPhiSigma_[iEta]->Eval( 300. ) )
         res = bFuncPhiSigma_[iEta]->Eval( 300. );
     }
   return res;
