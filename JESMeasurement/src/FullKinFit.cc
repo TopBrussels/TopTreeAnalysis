@@ -45,6 +45,8 @@ FullKinFit::FullKinFit(Dataset* d, ResolutionFit *resFitLightJets, ResolutionFit
       histo1D_[wJetsSFTitle] = new TH1F(wJetsSFTitle.c_str(),wJetsSFTitle.c_str(),100,0,2);
       string startTopMassTitle = "startTopMass_"+dataset_->Name();
       histo1D_[startTopMassTitle] = new TH1F(startTopMassTitle.c_str(),startTopMassTitle.c_str(),120,0,600);
+      string massUncTitle = "massUnc_"+dataset_->Name();
+      histo1D_[massUncTitle] = new TH1F(massUncTitle.c_str(),massUncTitle.c_str(),100,0,100);
     }
     
     // Make some plots
@@ -309,15 +311,20 @@ TH2F* FullKinFit::DummyMonster(int jetCombi)
   return histo;
 }
 
-float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG, int jetCombi)
+float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG, int jetCombi, bool correctCombi)
 {
   nTotalJetCombis_++;
+  
+//  cout << "kinFit!!!" << endl;
   
   float* result = new float[3];
   int hadrBJetIndex = MVAvals_.second[2], lightJet1Index = MVAvals_.second[0], lightJet2Index = MVAvals_.second[1];
   TLorentzVector bJet = (*jets_[hadrBJetIndex]);
   TLorentzVector lightJet1 = (*jets_[lightJet1Index]);
 	TLorentzVector lightJet2 = (*jets_[lightJet2Index]);
+	
+	float mTopRaw = (bJet+lightJet1+lightJet2).M();
+	float mWRaw = (lightJet1+lightJet2).M();
 	
   float lightCorr1 = 1 - resFitLightJets_->EtCorrection(&lightJet1);
   float lightCorr2 = 1 - resFitLightJets_->EtCorrection(&lightJet2);
@@ -326,6 +333,9 @@ float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG
   lightJet1 = lightCorr1 * lightJet1;
   lightJet2 = lightCorr2 * lightJet2;
   bJet = bCorr * bJet;
+  
+  float mTopCorr = (bJet+lightJet1+lightJet2).M();
+  float mWCorr = (lightJet1+lightJet2).M();
   
   // prepare the resolutions for the Kinematic Fit
   TMatrixD Ml1(3,3), Ml2(3,3), Mb(3,3);
@@ -340,11 +350,21 @@ float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG
   Mb(1,1) = pow(resFitBJetsL7_->ThetaResolution(&bJet, true), 2);
   Mb(2,2) = pow(resFitBJetsL7_->PhiResolution(&bJet, true), 2);
   
+//  cout << "resoLight1 :  " << lightJet1.Pt() << " " << resFitLightJetsL7_->EtResolution(&lightJet1, true) << "  | resoLight2 :  " << lightJet2.Pt() << " " << resFitLightJetsL7_->EtResolution(&lightJet2, true) << "  | resoB :  " << bJet.Pt() << " " << resFitBJetsL7_->EtResolution(&bJet, true) << endl;
+  
   // mass to start from
   float wJetsSF = WMass/( (lightJet1+lightJet2).M() ); // factor to scale up/down the light jets
   float startTopMass = ( ( (lightJet1+lightJet2)*wJetsSF ) + bJet ).M();
   histo1D_["wJetsSF_"+dataset_->Name()]->Fill(wJetsSF);
   histo1D_["startTopMass_"+dataset_->Name()]->Fill(startTopMass);
+  
+  if(correctCombi)
+  {
+    histo1D_["mWUnCorr_"+dataset_->Name()]->Fill(mWRaw);
+    histo1D_["mTopUnCorr_"+dataset_->Name()]->Fill(mTopRaw);
+    histo1D_["mWCorr_"+dataset_->Name()]->Fill(mWCorr);
+    histo1D_["mTopCorr_"+dataset_->Name()]->Fill(mTopCorr);
+  }
   
   Float_t mTopConstraint[51], chi2[51];
   float massMinChi2 = -1., minChi2 = 9999999., maxChi2 = 0;
@@ -445,13 +465,15 @@ float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG
     result[0] = minim;
     result[1] = uncert;
     
+    if( minimchi2 < 5 )
+      histo1D_["massUnc_"+dataset_->Name()]->Fill(uncert);
+    
     if( minim > 0 && minim > startTopMass-51 && minim < startTopMass+51 && a > 0 ) //&& minChi2 < 40 )
     {
       nFinalKinFitJetCombis_++;
       
       if( a < 0 || !(uncert<2000) || minim <= 50 )
       {
-//        cout << event->runId() << " " << event->lumiBlockId() << " " << event->eventId() << " " << jetCombi << " |  wJetsSF: " << wJetsSF << "  startTopMass: " << startTopMass << "  finalTopMass: " << minim << endl;
         cout << event->runId() << " " << event->lumiBlockId() << " " << event->eventId() << " " << jetCombi << " |  wJetsSF: " << wJetsSF
           << "  startTopMass: " << startTopMass << "  massMinChi2: " << massMinChi2 <<  "  finalTopMass: " << minim << " " << nGoodFits << " " << minChi2 << " " << nGoodFitsInFitWindow << endl;
         writePNG = true;

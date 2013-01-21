@@ -41,7 +41,7 @@ class FullKinFit {
     void SetMVAStuff(pair<float, vector<unsigned int> > MVAvals);
     TH2F* FitEvent(TRootEvent* event, float WMass = 80.4, float topMass = 172.5, bool writePNG = false, int jetCombi=0);
     TH2F* DummyMonster(int jetCombi=0);
-    float* EstimateTopMass(TRootEvent* event, float WMass = 80.4, bool writePNG = false, int jetCombi = 0);
+    float* EstimateTopMass(TRootEvent* event, float WMass = 80.4, bool writePNG = false, int jetCombi = 0, bool correctCombi = false);
     void Write(TFile* fout, bool savePNG = false, string pathPNG = string(""));
   
   private:
