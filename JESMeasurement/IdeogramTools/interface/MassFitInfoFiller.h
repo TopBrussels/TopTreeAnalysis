@@ -10,7 +10,7 @@
 #include <TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodTool.h>
 
 #include "TopTreeAnalysis/JESMeasurement/interface/LightMonster.h"
-#include "TopTreeAnalysis/Content/interface/Dataset.h"
+#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
 
 void fillMassFitInfoHeader(Dataset* dataSet, ideogram::MassFitInfoHeader& header, bool isSemiMu, bool containsPDFsyst);
 

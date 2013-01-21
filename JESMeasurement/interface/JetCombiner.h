@@ -14,12 +14,12 @@
 
 #include <sys/stat.h>
 
-#include "TopTreeAnalysis/Tools/interface/MVAComputer.h"
-#include "TopTreeAnalysis/Tools/interface/MVATrainer.h"
-#include "TopTreeAnalysis/Tools/interface/PlottingTools.h"
-#include "TopTreeAnalysis/MCInformation/interface/ResolutionFit.h"
-#include "TopTreeAnalysis/Tools/interface/MultiSamplePlot.h"
-#include "TopTreeAnalysis/MCInformation/interface/JetPartonMatching.h"
+#include "TopTreeAnalysisBase/Tools/interface/MVAComputer.h"
+#include "TopTreeAnalysisBase/Tools/interface/MVATrainer.h"
+#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/JetPartonMatching.h"
 
 #include "TopTreeProducer/interface/TRootJet.h"
 #include "TopTreeProducer/interface/TRootMuon.h"

@@ -16,13 +16,11 @@
 #include "TFitResult.h"
 #include "TFitResultPtr.h"
 
-#include "TopTreeAnalysis/MCInformation/interface/ResolutionFit.h"
-#include "TopTreeAnalysis/KinFitter/interface/TKinFitter.h"
-#include "TopTreeAnalysis/KinFitter/interface/TFitConstraintM.h"
-#include "TopTreeAnalysis/KinFitter/interface/TFitParticleEtThetaPhiEMomFix.h"
-#include "TopTreeAnalysis/Reconstruction/interface/FactorizedJetCorrector.h"
-#include "TopTreeAnalysis/Reconstruction/interface/JetCorrectorParameters.h"
-#include "TopTreeAnalysis/Tools/interface/PlottingTools.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/KinFitter/interface/TKinFitter.h"
+#include "TopTreeAnalysisBase/KinFitter/interface/TFitConstraintM.h"
+#include "TopTreeAnalysisBase/KinFitter/interface/TFitParticleEtThetaPhiEMomFix.h"
+#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
 
 #include "TopTreeProducer/interface/TRootEvent.h"
 #include "TopTreeProducer/interface/TRootJet.h"
