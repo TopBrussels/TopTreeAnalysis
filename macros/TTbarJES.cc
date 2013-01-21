@@ -317,9 +317,6 @@ int main (int argc, char *argv[])
   
   cout << "Initializing LumiReWeighting stuff" << endl;
   LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");
-
   
   /////////////////////////////
   /// ResolutionFit Stuff
@@ -346,13 +343,13 @@ int main (int argc, char *argv[])
   else
   {
     resFitLightJets = new ResolutionFit("LightJet");
-    resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
+    resFitLightJets->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/lightJetReso.root");
     resFitLightJetsL7 = new ResolutionFit("LightJetL7");
-    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_AfterL7.root");
+    resFitLightJetsL7->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/lightJetReso_AfterL7.root");
     resFitBJets = new ResolutionFit("BJet");
-    resFitBJets->LoadResolutions("resolutions/bJetReso.root");
+    resFitBJets->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/bJetReso.root");
     resFitBJetsL7 = new ResolutionFit("BJetL7");
-    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_AfterL7.root");
+    resFitBJetsL7->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/bJetReso_AfterL7.root");
   }
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
@@ -479,8 +476,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 1000; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 1000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -1057,20 +1054,13 @@ int main (int argc, char *argv[])
    	      mvaValsVector.push_back(tmpMvaVals.first);
           kinFit->SetMVAStuff(tmpMvaVals);
           
+          bool correctCombi = false;
+          if( ( (tmpMvaVals.second[0] == lightJet1Index && tmpMvaVals.second[1] == lightJet2Index) || (tmpMvaVals.second[1] == lightJet1Index && tmpMvaVals.second[0] == lightJet2Index) ) && tmpMvaVals.second[2] == hadrBJetIndex ) correctCombi = true;
+          
           if(measureTopMassDifference)
           {
             vector<float> tmp;
-            float* res = 0;
-//              if( mcJetCombi[2] == tmpMvaVals.second[2] && ( ( mcJetCombi[1] == tmpMvaVals.second[1] && mcJetCombi[0] == tmpMvaVals.second[0] )
-//                 || ( mcJetCombi[0] == tmpMvaVals.second[1] && mcJetCombi[1] == tmpMvaVals.second[0] ) ) )
-            res = kinFit->EstimateTopMass(event, 80.4, false, iCombi);
-//              else
-//              {
-//                res = new float[3];
-//                res[0] = 99.;
-//                res[1] = 99.;
-//                res[2] = 99.;
-//              }
+            float* res = kinFit->EstimateTopMass(event, 80.4, false, iCombi, correctCombi);
             tmp.push_back(res[0]);
             tmp.push_back(res[1]);
             tmp.push_back(res[2]);
