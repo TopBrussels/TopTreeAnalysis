@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
   // Configuration
   /////////////////////
 
-	bool useMassesAndResolutions = false;
+	bool useMassesAndResolutions = true;
 	bool calculateTransferFunctions = true; // true will have only an effect is useMassesAndResolutions = false
 
   //xml file
@@ -124,10 +124,6 @@ int main (int argc, char *argv[])
       foundEl=true;  
     }  
 
-    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // when only using one channel
-      Luminosity = datasets[d]->EquivalentLumi();
-    }   
-
     if( dataSetName.find("QCD") == 0 ) datasets[d]->SetColor(kYellow);
     if( dataSetName.find("TT") == 0 ) datasets[d]->SetColor(kRed+1);
     if( dataSetName.find("TTbarJets_Other") == 0 ) datasets[d]->SetColor(kRed-7);
@@ -155,8 +151,10 @@ int main (int argc, char *argv[])
   if (foundMu) {
 		for (unsigned int d = 0; d < datasets.size (); d++) {
 			string dataSetName = datasets[d]->Name();
-			if ( ! (dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0) ) 
+			if ( ! (dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0) ) {
 				datasetsMu.push_back(datasets[d]);
+				cout << "datasets[d]->Name() " << datasets[d]->Name() << endl;
+			}
 		}
 	}
       
@@ -291,9 +289,9 @@ int main (int argc, char *argv[])
 
   LumiReWeighting LumiWeights, LumiWeightsUp, LumiWeightsDown;
   
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_down.root", "pileup", "pileup");
+  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
+  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_down.root", "pileup", "pileup");
 
   cout << " Initialized LumiReWeighting stuff" << endl;
   
@@ -340,7 +338,7 @@ int main (int argc, char *argv[])
       vCorrParam.push_back(*ResJetCorPar);
     }
     
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
     
     // true means redo also the L1
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
@@ -411,7 +409,6 @@ int main (int argc, char *argv[])
             
       if(ievt%1000 == 0)
 	std::cout<<"Processing the "<<ievt<<"th event (" << ((double)ievt/(double)datasets[d]->NofEvtsToRunOver())*100  << "%)" << flush<<"\r";
-
       ////////////////
       // LOAD EVENT //
       ////////////////
@@ -509,22 +506,16 @@ int main (int argc, char *argv[])
 				//semi-mu
 				if(dataSetName.find("Data_Mu") == 0 || dataSetName.find("data_Mu") == 0 || dataSetName.find("DATA_Mu") == 0) {
 	  
-	  			if( event->runId() <= 190738 )
-      	  	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
-					else if( event->runId() >= 191043 && event->runId() <= 191411 )
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
-					else if( event->runId() >= 191695 && event->runId() <= 193621 )
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-					else if( event->runId() >= 193834 && event->runId() <= 194225 )
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
-					else if( event->runId() >= 194270 && event->runId() <= 196531 )
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+					if( event->runId() <= 190738 )
+						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun, iFile);
+					else if( event->runId() >= 191043 && event->runId() <= 193621 )
+						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v12"), currentRun, iFile);
+					else if( event->runId() >= 193834 && event->runId() <= 196531 )
+						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 					else if( event->runId() >= 198049 && event->runId() <= 199608)
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-					else if( event->runId() >= 199698 && event->runId() <= 202504)
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
-					else if( event->runId() >= 202972 && event->runId() <= 203002)
-						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v4"), currentRun, iFile);
+						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v14"), currentRun, iFile);
+					else if( event->runId() >= 199698 && event->runId() <= 208357)
+						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v15"), currentRun, iFile);
 				  else {
 						cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
 						exit(1);
@@ -534,25 +525,21 @@ int main (int argc, char *argv[])
 						exit(-1);
 					}
 				} else {
-	 			 	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
-			 	 	if (itriggerSemiMu == 9999)
-			    	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun);
-			  	if (itriggerSemiMu == 9999) 
-			    	itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun);
+					itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun); // Summer12 DR53X
+					if( itriggerSemiMu == 9999 )
+						itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun); // Summer12 DR53X
 				}
 
 				// semi-electron
   		  if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 ) {
 					if( event->runId() <= 190738 )
-			    	itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
-				  else if( event->runId() >= 191046 && event->runId() <= 191411 )
-				    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
-				  else if( event->runId() >= 191695 && event->runId() <= 193621 )
-		  		  itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v10"), currentRun, iFile);
-			  	else if( event->runId() >= 193834 && event->runId() <= 194225 )
-		   	 	itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
-			  	else if( event->runId() >= 194270 && event->runId() <= 196531)
-		    		itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+						itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v8"), currentRun, iFile);
+					else if( event->runId() >= 191043 && event->runId() <= 191411 )
+						itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v9"), currentRun, iFile);
+					else if( event->runId() >= 191695 && event->runId() <= 196531)
+						itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun, iFile);
+					else if( event->runId() >= 198049 && event->runId() <= 208357)
+						itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v11"), currentRun, iFile);
 	 			 	else { 
       			cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
 	    			exit(1);
@@ -562,11 +549,9 @@ int main (int argc, char *argv[])
 	   	 	  exit(-1);
 	   		 }
 				} else {
-	  			itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
-    		  if( itriggerSemiEl == 9999 )
-	  		  	itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun);
-	  			if( itriggerSemiEl == 9999 )
-	  		  	itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun);
+					itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun); // Summer12 DR53X
+					if( itriggerSemiEl == 9999 )
+						itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v8"), currentRun); // Summer12 DR53X  
 				}
 			}
 
@@ -597,13 +582,13 @@ int main (int argc, char *argv[])
       /////////////////////
       
       //Declare selection instance    
-      Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
+      Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
 
-      selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
-      selection.setMuonCuts(26.,2.1,0.12,0,0.2,0.3,1,1.,5,1);
-      selection.setElectronCuts(30.,2.5,0.1,0.02,0.,1.,0.3,0);
+      selection.setJetCuts(30.,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setMuonCuts(35,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
+      selection.setElectronCuts(32,2.5,0.1,0.02,0.5,0.3,0); // Ele25 uses 30 so Ele27 32? DR el-jets cleaning still needed?
       selection.setLooseMuonCuts(10,2.5,0.2);
-      selection.setLooseElectronCuts(20,2.5,0.2,0.); // semiMu looseElectron cuts
+      selection.setLooseElectronCuts(20,2.5,0.15,0.); // semiMu looseElectron cuts
 
       bool triggedSemiMu = false;
       bool triggedSemiEl = false;
@@ -635,8 +620,8 @@ int main (int argc, char *argv[])
       }
 
       //selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);	
-      selectedMuons = selection.GetSelectedMuons(vertex[0]);
-      selectedElectrons = selection.GetSelectedElectrons(vertex[0],selectedJets);
+      selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
+      selectedElectrons = selection.GetSelectedElectrons(selectedJets);
 
 			//cout<<"blabla "<<endl;
       vector<TRootMCParticle*> mcParticles;
@@ -738,7 +723,7 @@ int main (int argc, char *argv[])
      
 			//if (!eventselectedSemiMu_onebtag && !eventselectedSemiEl_onebtag) continue;
 			if (!eventselectedSemiMu && !eventselectedSemiEl) continue;
-			//cout << "check - we are continuing!" << endl;
+			//cout << "check - event is selected!" << endl;
      
 			////////////////////////////////////
 			// JET PARTON MATCHING FOR MASSES //					
@@ -1020,13 +1005,14 @@ int main (int argc, char *argv[])
      
 		 	//cout << "make data-mc plots now" << endl;
 			// when running both electron and muon data, pick the right dataset vector and lumi for the MSPlots
-			if (!foundMu && !foundEl)
+			if (!foundMu && !foundEl) {
+				//cout << "datasetsPlot is independent of muon or electron "  << endl;
 				datasetsPlot = datasets;
-			else if (eventselectedSemiMu_onebtag) { 
+			} else if (eventselectedSemiMu_onebtag) { 
+				//cout << "datasetsPlot should be muonlist " << endl;
 				datasetsPlot = datasetsMu;
 				Luminosity = LuminosityMu;
-			}
-			else if (eventselectedSemiEl_onebtag) {
+			} else if (eventselectedSemiEl_onebtag) {
 				datasetsPlot = datasetsEl;
 				Luminosity = LuminosityEl;
 			}
@@ -1049,19 +1035,19 @@ int main (int argc, char *argv[])
 				MSPlot["NofSelectedJets"+Flav] = new MultiSamplePlot(datasetsPlot, "NofSelectedJets"+Flav, 12, 2, 14, "Number of Jets");
 				MSPlot["Selected_Events_Btag_Values"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Values"+Flav, 30, -1, 2, "BTag value");
 				MSPlot["Selected_Events_nb_Btags"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_nb_Btags"+Flav, 30, -1, 2, "BTag value");
-				MSPlot["NofPV"] = new MultiSamplePlot(datasets, "NofPV", 31, -0.5, 30.5, "Nb. of primary vertices");
-				MSPlot["NofPV_after_lumiWeight"] = new MultiSamplePlot(datasets, "NofPV_after_lumiWeight", 31, -0.5, 30.5, "Nb. of primary vertices");
-				MSPlot["Pileup_Reweighting"+Flav] = new MultiSamplePlot(datasets,"Pileup_Reweighting"+Flav, 40, 0, 20, "lumiWeight");
-				MSPlot["MET_Pt"+Flav] = new MultiSamplePlot(datasets,"MET_Pt"+Flav, 300, 0, 600, "p_{T} (GeV)");
-				MSPlot["MET_Et"+Flav] = new MultiSamplePlot(datasets,"MET_Et"+Flav, 300, 0, 600, "E_{T} (GeV)");
-				MSPlot["Ht_4leadingjets"+Flav] = new MultiSamplePlot(datasets,"Ht_4leadingjets"+Flav, 100, 0, 1000, "H_{T} (GeV)");
+				MSPlot["NofPV"] = new MultiSamplePlot(datasetsPlot, "NofPV", 31, -0.5, 30.5, "Nb. of primary vertices");
+				MSPlot["NofPV_after_lumiWeight"] = new MultiSamplePlot(datasetsPlot, "NofPV_after_lumiWeight", 31, -0.5, 30.5, "Nb. of primary vertices");
+				MSPlot["Pileup_Reweighting"+Flav] = new MultiSamplePlot(datasetsPlot,"Pileup_Reweighting"+Flav, 40, 0, 20, "lumiWeight");
+				MSPlot["MET_Pt"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Pt"+Flav, 300, 0, 600, "p_{T} (GeV)");
+				MSPlot["MET_Et"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Et"+Flav, 300, 0, 600, "E_{T} (GeV)");
+				MSPlot["Ht_4leadingjets"+Flav] = new MultiSamplePlot(datasetsPlot,"Ht_4leadingjets"+Flav, 100, 0, 1000, "H_{T} (GeV)");
 				MSPlot["Selected_Events_pT_lepton"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_lepton"+Flav, 22, 0, 440, "p_{T} (GeV)");
 				MSPlot["Selected_Events_Eta_lepton"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Eta_lepton"+Flav, 22, 0, 2.2, "Eta");
 
-				MSPlot["Chi2_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"Chi2_1btag"+Flav, 100, 0, 50, "{#chi}^2");
-				MSPlot["hadTop_Ht_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTopHt_1btag"+Flav, 100, 0, 1000, "H_{T} (GeV)");
-				MSPlot["hadTop_Mass_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Mass_1btag"+Flav, 300, 0, 600, "Mass (GeV)");
-				MSPlot["hadTopPt_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Pt_1btag"+Flav, 300, 0, 600, "Mass (GeV)");
+				//MSPlot["Chi2_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"Chi2_1btag"+Flav, 100, 0, 50, "{#chi}^2");
+				//MSPlot["hadTop_Ht_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTopHt_1btag"+Flav, 100, 0, 1000, "H_{T} (GeV)");
+				//MSPlot["hadTop_Mass_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Mass_1btag"+Flav, 300, 0, 600, "Mass (GeV)");
+				//MSPlot["hadTopPt_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Pt_1btag"+Flav, 300, 0, 600, "Mass (GeV)");
 				//MSPlot["TTbar_Mass_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Mass_1btag"+Flav, 300, 0, 600, "Mass (GeV)");
 				//MSPlot["TTbar_Angle_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Angle_1btag"+Flav, 300, 0, 600, "Phi");
 
@@ -1079,6 +1065,7 @@ int main (int argc, char *argv[])
 				if (eventselectedSemiEl_onebtag) {
 					MSPlot["Selected_Events_relIso_Electron"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Electron", 20, 0, 0.2, "relIso");
        	}
+		 		//cout << "all plots declared" << endl;
 			}
      
 		 	//filling plots
@@ -1655,20 +1642,50 @@ int main (int argc, char *argv[])
     // Write out the plots //
     /////////////////////////
     
-    mkdir("DemoPlots",0777);
-   
-    for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
-    {
-			MultiSamplePlot *temp = it->second;
-			string name = it->first;
-			temp->Draw(false, name, true, true, true, true, true, 1, true);
-			temp->Write(fout, name, true, "DemoPlots/");
-    }
+    string pathPNG = "PlotsWtbCouplings/";    
+		mkdir(pathPNG.c_str(),0777);
+		mkdir((pathPNG+"MSPlot/").c_str(),0777);
     
+		//Write histograms
+		fout->cd();
+		for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
+		{
+				//cout << "MSPlot: " << it->first << endl;
+				MultiSamplePlot *temp = it->second;
+				string name = it->first;
+				temp->Draw(false, name, true, true, true, true, true, 1, false);
+				temp->Write(fout, name, true, pathPNG+"MSPlot/");
+		}
+    
+		// 1D 
+		TDirectory* th1dir = fout->mkdir("1D_histograms");
+		th1dir->cd();
+		for(std::map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
+		{
+			TH1F *temp = it->second;
+			int N = temp->GetNbinsX();
+			temp->SetBinContent(N,temp->GetBinContent(N)+temp->GetBinContent(N+1));
+			temp->SetBinContent(N+1,0);
+			temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries...
+			temp->Write();
+			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+			tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+		}
+    
+		// 2D
+		TDirectory* th2dir = fout->mkdir("2D_histograms_graphs");
+		th2dir->cd();
+		for(std::map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
+		{
+			TH2F *temp = it->second;
+			temp->Write();
+			TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+			tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+		}
 
   
-    //Selection tables
-    selecTableSemiMu.TableCalculator(false, true, true, true, true);
+		//Selection tables
+		selecTableSemiMu.TableCalculator(false, true, true, true, true);
     string selectiontableMu = "SelectionTable_WtbCouplings_SemiMu.tex";
     selecTableSemiMu.Write(selectiontableMu.c_str());
         
