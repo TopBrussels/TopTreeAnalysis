@@ -343,13 +343,13 @@ int main (int argc, char *argv[])
   else
   {
     resFitLightJets = new ResolutionFit("LightJet");
-    resFitLightJets->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/lightJetReso.root");
+    resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
     resFitLightJetsL7 = new ResolutionFit("LightJetL7");
-    resFitLightJetsL7->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/lightJetReso_AfterL7.root");
+    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_AfterL7.root");
     resFitBJets = new ResolutionFit("BJet");
-    resFitBJets->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/bJetReso.root");
+    resFitBJets->LoadResolutions("resolutions/bJetReso.root");
     resFitBJetsL7 = new ResolutionFit("BJetL7");
-    resFitBJetsL7->LoadResolutions("/home/stijn/TopTreeAnalysis/CMSSW_42X_v3/TopBrussels/TopTreeAnalysis/macros/resolutions/bJetReso_AfterL7.root");
+    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_AfterL7.root");
   }
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
@@ -476,8 +476,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 1000; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 1000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
