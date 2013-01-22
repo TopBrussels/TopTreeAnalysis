@@ -12,23 +12,25 @@
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
-#include "../Selection/interface/SelectionTable.h"
-#include "../Tools/interface/PlottingTools.h"
-#include "../Tools/interface/MultiSamplePlot.h"
-#include "../Tools/interface/TTreeLoader.h"
-#include "../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../Content/interface/AnalysisEnvironment.h"
-#include "../Content/interface/Dataset.h"
-#include "../Tools/interface/MVATrainer.h"
-#include "../Tools/interface/MVAComputer.h"
-#include "../Tools/interface/JetTools.h"
-#include "../MCInformation/interface/ResolutionFit.h"
-#include "../JESMeasurement/interface/FullKinFit.h"
-#include "../JESMeasurement/interface/JetCombiner.h"
-#include "../Reconstruction/interface/JetCorrectorParameters.h"
-#include "../Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "../JESMeasurement/interface/LightMonster.h"
-#include "../MCInformation/interface/LumiReWeighting.h"
+#include "TopTreeAnalysisBase/Selection/interface/SelectionTable.h"
+#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
+#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Tools/interface/TTreeLoader.h"
+#include "TopTreeAnalysisBase/Tools/interface/AnalysisEnvironmentLoader.h"
+#include "TopTreeAnalysisBase/Content/interface/AnalysisEnvironment.h"
+#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
+#include "TopTreeAnalysisBase/Tools/interface/MVATrainer.h"
+#include "TopTreeAnalysisBase/Tools/interface/MVAComputer.h"
+#include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectorParameters.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectionUncertainty.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
+
+#include "TopTreeAnalysis/JESMeasurement/interface/FullKinFit.h"
+#include "TopTreeAnalysis/JESMeasurement/interface/JetCombiner.h"
+#include "TopTreeAnalysis/JESMeasurement/interface/LightMonster.h"
+
 #include "Style.C"
 
 using namespace std;
@@ -622,9 +624,9 @@ int main (int argc, char *argv[])
       
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
-      selection.setJetCuts(32,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setJetCuts(30,2.5,0.01,1.,0.98,0.3,0.1);
       selection.setMuonCuts(25,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
-      selection.setElectronCuts(30,2.5,0.1,0.02,0.5,0.3,0); // 30 GeV too low? DR el-jets cleaning still needed?
+      selection.setElectronCuts(32,2.5,0.1,0.02,0.5,0.3,0); // 32 GeV too low? DR el-jets cleaning still needed?
       selection.setLooseMuonCuts(10,2.5,0.2);
       selection.setLooseElectronCuts(20,2.5,0.15,0.);
       
