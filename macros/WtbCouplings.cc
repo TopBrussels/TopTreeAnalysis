@@ -135,7 +135,7 @@ int main (int argc, char *argv[])
     if( dataSetName.find("ZJets") == 0 )
     {
       datasets[d]->SetTitle("Z/#gamma*#rightarrowl^{+}l^{-}");
-      datasets[d]->SetColor(kAzure-2);
+      datasets[d]->SetColor(kBlue-2);
     }
     if( dataSetName.find("ST") == 0 || dataSetName.find("SingleTop") ==0 )
       datasets[d]->SetColor(kMagenta);
@@ -611,15 +611,9 @@ int main (int argc, char *argv[])
       
       selectedJets = selection.GetSelectedJets(true);
 
-      if (selectedJets.size() >= 4) {
-				//cout << "ol" << endl;
-				if (selectedJets[0]->Pt() < 45) selectedJets.clear();
-				if (selectedJets[1]->Pt() < 45) selectedJets.clear();
-				if (selectedJets[2]->Pt() < 45) selectedJets.clear();
-				if (selectedJets[3]->Pt() < 20) selectedJets.clear();
-      }
+      if (selectedJets.size() >= 4)
+				if (selectedJets[3]->Pt() < 30) selectedJets.clear();
 
-      //selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);	
       selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
       selectedElectrons = selection.GetSelectedElectrons(selectedJets);
 
@@ -1033,13 +1027,13 @@ int main (int argc, char *argv[])
 				MSPlot["Selected_Events_pT_4leadingjets"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_4leadingjets"+Flav, 30, 0, 600, "p_{T} (GeV)");
 				MSPlot["Selected_Events_pT_alljets"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_alljets"+Flav, 30, 0, 600, "p_{T} (GeV)");
 				MSPlot["NofSelectedJets"+Flav] = new MultiSamplePlot(datasetsPlot, "NofSelectedJets"+Flav, 12, 2, 14, "Number of Jets");
-				MSPlot["Selected_Events_Btag_Values"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Values"+Flav, 30, -1, 2, "BTag value");
+				MSPlot["Selected_Events_Btag_Values"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Values"+Flav, 30, -1, 1.1, "BTag value");
 				MSPlot["Selected_Events_nb_Btags"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_nb_Btags"+Flav, 30, -1, 2, "BTag value");
 				MSPlot["NofPV"] = new MultiSamplePlot(datasetsPlot, "NofPV", 31, -0.5, 30.5, "Nb. of primary vertices");
 				MSPlot["NofPV_after_lumiWeight"] = new MultiSamplePlot(datasetsPlot, "NofPV_after_lumiWeight", 31, -0.5, 30.5, "Nb. of primary vertices");
 				MSPlot["Pileup_Reweighting"+Flav] = new MultiSamplePlot(datasetsPlot,"Pileup_Reweighting"+Flav, 40, 0, 20, "lumiWeight");
-				MSPlot["MET_Pt"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Pt"+Flav, 300, 0, 600, "p_{T} (GeV)");
-				MSPlot["MET_Et"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Et"+Flav, 300, 0, 600, "E_{T} (GeV)");
+				MSPlot["MET_Pt"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Pt"+Flav, 200, 0, 600, "p_{T} (GeV)");
+				MSPlot["MET_Et"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Et"+Flav, 200, 0, 600, "E_{T} (GeV)");
 				MSPlot["Ht_4leadingjets"+Flav] = new MultiSamplePlot(datasetsPlot,"Ht_4leadingjets"+Flav, 100, 0, 1000, "H_{T} (GeV)");
 				MSPlot["Selected_Events_pT_lepton"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_lepton"+Flav, 22, 0, 440, "p_{T} (GeV)");
 				MSPlot["Selected_Events_Eta_lepton"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Eta_lepton"+Flav, 22, 0, 2.2, "Eta");
@@ -1053,10 +1047,10 @@ int main (int argc, char *argv[])
 
 				MSPlot["Chi2_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"Chi2_2btags"+Flav, 100, 0, 50, "{#chi}^2");
 				MSPlot["hadTop_Ht_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTopHt_2btags"+Flav, 100, 0, 1000, "H_{T} (GeV)");
-				MSPlot["hadTop_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Mass_2btags"+Flav, 300, 0, 600, "Mass (GeV)");
-				MSPlot["hadTop_Pt_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Pt_2btags"+Flav, 300, 0, 600, "Mass (GeV)");
-				//MSPlot["TTbar_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Mass_2btags"+Flav, 300, 0, 600, "Mass (GeV)");
-				//MSPlot["TTbar_Angle_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Angle_2btags"+Flav, 300, 0, 600, "Phi");
+				MSPlot["hadTop_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Mass_2btags"+Flav, 100, 0, 600, "Mass (GeV)");
+				MSPlot["hadTop_Pt_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Pt_2btags"+Flav, 100, 0, 600, "Mass (GeV)");
+				//MSPlot["TTbar_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Mass_2btags"+Flav, 100, 0, 600, "Mass (GeV)");
+				//MSPlot["TTbar_Angle_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Angle_2btags"+Flav, 100, 0, 600, "Phi");
 			
 				if (eventselectedSemiMu_onebtag) {
 					MSPlot["Selected_Events_d0_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_d0_Muon", 20, 0, 0.1, "d0");
