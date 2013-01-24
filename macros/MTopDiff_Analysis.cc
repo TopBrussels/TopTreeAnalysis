@@ -28,19 +28,20 @@
 #include "RooLandau.h"
 #include "RooCBShape.h"
 
-#include "../Tools/interface/PlottingTools.h"
-#include "../Tools/interface/MultiSamplePlot.h"
-#include "../Content/interface/Dataset.h"
-#include "../JESMeasurement/interface/LightMonster.h"
-#include "../JESMeasurement/interface/MonsterTools.h"
-#include "../JESMeasurement/IdeogramTools/interface/MassFitInfoFiller.h"
-#include "../MCInformation/interface/LumiReWeighting.h"
-#include "../MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
+#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
 
-#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassFitInfoHeader.h"
-#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassFitInfoEvent.h"
-#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodTool.h"
-#include "../../TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodWriter.h"
+#include "TopTreeAnalysis/JESMeasurement/interface/LightMonster.h"
+#include "TopTreeAnalysis/JESMeasurement/interface/MonsterTools.h"
+#include "TopTreeAnalysis/JESMeasurement/IdeogramTools/interface/MassFitInfoFiller.h"
+
+#include "TopQuarkAnalysis/TopMassIdeogram/interface/MassFitInfoHeader.h"
+#include "TopQuarkAnalysis/TopMassIdeogram/interface/MassFitInfoEvent.h"
+#include "TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodTool.h"
+#include "TopQuarkAnalysis/TopMassIdeogram/interface/MassLikelihoodWriter.h"
 
 #include "Style.C"
 
@@ -74,10 +75,10 @@ int main (int argc, char *argv[])
   mkdir(pathPNG.c_str(),0777);
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
   
-  float LuminosityMu = 11767.257, LuminosityEl = 11632.529;
+  float LuminosityMu = 17541.645, LuminosityEl = 15812.53;
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = false; // false:  files are created but no events are filled
+  bool writeASCIIstuff = true; // false:  files are created but no events are filled
   bool useOnlyHighestWeight = false;
   if(writeASCIIstuff) useOnlyHighestWeight = false;
   
@@ -90,25 +91,25 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-//    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
-//    inputMonsters.push_back("Monsters/FixedResolutions/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
     inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
     
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
@@ -274,8 +275,8 @@ int main (int argc, char *argv[])
   MSPlot["4th_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
   MSPlot["4th_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
   MSPlot["MET"] = new MultiSamplePlot(dataSetsOneData,"MET",100,0,300,"MET (GeV)","Nr. of events");
-  MSPlot["MET_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonPlus",100,0,250,"MET (GeV)","Nr. of events");
-  MSPlot["MET_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonMinus",100,0,250,"MET (GeV)","Nr. of events");
+  MSPlot["MET_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonPlus",100,0,300,"MET (GeV)","Nr. of events");
+  MSPlot["MET_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonMinus",100,0,300,"MET (GeV)","Nr. of events");
   MSPlot["Nr_of_jets"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"No. of jets","Events");
 //  MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
@@ -416,10 +417,10 @@ int main (int argc, char *argv[])
     MSPlot["Angle_1stjet_3rdjet_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"Angle_1stjet_3rdjet_muMinus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
     MSPlot["Angle_1stjet_3rdjet_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_3rdjet_elPlus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
     MSPlot["Angle_1stjet_3rdjet_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"Angle_1stjet_3rdjet_elMinus",32,0,3.2,"Angle(leading jet, 3rd jet)","Nr. of events");
-    MSPlot["MET_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muPlus",100,0,250,"MET (GeV)","Nr. of events");
-    MSPlot["MET_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muMinus",100,0,250,"MET (GeV)","Nr. of events");
-    MSPlot["MET_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elPlus",100,0,250,"MET (GeV)","Nr. of events");
-    MSPlot["MET_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elMinus",100,0,250,"MET (GeV)","Nr. of events");
+    MSPlot["MET_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muPlus",100,0,300,"MET (GeV)","Nr. of events");
+    MSPlot["MET_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MET_muMinus",100,0,300,"MET (GeV)","Nr. of events");
+    MSPlot["MET_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elPlus",100,0,300,"MET (GeV)","Nr. of events");
+    MSPlot["MET_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MET_elMinus",100,0,300,"MET (GeV)","Nr. of events");
     
     MSPlot["mW_UnFitted_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mW_UnFitted_muPlus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
     MSPlot["mW_UnFitted_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mW_UnFitted_muMinus",80,0,200,"Unfitted W Mass (GeV)","Nr. of events / 2.5 GeV");
@@ -462,9 +463,9 @@ int main (int argc, char *argv[])
   
   // initialize LumiReWeighting stuff
   cout << "Initializing LumiReWeighting stuff" << endl;
-  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_up.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_down.root", "pileup", "pileup");
   
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
@@ -677,10 +678,11 @@ int main (int argc, char *argv[])
       TLorentzVector MET = monster->met();
       vector<float> btagCSV = monster->bTagCSV();
       int nBtags = 0, nJets = 0;
+      
       for(unsigned int i=0; i<selectedJets.size(); i++)
       {
         if(btagCSV[i] > bTagCut) nBtags++;
-        if(selectedJets[0].Pt()>pTjetCut) nJets++;
+        if(selectedJets[i].Pt()>pTjetCut) nJets++;
       }
       if( !(selectedJets[0].Pt()>pTjetCut && selectedJets[1].Pt()>pTjetCut && selectedJets[2].Pt()>pTjetCut && selectedJets[3].Pt()>pTjetCut) )
         continue;
@@ -960,12 +962,12 @@ int main (int argc, char *argv[])
               writer(outFileLikelihoodSemiMu,eventMu);
             }
             
-            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
-            if(applyChi2Cut(eventMu, maxChi2))
-            {
-              setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
-              writerHighestWeight(outFileLikelihoodSemiMuSplitted,eventMu);
-            }
+//            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
+//            if(applyChi2Cut(eventMu, maxChi2))
+//            {
+//              setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
+//              writerHighestWeight(outFileLikelihoodSemiMuSplitted,eventMu);
+//            }
           }
           
           nSemiMuInASCII++;
@@ -999,12 +1001,12 @@ int main (int argc, char *argv[])
               writer(outFileLikelihoodSemiEl,eventEl);
             }
             
-            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
-            if(applyChi2Cut(eventEl, maxChi2))
-            {
-              setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
-              writerHighestWeight(outFileLikelihoodSemiElSplitted,eventEl);
-            }
+//            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
+//            if(applyChi2Cut(eventEl, maxChi2))
+//            {
+//              setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
+//              writerHighestWeight(outFileLikelihoodSemiElSplitted,eventEl);
+//            }
           }
           
           nSemiElInASCII++;
@@ -1121,8 +1123,8 @@ int main (int argc, char *argv[])
 	  RooRealVar mTopFitWjets("mTopFitWjets","mTopFitWjets",50.,650.);
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
 	
-	  RooRealVar mean("mean","mean",155.,155.,200.);
-	  RooRealVar sigma("sigma","sigma",20.,1.,100.);
+	  RooRealVar mean("mean","mean",150.,130.,180.);
+	  RooRealVar sigma("sigma","sigma",35.,20.,50.);
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
     
@@ -1169,7 +1171,7 @@ int main (int argc, char *argv[])
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
 //    temp->Draw(false, name, false, true, true, true, true, 1, true);
-    temp->Draw(false, name, false, true, true, true, false, 1, false); // void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+    temp->Draw(false, name, false, true, true, true, false, 1, true); // void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
 //    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
