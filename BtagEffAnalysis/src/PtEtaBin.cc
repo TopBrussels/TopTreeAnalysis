@@ -91,12 +91,21 @@ PtEtaBin::PtEtaBin(int debug, int nVar1, int nVar0, int nBdisc, double ptbinlow,
   TH2Sng_ProfileX = NULL;
   TH2Bkg_ProfileX = NULL;
   TH2Data_ProfileX = NULL; 
-  TH2Sng_Left = NULL;
-  TH2Bkg_Left = NULL;
-  TH2Data_Left = NULL;
-  TH2Sng_Right = NULL;
-  TH2Bkg_Right = NULL;
-  TH2Data_Right = NULL;
+  
+    TH2Sng_Left = NULL;
+    TH2Bkg_Left = NULL;
+    TH2Data_Left = NULL;
+    TH2Sng_Right = NULL;
+    TH2Bkg_Right = NULL;
+    TH2Data_Right = NULL;
+
+    TH2Sng_LeftControl = NULL;
+    TH2Bkg_LeftControl = NULL;
+    TH2Data_LeftControl = NULL;
+    TH2Sng_RightControl = NULL;
+    TH2Bkg_RightControl = NULL;
+    TH2Data_RightControl = NULL;
+    
   TH2SngVar12_Left = NULL;
   TH2BkgVar12_Left = NULL;
   TH2DataVar12_Left = NULL;
@@ -179,6 +188,22 @@ PtEtaBin::PtEtaBin(int debug, int nVar1, int nVar0, int nBdisc, double ptbinlow,
   TH2Bkg_Left1DYReweigh = NULL;
   TH2Sng_Left1DYReweigh = NULL;
   TH2Data_Left1DYReweigh = NULL;
+    
+    TH2Sng_Left1DYControl = NULL;
+    TH2Bkg_Left1DYControl = NULL;
+    TH2Data_Left1DYControl = NULL;
+
+    TH2Sng_Left1DYControlReweigh = NULL;
+    TH2Bkg_Left1DYControlReweigh = NULL;
+    TH2Data_Left1DYControlReweigh = NULL;
+
+    TH2Sng_Right1DYControl = NULL;
+    TH2Bkg_Right1DYControl = NULL;
+    TH2Data_Right1DYControl = NULL;
+    
+    TH2Sng_Right1DYControlReweigh = NULL;
+    TH2Bkg_Right1DYControlReweigh = NULL;
+    TH2Data_Right1DYControlReweigh = NULL;
 
   TH2Bkg_Right1DYReweighRatio = NULL;
   TH2Sng_Right1DYReweighRatio = NULL;
@@ -239,6 +264,8 @@ PtEtaBin::~PtEtaBin(){
   delete TH1Sng_chisqControl;
   delete TH1Bkg_chisqControl;
   delete TH1Data_chisqControl;
+    
+    delete TH1Data_PartonFlavor;
 
   delete genericName;
   delete TH2Sng;
@@ -247,12 +274,18 @@ PtEtaBin::~PtEtaBin(){
   delete TH2Sng_ProfileX;
   delete TH2Bkg_ProfileX;
   delete TH2Data_ProfileX;  
-  delete TH2Sng_Left;
-  delete TH2Bkg_Left;
-  delete TH2Data_Left;
-  delete TH2Sng_Right;
-  delete TH2Bkg_Right;
-  delete TH2Data_Right;
+    delete TH2Sng_Left;
+    delete TH2Bkg_Left;
+    delete TH2Data_Left;
+    delete TH2Sng_Right;
+    delete TH2Bkg_Right;
+    delete TH2Data_Right;
+    delete TH2Sng_LeftControl;
+    delete TH2Bkg_LeftControl;
+    delete TH2Data_LeftControl;
+    delete TH2Sng_RightControl;
+    delete TH2Bkg_RightControl;
+    delete TH2Data_RightControl;
   delete TH2SngVar12_Left;
   delete TH2BkgVar12_Left;
   delete TH2DataVar12_Left;
@@ -300,13 +333,22 @@ PtEtaBin::~PtEtaBin(){
   delete TH1Sng_BtagEffMC;
   delete TH1Bkg_BtagEffMC;
   delete TH1Data_BtagEffMC;
-  delete TH2Sng_Left1DX;
-  delete TH2Bkg_Left1DX;
-  delete TH2Data_Left1DX;
-  delete TH2Sng_Right1DX;
-  delete TH2Bkg_Right1DX;
-  delete TH2Data_Right1DX;
-  delete TH2SngVar12_Left1DY;
+    delete TH2Sng_Left1DX;
+    delete TH2Bkg_Left1DX;
+    delete TH2Data_Left1DX;
+    delete TH2Sng_Right1DX;
+    delete TH2Bkg_Right1DX;
+    delete TH2Data_Right1DX;
+
+    delete TH2Sng_Left1DXControl;
+    delete TH2Bkg_Left1DXControl;
+    delete TH2Data_Left1DXControl;
+    delete TH2Sng_Right1DXControl;
+    delete TH2Bkg_Right1DXControl;
+    delete TH2Data_Right1DXControl;
+
+    
+    delete TH2SngVar12_Left1DY;
   delete TH2BkgVar12_Left1DY;
   delete TH2DataVar12_Left1DY;
   delete TH2SngVar12_Right1DY;
@@ -319,20 +361,38 @@ PtEtaBin::~PtEtaBin(){
   delete TH2BkgVar12_Right1DYReweighRatio;
   delete TH2DataVar12_Right1DYReweighRatio;
   delete TH2Data_RightLeft1DX;
-  delete TH2Data_LeftRight1DX;
-  delete TFData_LeftRight1DXFit;
+    delete TH2Data_LeftRight1DX;
+    delete TH2Data_LeftRight1DXControl;
+    delete TFData_LeftRight1DXFit;
+    delete TFData_LeftRight1DXControlFit;
   delete TH2DataVar12_LeftRight;
-  delete TH2Data_Left1DY;
-  delete TH2Sng_Left1DY;
-  delete TH2Bkg_Left1DY;
-  delete TH2Data_Right1DY;
-  delete TH2Sng_Right1DY;
-  delete TH2Bkg_Right1DY;
+    delete TH2Data_Left1DY;
+    delete TH2Sng_Left1DY;
+    delete TH2Bkg_Left1DY;
+    delete TH2Data_Right1DY;
+    delete TH2Sng_Right1DY;
+    delete TH2Bkg_Right1DY;
+    
+    delete TH2Data_Left1DYControl;
+    delete TH2Sng_Left1DYControl;
+    delete TH2Bkg_Left1DYControl;
+
+    delete TH2Data_Left1DYControlReweigh;
+    delete TH2Sng_Left1DYControlReweigh;
+    delete TH2Bkg_Left1DYControlReweigh;
+    
+    delete TH2Data_Right1DYControl;
+    delete TH2Sng_Right1DYControl;
+    delete TH2Bkg_Right1DYControl;
   //delete TH2Data_Left1DYReweigh;
 
-  delete TH2Bkg_Right1DYReweigh;
-  delete TH2Sng_Right1DYReweigh;
-  delete TH2Data_Right1DYReweigh;
+    delete TH2Bkg_Right1DYReweigh;
+    delete TH2Sng_Right1DYReweigh;
+    delete TH2Data_Right1DYReweigh;
+    delete TH2Bkg_Right1DYControlReweigh;
+    delete TH2Sng_Right1DYControlReweigh;
+    delete TH2Data_Right1DYControlReweigh;
+    
   delete TH2Bkg_Left1DYReweigh;
   delete TH2Sng_Left1DYReweigh;
   delete TH2Data_Left1DYReweigh;
@@ -381,11 +441,19 @@ PtEtaBin::~PtEtaBin(){
     delete TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff;
     delete TH1Data_BtagEffShapeMC_MeasuredRRDiff;
     
+    
+    delete TH1Data_MistagMeasuredRR;
+    delete TH1Data_MistagEffMeasuredRR;
+    delete TH1Data_MistagEffMeasuredRRDiff;
+    
 	delete TH1Data_Pt_Left;
 	delete TH1Sng_Pt_Left;
 	delete TH1Data_Pt_Right;
 	delete TH1Data_Pt_RightReweigh;
 	delete TH1Data_Pt_Control;
+	delete TH1Data_Pt_ControlReweigh;
+	delete TH1Data_Eta_Control;
+	delete TH1Data_Eta_ControlReweigh;
 	
 	
 	for (std::map<TString,TH1D*>::const_iterator it=histo1D.begin(); it != histo1D.end(); ++it) {
@@ -417,6 +485,9 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
   
   //+if(debug_>2) cout << "PtEtaBin::DefineSignalSamplePlots " << *genericName << endl;
 
+    GiveName(&title_PartonFlavor_); title_PartonFlavor_+="TH1Data_PartonFlavor"; 
+    TH1Data_PartonFlavor=new TH1D(title_PartonFlavor_,title_PartonFlavor_,22,-0.5,21.5);
+    
     int nFitBins = 50;
 
   GiveName(&titleSng_); titleSng_+="TH2Sng"; 
@@ -655,25 +726,38 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
   TH2DataVar12_Right->Sumw2(); 
 	
 	GiveName(&titleData_Pt_Left); titleData_Pt_Left+="TH1Data_Pt_Left"; 
-	TH1Data_Pt_Left = new TH1D(titleData_Pt_Left,titleData_Pt_Left,100,0,500);
+	TH1Data_Pt_Left = new TH1D(titleData_Pt_Left,titleData_Pt_Left,50,0,500);
     
     GiveName(&titleSng_Pt_Left); titleSng_Pt_Left+="TH1Sng_Pt_Left"; 
-	TH1Sng_Pt_Left = new TH1D(titleSng_Pt_Left,titleSng_Pt_Left,100,0,500);
+	TH1Sng_Pt_Left = new TH1D(titleSng_Pt_Left,titleSng_Pt_Left,50,0,500);
 	
 	GiveName(&titleData_Pt_Right); titleData_Pt_Right+="TH1Data_Pt_Right"; 
-	TH1Data_Pt_Right = new TH1D(titleData_Pt_Right,titleData_Pt_Right,100,0,500);
+	TH1Data_Pt_Right = new TH1D(titleData_Pt_Right,titleData_Pt_Right,50,0,500);
 
     GiveName(&titleData_Pt_RightReweigh); titleData_Pt_RightReweigh+="TH1Data_Pt_RightReweigh"; 
-	TH1Data_Pt_RightReweigh = new TH1D(titleData_Pt_RightReweigh,titleData_Pt_RightReweigh,100,0,500);
+	TH1Data_Pt_RightReweigh = new TH1D(titleData_Pt_RightReweigh,titleData_Pt_RightReweigh,50,0,500);
 
 	GiveName(&titleData_Pt_Control); titleData_Pt_Control+="TH1Data_Pt_Control"; 
-	TH1Data_Pt_Control = new TH1D(titleData_Pt_Control,titleData_Pt_Control,100,0,500);
-	
+	TH1Data_Pt_Control = new TH1D(titleData_Pt_Control,titleData_Pt_Control,50,0,500);
+    
+	GiveName(&titleData_Pt_ControlReweigh); titleData_Pt_ControlReweigh+="TH1Data_Pt_ControlReweigh"; 
+	TH1Data_Pt_ControlReweigh = new TH1D(titleData_Pt_ControlReweigh,titleData_Pt_ControlReweigh,50,0,500);	
+    
+    GiveName(&titleData_Eta_Control); titleData_Eta_Control+="TH1Data_Eta_Control"; 
+	TH1Data_Eta_Control = new TH1D(titleData_Eta_Control,titleData_Eta_Control,20,0,2.4);
+    
+	GiveName(&titleData_Eta_ControlReweigh); titleData_Eta_ControlReweigh+="TH1Data_Eta_ControlReweigh"; 
+	TH1Data_Eta_ControlReweigh = new TH1D(titleData_Eta_ControlReweigh,titleData_Eta_ControlReweigh,20,0,2.4);
+
 	TH1Data_Pt_Left->Sumw2(); 
 	TH1Sng_Pt_Left->Sumw2(); 
 	TH1Data_Pt_Right->Sumw2(); 
 	TH1Data_Pt_Control->Sumw2(); 
-    	
+	TH1Data_Pt_ControlReweigh->Sumw2(); 
+
+    TH1Data_Eta_Control->Sumw2(); 
+	TH1Data_Eta_ControlReweigh->Sumw2(); 
+
 	//nBinsVar0=70;
 	//lowRangeVar0=0;
 	//upRangeVar0=700;
@@ -800,9 +884,9 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
     
     // 1D templates (m3)
     
-    int nBinsM3=80;
+    int nBinsM3=25;
     int minM3=0;
-    int maxM3=800;
+    int maxM3=500;
     
     /* data */
     name = ""; GiveName(&name); name+="TH1Data_M3"; 
@@ -858,62 +942,94 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
     
     /* data */
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3"; 
-	histo2D["TH2Data_MLB_M3"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagL"; 
-	histo2D["TH2Data_MLB_M3_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagM"; 
-	histo2D["TH2Data_MLB_M3_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagT"; 
-	histo2D["TH2Data_MLB_M3_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     
     // ttbar
     
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar"; 
-	histo2D["TH2Data_MLB_M3_TTbar"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagL"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagM"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagT"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 
     // WJets
     
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets"; 
-	histo2D["TH2Data_MLB_M3_WJets"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagL"; 
-	histo2D["TH2Data_MLB_M3_WJets_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagM"; 
-	histo2D["TH2Data_MLB_M3_WJets_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagT"; 
-	histo2D["TH2Data_MLB_M3_WJets_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     
     // QCD
     
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet"; 
-	histo2D["TH2Data_MLB_M3_multijet"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagL"; 
-	histo2D["TH2Data_MLB_M3_multijet_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagM"; 
-	histo2D["TH2Data_MLB_M3_multijet_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagT"; 
-	histo2D["TH2Data_MLB_M3_multijet_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 
     // bkg
 	
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC"; 
-	histo2D["TH2Data_MLB_M3_VVMC"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagL"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagL"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagM"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagM"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagT"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagT"] = new TH2D(name,name,8,lowRangeVar0,upRangeVar0,8,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
 
     
 }
 
-void PtEtaBin::DefineControlSamplePlots(int nBinsControlVar1, double lowRangControlVar1, double upRangeControlVar1, int nBinsControlVar2, double lowRangControlVar2, double upRangeControlVar2, int nBinsControlVar, double lowRangeControlVar, double upRangeControlVar){
+void PtEtaBin::DefineControlSamplePlots(int nBdiscrAlgos, int nBinsControlVar1, double lowRangControlVar1, double upRangeControlVar1, int nBinsControlVar2, double lowRangControlVar2, double upRangeControlVar2, int nBinsControlVar, double lowRangeControlVar, double upRangeControlVar, int nBinsBtag[], double lowRangeBtag[], double upRangeBtag[]){
+    
+    GiveName(&titleSng_LeftControl_); titleSng_LeftControl_+="TH2Sng_LeftControl"; 
+    GiveName(&titleBkg_LeftControl_); titleBkg_LeftControl_+="TH2Bkg_LeftControl";
+    GiveName(&titleData_LeftControl_); titleData_LeftControl_+="TH2Data_LeftControl"; 
+    
+    if(!varBinSize_){
+        TH2Sng_LeftControl = new TH2D(titleSng_LeftControl_,titleSng_LeftControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],lowRangeBtag[nBdiscrAlgos],upRangeBtag[nBdiscrAlgos]);
+        TH2Bkg_LeftControl = new TH2D(titleBkg_LeftControl_,titleBkg_LeftControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],lowRangeBtag[nBdiscrAlgos],upRangeBtag[nBdiscrAlgos]);
+        TH2Data_LeftControl = new TH2D(titleData_LeftControl_,titleData_LeftControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],lowRangeBtag[nBdiscrAlgos],upRangeBtag[nBdiscrAlgos]);
+    }
+        
+    if(varBinSize_){
+        TH2Sng_LeftControl = new TH2D(titleSng_LeftControl_,titleSng_LeftControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],rangesbTag_);
+        TH2Bkg_LeftControl = new TH2D(titleBkg_LeftControl_,titleBkg_LeftControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],rangesbTag_);
+        TH2Data_LeftControl = new TH2D(titleData_LeftControl_,titleData_LeftControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],rangesbTag_);
+    } 
+    
+    GiveName(&titleSng_RightControl_); titleSng_RightControl_+="TH2Sng_RightControl"; 
+    GiveName(&titleBkg_RightControl_); titleBkg_RightControl_+="TH2Bkg_RightControl"; 
+    GiveName(&titleData_RightControl_); titleData_RightControl_+="TH2Data_RightControl";
+    
+    if(!varBinSize_){
+        TH2Sng_RightControl = new TH2D(titleSng_RightControl_,titleSng_RightControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],lowRangeBtag[nBdiscrAlgos],upRangeBtag[nBdiscrAlgos]);
+        TH2Bkg_RightControl = new TH2D(titleBkg_RightControl_,titleBkg_RightControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],lowRangeBtag[nBdiscrAlgos],upRangeBtag[nBdiscrAlgos]);
+        TH2Data_RightControl = new TH2D(titleData_RightControl_,titleData_RightControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],lowRangeBtag[nBdiscrAlgos],upRangeBtag[nBdiscrAlgos]);
+    }    
+    if(varBinSize_){
+        TH2Sng_RightControl = new TH2D(titleSng_RightControl_,titleSng_RightControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],rangesbTag_);
+        TH2Bkg_RightControl = new TH2D(titleBkg_RightControl_,titleBkg_RightControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],rangesbTag_);
+        TH2Data_RightControl = new TH2D(titleData_RightControl_,titleData_RightControl_,nBinsControlVar1,lowRangControlVar1,upRangeControlVar1,nBinsBtag[nBdiscrAlgos],rangesbTag_);
+    }
+
 
   GiveName(&titleSng_ControlVar_); titleSng_ControlVar_+="TH1Sng_ControlVar"; 
   GiveName(&titleBkg_ControlVar_); titleBkg_ControlVar_+="TH1Bkg_ControlVar"; 
@@ -973,7 +1089,7 @@ void PtEtaBin::DefineControlSamplePlots(int nBinsControlVar1, double lowRangCont
   TH1Data_ControlVarReweigh = new TH1D(titleData_ControlVarReweigh_,titleData_ControlVarReweigh_,nBinsControlVar,lowRangeControlVar,upRangeControlVar);
 
   //nBinsControlVar=20;
-  //TH1Sng_ControlVarReweigh = new TH1D(titleSng_ControlVarReweigh_,titleSng_ControlVarReweigh_,nBinsControlVar,rangesVar1_);
+  //TH1Sng_ControlVarReweigh = new TH1D(titleSng_ControlVarReweigh_,titleSng_ControlVarReweigh_,nBinsControlVar,rangesControlVar1_);
   //TH1Bkg_ControlVarReweigh = new TH1D(titleBkg_ControlVarReweigh_,titleBkg_ControlVarReweigh_,nBinsControlVar,rangesVar1_);
   //TH1Data_ControlVarReweigh = new TH1D(titleData_ControlVarReweigh_,titleData_ControlVarReweigh_,nBinsControlVar,rangesVar1_);
 
@@ -1069,12 +1185,12 @@ void PtEtaBin::SetErrorsControlSamples(){
 
 //void PtEtaBin::FillSignalSamplePlots(double weight, int partonFlavour, double bTag, double var1, double var2, double var0, int partonFlavourControl, double bTagControl, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralCutVar0, double upCutVar0){//I should replace the name var1 with var1
 void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int partonFlavour, bool isW, bool isR, double chisq, double bTag, double* bTagCuts, double var1, double var2, double var0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0, double defaultbTag){
-
+    
 	if(var1>ptbinlow_ && var1<ptbinup_){
 		
 		
 		if(var2>etabinlow_ && var2<etabinup_){ 
-			
+            			
 			if((var0>lowCutVar0 && var0<centralLowCutVar0) || (var0>=centralUpCutVar0 && var0<upCutVar0)){
 				if(fabs(partonFlavour)==5){
 					TH2Sng->Fill(var0,bTag,weight);
@@ -1099,7 +1215,7 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 				TH2DataVar12_Left->Fill(var1,var2,weight);
 				TH1Data_Pt_Left->Fill(var1,weight);
                 //if(fabs(partonFlavour)==5)
-                TH1Sng_Pt_Left->Fill(var1,weight_nonrew);
+                TH1Sng_Pt_Left->Fill(var1,weight);
                 //if (var1 < 0) cout << var0 << " " << var1 << endl; exit(1);
 			}
 			
@@ -1171,6 +1287,8 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
             
 			TH1Data_BtagAll->Fill(bTag,weight);
 			
+            TH1Data_PartonFlavor->Fill(fabs(partonFlavour),weight);
+
             //if (var0>=60 && var0<=200) {
             
             //weight_nonrew=2;
@@ -1272,7 +1390,7 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 	
 }
 
-void PtEtaBin::FillControlSamplePlots(double weight, int partonFlavour, bool isW, bool isR,  double chisq, double controlVar1, double controlVar2, double controlVar, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
+void PtEtaBin::FillControlSamplePlots(double weight, int partonFlavour, bool isW, bool isR,  double chisq, double bTag, double controlVar1, double controlVar2, double controlVar, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
  
 	if(controlVar1>ptbinlow_ && controlVar1<ptbinup_){
 		if(controlVar2>etabinlow_ && controlVar2<etabinup_){
@@ -1285,6 +1403,26 @@ void PtEtaBin::FillControlSamplePlots(double weight, int partonFlavour, bool isW
 			}  
 			TH1Data_ControlVar->Fill(controlVar,weight);
 			TH1Data_Pt_Control->Fill(controlVar1,weight);
+			TH1Data_Eta_Control->Fill(controlVar2,weight);
+            
+            //double bTag=1;
+            if(controlVar>lowCutVar0 && controlVar<centralLowCutVar0){
+				if(fabs(partonFlavour)==5){
+					TH2Sng_LeftControl->Fill(controlVar1,bTag,weight);
+				} else {
+					TH2Bkg_LeftControl->Fill(controlVar1,bTag,weight);
+				}
+				TH2Data_LeftControl->Fill(controlVar1,bTag,weight);
+            }
+			
+			if(controlVar>=centralUpCutVar0 && controlVar<upCutVar0){
+				if(fabs(partonFlavour)==5){
+					TH2Sng_RightControl->Fill(controlVar1,bTag,weight);
+				} else {
+					TH2Bkg_RightControl->Fill(controlVar1,bTag,weight);
+				}
+				TH2Data_RightControl->Fill(controlVar1,bTag,weight);				
+			}
 									
 		}
 	}  
@@ -1535,15 +1673,51 @@ void PtEtaBin::MakeMCEffPlots(){
 		TH1Sng_BtagEffMC->SetBinContent(i+1,tmpcontent); 
 		TH1Sng_BtagEffMC->SetBinError(i+1,tmperror); 
 	}
+    
+    double lmin=0;
+	double lmine=0;
+	double lplus=0;
+	double lpluse=0;
+	for(int i=0; i<=TH2Bkg_Left1DY->GetXaxis()->GetNbins()+1; i++){
+		lplus+=TH2Bkg_Left1DY->GetBinContent(i);
+		lpluse+=pow(TH2Bkg_Left1DY->GetBinError(i),2);
+	}
 	
-	integral=0;
+	TH1Bkg_BtagEffMC->SetBinContent(0,1);
+	for(int i=0; i<=TH2Bkg_Left1DY->GetXaxis()->GetNbins(); i++){
+		double Eff=TH2Bkg_Left1DY->Integral(i,TH2Bkg_Left1DY->GetXaxis()->GetNbins()+1)/integral;//The corresponding cut is the low edge of the bin
+		//TH1Bkg_BtagEffMC->SetBinContent(i,Eff); 
+		
+		lplus-=TH2Bkg_Left1DY->GetBinContent(i);
+		lpluse-=pow(TH2Bkg_Left1DY->GetBinError(i),2);
+		if(lplus<1){lplus=0; lpluse=0;}
+		lmin+=TH2Bkg_Left1DY->GetBinContent(i);
+		lmine+=pow(TH2Bkg_Left1DY->GetBinError(i),2);
+		
+		double tmpcontent=lplus/(lplus+lmin);
+		
+		double tmperror=sqrt(
+							 pow(sqrt(lpluse) * ( 1/(lplus+lmin) - lplus/( (lplus+lmin)*(lplus+lmin) )  ) ,2) + 
+							 pow(sqrt(lmine)  *                  lplus/( (lplus+lmin)*(lplus+lmin) )    ,2)
+							 );
+		
+		//cout << " MC : " << titleBkg_BtagEffMC_ << " " << tmpcontent << " " << Eff << endl;
+		
+		TH1Bkg_BtagEffMC->SetBinContent(i+1,tmpcontent); 
+		TH1Bkg_BtagEffMC->SetBinError(i+1,tmperror); 
+	}
+
+	
+	/*integral=0;
 	integral=TH2Bkg_Left1DY->Integral(0,TH2Bkg_Left1DY->GetXaxis()->GetNbins()+1);
 	for(int i=0; i<=TH2Bkg_Left1DY->GetXaxis()->GetNbins()+1; i++){
 		double Eff=TH2Bkg_Left1DY->Integral(i,TH2Bkg_Left1DY->GetXaxis()->GetNbins()+1)/integral;
 		TH1Bkg_BtagEffMC->SetBinContent(i,Eff); 
 		TH1Bkg_BtagEffMC->SetBinError(i,0); 
 		//The corresponding cut is the low edge of the bin
-	}
+	}*/
+    
+    
 	integral=0;
 	integral=TH2Data_Left1DY->Integral(0,TH2Data_Left1DY->GetXaxis()->GetNbins()+1);
 	for(int i=0; i<=TH2Data_Left1DY->GetXaxis()->GetNbins()+1; i++){
@@ -1590,14 +1764,51 @@ void PtEtaBin::MakeMCEffPlots(){
 		
 	}
 	
-	integral=0;
+	/*integral=0;
 	integral=TH1Bkg_BtagAll->Integral(0,TH1Bkg_BtagAll->GetXaxis()->GetNbins()+1);
 	for(int i=0; i<=TH1Bkg_BtagAll->GetXaxis()->GetNbins()+1; i++){
 		double Eff=TH1Bkg_BtagAll->Integral(i,TH1Bkg_BtagAll->GetXaxis()->GetNbins()+1)/integral;
 		TH1Bkg_BtagEffAll->SetBinContent(i,Eff); 
 		TH1Bkg_BtagEffAll->SetBinError(i,0); 
 		//The corresponding cut is the low edge of the bin
+	}*/
+    
+    integral=0; 
+	integral=TH1Bkg_BtagAll->Integral(0,TH1Bkg_BtagAll->GetXaxis()->GetNbins()+1); //the plots here are for the distributions of the whole signal sample  
+	
+	double lminA=0;
+	double lminAe=0;
+	double lplusA=0;
+	double lplusAe=0;  
+	for(int i=0; i<=TH1Bkg_BtagAll->GetXaxis()->GetNbins()+1; i++){
+		lplusA+=TH1Bkg_BtagAll->GetBinContent(i);
+		lplusAe+=pow(TH1Bkg_BtagAll->GetBinError(i),2);
+	} 
+	TH1Bkg_BtagEffAll->SetBinContent(0,1);
+	for(int i=0; i<=TH1Bkg_BtagAll->GetXaxis()->GetNbins(); i++){
+		double Eff=TH1Bkg_BtagAll->Integral(i,TH1Bkg_BtagAll->GetXaxis()->GetNbins()+1)/integral;    //The corresponding cut is the low edge of the bin
+		//TH1Bkg_BtagEffAll->SetBinContent(i,Eff); 
+		
+		lplusA-=TH1Bkg_BtagAll->GetBinContent(i);
+		lplusAe-=pow(TH1Bkg_BtagAll->GetBinError(i),2);
+		if(lplusA<1){lplusA=0; lplusAe=0;}
+		lminA+=TH1Bkg_BtagAll->GetBinContent(i);
+		lminAe+=pow(TH1Bkg_BtagAll->GetBinError(i),2);
+		
+		double tmpcontent=lplusA/(lplusA+lminA);
+		
+		double tmperror=sqrt(
+							 pow(sqrt(lplusAe) * ( 1/(lplusA+lminA) - lplusA/( (lplusA+lminA)*(lplusA+lminA) )  ) ,2) + 
+							 pow(sqrt(lminAe)  *                  lplusA/( (lplusA+lminA)*(lplusA+lminA) )    ,2)
+							 );
+		
+		TH1Bkg_BtagEffAll->SetBinContent(i+1,tmpcontent); 
+		TH1Bkg_BtagEffAll->SetBinError(i+1,tmperror); 
+		
+		//cout << " All : " << titleSng_BtagEffMC_ << " " << tmpcontent << " " << Eff << endl;
+		
 	}
+    
 	integral=0;  
 	integral=TH1Data_BtagAll->Integral(0,TH1Data_BtagAll->GetXaxis()->GetNbins()+1);
 	for(int i=0; i<=TH1Data_BtagAll->GetXaxis()->GetNbins()+1; i++){
@@ -1640,21 +1851,37 @@ void PtEtaBin::MakeProfileXplots(){
 
 void PtEtaBin::Make1DXplots(){
 
-  GiveName(&titleSng_Left1DX_); titleSng_Left1DX_+="TH2Sng_Left1DX"; 
-  GiveName(&titleBkg_Left1DX_); titleBkg_Left1DX_+="TH2Bkg_Left1DX"; 
-  GiveName(&titleData_Left1DX_); titleData_Left1DX_+="TH2Data_Left1DX"; 
-  
-  TH2Sng_Left1DX = TH2Sng_Left->ProjectionX(titleSng_Left1DX_,0,TH2Sng_Left->GetYaxis()->GetNbins()+1,"e");
-  TH2Bkg_Left1DX = TH2Bkg_Left->ProjectionX(titleBkg_Left1DX_,0,TH2Bkg_Left->GetYaxis()->GetNbins()+1,"e");
-  TH2Data_Left1DX = TH2Data_Left->ProjectionX(titleData_Left1DX_,0,TH2Data_Left->GetYaxis()->GetNbins()+1,"e");
-
-  GiveName(&titleSng_Right1DX_); titleSng_Right1DX_+="TH2Sng_Right1DX"; 
-  GiveName(&titleBkg_Right1DX_); titleBkg_Right1DX_+="TH2Bkg_Right1DX"; 
-  GiveName(&titleData_Right1DX_); titleData_Right1DX_+="TH2Data_Right1DX"; 
+    GiveName(&titleSng_Left1DX_); titleSng_Left1DX_+="TH2Sng_Left1DX"; 
+    GiveName(&titleBkg_Left1DX_); titleBkg_Left1DX_+="TH2Bkg_Left1DX"; 
+    GiveName(&titleData_Left1DX_); titleData_Left1DX_+="TH2Data_Left1DX"; 
     
-  TH2Sng_Right1DX = TH2Sng_Right->ProjectionX(titleSng_Right1DX_,0,TH2Sng_Right->GetYaxis()->GetNbins()+1,"e");
-  TH2Bkg_Right1DX = TH2Bkg_Right->ProjectionX(titleBkg_Right1DX_,0,TH2Bkg_Right->GetYaxis()->GetNbins()+1,"e");
-  TH2Data_Right1DX = TH2Data_Right->ProjectionX(titleData_Right1DX_,0,TH2Data_Right->GetYaxis()->GetNbins()+1,"e");
+    TH2Sng_Left1DX = TH2Sng_Left->ProjectionX(titleSng_Left1DX_,0,TH2Sng_Left->GetYaxis()->GetNbins()+1,"e");
+    TH2Bkg_Left1DX = TH2Bkg_Left->ProjectionX(titleBkg_Left1DX_,0,TH2Bkg_Left->GetYaxis()->GetNbins()+1,"e");
+    TH2Data_Left1DX = TH2Data_Left->ProjectionX(titleData_Left1DX_,0,TH2Data_Left->GetYaxis()->GetNbins()+1,"e");
+    
+    GiveName(&titleSng_Right1DX_); titleSng_Right1DX_+="TH2Sng_Right1DX"; 
+    GiveName(&titleBkg_Right1DX_); titleBkg_Right1DX_+="TH2Bkg_Right1DX"; 
+    GiveName(&titleData_Right1DX_); titleData_Right1DX_+="TH2Data_Right1DX"; 
+    
+    TH2Sng_Right1DX = TH2Sng_Right->ProjectionX(titleSng_Right1DX_,0,TH2Sng_Right->GetYaxis()->GetNbins()+1,"e");
+    TH2Bkg_Right1DX = TH2Bkg_Right->ProjectionX(titleBkg_Right1DX_,0,TH2Bkg_Right->GetYaxis()->GetNbins()+1,"e");
+    TH2Data_Right1DX = TH2Data_Right->ProjectionX(titleData_Right1DX_,0,TH2Data_Right->GetYaxis()->GetNbins()+1,"e");
+    
+    GiveName(&titleSng_Left1DXControl_); titleSng_Left1DXControl_+="TH2Sng_Left1DXControl"; 
+    GiveName(&titleBkg_Left1DXControl_); titleBkg_Left1DXControl_+="TH2Bkg_Left1DXControl"; 
+    GiveName(&titleData_Left1DXControl_); titleData_Left1DXControl_+="TH2Data_Left1DXControl"; 
+    
+    TH2Sng_Left1DXControl = TH2Sng_LeftControl->ProjectionX(titleSng_Left1DXControl_,0,TH2Sng_Left->GetYaxis()->GetNbins()+1,"e");
+    TH2Bkg_Left1DXControl = TH2Bkg_LeftControl->ProjectionX(titleBkg_Left1DXControl_,0,TH2Bkg_Left->GetYaxis()->GetNbins()+1,"e");
+    TH2Data_Left1DXControl = TH2Data_LeftControl->ProjectionX(titleData_Left1DXControl_,0,TH2Data_Left->GetYaxis()->GetNbins()+1,"e");
+    
+    GiveName(&titleSng_Right1DXControl_); titleSng_Right1DXControl_+="TH2Sng_Right1DXControl"; 
+    GiveName(&titleBkg_Right1DXControl_); titleBkg_Right1DXControl_+="TH2Bkg_Right1DXControl"; 
+    GiveName(&titleData_Right1DXControl_); titleData_Right1DXControl_+="TH2Data_Right1DXControl"; 
+    
+    TH2Sng_Right1DXControl = TH2Sng_RightControl->ProjectionX(titleSng_Right1DXControl_,0,TH2Sng_Right->GetYaxis()->GetNbins()+1,"e");
+    TH2Bkg_Right1DXControl = TH2Bkg_RightControl->ProjectionX(titleBkg_Right1DXControl_,0,TH2Bkg_Right->GetYaxis()->GetNbins()+1,"e");
+    TH2Data_Right1DXControl = TH2Data_RightControl->ProjectionX(titleData_Right1DXControl_,0,TH2Data_Right->GetYaxis()->GetNbins()+1,"e");
 
 }
 
@@ -1950,10 +2177,10 @@ void PtEtaBin::MakeSCVar12RatioPlot(){
 void PtEtaBin::MakeXRatioPlot(bool useFit){
   //X stands for Pt
 
-  //I first have to normalize the pt plots, I rescale them to the original ones at the end of this method
-  double rightScale=TH2Data_Right1DX->Integral(0,TH2Data_Right1DX->GetXaxis()->GetNbins()+1);
-  double leftScale=TH2Data_Left1DX->Integral(0,TH2Data_Left1DX->GetXaxis()->GetNbins()+1);
-  
+    //I first have to normalize the pt plots, I rescale them to the original ones at the end of this method
+    double rightScale=TH2Data_Right1DX->Integral(0,TH2Data_Right1DX->GetXaxis()->GetNbins()+1);
+    double leftScale=TH2Data_Left1DX->Integral(0,TH2Data_Left1DX->GetXaxis()->GetNbins()+1);
+    
   TH2Data_Right1DX->Scale(1/rightScale); // I've set sumw2 so that the error gets propagated correctly (I've checked this explicitely)
   TH2Data_Left1DX->Scale(1/leftScale);
 
@@ -1970,9 +2197,10 @@ void PtEtaBin::MakeXRatioPlot(bool useFit){
     }
   }
  
-  GiveName(&titleData_LeftRight1DX_); titleData_LeftRight1DX_+="TH2Data_LeftRight1DX"; 
-  //if(!varBinSize_){
+    GiveName(&titleData_LeftRight1DX_); titleData_LeftRight1DX_+="TH2Data_LeftRight1DX"; 
+    //if(!varBinSize_){
     TH2Data_LeftRight1DX = new TH1D(titleData_LeftRight1DX_,titleData_LeftRight1DX_,TH2Data_Left1DX->GetXaxis()->GetNbins(),TH2Data_Left1DX->GetXaxis()->GetBinLowEdge(1),TH2Data_Left1DX->GetXaxis()->GetBinUpEdge(TH2Data_Left1DX->GetXaxis()->GetNbins()));
+
     //}
     //if(varBinSize_){
     //TH2Data_LeftRight1DX = new TH1D(titleData_LeftRight1DX_,titleData_LeftRight1DX_,TH2Data_Left1DX->GetXaxis()->GetNbins(),rangesVar1_);
@@ -1990,7 +2218,33 @@ void PtEtaBin::MakeXRatioPlot(bool useFit){
   
   TH2Data_Right1DX->Scale(rightScale);
   TH2Data_Left1DX->Scale(leftScale);
+    
+    // control sample
+    
+    //I first have to normalize the pt plots, I rescale them to the original ones at the end of this method
+    double rightScaleC=TH2Data_Right1DXControl->Integral(0,TH2Data_Right1DXControl->GetXaxis()->GetNbins()+1);
+    double leftScaleC=TH2Data_Left1DXControl->Integral(0,TH2Data_Left1DXControl->GetXaxis()->GetNbins()+1);
+    
+    TH2Data_Right1DXControl->Scale(1/rightScaleC); // I've set sumw2 so that the error gets propagated correctly (I've checked this explicitely)
+    TH2Data_Left1DXControl->Scale(1/leftScaleC);
+    
+    GiveName(&titleData_LeftRight1DXControl_); titleData_LeftRight1DXControl_+="TH2Data_LeftRight1DXControl"; 
+    //if(!varBinSize_){
+    TH2Data_LeftRight1DXControl = new TH1D(titleData_LeftRight1DXControl_,titleData_LeftRight1DXControl_,TH2Data_Left1DXControl->GetXaxis()->GetNbins(),TH2Data_Left1DXControl->GetXaxis()->GetBinLowEdge(1),TH2Data_Left1DXControl->GetXaxis()->GetBinUpEdge(TH2Data_Left1DXControl->GetXaxis()->GetNbins()));
+    
+    for(int i=0; i<=TH2Data_Left1DXControl->GetXaxis()->GetNbins()+1; i++){
+        if(TH2Data_Left1DXControl->GetBinContent(i)!=0 && TH2Data_Right1DXControl->GetBinContent(i)!=0){
+            //cout << TH2Data_Left1DXControl->GetBinContent(i) << " " << TH2Data_Right1DXControl->GetBinContent(i) << " " << TH2Data_Left1DXControl->GetBinContent(i)/TH2Data_Right1DXControl->GetBinContent(i)<< endl;
+            TH2Data_LeftRight1DXControl->SetBinContent(i,TH2Data_Left1DXControl->GetBinContent(i)/TH2Data_Right1DXControl->GetBinContent(i)); 
+            TH2Data_LeftRight1DXControl->SetBinError(i,sqrt(pow((TH2Data_Left1DXControl->GetBinError(i)/TH2Data_Right1DXControl->GetBinContent(i)),2)+pow((TH2Data_Left1DXControl->GetBinContent(i)/TH2Data_Right1DXControl->GetBinError(i)*TH2Data_Right1DXControl->GetBinError(i)),2)));
+        } else {
+            TH2Data_LeftRight1DXControl->SetBinContent(i,-0.01);
+        }
+    }
  
+    TH2Data_Right1DXControl->Scale(rightScaleC);
+    TH2Data_Left1DXControl->Scale(leftScaleC);
+    
   //here I'm using the background pt distributions left and right
   /*  double rightScale=TH2Bkg_Right1DX->Integral(0,TH2Bkg_Right1DX->GetXaxis()->GetNbins()+1);
   double leftScale=TH2Bkg_Left1DX->Integral(0,TH2Bkg_Left1DX->GetXaxis()->GetNbins()+1);
@@ -2089,6 +2343,24 @@ void PtEtaBin::MakeXRatioPlot(bool useFit){
 	  	TFData_LeftRight1DXFit = (TF1*) r->Get("nDisc_10_ptbinlow_0_etabinlow_-9990_TH2Data_LeftRight1DXFit");*/
 	   
 	   //r->Close();
+      
+      
+      // control sample 
+      
+      GiveName(&titleData_LeftRight1DXControlFit_); titleData_LeftRight1DXControlFit_+="TH2Data_LeftRight1DXControlFit"; 
+      
+      //    TFData_LeftRight1DXControlFit = new TF1(titleData_LeftRight1DXControlFit_,"expo",30,300);
+      //TFData_LeftRight1DXControlFit = new TF1(titleData_LeftRight1DXControlFit_,"exp([0]+[1]*x)+[2]*x",30,300);
+      
+      //TFData_LeftRight1DXControlFit = new TF1(titleData_LeftRight1DXControlFit_,"exp([0]+[1]*x)+[2]",31,300);
+      TFData_LeftRight1DXControlFit = new TF1(titleData_LeftRight1DXControlFit_,"exp([0]+[1]*x)+[2]",41,300);
+      TFData_LeftRight1DXControlFit->SetParameter(0,1.016);
+      TFData_LeftRight1DXControlFit->SetParameter(1,-0.014);
+      TFData_LeftRight1DXControlFit->SetParameter(2,0.25);
+      
+      //TFData_LeftRight1DXControlFit = new TF1(titleData_LeftRight1DXControlFit_,"pol3",30,300);
+      
+      TH2Data_LeftRight1DXControl->Fit(TFData_LeftRight1DXControlFit,"RQ");
 	  
 	  
   }
@@ -2124,22 +2396,38 @@ void PtEtaBin::SetLeftRightPars(double *par0, double *par1, double *par2){
 
 void PtEtaBin::Make1DYplots(){
  
-  GiveName(&titleSng_Left1DY_); titleSng_Left1DY_+="TH2Sng_Left1DY"; 
-  GiveName(&titleBkg_Left1DY_); titleBkg_Left1DY_+="TH2Bkg_Left1DY"; 
-  GiveName(&titleData_Left1DY_); titleData_Left1DY_+="TH2Data_Left1DY"; 
-
-  GiveName(&titleSng_Right1DY_); titleSng_Right1DY_+="TH2Sng_Right1DY"; 
-  GiveName(&titleBkg_Right1DY_); titleBkg_Right1DY_+="TH2Bkg_Right1DY"; 
-  GiveName(&titleData_Right1DY_); titleData_Right1DY_+="TH2Data_Right1DY"; 
-
-  TH2Sng_Right1DY = TH2Sng_Right->ProjectionY(titleSng_Right1DY_,0,TH2Sng_Right->GetXaxis()->GetNbins()+1,"e");
-  TH2Bkg_Right1DY = TH2Bkg_Right->ProjectionY(titleBkg_Right1DY_,0,TH2Bkg_Right->GetXaxis()->GetNbins()+1,"e");
-  TH2Data_Right1DY = TH2Data_Right->ProjectionY(titleData_Right1DY_,0,TH2Data_Right->GetXaxis()->GetNbins()+1,"e");
-
-  TH2Sng_Left1DY = TH2Sng_Left->ProjectionY(titleSng_Left1DY_,0,TH2Sng_Left->GetXaxis()->GetNbins()+1,"e");
-  TH2Bkg_Left1DY = TH2Bkg_Left->ProjectionY(titleBkg_Left1DY_,0,TH2Bkg_Left->GetXaxis()->GetNbins()+1,"e");
-  TH2Data_Left1DY = TH2Data_Left->ProjectionY(titleData_Left1DY_,0,TH2Data_Left->GetXaxis()->GetNbins()+1,"e");
-
+    GiveName(&titleSng_Left1DY_); titleSng_Left1DY_+="TH2Sng_Left1DY"; 
+    GiveName(&titleBkg_Left1DY_); titleBkg_Left1DY_+="TH2Bkg_Left1DY"; 
+    GiveName(&titleData_Left1DY_); titleData_Left1DY_+="TH2Data_Left1DY"; 
+    
+    GiveName(&titleSng_Right1DY_); titleSng_Right1DY_+="TH2Sng_Right1DY"; 
+    GiveName(&titleBkg_Right1DY_); titleBkg_Right1DY_+="TH2Bkg_Right1DY"; 
+    GiveName(&titleData_Right1DY_); titleData_Right1DY_+="TH2Data_Right1DY"; 
+    
+    TH2Sng_Right1DY = TH2Sng_Right->ProjectionY(titleSng_Right1DY_,0,TH2Sng_Right->GetXaxis()->GetNbins()+1,"e");
+    TH2Bkg_Right1DY = TH2Bkg_Right->ProjectionY(titleBkg_Right1DY_,0,TH2Bkg_Right->GetXaxis()->GetNbins()+1,"e");
+    TH2Data_Right1DY = TH2Data_Right->ProjectionY(titleData_Right1DY_,0,TH2Data_Right->GetXaxis()->GetNbins()+1,"e");
+    
+    TH2Sng_Left1DY = TH2Sng_Left->ProjectionY(titleSng_Left1DY_,0,TH2Sng_Left->GetXaxis()->GetNbins()+1,"e");
+    TH2Bkg_Left1DY = TH2Bkg_Left->ProjectionY(titleBkg_Left1DY_,0,TH2Bkg_Left->GetXaxis()->GetNbins()+1,"e");
+    TH2Data_Left1DY = TH2Data_Left->ProjectionY(titleData_Left1DY_,0,TH2Data_Left->GetXaxis()->GetNbins()+1,"e");
+    
+    GiveName(&titleSng_Left1DYControl_); titleSng_Left1DYControl_+="TH2Sng_Left1DYControl"; 
+    GiveName(&titleBkg_Left1DYControl_); titleBkg_Left1DYControl_+="TH2Bkg_Left1DYControl"; 
+    GiveName(&titleData_Left1DYControl_); titleData_Left1DYControl_+="TH2Data_Left1DYControl"; 
+    
+    GiveName(&titleSng_Right1DYControl_); titleSng_Right1DYControl_+="TH2Sng_Right1DYControl"; 
+    GiveName(&titleBkg_Right1DYControl_); titleBkg_Right1DYControl_+="TH2Bkg_Right1DYControl"; 
+    GiveName(&titleData_Right1DYControl_); titleData_Right1DYControl_+="TH2Data_Right1DYControl"; 
+    
+    TH2Sng_Right1DYControl = TH2Sng_RightControl->ProjectionY(titleSng_Right1DYControl_,0,TH2Sng_Right->GetXaxis()->GetNbins()+1,"e");
+    TH2Bkg_Right1DYControl = TH2Bkg_RightControl->ProjectionY(titleBkg_Right1DYControl_,0,TH2Bkg_Right->GetXaxis()->GetNbins()+1,"e");
+    TH2Data_Right1DYControl = TH2Data_RightControl->ProjectionY(titleData_Right1DYControl_,0,TH2Data_Right->GetXaxis()->GetNbins()+1,"e");
+    
+    TH2Sng_Left1DYControl = TH2Sng_LeftControl->ProjectionY(titleSng_Left1DYControl_,0,TH2Sng_Left->GetXaxis()->GetNbins()+1,"e");
+    TH2Bkg_Left1DYControl = TH2Bkg_LeftControl->ProjectionY(titleBkg_Left1DYControl_,0,TH2Bkg_Left->GetXaxis()->GetNbins()+1,"e");
+    TH2Data_Left1DYControl = TH2Data_LeftControl->ProjectionY(titleData_Left1DYControl_,0,TH2Data_Left->GetXaxis()->GetNbins()+1,"e"); 
+    
   /*  cout << "Sng left " << TH2Sng_Left1DY->Integral(0,TH2Sng_Left1DY->GetXaxis()->GetNbins()+1) << endl;
   cout << "Bkg left " << TH2Bkg_Left1DY->Integral(0,TH2Bkg_Left1DY->GetXaxis()->GetNbins()+1) << endl;
   cout << "Data left " << TH2Data_Left1DY->Integral(0,TH2Data_Left1DY->GetXaxis()->GetNbins()+1) << endl;
@@ -2204,7 +2492,8 @@ void PtEtaBin::SetError1DYVar2plots(){
 }
 
 void PtEtaBin::ReweighLeft(){//obsolete
-  return;
+    
+  //return;
   //does make the 1DY plots +reweight one of them
   /*  if(debug_>2) cout << "+----> PtEtaBin::ReweighLeft - start method" << endl; 
 
@@ -2216,6 +2505,27 @@ void PtEtaBin::ReweighLeft(){//obsolete
 
   CalculateReweigh(TH2Data_Left, TH2Data_RightLeft1DX, TH2Data_Left1DYReweigh);
   */
+    
+    GiveName(&titleSng_Left1DYControlReweigh_); titleSng_Left1DYControlReweigh_+="TH2Sng_Left1DYControlReweigh"; 
+    GiveName(&titleBkg_Left1DYControlReweigh_); titleBkg_Left1DYControlReweigh_+="TH2Bkg_Left1DYControlReweigh"; 
+    GiveName(&titleData_Left1DYControlReweigh_); titleData_Left1DYControlReweigh_+="TH2Data_Left1DYControlReweigh";
+    
+    if(!varBinSize_){
+    
+        TH2Sng_Left1DYControlReweigh = new TH1D(titleSng_Left1DYControlReweigh_,titleSng_Left1DYControlReweigh_,TH2Sng_Left->GetYaxis()->GetNbins(),TH2Sng_Left->GetYaxis()->GetBinLowEdge(1),TH2Sng_Left->GetYaxis()->GetBinUpEdge(TH2Sng_Left->GetYaxis()->GetNbins()));
+        TH2Bkg_Left1DYControlReweigh = new TH1D(titleBkg_Left1DYControlReweigh_,titleBkg_Left1DYControlReweigh_,TH2Bkg_Left->GetYaxis()->GetNbins(),TH2Bkg_Left->GetYaxis()->GetBinLowEdge(1),TH2Bkg_Left->GetYaxis()->GetBinUpEdge(TH2Bkg_Left->GetYaxis()->GetNbins()));
+        TH2Data_Left1DYControlReweigh = new TH1D(titleData_Left1DYControlReweigh_,titleData_Left1DYControlReweigh_,TH2Data_Left->GetYaxis()->GetNbins(),TH2Data_Left->GetYaxis()->GetBinLowEdge(1),TH2Data_Left->GetYaxis()->GetBinUpEdge(TH2Data_Left->GetYaxis()->GetNbins()));
+    }
+    
+    if(varBinSize_){
+         
+        TH2Sng_Left1DYControlReweigh = new TH1D(titleSng_Left1DYControlReweigh_,titleSng_Left1DYControlReweigh_,TH2Sng_Left->GetYaxis()->GetNbins(),rangesbTag_);
+        TH2Bkg_Left1DYControlReweigh = new TH1D(titleBkg_Left1DYControlReweigh_,titleBkg_Left1DYControlReweigh_,TH2Bkg_Left->GetYaxis()->GetNbins(),rangesbTag_);
+        TH2Data_Left1DYControlReweigh = new TH1D(titleData_Left1DYControlReweigh_,titleData_Left1DYControlReweigh_,TH2Data_Left->GetYaxis()->GetNbins(),rangesbTag_);
+        
+    }    
+
+    
 } // certainly obsolete
 
 
@@ -2224,19 +2534,32 @@ void PtEtaBin::ReweighRight(){
   //does make the 1DY plots +reweight one of them
   if(debug_>2) cout << "+----> PtEtaBin::ReweighRight - start method" << endl; 
 
-  GiveName(&titleSng_Right1DYReweigh_); titleSng_Right1DYReweigh_+="TH2Sng_Right1DYReweigh"; 
-  GiveName(&titleBkg_Right1DYReweigh_); titleBkg_Right1DYReweigh_+="TH2Bkg_Right1DYReweigh"; 
-  GiveName(&titleData_Right1DYReweigh_); titleData_Right1DYReweigh_+="TH2Data_Right1DYReweigh"; 
+    GiveName(&titleSng_Right1DYReweigh_); titleSng_Right1DYReweigh_+="TH2Sng_Right1DYReweigh"; 
+    GiveName(&titleBkg_Right1DYReweigh_); titleBkg_Right1DYReweigh_+="TH2Bkg_Right1DYReweigh"; 
+    GiveName(&titleData_Right1DYReweigh_); titleData_Right1DYReweigh_+="TH2Data_Right1DYReweigh";
+    
+    GiveName(&titleSng_Right1DYControlReweigh_); titleSng_Right1DYControlReweigh_+="TH2Sng_Right1DYControlReweigh"; 
+    GiveName(&titleBkg_Right1DYControlReweigh_); titleBkg_Right1DYControlReweigh_+="TH2Bkg_Right1DYControlReweigh"; 
+    GiveName(&titleData_Right1DYControlReweigh_); titleData_Right1DYControlReweigh_+="TH2Data_Right1DYControlReweigh";
 
   if(!varBinSize_){
-    TH2Sng_Right1DYReweigh = new TH1D(titleSng_Right1DYReweigh_,titleSng_Right1DYReweigh_,TH2Sng_Right->GetYaxis()->GetNbins(),TH2Sng_Right->GetYaxis()->GetBinLowEdge(1),TH2Sng_Right->GetYaxis()->GetBinUpEdge(TH2Sng_Right->GetYaxis()->GetNbins()));
-    TH2Bkg_Right1DYReweigh = new TH1D(titleBkg_Right1DYReweigh_,titleBkg_Right1DYReweigh_,TH2Bkg_Right->GetYaxis()->GetNbins(),TH2Bkg_Right->GetYaxis()->GetBinLowEdge(1),TH2Bkg_Right->GetYaxis()->GetBinUpEdge(TH2Bkg_Right->GetYaxis()->GetNbins()));
-    TH2Data_Right1DYReweigh = new TH1D(titleData_Right1DYReweigh_,titleData_Right1DYReweigh_,TH2Data_Right->GetYaxis()->GetNbins(),TH2Data_Right->GetYaxis()->GetBinLowEdge(1),TH2Data_Right->GetYaxis()->GetBinUpEdge(TH2Data_Right->GetYaxis()->GetNbins()));
+      TH2Sng_Right1DYReweigh = new TH1D(titleSng_Right1DYReweigh_,titleSng_Right1DYReweigh_,TH2Sng_Right->GetYaxis()->GetNbins(),TH2Sng_Right->GetYaxis()->GetBinLowEdge(1),TH2Sng_Right->GetYaxis()->GetBinUpEdge(TH2Sng_Right->GetYaxis()->GetNbins()));
+      TH2Bkg_Right1DYReweigh = new TH1D(titleBkg_Right1DYReweigh_,titleBkg_Right1DYReweigh_,TH2Bkg_Right->GetYaxis()->GetNbins(),TH2Bkg_Right->GetYaxis()->GetBinLowEdge(1),TH2Bkg_Right->GetYaxis()->GetBinUpEdge(TH2Bkg_Right->GetYaxis()->GetNbins()));
+      TH2Data_Right1DYReweigh = new TH1D(titleData_Right1DYReweigh_,titleData_Right1DYReweigh_,TH2Data_Right->GetYaxis()->GetNbins(),TH2Data_Right->GetYaxis()->GetBinLowEdge(1),TH2Data_Right->GetYaxis()->GetBinUpEdge(TH2Data_Right->GetYaxis()->GetNbins()));
+      
+      TH2Sng_Right1DYControlReweigh = new TH1D(titleSng_Right1DYControlReweigh_,titleSng_Right1DYControlReweigh_,TH2Sng_Right->GetYaxis()->GetNbins(),TH2Sng_Right->GetYaxis()->GetBinLowEdge(1),TH2Sng_Right->GetYaxis()->GetBinUpEdge(TH2Sng_Right->GetYaxis()->GetNbins()));
+      TH2Bkg_Right1DYControlReweigh = new TH1D(titleBkg_Right1DYControlReweigh_,titleBkg_Right1DYControlReweigh_,TH2Bkg_Right->GetYaxis()->GetNbins(),TH2Bkg_Right->GetYaxis()->GetBinLowEdge(1),TH2Bkg_Right->GetYaxis()->GetBinUpEdge(TH2Bkg_Right->GetYaxis()->GetNbins()));
+      TH2Data_Right1DYControlReweigh = new TH1D(titleData_Right1DYControlReweigh_,titleData_Right1DYControlReweigh_,TH2Data_Right->GetYaxis()->GetNbins(),TH2Data_Right->GetYaxis()->GetBinLowEdge(1),TH2Data_Right->GetYaxis()->GetBinUpEdge(TH2Data_Right->GetYaxis()->GetNbins()));
   }
   if(varBinSize_){
-    TH2Sng_Right1DYReweigh = new TH1D(titleSng_Right1DYReweigh_,titleSng_Right1DYReweigh_,TH2Sng_Right->GetYaxis()->GetNbins(),rangesbTag_);
-    TH2Bkg_Right1DYReweigh = new TH1D(titleBkg_Right1DYReweigh_,titleBkg_Right1DYReweigh_,TH2Bkg_Right->GetYaxis()->GetNbins(),rangesbTag_);
-    TH2Data_Right1DYReweigh = new TH1D(titleData_Right1DYReweigh_,titleData_Right1DYReweigh_,TH2Data_Right->GetYaxis()->GetNbins(),rangesbTag_);
+      TH2Sng_Right1DYReweigh = new TH1D(titleSng_Right1DYReweigh_,titleSng_Right1DYReweigh_,TH2Sng_Right->GetYaxis()->GetNbins(),rangesbTag_);
+      TH2Bkg_Right1DYReweigh = new TH1D(titleBkg_Right1DYReweigh_,titleBkg_Right1DYReweigh_,TH2Bkg_Right->GetYaxis()->GetNbins(),rangesbTag_);
+      TH2Data_Right1DYReweigh = new TH1D(titleData_Right1DYReweigh_,titleData_Right1DYReweigh_,TH2Data_Right->GetYaxis()->GetNbins(),rangesbTag_);
+  
+      TH2Sng_Right1DYControlReweigh = new TH1D(titleSng_Right1DYControlReweigh_,titleSng_Right1DYControlReweigh_,TH2Sng_Right->GetYaxis()->GetNbins(),rangesbTag_);
+      TH2Bkg_Right1DYControlReweigh = new TH1D(titleBkg_Right1DYControlReweigh_,titleBkg_Right1DYControlReweigh_,TH2Bkg_Right->GetYaxis()->GetNbins(),rangesbTag_);
+      TH2Data_Right1DYControlReweigh = new TH1D(titleData_Right1DYControlReweigh_,titleData_Right1DYControlReweigh_,TH2Data_Right->GetYaxis()->GetNbins(),rangesbTag_);
+
   }    
 
   GiveName(&titleSng_Left1DYReweigh_); titleSng_Left1DYReweigh_+="TH2Sng_Left1DYReweigh"; 
@@ -2412,7 +2735,7 @@ void PtEtaBin::ReweighRight(){
 
   }*/
 
-void PtEtaBin::FillReweighControl(double btag, double* btagCuts, bool do2D, double weight, int partonFlavour, bool isW, bool isR, double controlVar1, double controlVar2, double controlVar0,  double lowCutVar0, double centralUpCutVar0, double centralLowCutVar0, double upCutVar0, double chisq){
+void PtEtaBin::FillReweighControl(double bTag, double* btagCuts, bool do2D, double weight, int partonFlavour, bool isW, bool isR, double controlVar1, double controlVar2, double controlVar0,  double lowCutVar0, double centralUpCutVar0, double centralLowCutVar0, double upCutVar0, double chisq){
 
   bool BinFound = false;
   
@@ -2497,9 +2820,33 @@ void PtEtaBin::FillReweighControl(double btag, double* btagCuts, bool do2D, doub
     if(controlVar2>etabinlow_ && controlVar2<etabinup_){  //if(fabs(partonFlavour)!=5) if(chisq<3) TH1Data_ControlVarReweigh->Fill(controlVar0,SignalControlWeight); //abuse for chisq-reweigh
       //if(fabs(partonFlavour)!=5) if(chisq<10) TH1Data_ControlVarReweigh->Fill(controlVar0,1); //abuse for chisq-reweigh
       
-      TH1Data_ControlVarReweigh->Fill(controlVar0,SignalControlWeight); 
+
+        //if(controlVar0>=centralUpCutVar0 && controlVar0<upCutVar0){
+            
+            double lr_weight = TFData_LeftRight1DXControlFit->Eval(controlVar1);
+            //double lr_weight = TFData_LeftRight1DXFit->Eval(controlVar1);
         
-        //cout << controlVar0 << " -> " << SignalControlWeight << endl << endl << endl; exit(1);
+            //lr_weight=1;   
+
+            TH2Data_Right1DYControlReweigh->Fill(bTag,SignalControlWeight*lr_weight);
+            if(fabs(partonFlavour)==5) TH2Sng_Right1DYControlReweigh->Fill(bTag,SignalControlWeight*lr_weight);
+            if(fabs(partonFlavour)!=5) TH2Bkg_Right1DYControlReweigh->Fill(bTag,SignalControlWeight*lr_weight);
+        //}           
+
+        if(controlVar0>lowCutVar0 && controlVar0<=centralUpCutVar0){
+
+        
+            TH2Data_Left1DYControlReweigh->Fill(bTag,SignalControlWeight);
+            if(fabs(partonFlavour)==5) TH2Sng_Left1DYControlReweigh->Fill(bTag,SignalControlWeight);
+            if(fabs(partonFlavour)!=5) TH2Bkg_Left1DYControlReweigh->Fill(bTag,SignalControlWeight);
+        
+        }
+
+        TH1Data_ControlVarReweigh->Fill(controlVar0,SignalControlWeight); 
+        TH1Data_Pt_ControlReweigh->Fill(controlVar1,SignalControlWeight);
+        TH1Data_Eta_ControlReweigh->Fill(controlVar2,SignalControlWeight);
+        
+        //cout << controlVar1 << " -> " << SignalControlWeight << endl << endl << endl; exit(1);
 	
 		histo1D["TH1Data_Var0_VVData"]->Fill(controlVar0,SignalControlWeight); 
 				
@@ -2509,6 +2856,9 @@ void PtEtaBin::FillReweighControl(double btag, double* btagCuts, bool do2D, doub
       if(fabs(partonFlavour)!=5) TH1Bkg_ControlVarReweigh->Fill(controlVar0,SignalControlWeight);
       if(fabs(partonFlavour)!=5) if(isW) TH1Bkg_W_ControlVarReweigh->Fill(controlVar0,SignalControlWeight);
       if(fabs(partonFlavour)!=5) if(isR) TH1Bkg_R_ControlVarReweigh->Fill(controlVar0,SignalControlWeight);
+                
+        //lr_weight=1;
+               
     }
   }
 }
@@ -2795,6 +3145,7 @@ void PtEtaBin::GetLRratio(bool dofitprint, bool doPrint, double FMCBias, bool do
 	
     leftNonBReweigh_      = TH1Data_ControlVarReweigh->Integral(lowerBin_,centralLowBin_);
   rightNonBReweigh_     = TH1Data_ControlVarReweigh->Integral(centralUpBin_+1,upperBin_);
+    
 	
   //cout << "~~~~~~~~~~~~~~~~~~~~~~~ ControlVarReweigh BinContent " << TH1Data_ControlVarReweigh->GetBinContent(20) << "  -->Fix this difference!!" << endl;
   //cout << "~~~~~~~~~~~~~~~~~~~~~~~ ControlVarReweigh BinContent " << TH1Data_ControlVarReweigh->GetBinContent(60) << "  -->Fix this difference!!" << endl;
@@ -3491,8 +3842,8 @@ void PtEtaBin::MeasureEff(bool doSCreweigh){
 
   EffCalculation(doSCreweigh, TH2Data_Left1DY,TH2Data_Right1DY,TH1Data_BtagMeasured,TH1Data_BtagEffMeasured,TH1Data_BtagMCMeasured,TH1Data_BtagEffMCMeasured);
 
-  DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMeasured,TH1Data_BtagEffMeasuredDiff);
-  DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMCMeasured,TH1Data_BtagEffMCMeasuredDiff);
+  DiffCalculation(TH1Sng_BtagEffAll,TH1Data_BtagEffMeasured,TH1Data_BtagEffMeasuredDiff);
+  DiffCalculation(TH1Sng_BtagEffAll,TH1Data_BtagEffMCMeasured,TH1Data_BtagEffMCMeasuredDiff);
 
 }
 
@@ -3604,98 +3955,36 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
     TH1Data_BtagEffShapeMC_MeasuredRRDiff->Sumw2();
     TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff->Sumw2();
     
-    if (((string)titleData_BtagEffMeasuredRRDiff_).find("nDisc_7") != string::npos) {
-        cout << titleData_BtagEffMeasuredRRDiff_ << endl;
+    if (((string)titleData_BtagEffMeasuredRRDiff_).find("nDisc_6") != string::npos || ((string)titleData_BtagEffMeasuredRRDiff_).find("nDisc_7") != string::npos) {
+        //cout << titleData_BtagEffMeasuredRRDiff_ << endl;
         
         double w[100];
-        w[0]=0.792508;
-        w[1]=0.434324;
-        w[2]=1.17795;
-        w[3]=1.15057;
-        w[4]=1.02902;
-        w[5]=1.04176;
-        w[6]=1.03702;
-        w[7]=0.828485;
-        w[8]=0.750401;
-        w[9]=0.77243;
-        w[10]=0.826643;
-        w[11]=0.814294;
-        w[12]=0.922471;
-        w[13]=0.960505;
-        w[14]=0.864035;
-        w[15]=0.982579;
-        w[16]=0.922193;
-        w[17]=0.946188;
-        w[18]=0.933306;
-        w[19]=0.912001;
-        w[20]=1.04092;
-        w[21]=1.1877;
-        w[22]=1.11757;
-        w[23]=1.05655;
-        w[24]=1.1435;
         
-        double w_ss[100];
-        w_ss[0]=0.861313;
-        w_ss[1]=0;
-        w_ss[2]=1.19854;
-        w_ss[3]=1.10203;
-        w_ss[4]=0.999377;
-        w_ss[5]=1.00652;
-        w_ss[6]=0.983845;
-        w_ss[7]=0.880869;
-        w_ss[8]=0.904883;
-        w_ss[9]=0.849013;
-        w_ss[10]=0.958258;
-        w_ss[11]=0.921886;
-        w_ss[12]=0.953792;
-        w_ss[13]=0.952152;
-        w_ss[14]=0.830546;
-        w_ss[15]=1.10515;
-        w_ss[16]=0.878504;
-        w_ss[17]=0.902129;
-        w_ss[18]=0.836276;
-        w_ss[19]=1.15925;
-        w_ss[20]=1.15903;
-        w_ss[21]=1.3983;
-        w_ss[22]=1.10204;
-        w_ss[23]=1.34781;
-        w_ss[24]=1.223;
-        
-        double w_cs[100];
-        w_cs[0]=1.13386;
-        w_cs[1]=0;
-        w_cs[2]=0.595414;
-        w_cs[3]=0.877307;
-        w_cs[4]=0.919263;
-        w_cs[5]=0.862696;
-        w_cs[6]=1.12907;
-        w_cs[7]=0.932574;
-        w_cs[8]=0.909232;
-        w_cs[9]=0.842244;
-        w_cs[10]=0.853889;
-        w_cs[11]=0.822262;
-        w_cs[12]=0.927505;
-        w_cs[13]=1.08009;
-        w_cs[14]=0.923439;
-        w_cs[15]=0.85881;
-        w_cs[16]=1.05027;
-        w_cs[17]=1.08009;
-        w_cs[18]=1.34814;
-        w_cs[19]=1.11323;
-        w_cs[20]=1.0473;
-        w_cs[21]=1.22355;
-        w_cs[22]=1.29081;
-        w_cs[23]=1.276;
-        w_cs[24]=1.44094;
-
         for (int b=0; b<TH2Data_Right1DYReweigh->GetNbinsX(); b++) {
-            w[b]=w_cs[b];
             
-            TH2Sng_Right1DYReweigh->SetBinContent(b,w[b]*TH2Sng_Right1DYReweigh->GetBinContent(b));
-            TH2Bkg_Right1DYReweigh->SetBinContent(b,w[b]*TH2Bkg_Right1DYReweigh->GetBinContent(b));
+            TH1D* nom = (TH1D*) TH2Data_Left1DYControl->Clone();
+            TH1D* denom = (TH1D*) TH2Data_Right1DYControlReweigh->Clone();
+            
+            //TH1D* nom = (TH1D*) TH2Bkg_Left1DY->Clone();
+            //TH1D* denom = (TH1D*) TH2Bkg_Right1DYReweigh->Clone();
+            
+            nom->Scale(1./nom->Integral());
+            denom->Scale(1./denom->Integral());
+            
+            if (denom->GetBinContent(b) > 0)
+                w[b]=nom->GetBinContent(b)/denom->GetBinContent(b);
+            else
+                w[b]=1;
+            
+            //w[b]=1;
+            
+            //cout << w[b] << endl;
+            
+            //TH2Sng_Right1DYReweigh->SetBinContent(b,w[b]*TH2Sng_Right1DYReweigh->GetBinContent(b));
+            //TH2Bkg_Right1DYReweigh->SetBinContent(b,w[b]*TH2Bkg_Right1DYReweigh->GetBinContent(b));
             TH2Data_Right1DYReweigh->SetBinContent(b,w[b]*TH2Data_Right1DYReweigh->GetBinContent(b));
         }
-
+        
     }
     
   if(!doShift_){
@@ -3716,12 +4005,140 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
 	
 	exit(0);
 */
-  DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMeasuredRR,TH1Data_BtagEffMeasuredRRDiff);
-    DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMCMeasuredRR,TH1Data_BtagEffMCMeasuredRRDiff);
+    DiffCalculation(TH1Sng_BtagEffAll,TH1Data_BtagEffMeasuredRR,TH1Data_BtagEffMeasuredRRDiff);
+    DiffCalculation(TH1Sng_BtagEffAll,TH1Data_BtagEffMCMeasuredRR,TH1Data_BtagEffMCMeasuredRRDiff);
 
-    DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffShapeMC_MeasuredRR,TH1Data_BtagEffShapeMC_MeasuredRRDiff);
-    DiffCalculation(TH1Sng_BtagEffMC,TH1Data_BtagEffMC_ShapeMC_MeasuredRR,TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff);
+    DiffCalculation(TH1Sng_BtagEffAll,TH1Data_BtagEffShapeMC_MeasuredRR,TH1Data_BtagEffShapeMC_MeasuredRRDiff);
+    DiffCalculation(TH1Sng_BtagEffAll,TH1Data_BtagEffMC_ShapeMC_MeasuredRR,TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff);
 
+}
+
+void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh){
+    
+    GiveName(&titleData_MistagEffMeasuredRR_); titleData_MistagEffMeasuredRR_+="TH1Data_MistagEffMeasuredRR";
+    GiveName(&titleData_MistagMeasuredRR_); titleData_MistagMeasuredRR_+="TH1Data_MistagMeasuredRR";
+    
+    if(!varBinSize_){
+        TH1Data_MistagEffMeasuredRR = new TH1D(titleData_MistagEffMeasuredRR_,titleData_MistagEffMeasuredRR_,TH1Bkg_BtagAll->GetXaxis()->GetNbins(),TH1Bkg_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Bkg_BtagAll->GetXaxis()->GetBinUpEdge(TH1Bkg_BtagAll->GetXaxis()->GetNbins()));
+        TH1Data_MistagMeasuredRR = new TH1D(titleData_MistagMeasuredRR_,titleData_MistagMeasuredRR_,TH1Bkg_BtagAll->GetXaxis()->GetNbins(),TH1Bkg_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Bkg_BtagAll->GetXaxis()->GetBinUpEdge(TH1Bkg_BtagAll->GetXaxis()->GetNbins()));
+        
+    }
+    if(varBinSize_){
+        TH1Data_MistagEffMeasuredRR = new TH1D(titleData_MistagEffMeasuredRR_,titleData_MistagEffMeasuredRR_,TH1Bkg_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+        TH1Data_MistagMeasuredRR = new TH1D(titleData_MistagMeasuredRR_,titleData_MistagMeasuredRR_,TH1Bkg_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+    }
+    
+    //diff plots
+    GiveName(&titleData_MistagEffMeasuredRRDiff_); titleData_MistagEffMeasuredRRDiff_+="TH1Data_MistagEffMeasuredRRDiff";
+    
+    if(!varBinSize_){
+        TH1Data_MistagEffMeasuredRRDiff = new TH1D(titleData_MistagEffMeasuredRRDiff_,titleData_MistagEffMeasuredRRDiff_,TH1Bkg_BtagAll->GetXaxis()->GetNbins(),TH1Bkg_BtagAll->GetXaxis()->GetBinLowEdge(1),TH1Bkg_BtagAll->GetXaxis()->GetBinUpEdge(TH1Bkg_BtagAll->GetXaxis()->GetNbins()));
+    }
+    if(varBinSize_){
+        TH1Data_MistagEffMeasuredRRDiff = new TH1D(titleData_MistagEffMeasuredRRDiff_,titleData_MistagEffMeasuredRRDiff_,TH1Bkg_BtagAll->GetXaxis()->GetNbins(),rangesbTag_);
+    }
+    
+    TH1Data_MistagEffMeasuredRR->Sumw2();
+    TH1Data_MistagMeasuredRR->Sumw2();
+    TH1Data_MistagEffMeasuredRRDiff->Sumw2();
+    
+    // fill mistag distribution
+    
+    //1.56366
+    
+    double scale=TH1Sng_BtagAll->Integral()/TH1Data_BtagMeasuredRR->Integral();
+    
+    cout << "scale before: " << scale << endl;
+    
+    TString outname;
+    GiveName(&outname); outname="./mistagscale/"+outname+"BtagShapeScale.txt";
+    
+    bool write=false;
+    ifstream check(outname);
+    if (!check) write=true;
+
+    if (TH1Sng_BtagAll->Integral() > 0 && write) {
+        
+        scale = TH1Sng_BtagAll->Integral()/TH1Data_BtagMeasuredRR->Integral();
+        
+        if (write) {
+
+            cout << "writing to "+outname << endl;
+            fstream out(outname, ios::out);
+            out << scale << endl;
+            out.close();
+            
+        } 
+        
+    } else {
+        
+        while (!check.eof())
+            check >> scale;
+    }    check.close();
+    
+    cout << "scale after: " << scale << endl;
+
+    //exit(1);
+    
+    for (int b=0;b<TH1Data_MistagMeasuredRR->GetNbinsX(); b++) {
+        
+        double cont = TH1Data_BtagAll->GetBinContent(b)-(scale*TH1Data_BtagMeasuredRR->GetBinContent(b));
+        
+        double ua = TH1Data_BtagAll->GetBinError(b);
+        double ub = TH1Data_BtagMeasuredRR->GetBinError(b);
+        double ucont = sqrt(pow(ua,2)+(scale*scale*pow(ub,2)));
+        
+        TH1Data_MistagMeasuredRR->SetBinContent(b,cont);
+        
+        TH1Data_MistagMeasuredRR->SetBinError(b,ucont);
+        
+        //cout << ucont << endl;
+        
+    }
+    
+    // calculate the eff
+    
+	double min=0;
+	double mine=0;
+	double plus=0;
+	double pluse=0;
+	for(int i=0; i<=TH1Data_MistagMeasuredRR->GetNbinsX()+1; i++){
+		plus+=TH1Data_MistagMeasuredRR->GetBinContent(i);
+		pluse+=pow(TH1Data_MistagMeasuredRR->GetBinError(i),2);
+	}
+	
+	TH1Data_MistagEffMeasuredRR->SetBinContent(0,1);
+	
+	for(int i=0; i<=TH1Data_MistagMeasuredRR->GetNbinsX(); i++){
+		plus-=TH1Data_MistagMeasuredRR->GetBinContent(i);
+		pluse-=pow(TH1Data_MistagMeasuredRR->GetBinError(i),2);
+		if(plus<1){plus=0; pluse=0;}
+        min+=TH1Data_MistagMeasuredRR->GetBinContent(i);
+		mine+=pow(TH1Data_MistagMeasuredRR->GetBinError(i),2);
+		
+        double tmpcontent=plus/(plus+min);
+		
+		double tmperror=sqrt(
+							 pow(sqrt(pluse) * ( 1/(plus+min) - plus/( (plus+min)*(plus+min) )  ) ,2) + 
+							 pow(sqrt(mine)  *                  plus/( (plus+min)*(plus+min) )    ,2)
+							 );
+		
+        if (isnan(tmperror)) {
+            tmperror=tmpcontent;
+        }
+		
+		TH1Data_MistagEffMeasuredRR->SetBinContent(i+1,tmpcontent);
+		TH1Data_MistagEffMeasuredRR->SetBinError(i+1,tmperror);
+        
+        //cout << tmpcontent << " " << tmperror << endl;
+
+		
+	}
+    
+    DiffCalculation(TH1Data_MistagEffMeasuredRR,TH1Bkg_BtagEffAll,TH1Data_MistagEffMeasuredRRDiff);
+
+    //exit(1);
+    
 }
 
 void PtEtaBin::CoutWPEff(bool RRincluded, bool doSCreweigh, double wp, double* WParray, bool pseudo, bool more, int ptbin, int etabin, double runNb){
@@ -3750,9 +4167,14 @@ void PtEtaBin::CoutWPEff(bool RRincluded, bool doSCreweigh, double wp, double* W
       //cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " F_ " << F_ << " \\pm " << Fe_ << endl;
       //cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " #b's used " << bused << endl;
       cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " Fdata_ " << FReweigh_ << " \\pm " << FReweighe_ << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (All): " << TH1Sng_BtagEffAll->GetBinContent(i) << " \\pm " << TH1Sng_BtagEffAll->GetBinError(i) << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (MC): " << TH1Sng_BtagEffMC->GetBinContent(i) << " \\pm " << TH1Sng_BtagEffMC->GetBinError(i) << endl;
-      cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (FMC) : " << TH1Data_BtagEffMCMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasured->GetBinError(i) << " (bias wrt truth : " << bias_fmc << ")" << endl;
+        cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (All): " << TH1Sng_BtagEffAll->GetBinContent(i) << " \\pm " << TH1Sng_BtagEffAll->GetBinError(i) << endl;
+        cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (MC): " << TH1Sng_BtagEffMC->GetBinContent(i) << " \\pm " << TH1Sng_BtagEffMC->GetBinError(i) << endl;
+        cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " mistag eff (All): " << TH1Bkg_BtagEffAll->GetBinContent(i) << " \\pm " << TH1Bkg_BtagEffAll->GetBinError(i) << endl;
+        cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " mistag eff (MC): " << TH1Bkg_BtagEffMC->GetBinContent(i) << " \\pm " << TH1Bkg_BtagEffMC->GetBinError(i) << endl;
+
+        cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " mistag eff (RR): " << TH1Data_MistagEffMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_MistagEffMeasuredRR->GetBinError(i) << endl;
+
+        cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (FMC) : " << TH1Data_BtagEffMCMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasured->GetBinError(i) << " (bias wrt truth : " << bias_fmc << ")" << endl;
       cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (Fdata) : " << TH1Data_BtagEffMeasured->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMeasured->GetBinError(i) << " (bias wrt truth : " << bias_fdata << ")" << endl;
       if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+FMC+ShapeData) : " << TH1Data_BtagEffMCMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMCMeasuredRR->GetBinError(i) << " (bias wrt truth : " << bias_rr_fmc << ")" << endl;
       if(RRincluded) cout << runNb << ") " << ptbin << " " << etabin << " " << wp << " b-tag eff (RR+Fdata+ShapeData) : " << TH1Data_BtagEffMeasuredRR->GetBinContent(i) << " \\pm " << TH1Data_BtagEffMeasuredRR->GetBinError(i) << " (bias wrt truth : " << bias_rr_fdata << ")" << endl;
@@ -3821,6 +4243,12 @@ void PtEtaBin::GetWPEff(bool RRincluded, bool doSCreweigh, double wp, double* WP
         if(RRincluded) WParray[20] = TH1Data_BtagEffShapeMC_MeasuredRR->GetBinContent(i);
         if(RRincluded) WParray[21] = TH1Data_BtagEffShapeMC_MeasuredRR->GetBinError(i);
         
+        WParray[22] = TH1Bkg_BtagEffAll->GetBinContent(i);
+        WParray[23] = TH1Bkg_BtagEffAll->GetBinError(i);
+        WParray[24] = TH1Data_MistagEffMeasuredRR->GetBinContent(i);
+        WParray[25] = TH1Data_MistagEffMeasuredRR->GetBinError(i);
+        
+        
       //extend with parameters of SCreweigh-fit (or do this unfitted)
 		
 		//cout << "-------------++++++++++++++++++ " << WParray[8] << endl;
@@ -3876,8 +4304,28 @@ void::PtEtaBin::DiffCalculation(TH1D* Estimate, TH1D* Orig, TH1D* result){
   //Orig stands for the MC plot
   //Estimate stands for the plot containing the btag efficiency estimator
 
-  result->Add(Orig,Estimate,1,-1);
-  result->Divide(Orig);
+  //result->Add(Orig,Estimate,1,-1);
+  //result->Divide(Orig);
+    
+    for (int i=0; i<result->GetNbinsX(); i++) {
+        
+        double a=Estimate->GetBinContent(i);
+        double b=Orig->GetBinContent(i);
+        double sa=Estimate->GetBinError(i);
+        double sb=Orig->GetBinError(i);
+        
+        float bias = (a-b)/b;
+        
+        float term1 = pow(1/b,2)*pow(sa,2);
+        float term2 = pow((-1/b)-((a-b)/pow(b,2)),2)*pow(sb,2);
+        
+        float uncBias = sqrt(term1+term2);
+        
+        if (b > 0) {
+            result->SetBinContent(i,bias);
+            result->SetBinError(i,uncBias);
+        }
+    }
 
 }
 
@@ -4295,6 +4743,8 @@ void PtEtaBin::WriteSignalSamplePlots(){
   //if(debug_>1) cout << "Signal sample mlj, mean:    " << TH1Bkg_Var0->GetMean() << endl;
   //if(debug_>1) cout << "Signal sample mlj, spread:  " << TH1Bkg_Var0->GetRMS() << endl;
 
+    TH1Data_PartonFlavor->Write();
+    
   TH2Sng_Left->Write();
   TH2Bkg_Left->Write();
   TH2Data_Left->Write();
@@ -4354,6 +4804,9 @@ void PtEtaBin::WriteSignalSamplePlots(){
     TH1Data_Pt_Right->Write();
     TH1Data_Pt_RightReweigh->Write();
 	TH1Data_Pt_Control->Write();
+	TH1Data_Pt_ControlReweigh->Write();
+    TH1Data_Eta_Control->Write();
+	TH1Data_Eta_ControlReweigh->Write();
 }
 
 void PtEtaBin::WriteSoverSBPlot(){
@@ -4369,6 +4822,14 @@ void PtEtaBin::WriteControlSamplePlots(){
   //if(debug_>1) cout << "Signal sample mlj, mean:    " << TH1Data_ControlVarReweigh->GetMean() << endl;
   //if(debug_>1) cout << "Signal sample mlj, spread:  " << TH1Data_ControlVarReweigh->GetRMS() << endl;
 
+    TH2Sng_LeftControl->Write();
+    TH2Bkg_LeftControl->Write();
+    TH2Data_LeftControl->Write();
+    
+    TH2Sng_RightControl->Write();
+    TH2Bkg_RightControl->Write();
+    TH2Data_RightControl->Write();
+    
   TH1Sng_ControlVar->Write();
   TH1Bkg_ControlVar->Write();
   TH1Bkg_W_ControlVar->Write();
@@ -4393,7 +4854,9 @@ void PtEtaBin::WriteMCEffPlots(bool doCout){
   if(debug_>4) cout << "+--> PtEtaBin::MakeMCEffPlots" << endl;
   TH1Sng_BtagEffMC->Write();
   TH1Sng_BtagEffAll->Write();
-  //TH1Bkg_BtagEff->Write();
+    TH1Bkg_BtagEffMC->Write();
+    TH1Bkg_BtagEffAll->Write();
+
   //TH1Data_BtagEff->Write();
   if(doCout){
     cout << "################## define working points ##################" << endl;
@@ -4443,22 +4906,37 @@ void PtEtaBin::Write1DXplots(bool doCout){
 
   }
 
-  TH2Bkg_Left1DX->Write();
-  TH2Data_Left1DX->Write(); 
-  TH2Sng_Right1DX->Write();
-  TH2Bkg_Right1DX->Write();
-  TH2Data_Right1DX->Write();
+    TH2Bkg_Left1DX->Write();
+    TH2Data_Left1DX->Write(); 
+    TH2Sng_Right1DX->Write();
+    TH2Bkg_Right1DX->Write();
+    TH2Data_Right1DX->Write();
+    
+    TH2Sng_Left1DXControl->Write();
+    TH2Bkg_Left1DXControl->Write();
+    TH2Data_Left1DXControl->Write(); 
+    TH2Sng_Right1DXControl->Write();
+    TH2Bkg_Right1DXControl->Write();
+    TH2Data_Right1DXControl->Write();
 }
 
 void PtEtaBin::Write1DYplots(){
   if(debug_>4) cout << "+--> PtEtaBin::Write1DYplots" << endl;
-   TH2Data_Left1DY->Write();
-   TH2Sng_Left1DY->Write();
-   TH2Bkg_Left1DY->Write();
-   
-   TH2Sng_Right1DY->Write();
-   TH2Bkg_Right1DY->Write();
-   TH2Data_Right1DY->Write();
+    TH2Data_Left1DY->Write();
+    TH2Sng_Left1DY->Write();
+    TH2Bkg_Left1DY->Write();
+    
+    TH2Sng_Right1DY->Write();
+    TH2Bkg_Right1DY->Write();
+    TH2Data_Right1DY->Write();
+    
+    TH2Data_Left1DYControl->Write();
+    TH2Sng_Left1DYControl->Write();
+    TH2Bkg_Left1DYControl->Write();
+    
+    TH2Sng_Right1DYControl->Write();
+    TH2Bkg_Right1DYControl->Write();
+    TH2Data_Right1DYControl->Write();
 }
 
 void PtEtaBin::Write1DYVar2plots(){
@@ -4484,8 +4962,10 @@ void PtEtaBin::WriteEffPlots(){
 void PtEtaBin::WriteXRatioPlot(){
   if(debug_>4) cout << "+--> PtEtaBin::WriteXRatioPlot" << endl;
   TH2Data_RightLeft1DX->Write();  
-  TH2Data_LeftRight1DX->Write();
+    TH2Data_LeftRight1DX->Write();
+    TH2Data_LeftRight1DXControl->Write();
 	TFData_LeftRight1DXFit->Write();
+	TFData_LeftRight1DXControlFit->Write();
 
 }
 
@@ -4547,9 +5027,18 @@ void PtEtaBin::WriteEffPlotsRR(){
   TH2BkgVar12_Right1DYReweighRatio->Write();
   TH2DataVar12_Right1DYReweighRatio->Write(); //this is not really the proper place to do this! should write a new function for it
 
-  TH2Data_Right1DYReweigh->Write(); 
-  TH2Sng_Right1DYReweigh->Write(); 
-  TH2Bkg_Right1DYReweigh->Write(); 
+    TH2Data_Right1DYReweigh->Write(); 
+    TH2Sng_Right1DYReweigh->Write(); 
+    TH2Bkg_Right1DYReweigh->Write(); 
+    
+    TH2Data_Right1DYControlReweigh->Write(); 
+    TH2Sng_Right1DYControlReweigh->Write(); 
+    TH2Bkg_Right1DYControlReweigh->Write();
+    
+    TH2Data_Left1DYControlReweigh->Write();
+    TH2Sng_Left1DYControlReweigh->Write();
+    TH2Bkg_Left1DYControlReweigh->Write();
+    
   TH2Data_Left1DYReweigh->Write(); 
   TH2Sng_Left1DYReweigh->Write(); 
   TH2Bkg_Left1DYReweigh->Write(); 
@@ -4581,11 +5070,16 @@ void PtEtaBin::WriteEffPlotsRR(){
     TH1Data_BtagEffMCMeasuredRR->Write();	
     TH1Data_BtagEffShapeMC_MeasuredRR->Write();	
     TH1Data_BtagEffMC_ShapeMC_MeasuredRR->Write();	
-  
+    
     TH1Data_BtagEffMeasuredRRDiff->Write();
     TH1Data_BtagEffMCMeasuredRRDiff->Write();
     TH1Data_BtagEffShapeMC_MeasuredRRDiff->Write();
     TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff->Write();
+
+
+    TH1Data_MistagMeasuredRR->Write();
+    TH1Data_MistagEffMeasuredRR->Write();
+    TH1Data_MistagEffMeasuredRRDiff->Write();
 }
 
 void PtEtaBin::WriteHistosToRootFile(bool w1, bool w2, bool w3, bool w4, bool w5, bool w6, bool w7, bool w8, bool w9, bool w10, bool w11, bool dow5cout){
@@ -5855,6 +6349,11 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     //ttbar->Scale((ttbar->Integral()*1.05)/ttbar->Integral());
     
+    data->SetBinContent(data->GetNbinsX(),data->GetBinContent(data->GetNbinsX())+data->GetBinContent(data->GetNbinsX()+1));
+    ttbar->SetBinContent(ttbar->GetNbinsX(),ttbar->GetBinContent(ttbar->GetNbinsX())+ttbar->GetBinContent(ttbar->GetNbinsX()+1));
+    vvmc->SetBinContent(vvmc->GetNbinsX(),vvmc->GetBinContent(vvmc->GetNbinsX())+vvmc->GetBinContent(vvmc->GetNbinsX()+1));
+    if (fitQCD) vvdata->SetBinContent(vvdata->GetNbinsX(),vvdata->GetBinContent(vvdata->GetNbinsX())+vvdata->GetBinContent(vvdata->GetNbinsX()+1));
+
     TObjArray *mc;
     
     if (fitQCD)

@@ -70,11 +70,11 @@ class PtEtaBin{
   PtEtaBin(int, int, int, int, double, double, double, double, bool, bool);
 
   void DefineSignalSamplePlots(int, int, double, double, int, double, double, int, double, double, int, double, double, int, double, double, int*, double*, double*);
-  void DefineControlSamplePlots(int, double, double, int, double, double, int, double, double);
+  void DefineControlSamplePlots(int,int, double, double, int, double, double, int, double, double, int*, double*, double*);
   //void FillSignalSamplePlots(double, int, double, double, double, double, int, double, double, double, double, double, double, double);
 
   void FillSignalSamplePlots(double, double, int, bool, bool, double, double, double*, double, double, double, double, double, double, double, double,double);
-  void FillControlSamplePlots(double, int, bool, bool, double, double, double, double, double, double, double, double);
+  void FillControlSamplePlots(double, int, bool, bool, double, double, double, double, double, double, double, double, double);
 
 	void FillXStemplates(double weight, string datasetname, int partonflavour, double btag, double *btagCuts, double controlVar0, double m3,double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0);
 
@@ -115,7 +115,9 @@ void GetLeftRightPars(double*, double*, double*);
   void GetPercentiles(double,double,double,int*);
   void MeasureEff(bool);
   void MeasureEffLR(bool);
-  void MeasureEffRR(bool);
+    void MeasureEffRR(bool);
+
+    void MeasureMistagEffRR(bool);
 
   void GetWPEff(bool, bool, double, double*, bool, bool, double);
   void CoutWPEff(bool, bool, double, double*, bool, bool, int, int, double);
@@ -230,6 +232,10 @@ private:
 	std::map<TString,TH1D*> histo1D;
 	std::map<TString,TH2D*> histo2D;
 
+    TH1D * TH1Data_PartonFlavor;
+    TString title_PartonFlavor_;
+
+    
   TH2D * TH2Sng;
   TH2D * TH2Bkg;
   TH2D * TH2Data;
@@ -244,19 +250,33 @@ private:
   TString titleBkg_ProfileX_;
   TString titleData_ProfileX_;
   
-  TH2D * TH2Sng_Left;
-  TH2D * TH2Bkg_Left;
-  TH2D * TH2Data_Left;
-  TString titleSng_Left_;
-  TString titleBkg_Left_;
-  TString titleData_Left_;
-
-  TH2D * TH2Sng_Right;
-  TH2D * TH2Bkg_Right;
-  TH2D * TH2Data_Right;
-  TString titleSng_Right_;
-  TString titleBkg_Right_;
-  TString titleData_Right_;
+    TH2D * TH2Sng_Left;
+    TH2D * TH2Bkg_Left;
+    TH2D * TH2Data_Left;
+    TString titleSng_Left_;
+    TString titleBkg_Left_;
+    TString titleData_Left_;
+    
+    TH2D * TH2Sng_Right;
+    TH2D * TH2Bkg_Right;
+    TH2D * TH2Data_Right;
+    TString titleSng_Right_;
+    TString titleBkg_Right_;
+    TString titleData_Right_;
+    
+    TH2D * TH2Sng_LeftControl;
+    TH2D * TH2Bkg_LeftControl;
+    TH2D * TH2Data_LeftControl;
+    TString titleSng_LeftControl_;
+    TString titleBkg_LeftControl_;
+    TString titleData_LeftControl_;
+    
+    TH2D * TH2Sng_RightControl;
+    TH2D * TH2Bkg_RightControl;
+    TH2D * TH2Data_RightControl;
+    TString titleSng_RightControl_;
+    TString titleBkg_RightControl_;
+    TString titleData_RightControl_;
 
   TH2D * TH2SngVar12_Left; //var12 stands for var 1 versus var 2
   TH2D * TH2BkgVar12_Left;
@@ -290,11 +310,18 @@ private:
 	TH1D * TH1Data_Pt_Right;
 	TH1D * TH1Data_Pt_RightReweigh;
 	TH1D * TH1Data_Pt_Control;
+	TH1D * TH1Data_Pt_ControlReweigh;
+    TH1D * TH1Data_Eta_Control;
+	TH1D * TH1Data_Eta_ControlReweigh;
+    
 	TString titleData_Pt_Left;
 	TString titleSng_Pt_Left;
 	TString titleData_Pt_Right;
 	TString titleData_Pt_RightReweigh;
 	TString titleData_Pt_Control;
+	TString titleData_Pt_ControlReweigh;
+	TString titleData_Eta_Control;
+	TString titleData_Eta_ControlReweigh;
 
 
   TString titleSng_chisq_;
@@ -418,19 +445,33 @@ private:
   TString titleData_BtagEffMC_;
   
   //plots for 1D of pt/btag plots
-  TH1D * TH2Sng_Left1DX;
-  TH1D * TH2Bkg_Left1DX;
-  TH1D * TH2Data_Left1DX;
-  TString titleSng_Left1DX_;
-  TString titleBkg_Left1DX_;
-  TString titleData_Left1DX_;
-
-  TH1D * TH2Sng_Right1DX;
-  TH1D * TH2Bkg_Right1DX;
-  TH1D * TH2Data_Right1DX;
-  TString titleSng_Right1DX_;
-  TString titleBkg_Right1DX_;
-  TString titleData_Right1DX_;
+    TH1D * TH2Sng_Left1DX;
+    TH1D * TH2Bkg_Left1DX;
+    TH1D * TH2Data_Left1DX;
+    TString titleSng_Left1DX_;
+    TString titleBkg_Left1DX_;
+    TString titleData_Left1DX_;
+    
+    TH1D * TH2Sng_Right1DX;
+    TH1D * TH2Bkg_Right1DX;
+    TH1D * TH2Data_Right1DX;
+    TString titleSng_Right1DX_;
+    TString titleBkg_Right1DX_;
+    TString titleData_Right1DX_;
+    
+    TH1D * TH2Sng_Left1DXControl;
+    TH1D * TH2Bkg_Left1DXControl;
+    TH1D * TH2Data_Left1DXControl;
+    TString titleSng_Left1DXControl_;
+    TString titleBkg_Left1DXControl_;
+    TString titleData_Left1DXControl_;
+    
+    TH1D * TH2Sng_Right1DXControl;
+    TH1D * TH2Bkg_Right1DXControl;
+    TH1D * TH2Data_Right1DXControl;
+    TString titleSng_Right1DXControl_;
+    TString titleBkg_Right1DXControl_;
+    TString titleData_Right1DXControl_;
  
   TH1D * TH2SngVar12_Left1DY;
   TH1D * TH2BkgVar12_Left1DY;
@@ -461,11 +502,16 @@ private:
   TString titleDataVar12_Right1DYReweighRatio_;
 
   TH1D * TH2Data_RightLeft1DX;
-  TH1D * TH2Data_LeftRight1DX;
-  TString titleData_RightLeft1DX_;
-  TString titleData_LeftRight1DX_;
-  TF1 * TFData_LeftRight1DXFit;
-  TString titleData_LeftRight1DXFit_;
+    TH1D * TH2Data_LeftRight1DX;
+    TString titleData_RightLeft1DX_;
+    TString titleData_LeftRight1DX_;
+    TF1 * TFData_LeftRight1DXFit;
+    TString titleData_LeftRight1DXFit_;
+    
+    TH1D * TH2Data_LeftRight1DXControl;
+    TString titleData_LeftRight1DXControl_;
+    TF1 * TFData_LeftRight1DXControlFit;
+    TString titleData_LeftRight1DXControlFit_;
 
   TH2D * TH2DataVar12_LeftRight;
   TString titleDataVar12_LeftRight_; 
@@ -546,6 +592,35 @@ private:
   TString titleBkg_Left1DYReweigh_LeftRightRatio_;
   TString titleSng_Left1DYReweigh_LeftRightRatio_;
   TString titleData_Left1DYReweigh_LeftRightRatio_;
+    
+    TH1D* TH2Bkg_Left1DYControl;
+    TH1D* TH2Sng_Left1DYControl;
+    TH1D* TH2Data_Left1DYControl;
+    TString titleBkg_Left1DYControl_;
+    TString titleSng_Left1DYControl_;
+    TString titleData_Left1DYControl_;
+
+    TH1D* TH2Bkg_Left1DYControlReweigh;
+    TH1D* TH2Sng_Left1DYControlReweigh;
+    TH1D* TH2Data_Left1DYControlReweigh;
+    TString titleBkg_Left1DYControlReweigh_;
+    TString titleSng_Left1DYControlReweigh_;
+    TString titleData_Left1DYControlReweigh_;
+
+    TH1D* TH2Bkg_Right1DYControl;
+    TH1D* TH2Sng_Right1DYControl;
+    TH1D* TH2Data_Right1DYControl;
+    TString titleBkg_Right1DYControl_;
+    TString titleSng_Right1DYControl_;
+    TString titleData_Right1DYControl_;
+    
+    TH1D* TH2Bkg_Right1DYControlReweigh;
+    TH1D* TH2Sng_Right1DYControlReweigh;
+    TH1D* TH2Data_Right1DYControlReweigh;
+    TString titleBkg_Right1DYControlReweigh_;
+    TString titleSng_Right1DYControlReweigh_;
+    TString titleData_Right1DYControlReweigh_;
+
 
   int lowerBin_;
   int upperBin_;
@@ -600,8 +675,8 @@ private:
   TH1D * TH1Data_BtagEffMCMeasuredLRDiff;
   TString titleData_BtagEffMCMeasuredLRDiff_;
 
-  TH1D * TH1Data_BtagMeasuredRR;//RR aka Right region b-tag plot Reweighted
-  TString titleData_BtagMeasuredRR_;
+    TH1D * TH1Data_BtagMeasuredRR;//RR aka Right region b-tag plot Reweighted
+    TString titleData_BtagMeasuredRR_;
     TH1D * TH1Data_BtagShapeMC_MeasuredRR;
     TString titleData_BtagShapeMC_MeasuredRR_;
     
@@ -609,9 +684,9 @@ private:
     TString titleData_BtagMCMeasuredRR_;
     TH1D * TH1Data_BtagMC_ShapeMC_MeasuredRR;
     TString titleData_BtagMC_ShapeMC_MeasuredRR_;
-  
-  TH1D * TH1Data_BtagEffMeasuredRR;
-  TString titleData_BtagEffMeasuredRR_;
+    
+    TH1D * TH1Data_BtagEffMeasuredRR;
+    TString titleData_BtagEffMeasuredRR_;
     TH1D * TH1Data_BtagEffShapeMC_MeasuredRR;
     TString titleData_BtagEffShapeMC_MeasuredRR_;
     
@@ -619,9 +694,9 @@ private:
     TString titleData_BtagEffMCMeasuredRR_;
     TH1D * TH1Data_BtagEffMC_ShapeMC_MeasuredRR;
     TString titleData_BtagEffMC_ShapeMC_MeasuredRR_;
-
-  TH1D * TH1Data_BtagEffMeasuredRRDiff;
-  TString titleData_BtagEffMeasuredRRDiff_;
+    
+    TH1D * TH1Data_BtagEffMeasuredRRDiff;
+    TString titleData_BtagEffMeasuredRRDiff_;
     TH1D * TH1Data_BtagEffShapeMC_MeasuredRRDiff;
     TString titleData_BtagEffShapeMC_MeasuredRRDiff_;
     
@@ -630,6 +705,23 @@ private:
     TH1D * TH1Data_BtagEffMC_ShapeMC_MeasuredRRDiff;
     TString titleData_BtagEffMC_ShapeMC_MeasuredRRDiff_;
 	
+    // mistag
+    TH1D * TH1Data_MistagMeasuredRR;//RR aka Right region b-tag plot Reweighted
+    TString titleData_MistagMeasuredRR_;
+    TH1D * TH1Data_MistagShapeMC_MeasuredRR;
+    TString titleData_MistagShapeMC_MeasuredRR_;
+    
+    TH1D * TH1Data_MistagEffMeasuredRR;
+    TString titleData_MistagEffMeasuredRR_;
+    TH1D * TH1Data_MistagEffShapeMC_MeasuredRR;
+    TString titleData_MistagEffShapeMC_MeasuredRR_;
+        
+    TH1D * TH1Data_MistagEffMeasuredRRDiff;
+    TString titleData_MistagEffMeasuredRRDiff_;
+    TH1D * TH1Data_MistagEffShapeMC_MeasuredRRDiff;
+    TString titleData_MistagEffShapeMC_MeasuredRRDiff_;
+    
+
 	std::map<std::string, float> EffCalcDetails_;
 	
 	vector<string> FitPlotPaths;

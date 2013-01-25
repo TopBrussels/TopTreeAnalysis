@@ -1,21 +1,47 @@
 {
 
-  TFile* f = new TFile("../store/mc.root");
+  TFile* f = new TFile("../TTrees/DATA_6/NTupleAnalyzed.root");
 
-  TH1F* effMC = (TH1F*) f->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_BtagEffMC");
-  TH1F* eff = (TH1F*) f->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRR"); 
-  TH1F* bias = (TH1F*) f->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagEffMeasuredRRDiff");
+  for (int nDisc=0;nDisc<8; nDisc++) {
+    //int nDisc=6;
+
+  string discName = "";
+  if (nDisc == 0)
+    discName = "TCHE";
+  else if (nDisc == 1)
+    discName = "TCHP";
+  else if (nDisc == 2)
+    discName = "JP";
+  else if (nDisc == 3)
+    discName = "JBP";
+  else if (nDisc == 4)
+    discName = "SSVHE";
+  else if (nDisc == 5)
+    discName = "SSVHP";
+  else if (nDisc == 6)
+    discName = "CSV";
+  else if (nDisc == 7)
+    discName = "CSVR";
+
+
+  stringstream snDisc; snDisc << nDisc;
+
+  string prefix="Variable_1_0/Discriminator_"+snDisc.str()+"/nDisc_"+snDisc.str()+"_ptbinlow_0_etabinlow_-9990_";
+
+  TH1F* effMC = (TH1F*) f->Get((prefix+"TH1Sng_BtagEffMC").c_str());
+  TH1F* eff = (TH1F*) f->Get((prefix+"TH1Data_BtagEffMeasuredRR").c_str()); 
+  TH1F* bias = (TH1F*) f->Get((prefix+"TH1Data_BtagEffMeasuredRRDiff").c_str());
 
   TCanvas* c1 = new TCanvas("c1","c1",800,600);
   c1->Divide(2,1);
  
   c1->cd(1);
-  gPad->SetGrid();
+  //gPad->SetGrid();
 
   eff->SetLineColor(kRed);
   eff->SetMarkerColor(kRed);
   effMC->SetTitle("");
-  effMC->GetXaxis()->SetTitle("TCHE discriminant");
+  effMC->GetXaxis()->SetTitle((discName+" discriminator").c_str());
   effMC->GetYaxis()->SetTitle("Efficiency");
   effMC->Draw();
   eff->Draw("sames");
@@ -50,9 +76,9 @@ TLatex* text = new TLatex(0.13,0.87,"CMS Simulation");
 
   c1->cd(2);
 
-  gPad->SetGrid();
+  //gPad->SetGrid();
   bias->SetTitle("");
-  bias->GetXaxis()->SetTitle("TCHE discriminant");
+  bias->GetXaxis()->SetTitle((discName+" discriminator").c_str());
   bias->GetYaxis()->SetTitle("rel. bias (%)");
   bias->GetYaxis()->SetLabelSize(0.045);
   bias->GetYaxis()->SetTitleOffset(1.1);
@@ -78,6 +104,7 @@ TLatex* text = new TLatex(0.13,0.87,"CMS Simulation");
 	text->Draw();
 
   
-  c1->SaveAs("effRRFdata.pdf");
- 
+	c1->SaveAs(("effRRFdata_tagger_"+discName+".pdf").c_str());
+
+  }
 }

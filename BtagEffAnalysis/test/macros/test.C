@@ -1,24 +1,47 @@
 {
-   TCanvas *cst1 = new TCanvas("cst1","cst1",700,400);
-   cst1->Divide(2,1);
 
-   TH1F * hst11 = new TH1F("hst11", "", 20, -10, 10);
-   hst11->Sumw2();
-   hst11->FillRandom("gaus", 1000);
-   hst11->SetFillColor(kViolet);
-   hst11->SetLineColor(kViolet);
+TFile* _file0 = new TFile("TTrees/DATA_14/NTupleAnalyzed.root");
 
-   TH1F * hst12 = new TH1F("hst12", "", 20, -10, 10);
-   hst12->FillRandom("gaus", 500);
-   hst12->SetFillColor(kBlue);
-   hst12->SetLineColor(kBlue);
+TH1D* histo1 =_file0->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Sng_ControlVar");
+TH1D* histo2 =_file0->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Bkg_ControlVar");
+TH1D* histo3 =_file0->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_ControlVar");
 
-   THStack st1("st1", "st1");
-   st1.Add(hst11);
-   st1.Add(hst12);
+histo1->SetMarkerColor(kRed);
+histo2->SetMarkerColor(kBlue);
+histo3->SetMarkerColor(kGreen);
 
-   cst1->cd(1); st1.Draw();
-   cst1->cd(2); st1.Draw("hist");
+//histo1->DrawNormalized(); histo1->SetMarkerColor(kRed);
+//histo2->DrawNormalized("sames");histo2->SetMarkerColor(kBlue);
+//histo3->DrawNormalized("sames");histo3->SetMarkerColor(kGreen);
 
-   return cst1;
+cout << "non-b pur " <<  histo2->GetEntries()/histo3->GetEntries() << endl;
+
+cout << histo1->GetEntries()+histo2->GetEntries() << " ?= " << histo3->GetEntries() << endl;
+
+ cout << endl << endl;
+
+TH1D* btag =_file0->Get("Variable_1_0/Discriminator_0/nDisc_0_ptbinlow_0_etabinlow_-9990_TH1Data_BtagMeasuredRR");
+btag->Rebin(5);
+ btag->Draw();
+
+ float plus=0;
+ float min=0;
+
+ for(int i=0; i<=btag->GetNbinsX()+1; i++){
+   plus+=btag->GetBinContent(i);
+   
+ }
+   
+ for(int i=0; i<=btag->GetNbinsX(); i++){	
+   plus-=btag->GetBinContent(i);
+   min+=btag->GetBinContent(i);
+
+   cout << "Bin " << i << " Btag Cut " << btag->GetBinLowEdge(i) << " min " << min << " plus " << plus << " plus/(plus+min) " << plus/(plus+min) <<endl;
+ }   
+
+
+
+
+    
+ }
 }

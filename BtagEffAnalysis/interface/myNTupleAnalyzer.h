@@ -23,8 +23,8 @@
 #include "../interface/WorkingPointBin.h"
 #include "../interface/MakerJetOrigin.h"
 
-#include "../../Content/interface/Dataset.h"
-#include "../../Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
+#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
 
 #include <TFile.h>
 #include <TObject.h>
@@ -232,7 +232,9 @@ private:
 	double dataLum_;
 	int nPseudoExp_;
 	bool doPseudoExp_; //to do the pseudo-exps
-	
+
+	bool useTTJetsExcl_;	
+
 	double* newFpt;
 	double* newFeta;
 	int* percentiles_;
@@ -251,6 +253,7 @@ private:
 	std::map<string,TH2D*> XSHistos;
 	
 	std::map<float,vector<std::pair<float,float> > > bTagPseudoExpResults;
+	std::map<float,vector<std::pair<float,float> > > misTagPseudoExpResults;
 	
 	std::map<string,vector<float> > bTagPseudoExpResultsForF;
 	std::map<string,vector<float> > bTagPseudoExpResultsForXS;

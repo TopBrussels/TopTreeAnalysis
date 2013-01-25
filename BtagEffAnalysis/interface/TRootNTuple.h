@@ -61,6 +61,7 @@ public:
 	  ,ptMuon_(-999.)
 	  ,EMuon_(-999.)
 	  ,etaMuon_(-999.)
+	  ,chargeMuon_(-999.)
 	  ,mvaTrigID_(-999.)
 	  ,delRlj_(-999.)
 	  ,partonFlavourControl_(-999)
@@ -169,6 +170,7 @@ public:
 	Double_t ptMuon() const { return ptMuon_;}
 	Double_t EMuon() const { return EMuon_;}
 	Double_t etaMuon() const { return etaMuon_;}
+	Double_t chargeMuon() const { return chargeMuon_;}
 	Double_t mvaTrigID() const {return mvaTrigID_;}
 	Double_t delRlj() const { return delRlj_;}  
 	Int_t partonFlavourControl() const { return partonFlavourControl_;}
@@ -286,6 +288,7 @@ public:
 	void setPtMuon(Double_t ptMuon) {ptMuon_=ptMuon;}
 	void setEMuon(Double_t EMuon) {EMuon_=EMuon;}
 	void setEtaMuon(Double_t etaMuon) {etaMuon_=etaMuon;}
+	void setChargeMuon(Double_t chargeMuon) {chargeMuon_=chargeMuon;}
 	void setmvaTrigID(Double_t i) {mvaTrigID_=i;}
 	void setDelRlj(Double_t delRlj) {delRlj_=delRlj;}  
 	void setPartonFlavourControl(Int_t partonFlavourControl) { partonFlavourControl_=partonFlavourControl;}
@@ -399,6 +402,7 @@ private:
 	Double_t ptMuon_;
 	Double_t EMuon_;
 	Double_t etaMuon_;
+	Double_t chargeMuon_;
 	Double_t mvaTrigID_;
 	Double_t delRlj_;
 	Int_t partonFlavourControl_;

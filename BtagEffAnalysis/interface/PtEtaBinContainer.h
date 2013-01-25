@@ -28,10 +28,10 @@ class PtEtaBinContainer{
   ~PtEtaBinContainer(); 
 
   void DefineSignalSamplePlots(int, double, double, int, double, double, int, double, double, int, double, double, int, double, double, int[], double[], double[]);
-  void DefineControlSamplePlots(int, double, double,int, double, double,int, double, double);
+  void DefineControlSamplePlots(int, double, double,int, double, double,int, double, double,int[], double[], double[]);
   //void FillSignalSamplePlots(double, int, double*, double, double, double, int, double, double, double, double, double, double, double);
   void FillSignalSamplePlots(double, double, int, bool, bool, double, double*, std::map<int,vector<double> > WPMap, double, double, double, double, double, double, double,double);
-  void FillControlSamplePlots(double, int, bool, bool, double, double, double, double, double, double, double, double);
+  void FillControlSamplePlots(double, int, bool, bool, double, double*, double, double, double, double, double, double, double);
 
   void FillXStemplates(double weight, string datasetname, int partonFlavour, double* btag,std::map<int,vector<double> > WPMap, double controlVar0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0);
 
@@ -72,6 +72,7 @@ class PtEtaBinContainer{
   void MeasureEff(bool);
   void MeasureEffLR(bool);
   void MeasureEffRR(bool);
+    void MeasureMistagEffRR(bool);
 
   void GetWPEff(bool, bool, double, int, double*, bool, bool, int, int, bool, double);
   void CoutWPEff(bool, bool, double, int, double*, bool, bool, int, int, bool, double);

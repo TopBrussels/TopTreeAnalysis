@@ -6,15 +6,20 @@
     double ueb_meas[5]={0.026,0.027,0.027,0.025,0.022};
     */
     //values around TCHEM
-    double eb_true[5]={0.632,0.666,0.702,0.737,0.772};
+    /*double eb_true[5]={0.632,0.666,0.702,0.737,0.772};
     double ueb_true[5]={0.006,0.006,0.005,0.005,0.005};
     double eb_meas[5]={0.648,0.681,0.720,0.751,0.794};
-    double ueb_meas[5]={0.025,0.026,0.027,0.028,0.029};
-    
+    double ueb_meas[5]={0.025,0.026,0.027,0.028,0.029};*/
+
+  double eb_true[3]={0.341,0.686,0.829};
+  double ueb_true[3]={0.002,0.002,0.001};
+  double eb_meas[3]={0.344,0.687,0.827};
+  double ueb_meas[3]={0.004,0.007,0.007};
+
     //double cuts[5]={2.58,2.1,1.7,1.35,0.915};
     
-    int ref=2;
-    int nUse=5;
+    int ref=1;
+    int nUse=3;
     
     double xVals[5];
     double uxVals[5];

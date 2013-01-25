@@ -257,17 +257,17 @@ void PtEtaBinContainer::SetVarBins(std::map<int,vector<float> > rangesbTag) {
 	
 }
 
-void PtEtaBinContainer::DefineControlSamplePlots(int nBinsControlVar1, double lowRangeControlVar1, double upRangeControlVar1, int nBinsControlVar2, double lowRangeControlVar2, double upRangeControlVar2, int nBinsControlVar, double lowRangeControlVar, double upRangeControlVar){
+void PtEtaBinContainer::DefineControlSamplePlots(int nBinsControlVar1, double lowRangeControlVar1, double upRangeControlVar1, int nBinsControlVar2, double lowRangeControlVar2, double upRangeControlVar2, int nBinsControlVar, double lowRangeControlVar, double upRangeControlVar,int nBinsBtag[], double lowRangeBtag[], double upRangeBtag[]){
   for (int k=0; k<nBdiscrAlgos_; k++){
     for(int i=0; i<nPtBins_; i++){ 
-      binVector_[i][k]->DefineControlSamplePlots(nBinsControlVar1,lowRangeControlVar1,upRangeControlVar1,nBinsControlVar2,lowRangeControlVar2,upRangeControlVar,nBinsControlVar,lowRangeControlVar,upRangeControlVar);
+      binVector_[i][k]->DefineControlSamplePlots(k,nBinsControlVar1,lowRangeControlVar1,upRangeControlVar1,nBinsControlVar2,lowRangeControlVar2,upRangeControlVar,nBinsControlVar,lowRangeControlVar,upRangeControlVar,nBinsBtag,lowRangeBtag,upRangeBtag);
     }
     for(int j=nPtBins_; j<nPtBins_+nEtaBins_; j++){	
       //cout << "PtEtaBinContainer::DefineControlSamplePlots " << " k "<< k << " i " << i << " j " << j << nBinsControlVar1 << " " << lowRangeControlVar1 << " " << upRangeControlVar1 << " " << nBinsControlVar2 << " " << lowRangeControlVar2 << " " << upRangeControlVar2 << " " << nBinsControlVar << " " << lowRangeControlVar << " " <<  upRangeControlVar << endl;
-      binVector_[j][k]->DefineControlSamplePlots(nBinsControlVar1,lowRangeControlVar1,upRangeControlVar1,nBinsControlVar2,lowRangeControlVar2,upRangeControlVar,nBinsControlVar,lowRangeControlVar,upRangeControlVar);
+      binVector_[j][k]->DefineControlSamplePlots(k,nBinsControlVar1,lowRangeControlVar1,upRangeControlVar1,nBinsControlVar2,lowRangeControlVar2,upRangeControlVar,nBinsControlVar,lowRangeControlVar,upRangeControlVar,nBinsBtag,lowRangeBtag,upRangeBtag);
     }
     
-    binGlobal_[k]->DefineControlSamplePlots(nBinsControlVar1,lowRangeControlVar1,upRangeControlVar1,nBinsControlVar2,lowRangeControlVar2,upRangeControlVar2,nBinsControlVar,lowRangeControlVar,upRangeControlVar);
+    binGlobal_[k]->DefineControlSamplePlots(k,nBinsControlVar1,lowRangeControlVar1,upRangeControlVar1,nBinsControlVar2,lowRangeControlVar2,upRangeControlVar2,nBinsControlVar,lowRangeControlVar,upRangeControlVar,nBinsBtag,lowRangeBtag,upRangeBtag);
   }
 }
 
@@ -341,17 +341,17 @@ void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonre
   }
 }
 
-void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour, bool isW, bool isR, double chisq, double controlVar1, double controlVar2, double controlVar, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
+void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, double controlVar1, double controlVar2, double controlVar, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
   for (int k=0; k<nBdiscrAlgos_; k++){
     for(int i=0; i<nPtBins_; i++){ 
       if(controlVar1>ptBins_[i] && controlVar1<ptBins_[i+1]){
-	binVector_[i][k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
+	binVector_[i][k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,bTag[k],controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
       }
     }
     for(int j=nPtBins_; j<nPtBins_+nEtaBins_; j++){
       int index=j-nPtBins_;
       if(controlVar2>etaBins_[index] && controlVar2<etaBins_[index+1]){
-	binVector_[j][k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
+	binVector_[j][k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,bTag[k],controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
       }
     }
     
@@ -359,7 +359,7 @@ void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour,
     //if(controlVar1>ptLowCut_ && controlVar1<ptUpCut_){
     if(controlVar1>ptLowCut_ && controlVar1<ptUpCut_){
       if(!(controlVar1>ptLowCutComplement_ && controlVar1<ptUpCutComplement_)){
-	binGlobal_[k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
+	binGlobal_[k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,bTag[k],controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
       }
     }
  }
@@ -763,6 +763,18 @@ void PtEtaBinContainer::MeasureEffRR(bool doSCreweigh){
     }
     binGlobal_[k]->MeasureEffRR(doSCreweigh);
   }
+}
+
+void PtEtaBinContainer::MeasureMistagEffRR(bool doSCreweigh){
+    for (int k=0; k<nBdiscrAlgos_; k++){
+        for(int i=0; i<nPtBins_; i++){ 
+            binVector_[i][k]->MeasureMistagEffRR(false);
+        }
+        for(int j=nPtBins_; j<nPtBins_+nEtaBins_; j++){
+            binVector_[j][k]->MeasureMistagEffRR(false);
+        }
+        binGlobal_[k]->MeasureMistagEffRR(doSCreweigh);
+    }
 }
 
 void PtEtaBinContainer::GetWPEff(bool RRincl, bool doSCreweigh, double wp, int tagger, double *array, bool pseudo, bool more, int ptbin, int etabin, bool ptetabin, double runNb){

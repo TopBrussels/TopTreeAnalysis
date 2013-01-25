@@ -1,12 +1,12 @@
 {
     
-    string lumiPlot="2.18";
+    string lumiPlot="11.9";
     
     string plotName = "MLB_BTV";
     
-    string filetmp="";
+    string filetmp="../StackPlots_Mu.root";
     
-    string toSave = "";
+    string toSave = "NONE";
     
     double lumi_error = 0.044;
     double ttbar_error = 0.15;
@@ -16,7 +16,7 @@
     other_error = 0;    
     
     double btagSF=1;
-    double ubtagSF=1;
+    double ubtagSF=0;
     
     ifstream t(".plotopts",ios::in);
     
@@ -30,6 +30,7 @@
     
     cout << filetmp << " " << lumiPlot << " " << btagSF << " " << ubtagSF << " " << plotName << endl;
     
+
     TString fileName = filetmp.c_str();
     
     //ttbar_error=sqrt((ttbar_error*ttbar_error)+(ubtagSF*ubtagSF));
@@ -181,7 +182,6 @@
     // CREATE THE CANVAS
     
     TCanvas* c = new TCanvas("c","c", 1000, 800);
-    c->SetBottomMargin(0.3);
     
     // OPEN TFILE
     TFile* f = new TFile(fileName);
@@ -271,18 +271,24 @@
                     
                     TH1D* data = (TH1D*) f->Get(("MultiSamplePlot_"+plotName+"/"+plotName+"_Data").c_str());
                     
-                    data->Scale(data->Integral()/(data->Integral()*btagSF));
+                    if (data) data->Scale(data->Integral()/(data->Integral()*btagSF));
                     
                     // GET THE LEGEND
                     
                     TLegend* legend;// = (TLegend*) f->Get(("MultiSamplePlot_"+plotName+"/leg").c_str());
     
+    if (data) c->SetBottomMargin(0.3);
+
     //tmp fix
     
-    legend = new TLegend(0.7,0.58,0.94,0.89);
- 
+    if (plotName.find("BestJetCombChi2") != string::npos)
+      legend = new TLegend(0.7,0.64,0.84,0.89);
+    else if (plotName.find("bTagger") != string::npos)
+      legend = new TLegend(0.7,0.64,0.94,0.89);
+    else
+      legend = new TLegend(0.7,0.58,0.94,0.89);
     
-    legend->AddEntry(data,"Data","L E");
+    if (data) legend->AddEntry(data,"Data","L E");
     
     h1->SetFillColor(kRed+1);   
     h2->SetFillColor(kRed-7);   
@@ -318,10 +324,13 @@
     
     // BUILD THE RATIO PLOT
     
-    TH1D* ratio = (TH1D*) data->Clone();
+    TH1D* ratio;
+    TPad* pad;
+    if (data) {
+    ratio = (TH1D*) data->Clone();
     ratio->Divide(added);
     
-    TPad* pad = new TPad("pad", "pad", 0.0, 0.0, 1.0, 1.0);
+    pad = new TPad("pad", "pad", 0.0, 0.0, 1.0, 1.0);
     pad->SetTopMargin(0.7);
     pad->SetFillColor(0);
     pad->SetFillStyle(0);
@@ -338,7 +347,8 @@
     ratio->SetMarkerSize(0.7);
     ratio->GetYaxis().SetNdivisions(5);
     
-    
+    }
+
     // BUILD THE LUMIERROR PLOT
     
     TH1D* lumiband = (TH1D*) hmc->Clone();
@@ -362,6 +372,7 @@
     lumiband->SetFillColor(1);
     lumiband->SetMarkerStyle(1);
     
+    if (data)
     if (ubtagSF > 0)
         legend->AddEntry( lumiband , "Luminosity+b tagging" , "f");
     else
@@ -372,26 +383,31 @@
     
     //stack->SetMaximum( .1*stack->GetMaximum() );
     //stack->SetMinimum( 0.1 );
+    //cout << stack->GetMaximum() << endl;
+    
+    if (plotName.find("bTagger") != string::npos)
+      stack->SetMaximum(stack->GetMaximum()*500);
     
     stack->Draw("HIST");
     //stack->GetXaxis()->SetTitle(label);
     stack->GetYaxis()->CenterTitle();
     //stack->GetYaxis()->SetTitle(ylabel);
-    stack->GetXaxis()->SetLabelSize(0);
+    if (data) stack->GetXaxis()->SetLabelSize(0);
+    else      stack->GetXaxis()->SetLabelSize(0.04);
     stack->GetYaxis().SetLabelSize(0.04);
-    stack->GetXaxis()->SetTitleSize(0);
-    lumiband->Draw("samee2");
+    if (data) stack->GetXaxis()->SetTitleSize(0);
+    if (data) lumiband->Draw("samee2");
     
-    data->SetMarkerStyle(20);
-    data->Draw("SAME:E1");
-    
+    if (data) data->SetMarkerStyle(20);
+    if (data) data->Draw("SAME:E1");
+
     legend->Draw();
     
-    if (plotName.find("BestJetCombChi2") != string::npos) gPad->SetLogy();
+    if (plotName.find("BestJetCombChi2") != string::npos || plotName.find("bTagger") != string::npos) gPad->SetLogy();
         
-        pad->Draw();
-        pad->cd(0);
-        ratio->Draw("e");
+    if (data) pad->Draw();
+    if (data) pad->cd(0);
+    if (data) ratio->Draw("e");
         
         // Draw the CMS line
         
@@ -399,13 +415,13 @@
         latex->SetNDC();
         latex->SetTextSize(0.04);
         latex->SetTextAlign(31); // align right
-        latex->DrawLatex(0.45, 0.95, "CMS Preliminary");
-        
+        if (data) latex->DrawLatex(0.38, 0.95, "CMS Preliminary");
+        else latex->DrawLatex(0.38, 0.95, "CMS Simulation");
         TLatex* latex2 = new TLatex();
         latex2->SetNDC();
         latex2->SetTextSize(0.04);
         latex2->SetTextAlign(31); // align right
-        latex2->DrawLatex(0.87, 0.95, (lumiPlot + " fb^{-1} at #sqrt{s} = 8 TeV").c_str());
+        if (data)latex2->DrawLatex(0.80, 0.95, (lumiPlot + " fb^{-1} at #sqrt{s} = 8 TeV").c_str());
         
         
         // SAVE PLOT
