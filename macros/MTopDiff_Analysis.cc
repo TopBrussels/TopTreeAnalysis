@@ -482,7 +482,7 @@ int main (int argc, char *argv[])
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
   Double_t pTjetCut = 30.;
-  Int_t nBtagCut = 1;
+  Int_t nBtagCut = 2;
   Int_t nJetCut = 9999;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
@@ -613,7 +613,7 @@ int main (int argc, char *argv[])
     int nRealBjets = 0, nRealBjetsBtag = 0, nLightJets = 0, nLightJetsBtag = 0;
     
     for(unsigned int iEvt=0; iEvt<nEvent; iEvt++)
-//    for(unsigned int iEvt=0; iEvt<1000; iEvt++)
+//    for(unsigned int iEvt=0; iEvt<2; iEvt++)
     {
       inMonstersTree->GetEvent(iEvt);
 //      cout << "event: " << iEvt << endl;
@@ -955,7 +955,7 @@ int main (int argc, char *argv[])
           if(writeASCIIstuff)
           {
             fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, false, bestCombi);
-            if(applyChi2Cut(eventMu, maxChi2))
+            if(applyChi2Cut(eventMu, maxChi2, true, 1))
             {
               setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
 //              cout << eventMu << endl;
@@ -963,7 +963,7 @@ int main (int argc, char *argv[])
             }
             
 //            fillMassFitInfoEvent(monster, headerMu, eventMu, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
-//            if(applyChi2Cut(eventMu, maxChi2))
+//            if(applyChi2Cut(eventMu, maxChi2, true, 1))
 //            {
 //              setBtagWeights(eventMu, bTagCut, bTagEff, misTagRate);
 //              writerHighestWeight(outFileLikelihoodSemiMuSplitted,eventMu);
@@ -994,7 +994,7 @@ int main (int argc, char *argv[])
           if(writeASCIIstuff)
           {
             fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, false, bestCombi);
-            if(applyChi2Cut(eventEl, maxChi2))
+            if(applyChi2Cut(eventEl, maxChi2, true, 1))
             {
               setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
 //              cout << eventEl << endl;
@@ -1002,7 +1002,7 @@ int main (int argc, char *argv[])
             }
             
 //            fillMassFitInfoEvent(monster, headerEl, eventEl, lumiWeight, lumiWeightUp, lumiWeightDown, true, bestCombi);
-//            if(applyChi2Cut(eventEl, maxChi2))
+//            if(applyChi2Cut(eventEl, maxChi2, true, 1))
 //            {
 //              setBtagWeights(eventEl, bTagCut, bTagEff, misTagRate);
 //              writerHighestWeight(outFileLikelihoodSemiElSplitted,eventEl);
@@ -1123,7 +1123,7 @@ int main (int argc, char *argv[])
 	  RooRealVar mTopFitWjets("mTopFitWjets","mTopFitWjets",50.,650.);
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
 	
-	  RooRealVar mean("mean","mean",150.,130.,180.);
+	  RooRealVar mean("mean","mean",175.,130.,300.);
 	  RooRealVar sigma("sigma","sigma",35.,20.,50.);
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
