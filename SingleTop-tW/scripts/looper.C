@@ -181,7 +181,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   histo_njetsbt->Sumw2();
   
   sprintf(title,"ptsys_%s",plotName);
-  TH1F* histo_ptsys = new TH1F( title, " ", 100,  0, 200 );
+  TH1F* histo_ptsys = new TH1F( title, " ", 200,  0, 200 );
   histo_ptsys->Sumw2();
   
   sprintf(title,"ht_%s",plotName);
@@ -246,7 +246,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   histo_ptsys_1j1t->Sumw2();
   
   sprintf(title,"ht_1j1t_%s",plotName);
-  TH1F* histo_ht_1j1t = new TH1F( title, " ", 300,  0, 600 );
+  TH1F* histo_ht_1j1t = new TH1F( title, " ", 200,  0, 200 );
   histo_ht_1j1t->Sumw2();
   
   sprintf(title,"pt_leading_1j1t_%s",plotName);
@@ -269,7 +269,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   histo_mll_2j1t->Sumw2();
   
   sprintf(title,"ptsys_2j1t_%s",plotName);
-  TH1F* histo_ptsys_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  TH1F* histo_ptsys_2j1t = new TH1F( title, " ", 200,  0, 200 );
   histo_ptsys_2j1t->Sumw2();
   
   sprintf(title,"ht_2j1t_%s",plotName);
@@ -296,7 +296,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
   histo_mll_2j2t->Sumw2();
   
   sprintf(title,"ptsys_2j2t_%s",plotName);
-  TH1F* histo_ptsys_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  TH1F* histo_ptsys_2j2t = new TH1F( title, " ", 300,  0, 600 );
   histo_ptsys_2j2t->Sumw2();
   
   sprintf(title,"ht_2j2t_%s",plotName);
@@ -321,6 +321,42 @@ void looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_2lep_%s",plotName);
   TH1F* histo_nvertex_2lep = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex_2lep->Sumw2();
+
+
+  // Test jets
+  sprintf(title,"ht_2j1t_leading_%s",plotName);
+  TH1F* histo_ht_2j1t_leading = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_2j1t_leading->Sumw2();
+  
+  sprintf(title,"ht_2j1t_all_%s",plotName);
+  TH1F* histo_ht_2j1t_all = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_2j1t_all->Sumw2();
+  
+  sprintf(title,"ht_2j2t_leading_%s",plotName);
+  TH1F* histo_ht_2j2t_leading = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_2j1t_leading->Sumw2();
+  
+  sprintf(title,"ht_2j2t_all_%s",plotName);
+  TH1F* histo_ht_2j2t_all = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_2j2t_all->Sumw2();
+  
+  sprintf(title,"ptsys_2j1t_leading_%s",plotName);
+  TH1F* histo_ptsys_2j1t_leading = new TH1F( title, " ", 200,  0, 200 );
+  histo_ptsys_2j1t_leading->Sumw2();
+  
+  sprintf(title,"ptsys_2j1t_all_%s",plotName);
+  TH1F* histo_ptsys_2j1t_all = new TH1F( title, " ", 200,  0, 200 );
+  histo_ptsys_2j1t_all->Sumw2();
+  
+  sprintf(title,"ptsys_2j2t_leading_%s",plotName);
+  TH1F* histo_ptsys_2j2t_leading = new TH1F( title, " ", 200,  0, 200 );
+  histo_ptsys_2j1t_leading->Sumw2();
+  
+  sprintf(title,"ptsys_2j2t_all_%s",plotName);
+  TH1F* histo_ptsys_2j2t_all = new TH1F( title, " ", 200,  0, 200 );
+  histo_ptsys_2j2t_all->Sumw2();
+
+
 
   if (fChain == 0) return;
   
@@ -387,6 +423,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	int iJet = -5;
 	int iSF;
 	double tempSF = SFval;
+	int iLead = -5;
 	
 	int SFvalue = int(tempSF*100);
 	int nloose = 0;
@@ -397,6 +434,7 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	  if (ptJet->at(i) > 30 && fabs(tempJet.Eta()) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	    nJets++;
 	    iJet = i;
+	    if (iLead == -5) iLead = iJet;
 	    if (btCSVBJet->at(i) > 0.679){
 	      iSF = rand() % 100;
 	      if (iSF < SFvalue ){
@@ -533,12 +571,57 @@ void looper::myLoop(int nsel, int mode, bool silent)
 	        histo_ptsys_2j1t->Fill(ptSystem, xlWeight);
 	        histo_ht_2j1t->Fill(ht, xlWeight);
 	        histo_pt_leading_2j1t->Fill(jet.Pt(), xlWeight);
+		TLorentzVector jet2(pxJet->at(iLead),pyJet->at(iLead), pzJet->at(iLead), eJet->at(iLead));
+		double htled = lepton0.Pt() + lepton1.Pt() + jet2.Pt() + metPt; 
+		histo_ht_2j1t_leading->Fill(htled, xlWeight);
+		double htall = lepton0.Pt() + lepton1.Pt() + jet.Pt() + jet2.Pt() + metPt; 
+		histo_ht_2j1t_all->Fill(htall, xlWeight);
+		
+		 
+		double ptSysPxled = lepton0.Px() + lepton1.Px() + jet2.Px() + metPx;
+		double ptSysPyled = lepton0.Py() + lepton1.Py() + jet2.Py() + metPy;
+		double ptSystemled = sqrt(ptSysPxled*ptSysPxled + ptSysPyled*ptSysPyled);
+	      	histo_ptsys_2j1t_leading->Fill(ptSystemled, xlWeight);
+		
+		double ptSysPxall = lepton0.Px() + lepton1.Px() + jet.Px() + jet2.Px() + metPx;
+		double ptSysPyall = lepton0.Py() + lepton1.Py() + jet.Py() + jet2.Py() + metPy;
+		double ptSystemall = sqrt(ptSysPxall*ptSysPxall + ptSysPyall*ptSysPyall);
+	      	histo_ptsys_2j1t_all->Fill(ptSystemall, xlWeight);
+		
+		
+		
+		
+		
+		
 	      } else if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  {
 	        histo_mll_2j2t->Fill(pair.M(),  xlWeight);
 	        histo_met_2j2t->Fill(metPt,  xlWeight);
 	        histo_ptsys_2j2t->Fill(ptSystem, xlWeight);
 	        histo_ht_2j2t->Fill(ht, xlWeight);
 	        histo_pt_leading_2j2t->Fill(jet.Pt(), xlWeight);
+		TLorentzVector jet2(pxJet->at(iLead),pyJet->at(iLead), pzJet->at(iLead), eJet->at(iLead));
+		double htled = lepton0.Pt() + lepton1.Pt() + jet2.Pt() + metPt; 
+		histo_ht_2j2t_leading->Fill(htled, xlWeight);
+		double htall = lepton0.Pt() + lepton1.Pt() + jet.Pt() + jet2.Pt() + metPt; 
+		histo_ht_2j2t_all->Fill(htall, xlWeight);    
+	
+	
+	
+		double ptSysPxled = lepton0.Px() + lepton1.Px() + jet2.Px() + metPx;
+		double ptSysPyled = lepton0.Py() + lepton1.Py() + jet2.Py() + metPy;
+		double ptSystemled = sqrt(ptSysPxled*ptSysPxled + ptSysPyled*ptSysPyled);
+	      	histo_ptsys_2j2t_leading->Fill(ptSystemled, xlWeight);
+		
+		double ptSysPxall = lepton0.Px() + lepton1.Px() + jet.Px() + jet2.Px() + metPx;
+		double ptSysPyall = lepton0.Py() + lepton1.Py() + jet.Py() + jet2.Py() + metPy;
+		double ptSystemall = sqrt(ptSysPxall*ptSysPxall + ptSysPyall*ptSysPyall);
+	      	histo_ptsys_2j2t_all->Fill(ptSystemall, xlWeight);
+		
+		
+		
+		
+		
+		
 	      }
 	      
 	      

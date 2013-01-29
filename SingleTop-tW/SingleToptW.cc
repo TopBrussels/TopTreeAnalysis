@@ -30,7 +30,6 @@
 #include "../MCInformation/interface/ResolutionFit.h"
 #include "../Reconstruction/interface/JetCorrectorParameters.h"
 #include "../Reconstruction/interface/JetCorrectionUncertainty.h"
-
 #include "../MCInformation/interface/LumiReWeighting.h"
 #include "../macros/Style.C"
 
@@ -159,19 +158,19 @@ int main(int argc, char* argv[]) {
       double xlweight;
      
       if (dataSetName == "data"){	     sprintf(name, "data");	     xlweight = 1;			     isData = true;}
-      else if (dataSetName == "tt"){	     sprintf(name, "tt");	     xlweight = lumi*225.197/6883735;	     isTop = true;} 
+      else if (dataSetName == "tt"){	     sprintf(name, "tt");	     xlweight = lumi*225.197/6830443;	     isTop = true;} 
       else if (dataSetName == "twdr"){	     sprintf(name, "tw_dr");	     xlweight = lumi*11.1/497657;	     } 
-      else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");	     xlweight = lumi*11.1/493458;	     } 
-      else if (dataSetName == "t"){	     sprintf(name, "t");	     xlweight = lumi*56.4/3747576;	       } 
-      else if (dataSetName == "at"){	     sprintf(name, "at");	     xlweight = lumi*30.7/1905066;	     }
-      else if (dataSetName == "s"){	     sprintf(name, "s");	     xlweight = lumi*3.79/259960;	      } 
-      else if (dataSetName == "as"){	     sprintf(name, "as");	     xlweight = lumi*1.76/139974;	    } 
-      else if (dataSetName == "ww"){	     sprintf(name, "ww");	     xlweight = lumi*54.838/1933232;	      } 
-      else if (dataSetName == "wz"){	     sprintf(name, "wz");	     xlweight = lumi*22.44/8080197;	     } 
-      else if (dataSetName == "zz"){	     sprintf(name, "zz");	     xlweight = lumi*9.03/9799902;	     } 
-      else if (dataSetName == "zjets"){       sprintf(name, "zjets");	     xlweight = lumi*3532.8/29161806;	     } 
-      else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214;	     } 
-      else if (dataSetName == "wjets"){       sprintf(name, "wjets");	     xlweight = lumi*36257.2/55649483;         }  
+      else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");	     xlweight = lumi*11.1/481071;	     } 
+      else if (dataSetName == "t"){	     sprintf(name, "t");	     xlweight = lumi*56.4/3748832;	     } 
+      else if (dataSetName == "at"){	     sprintf(name, "at");	     xlweight = lumi*30.7/1807197;	     } 
+      else if (dataSetName == "s"){	     sprintf(name, "s");	     xlweight = lumi*3.79/259960;	     } 
+      else if (dataSetName == "as"){	     sprintf(name, "as");	     xlweight = lumi*1.76/139974;	     } 
+      else if (dataSetName == "ww"){	     sprintf(name, "ww");	     xlweight = lumi*54.838/10000413;	     } 
+      else if (dataSetName == "wz"){	     sprintf(name, "wz");	     xlweight = lumi*22.44/9900267;	     }
+      else if (dataSetName == "zz"){	     sprintf(name, "zz");	     xlweight = lumi*9.03/9799891;	     } 
+      else if (dataSetName == "zjets"){       sprintf(name, "zjets");	     xlweight = lumi*3532.8/30364599;	     } 
+      else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;	     } 
+      else if (dataSetName == "wjets"){       sprintf(name, "wjets");	     xlweight = lumi*36257.2/57411352;       } 
        
 	  
       //Test file
@@ -478,15 +477,45 @@ int main(int argc, char* argv[]) {
               selection.setDiMuonCuts(20,2.4,0.20,999.);
               selection.setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1);
               selection.setLooseMuonCuts(10,2.5,0.2);
-              selection.setLooseDiElectronCuts(15,2.5,0.15); 
-		
+              selection.setLooseDiElectronCuts(15,2.5,0.15, -99999); 
+	      //selection.setLooseDiElectronCuts(15,2.5,0.15);
 	      //Select Objects 
 	      vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
 	      vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
-	   
+	   double isocorr = 0;
+	   double RelIso;
+	   	  
+	      if ((event->lumiBlockId() == 1101 && event->eventId() ==330293) || (event->lumiBlockId() == 1624 && event->eventId() ==486969)  
+	       || (event->lumiBlockId() == 18 && event->eventId() ==5259)) {
+	      cout << endl;
+	    cout << event->lumiBlockId() << " - " << event->eventId() << endl;
+		cout << "Electrons" << endl;
+		for(unsigned int i=0; i<init_electrons.size(); i++){
+		  isocorr = 0.5*init_electrons[i]->puChargedHadronIso();
+		  RelIso = (init_electrons[i]->chargedHadronIso() + max( init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - isocorr, 0.) )/ init_electrons[i]->Pt();
+		  cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << RelIso << ", "
+		       <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
+
+		}	
+		cout << "Muons" << endl;
+
+		for(unsigned int i=0; i<init_muons.size(); i++){
+		  isocorr = 0.5*init_muons[i]->puChargedHadronIso();
+		  RelIso = (init_muons[i]->chargedHadronIso() + max( init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - isocorr, 0.) )/ init_muons[i]->Pt();
+		  cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << RelIso << endl;
+
+		}
+		cout << "Jets" << endl;
+		for(unsigned int i=0; i<init_jets.size(); i++){
+		  cout << i  << ": " << init_jets[i]->Pt() << ", " << init_jets[i]->Eta() <<  endl;
+
+		}	
+		  	
+		  
+	      }
 	   
 	      // Tight lepton selection
 	      bool leptonSelection = false;
@@ -495,6 +524,30 @@ int main(int argc, char* argv[]) {
 	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
 		
 	      if (leptonSelection) {
+		  /*
+		      cout << endl;
+	    cout << event->lumiBlockId() << " - " << event->eventId() << endl;
+		cout << "Electrons" << endl;
+		for(unsigned int i=0; i<init_electrons.size(); i++){
+		  isocorr = 0.5*init_electrons[i]->puChargedHadronIso();
+		  RelIso = (init_electrons[i]->chargedHadronIso() + max( init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - isocorr, 0.) )/ init_electrons[i]->Pt();
+		  cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << RelIso << ", "
+		       <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
+
+		}	
+		cout << "Muons" << endl;
+
+		for(unsigned int i=0; i<init_muons.size(); i++){
+		  isocorr = 0.5*init_muons[i]->puChargedHadronIso();
+		  RelIso = (init_muons[i]->chargedHadronIso() + max( init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - isocorr, 0.) )/ init_muons[i]->Pt();
+		  cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << RelIso << endl;
+
+		}
+		cout << "Jets" << endl;
+		for(unsigned int i=0; i<init_jets.size(); i++){
+		  cout << i  << ": " << init_jets[i]->Pt() << ", " << init_jets[i]->Eta() <<  endl;
+
+		}*/
 		  
 		bool charge = false;
 		double q0, q1;
@@ -540,8 +593,11 @@ int main(int argc, char* argv[]) {
 		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
+		  TRootElectron* el = (TRootElectron*) selectedElectrons[0];
+		  double   isocorr = 0.5*el->puChargedHadronIso();
+		  float RelIso = (el->chargedHadronIso() + max( el->neutralHadronIso() + el->photonIso()  - isocorr, 0.) )/ el->Pt();
+		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << "\t" << el->Pt() << "\t" << RelIso << endl;
 		  
-		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 		  
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
