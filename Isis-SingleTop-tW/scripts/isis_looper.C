@@ -38,6 +38,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
+    
+  else if (nsel == -10)                   {sprintf(plotName,"tt");}
+  else if (nsel ==  10)                   {sprintf(plotName,"tt");}
   
   bool nosf = false;
   
@@ -48,6 +51,12 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if ( mode == 1)   lumi = 1000; // to check 
   else if ( mode == 2)   lumi = 5103.58; // to check 
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
+  
+   if(nsel == -10){
+  sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == 10 ){
+   sprintf(newRootFile,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  }
  
   TFile f_var(newRootFile, "UPDATE");
   

@@ -26,6 +26,7 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
+
   
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;
   if (!silent){
@@ -37,6 +38,8 @@ void chain(int nsel = 0, int mode = 0, bool silent = false){
   
   char myRootFile[300];
   sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
+  
+
   
   TChain *myCh = new TChain("myTree","myTree");
   myCh->Add(myRootFile);

@@ -10,4 +10,6 @@ root.exe -b -l -q isis_chain.C\(5\,0\,0\)
 root.exe -b -l -q isis_chain.C\(6\,0\,0\)
 root.exe -b -l -q isis_chain.C\(7\,0\,0\)
 
+root.exe -b -l -q isis_chain.C\(10\,0\,0\)
+root.exe -b -l -q isis_chain.C\(-10\,0\,0\)
 

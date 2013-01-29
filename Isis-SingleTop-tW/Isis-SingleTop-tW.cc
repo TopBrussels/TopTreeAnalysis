@@ -123,6 +123,9 @@ int main(int argc, char* argv[]) {
     // argc is the number of arguments you give, your name of the code is already 1 argument, if you put space --something then you have 2 arguments so if argc >1, something happens
     // argv is the array that contains all the possible arguments
     // argval is the argument on place iarg in the array argv
+   
+    std::string tempxml; 
+    bool foundxml = false; 
     
     for(int iarg = 0; iarg < argc && argc>1 ; iarg++){
         std::string argval=argv[iarg];
@@ -144,6 +147,7 @@ int main(int argc, char* argv[]) {
                 cout << "--NoSF: Do not apply b-tag scale factor" << endl;
                 cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
                 cout << "--3D: 3D Pileup reweighting" << endl;
+		cout << "--xml myxml.xml Xml file" << endl; 
                 return 0;
         }
         if (argval=="--ee"){
@@ -199,7 +203,11 @@ int main(int argc, char* argv[]) {
         if (argval=="--3D") {
                 Pu3D = true;
         }
-    
+       if (argval=="--xml") {
+                iarg++;
+		tempxml = argv[iarg];
+		foundxml = true; 
+        }
     }   
     
     // Give the modes on the screen 
@@ -234,7 +242,9 @@ int main(int argc, char* argv[]) {
         xmlfile = "twee.xml";
     }
     
-    
+    if (foundxml){
+      xmlfile = tempxml; 
+    }
     // Configuration of the output format this takes the configurations of the xml file 
        // Make a top tree with the name: set configurations, you can call this tree with configTree
        //   A TTree object has a header with a name and a title. It consists of a list of independent branches (TBranch). Each branch has its own definition and list of buffers.
@@ -306,21 +316,22 @@ int main(int argc, char* argv[]) {
         // Define the cross sections and weights for every data set
         // sprintf makes the string you call name contain data 
         char name[100];
-        
+
+	// from twiki danny: https://twiki.cern.ch/twiki/bin/viewauth/Main/KUSingleTop8TeV2012#MC_Samples
         if (dataSetName == "data"){             sprintf(name, "data");          xlweight = 1;                           isData = true;}
-        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6883735;        isTop = true;} 
+        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657;            } 
-        else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/493458;            } 
-        else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/3747576;             } 
-        else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/1905066;           }
+        else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/481071;            } 
+        else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/3748832;             } 
+        else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/180719;           }
 	else if (dataSetName == "s"){           sprintf(name, "s");             xlweight = lumi*3.79/259960;             } 
         else if (dataSetName == "as"){          sprintf(name, "as");            xlweight = lumi*1.76/139974;           } 
-        else if (dataSetName == "ww"){          sprintf(name, "ww");            xlweight = lumi*54.838/1933232;          } 
-        else if (dataSetName == "wz"){          sprintf(name, "wz");            xlweight = lumi*22.44/8080197;          } 
-        else if (dataSetName == "zz"){          sprintf(name, "zz");            xlweight = lumi*9.03/9799902;           } 
-        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/29161806;        } 
-        else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7132214;          } 
-        else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/55649483;         }  
+        else if (dataSetName == "ww"){          sprintf(name, "ww");            xlweight = lumi*54.838/10000413;          } 
+        else if (dataSetName == "wz"){          sprintf(name, "wz");            xlweight = lumi*22.44/9900267;          } 
+        else if (dataSetName == "zz"){          sprintf(name, "zz");            xlweight = lumi*9.03/9799891 ;           } 
+        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;        } 
+        else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;          } 
+        else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411355;         }  
 	//else if (dataSetName == "zjets1"){       sprintf(name, "zjets1");         xlweight = ??;        }
 	//else if (dataSetName == "zjets_lowmll1"){       sprintf(name, "zjets_lowmll1");         xlweight = ??;        }
 	//else if (dataSetName == "wjets1"){       sprintf(name, "wjets_1");         xlweight = ??;        }
@@ -388,7 +399,8 @@ int main(int argc, char* argv[]) {
         
          
         LumiReWeighting LumiWeights; 
-	LumiWeights = LumiReWeighting("pileupHistos/Summer12.root", "pileupHistos/pileup_2012Data53X_UpToRun196531.root", "pileup", "pileup");  
+	  LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root", "pileupHistos/run2012B_13Jul.root", "pileup", "pileup");
+	//LumiWeights = LumiReWeighting("pileupHistos/toptree_id_2126_canvas_36.root", "pileupHistos/pileup_2012Data53X_UpToRun196531.root", "pileup", "pileup");  
        //  LumiWeights = LumiReWeighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup");  // gives PU weights per bin
         
         //systematics    WHAT DOES THIS DO? 
@@ -399,7 +411,7 @@ int main(int argc, char* argv[]) {
         
         ////////////////////////////////////
         /// INITALISATION JEC/JER Factors //    This isn't applied for JEC, but needed for JER  ==> HOW DOES THIS SECTION WORK? 
-        ////////////////////////////////////
+        ////////////////////////////////////l
         vector<JetCorrectorParameters> vCorrParam;
       
         // Create the JetCorrectorParameter objects, the order does not matter.
@@ -418,9 +430,11 @@ int main(int argc, char* argv[]) {
                 vCorrParam.push_back(*ResJetCorPar);    
         } 
       
-        //I think this is not used!
+        //With the new JEC correction uncertainties , you only apply these onces for systematics because the correction itself is already applied in the MC Samples themselves, 
+	// each new tag comes with a new correction, in brussels they have  way of avoiding the problem that you have to skim your samples again, but in this case it isnt necessary 
+	// Load the JEC corrections uncertainties                                    
                 JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
-        // if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_DATA_Uncertainty_AK5PFchs.txt");
+         //if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt");
     
         // true means redo also the L1
                 JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); 
@@ -455,6 +469,9 @@ int main(int argc, char* argv[]) {
         
         TH1F* pileup_weights = new TH1F("pileup_weights", "The calculated PU weights", 1000,0,10); 
         TH1F* pileup_weights3D = new TH1F("pileup_weights3D", "The calculated 3DPU weights", 1000,0,10); 
+	
+	TH1F* nvertex_beforePU = new TH1F("nvertex_beforePU", "The #vertices before PU reweighting", 1000,0,1000); 
+        TH1F* nvertex_afterPU = new TH1F("nvertex_afterPU", "The #vertices after PU reweighting", 1000,0,1000); 
         
         
         
@@ -623,9 +640,9 @@ int main(int argc, char* argv[]) {
                 
                 ////////////////////////////////
                 ///  JES (Jet Energy Scale)  ///     
-                ///        SYSTEMATICS       ///      Isn't applied, ready for use later   ==> commented
+                ///        SYSTEMATICS       ///      
                 //////////////////////////////// 
-                /*
+                
                 // If the JES systematics are on, minus
                 if(JESPlus){
                         jetTools->correctJetJESUnc(initial_jets_corrected, "minus", 1); 
@@ -634,7 +651,7 @@ int main(int argc, char* argv[]) {
                 else if(JESMinus){
                         jetTools->correctJetJESUnc(initial_jets_corrected, "plus", 1); 
                 }
-                */
+                
                 
                 ////////////////////////////////
                 ///    JER(JE Resolution)    ///     The jet energy resolution in the MC is better than the one from the real data.
@@ -780,10 +797,10 @@ int main(int argc, char* argv[]) {
 				// 	void Selection::setLooseMuonCuts(float Pt, float Eta, float RelIso) 
 				//
 	      			selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
-             		 	selection.setDiMuonCuts(20,2.4,0.20,999.);
-              			selection.setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1);
-              			selection.setLooseMuonCuts(10,2.5,0.2);
-              			selection.setLooseDiElectronCuts(15,2.5,0.2); 
+             		 	selection.setDiMuonCuts(20.,2.4,0.20,999.);
+              			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.,1,0.3,1);
+              			selection.setLooseMuonCuts(10.,2.5,0.2);
+              			selection.setLooseDiElectronCuts(15.0,2.5,0.2); 
 		
 		
 		
@@ -1010,7 +1027,7 @@ int main(int argc, char* argv[]) {
 			  							iJet = i;
 			  							if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){
 			    								iSF = rand() % 100;
-			    								if (iSF < SFvalue || SFval == 1){
+			    								if (iSF < SFvalue || SFval == 1){ // corrigeer voor het feit dat je niet 100% SF hebt
 			     								bTagged = true;
 			      								nJetsBT++;
 			      								nTightJetsBT++;

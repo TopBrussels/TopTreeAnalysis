@@ -27,6 +27,10 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
   
+    
+  else if (nsel == -10)                   {sprintf(plotName,"tt");}
+  else if (nsel ==  10)                   {sprintf(plotName,"tt");}
+  
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;
   if (!silent){
     cout << "[Info:]" ;
@@ -37,6 +41,12 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   
   char myRootFile[300];
   sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
+  
+  if(nsel == -10){
+  sprintf(myRootFile,"outputs/JERsysDown_%d_%s.root", mode, plotName);
+  }else if(nsel == 10 ){
+   sprintf(myRootFile,"outputs/JERsysUp_%d_%s.root", mode, plotName);
+  }
   
   TChain *myCh = new TChain("myTree","myTree");
   myCh->Add(myRootFile);
