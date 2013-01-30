@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
   }   
   
   // Luminosity and xml files
-  if      (mode == 0){ 	 lumi = 4399;  xmlfile ="config/twemu.xml";}
+  if      (mode == 0){ 	 lumi = 11966.617;  xmlfile ="config/twemu.xml";}
   else if (mode == 1){	 lumi = 1000;  xmlfile = "config/twmumu.xml";}
   else if (mode == 2){	 lumi = 5103.58;  xmlfile = "config/twee.xml";}
  
