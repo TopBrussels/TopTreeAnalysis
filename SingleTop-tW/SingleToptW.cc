@@ -124,9 +124,10 @@ int main(int argc, char* argv[]) {
   }   
   
   // Luminosity and xml files
-  if      (mode == 0){ 	 lumi = 11966.617;  xmlfile ="config/twemu.xml";}
-  else if (mode == 1){	 lumi = 1000;  xmlfile = "config/twmumu.xml";}
-  else if (mode == 2){	 lumi = 5103.58;  xmlfile = "config/twee.xml";}
+  // Only runs A, A recover, B, C (24, v2)
+  if      (mode == 0){ 	 lumi = 11966.617;  	xmlfile ="config/twemu.xml";}
+  else if (mode == 1){	 lumi = 12067.294;  	xmlfile = "config/twmumu.xml";}
+  else if (mode == 2){	 lumi = 12093.792;  	xmlfile = "config/twee.xml";}
  
  
    
@@ -193,18 +194,19 @@ int main(int argc, char* argv[]) {
       else if (!isData && !reweightPU) sprintf(rootFileName,"outputs/out_noPU_%d_%s.root", mode, name);
       else sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);
       
-      char myTexFile[300];
-      sprintf(myTexFile,"events/lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
-      ofstream salida(myTexFile);
-      sprintf(myTexFile,"events/lepveto_run_lumi_event_%d_%s.txt", mode, name);
-      ofstream salida2(myTexFile);
-      sprintf(myTexFile,"events/met_run_lumi_event_%d_%s.txt", mode, name);
-      ofstream salida3(myTexFile);
-      sprintf(myTexFile,"events/jet_run_lumi_event_%d_%s.txt", mode, name);
-      ofstream salida4(myTexFile);
-      sprintf(myTexFile,"events/bt_run_lumi_event_%d_%s.txt", mode, name);
-      ofstream salida5(myTexFile);
-      
+      /*
+	char myTexFile[300];
+	sprintf(myTexFile,"events/lepsel_info_run_lumi_event_%d_%s.txt", mode, name);
+	ofstream salida(myTexFile);
+	sprintf(myTexFile,"events/lepveto_run_lumi_event_%d_%s.txt", mode, name);
+	ofstream salida2(myTexFile);
+	sprintf(myTexFile,"events/met_run_lumi_event_%d_%s.txt", mode, name);
+	ofstream salida3(myTexFile);
+	sprintf(myTexFile,"events/jet_run_lumi_event_%d_%s.txt", mode, name);
+	ofstream salida4(myTexFile);
+	sprintf(myTexFile,"events/bt_run_lumi_event_%d_%s.txt", mode, name);
+	ofstream salida5(myTexFile);
+      */
       
       // Objects
       vector < TRootVertex* > vertex;
@@ -485,37 +487,7 @@ int main(int argc, char* argv[]) {
 	      vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 	      vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 	      vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
-	   double isocorr = 0;
-	   double RelIso;
-	   	  
-	      if ((event->lumiBlockId() == 1101 && event->eventId() ==330293) || (event->lumiBlockId() == 1624 && event->eventId() ==486969)  
-	       || (event->lumiBlockId() == 18 && event->eventId() ==5259)) {
-	      cout << endl;
-	    cout << event->lumiBlockId() << " - " << event->eventId() << endl;
-		cout << "Electrons" << endl;
-		for(unsigned int i=0; i<init_electrons.size(); i++){
-		  isocorr = 0.5*init_electrons[i]->puChargedHadronIso();
-		  RelIso = (init_electrons[i]->chargedHadronIso() + max( init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - isocorr, 0.) )/ init_electrons[i]->Pt();
-		  cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << RelIso << ", "
-		       <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
-
-		}	
-		cout << "Muons" << endl;
-
-		for(unsigned int i=0; i<init_muons.size(); i++){
-		  isocorr = 0.5*init_muons[i]->puChargedHadronIso();
-		  RelIso = (init_muons[i]->chargedHadronIso() + max( init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - isocorr, 0.) )/ init_muons[i]->Pt();
-		  cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << RelIso << endl;
-
-		}
-		cout << "Jets" << endl;
-		for(unsigned int i=0; i<init_jets.size(); i++){
-		  cout << i  << ": " << init_jets[i]->Pt() << ", " << init_jets[i]->Eta() <<  endl;
-
-		}	
-		  	
-		  
-	      }
+	 
 	   
 	      // Tight lepton selection
 	      bool leptonSelection = false;
@@ -524,30 +496,6 @@ int main(int argc, char* argv[]) {
 	      else if 	(mode == 2 && selectedElectrons.size()== 2 && selectedMuons.size()== 0) leptonSelection = true;
 		
 	      if (leptonSelection) {
-		  /*
-		      cout << endl;
-	    cout << event->lumiBlockId() << " - " << event->eventId() << endl;
-		cout << "Electrons" << endl;
-		for(unsigned int i=0; i<init_electrons.size(); i++){
-		  isocorr = 0.5*init_electrons[i]->puChargedHadronIso();
-		  RelIso = (init_electrons[i]->chargedHadronIso() + max( init_electrons[i]->neutralHadronIso() + init_electrons[i]->photonIso() - isocorr, 0.) )/ init_electrons[i]->Pt();
-		  cout << i  << ": " << init_electrons[i]->Pt() << ", " << init_electrons[i]->Eta() << ", " << RelIso << ", "
-		       <<  init_electrons[i]->d0() << ", " <<  init_electrons[i]->passConversion() << ", " << init_electrons[i]->mvaTrigId() << ", " << init_electrons[i]->missingHits() <<  endl;
-
-		}	
-		cout << "Muons" << endl;
-
-		for(unsigned int i=0; i<init_muons.size(); i++){
-		  isocorr = 0.5*init_muons[i]->puChargedHadronIso();
-		  RelIso = (init_muons[i]->chargedHadronIso() + max( init_muons[i]->neutralHadronIso() + init_muons[i]->photonIso() - isocorr, 0.) )/ init_muons[i]->Pt();
-		  cout << i  << ": " << init_muons[i]->Pt() << ", " << init_muons[i]->Eta() << ", " << RelIso << endl;
-
-		}
-		cout << "Jets" << endl;
-		for(unsigned int i=0; i<init_jets.size(); i++){
-		  cout << i  << ": " << init_jets[i]->Pt() << ", " << init_jets[i]->Eta() <<  endl;
-
-		}*/
 		  
 		bool charge = false;
 		double q0, q1;
@@ -594,16 +542,12 @@ int main(int argc, char* argv[]) {
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
 		  TRootElectron* el = (TRootElectron*) selectedElectrons[0];
-		  double   isocorr = 0.5*el->puChargedHadronIso();
-		  float RelIso = (el->chargedHadronIso() + max( el->neutralHadronIso() + el->photonIso()  - isocorr, 0.) )/ el->Pt();
-		  salida << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << "\t" << el->Pt() << "\t" << RelIso << endl;
-		  
-		  
+		
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
 		    cutflow_raw->Fill(5);
 
-		    salida2 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
+		 
 		  
 		    // Low mll cut (all final states)
 		    TLorentzVector pair = lepton0 + lepton1;   
@@ -750,7 +694,6 @@ int main(int argc, char* argv[]) {
 			if (met_pt > 30 || mode == 0){
 			  cutflow->Fill(7, weight);
 			  cutflow_raw->Fill(7);
-			  salida3 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 
 			  
 			  // Filling all the regions
@@ -781,13 +724,11 @@ int main(int argc, char* argv[]) {
 			    
 			  // Filling the signal region
 			  if(nJets == 1){
-			    salida4 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 
 			    TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			    cutflow->Fill(8, weight);
 			    cutflow_raw->Fill(8);
 			    if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
-			      salida5 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 
 			      cutflow->Fill(9,weight);
 			      cutflow_raw->Fill(9);
