@@ -1,8 +1,21 @@
 <?xml version="1.0"?>
 <datasets>
 
-  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_all/T_tW_DR_new/*.root"/> 
-
+<d name="data" title="data" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/data/*.root"/> 
+  
+  <d name="tt" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/TTJets/*.root"/> 
+  <d name="twdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/T_tW_DR/*.root"/> 
+  <d name="atwdr" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/Tbar_tW_DR/*.root"/> 
+  <d name="t" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/T_t/*.root"/> 
+  <d name="at" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/Tbar_t/*.root"/> 
+  <d name="ww" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/WW/*.root"/> 
+  <d name="wz" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/WZ/*.root"/> 
+  <d name="zz" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/ZZ/*.root"/>  
+  <d name="zjets" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/ZJets/*.root"/> 
+  <d name="zjets_lowmll" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/DY_10to50/*.root"/>  
+  <d name="wjets" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/WJets/WJets/*.root"/>
+  <d name="s" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/T_s/*.root"/> 
+  <d name="as" title="mc" add="1" filenames="/user/rebeca/Files/Summer12_53X_mumu/Tbar_s/*.root"/> 
  
 </datasets>
 
