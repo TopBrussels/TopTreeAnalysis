@@ -541,7 +541,6 @@ int main(int argc, char* argv[]) {
 		  if 	  (mode == 0 && looseMuons.size()== 1 && looseElectrons.size() == 1) leptonVeto = true;
 		  else if (mode == 1 && looseMuons.size()== 2 && looseElectrons.size() == 0) leptonVeto = true;
 		  else if (mode == 2 && looseMuons.size()== 0 && looseElectrons.size() == 2) leptonVeto = true;
-		  TRootElectron* el = (TRootElectron*) selectedElectrons[0];
 		
 		  if (leptonVeto) {
 		    cutflow->Fill(5, weight);
@@ -641,33 +640,46 @@ int main(int argc, char* argv[]) {
 		      delete btCSVBmvaJet;
 			
 		      
-		      double SFval, SFerror;
-		      if (isData || !scaleFactor){
-			SFval = 1;
-			SFerror = 0;
-		      } else if (isTop){
-			SFval = 0.95;
-			SFerror = 0.03;
-		      } else {
-			SFval = 0.97;
-			SFerror = 0.03;
-		      } 
-			
-		      //Jet and b-tag selection
+		      double SFval = 1;
+		      double SFerror = 0;
 		      int nJetsBT = 0;
 		      int nTightJetsBT = 0;
 		      int nJets = 0;
 		      bool bTagged = false;
 		      int iJet = -5;
-		      int iSF;
-		      double tempSF = SFval;
-		      if (SFminus) 	tempSF = SFval - SFerror;
-		      if (SFplus) 	tempSF = SFval + SFerror;
-		      int SFvalue = int(tempSF*100);
+		      int iSF;    
+		      
 			
 		      for (unsigned int i =0; i < selectedJets.size(); i ++){
 			TRootJet* tempJet = (TRootJet*) selectedJets[i];
 			TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
+			
+			////pt dependent scale factors, not contemplating values > 1, to be fixed
+			if (!isData && scaleFactor) SFval = 0.726981*((1.+(0.253238*tempJet->Pt()))/(1.+(0.188389*tempJet->Pt())));
+			if (!isData && scaleFactor) {
+			  if (tempJet->Pt() < 30) SFerror = 0.0554504;
+			  else if (tempJet->Pt() < 40) SFerror = 0.0209663;
+			  else if (tempJet->Pt() < 50) SFerror = 0.0207019;
+			  else if (tempJet->Pt() < 60) SFerror = 0.0230073;
+			  else if (tempJet->Pt() < 70) SFerror = 0.0208719;
+			  else if (tempJet->Pt() < 80) SFerror = 0.0200453;
+			  else if (tempJet->Pt() < 100) SFerror = 0.0264232;
+			  else if (tempJet->Pt() < 120) SFerror = 0.0240102;
+			  else if (tempJet->Pt() < 160) SFerror = 0.0229375;
+			  else if (tempJet->Pt() < 210) SFerror = 0.0184615;
+			  else if (tempJet->Pt() < 260) SFerror = 0.0216242;
+			  else if (tempJet->Pt() < 320) SFerror = 0.0248119;
+			  else if (tempJet->Pt() < 400) SFerror = 0.0465748;
+			  else if (tempJet->Pt() < 500) SFerror = 0.0474666;
+			  else if (tempJet->Pt() < 600) SFerror = 0.0718173;
+			  else  SFerror = 0.0717567; //800
+			}
+			double tempSF = SFval;
+			if (SFminus) 	tempSF = SFval - SFerror;
+			if (SFplus) 	tempSF = SFval + SFerror;
+			int SFvalue = int(tempSF*100);
+			//
+			
 			if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tJet)), fabs(lepton1.DeltaR(tJet))) > 0.3) {
 			  nJets++;
 			  iJet = i;
@@ -691,7 +703,7 @@ int main(int argc, char* argv[]) {
 			cutflow->Fill(6, weight);
 			cutflow_raw->Fill(6);
 			// MET in ee and mumu
-			if (met_pt > 30 || mode == 0){
+			if (met_pt > 50 || mode == 0){
 			  cutflow->Fill(7, weight);
 			  cutflow_raw->Fill(7);
 

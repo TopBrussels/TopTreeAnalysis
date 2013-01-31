@@ -41,12 +41,11 @@ void looper::myLoop(int nsel, int mode, bool silent)
   
   bool nosf = false;
   
-  
   char newRootFile[300];
   double lumi = luminosity; 
-  if (mode == 0 )        lumi = 4399; 
-  else if ( mode == 1)   lumi = 1000;
-  else if ( mode == 2)   lumi = 1000;
+  if (mode == 0 )        lumi = 11966.617; 
+  else if ( mode == 1)   lumi = 12067.294;
+  else if ( mode == 2)   lumi = 12093.792;
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
  
   TFile f_var(newRootFile, "UPDATE");

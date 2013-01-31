@@ -32,9 +32,9 @@ void plotmaker(int mode = 0){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  if (mode == 0) labelcms2->AddText("4.4 fb^{-1}, e#mu channel  ");
-  if (mode == 1) labelcms2->AddText("4.4 fb^{-1}, #mu#mu channel  ");
-  if (mode == 2) labelcms2->AddText("4.4 fb^{-1}, ee channel  ");
+  if (mode == 0) labelcms2->AddText("12.2 fb^{-1}, e#mu channel  ");
+  if (mode == 1) labelcms2->AddText("12.2 fb^{-1}, #mu#mu channel  ");
+  if (mode == 2) labelcms2->AddText("12.2 fb^{-1}, ee channel  ");
   
   labelcms2->SetBorderSize(0);
   
@@ -60,9 +60,9 @@ void plotmaker(int mode = 0){
   char myRootFile[300];
   double lumi = 1000;
   
-  if (mode == 0 )        lumi = 4399; 
-  else if ( mode == 1)   lumi = 1000;
-  else if ( mode == 2)   lumi = 1000;
+  if (mode == 0 )        lumi = 11966.617; 
+  else if ( mode == 1)   lumi = 12067.294;
+  else if ( mode == 2)   lumi = 12093.792;
   
   
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
@@ -74,13 +74,13 @@ void plotmaker(int mode = 0){
   const int nPlots = 11;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
- // Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack}; //original
+  Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack}; //original
  // Color_t color[nProcess] =        { kYellow-9, kMagenta-10, kRed-7, kYellow-10,  kMagenta-1, kBlue-10, 40, kBlack}; // opt 1
   //Color_t color[nProcess] =        { kCyan-10, kMagenta-1, kMagenta-1, kYellow-10,  kBlue-10, kBlue-5, 40, kBlack}; //opt 2
   //Color_t color[nProcess] =        { kYellow-10, 0, kRed-7, 0,  kOrange+4, kMagenta+4, 0, kBlack}; // opt 3
  //Color_t color[nProcess] =        { kWhite, 0, kCyan-7, 0,  kBlue-2, kBlue-10, 0, kBlack}; // opt 4
 //  Color_t color[nProcess] =        { kRed-10, 0, kBlue-10, 0,  kMagenta+3, kCyan-5, 0, kBlack}; //opt 5
-  Color_t color[nProcess] =        { kGreen-10, 0, kCyan-6, 0,  kCyan+4, kBlue-10, 0, kBlack};
+//  Color_t color[nProcess] =        { kGreen-10, 0, kCyan-6, 0,  kCyan+4, kBlue-10, 0, kBlack};
 
   TString cutLabel[nPlots] =     { "cuts", "met", "mll", "nloosejets_bt", "njetsbt_cut", "ptsys", "ht", "pt_leading", "nvertex", "pt_max", "pt_min"};
   int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 2, 2,};
