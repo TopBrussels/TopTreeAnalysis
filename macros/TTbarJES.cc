@@ -71,7 +71,7 @@ int main (int argc, char *argv[])
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used:  " << systematic << endl;
-  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus") )
+  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus" || systematic == "bVSbbarJES") )
   {
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: Nominal, InvertedIso, JESPlus, JESMinus, JERPlus, JERMinus" << endl;
@@ -478,8 +478,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 1000; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 100; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -615,6 +615,18 @@ int main (int argc, char *argv[])
             init_jets_corrected[iJet]->SetPxPyPzE(jet->Px()*(1+deltaPtFraction), jet->Py()*(1+deltaPtFraction), jet->Pz()*(1+deltaPtFraction), jet->E()*(1+deltaPtFraction));
             histo1D["AlignSystSF"]->Fill(deltaPtFraction);
           }
+        }
+      }
+      
+      if(systematic == "bVSbbarJES")
+      {
+        // Scale PFJets up/down according to their flavour (b or bbar)
+        for(unsigned int iJet=0; iJet<init_jets_corrected.size(); iJet++)
+        {
+          if(init_jets_corrected[iJet]->partonFlavour() == 5)
+            init_jets_corrected[iJet]->SetPxPyPzE(init_jets_corrected[iJet]->Px()*(1+0.01), init_jets_corrected[iJet]->Py()*(1+0.01), init_jets_corrected[iJet]->Pz()*(1+0.01), init_jets_corrected[iJet]->E()*(1+0.01));
+          else if(init_jets_corrected[iJet]->partonFlavour() == -5)
+            init_jets_corrected[iJet]->SetPxPyPzE(init_jets_corrected[iJet]->Px()*(1-0.01), init_jets_corrected[iJet]->Py()*(1-0.01), init_jets_corrected[iJet]->Pz()*(1-0.01), init_jets_corrected[iJet]->E()*(1-0.01));
         }
       }
       
