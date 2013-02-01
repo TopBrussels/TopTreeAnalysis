@@ -38,24 +38,66 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
-    
+  //JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
+    else if (nsel == -20)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  20)                   {sprintf(plotName,"twdr");}
+  
+  //JES
+    else if (nsel == -11)                   {sprintf(plotName,"tt");}
+  else if (nsel ==  11)                   {sprintf(plotName,"tt");}
+    else if (nsel == -21)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  21)                   {sprintf(plotName,"twdr");}
+  
+    //PU
+    else if (nsel == -12)                   {sprintf(plotName,"tt");}
+  else if (nsel ==  12)                   {sprintf(plotName,"tt");}
+    else if (nsel == -22)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  22)                   {sprintf(plotName,"twdr");}
+  
+  //SF
+    else if (nsel == -13)                   {sprintf(plotName,"tt");}
+  else if (nsel ==  13)                   {sprintf(plotName,"tt");}
+    else if (nsel == -23)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  23)                   {sprintf(plotName,"twdr");}
+
+  //MET
+    else if (nsel == -14)                   {sprintf(plotName,"tt");}
+  else if (nsel ==  14)                   {sprintf(plotName,"tt");}
+    else if (nsel == -24)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
   
   bool nosf = false;
   
   
   char newRootFile[300];
   double lumi = luminosity; 
-  if (mode == 0 )        lumi = 4399; 
-  else if ( mode == 1)   lumi = 1000; // to check 
-  else if ( mode == 2)   lumi = 5103.58; // to check 
+    if      (mode == 0){ 	 lumi = 11966.617;  	xmlfile ="config/twemu.xml";}
+     else if (mode == 1){	 lumi = 12067.294;  	xmlfile = "config/twmumu.xml";}
+     else if (mode == 2){	 lumi = 12093.792;  	xmlfile = "config/twee.xml";}
   sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   
-   if(nsel == -10){
+   if(nsel == -10 || nsel == -20){
   sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == 10 ){
+  }else if(nsel == 10 || nsel == 20){
    sprintf(newRootFile,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == -11 || nsel == -21 ){
+   sprintf(newRootFile,"results/JESsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == 11 || nsel == 21 ){
+   sprintf(newRootFile,"results/JESsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == -12 || nsel == -22 ){
+   sprintf(newRootFile,"results/PUsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == 12 || nsel == 22 ){
+   sprintf(newRootFile,"results/PUsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == -13 || nsel == -23 ){
+   sprintf(newRootFile,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == 13 || nsel == 23 ){
+   sprintf(newRootFile,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == -14 || nsel == -24 ){
+   sprintf(newRootFile,"results/METsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  }else if(nsel == 14 || nsel == 24 ){
+   sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
  
   TFile f_var(newRootFile, "UPDATE");
@@ -139,6 +181,18 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ht_cut = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_cut->Sumw2();
   
+   sprintf(title,"ht_nomet_high_%s",plotName);
+  TH1F* histo_ht_nomet_high = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_high->Sumw2();
+  
+  sprintf(title,"ht_nomet_low_%s",plotName);
+  TH1F* histo_ht_nomet_low = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_low->Sumw2();
+  
+  sprintf(title,"ht_nomet_cut_%s",plotName);
+  TH1F* histo_ht_nomet_cut = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_cut->Sumw2();
+  
   sprintf(title,"pt_max_%s",plotName);
   TH1F* histo_pt_max = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_max->Sumw2();
@@ -162,6 +216,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"ht_bf_%s",plotName);
   TH1F* histo_ht_bf = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_bf->Sumw2();
+  
+   sprintf(title,"ht_nomet_bf_%s",plotName);
+  TH1F* histo_ht_nomet_bf = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_bf->Sumw2();
   
   sprintf(title,"ptsys_bf_%s",plotName);
   TH1F* histo_ptsys_bf = new TH1F( title, " ", 100,  0, 200 );
@@ -197,6 +255,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ht = new TH1F( title, " ", 300,  0, 600 );
   histo_ht->Sumw2();
   
+    
+  sprintf(title,"ht_nomet_%s",plotName);
+  TH1F* histo_ht_nomet = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet->Sumw2();
+  
   sprintf(title,"pt_leading_%s",plotName);
   TH1F* histo_pt_leading = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_leading->Sumw2();
@@ -229,6 +292,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ht_1j = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_1j->Sumw2();
   
+   sprintf(title,"ht_nomet_1j_%s",plotName);
+  TH1F* histo_ht_nomet_1j = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_1j->Sumw2();
+  
   sprintf(title,"pt_leading_1j_%s",plotName);
   TH1F* histo_pt_leading_1j = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_leading_1j->Sumw2();
@@ -254,6 +321,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"ht_1j1t_%s",plotName);
   TH1F* histo_ht_1j1t = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_1j1t->Sumw2();
+  
+   sprintf(title,"ht_nomet_1j1t_%s",plotName);
+  TH1F* histo_ht_nomet_1j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_1j1t->Sumw2();
   
   sprintf(title,"pt_leading_1j1t_%s",plotName);
   TH1F* histo_pt_leading_1j1t = new TH1F( title, " ", 100,  0, 200 );
@@ -282,6 +353,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ht_2j1t = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_2j1t->Sumw2();
   
+    sprintf(title,"ht_nomet_2j1t_%s",plotName);
+  TH1F* histo_ht_nomet_2j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_2j1t->Sumw2();
+  
   sprintf(title,"pt_leading_2j1t_%s",plotName);
   TH1F* histo_pt_leading_2j1t = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_leading_2j1t->Sumw2();
@@ -308,6 +383,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"ht_2j2t_%s",plotName);
   TH1F* histo_ht_2j2t = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_2j2t->Sumw2();
+  
+   sprintf(title,"ht_nomet_2j2t_%s",plotName);
+  TH1F* histo_ht_nomet_2j2t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_nomet_2j2t->Sumw2();
   
   sprintf(title,"pt_leading_2j2t_%s",plotName);
   TH1F* histo_pt_leading_2j2t = new TH1F( title, " ", 100,  0, 200 );
@@ -439,7 +518,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     
     
     if (lumi != lum && nsel != 666 && mode !=3){
-      if (jentry == 0)std::cout << "[Warning:] This tree was made with a different luminosity (" << lum << ") than " << lumi << std::endl;
+      if (jentry
+       == 0)std::cout << "[Warning:] This tree was made with a different luminosity (" << lum << ") than " << lumi << std::endl;
       //xlWeight*=(lumi/lum);
     }
     
@@ -586,8 +666,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  double ptSysPy1 = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
 	  double ptSystem1 = sqrt(ptSysPx1*ptSysPx1 + ptSysPy1*ptSysPy1);
 	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	  double ht1_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ;
 	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
 	  histo_ht_bf->Fill(ht1, xlWeight);
+	  histo_ht_nomet_bf->Fill(ht1_nomet, xlWeight);
 	}
 	bool invMass = false;
 	if      (mode == 0) invMass = true;
@@ -626,11 +708,13 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	       double ht_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ; 
 	      
 	      histo_mll_1j->Fill(pair.M(),  xlWeight);
 	      histo_met_1j->Fill(metPt,  xlWeight);
 	      histo_ptsys_1j->Fill(ptSystem, xlWeight);
 	      histo_ht_1j->Fill(ht, xlWeight);
+	      histo_ht_nomet_1j->Fill(ht_nomet, xlWeight);
 	      histo_pt_leading_1j->Fill(jet.Pt(), xlWeight);
 	      
 	      
@@ -642,10 +726,12 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	        histo_met_1j1t->Fill(metPt,  xlWeight);
 	        histo_ptsys_1j1t->Fill(ptSystem, xlWeight);
 	        histo_ht_1j1t->Fill(ht, xlWeight);
+		histo_ht_nomet_1j1t->Fill(ht_nomet, xlWeight);
 	        histo_pt_leading_1j1t->Fill(jet.Pt(), xlWeight);
 	      
 		histo_ptsys->Fill(ptSystem, xlWeight);
 		histo_ht->Fill(ht, xlWeight);
+		histo_ht_nomet->Fill(ht_nomet, xlWeight);
 		
 		histo_met_bt->Fill(metPt, xlWeight);
 		
@@ -655,15 +741,17 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		if (nvertex > 5) {
 		  histo_ptsys_high->Fill(ptSystem, xlWeight);
 		  histo_ht_high->Fill(ht, xlWeight);
+		  histo_ht_nomet_high->Fill(ht_nomet, xlWeight);
 		} else {
 		  histo_ptsys_low->Fill(ptSystem, xlWeight);
 		  histo_ht_low->Fill(ht, xlWeight);
-		  
+		   histo_ht_nomet_low->Fill(ht_nomet, xlWeight);
 		}
 		
 		if (ht > htMin || mode !=0){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
+		  histo_ht_nomet_cut->Fill(ht_nomet, xlWeight);
 		  
 		  //Example to access the pu reweighting!
 		  histo_nvertex_final->Fill(nvertex, rawWeight);
@@ -687,18 +775,21 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
 	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
+	      double ht_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ;
 	      
 	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1) {
 	        histo_mll_2j1t->Fill(pair.M(),  xlWeight);
 	        histo_met_2j1t->Fill(metPt,  xlWeight);
 	        histo_ptsys_2j1t->Fill(ptSystem, xlWeight);
 	        histo_ht_2j1t->Fill(ht, xlWeight);
+		histo_ht_nomet_2j1t->Fill(ht_nomet, xlWeight);
 	        histo_pt_leading_2j1t->Fill(jet.Pt(), xlWeight);
 	      } else if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  {
 	        histo_mll_2j2t->Fill(pair.M(),  xlWeight);
 	        histo_met_2j2t->Fill(metPt,  xlWeight);
 	        histo_ptsys_2j2t->Fill(ptSystem, xlWeight);
 	        histo_ht_2j2t->Fill(ht, xlWeight);
+		histo_ht_nomet_2j2t->Fill(ht_nomet, xlWeight);
 	        histo_pt_leading_2j2t->Fill(jet.Pt(), xlWeight);
 	      }
 	      

@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////
     ///                 B-tag SF              ///
     /////////////////////////////////////////////
-    bool scaleFactor = false; 
+    bool scaleFactor = true; 
 
     /////////////////////////////////////////////
     ///              Naked Option             ///
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
     
     int mode = 0; 
     double lumi = 1000; //by default is the luminosity 1000
-    string xmlfile = "twemu.xml" ;  // by default, use mode 0
+    string xmlfile = "config/twemu.xml" ;  // by default, use mode 0
     
     // Set as default the emu mode
     if(mode != 0 && mode != 1 && mode != 2){
@@ -228,8 +228,15 @@ int main(int argc, char* argv[]) {
     ///       CONFIGURATION       ///
     /////////////////////////////////
     
+      // Luminosity and xml files
+  // Only runs A, A recover, B, C (24, v2)
+     if      (mode == 0){ 	 lumi = 11966.617;  	xmlfile ="config/twemu.xml";}
+     else if (mode == 1){	 lumi = 12067.294;  	xmlfile = "config/twmumu.xml";}
+     else if (mode == 2){	 lumi = 12093.792;  	xmlfile = "config/twee.xml";}
+ 
+    
     // xml file, this file contains the rootfiles of the skimmed toptrees
-    if( mode == 0){
+  /*  if( mode == 0){
         lumi = 4399;   // only run B 13July2012
         xmlfile = "twemu.xml";
     }
@@ -241,7 +248,7 @@ int main(int argc, char* argv[]) {
         lumi = 5103.58; // Still to check! 
         xmlfile = "twee.xml";
     }
-    
+  */  
     if (foundxml){
       xmlfile = tempxml; 
     }
@@ -316,8 +323,7 @@ int main(int argc, char* argv[]) {
         // Define the cross sections and weights for every data set
         // sprintf makes the string you call name contain data 
         char name[100];
-
-	// from twiki danny: https://twiki.cern.ch/twiki/bin/viewauth/Main/KUSingleTop8TeV2012#MC_Samples
+	
         if (dataSetName == "data"){             sprintf(name, "data");          xlweight = 1;                           isData = true;}
         else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight = lumi*11.1/497657;            } 
@@ -331,7 +337,7 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "zz"){          sprintf(name, "zz");            xlweight = lumi*9.03/9799891 ;           } 
         else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;        } 
         else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;          } 
-        else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411355;         }  
+        else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411352;         }  
 	//else if (dataSetName == "zjets1"){       sprintf(name, "zjets1");         xlweight = ??;        }
 	//else if (dataSetName == "zjets_lowmll1"){       sprintf(name, "zjets_lowmll1");         xlweight = ??;        }
 	//else if (dataSetName == "wjets1"){       sprintf(name, "wjets_1");         xlweight = ??;        }
@@ -399,14 +405,25 @@ int main(int argc, char* argv[]) {
         
          
         LumiReWeighting LumiWeights; 
-	  LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root", "pileupHistos/run2012B_13Jul.root", "pileup", "pileup");
+	
+	    bool PUsysUp = false; 
+    bool PUsysDown = false; 
+    
+      if(PUsysUp){
+           LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root","pileupHistos/pileup_tW_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup"); 
+      }else if(PUsysDown){
+          LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root","pileupHistos/pileup_tW_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup"); 
+      }else{
+	  LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root","pileupHistos/pileup_tW_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup"); 
+	   }
+	  
 	//LumiWeights = LumiReWeighting("pileupHistos/toptree_id_2126_canvas_36.root", "pileupHistos/pileup_2012Data53X_UpToRun196531.root", "pileup", "pileup");  
        //  LumiWeights = LumiReWeighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup");  // gives PU weights per bin
-        
-        //systematics    WHAT DOES THIS DO? 
+        /* OLD 7 TeV analysis
+        //systematics   : je maakt dezelfde  distributie met mean 0.6 naar links or rechts
         reweight::PoissonMeanShifter PShiftDown_= reweight::PoissonMeanShifter(-0.6); 
         reweight::PoissonMeanShifter PShiftUp_= reweight::PoissonMeanShifter(0.6); 
-        
+        */
         
         
         ////////////////////////////////////
@@ -622,6 +639,7 @@ int main(int argc, char* argv[]) {
                 if(!isData){
                         lumiWeight = LumiWeights.ITweight( (int) event -> nTruePU() );
                         
+			/* OLD 7 tEV 
                         // If one wants the PU reweighting scaled down   ==> WHY WOULD SOMEONE WANT THIS?
                         if(PUsysDown){
                                 lumiWeight*PShiftDown_.ShiftWeight(event ->nPu(0));     // Why not event->nTruePU() like in michael's code? 
@@ -631,10 +649,11 @@ int main(int argc, char* argv[]) {
                         if(PUsysUp){
                                 lumiWeight*PShiftUp_.ShiftWeight(event ->nPu(0)); 
                         }
-                        
+                        */
+			
                         //If PU reweighting is turned on
                         if(reweightPU){
-                                weight *= lumiWeight;      // HOW COME THIS IS NOT WITH HISTO'S? 
+                                weight *= lumiWeight;      
                         }
                 } // closing loop for PU reweighting for MC
                 
@@ -800,7 +819,7 @@ int main(int argc, char* argv[]) {
              		 	selection.setDiMuonCuts(20.,2.4,0.20,999.);
               			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.,1,0.3,1);
               			selection.setLooseMuonCuts(10.,2.5,0.2);
-              			selection.setLooseDiElectronCuts(15.0,2.5,0.2); 
+              			selection.setLooseDiElectronCuts(15.0,2.5,0.2,0.5); 
 		
 		
 		
