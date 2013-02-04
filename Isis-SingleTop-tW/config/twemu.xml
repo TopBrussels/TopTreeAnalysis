@@ -27,14 +27,14 @@
  -->
  
  
- <!-- NEW MC SAMPLES TAKEN FROM REBECA --> 
+ <!-- NEW MC SAMPLES TAKEN FROM REBECA 
  
   
    
    
     <d name="data" title="data" add="1" filenames="/user/ivanpari/Files/Fall12_1e1mu/MuEGRun2012B/13Jul2012-v1/*.root"/>
-  <! -- to check probs, is mumu one   <d name="data" title="data" add="1" filenames="dcap://maite.iihe.ac.be/pnfs/iihe/cms/store/user/dhondt/Skimmed-TopTrees/Skim_MuEGPt15_TopTreeId_2231/10012013_162429/*10.root"/>
-   -->
+  to check probs, is mumu one   <d name="data" title="data" add="1" filenames="dcap://maite.iihe.ac.be/pnfs/iihe/cms/store/user/dhondt/Skimmed-TopTrees/Skim_MuEGPt15_TopTreeId_2231/10012013_162429/*10.root"/>
+   
    <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
    <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_tW_DR/*.root"/> 
   <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/TTJets/*.root"/> 
@@ -49,6 +49,23 @@
   <d name="wjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WJets/*.root"/>
   <d name="s" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_s/*.root"/> 
   <d name="as" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_s/*.root"/>  
+  -->
+  
+  <d name="data" title="data" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/data/*.root"/> 
+  
+  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/TTJets/*.root"/> 
+  <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
+  <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_tW_DR/*.root"/> 
+  <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_t/*.root"/> 
+  <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_t/*.root"/> 
+  <d name="ww" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WW/*.root"/> 
+  <d name="wz" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WZ/*.root"/> 
+  <d name="zz" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/ZZ/*.root"/>  
+  <d name="zjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/ZJets/*.root"/> 
+  <d name="zjets_lowmll" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/DY_10to50/*.root"/>  
+  <d name="wjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WJets/WJets/*.root"/>
+  <d name="s" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_s/*.root"/> 
+  <d name="as" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_s/*.root"/> 
  
   
 </datasets>
