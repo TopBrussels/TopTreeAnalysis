@@ -41,31 +41,31 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   //JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
-    else if (nsel == -20)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -20)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  20)                   {sprintf(plotName,"twdr");}
   
   //JES
-    else if (nsel == -11)                   {sprintf(plotName,"tt");}
+  else if (nsel == -11)                   {sprintf(plotName,"tt");}
   else if (nsel ==  11)                   {sprintf(plotName,"tt");}
-    else if (nsel == -21)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -21)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  21)                   {sprintf(plotName,"twdr");}
   
     //PU
-    else if (nsel == -12)                   {sprintf(plotName,"tt");}
+  else if (nsel == -12)                   {sprintf(plotName,"tt");}
   else if (nsel ==  12)                   {sprintf(plotName,"tt");}
-    else if (nsel == -22)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -22)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  22)                   {sprintf(plotName,"twdr");}
   
   //SF
-    else if (nsel == -13)                   {sprintf(plotName,"tt");}
+  else if (nsel == -13)                   {sprintf(plotName,"tt");}
   else if (nsel ==  13)                   {sprintf(plotName,"tt");}
-    else if (nsel == -23)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -23)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  23)                   {sprintf(plotName,"twdr");}
 
   //MET
-    else if (nsel == -14)                   {sprintf(plotName,"tt");}
+  else if (nsel == -14)                   {sprintf(plotName,"tt");}
   else if (nsel ==  14)                   {sprintf(plotName,"tt");}
-    else if (nsel == -24)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -24)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
   
   bool nosf = false;
@@ -73,32 +73,45 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   char newRootFile[300];
   double lumi = luminosity; 
-    if      (mode == 0){ 	 lumi = 11966.617;  	xmlfile ="config/twemu.xml";}
-     else if (mode == 1){	 lumi = 12067.294;  	xmlfile = "config/twmumu.xml";}
-     else if (mode == 2){	 lumi = 12093.792;  	xmlfile = "config/twee.xml";}
-  sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
+    if      (mode == 0)	 lumi = 11966.617;  	
+    else if (mode == 1) lumi = 12067.294;  	
+    else if (mode == 2) lumi = 12093.792;  	
   
-   if(nsel == -10 || nsel == -20){
+  
+  if(nsel == -10 || nsel == -20){
   sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == 10 || nsel == 20){
+  }
+  else if(nsel == 10 || nsel == 20){
    sprintf(newRootFile,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == -11 || nsel == -21 ){
+  }
+  else if(nsel == -11 || nsel == -21 ){
    sprintf(newRootFile,"results/JESsysDown_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == 11 || nsel == 21 ){
+  }
+  else if(nsel == 11 || nsel == 21 ){
    sprintf(newRootFile,"results/JESsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == -12 || nsel == -22 ){
+  }
+  else if(nsel == -12 || nsel == -22 ){
    sprintf(newRootFile,"results/PUsysDown_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == 12 || nsel == 22 ){
+  }
+  else if(nsel == 12 || nsel == 22 ){
    sprintf(newRootFile,"results/PUsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == -13 || nsel == -23 ){
+  }
+  else if(nsel == -13 || nsel == -23 ){
    sprintf(newRootFile,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == 13 || nsel == 23 ){
+  }
+  else if(nsel == 13 || nsel == 23 ){
    sprintf(newRootFile,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == -14 || nsel == -24 ){
+  }
+  else if(nsel == -14 || nsel == -24 ){
    sprintf(newRootFile,"results/METsysDown_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == 14 || nsel == 24 ){
+  }
+  else if(nsel == 14 || nsel == 24 ){
    sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
+  else{
+    sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
+  }
+ 
  
   TFile f_var(newRootFile, "UPDATE");
   
@@ -556,10 +569,12 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	if ( nsel == 666 || nosf){
 	  SFval = 1;
 	  SFerror = 0;
-	} else if (nsel == 0){
+	} 
+	else if (nsel == 0){
 	  SFval = 0.95;
 	  SFerror = 0.03;
-	} else {
+	} 
+	else {
 	  SFval = 0.97;
 	  SFerror = 0.03;
 	}
@@ -591,14 +606,15 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		bTagged = true;
 		nJetsBT++;
 		nTightJetsBT++;
-	      } 
-	    } 
-	  } else if (btCSVBJet->at(i) > 0.679){
+	      } // end if (iSF < SFvalue) 
+	    } // end  if (btCSVBJet->at(i) > 0.679)
+	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
+	  else if (btCSVBJet->at(i) > 0.679){
 	    iSF = rand() % 100;
 	    if (iSF < SFvalue ) nJetsBT++;
-	  }  
+	  }  // end else if (btCSVBJet->at(i) > 0.679)
 	  
-	}
+	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
 	
 	
         if(nJets){
@@ -629,7 +645,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	 }
 	 
 	
-	}
+	} // end if(nJets)
 	
 
 	histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
@@ -645,7 +661,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  histo_met_high->Fill(metPt,  xlWeight);
 	  histo_njets_high->Fill(nJets,  xlWeight);
 	  histo_njetsbt_high->Fill(nJetsBT,  xlWeight);
-	} else {
+	} 
+	else {
 	  histo_met_low->Fill(metPt,  xlWeight);
 	  histo_njets_low->Fill(nJets,  xlWeight);
 	  histo_njetsbt_low->Fill(nJetsBT,  xlWeight);  
@@ -670,7 +687,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
 	  histo_ht_bf->Fill(ht1, xlWeight);
 	  histo_ht_nomet_bf->Fill(ht1_nomet, xlWeight);
-	}
+	} // end (nJets == 1)
+	
 	bool invMass = false;
 	if      (mode == 0) invMass = true;
 	else if (mode == 1  && (pair.M() > invMax || pair.M() < invMin)) invMass = true;
@@ -742,11 +760,12 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  histo_ptsys_high->Fill(ptSystem, xlWeight);
 		  histo_ht_high->Fill(ht, xlWeight);
 		  histo_ht_nomet_high->Fill(ht_nomet, xlWeight);
-		} else {
+		} // end if nvertex > 5 
+		else {
 		  histo_ptsys_low->Fill(ptSystem, xlWeight);
 		  histo_ht_low->Fill(ht, xlWeight);
 		   histo_ht_nomet_low->Fill(ht_nomet, xlWeight);
-		}
+		} // end else
 		
 		if (ht > htMin || mode !=0){
 		  histo->Fill(6, xlWeight);
@@ -758,10 +777,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  histo_nvertex_final_3D->Fill(nvertex, rawWeight*puweight3D);
 		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
 		  
-		}
-	      }
-	    }
-	  }
+		} // end if (ht > htMin || mode !=0)
+	      } // end  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)
+	    } // end if (nJets == 1
+	  } // end if (invMass)
 	  
 	  
 	  //Filling of all region from here
@@ -851,6 +870,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (i == 6) cout << " jet_bt: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
+    
     cout << "------------------------------------------" << endl; 
     cout << "[eta values:]" << plotName << endl;
     cout << "------------------------------------------" << endl; 

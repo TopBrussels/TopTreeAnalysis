@@ -34,7 +34,7 @@ void syst_plotmaker(int mode = 0){
   labelcms2->SetTextAlign(12);
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
-  labelcms2->AddText("4.4 fb^{-1}, e#mu channel  ");
+  labelcms2->AddText("12 fb^{-1}, e#mu channel  ");
   labelcms2->SetBorderSize(0);
   
   gStyle->SetOptStat(0);
@@ -50,62 +50,69 @@ void syst_plotmaker(int mode = 0){
   gStyle->SetTitleYOffset(1.7);//1.7
   
   char myRootFile[300];
-  char myRootFile_JERsysDown[300];
-  char myRootFile_JERsysUp[300];
-  char myRootFile_JESsysDown[300];
-  char myRootFile_JESsysUp[300];
-  char myRootFile_PUsysDown[300];
-  char myRootFile_PUsysUp[300];
+  char myRootFileJERsysDown[300];
+  char myRootFileJERsysUp[300];
+  char myRootFileJESsysDown[300];
+  char myRootFileJESsysUp[300];
+  char myRootFilePUsysDown[300];
+  char myRootFilePUsysUp[300];
+  char myRootFileSFsysDown[300];
+  char myRootFileSFsysUp[300];
+  char myRootFileMETsysDown[300];
+  char myRootFileMETsysUp[300];
   double lumi = 11966.617; // emu channel
 
     
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode); // take output from looper
  
-  sprintf(myRootFile_JERsysDown,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileJERsysDown,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFile_JERsysUp,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileJERsysUp,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
- sprintf(myRootFile_JESsysDown,"results/JESsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileJESsysDown,"results/JESsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFile_JESsysUp,"results/JESsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileJESsysUp,"results/JESsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
-   sprintf(myRootFile_PUsysDown,"results/PUsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFilePUsysDown,"results/PUsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFile_PUsysUp,"results/PUsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFilePUsysUp,"results/PUsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
-     sprintf(myRootFile_SFsysDown,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileSFsysDown,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFile_SFsysUp,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileSFsysUp,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
-     sprintf(myRootFile_METsysDown,"results/METsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileMETsysDown,"results/METsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFile_METsysUp,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileMETsysUp,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
   
    
   TFile *_file0 = TFile::Open(myRootFile);
-  TFile *_file_JERsysUp = TFile::Open(myRootFile_JERsysUp);
-  TFile *_file_JERsysDown = TFile::Open(myRootFile_JERsysDown);
-  TFile *_file_JESsysUp = TFile::Open(myRootFile_JESsysUp);
-  TFile *_file_JESsysDown = TFile::Open(myRootFile_JESsysDown);
-  TFile *_file_PUsysUp = TFile::Open(myRootFile_PUsysUp);
-  TFile *_file_PUsysDown = TFile::Open(myRootFile_PUsysDown);
-  TFile *_file_SFsysUp = TFile::Open(myRootFile_SFsysUp);
-  TFile *_file_SFsysDown = TFile::Open(myRootFile_SFsysDown);
-  TFile *_file_METsysUp = TFile::Open(myRootFile_METsysUp);
-  TFile *_file_METsysDown = TFile::Open(myRootFile_METsysDown);
+  TFile *_fileJERsysUp = TFile::Open(myRootFileJERsysUp);
+  TFile *_fileJERsysDown = TFile::Open(myRootFileJERsysDown);
+  TFile *_fileJESsysUp = TFile::Open(myRootFileJESsysUp);
+  TFile *_fileJESsysDown = TFile::Open(myRootFileJESsysDown);
+  TFile *_filePUsysUp = TFile::Open(myRootFilePUsysUp);
+  TFile *_filePUsysDown = TFile::Open(myRootFilePUsysDown);
+  TFile *_fileSFsysUp = TFile::Open(myRootFileSFsysUp);
+  TFile *_fileSFsysDown = TFile::Open(myRootFileSFsysDown);
+  TFile *_fileMETsysUp = TFile::Open(myRootFileMETsysUp);
+  TFile *_fileMETsysDown = TFile::Open(myRootFileMETsysDown);
   
+  cout << "-------------------------------------------------------" << endl; 
+  cout << " ------------ USED FILES ------------------------------" << endl; 
   cout << "Normal: " << myRootFile << endl;
-  cout << "JERsysDown: " << myRootFile_JERsysDown << endl;
-  cout << "JERsysUp: " << myRootFile_JERsysUp << endl;
-  cout << "JESsysDown: " << myRootFile_JESsysDown << endl;
-  cout << "JESsysUp: " << myRootFile_JESsysUp << endl;
-  cout << "PUsysDown: " << myRootFile_PUsysDown << endl;
-  cout << "PUsysUp: " << myRootFile_PUsysUp << endl;
-  cout << "SFsysDown: " << myRootFile_SFsysDown << endl;
-  cout << "SFsysUp: " << myRootFile_SFsysUp << endl;
-  cout << "METsysDown: " << myRootFile_METsysDown << endl;
-  cout << "METsysUp: " << myRootFile_METsysUp << endl;
+  cout << "JERsysDown: " << myRootFileJERsysDown << endl;
+  cout << "JERsysUp: " << myRootFileJERsysUp << endl;
+  cout << "JESsysDown: " << myRootFileJESsysDown << endl;
+  cout << "JESsysUp: " << myRootFileJESsysUp << endl;
+  cout << "PUsysDown: " << myRootFilePUsysDown << endl;
+  cout << "PUsysUp: " << myRootFilePUsysUp << endl;
+  cout << "SFsysDown: " << myRootFileSFsysDown << endl;
+  cout << "SFsysUp: " << myRootFileSFsysUp << endl;
+  cout << "METsysDown: " << myRootFileMETsysDown << endl;
+  cout << "METsysUp: " << myRootFileMETsysUp << endl;
+  cout << "-------------------------------------------------------" << endl; 
   
   const int nProcess = 2;
   const int nPlots = 6;
@@ -130,8 +137,8 @@ void syst_plotmaker(int mode = 0){
   TString plotJER = "JER_"; 
   TString plotJES = "JES_"; 
   TString plotPU = "PU_";
-  TString plotPU = "SF_";
-  TString plotPU = "MET_";
+  TString plotSF = "SF_";
+  TString plotMET = "MET_";
   TString plotAnalysis = "Systematics"; // directory in plots where the plots are saved
   
 
@@ -196,27 +203,27 @@ void syst_plotmaker(int mode = 0){
 	
        // Get histos tt bar 
        histo_tt= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-       histo_tt_JERsysDown= (TH1F*) _file_JERsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
-       histo_tt_JERsysUp= (TH1F*) _file_JERsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "JERsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-       histo_tt_JESsysDown= (TH1F*) _file_JESsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "JESsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
-       histo_tt_JESsysUp= (TH1F*) _file_JESsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "JESsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-       histo_tt_PUsysDown= (TH1F*) _file_PUsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "PUsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
-       histo_tt_PUsysUp= (TH1F*) _file_PUsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "PUsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-       histo_tt_SFsysDown= (TH1F*) _file_SFsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "SFsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
-       histo_tt_SFsysUp= (TH1F*) _file_SFsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "SFsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-       histo_tt_METsysDown= (TH1F*) _file_METsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "METsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
-       histo_tt_METsysUp= (TH1F*) _file_METsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	       cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+	      // cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+       histo_tt_JERsysDown= (TH1F*) _fileJERsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	      // cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_JERsysUp= (TH1F*) _fileJERsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	       //cout << "JERsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+       histo_tt_JESsysDown= (TH1F*) _fileJESsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	     //  cout << "JESsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_JESsysUp= (TH1F*) _fileJESsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "JESsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+       histo_tt_PUsysDown= (TH1F*) _filePUsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	      // cout << "PUsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_PUsysUp= (TH1F*) _filePUsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	      // cout << "PUsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+       histo_tt_SFsysDown= (TH1F*) _fileSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	     //  cout << "SFsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_SFsysUp= (TH1F*) _fileSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	      // cout << "SFsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+       histo_tt_METsysDown= (TH1F*) _fileMETsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "METsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_METsysUp= (TH1F*) _fileMETsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
 	       
 	       	       
        histo_tt->Rebin(rebinHisto[iPlots]);
@@ -275,27 +282,27 @@ void syst_plotmaker(int mode = 0){
        
        // get histos twdr
        histo_twdr= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_JERsysDown= (TH1F*) _file_JERsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_JERsysUp= (TH1F*) _file_JERsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "JERsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_JESsysDown= (TH1F*) _file_JESsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "JESsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_JESsysUp= (TH1F*) _file_JESsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "JESsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-	histo_twdr_PUsysDown= (TH1F*) _file_PUsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "PUsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_PUsysUp= (TH1F*) _file_PUsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "PUsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_SFsysDown= (TH1F*) _file_SFsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "SFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_SFsysUp= (TH1F*) _file_SFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "SFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-	histo_twdr_PUsysDown= (TH1F*) _file_PUsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "METsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_METsysUp= (TH1F*) _file_METsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+        //cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_JERsysDown= (TH1F*) _fileJERsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_JERsysUp= (TH1F*) _fileJERsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "JERsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_JESsysDown= (TH1F*) _fileJESsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "JESsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_JESsysUp= (TH1F*) _fileJESsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "JESsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_PUsysDown= (TH1F*) _filePUsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "PUsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_PUsysUp= (TH1F*) _filePUsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "PUsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_SFsysDown= (TH1F*) _fileSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "SFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_SFsysUp= (TH1F*) _fileSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "SFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_METsysDown= (TH1F*) _fileMETsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "METsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_METsysUp= (TH1F*) _fileMETsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
 	
 	
        histo_twdr->Rebin(rebinHisto[iPlots]);

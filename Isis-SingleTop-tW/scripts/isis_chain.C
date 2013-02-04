@@ -30,31 +30,31 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   // JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
-    else if (nsel == -20)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -20)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  20)                   {sprintf(plotName,"twdr");}
   
   //JES
-    else if (nsel == -11)                   {sprintf(plotName,"tt");}  
+  else if (nsel == -11)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  11)                   {sprintf(plotName,"tt");}
-    else if (nsel == -21)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -21)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  21)                   {sprintf(plotName,"twdr");}
   
   //PU
-      else if (nsel == -12)                   {sprintf(plotName,"tt");}  
+  else if (nsel == -12)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  12)                   {sprintf(plotName,"tt");}
-    else if (nsel == -22)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -22)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  22)                   {sprintf(plotName,"twdr");}
   
   //SF
-      else if (nsel == -13)                   {sprintf(plotName,"tt");}  
+  else if (nsel == -13)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  13)                   {sprintf(plotName,"tt");}
-    else if (nsel == -23)                   {sprintf(plotName,"twdr");}
+ else if (nsel == -23)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  23)                   {sprintf(plotName,"twdr");}
   
     //MET
-      else if (nsel == -14)                   {sprintf(plotName,"tt");}  
+  else if (nsel == -14)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  14)                   {sprintf(plotName,"tt");}
-    else if (nsel == -24)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -24)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
   
   
@@ -68,7 +68,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   }
   
   char myRootFile[300];
-  sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
+  
   
   if(nsel == -10 || nsel == -20){
   sprintf(myRootFile,"outputs/JERsysDown_%d_%s.root", mode, plotName);
@@ -79,17 +79,19 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   }else if(nsel == 11 || nsel == 21 ){
    sprintf(myRootFile,"outputs/JESsysUp_%d_%s.root", mode, plotName);
   }else if(nsel == -12 || nsel == -22 ){
-   sprintf(myRootFile,"outputs/PUsysDown_d_%s.root", mode, plotName);
+   sprintf(myRootFile,"outputs/PUsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 12 || nsel == 22 ){
    sprintf(myRootFile,"outputs/PUsysUp_%d_%s.root", mode, plotName);
   }else if(nsel == -13 || nsel == -23 ){
-   sprintf(myRootFile,"outputs/SFsysDown_d_%s.root", mode, plotName);
+   sprintf(myRootFile,"outputs/SFsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 13 || nsel == 23 ){
    sprintf(myRootFile,"outputs/SFsysUp_%d_%s.root", mode, plotName);
   }else if(nsel == -14 || nsel == -24 ){
-   sprintf(myRootFile,"outputs/METsysDown_d_%s.root", mode, plotName);
+   sprintf(myRootFile,"outputs/METsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 14 || nsel == 24 ){
    sprintf(myRootFile,"outputs/METsysUp_%d_%s.root", mode, plotName);
+  }else{
+   sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
   }
   
   
