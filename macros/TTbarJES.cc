@@ -318,7 +318,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////
   
   cout << "Initializing LumiReWeighting stuff" << endl;
-  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
   
   /////////////////////////////
   /// ResolutionFit Stuff
@@ -478,8 +478,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 100; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 1000000; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -538,7 +538,7 @@ int main (int argc, char *argv[])
       	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
       	  else if( event->runId() >= 198049 && event->runId() <= 199608)
       	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v14"), currentRun, iFile);
-      	  else if( event->runId() >= 199698 && event->runId() <= 208357)
+      	  else if( event->runId() >= 199698 && event->runId() <= 208686)
       	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v15"), currentRun, iFile);
           else
             cout << "Unknown run for SemiMu HLTpath selection: " << event->runId() << endl;
@@ -559,7 +559,7 @@ int main (int argc, char *argv[])
 	          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v9"), currentRun, iFile);
       	  else if( event->runId() >= 191695 && event->runId() <= 196531)
       	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun, iFile);
-      	  else if( event->runId() >= 198049 && event->runId() <= 208357)
+      	  else if( event->runId() >= 198049 && event->runId() <= 208686)
 	          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v11"), currentRun, iFile);
           else
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
@@ -823,7 +823,7 @@ int main (int argc, char *argv[])
         {
           otherSelectedJets.push_back( *selectedJets[iJet] );
           bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
-          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > 0.679 )
+          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > 0.679 ) // nominal: 0.679
           {
             nBtags++;
             if( fabs(selectedJets[iJet]->partonFlavour()) == 5 ) nBjetsBtag++;
