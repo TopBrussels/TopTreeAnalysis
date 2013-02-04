@@ -82,7 +82,7 @@ int main (int argc, char *argv[])
   bool useOnlyHighestWeight = false;
   if(writeASCIIstuff) useOnlyHighestWeight = false;
   
-  RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING); // suppress all the info stuff from rooFit
+//  RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING); // suppress all the info stuff from rooFit
   
   cout << "Executing the Top Mass difference analysis for an integrated luminosity of semi-mu " << LuminosityMu << " pb^-1 and semi-el " << LuminosityEl << " pb^-1" << endl;
   
@@ -94,11 +94,11 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
@@ -220,11 +220,13 @@ int main (int argc, char *argv[])
     if( dataSet->Name().find("WJets") == 0 )
     {
       dataSet->SetTitle("W#rightarrowl#nu");
+      dataSet->SetName("W_"+dataSet->Name());
       color = kGreen-3;
     }
     if( dataSet->Name().find("ZJets") == 0 )
     {
       dataSet->SetTitle("Z/#gamma*#rightarrowl^{+}l^{-}");
+      dataSet->SetName("Z_"+dataSet->Name());
       color = kAzure-2;
     }
     if( dataSet->Name().find("ST") == 0 || dataSet->Name().find("SingleTop") ==0 )
@@ -463,9 +465,13 @@ int main (int argc, char *argv[])
   
   // initialize LumiReWeighting stuff
   cout << "Initializing LumiReWeighting stuff" << endl;
-  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_up.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_down.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_el = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_El/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsUp_el = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_El/sys_up.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsDown_el = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_El/sys_down.root", "pileup", "pileup");
+  
+  LumiReWeighting LumiWeights_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsUp_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_up.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsDown_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_down.root", "pileup", "pileup");
   
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
@@ -482,7 +488,7 @@ int main (int argc, char *argv[])
   Double_t bTagEff = writer.initialParameter->GetValue("bTagEff",(Double_t) -1.0);
   Double_t misTagRate = writer.initialParameter->GetValue("misTagRate",(Double_t) -1.0);
   Double_t pTjetCut = 30.;
-  Int_t nBtagCut = 2;
+  Int_t nBtagCut = 1;
   Int_t nJetCut = 9999;
   
   cout << "Loaded settings from ideogram config file:  " << ideogramParameterFilename << endl;
@@ -626,9 +632,20 @@ int main (int argc, char *argv[])
       float lumiWeight = 1., lumiWeightUp = 1., lumiWeightDown = 1.;
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("DAtaDriven") != string::npos) )
       {
-        lumiWeight = LumiWeights.ITweight( (int)monster->nTruePU() );
-        lumiWeightUp = LumiWeightsUp.ITweight( (int)monster->nTruePU() );
-        lumiWeightDown = LumiWeightsDown.ITweight( (int)monster->nTruePU() );
+        if(monster->selectedSemiMu())
+        {
+          lumiWeight = LumiWeights_mu.ITweight( (int)monster->nTruePU() );
+          lumiWeightUp = LumiWeightsUp_mu.ITweight( (int)monster->nTruePU() );
+          lumiWeightDown = LumiWeightsDown_mu.ITweight( (int)monster->nTruePU() );
+        }
+        else
+        {
+          lumiWeight = LumiWeights_el.ITweight( (int)monster->nTruePU() );
+          lumiWeightUp = LumiWeightsUp_el.ITweight( (int)monster->nTruePU() );
+          lumiWeightDown = LumiWeightsDown_el.ITweight( (int)monster->nTruePU() );
+        }
+//        if( LumiWeights_mu.ITweight( (int)monster->nTruePU() ) != LumiWeights_el.ITweight( (int)monster->nTruePU() ) )
+//          cout << "Different LumiWeights:  " << LumiWeights_el.ITweight( (int)monster->nTruePU() ) << " | " << LumiWeights_mu.ITweight( (int)monster->nTruePU() ) << endl;
       }
       
       // muoncharge-string
@@ -637,10 +654,7 @@ int main (int argc, char *argv[])
       if(monster->selectedSemiMu())
       {
         if(dataSet->Title().find("Data_El") == 0)
-        {
-//          cout << "skipping!!!   " << dataSet->Title() << endl;
           continue;
-        }
         Luminosity = LuminosityMu;
         leptonCharge = "_mu";
         leptonDecay = "_mu";
@@ -650,10 +664,7 @@ int main (int argc, char *argv[])
       else
       {
         if(dataSet->Title().find("Data_Mu") == 0)
-        {
-//          cout << "skipping!!!   " << dataSet->Title() << endl;
           continue;
-        }
         Luminosity = LuminosityEl;
         leptonCharge = "_el";
         leptonDecay = "_el";
@@ -1041,7 +1052,7 @@ int main (int argc, char *argv[])
           if( minChi2[iCombi] < maxChi2 )
           {
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
-            if( dataSetName.find("WJets") == 0 )
+            if( dataSetName.find("W_WJets") == 0 )
             {
               histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
               histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight / (double) mTop.size() );
@@ -1123,13 +1134,21 @@ int main (int argc, char *argv[])
 	  RooRealVar mTopFitWjets("mTopFitWjets","mTopFitWjets",50.,650.);
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
 	
-	  RooRealVar mean("mean","mean",175.,130.,300.);
-	  RooRealVar sigma("sigma","sigma",35.,20.,50.);
+	  RooRealVar mean("mean","mean",150.,130.,180.);
+	  RooRealVar sigma("sigma","sigma",35.,33.,50.);
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
     
+	  RooRealVar meanCB("meanCB","meanCB",154.,130.,180.);
+	  RooRealVar sigmaCB("sigmaCB","sigmaCB",20.,13.,50.);
+	  RooRealVar alpha("alpha","alpha",-0.35,-10.,10.);
+	  RooRealVar N("N","N",5);
+	  RooCBShape wJetsShapeCB("TTJetsShapeCB","TTJetsShapeCB",mTopFitWjets,meanCB,sigmaCB,alpha,N);
+//    wJetsShapeCB.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
+    
     RooPlot* plot = mTopFitWjets.frame();
     dataHistWjets.plotOn(plot);
+//    wJetsShapeCB.plotOn(plot, LineColor(3));
     wJetsShapeLandau.plotOn(plot);
     
     TCanvas* cFit = new TCanvas("mTopFitWjets","mTopFitWjets");
@@ -1170,8 +1189,8 @@ int main (int argc, char *argv[])
     else if(name.find("elMinus") < name.size()) temp->addText("e^{-}+jets");
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
-//    temp->Draw(false, name, false, true, true, true, true, 1, true);
-    temp->Draw(false, name, false, true, true, true, false, 1, true); // void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+//    temp->Draw(false, name, true, true, true, true, true, 1, true);
+    temp->Draw(false, name, false, false, false, false, false, 1, true); // void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
 //    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
