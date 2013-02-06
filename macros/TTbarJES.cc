@@ -819,24 +819,25 @@ int main (int argc, char *argv[])
         int nBtags = 0;
         vector<float> bTagCSV;
         vector<TLorentzVector> otherSelectedJets;
+        double bTagCutValue = 0.679; // nominal: 0.679
+        if(systematic == "bTagPlus") bTagCutValue = 0.62;
+        else if(systematic == "bTagMinus") bTagCutValue = 0.73;
+        else if(systematic == "bVSbbarTag")
+        {
+          if(eventSelectedSemiMu)
+          {
+            if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.62;
+            else bTagCutValue = 0.73;
+          }
+          else
+          {
+            if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.62;
+            else bTagCutValue = 0.73;
+          }
+        }
+        
         for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
         {
-          double bTagCutValue = 0.679; // nominal: 0.679
-          if(systematic == "bTagPlus") bTagCutValue = 0.62;
-          else if(systematic == "bTagMinus") bTagCutValue = 0.73;
-          else if(systematic == "bVSbbarTag")
-          {
-            if(eventSelectedSemiMu)
-            {
-              if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.62;
-              else bTagCutValue = 0.73;
-            }
-            else
-            {
-              if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.62;
-              else bTagCutValue = 0.73;
-            }
-          }
           
           otherSelectedJets.push_back( *selectedJets[iJet] );
           bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
