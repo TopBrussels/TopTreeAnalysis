@@ -71,7 +71,7 @@ int main (int argc, char *argv[])
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used:  " << systematic << endl;
-  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus" || systematic == "bVSbbarJES") )
+  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus" || systematic == "bVSbbarJES" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "bVSbbarTag") )
   {
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: Nominal, InvertedIso, JESPlus, JESMinus, JERPlus, JERMinus" << endl;
@@ -479,7 +479,7 @@ int main (int argc, char *argv[])
       cout << "	Loop over events " << endl;
     
     for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 1000000; ievt++)
+//    for (unsigned int ievt = 0; ievt < 100; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -821,9 +821,26 @@ int main (int argc, char *argv[])
         vector<TLorentzVector> otherSelectedJets;
         for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
         {
+          double bTagCutValue = 0.679; // nominal: 0.679
+          if(systematic == "bTagPlus") bTagCutValue = 0.62;
+          else if(systematic == "bTagMinus") bTagCutValue = 0.73;
+          else if(systematic == "bVSbbarTag")
+          {
+            if(eventSelectedSemiMu)
+            {
+              if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.62;
+              else bTagCutValue = 0.73;
+            }
+            else
+            {
+              if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.62;
+              else bTagCutValue = 0.73;
+            }
+          }
+          
           otherSelectedJets.push_back( *selectedJets[iJet] );
           bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
-          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > 0.679 ) // nominal: 0.679
+          if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > bTagCutValue )
           {
             nBtags++;
             if( fabs(selectedJets[iJet]->partonFlavour()) == 5 ) nBjetsBtag++;
