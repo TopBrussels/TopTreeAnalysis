@@ -12,26 +12,26 @@
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
-#include "../Selection/interface/SelectionTable.h"
-#include "../Tools/interface/PlottingTools.h"
-#include "../Tools/interface/MultiSamplePlot.h"
-#include "../Tools/interface/TTreeLoader.h"
-#include "../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../Content/interface/AnalysisEnvironment.h"
-#include "../Content/interface/Dataset.h"
-#include "../MCInformation/interface/MCWeighter.h"
-#include "../Selection/interface/ElectronPlotter.h"
-#include "../Selection/interface/MuonPlotter.h"
-#include "../Selection/interface/JetPlotter.h"
-#include "../Selection/interface/VertexPlotter.h"
-#include "../Tools/interface/JetTools.h"
-#include "../MCInformation/interface/ResolutionFit.h"
-#include "../MCInformation/interface/JetPartonMatching.h"
-#include "../Reconstruction/interface/JetCorrectorParameters.h"
+#include "TopTreeAnalysisBase/Selection/interface/SelectionTable.h"
+#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
+#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Tools/interface/TTreeLoader.h"
+#include "TopTreeAnalysisBase/Tools/interface/AnalysisEnvironmentLoader.h"
+#include "TopTreeAnalysisBase/Content/interface/AnalysisEnvironment.h"
+#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/MCWeighter.h"
+#include "TopTreeAnalysisBase/Selection/interface/ElectronPlotter.h"
+#include "TopTreeAnalysisBase/Selection/interface/MuonPlotter.h"
+#include "TopTreeAnalysisBase/Selection/interface/JetPlotter.h"
+#include "TopTreeAnalysisBase/Selection/interface/VertexPlotter.h"
+#include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/JetPartonMatching.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectorParameters.h"
 #include "../BtagEffAnalysis/interface/TRootNTuple.h"
 #include "Style.C"
-#include "../MCInformation/interface/LumiReWeighting.h"
-#include "../MCInformation/interface/Lumi3DReWeighting.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/Lumi3DReWeighting.h"
 
 using namespace std;
 using namespace reweight;
@@ -69,9 +69,9 @@ int main (int argc, char *argv[])
   if (systematic == 2)
     postfix="_JESPlus";
   if (systematic == 3)
-    postfix="_JESMinusAfterSel";
+    postfix="_METUnClusteredEnergyMinus";
   if (systematic == 4)
-    postfix="_JESPlusAfterSel";
+    postfix="_METUnClusteredEnergyPlus";
   if (systematic == 5)
     postfix="_ZeroPUevents";
   if (systematic == 6)
@@ -107,7 +107,7 @@ int main (int argc, char *argv[])
   cout << " Beginning of the program for creating the BTag Trees ! " << endl;
   cout << "********************************************************" << endl;
 
-  //SetStyle if needed
+  //SetsStyle if needed
   //setTDRStyle(); 
   setMyStyle();
 
@@ -154,8 +154,8 @@ int main (int argc, char *argv[])
   new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv);
   int verbose = anaEnv.Verbose;
   float oldLuminosity = anaEnv.Luminosity;	// in 1/pb
- 
- 	cout << "analysis environment luminosity for rescaling "<< oldLuminosity << endl;
+  
+  cout << "analysis environment luminosity for rescaling "<< oldLuminosity << endl;
   
   /////////////////////
   // Load Datasets
@@ -343,63 +343,16 @@ int main (int argc, char *argv[])
 
   //cout << Luminosity << endl;
 
-  LumiReWeighting LumiWeights, LumiWeightsUp, LumiWeightsDown;
+  LumiReWeighting LumiWeights_mu, LumiWeightsUp_mu, LumiWeightsDown_mu;
+  LumiReWeighting LumiWeights_el, LumiWeightsUp_el, LumiWeightsDown_el;
   
-  //LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun191810.root", "pileup", "pileup");
-  //LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun193557.root", "pileup", "pileup");
-  /*
-  // 0.9/fb
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun194076/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun194076/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun194076/sys_down.root", "pileup", "pileup");
+  LumiWeights_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/nominal.root", "pileup", "pileup");
+  LumiWeightsUp_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_down.root", "pileup", "pileup");
 
-  // 1.6/fb
-
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun194479/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun194479/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun194479/sys_down.root", "pileup", "pileup");
-  */
-
-  // 2.2 /fb
-
-  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun195016/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun195016/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012Data_UpToRun195016/sys_down.root", "pileup", "pileup");*/
-
-  //2.7/fb recalib JP
-  
-  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012DataRecalib_UpToRun195396/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012DataRecalib_UpToRun195396/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12.root", "PileUpReweighting/pileup_2012DataRecalib_UpToRun195396/sys_down.root", "pileup", "pileup");*/
-  
- //4.9/fb recalib JP
-  
-  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S7.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S7.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S7.root", "PileUpReweighting/pileup_2012Data_UpToRun196531/sys_down.root", "pileup", "pileup");*/
-
-  // 5.1/fb with new S10 pileup scenario
-
-  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun196531/sys_down.root", "pileup", "pileup");
-  */
-
-  // 11.6/fb with new S10 pileup scenario
-
-  /*LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun203002/sys_down.root", "pileup", "pileup");*/
-
-  // 11.6/fb with new S10 pileup scenario
-
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun206940/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun206940/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun206940/sys_down.root", "pileup", "pileup");
-  
-
-  //reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
-  //reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
+  LumiWeights_el = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_El/nominal.root", "pileup", "pileup");
+  LumiWeightsUp_el = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_El/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown_el = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_El/sys_down.root", "pileup", "pileup");
 
   cout << " Initialized LumiReWeighting stuff" << endl;
   
@@ -473,28 +426,22 @@ int main (int argc, char *argv[])
     //JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L2Relative.txt");
     //JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/START42_V17_AK5PFchs_L1FastJet.txt");
 
-    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
+    //JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
+    //JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
+    //JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
     
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
-    vCorrParam.push_back(*L1JetPar);
-    vCorrParam.push_back(*L2JetPar);
-    vCorrParam.push_back(*L3JetPar);
+    //vCorrParam.push_back(*L1JetPar);
+    //vCorrParam.push_back(*L2JetPar);
+    //vCorrParam.push_back(*L3JetPar);
 
-    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // DATA!
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
-      vCorrParam.push_back(*ResJetCorPar);
-    }
+    //if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // DATA!
+    //  JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
+    //  vCorrParam.push_back(*ResJetCorPar);
+    // }
     
-    
-    //OLD
-    //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
-    //NEW
-    //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
 
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
-    
     // true means redo also the L1
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
     
@@ -672,7 +619,8 @@ int main (int argc, char *argv[])
       
       // scale factor for the event
       float scaleFactor = 1.;
-      float scaleFactorOLDREW = 1.;
+      float scaleFactor_mu = 1;
+      float scaleFactor_el = 1;
       
       // Load the GenEvent and calculate the branching ratio correction
       /*if(dataSetName.find("TTbarJets") == 0)
@@ -728,25 +676,26 @@ int main (int argc, char *argv[])
 
       // old method
 
-      double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
-      double lumiWeightOLD=lumiWeight;
-      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
-	lumiWeight=1;
+      double lumiWeight_mu = LumiWeights_mu.ITweight( (int)event->nTruePU() );
+      double lumiWeight_el = LumiWeights_el.ITweight( (int)event->nTruePU() );
 
-      //if (event->nPu(0) >= 25) cout << "#pu " << event->nPu(0) << " shift +0.6 " << PShiftUp_.ShiftWeight( event->nPu(0) ) << endl;
+      //cout << lumiWeight_mu << " " << lumiWeight_el << endl;
 
-      if (systematic == 10)
-	//lumiWeight = lumiWeight*PShiftUp_.ShiftWeight( event->nPu(0) );
-	lumiWeight = LumiWeightsUp.ITweight( (int)event->nTruePU() );
-	
-      else if (systematic == 11) 
-	//lumiWeight = lumiWeight*PShiftDown_.ShiftWeight( event->nPu(0) );
-	lumiWeight = LumiWeightsDown.ITweight( (int)event->nTruePU() );
+      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) {
+	lumiWeight_mu=1;
+	lumiWeight_el=1;
+      }
+      if (systematic == 10) {
+	lumiWeight_mu = LumiWeightsUp_mu.ITweight( (int)event->nTruePU() );
+	lumiWeight_el = LumiWeightsUp_el.ITweight( (int)event->nTruePU() );
+      }
+      else if (systematic == 11) {
+	lumiWeight_mu = LumiWeightsDown_mu.ITweight( (int)event->nTruePU() );
+	lumiWeight_el = LumiWeightsDown_el.ITweight( (int)event->nTruePU() );
+      }
 
-      //cout << "scaleFactor before = " << scaleFactor << " " << lumiWeight <<endl;
-      scaleFactor = scaleFactor*lumiWeight;
-      scaleFactorOLDREW = scaleFactor;
-      //cout << "scaleFacto after = " << scaleFactor << " " << scaleFactorOLDREW <<  endl;
+      scaleFactor_mu = scaleFactor_mu*lumiWeight_mu;
+      scaleFactor_el = scaleFactor_el*lumiWeight_el;
 
       ///////////////////
       // TRIGGER SETUP //
@@ -769,31 +718,19 @@ int main (int argc, char *argv[])
 	  
 	  // 2.7/fb recalib 
 	  if( event->runId() <= 190738 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun, iFile);
 
-	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
+	  else if( event->runId() >= 191043 && event->runId() <= 193621 )
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v12"), currentRun, iFile);
 
-	  else if( event->runId() >= 191695 && event->runId() <= 193621 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-
-	  else if( event->runId() >= 193834 && event->runId() <= 194225 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
-
-	  //else if( event->runId() >= 194270 && event->runId() <= 195396 ) // end for TOP-12-006-PAS
-	  //  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-
-	  else if( event->runId() >= 194270 && event->runId() <= 196531 )
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+	  else if( event->runId() >= 193834 && event->runId() <= 196531 )
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 
 	  else if( event->runId() >= 198049 && event->runId() <= 199608)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-	  
-	  else if( event->runId() >= 199698 && event->runId() <= 202504)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v14"), currentRun, iFile);
 
-	  else if( event->runId() >= 202972 && event->runId() <= 206940)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v4"), currentRun, iFile);
+	  else if( event->runId() >= 199698 && event->runId() <= 208686)
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v15"), currentRun, iFile);
 
 	  else {
 	    cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
@@ -807,67 +744,29 @@ int main (int argc, char *argv[])
           }
 
 	} else {
-	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
-	  if (itriggerSemiMu == 9999)
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun);
-	  if (itriggerSemiMu == 9999) 
-	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun);
-
+	  itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun); // Summer12 DR53X
+	  if( itriggerSemiMu == 9999 )
+	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun); // Summer12 DR53X
 	}
 
 	// semi-el
 	// semi-electron
         if(dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0 ) {
          
-	  // 2.3/fb
-	  /*if( event->runId() <= 190738 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
-	  else if( event->runId() >= 191057 && event->runId() <= 191411 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
-	  else if( event->runId() >= 191695 && event->runId() <= 191810 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v10"), currentRun, iFile);
-	  else if( event->runId() >= 191830 && event->runId() <= 193557 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v10"), currentRun, iFile);
-	  else if( event->runId() >= 193575 && event->runId() <= 193621 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v10"), currentRun, iFile);
-	  else if( event->runId() >= 193998 && event->runId() <= 194076 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
-	  else if( event->runId() >= 194108 && event->runId() <= 194225)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
-	  else if( event->runId() >= 194270 && event->runId() <= 194479)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-	   else if( event->runId() >= 194480 && event->runId() <= 194644)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-	   else if( event->runId() >= 194691 && event->runId() <= 195016)
-	   itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);*/
 	  
 	  // 2.7/fb recalib 
 	  if( event->runId() <= 190738 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v8"), currentRun, iFile);
 	  
 	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun, iFile);
-	  
-	  else if( event->runId() >= 191695 && event->runId() <= 193621 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v10"), currentRun, iFile);
-	  	  
-	  else if( event->runId() >= 193834 && event->runId() <= 194225 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v5"), currentRun, iFile);
-	  	  
-	  //else if( event->runId() >= 194270 && event->runId() <= 195396) // END OF TOP_12_006 ICHEP DATASET
-	  //  itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-	  
-	  else if( event->runId() >= 194270 && event->runId() <= 196531)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v9"), currentRun, iFile);
 
-	  else if( event->runId() >= 198049 && event->runId() <= 199608)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-
-	  else if( event->runId() >= 199698 && event->runId() <= 202504)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet30_v3"), currentRun, iFile);
+	  else if( event->runId() >= 191695 && event->runId() <= 196531)
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun, iFile);
 	  
-	  else if( event->runId() >= 202972 && event->runId() <= 203002)
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoVL_TrkIdVL_TrkIsoT_TriCentralPFNoPUJet30_v4"), currentRun, iFile);	  
+	  else if( event->runId() >= 198049 && event->runId() <= 208686)
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v11"), currentRun, iFile);
+  
 	  else { 
             cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
 	    exit(1);
@@ -880,13 +779,10 @@ int main (int argc, char *argv[])
         }
         else
         {
-	  itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_30_20_v1"), currentRun); // Summer12 DR53X
-          if( itriggerSemiEl == 9999 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun);
+	  itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun); // Summer12 DR53X
 	  if( itriggerSemiEl == 9999 )
-	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v9"), currentRun);
-	  
-        }
+	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v8"), currentRun); // Summer12 DR53X  
+	}
 	
       }
 
@@ -933,6 +829,18 @@ int main (int argc, char *argv[])
 	  jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",1);
 	else if (systematic == 2)
 	  jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",1);
+
+	//double before = mets[0]->Pt();
+
+	//correctMETUnclusteredEnergy(TRootMET* inMET, vector<TRootJet*> inJets, vector<TRootMuon*> inMuons, vector<TRootElectron*> inElectrons, string direction)
+
+	if (systematic == 3)
+	  jetTools->correctMETUnclusteredEnergy(mets[0],init_jets_corrected, init_muons, init_electrons, "minus");
+	else if (systematic == 4)
+	  jetTools->correctMETUnclusteredEnergy(mets[0],init_jets_corrected, init_muons, init_electrons, "plus");
+
+	//if (before > 29 && before < 31)
+	//cout << before << "  ---> " <<  mets[0]->Pt()  << "  <<->> diff " << (before-mets[0]->Pt())/mets[0]->Pt() << endl;
 	
 	//for (unsigned int j=0;j<init_jets_corrected.size();j++)
 	//cout << "after jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
@@ -947,46 +855,12 @@ int main (int argc, char *argv[])
       /////////////////////
       
       //Declare selection instance    
-      Selection selection(init_jets_corrected, init_muons, init_electrons, mets);
-
-      //selection.setJetCuts();
-      //selection.setLooseMuonCuts();
-      //selection.setMuonCuts(); // to make shure our normal mu+jets cuts are not overwritten by dilepton cuts
-
-      // SYNC WITH GERRIT
-      //selection.setJetCuts(30.,2.4,0.01,1.,0.98,0.3,0.1);
-
-      //selection.setMuonCuts(30.,2.1,0.125,10,0.02,0.3,1,1,1);
-      //selection.setMuonCuts(35.,2.1,0.125,10,0.02,0.3,1,1,1);
-      //selection.setMuonCuts(20.,2.1,0.125,10,0.02,0.3,1,1,1); // refSelV4 values
-
-      // new for 2 channels at once
-
-      //selection.setJetCuts(35.,2.5,0.01,1.,0.98,0.3,0.1);
-      selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
-
-      //selection.setMuonCuts(35,2.1,0.125,0,0.02,0.3,1,1,5);
-      selection.setMuonCuts(26,2.1,0.12,0,0.2,0.3,1,1,5);
-      //selection.setElectronCuts(35,2.5,0.1,0.02,0.,1,0.3);
-      selection.setElectronCuts(30,2.5,0.1,0.02,0.,1,0.3);
+      Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
+      selection.setJetCuts(40,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setMuonCuts(25,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
+      selection.setElectronCuts(32,2.5,0.1,0.02,0.5,0.3,0); // Ele25 uses 30 so Ele27 32? DR el-jets cleaning still needed?
       selection.setLooseMuonCuts(10,2.5,0.2);
-      selection.setLooseElectronCuts(20,2.5,0.2,0.); // semiMu looseElectron cuts
-
-      /*if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-      {
-        // Apply the scraping veto
-        bool isBeamBG = true;
-        if(event->nTracks() > 10)
-        {
-          if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
-            isBeamBG = false;
-        }
-        if(isBeamBG) continue;*/
-        
-        // Apply the JSON
-        // bool passedJSON = treeLoader.EventPassedJSON(datasets[d], event->runId(), event->lumiBlockId());
-        // if(!passedJSON) continue;
-      // }
+      selection.setLooseElectronCuts(20,2.5,0.15,0.);
 
       bool triggedSemiMu = false;
       bool triggedSemiEl = false;
@@ -998,22 +872,23 @@ int main (int argc, char *argv[])
 
       bool isGoodPV = false;
         
-      isGoodPV = selection.isPVSelected(vertex, anaEnv.PVertexNdofCut, anaEnv.PVertexZCut, anaEnv.PVertexRhoCut);
+      //isGoodPV = selection.isPVSelected(vertex, anaEnv.PVertexNdofCut, anaEnv.PVertexZCut, anaEnv.PVertexRhoCut);
+      isGoodPV = selection.isPVSelected(vertex, 4, 24, 2.);
 
       vector<TRootJet*> selectedJets, selectedJetsNoMu, selectedJetsNoEl;
       vector<TRootMuon*> selectedMuons;
       vector<TRootElectron*> selectedElectrons;
-      vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons();
-      vector<TRootElectron*> vetoElectronsSemiMu = selection.GetSelectedLooseElectrons(false);
-      vector<TRootElectron*> vetoElectronsSemiEl = selection.GetSelectedLooseElectrons(30,2.5,0.2,true);
+      vector<TRootMuon*> vetoMuons = selection.GetSelectedLooseMuons(10,2.5,0.2);
+      vector<TRootElectron*> vetoElectronsSemiMu = selection.GetSelectedLooseElectrons(20,2.5,0.15);
+      vector<TRootElectron*> vetoElectronsSemiEl = selection.GetSelectedLooseElectrons(20,2.5,0.15);
       
       if( dataSetName.find("InvIso") != string::npos )  {
         vector<TRootMuon*> overlapMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0]);
-        vector<TRootElectron*> overlapElectrons = selection.GetSelectedElectronsInvIso(0.2, vertex[0]);
+        vector<TRootElectron*> overlapElectrons = selection.GetSelectedElectronsInvIso(0.2);
         selectedJetsNoMu = selection.GetSelectedJets(overlapMuons,true);
         selectedJetsNoEl = selection.GetSelectedJets(overlapElectrons,true);
 
-	if (selectedJetsNoMu.size() >= 4) {
+	/*if (selectedJetsNoMu.size() >= 4) {
 	  //cout << "ol" << endl;
 	  if (selectedJetsNoMu[0]->Pt() < 45) selectedJetsNoMu.clear();
 	  if (selectedJetsNoMu[1]->Pt() < 45) selectedJetsNoMu.clear();
@@ -1027,30 +902,28 @@ int main (int argc, char *argv[])
 	  if (selectedJetsNoEl[1]->Pt() < 45) selectedJetsNoEl.clear();
 	  if (selectedJetsNoEl[2]->Pt() < 40) selectedJetsNoEl.clear();
 	  if (selectedJetsNoEl[3]->Pt() < 40) selectedJetsNoEl.clear();
-	}
+	  }*/
 
 	//selectedJetsNoMu = selection.GetSelectedJets(true);
         //selectedJetsNoEl = selection.GetSelectedJets(true);
 
-	//selectedMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0], selectedJetsNoMu);
-        //selectedElectrons = selection.GetSelectedElectronsInvIso(0.2, vertex[0],selectedJetsNoEl);
-	selectedMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0]);
-        selectedElectrons = selection.GetSelectedElectronsInvIso(0.2, vertex[0]);
+	selectedMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0], selectedJetsNoMu);
+        selectedElectrons = selection.GetSelectedElectronsInvIso(0.2,selectedJetsNoEl);
       }
       else { // Normal selection
 	selectedJets = selection.GetSelectedJets(true);
 
-	if (selectedJets.size() >= 4) {
+	/*if (selectedJets.size() >= 4) {
 	  //cout << "ol" << endl;
 	  if (selectedJets[0]->Pt() < 45) selectedJets.clear();
 	  if (selectedJets[1]->Pt() < 45) selectedJets.clear();
 	  if (selectedJets[2]->Pt() < 40) selectedJets.clear();
 	  if (selectedJets[3]->Pt() < 40) selectedJets.clear();
-	}
+	  }*/
 
 	//selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);	
-	selectedMuons = selection.GetSelectedMuons(vertex[0]);
-	selectedElectrons = selection.GetSelectedElectrons(vertex[0],selectedJets);
+	selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);
+	selectedElectrons = selection.GetSelectedElectrons(selectedJets);
       }
 
       vector<TRootMCParticle*> mcParticles;
@@ -1065,22 +938,27 @@ int main (int argc, char *argv[])
       bool eventselectedSemiEl = false;
 
       // semi-mu selection
-      if (triggedSemiMu && isGoodPV) {
-	if(dataSetName.find("InvIso") != string::npos) selectedJets = selectedJetsNoMu;
-	if (selectedMuons.size() == 1) {
-	  //cout << "selectedLooseMuons: " << selectedLooseMuons.size() << endl;
-	  if (vetoMuons.size() == 1) {
-	    if (vetoElectronsSemiMu.size() == 0) {
-	      if (selectedJets.size() >= 4) {
-	      //if (selectedJets.size() == 4) {
-		//if (selectedJets[0]->Pt() > 45 && selectedJets[1]->Pt() > 45 && selectedJets[2]->Pt() > 45 && selectedJets[3]->Pt() > 20) {
+      if (triggedSemiMu) {
+	if (isGoodPV) {
+	  if(dataSetName.find("InvIso") != string::npos) selectedJets = selectedJetsNoMu;
+	  if (selectedMuons.size() == 1) {
+	    //cout << "selectedLooseMuons: " << selectedLooseMuons.size() << endl;
+	    if( vetoMuons.size() == 1 || ( dataSetName.find("InvIso") != string::npos && vetoMuons.size() == 0 ) ) { // if InvertedIso, selected muon not part of vetoMuons vector!
+	      if (vetoElectronsSemiMu.size() == 0) {
+		if (selectedJets.size() >= 4) {
+		  //if (selectedJets.size() == 4) {
+		  //if (selectedJets[0]->Pt() > 45 && selectedJets[1]->Pt() > 45 && selectedJets[2]->Pt() > 45 && selectedJets[3]->Pt() > 20) {
 		  eventselectedSemiMu = true;
 		  // }
+		}
 	      }
 	    }
 	  }
 	}
       }
+
+       double lumiWeight = lumiWeight_el;
+       scaleFactor = scaleFactor_el;
 
      selecTableSemiEl.Fill(d,0,scaleFactor*lumiWeight);
 
@@ -1096,7 +974,7 @@ int main (int argc, char *argv[])
 	     if (vetoElectronsSemiEl.size() == 1) {
 	       //if( !selection.foundZCandidate(selectedElectrons[0], vetoElectronsSemiEl) ) {
 	       selecTableSemiEl.Fill(d,5,scaleFactor*lumiWeight);
-	       if( selection.passConversionRejection(selectedElectrons[0]) ) {
+	       //if( selection.passConversionRejection(selectedElectrons[0]) ) {
 		 selecTableSemiEl.Fill(d,6,scaleFactor*lumiWeight);
 		 if( selectedJets.size()>=1 ) {
 		   selecTableSemiEl.Fill(d,7,scaleFactor*lumiWeight);
@@ -1113,20 +991,29 @@ int main (int argc, char *argv[])
 		       }
 		     }
 		   }
-		 }
+		 //}
 	       }
 	     }
 	   }
 	 }
        }
      }
-
+     //eventselectedSemiEl=false;
      /*if (eventselected) {
 	if (selectedJets[0]->Pt() < 70 || selectedJets[1]->Pt() < 50) 
 	eventselected=false;
 	}*/
      
      if (!eventselectedSemiMu && !eventselectedSemiEl) continue;
+     
+     if (eventselectedSemiMu) scaleFactor = scaleFactor_mu;
+     if (eventselectedSemiEl) scaleFactor = scaleFactor_el;
+
+     /*if (scaleFactor_mu != scaleFactor_el) {
+       cout << endl << "Mu: " << eventselectedSemiMu << " El: " << eventselectedSemiEl << endl;
+       cout << "Scalefactor mu " << scaleFactor_mu << " el " << scaleFactor_el << endl;
+       cout << "Scalefactor sel " << scaleFactor<< endl;
+       }*/
 
      /*if (event->eventId() == 5942766) {
 
@@ -1168,11 +1055,7 @@ int main (int argc, char *argv[])
       //cout << endl;
       //exit(1);
 
-      if (systematic == 3)
-	jetTools->correctJetJESUnc(selectedJets, "minus");
-      else if (systematic == 4)
-	jetTools->correctJetJESUnc(selectedJets, "plus");
-
+     
       /*if(dataSetName.find("WJets_TuneZ2_scaledown") == 0) {
 	treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
@@ -1366,8 +1249,8 @@ int main (int argc, char *argv[])
 	histo1D["hadronicRecoWMass"]->Fill(WMass);
 	histo1D["hadronicRecoTopMass"]->Fill(TopMass);
 	
-	histo1D["hadronicRecoWMass-REW"]->Fill(WMass,lumiWeightOLD);
-	histo1D["hadronicRecoTopMass-REW"]->Fill(TopMass,lumiWeightOLD);
+	histo1D["hadronicRecoWMass-REW"]->Fill(WMass,lumiWeight);
+	histo1D["hadronicRecoTopMass-REW"]->Fill(TopMass,lumiWeight);
 	
 	histo1D["hadronicRecoWMass-REW3D"]->Fill(WMass,lumiWeight);
 	histo1D["hadronicRecoTopMass-REW3D"]->Fill(TopMass,lumiWeight);
@@ -1749,7 +1632,7 @@ int main (int argc, char *argv[])
 	if (MSPlot.find("Selected_Events_nPV"+leptonFlav) == MSPlot.end())
 	  MSPlot["Selected_Events_nPV"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_nPV"+leptonFlav, 36, -0.5, 35.5, "nPV");
 
-	MSPlot["Selected_Events_nPV"+leptonFlav]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactorOLDREW);
+	MSPlot["Selected_Events_nPV"+leptonFlav]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 
 	if (MSPlot.find("Selected_Events_nPV_NONREW"+leptonFlav) == MSPlot.end())
 	  MSPlot["Selected_Events_nPV_NONREW"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_nPV_NONREW"+leptonFlav, 36, -0.5, 35.5, "nPV");
@@ -2118,7 +2001,7 @@ int main (int argc, char *argv[])
 	NTuple->setWeight(1/(datasets[d]->EquivalentLumi()));
 
 	NTuple->setScaleFactor3D(scaleFactor);
-	NTuple->setScaleFactor(scaleFactorOLDREW);
+	NTuple->setScaleFactor(scaleFactor);
 
 	// For PDF Unc
 
@@ -2147,6 +2030,11 @@ int main (int argc, char *argv[])
 	NTuple->setPtMuon((*selectedLepton).Pt());   
 	NTuple->setEMuon((*selectedLepton).E());   
 	NTuple->setEtaMuon((*selectedLepton).Eta());
+
+	if (eventselectedSemiMu)
+	  NTuple->setChargeMuon(selectedMuons[0]->charge());
+	else if (eventselectedSemiEl)
+	  NTuple->setChargeMuon(selectedElectrons[0]->charge());
 
 	if (eventselectedSemiEl) {
 	  //cout << selectedElectrons[0]->mvaTrigId() << endl;
@@ -2316,6 +2204,8 @@ int main (int argc, char *argv[])
 
     cout << "+> " << nSelectedMu << " mu+jets events where selected"<< endl;
     cout << "+> " << nSelectedEl << " e+jets events where selected"<< endl;
+
+    cout << "+> mu+jets ttbar sel eff " << ((double)nSelectedMu/(double)datasets[d]->NofEvtsToRunOver())*100 << endl;
 
     if (dataSetName.find("Data_El") == 0 || dataSetName.find("data_El") == 0 || dataSetName.find("DATA_El") == 0) {
       string fname = dataSetName+"_QCDEst_RunRangeCounts.txt";
@@ -2498,7 +2388,7 @@ int main (int argc, char *argv[])
   
     //Selection tables
     selecTableSemiEl.TableCalculator(false, true, true, true, true);
-    string selectiontableEl = "SelectionTable"+postfix+"_BTAG_SEMIMU.tex";
+    string selectiontableEl = "SelectionTable"+postfix+"_BTAG_SEMIEL.tex";
     selecTableSemiEl.Write(selectiontableEl.c_str());
     
     if (runSpecificSample) return 0;
