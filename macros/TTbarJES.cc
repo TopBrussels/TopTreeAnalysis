@@ -318,7 +318,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////
   
   cout << "Initializing LumiReWeighting stuff" << endl;
-  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/nominal.root", "pileup", "pileup");
   
   /////////////////////////////
   /// ResolutionFit Stuff
@@ -466,7 +466,7 @@ int main (int argc, char *argv[])
     TTree* MonsterTree = new TTree("MonsterTree","Tree containing the monsters");
     
     if(measureTopMassDifference)
-      MonsterTree->Branch("TheLightMonster","LightMonster",&lightMonster);
+      MonsterTree->Branch("TheLightMonster","LightMonster",&lightMonster,256000);
 
     ////////////////////////////////////
     //	Loop on events
