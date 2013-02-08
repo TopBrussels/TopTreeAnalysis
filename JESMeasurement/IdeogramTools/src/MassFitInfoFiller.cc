@@ -63,6 +63,8 @@ void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHead
   event.lumiWeight = PUweight;
   event.PUdown = PUdown;
   event.PUup = PUup;
+  event.mTgen = monster->topMass();
+  event.mTbargen = monster->antiTopMass();
   // calculate pz neutrino (for mttbar)
   double M_W  = 80.4;
   double M_mu =  0.10566;
