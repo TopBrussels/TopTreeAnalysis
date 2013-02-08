@@ -75,7 +75,7 @@ int main (int argc, char *argv[])
   mkdir(pathPNG.c_str(),0777);
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
   
-  float LuminosityMu = 19125.189, LuminosityEl = 18716.074;
+  float LuminosityMu = 19125.189, LuminosityEl = 18716.074; // Average:  18920.6315 +- 756.82526
   
   bool doAllMSPlots = false;
   bool writeASCIIstuff = false; // false:  files are created but no events are filled
@@ -301,10 +301,10 @@ int main (int argc, char *argv[])
   MSPlot["sigmaMtop_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"sigmaMtop_Fit_AllCombi_muMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
   MSPlot["sigmaMtop_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_AllCombi_elPlus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
   MSPlot["sigmaMtop_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"sigmaMtop_Fit_AllCombi_elMinus",120,0,60,"Fitted Top Mass Sigma (GeV)","Nr. of events / 0.5 GeV");
-  MSPlot["MinChi2ndf_Fit_AllCombi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
-  MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,20,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muPlus",80,0,10,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"MinChi2ndf_Fit_AllCombi_muMinus",80,0,10,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_elPlus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elPlus",80,0,10,"Min #chi^{2}/ndf","Nr. of events");
+  MSPlot["MinChi2ndf_Fit_AllCombi_elMinus"] = new MultiSamplePlot(datasetsSemiEl,"MinChi2ndf_Fit_AllCombi_elMinus",80,0,10,"Min #chi^{2}/ndf","Nr. of events");
   
   MSPlot["nBtags"] = new MultiSamplePlot(datasetsSemiMu,"nBtags",5,-0.5,4.5,"Nr. of b-tagged jets","Nr. of events");
   MSPlot["leptonCharge"] = new MultiSamplePlot(datasetsSemiMu,"leptonCharge",2,-2,2,"leptonCharge","Nr. of events");
@@ -918,13 +918,16 @@ int main (int argc, char *argv[])
         for(int i=0;i<selectedJets.size();i++)
         {
           Ht += selectedJets[i].Pt();
-          MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
-          if(doAllMSPlots)
+          if(i<4)
           {
-            MSPlot["AllJets_pt"+leptonCharge]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
-            MSPlot["AllJets_eta"+leptonCharge]->Fill(selectedJets[i].Eta(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
-            MSPlot["AllJets_phi"+leptonCharge]->Fill(selectedJets[i].Phi(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
-          }  
+            MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+            if(doAllMSPlots)
+            {
+              MSPlot["AllJets_pt"+leptonCharge]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+              MSPlot["AllJets_eta"+leptonCharge]->Fill(selectedJets[i].Eta(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+              MSPlot["AllJets_phi"+leptonCharge]->Fill(selectedJets[i].Phi(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+            }  
+          }
           for(int j=0;j<i;j++)
           {
             for(int k=0;k<j;k++)
@@ -1164,6 +1167,7 @@ int main (int argc, char *argv[])
     cFit->cd();
     plot->Draw();
     cFit->SaveAs( (pathPNG+"mTopFitWjets.png").c_str() );
+    cFit->SaveAs( (pathPNG+"mTopFitWjets.pdf").c_str() );
     cFit->Write();
     
     cout << "Shape-fit results for WJets: " << endl;
