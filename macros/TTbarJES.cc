@@ -324,8 +324,8 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
   
-  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
-  bool ResolutionsClosure = false;
+  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
+  bool ResolutionsClosure = true;
   
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
   if(CalculateResolutions)
@@ -409,7 +409,7 @@ int main (int argc, char *argv[])
 //      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
 //      vCorrParam.push_back(*ResJetCorPar);
 //    }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
