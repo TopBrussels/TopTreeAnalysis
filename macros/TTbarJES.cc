@@ -324,8 +324,8 @@ int main (int argc, char *argv[])
   /// ResolutionFit Stuff
   /////////////////////////////
   
-  bool CalculateResolutions = true; // If false, the resolutions will be loaded from a previous calculation
-  bool ResolutionsClosure = true;
+  bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
+  bool ResolutionsClosure = false;
   
   ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
   if(CalculateResolutions)
@@ -852,6 +852,10 @@ int main (int argc, char *argv[])
         }
         
         if(nBtags < 1) continue;
+        
+        cout << "selected!!!" << endl;
+        
+        continue;
         
         //get the MC matched jet combination, not the MVA best matched
 	      vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
