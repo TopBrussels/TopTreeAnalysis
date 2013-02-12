@@ -696,7 +696,7 @@ int main (int argc, char *argv[])
           {
             MSPlot["nEventsAfterCutsSemiMu"]->Fill(3, datasets[d], true, Luminosity*scaleFactor);
   		      selecTableSemiMu.Fill(d,3,scaleFactor*lumiWeight);
-        		if( vetoMuons.size() == 1 || ( systematic == "InvertedIso" && vetoMuons.size() == 0 ) ) // if InvertedIso, selected muon not part of vetoMuons vector!
+        		if( ( systematic != "InvertedIso" && vetoMuons.size() == 1 ) || ( systematic == "InvertedIso" && vetoMuons.size() == 0 ) ) // if InvertedIso, selected muon not part of vetoMuons vector!
         		{
         		  MSPlot["nEventsAfterCutsSemiMu"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
               selecTableSemiMu.Fill(d,4,scaleFactor*lumiWeight);
@@ -754,7 +754,7 @@ int main (int argc, char *argv[])
             {
               MSPlot["nEventsAfterCutsSemiEl"]->Fill(4, datasets[d], true, Luminosity*scaleFactor);
               selecTableSemiEl.Fill(d,4,scaleFactor*lumiWeight);
-              if( vetoElectrons.size() == 1 )
+              if( ( systematic != "InvertedIso" && vetoElectrons.size() == 1 ) || ( systematic == "InvertedIso" && vetoElectrons.size() == 0 ) ) // if InvertedIso, selected electron not part of vetoElectrons vector!
               {
                 MSPlot["nEventsAfterCutsSemiEl"]->Fill(5, datasets[d], true, Luminosity*scaleFactor);
                 selecTableSemiEl.Fill(d,5,scaleFactor*lumiWeight);
@@ -1174,13 +1174,25 @@ int main (int argc, char *argv[])
           {
             lightMonster->setLepton( *selectedMuons[0] );
             lightMonster->setLeptonCharge( selectedMuons[0]->charge() );
-            lightMonster->setLeptonPFRelIso( (selectedMuons[0]->chargedHadronIso()+selectedMuons[0]->neutralHadronIso()+selectedMuons[0]->photonIso())/selectedMuons[0]->Pt() );
+            float reliso = (selectedMuons[0]->chargedHadronIso() + max( 0.0, selectedMuons[0]->neutralHadronIso() + selectedMuons[0]->photonIso() - 0.5*selectedMuons[0]->puChargedHadronIso() ) ) / selectedMuons[0]->Pt(); // dBeta corrected
+            lightMonster->setLeptonPFRelIso( reliso );
           }
           else
           {
             lightMonster->setLepton( *selectedElectrons[0] );
             lightMonster->setLeptonCharge( selectedElectrons[0]->charge() );
-            lightMonster->setLeptonPFRelIso( (selectedElectrons[0]->chargedHadronIso()+selectedElectrons[0]->neutralHadronIso()+selectedElectrons[0]->photonIso())/selectedElectrons[0]->Pt() );
+            double EffectiveArea = 0.;
+            double SCeta = fabs(selectedElectrons[0]->superClusterEta());
+            // HCP 2012 updated for electron conesize = 0.3, taken from http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/EGamma/EGammaAnalysisTools/interface/ElectronEffectiveArea.h?revision=1.4&view=markup
+            if      (SCeta >= 0.0   && SCeta < 1.0   ) EffectiveArea = 0.130;
+            else if (SCeta >= 1.0   && SCeta < 1.479 ) EffectiveArea = 0.137;
+            else if (SCeta >= 1.479 && SCeta < 2.0   ) EffectiveArea = 0.067;
+            else if (SCeta >= 2.0   && SCeta < 2.2   ) EffectiveArea = 0.089;
+            else if (SCeta >= 2.2   && SCeta < 2.3   ) EffectiveArea = 0.107;
+            else if (SCeta >= 2.3   && SCeta < 2.4   ) EffectiveArea = 0.110;
+            else if (SCeta >= 2.4) EffectiveArea = 0.138;
+            float reliso = (selectedElectrons[0]->chargedHadronIso() + max( selectedElectrons[0]->neutralHadronIso() + selectedElectrons[0]->photonIso()  - event->kt6PFJets_rho()*EffectiveArea, 0.) )/ selectedElectrons[0]->Pt(); // EffectiveArea corrected
+            lightMonster->setLeptonPFRelIso( reliso );
           }
           lightMonster->setHadrBQuark( jetCombiner->GetHadrBQuark() );
           lightMonster->setHadrLQuark1( jetCombiner->GetLightQuark1() );
