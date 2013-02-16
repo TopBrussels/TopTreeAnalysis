@@ -29,14 +29,13 @@ class LightMonster : public TObject
     ,idParton2_(-9999)
     ,xParton2_(-9999.)
     ,factorizationScale_(-9999.)
+    ,flavHistPath_(-9999.)
     ,nPV_(0)
-    ,nPUBXm1_(0)
-    ,nPU_(0)
-    ,nPUBXp1_(0)
     ,nTruePU_(0)
     ,topMass_(0)
     ,antiTopMass_(0)
     ,selectedSemiMu_(false)
+    ,triggerLeptons_()
     ,semiMuDecay_(false)
     ,semiElDecay_(false)
     ,topDecayedLept_(false)
@@ -74,14 +73,13 @@ class LightMonster : public TObject
   int idParton2() const { return idParton2_; }
   float xParton2() const { return xParton2_; }
   float factorizationScale() const { return factorizationScale_; }
+  int flavHistPath() const { return flavHistPath_; }
   unsigned int nPV() const { return nPV_; }
-  unsigned int nPUBXm1() const { return nPUBXm1_; }
-  unsigned int nPU() const { return nPU_; }
-  unsigned int nPUBXp1() const { return nPUBXp1_; }
   unsigned int nTruePU() const { return nTruePU_; }
   float topMass() const { return topMass_; }
   float antiTopMass() const { return antiTopMass_; }
   bool selectedSemiMu() const { return selectedSemiMu_; }
+  vector<TLorentzVector> triggerLeptons() const { return triggerLeptons_; }
   bool semiMuDecay() const { return semiMuDecay_; }
   bool semiElDecay() const { return semiElDecay_; }
   bool topDecayedLept() const { return topDecayedLept_; }
@@ -118,14 +116,13 @@ class LightMonster : public TObject
   void setIdParton2(int Id2) { idParton2_ = Id2; }
   void setXParton2(float x2) { xParton2_ = x2; }
   void setFactorizationScale(float scale) { factorizationScale_ = scale; }
+  void setFlavHistPath(int path) { flavHistPath_ = path; }
   void setNPV(unsigned int nPV) { nPV_ = nPV; }
-  void setNPUBXm1(unsigned int nPUBXm1) { nPUBXm1_ = nPUBXm1; }
-  void setNPU(unsigned int nPU) { nPU_ = nPU; }
-  void setNPUBXp1(unsigned int nPUBXp1) { nPUBXp1_ = nPUBXp1; }
   void setNTruePU(unsigned int nTruePU) { nTruePU_ = nTruePU; }
   void setTopMass(float topMass) { topMass_ = topMass; }
   void setAntiTopMass(float antiTopMass) { antiTopMass_ = antiTopMass; }
   void setSelectedSemiMu(bool selectedSemiMu) { selectedSemiMu_ = selectedSemiMu; }
+  void setTriggerLeptons(vector<TLorentzVector> triggerLeptons) { triggerLeptons_ = triggerLeptons; }
   void setSemiMuDecay(bool semiMuDecay) { semiMuDecay_ = semiMuDecay; }
   void setSemiElDecay(bool semiElDecay) { semiElDecay_ = semiElDecay; }
   void setTopDecayedLept(bool topDecayedLept) { topDecayedLept_ = topDecayedLept; }
@@ -177,14 +174,13 @@ class LightMonster : public TObject
   int idParton2_;
   float xParton2_;
   float factorizationScale_;
+  int flavHistPath_; // flavor history path, see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFlavorHistory
   unsigned int nPV_;
-  unsigned int nPUBXm1_;
-  unsigned int nPU_;
-  unsigned int nPUBXp1_;
   unsigned int nTruePU_;
   float topMass_;
   float antiTopMass_;
   bool selectedSemiMu_;
+  vector<TLorentzVector> triggerLeptons_;
   bool semiMuDecay_;
   bool semiElDecay_;
   bool topDecayedLept_;
