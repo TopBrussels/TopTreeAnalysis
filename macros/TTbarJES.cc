@@ -409,7 +409,7 @@ int main (int argc, char *argv[])
 //      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
 //      vCorrParam.push_back(*ResJetCorPar);
 //    }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
@@ -820,25 +820,24 @@ int main (int argc, char *argv[])
         vector<float> bTagCSV;
         vector<TLorentzVector> otherSelectedJets;
         double bTagCutValue = 0.679; // nominal: 0.679
-        if(systematic == "bTagPlus") bTagCutValue = 0.62;
-        else if(systematic == "bTagMinus") bTagCutValue = 0.73;
+        if(systematic == "bTagPlus") bTagCutValue = 0.63; // absolute change in eff: 1.389 % 
+        else if(systematic == "bTagMinus") bTagCutValue = 0.727; // absolute change in eff: -1.393 %
         else if(systematic == "bVSbbarTag")
         {
           if(eventSelectedSemiMu)
           {
-            if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.62;
-            else bTagCutValue = 0.73;
+            if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.653; // abs change: 0.6981 %
+            else bTagCutValue = 0.705; // abs change:  -0.7015 %
           }
           else
           {
-            if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.62;
-            else bTagCutValue = 0.73;
+            if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.653;
+            else bTagCutValue = 0.705;
           }
         }
         
         for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
         {
-          
           otherSelectedJets.push_back( *selectedJets[iJet] );
           bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
           if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > bTagCutValue )
@@ -852,10 +851,6 @@ int main (int argc, char *argv[])
         }
         
         if(nBtags < 1) continue;
-        
-        cout << "selected!!!" << endl;
-        
-        continue;
         
         //get the MC matched jet combination, not the MVA best matched
 	      vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
@@ -1147,10 +1142,8 @@ int main (int argc, char *argv[])
           lightMonster->setIdParton2( event->idParton2() );
           lightMonster->setXParton2( event->xParton2() );
           lightMonster->setFactorizationScale( event->factorizationScale() );
+          lightMonster->setFlavHistPath( event->flavorHistoryPath() );
           lightMonster->setNPV(vertex.size());
-          lightMonster->setNPUBXm1(event->nPu(-1));
-          lightMonster->setNPU(event->nPu(0));
-          lightMonster->setNPUBXp1(event->nPu(1));
           lightMonster->setNTruePU(event->nTruePU());
           lightMonster->setTopMass(topMass);
           lightMonster->setAntiTopMass(antiTopMass);
@@ -1174,12 +1167,35 @@ int main (int argc, char *argv[])
           lightMonster->setMET( *mets[0] );
           lightMonster->setSelectedJets( otherSelectedJets );
           lightMonster->setBTagCSV(bTagCSV);
+          vector<TLorentzVector> triggerLeptons;
+          std::map<std::string, std::vector<TopTree::triggeredObject> > trigFilters = event->getTriggerFilters();
           if( eventSelectedSemiMu )
           {
             lightMonster->setLepton( *selectedMuons[0] );
             lightMonster->setLeptonCharge( selectedMuons[0]->charge() );
             float reliso = (selectedMuons[0]->chargedHadronIso() + max( 0.0, selectedMuons[0]->neutralHadronIso() + selectedMuons[0]->photonIso() - 0.5*selectedMuons[0]->puChargedHadronIso() ) ) / selectedMuons[0]->Pt(); // dBeta corrected
             lightMonster->setLeptonPFRelIso( reliso );
+            if(trigFilters.find("hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15") != trigFilters.end())
+            {
+              std::vector<TopTree::triggeredObject> trigObj = trigFilters["hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15"];
+              for(int i=0; i<trigObj.size(); i++)
+              {
+                TLorentzVector tmp;
+                tmp.SetPtEtaPhiM(trigObj[i].pt, trigObj[i].eta, trigObj[i].phi, 0.);
+                triggerLeptons.push_back( tmp );
+              }
+            }
+            else if(trigFilters.find("hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoFiltered10") != trigFilters.end())
+            {
+              std::vector<TopTree::triggeredObject> trigObj = trigFilters["hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoFiltered10"];
+              for(int i=0; i<trigObj.size(); i++)
+              {
+                TLorentzVector tmp;
+                tmp.SetPtEtaPhiM(trigObj[i].pt, trigObj[i].eta, trigObj[i].phi, 0.);
+                triggerLeptons.push_back( tmp );
+              }
+            }
+            else cout << "No known triggerFilter found for run:  " << event->runId() << endl;
           }
           else
           {
@@ -1197,7 +1213,19 @@ int main (int argc, char *argv[])
             else if (SCeta >= 2.4) EffectiveArea = 0.138;
             float reliso = (selectedElectrons[0]->chargedHadronIso() + max( selectedElectrons[0]->neutralHadronIso() + selectedElectrons[0]->photonIso()  - event->kt6PFJets_rho()*EffectiveArea, 0.) )/ selectedElectrons[0]->Pt(); // EffectiveArea corrected
             lightMonster->setLeptonPFRelIso( reliso );
+            if(trigFilters.find("hltEle27WP80TrackIsoFilter") != trigFilters.end())
+            {
+              std::vector<TopTree::triggeredObject> trigObj = trigFilters["hltEle27WP80TrackIsoFilter"];
+              for(int i=0; i<trigObj.size(); i++)
+              {
+                TLorentzVector tmp;
+                tmp.SetPtEtaPhiM(trigObj[i].pt, trigObj[i].eta, trigObj[i].phi, 0.);
+                triggerLeptons.push_back( tmp );
+              }
+            }
+            else cout << "No known triggerFilter found for run:  " << event->runId() << endl;
           }
+          lightMonster->setTriggerLeptons( triggerLeptons );
           lightMonster->setHadrBQuark( jetCombiner->GetHadrBQuark() );
           lightMonster->setHadrLQuark1( jetCombiner->GetLightQuark1() );
           lightMonster->setHadrLQuark2( jetCombiner->GetLightQuark2() );
