@@ -47,7 +47,7 @@ int main (int argc, char *argv[])
   int systematic = 0; // 0: off 1: minus 2: plus
   
   if (argc > 1) // JES shift is command line parameter 1
-    if (atoi(argv[1]) == 0 || atoi(argv[1]) == 1 || atoi(argv[1]) == 2 || atoi(argv[1]) == 3 || atoi(argv[1]) == 4  || atoi(argv[1]) == 5 || atoi(argv[1]) == 6  || atoi(argv[1]) == 7 || atoi(argv[1]) == 8 || atoi(argv[1]) == 9 || atoi(argv[1]) == 10 || atoi(argv[1]) == 11 || atoi(argv[1]) == 12 || atoi(argv[1]) == -1) // -1 == do the invertediso setup
+    if (atoi(argv[1]) == 0 || atoi(argv[1]) == 1 || atoi(argv[1]) == 2 || atoi(argv[1]) == 3 || atoi(argv[1]) == 4  || atoi(argv[1]) == 5 || atoi(argv[1]) == 6  || atoi(argv[1]) == 7 || atoi(argv[1]) == 8 || atoi(argv[1]) == 9 || atoi(argv[1]) == 10 || atoi(argv[1]) == 11 || atoi(argv[1]) == 12 || atoi(argv[1]) == 13 || atoi(argv[1]) == 14 || atoi(argv[1]) == 15 || atoi(argv[1]) == 16 || atoi(argv[1]) == 17 || atoi(argv[1]) == 18 ||atoi(argv[1]) == -1) // -1 == do the invertediso setup
       systematic=atoi(argv[1]);
   
   bool runSpecificSample=false;
@@ -61,6 +61,20 @@ int main (int argc, char *argv[])
     nSpecSample=atoi(argv[2]);
 
   }
+
+  bool correctJets=false;
+
+  //cout << systematic << " " << correctJets << endl;
+  if (argc > 1) {
+    if (atoi(argv[1]) >= 40) {
+      systematic=atoi(argv[1])-40;
+      correctJets=true;
+      //cout << "oil" << endl;
+    }
+  }
+  //cout << systematic << " " << correctJets << endl;
+
+  //exit(1);
 
   string postfix = ""; // to relabel the names of systematic samples
 
@@ -84,6 +98,19 @@ int main (int argc, char *argv[])
     postfix="_LessPU";
   if (systematic == 12)
     postfix="_NomPU";
+
+  if (systematic == 13)
+    postfix="_ttjetsscaleup";
+  if (systematic == 14)
+    postfix="_ttjetsscaledown";
+  if (systematic == 15)
+    postfix="_ttjetsmatchingup";
+  if (systematic == 16)
+    postfix="_ttjetsmatchingdown";
+  if (systematic == 17)
+    postfix="_ttjetsmassup";
+  if (systematic == 18)
+    postfix="_ttjetsmassdown";
 
   cout << "systematic: " << systematic << " -> Postfix = " << postfix << endl;
 
@@ -474,7 +501,7 @@ int main (int argc, char *argv[])
     // create a histos map to store histos in the btagfile
 
     map<string,TH1F*> histo1D_btag;
-    map<string,TH1F*> histo1D_syst;
+    map<string,TH1D*> histo1D_syst;
     map<string,TH2F*> histo2D_btag;
     map<string,TGraphErrors*> graphErr_btag;
   
@@ -822,15 +849,69 @@ int main (int argc, char *argv[])
 
 	// Correct jets for JES uncertainy systematics
 	
-	//for (unsigned int j=0;j<init_jets_corrected.size();j++)
-	//cout << "jet " << j << " pt " << init_jets_corrected[j]->Pt() << " eta " << init_jets_corrected[j]->Eta() << endl;
+	/*for (unsigned int j=0;j<init_jets_corrected.size();j++)
+	  cout << "jet " << j << " pt " << init_jets_corrected[j]->Pt() << endl;
+	
+	  cout << "MET " << mets[0]->Pt() << endl;*/
 	
 	if (systematic == 1)
 	  jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus",1);
 	else if (systematic == 2)
 	  jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus",1);
 
+	// here we apply correction factors to the jets which were obtained using the W-mass peak after double btag
+	
+	double jetScale = 1;
+
+	if (correctJets) {
+
+	  if (systematic == 0) // nominal
+	    jetScale = 1.00559;
+	  else if (systematic == 1) // JES-
+	    jetScale = 1.02061;
+	  else if (systematic == 2) // JES+
+	    jetScale = 0.993531;
+	  else if (systematic == 3) // UC-
+	    jetScale = 1.00559;
+	  else if (systematic == 4) // UC+
+	    jetScale = 1.00559;
+	  else if (systematic == 6) // JER-
+	    jetScale = 1.009;
+	  else if (systematic == 7) // JER+
+	    jetScale = 1.00073;
+	  else if (systematic == 10) // PU+
+	    jetScale = 1.00647;
+	  else if (systematic == 11) // PU-
+	    jetScale = 1.00468;
+	  else if (systematic == 13) // Q2 up
+	    jetScale = 1.01013;
+	  else if (systematic == 14) // Q2 down
+	    jetScale = 0.998297;
+	  else if (systematic == 15) // MEPS up
+	    jetScale = 1.00417;
+	  else if (systematic == 16) // MEPS down
+	    jetScale = 1.00417;
+	  else if (systematic == 17) // mass up
+	    jetScale = 1.00754;
+	  else if (systematic == 18) // mass down
+	    jetScale = 0.998656;
+	}
+
+	//cout << dataSetName << " - JetScale == " << jetScale << endl;
+
+	//exit(1);
+
+	jetTools->scaleJets(init_jets_corrected,mets[0],jetScale);
+
+	/*for (unsigned int j=0;j<init_jets_corrected.size();j++)
+	  cout << " after jet " << j << " pt " << init_jets_corrected[j]->Pt() << endl;
+
+	cout << " after MET " << mets[0]->Pt() << endl;
+
+	exit(1);*/
 	//double before = mets[0]->Pt();
+
+	//cout << mets[0]->Pt() << " " << mets[0]->Et() << " diff: " << (mets[0]->Pt()-mets[0]->Et())/mets[0]->Et() << endl;
 
 	//correctMETUnclusteredEnergy(TRootMET* inMET, vector<TRootJet*> inJets, vector<TRootMuon*> inMuons, vector<TRootElectron*> inElectrons, string direction)
 
@@ -917,8 +998,8 @@ int main (int argc, char *argv[])
 	  //cout << "ol" << endl;
 	  if (selectedJets[0]->Pt() < 45) selectedJets.clear();
 	  if (selectedJets[1]->Pt() < 45) selectedJets.clear();
-	  if (selectedJets[2]->Pt() < 40) selectedJets.clear();
-	  if (selectedJets[3]->Pt() < 40) selectedJets.clear();
+	  if (selectedJets[2]->Pt() < 45) selectedJets.clear();
+	  if (selectedJets[3]->Pt() < 45) selectedJets.clear();
 	  }*/
 
 	//selectedMuons = selection.GetSelectedMuons(vertex[0],selectedJets);	
@@ -957,13 +1038,13 @@ int main (int argc, char *argv[])
 	}
       }
 
-       double lumiWeight = lumiWeight_el;
-       scaleFactor = scaleFactor_el;
+      double lumiWeight = lumiWeight_el;
+      scaleFactor = scaleFactor_el;
 
-     selecTableSemiEl.Fill(d,0,scaleFactor*lumiWeight);
+      selecTableSemiEl.Fill(d,0,scaleFactor*lumiWeight);
 
-     if( triggedSemiEl) {
-       if(dataSetName.find("InvIso") != string::npos) selectedJets = selectedJetsNoEl;
+      if( triggedSemiEl) {
+	if(dataSetName.find("InvIso") != string::npos) selectedJets = selectedJetsNoEl;
        selecTableSemiEl.Fill(d,1,scaleFactor*lumiWeight);
        if (isGoodPV ) {
 	 selecTableSemiEl.Fill(d,2,scaleFactor*lumiWeight);
@@ -1358,7 +1439,7 @@ int main (int argc, char *argv[])
 	}
 
 	if (histo1D_syst.find("weight") == histo1D_syst.end()) {
-	  histo1D_syst["weight"] = new TH1F("weight_check","weight check;weight;nEvents",100,0,1);
+	  histo1D_syst["weight"] = new TH1D("weight_check","weight check;weight;nEvents",100,0,1);
 	}
 	histo1D_syst["weight"]->Fill(systw);
 	
@@ -1371,14 +1452,19 @@ int main (int argc, char *argv[])
 	float mW_chi2 = (*selectedJets[Permutation[0]]+*selectedJets[Permutation[1]]).M();
 
 	if (histo1D_syst.find("JEC_Wmass_chi2def_mu") == histo1D_syst.end()) {
-	  histo1D_syst["JEC_Wmass_chi2def_mu"] = new TH1F("JEC_Wmass_chi2def_mu","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
-	  histo1D_syst["JEC_Wmass_chi2def_el"] = new TH1F("JEC_Wmass_chi2def_el","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	  histo1D_syst["JEC_Wmass_chi2def_mu"] = new TH1D("JEC_Wmass_chi2def_mu","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	  histo1D_syst["JEC_Wmass_chi2def_el"] = new TH1D("JEC_Wmass_chi2def_el","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
 	}
 	
 	if (eventselectedSemiMu)
 	  histo1D_syst["JEC_Wmass_chi2def_mu"]->Fill(mW_chi2,systw);
 	if (eventselectedSemiEl)
 	  histo1D_syst["JEC_Wmass_chi2def_el"]->Fill(mW_chi2,systw);
+
+	//if (eventselectedSemiMu && event->eventId() == 7845316) {
+	//  cout << event->eventId() << " " << mW_chi2 << endl;
+	//  exit(1);
+	//}
 
 	/* using the non-tagged jets in a 2-btag event */
 
@@ -1392,19 +1478,19 @@ int main (int argc, char *argv[])
 	}
 
 	if (histo1D_syst.find("JEC_Wmass_doublebtagdef_mu") == histo1D_syst.end()) {
-	  histo1D_syst["JEC_Wmass_doublebtagdef_mu"] = new TH1F("JEC_Wmass_doublebtagdef_mu","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
-	  histo1D_syst["JEC_Wmass_doublebtagdef_el"] = new TH1F("JEC_Wmass_doublebtagdef_el","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	  histo1D_syst["JEC_Wmass_doublebtagdef_mu"] = new TH1D("JEC_Wmass_doublebtagdef_mu","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
+	  histo1D_syst["JEC_Wmass_doublebtagdef_el"] = new TH1D("JEC_Wmass_doublebtagdef_el","M_{W} for jetcomb with smallest #Chi^{2} value of the 12 combinations;m_{W} (GeV/c^{2});#events",80,20,180);
 	}
 	
 	//cout << nBtags << " " << notTagged.size() << endl;
 
-	if (nBtags == 2 && notTagged.size()==2) {
+	if (nBtags == 2) {
 	  for (int l1=0; l1<notTagged.size();l1++) {
 	    for (int l2=0; l2<notTagged.size();l2++) {
 	      if (l1==l2) continue;
 	      if (l1>l2) continue;
 	      
-	      double mw_doublebtag=(*selectedJets[Permutation[l1]]+*selectedJets[Permutation[l2]]).M();
+	      double mw_doublebtag=(*selectedJets[notTagged[l1]]+*selectedJets[notTagged[l2]]).M();
 	      //cout << "     " << l1 << " " << l2 << " " << mw_doublebtag << endl;
 	      if (eventselectedSemiMu)
 		histo1D_syst["JEC_Wmass_doublebtagdef_mu"]->Fill(mw_doublebtag,systw);
@@ -2054,7 +2140,7 @@ int main (int argc, char *argv[])
 	//Setting some extra variables which could help reducing the amount of background:
 	
 	NTuple->setnJets(selectedJets.size());
-	NTuple->setMET(mets[0]->Et());
+	NTuple->setMET(mets[0]->Pt());
 	NTuple->setBtag_trackCountingHighEffBJetTags_hadb((*(selectedJets[Permutation[2]])).btag_trackCountingHighEffBJetTags());
 	
 	
@@ -2335,12 +2421,12 @@ int main (int argc, char *argv[])
 
       TDirectory* th1dirs = BTreeFile->mkdir("SystPlots");
 
-      for(std::map<std::string,TH1F*>::const_iterator it = histo1D_syst.begin(); it != histo1D_syst.end(); it++) {
-	  TH1F *temp = it->second;
+      for(std::map<std::string,TH1D*>::const_iterator it = histo1D_syst.begin(); it != histo1D_syst.end(); it++) {
+	  TH1D *temp = it->second;
 	  int N = temp->GetNbinsX();
-	  temp->SetBinContent(N,temp->GetBinContent(N)+temp->GetBinContent(N+1));
-	  temp->SetBinContent(N+1,0);
-	  temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries..
+	  //temp->SetBinContent(N,temp->GetBinContent(N)+temp->GetBinContent(N+1));
+	  //temp->SetBinContent(N+1,0);
+	  //temp->SetEntries(temp->GetEntries()-2); // necessary since each SetBinContent adds +1 to the number of entries..
 	  th1dirs->cd();
 	  temp->Write();
 
