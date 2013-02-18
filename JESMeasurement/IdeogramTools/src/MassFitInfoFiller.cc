@@ -37,7 +37,7 @@ void fillMassFitInfoEvent(LightMonster* monster, const ideogram::MassFitInfoHead
     event.nMuon = 1;
   }
   event.nVertex = monster->nPV();
-  event.nPU = monster->nPU();
+  event.nPU = monster->nTruePU();
   event.leptonCharge = monster->leptonCharge();
   TLorentzVector lepton = monster->lepton();
   event.leptonPt = lepton.Pt();
