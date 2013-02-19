@@ -30,6 +30,7 @@
 
 #include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
 #include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Tools/interface/LeptonTools.h"
 #include "TopTreeAnalysisBase/Content/interface/Dataset.h"
 #include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
 #include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
@@ -78,7 +79,7 @@ int main (int argc, char *argv[])
   float LuminosityMu = 19125.189, LuminosityEl = 18716.074; // Average:  18920.6315 +- 756.82526
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = false; // false:  files are created but no events are filled
+  bool writeASCIIstuff = true; // false:  files are created but no events are filled
   bool useOnlyHighestWeight = false;
   if(writeASCIIstuff) useOnlyHighestWeight = false;
   
@@ -109,7 +110,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
     
@@ -120,7 +121,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -498,6 +499,11 @@ int main (int argc, char *argv[])
   LumiReWeighting LumiWeightsUp_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_up.root", "pileup", "pileup");
   LumiReWeighting LumiWeightsDown_mu = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_down.root", "pileup", "pileup");
   
+  // initialize lepton SF
+  LeptonTools* leptonTools = new LeptonTools(false);
+  leptonTools->readMuonSF("LeptonSF/Muon_ID_iso_Efficiencies_Run_2012ABCD_53X.root", "LeptonSF/MuonEfficiencies_Run_2012A_2012B_53X.root", "LeptonSF/MuonEfficiencies_Run_2012C_53X.root", "LeptonSF/TriggerMuonEfficiencies_Run_2012D_53X.root");
+  leptonTools->readSelectronSF();
+  
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
   resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
@@ -545,13 +551,13 @@ int main (int argc, char *argv[])
     double dataSetElSF = 1., dataSetMuSF = 1.;
     if(dataSet->Name().find("QCD") == 0)
     {
-      dataSetElSF = 0.749505;
-      dataSetMuSF = 0.946939;
+      dataSetElSF = 0.872234;
+      dataSetMuSF = 0.955041;
     }
     else if( ! ( dataSet->Name().find("Data") == 0 ) )
     {
-      dataSetElSF = 0.985636;
-      dataSetMuSF = 1.01096;
+      dataSetElSF = 1.;
+      dataSetMuSF = 1.;
     }
     
     cout << "Processing DataSet: " << dataSetName << "  containing " << nEvent << " events" << endl;
@@ -697,6 +703,15 @@ int main (int argc, char *argv[])
       // muoncharge-string
       string leptonCharge, leptonDecay, leptonChargeIncl;
       float Luminosity;
+      TLorentzVector lepton = monster->lepton();
+      vector<TLorentzVector> triggObjs = monster->triggerLeptons();
+      
+      bool triggerMatch = false;
+      for(size_t iObj=0; iObj<triggObjs.size(); iObj++)
+        if( lepton.DeltaR(triggObjs[iObj]) < 0.1 )
+          triggerMatch = true;
+      if(!triggerMatch) continue;
+      
       if(monster->selectedSemiMu())
       {
         if(dataSet->Title().find("Data_El") == 0)
@@ -707,6 +722,7 @@ int main (int argc, char *argv[])
         if(monster->semiMuDecay()) nSemiMu_TTSemiMu++;
         else nSemiMu++;
         if(!writeASCIIstuff) monster->setEventWeight( monster->eventWeight() * dataSetMuSF );
+        monster->setEventWeight( monster->eventWeight() * leptonTools->getMuonSF(lepton.Eta(), lepton.Pt()) );
       }
       else
       {
@@ -718,6 +734,7 @@ int main (int argc, char *argv[])
         if(monster->semiElDecay()) nSemiEl_TTSemiEl++;
         else nSemiEl++;
         if(!writeASCIIstuff) monster->setEventWeight( monster->eventWeight() * dataSetElSF );
+        monster->setEventWeight( monster->eventWeight() * leptonTools->getElectronSF(lepton.Eta(), lepton.Pt()) );
       }
       if(monster->leptonCharge() == 1)
       {
@@ -742,7 +759,6 @@ int main (int argc, char *argv[])
       
       // the selected jets!
       vector<TLorentzVector> selectedJets = monster->selectedJets();
-      TLorentzVector lepton = monster->lepton();
       TLorentzVector MET = monster->met();
       vector<float> btagCSV = monster->bTagCSV();
       int nBtags = 0, nJets = 0;
@@ -789,7 +805,7 @@ int main (int argc, char *argv[])
           histo1D["maxIndexHadrJets"]->Fill(maxIndex);
         }
       }
-      continue;
+      
 //      cout << "Luminosity: " << Luminosity << "  monster->eventWeight(): " << monster->eventWeight() << "  lumiWeight: " << lumiWeight << endl;
       MSPlot["nPV_beforechi2"+leptonDecay]->Fill(monster->nPV(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
       MSPlot["RelPFISo"+leptonDecay]->Fill(monster->leptonPFRelIso(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
@@ -1050,7 +1066,7 @@ int main (int argc, char *argv[])
           outFileSemiMu << "LumiSection: " << monster->lumiBlockID() << endl;
           outFileSemiMu << "EventNr: " << monster->eventID() << endl;
           outFileSemiMu << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightDown << "  " << lumiWeightUp << endl;
-          outFileSemiMu << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nPU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
+          outFileSemiMu << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nTruePU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
           outFileSemiMu << lepton.Phi() << "  " << lepton.Eta() << "  " << lepton.Pt() << "  " << monster->leptonCharge() << "  " << MET.Px() << "  " << MET.Py() << endl;
           outFileSemiMu << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagCSV[0] << "  "
             << selectedJets[1].Pt() << "  " << selectedJets[1].Eta() << "  " << selectedJets[1].Phi() << "  " << btagCSV[1] << "  "
@@ -1089,7 +1105,7 @@ int main (int argc, char *argv[])
           outFileSemiEl << "LumiSection: " << monster->lumiBlockID() << endl;
           outFileSemiEl << "EventNr: " << monster->eventID() << endl;
           outFileSemiEl << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightDown << "  " << lumiWeightUp << endl;
-          outFileSemiEl << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nPU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
+          outFileSemiEl << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nTruePU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
           outFileSemiEl << lepton.Phi() << "  " << lepton.Eta() << "  " << lepton.Pt() << "  " << monster->leptonCharge() << "  " << MET.Px() << "  " << MET.Py() << endl;
           outFileSemiEl << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagCSV[0] << "  "
             << selectedJets[1].Pt() << "  " << selectedJets[1].Eta() << "  " << selectedJets[1].Phi() << "  " << btagCSV[1] << "  "
@@ -1114,10 +1130,14 @@ int main (int argc, char *argv[])
           if( minChi2[iCombi] < maxChi2 )
           {
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
-            if( dataSetName.find("W_WJets") == 0 )
+            if( dataSetName.find("W_WJets") == 0 || dataSetName.find("QCD") == 0 )
             {
-              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
-              histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight / (double) mTop.size() );
+              float factor = 1;
+              if( monster->selectedSemiMu() ) factor = LuminosityMu*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
+              else factor = LuminosityEl*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
+              
+              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], factor * (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
+              histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], factor / (double) mTop.size() );
               histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
               histo2D["wJets_mTopFitted_VS_combiWeight"]->Fill(mTop[iCombi], (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
             }
@@ -1197,7 +1217,7 @@ int main (int argc, char *argv[])
   histo1D["mTop_Fit_goodcombi"]->Fit("gaus","QR","",160,185);
   
   // Fit some histo's
-  if( histo1D["wJets_mTopFitted"]->GetEntries() > 2 )
+  if( histo1D["wJets_mTopFitted"]->GetEntries() > 1 )
   {
 	  RooRealVar mTopFitWjets("mTopFitWjets","mTopFitWjets",50.,650.);
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
@@ -1243,7 +1263,7 @@ int main (int argc, char *argv[])
 		TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
 		tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
 		tempCanvas->Write();
-		tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
+//		tempCanvas->SaveAs( (pathPNG+it->first+".pdf").c_str() );
 	}
 	
 	fout->cd();
@@ -1299,6 +1319,8 @@ int main (int argc, char *argv[])
   }
   
   fout->Close();
+  
+  delete leptonTools;
   
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
 
