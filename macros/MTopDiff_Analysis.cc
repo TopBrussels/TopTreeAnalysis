@@ -79,7 +79,7 @@ int main (int argc, char *argv[])
   float LuminosityMu = 19125.189, LuminosityEl = 18716.074; // Average:  18920.6315 +- 756.82526
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = true; // false:  files are created but no events are filled
+  bool writeASCIIstuff = false; // false:  files are created but no events are filled
   bool useOnlyHighestWeight = false;
   if(writeASCIIstuff) useOnlyHighestWeight = false;
   
@@ -95,8 +95,8 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
     
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
@@ -106,7 +106,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
@@ -121,7 +121,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -502,7 +502,7 @@ int main (int argc, char *argv[])
   // initialize lepton SF
   LeptonTools* leptonTools = new LeptonTools(false);
   leptonTools->readMuonSF("LeptonSF/Muon_ID_iso_Efficiencies_Run_2012ABCD_53X.root", "LeptonSF/MuonEfficiencies_Run_2012A_2012B_53X.root", "LeptonSF/MuonEfficiencies_Run_2012C_53X.root", "LeptonSF/TriggerMuonEfficiencies_Run_2012D_53X.root");
-  leptonTools->readSelectronSF();
+  leptonTools->readElectronSF();
   
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
@@ -551,8 +551,8 @@ int main (int argc, char *argv[])
     double dataSetElSF = 1., dataSetMuSF = 1.;
     if(dataSet->Name().find("QCD") == 0)
     {
-      dataSetElSF = 0.872234;
-      dataSetMuSF = 0.955041;
+      dataSetElSF = 0.868831;
+      dataSetMuSF = 0.947696;
     }
     else if( ! ( dataSet->Name().find("Data") == 0 ) )
     {
@@ -722,7 +722,8 @@ int main (int argc, char *argv[])
         if(monster->semiMuDecay()) nSemiMu_TTSemiMu++;
         else nSemiMu++;
         if(!writeASCIIstuff) monster->setEventWeight( monster->eventWeight() * dataSetMuSF );
-        monster->setEventWeight( monster->eventWeight() * leptonTools->getMuonSF(lepton.Eta(), lepton.Pt()) );
+        if( !dataSet->Title().find("Data") == 0 )
+          monster->setEventWeight( monster->eventWeight() * leptonTools->getMuonSF(lepton.Eta(), lepton.Pt()) );
       }
       else
       {
@@ -734,7 +735,8 @@ int main (int argc, char *argv[])
         if(monster->semiElDecay()) nSemiEl_TTSemiEl++;
         else nSemiEl++;
         if(!writeASCIIstuff) monster->setEventWeight( monster->eventWeight() * dataSetElSF );
-        monster->setEventWeight( monster->eventWeight() * leptonTools->getElectronSF(lepton.Eta(), lepton.Pt()) );
+        if( !dataSet->Title().find("Data") == 0 )
+          monster->setEventWeight( monster->eventWeight() * leptonTools->getElectronSF(lepton.Eta(), lepton.Pt()) );
       }
       if(monster->leptonCharge() == 1)
       {
