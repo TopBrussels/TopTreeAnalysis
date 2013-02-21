@@ -7,7 +7,7 @@
 double getPtWeight(TFile* f, std::string plot, double pt_jet) {
 
     
-    TH1D* hist = (TH1D*) f->Get(plot.c_str());    
+    TH1D* hist = (TH1D*) f->Get(plot.c_str());
 	
     if (hist) {
         
@@ -183,6 +183,10 @@ vector<double> calcXS(bool silent, float btagEff, float uncbtagEff, double effCH
 	//float effCHiSq = 0.868904;
 	
 	double misTagRate = FitForXSResults[offset+4];
+	double u_misTagRate = FitForXSResults[offset+5];
+    
+    //uncbtagEff=0;
+    // u_misTagRate=0;
 	
 	double FracBoverTotal = FitForXSResults[FitForXSResults.size()-1];
 	
@@ -202,7 +206,7 @@ vector<double> calcXS(bool silent, float btagEff, float uncbtagEff, double effCH
 	uncvals.push_back(btagEff);
 	uncvals.push_back(uncbtagEff);
 	uncvals.push_back(misTagRate);
-	uncvals.push_back(0.);
+	uncvals.push_back(u_misTagRate);
 	uncvals.push_back(FracBoverTotal);
 	uncvals.push_back(effCHiSq*effmlb);
 	uncvals.push_back(effsel);
@@ -258,9 +262,10 @@ vector<double> calcXS(bool silent, float btagEff, float uncbtagEff, double effCH
 		cout << "+> eff(sel) = " << effsel << endl;
 		cout << "+> eff(ChiSq) = " << effCHiSq << endl;
 		cout << "+> eff(mlb) = " << effmlb << endl;
+        cout << "+> #b/(#b+#q) = " << FracBoverTotal << endl;
 		cout << "+> eff(btag_cut) = " << btagCutEff << endl;
 		cout << "+> eff(btag_est) = " << btagEff << " +- " << uncbtagEff << endl;
-		cout << "+> ttbar eff(non-b-btag) = " << misTagRate << endl;
+		cout << "+> ttbar eff(non-b-btag) = " << misTagRate << " +- " << u_misTagRate << endl;
 		cout << "+> ttbar b/(nb+b) = " << FracBoverTotal << endl;
 		cout << "+> Ntt = " << nttMC << endl;
 		//cout << "+> NV_fitted = " << nV << endl;
@@ -340,6 +345,8 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
     
     nTTbarBeforeMLBCUT = 0;
     nTTbarAfterMLBCUT = 0;
+        
+    for (unsigned int i=0; i<20; i++) nTTbarAfterChiSq_dyn[i]=0;
     
     for (unsigned int i=0; i<100; i++) nTTbarAfterRefSel_nPV[i]=0;
 	
@@ -353,7 +360,7 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	//	cout << runSamples_[i] << endl;
 	//}
 	
-    nTaggers=8;
+    nTaggers=7;
     //nTaggers=3;
 	
     if (doPseudoExp) nTaggers=1;
@@ -383,7 +390,7 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	nIncreaseSample_=1;
 	//int increaseSampletmp_[1]={26};
 	//int increaseSampletmp_[1]={28};
-	int increaseSampletmp_[1]={-99};
+	/*int increaseSampletmp_[1]={-99};
 	increaseSample_ = new int[1];
 	
 	//nIncreaseSample_=7;
@@ -393,7 +400,7 @@ myNTupleAnalyzer::myNTupleAnalyzer(TString *inDir, TString *outDir, int *runSamp
 	for(int i=0; i<nIncreaseSample_; i++){
 		increaseSample_[i]=increaseSampletmp_[i];
 	}
-	increaseWeightFraction_=1.5;
+	increaseWeightFraction_=1.5;*/
 	
 	desiredIntLum_ = desiredIntLum;
 	nPseudoExp_ = nPseudoExp;
@@ -538,11 +545,14 @@ const double upRangeVarLR[2]={500,2.4};
 
 //const int nBinsVarSC[2]={20,10}; //for 1D, then the 10 is not taken into account
 //const int nBinsVarSC[2]={51,20}; //for 1D, then the 10 is not taken into account
+
 const int nBinsVarSC[2]={18,20}; //for 1D, then the 10 is not taken into account <-- THIS IS STILL USED
-//const int nBinsVarSC[2]={20,10};
 const double lowRangVarSC[2]={0,0};
 const double upRangeVarSC[2]={500,2.4};
-//const double upRangeVarSC[2]={500,3.5};
+
+/*const int nBinsVarSC[2]={50,80}; //for 1D, then the 10 is not taken into account <-- THIS IS STILL USED
+const double lowRangVarSC[2]={40,0};
+const double upRangeVarSC[2]={300,2};*/
 
 //const double lowRangVarSC[2]={0,-1};
 //const double upRangeVarSC[2]={500,1};
@@ -708,14 +718,46 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     cout << round(100,pom*1000) << endl;
     
     exit(1);*/
-
+    
+    bool doVariableChi2cut = false;
+    
+    double* chi2cuts = new double[8];
+    
+    //{110,125,125,125,125,125,125,125};
+    /*chi2cuts[0]=110;
+    chi2cuts[1]=125;
+    chi2cuts[2]=100;
+    chi2cuts[3]=100;
+    chi2cuts[4]=120;
+    chi2cuts[5]=90;
+    chi2cuts[6]=110;
+    chi2cuts[7]=120;*/
+    
+    if (!doVariableChi2cut)
+        for (int i=0;i<nTaggers;i++)
+            chi2cuts[i]=matchChiSquareCut_;
+            //chi2cuts[i]=100.;
+    
+    else {
+        chi2cuts[0]=110;
+        chi2cuts[1]=125;
+        chi2cuts[2]=100;
+        chi2cuts[3]=100;
+        chi2cuts[4]=120;
+        chi2cuts[5]=90;
+        chi2cuts[6]=110;
+        chi2cuts[7]=120;
+    }
+    
     useTTJetsExcl_=false;
+    
+    bool useMeasuredMistag = true;
 
 	bool doOnlyMSPlot = false;
     
     bool btagonly = false;
     
-    bool doBiasStudy=true;
+    bool doBiasStudy=false;
 
     bool doFBiasStudy=false;
     
@@ -836,11 +878,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     
     
     // NOMINAL SET OF SAMPLES
-    nTaggers=1;
-    nWP=3;
+    //nTaggers=1;
+    //nWP=3;
     
     if (useTTJetsExcl_) {
-        nTTbarBeforeRefSel = 24460323/0.438048; //(24460323*0.438048)+(11753993*0.104976)+(31131582*0.456976); // Summer12_DR53X prod V4 3 ttjets samples
+        nTTbarBeforeRefSel = 24860323/0.438048; //(24460323*0.438048)+(11753993*0.104976)+(31131582*0.456976); // Summer12_DR53X prod V4 3 ttjets samples
         nRunSamples_=15;
         inRootFile[0] = "BtagTree_TTbarJets_SemiLepton";
         inRootFile[1] = "BtagTree_TTbarJets_DiLepton";
@@ -1049,6 +1091,15 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			inRootFile[5] = "BtagTree_ZJets";
 			inRootFile[6] = "BtagTree_WJets";*/
             
+            /*nTTbarBeforeRefSel=5357195;
+            
+            for (int s=0;s<nRunSamples_;s++){
+                if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
+                    string rename = ((string)inRootFile[s])+"_scaledown";
+                    inRootFile[s]=(TString) rename;
+                }
+			}*/
+            
 			if (nPDFWeight != -1) {
 				stringstream s; s<<nPDFWeight;
 				sampleType="PDF-Uncertainty-Weight-"+s.str();
@@ -1123,28 +1174,36 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		case 7:
 			sampleType="TTJets-ScaleDown";
             sampleSel="TTJets";
-			nTTbarBeforeRefSel=5346767;
+			nTTbarBeforeRefSel=5357195;
 
-            for (int s=0;s<nRunSamples_;s++){
+            /*for (int s=0;s<nRunSamples_;s++){
                 if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
-                    string rename = ((string)inRootFile[s])+"_ScaleDown";
+                    string rename = ((string)inRootFile[s])+"_scaledown";
                     inRootFile[s]=(TString) rename;
                 }
-			}
+			}*/
+            
+            for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_ttjetsscaledown";
+            }
             
 			break;
 			
 		case 8:
 			sampleType="TTJets-ScaleUp";
             sampleSel="TTJets";
-			nTTbarBeforeRefSel=4619133;
+			nTTbarBeforeRefSel=4703202;
 			
-			for (int s=0;s<nRunSamples_;s++){
+			/*for (int s=0;s<nRunSamples_;s++){
                 if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
-                    string rename = ((string)inRootFile[s])+"_ScaleUp";
+                    string rename = ((string)inRootFile[s])+"_scaleup";
                     inRootFile[s]=(TString) rename;
                 }
-			}
+			}*/
+            
+            for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_ttjetsscaleup";
+            }
             
             break;
 
@@ -1153,12 +1212,16 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             sampleSel="TTJets";
 			nTTbarBeforeRefSel=5415003;
                                
-			for (int s=0;s<nRunSamples_;s++){
+			/*for (int s=0;s<nRunSamples_;s++){
                 if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
-                    string rename = ((string)inRootFile[s])+"_MatchingUp";
+                    string rename = ((string)inRootFile[s])+"_matchingup";
                     inRootFile[s]=(TString) rename;
                 }
-			}
+			}*/
+            
+            for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_ttjetsmatchingup";
+            }
 
             break;
 			
@@ -1167,12 +1230,16 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             sampleSel="TTJets";
 			nTTbarBeforeRefSel=5476715;
 			
-			for (int s=0;s<nRunSamples_;s++){
+			/*for (int s=0;s<nRunSamples_;s++){
                 if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
-                    string rename = ((string)inRootFile[s])+"_MatchingDown";
+                    string rename = ((string)inRootFile[s])+"_matchingdown";
                     inRootFile[s]=(TString) rename;
                 }
-			}
+			}*/
+            
+            for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_ttjetsmatchingdown";
+            }
             
             break;
 
@@ -1243,7 +1310,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		case 17:
 			sampleType="WJetsXSDown-50perc";
             sampleSel="WJets";
-			WJets_scale=0.5;	
+			WJets_scale=0.5;
             break;
 			
 		case 18:
@@ -1270,7 +1337,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			sampleType="RightReg-nominal";
 			
 			leftlimit=70;
-			centerleftlimit=170;
+			centerleftlimit=160;
 			rightlimit=300;
 			
 			break;
@@ -1279,7 +1346,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			sampleType="RightReg-smaller";
 						
 			leftlimit=70;
-			centerleftlimit=170;
+			centerleftlimit=160;
 			rightlimit=250;
 			
 			break;
@@ -1288,7 +1355,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			sampleType="RightReg-bigger";
 						
 			leftlimit=70;
-			centerleftlimit=170;
+			centerleftlimit=160;
 			rightlimit=350;
 			
 			break;
@@ -1296,31 +1363,53 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         case 24:
 			sampleType="TopMass-163.5";
             sampleSel="TTJets";
-			nRunSamples_=7;
-			nTTbarBeforeRefSel=1633191;
-			inRootFile[0] = "BtagTree_TTbarJets_Mass_163_5_GeV";
-			inRootFile[1] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[5] = "BtagTree_ZJets";
-			inRootFile[6] = "BtagTree_WJets";
+			nTTbarBeforeRefSel=5476715;
 			
+			/*for (int s=0;s<nRunSamples_;s++){
+                if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
+                    string rename = ((string)inRootFile[s])+"_mass_163_5";
+                    inRootFile[s]=(TString) rename;
+                }
+			}*/
+            
+            for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_ttjetsmassdown";
+            }
+            
             break;
             
         case 25:
 			sampleType="TopMass-181.5";
             sampleSel="TTJets";
-			nRunSamples_=7;
-			nTTbarBeforeRefSel=1665344;
-			inRootFile[0] = "BtagTree_TTbarJets_Mass_181_5_GeV";
-			inRootFile[1] = "BtagTree_ST_SingleTop_tChannel_t";
-			inRootFile[2] = "BtagTree_ST_SingleTop_tChannel_tbar";
-			inRootFile[3] = "BtagTree_ST_SingleTop_tWChannel_t";
-			inRootFile[4] = "BtagTree_ST_SingleTop_tWChannel_tbar";
-			inRootFile[5] = "BtagTree_ZJets";
-			inRootFile[6] = "BtagTree_WJets";
+			nTTbarBeforeRefSel=5415003;
 			
+			/*for (int s=0;s<nRunSamples_;s++){
+                if (((string)inRootFile[s]).find("TTbarJets") != string::npos) {
+                    string rename = ((string)inRootFile[s])+"_mass_181_5";
+                    inRootFile[s]=(TString) rename;
+                }
+			}*/
+            
+            for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_ttjetsmassup";
+            }
+            
+            break;
+
+            
+            
+        case 26:
+			sampleType="UnclusteredEnergy+";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_METUnClusteredEnergyPlus";
+            }
+			break;
+            
+        case 27:
+			sampleType="UnclusteredEnergy-";
+			for (unsigned int i=0; i<nRunSamples_; i++) {
+                if (((string)inRootFile[i]).find("InvIso") == -1) inRootFile[i] = inRootFile[i]+"_METUnClusteredEnergyMinus";
+            }
 			break;
             
         default:
@@ -1517,7 +1606,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
     
     //cout << bad_event.size() << endl;
 
-    
+    bool changed=false;
+
 	for (int iRootFile=0; iRootFile<nrFiles; iRootFile++){
 				
 		//exit(1);
@@ -1604,12 +1694,78 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			}			
 		}
     
-		for(int ev=0; ev < nEvent; ev++){  
+		//TRandom3 *rand = new TRandom3();
+        //rand->SetSeed(0);
+                        
+        for(int ev=0; ev < nEvent; ev++){
             
 			float weight = 0;
 			float weightfactor=1;
+
             
+            /*double scale = 0.1;
+             
+            if (scale != 1 && ((string)inRootPath).find("TTbarJets") != string::npos) {
+             
+             double randomskip = rand->Uniform(1);
+             
+             if(randomskip>scale)
+                 continue;
+                
+            }*/
+
 			tree_->GetEvent(ev);
+            
+            /*if (NTuple->dataSetName().find("TTbarJets_SemiLepton") == 0)
+                NTuple->setWeight( NTuple->weight() * ((225.2*0.444637)/98.6484) );
+            if (NTuple->dataSetName().find("TTbarJets_DiLepton") == 0)
+                NTuple->setWeight( NTuple->weight() * ((225.2*0.111128)/23.6406) );
+            if (NTuple->dataSetName().find("TTbarJets_FullHadronic") == 0)
+                NTuple->setWeight( NTuple->weight() * ((225.2*0.444234)/102.911) );*/
+
+            /*if (NTuple->dataSetName().find("TTbarJets_SemiLepton") == 0)
+                NTuple->setWeight( NTuple->weight() * ((225.2*2*(1./3.)*(2./3.))/98.6484) );
+            if (NTuple->dataSetName().find("TTbarJets_DiLepton") == 0)
+                NTuple->setWeight( NTuple->weight() * ((225.2*(1./3.)*(1./3.))/23.6406) );
+            if (NTuple->dataSetName().find("TTbarJets_FullHadronic") == 0)
+                NTuple->setWeight( NTuple->weight() * ((225.2*(2./3.)*(2./3.))/102.911) );
+            
+            if (scale !=1 && NTuple->dataSetName().find("TTbarJets") != string::npos) {
+                
+                if (!changed){
+                    
+                    nTTbarBeforeRefSel=nTTbarBeforeRefSel*scale;
+                    changed=true;
+                    
+                }
+                
+                NTuple->setWeight(1./((1./NTuple->weight())*scale));
+            
+            }*/
+            
+                        
+            /*if (useTTJetsExcl_ && NTuple->dataSetName().find("TTbarJets_Semi") == 0) {
+            
+                double newSF = NTuple->scalefactor();
+                
+                if (NTuple->truesemiMu())
+                    newSF = newSF * (0.495539/0.503159);
+                else if (NTuple->truesemiEl())
+                    newSF = newSF * (0.439344/0.443027);
+                else {
+                    //cout << NTuple->dataSetName() << " contains more than just semi-mu/el events" << endl;
+                    newSF = newSF * (0.0651178/0.0538139);
+                }
+                
+                //cout << NTuple->scalefactor() << " " << newSF << endl;
+                
+                NTuple->setScaleFactor(newSF);
+                NTuple->setScaleFactor3D(newSF);
+                
+                //cout << NTuple->scalefactor();
+                //exit(1);
+            
+            }*/
             
             //if (fabs(NTuple->partonFlavour()) == 5 && NTuple->mlj() > 170) continue;
             //if (fabs(NTuple->partonFlavour()) != 5) continue;
@@ -1620,14 +1776,18 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             //    if (NTuple->MET() < 40)
             //        continue;   
             
-            //if (decay == 1 && NTuple->mvaTrigID() < 0.8) continue;
-            //cout << "ok1" << endl;
+            //if (!NTuple->truesemiMu()) conti nue;
+            
+            //cout << decay << " " << NTuple->semiMu() << " " << NTuple->truesemiMu() << endl;
+            
             if (decay == 0 && NTuple->MET() <= 30) continue;
             if (decay == 1 && NTuple->MET() <= 40) continue;
             
-            //if (NTuple->ptMuon() < 30) continue;
+            //if (decay == 1 && NTuple->ptMuon() < 40) continue;
             
-            //if (decay == 1 && NTuple->mvaTrigID() < 0.5) continue;
+            //if (decay == 1 && NTuple->mvaTrigID() < 0.9) continue;
+            
+            //if (decay == 0 && NTuple->chargeMuon() == -1) continue;
                         
             //cout << "ok1a" << endl;
 
@@ -1835,9 +1995,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             //WJets_scale=1.;
 			if (doPseudoExp_)
 				weight = (1/origLumi)*desiredIntLum_*weightfactor;
-			else if (NTuple->dataSetName()=="WJets")
+			else if (NTuple->dataSetName().find("WJets") != string::npos)
 				weight = (1/origLumi)*desiredIntLum_*weightfactor*NTuple->scalefactor()*WJets_scale;
-			else if (NTuple->dataSetName()=="ZJets")
+			else if (NTuple->dataSetName().find("ZJets") != string::npos)
 				weight = (1/origLumi)*desiredIntLum_*weightfactor*NTuple->scalefactor()*ZJets_scale;
 			else
 				weight = (1/origLumi)*desiredIntLum_*weightfactor*NTuple->scalefactor();
@@ -1899,6 +2059,50 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             
             float weight_nonrew=weight;
             
+            if (decay == 0) { // Trigger + ID + ISO SF's for mu+jets
+                if (fabs(NTuple->etaMuon()) > 0 && fabs(NTuple->etaMuon()) < 0.9)
+                    weight_nonrew=weight_nonrew*0.980958*0.993704*0.995413;
+                else if (fabs(NTuple->etaMuon()) > 0.9 && fabs(NTuple->etaMuon()) < 1.2)
+                    weight_nonrew=weight_nonrew*0.963804*0.990908*0.999372;
+                else if (fabs(NTuple->etaMuon()) > 1.2 && fabs(NTuple->etaMuon()) < 2.1)
+                    weight_nonrew=weight_nonrew*0.994634*0.99803*1.00332;
+            }
+            else if (decay == 1) {
+                //weight_nonrew=weight_nonrew*0.9;
+                if (fabs(NTuple->etaMuon()) > 0 && fabs(NTuple->etaMuon()) < 0.8) {
+                    
+                    if (fabs(NTuple->ptMuon()) > 30 && fabs(NTuple->ptMuon()) < 40)
+                        weight_nonrew=weight_nonrew*0.950*0.984;
+                    else if (fabs(NTuple->ptMuon()) > 40 && fabs(NTuple->ptMuon()) < 50)
+                        weight_nonrew=weight_nonrew*0.966*0.999;
+                    else if (fabs(NTuple->ptMuon()) > 50 && fabs(NTuple->ptMuon()) < 200)
+                        weight_nonrew=weight_nonrew*0.961*0.999;
+                    
+                }
+                else if (fabs(NTuple->etaMuon()) > 0.8 && fabs(NTuple->etaMuon()) < 1.48) {
+                    
+                    if (fabs(NTuple->ptMuon()) > 30 && fabs(NTuple->ptMuon()) < 40)
+                        weight_nonrew=weight_nonrew*0.957*0.967;
+                    else if (fabs(NTuple->ptMuon()) > 40 && fabs(NTuple->ptMuon()) < 50)
+                        weight_nonrew=weight_nonrew*0.961*0.983;
+                    else if (fabs(NTuple->ptMuon()) > 50 && fabs(NTuple->ptMuon()) < 200)
+                        weight_nonrew=weight_nonrew*0.963*0.988;
+                    
+                }
+                else if (fabs(NTuple->etaMuon()) > 1.48 && fabs(NTuple->etaMuon()) < 2.50) {
+                    
+                    if (fabs(NTuple->ptMuon()) > 30 && fabs(NTuple->ptMuon()) < 40)
+                        weight_nonrew=weight_nonrew*0.922*0.991;
+                    else if (fabs(NTuple->ptMuon()) > 40 && fabs(NTuple->ptMuon()) < 50)
+                        weight_nonrew=weight_nonrew*0.941*1.018;
+                    else if (fabs(NTuple->ptMuon()) > 50 && fabs(NTuple->ptMuon()) < 200)
+                        weight_nonrew=weight_nonrew*0.971*0.977;
+                
+                }
+
+            }
+            //cout << weight << " " << weight_nonrew << endl;
+            
             //if (ptWeight != -999)
             //    weight = weight*ptWeight;
             
@@ -1913,9 +2117,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 //    if (weight == -999.) weight =1;
 				//}
                 
+                //if (decay == 1) origLumi=18716.074;
+
 				desiredIntLum_ = origLumi;
 				dataLum_ = 	desiredIntLum_;
-                                
+                
 			}
 
             
@@ -1952,8 +2158,42 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             
 			//cout << "still here?" << endl;
 			
-			// CHECKING WHICH CHI2 CUT TO TAKE
-			if (!doPseudoExp_ && doChi2Check) {
+			if (NTuple->dataSetName().find("TTbar") == 0) {
+				
+                nTTbarBeforeMLBCUT+=weight_nonrew;
+
+				nTTbarAfterRefSel+=weight_nonrew;
+                
+			}
+            
+            //extra cut on mlb to remove overflow bin from XS templates
+			
+			//if (!doOnlyMSPlot && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
+			
+            if (!doOnlyMSPlot) {
+                
+                //if (fitMode == 0 && NTuple->mlj() > upRangeVar0) continue; // TURN ME ON
+                
+                //if (fitMode == 1 && (NTuple->m3() > 500 || NTuple->m3() < 100) ) continue;
+                
+                if (NTuple->mlj() > upRangeVar0) continue;
+                //if (NTuple->mlj() > 250) continue;
+                
+                //if (NTuple->mlj() > upRangeVar0 || NTuple->m3() > 800) continue;
+                //else if (fitMode == 2 && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
+                
+            }
+            
+			if (NTuple->dataSetName().find("TTbar") == 0) {
+                
+				nTTbarAfterMLBCUT+=weight_nonrew;
+				
+                nTTbarBeforeChiSq+=weight_nonrew;
+
+			}
+			
+            // CHECKING WHICH CHI2 CUT TO TAKE
+            if (!doPseudoExp_ && doChi2Check) {
 				fout->cd();
 				
 				string title = "MTopDistribution_NOChiSqCut";
@@ -1996,17 +2236,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					//cout << chi2CutHistos[title]->GetTitle() << endl;
 				}
 				
-			}	
-
-
-			if (NTuple->dataSetName().find("TTbar") == 0) {
-				
-				nTTbarBeforeChiSq+=weight_nonrew;	
-			
-				nTTbarAfterRefSel+=weight_nonrew;
-                								
 			}
-			
+
 			nSelected_[NTuple->dataSetName()][2]+=NTuple->scalefactor();
 			nSelected_[NTuple->dataSetName()][4]++;
 			
@@ -2015,7 +2246,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				nSelected_[NTuple->dataSetName()][5]++;
 			}
 			
-			if(!doOnlyMSPlot && !doFBiasStudy && NTuple->chiSq()>matchChiSquareCut_) continue; // TURN ME ON
+			//if(!doOnlyMSPlot && !doFBiasStudy && NTuple->chiSq()>matchChiSquareCut_) continue; // TURN ME ON
             
             //if(NTuple->chiSq()>matchChiSquareCut_) continue;
 
@@ -2034,33 +2265,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			
 			if (NTuple->dataSetName().find("TTbar") == 0) {
 				
-				nTTbarAfterChiSq+=weight_nonrew;		
-				
-				nTTbarBeforeMLBCUT+=weight_nonrew;
-				
-			}
-			
-			//extra cut on mlb to remove overflow bin from XS templates
-			
-			//if (!doOnlyMSPlot && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
-			
-            if (!doOnlyMSPlot) {
-            
-                //if (fitMode == 0 && NTuple->mlj() > upRangeVar0) continue; // TURN ME ON
+                if (NTuple->chiSq()<=matchChiSquareCut_)
+                    nTTbarAfterChiSq+=weight_nonrew;
                 
-                if (fitMode == 1 && (NTuple->m3() > 500 || NTuple->m3() < 100) ) continue;
-                
-                if (NTuple->mlj() > upRangeVar0) continue;
-                
-                //if (NTuple->mlj() > upRangeVar0 || NTuple->m3() > 800) continue;
-                //else if (fitMode == 2 && (NTuple->mlj() > upRangeVar0 || NTuple->m3() > upRangeVar0)) continue;
-                
-            }
-            
-			if (NTuple->dataSetName().find("TTbar") == 0) {
+                for (int b=0; b<nTaggers; b++) {
+                    if (NTuple->chiSq()<=chi2cuts[b])
+                        nTTbarAfterChiSq_dyn[b]+=weight_nonrew;
+                }
 								
-				nTTbarAfterMLBCUT+=weight_nonrew;
-				
 			}
             
             v_weight_nonrew.push_back(weight_nonrew);
@@ -2258,6 +2470,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			v_var.push_back(NTuple->mlj());
 			
             v_varb.push_back(NTuple->m3());
+            //v_varb.push_back(NTuple->ptMuon());
+            //v_varb.push_back(NTuple->MET());
             
 			v_pt.push_back(NTuple->pt());
 			v_eta.push_back(fabs(NTuple->eta()));
@@ -2371,7 +2585,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             MSPlot["Eta_lepton"] = new MultiSamplePlot(datasets, "Eta_lepton", 50, -5, 5, "#eta^{#mu}");
             MSPlot["Eta_lepton_btag"] = new MultiSamplePlot(datasets, "Eta_lepton_btag", 50, -5, 5, "#eta^{#mu}");
         } else if (decay==1) {
-            MSPlot["pT_lepton"] = new MultiSamplePlot(datasets, "pT_lepton", 100, 0, 500, "p_{T}^{e}");
+            MSPlot["pT_lepton"] = new MultiSamplePlot(datasets, "pT_lepton", 100, 2, 502, "p_{T}^{e}");
             MSPlot["pT_lepton_btag"] = new MultiSamplePlot(datasets, "pT_lepton_btag", 100, 0, 500, "p_{T}^{e}");
             
             MSPlot["Eta_lepton"] = new MultiSamplePlot(datasets, "Eta_lepton", 50, -5, 5, "#eta^{e}");
@@ -2703,6 +2917,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     profile_PU["PT_Lepton_VS_MET"]=new TH2D("profile_PT_Lepton_VS_MET","profilePT_Lepton_VS_MET;p_{T}^{lepton};MET",50,0,500,80,0,800);
                 }
                 profile_PU["PT_Lepton_VS_MET"]->Fill(v_ptMuon[n],v_met[n],w);
+                
+                if (profile_PU.find("MLB_VS_MET") == profile_PU.end()) {
+                    profile_PU["MLB_VS_MET"]=new TH2D("profile_MLB_VS_MET","profile_MLB_VS_MET;M_{lb};MET",50,0,500,80,0,800);
+                }
+                profile_PU["MLB_VS_MET"]->Fill(v_var[n],v_met[n],w);
 
                 
                 if (hist_PU.find("MLBL") == hist_PU.end()) {
@@ -3969,13 +4188,21 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     }
 					// fill signal sample
                     
-					aContainer->FillSignalSamplePlots(weight,weight_nonrew,v_partonFlavour[n],v_lepb_is[n][2],v_lepb_is[n][3],v_matchChiSquare[n],v_bTag[n],WPMap,v_pt[n],v_eta[n],v_var[n]+global_shift,v_varb[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_);
+					aContainer->FillSignalSamplePlots(weight,weight_nonrew,v_partonFlavour[n],v_lepb_is[n][2],v_lepb_is[n][3],v_matchChiSquare[n],v_bTag[n],WPMap,v_pt[n],v_eta[n],v_var[n]+global_shift,v_varb[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,chi2cuts);
 					
 					// fill control sample
 					if (v_ptControl[n] > ptcutextra && v_ptControl2[n] > ptcutextra) {
-							aContainer->FillControlSamplePlots(weightC1,v_partonFlavourControl[n],v_q1_is[n][2],v_q1_is[n][3],v_matchChiSquare[n],v_bTagCS1[n],v_ptControl[n],v_etaControl[n],v_controlVar[n]+global_shift,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_);
-							aContainer->FillControlSamplePlots(weightC2,v_partonFlavourControl2[n],v_q2_is[n][2],v_q2_is[n][3],v_matchChiSquare[n],v_bTagCS2[n],v_ptControl2[n],v_etaControl2[n],v_controlVar2[n]+global_shift,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_);
+							aContainer->FillControlSamplePlots(weightC1,v_partonFlavourControl[n],v_q1_is[n][2],v_q1_is[n][3],v_matchChiSquare[n],v_bTagCS1[n],v_ptControl[n],v_etaControl[n],v_controlVar[n]+global_shift,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,chi2cuts);
+							aContainer->FillControlSamplePlots(weightC2,v_partonFlavourControl2[n],v_q2_is[n][2],v_q2_is[n][3],v_matchChiSquare[n],v_bTagCS2[n],v_ptControl2[n],v_etaControl2[n],v_controlVar2[n]+global_shift,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,chi2cuts);
 					}
+                    
+                    /*if (v_ptControl[n] > ptcutextra) {
+                     aContainer->FillControlSamplePlots(weightC1,v_partonFlavourControl[n],v_q1_is[n][2],v_q1_is[n][3],v_matchChiSquare[n],v_bTagCS1[n],v_ptControl[n],v_etaControl[n],v_controlVar[n]+global_shift,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,chi2cuts);
+                    }
+                    if (v_ptControl2[n] > ptcutextra) {
+                    aContainer->FillControlSamplePlots(weightC2,v_partonFlavourControl2[n],v_q2_is[n][2],v_q2_is[n][3],v_matchChiSquare[n],v_bTagCS2[n],v_ptControl2[n],v_etaControl2[n],v_controlVar2[n]+global_shift,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,chi2cuts);
+                    }*/
+                    
 					//}
 					
 					/*	if (v_ptControl[n] > ptcutextra && v_bTagControl[n] < 100)
@@ -3987,12 +4214,37 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					
                     // JES TEST
                     
-                    float extraw=1;
+                    float extraw=1.;
+                    
                     //if (v_dataSetName[n].find("TTbar") == string::npos) {
                     //    extraw = 1;
                     //}
                     
-					aContainer->FillXStemplates(weight_nonrew*extraw,v_dataSetName[n],v_partonFlavour[n],v_bTag[n],WPMap,v_var[n],v_varb[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_);
+                    /*if (fitMode == 1 && (v_varb[n] < 100 || v_varb[n] > 400) ) {
+                     
+                     extraw=0;
+                     
+                     if (v_dataSetName[n].find("TTbar") == 0)
+                     nTTbarAfterMLBCUT-=v_weight_nonrew[n];
+                     
+                     }*/
+
+                    
+                    //if (fitMode == 1 && (v_varb[n] > 500) )
+                    //    extraw=0;
+                    //if (fitMode == 2 && (v_varb[n] > 500 || v_var[n] > 300) )
+                    //    extraw=0;
+                    
+                    if (extraw == 0) {
+                        if (v_dataSetName[n].find("TTbar") == 0) {
+                            for (int b=0; b<nTaggers; b++) {
+                                if (v_matchChiSquare[n]<=chi2cuts[b])
+                                    nTTbarAfterChiSq_dyn[b]-=v_weight_nonrew[n];
+                            }
+                        }
+                    }
+                    
+                    aContainer->FillXStemplates(v_weight_nonrew[n]*extraw,v_dataSetName[n],v_partonFlavour[n],v_bTag[n],WPMap,v_var[n],v_varb[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,v_matchChiSquare[n],chi2cuts);
 				
 					if (v_dataSetName[n].find("TTbar") == 0)
 						
@@ -4074,19 +4326,21 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     }					
 					//cout << "2nd loop n: " << n << " " << weight<< endl;
 
-					aContainer->FillReweighRight(do2D,useFit,weight,v_partonFlavour[n],v_bTag[n],v_pt[n],v_eta[n],v_var[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_);//original
+					aContainer->FillReweighRight(do2D,useFit,weight,v_partonFlavour[n],v_bTag[n],v_pt[n],v_eta[n],v_var[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,v_matchChiSquare[n],chi2cuts);//original
 					
 					//aContainer->FillReweighControl(do2Dcontrol, weight,partonFlavour,lepb_is[2],lepb_is[3],pt,eta,var,leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,matchChiSquare); //this one is for the reweighing of the non-b mlj distribution in signal sample between different chi-square cuts
 					double* bTagCuts = new double[3];
 					
 					bTagCuts[0]=1.7; bTagCuts[1]=3.3; bTagCuts[2]=10.2; // VERY BAD!!!!!!
 					if (v_ptControl[n] > ptcutextra && v_ptControl2[n] > ptcutextra) {
-						aContainer->FillReweighControl(v_bTagCS1[n],bTagCuts,do2Dcontrol, weightC1,v_partonFlavourControl[n],v_q1_is[n][2],v_q1_is[n][3],v_ptControl[n],v_etaControl[n],v_controlVar[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,v_matchChiSquare[n]);
-						aContainer->FillReweighControl(v_bTagCS2[n],bTagCuts,do2Dcontrol, weightC2,v_partonFlavourControl2[n],v_q2_is[n][2],v_q2_is[n][3],v_ptControl2[n],v_etaControl2[n],v_controlVar2[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,v_matchChiSquare[n]);
+						aContainer->FillReweighControl(v_bTagCS1[n],bTagCuts,do2Dcontrol, weightC1,v_partonFlavourControl[n],v_q1_is[n][2],v_q1_is[n][3],v_ptControl[n],v_etaControl[n],v_controlVar[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,v_matchChiSquare[n],chi2cuts);
+						aContainer->FillReweighControl(v_bTagCS2[n],bTagCuts,do2Dcontrol, weightC2,v_partonFlavourControl2[n],v_q2_is[n][2],v_q2_is[n][3],v_ptControl2[n],v_etaControl2[n],v_controlVar2[n],leftlimit_,centerleftlimit_,centerrightlimit_,rightlimit_,v_matchChiSquare[n],chi2cuts);
 						
 					}
 				}
 				
+                stringstream matchChiSquareCutSTR; matchChiSquareCutSTR << matchChiSquareCut_;
+
 				aContainer->GetLRratio(FMCBias,doNewF,newFpt,newFeta);
 				if(verbosity_>1) cout<<"+--> (L=" << desiredIntLum_ << ") Pseudo-Experiment " << iPE << " Calculated the LR ratio "  << endl;
 				aContainer->MeasureEff(doSCreweigh); // not reweighted
@@ -4095,11 +4349,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				if(verbosity_>1) cout<<"+--> (L=" << desiredIntLum_ << ") Pseudo-Experiment " << iPE << " Made reweigh ratio"  << endl;
 				aContainer->MeasureEffRR(doSCreweigh); // RR stands for Right Reweighted
 				if(verbosity_>1) cout<<"+--> (L=" << desiredIntLum_ << ") Pseudo-Experiment " << iPE << " Measured the efficiency Right reweighted"  << endl;
-                aContainer->MeasureMistagEffRR(doSCreweigh); // RR stands for Right Reweighted
+                aContainer->MeasureMistagEffRR(doSCreweigh,matchChiSquareCutSTR.str(),data_postfix,nSystematic); // RR stands for Right Reweighted
 				if(verbosity_>1) cout<<"+--> (L=" << desiredIntLum_ << ") Pseudo-Experiment " << iPE << " Measured the mistag efficiency Right reweighted"  << endl;
-				
-				stringstream matchChiSquareCutSTR; matchChiSquareCutSTR << matchChiSquareCut_;
-				
+								
 				if (doVarBins && !btagonly)
 					FitForXSResults = aContainer->doMLJTemplateFit(matchChiSquareCutSTR.str(),fitMode,data_postfix,nSystematic);
 				else {
@@ -4119,9 +4371,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 		stringstream matchChiSquareCutSTR; matchChiSquareCutSTR << matchChiSquareCut_;
 		
 		double chiSQCutEff;
+        std::map<double,double> chiSQCutEff_dyn;
 		double refSelEff;
 		double MLBCutEff;
 		
+        std::map<double,double> chiSQCutEff_dyn_sample;
 		double chiSQCutEff_sample = (double)nTTbarAfterChiSq/(double)nTTbarBeforeChiSq;
 		double MLBCutEff_sample = (double)nTTbarAfterMLBCUT/(double)nTTbarBeforeMLBCUT;		
 		double refSelEff_sample = (double)nTTbarAfterRefSel/(double)nTTbarBeforeRefSel;
@@ -4137,6 +4391,10 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
         exit(1);
 		*/
         
+        for (std::map<double,double>::iterator it=nTTbarAfterChiSq_dyn.begin(); it != nTTbarAfterChiSq_dyn.end(); ++it) {
+            chiSQCutEff_dyn_sample[it->first]=(double)it->second/(double)nTTbarBeforeChiSq;
+        }
+                
 		if (sampleType.find("nominal") != string::npos) {
 			
 			ofstream effs; effs.open(("efficiencies_channel"+data_postfix+".nominal").c_str(), ios::out | ios::trunc );
@@ -4144,31 +4402,50 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			effs << refSelEff_sample << " " << chiSQCutEff_sample << " " << MLBCutEff_sample;
 			
 			effs.close();
-			
-		}			
+            
+            ofstream effs2; effs2.open(("efficiencies_chi2cut_dynamic_channel"+data_postfix+".nominal").c_str(), ios::out | ios::trunc );
+
+			for (std::map<double,double>::iterator it=chiSQCutEff_dyn_sample.begin(); it != chiSQCutEff_dyn_sample.end(); ++it) {
+                effs2 << it->second << "\n";
+            }
+            
+            effs2.close();
+
+		}
 		
 		if (sampleType.find("nominal") == string::npos) {
 			
 			double chiSQCutEff_nom = 0;
 			double MLBCutEff_nom = 0;		
 			double refSelEff_nom = 0;
+            std::map<double,double> chiSQCutEff_dyn_nom;
 			
 			ifstream effs; effs.open(("efficiencies_channel"+data_postfix+".nominal").c_str(), ios::in );
 			
 			while (!effs.eof())
 				effs >> refSelEff_nom >> chiSQCutEff_nom >> MLBCutEff_nom;
 			
+            ifstream effs2; effs2.open(("efficiencies_chi2cut_dynamic_channel"+data_postfix+".nominal").c_str(), ios::in );
+			
+            int k=0;
+			while (!effs2.eof()) {
+				effs2 >> chiSQCutEff_dyn_nom[k];
+                k++;    
+            }
+            
 			cout << refSelEff_nom << " " << chiSQCutEff_nom << " " << MLBCutEff_nom << endl;
 												
 			effs.close();
-			
+            
+            chiSQCutEff_dyn = chiSQCutEff_dyn_nom;
 			chiSQCutEff = chiSQCutEff_nom; 
 			MLBCutEff = MLBCutEff_nom;
 			refSelEff = refSelEff_nom;
             
-            //chiSQCutEff = chiSQCutEff_sample;
-			//MLBCutEff = MLBCutEff_sample;
-			//refSelEff = refSelEff_sample;
+            /*chiSQCutEff_dyn = chiSQCutEff_dyn_sample;
+            chiSQCutEff = chiSQCutEff_sample;
+			MLBCutEff = MLBCutEff_sample;
+			refSelEff = refSelEff_sample;*/
 
 			
 			//if (datasetName == "Data") // FIXME : get new value
@@ -4178,6 +4455,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 			
 		} else {
 			
+            chiSQCutEff_dyn = chiSQCutEff_dyn_sample;
 			chiSQCutEff = chiSQCutEff_sample;
 			MLBCutEff = MLBCutEff_sample;
 			refSelEff = refSelEff_sample;
@@ -4209,7 +4487,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
              chiSQCutEff = 0.91274;
              refSelEff = 0.0235167;
              }
-            
+         
             //refSelEff=0.0272082+(0.0272082*1.0*0.01);
             //chiSQCutEff=1;
             //MLBCutEff=1;
@@ -4241,7 +4519,12 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				//cout << taggerCounter[taggerArray[iwp]] << endl;
                 				
 				aContainer->GetWPEff(true,doSCreweigh,wpArray[iwp],taggerArray[iwp],results,doPseudoExp_,true,0,0,false,runNb);
-  
+                
+                // change chi2 cut efficiency with dynamic value
+                
+                chiSQCutEff = chiSQCutEff_dyn[taggerArray[iwp]];
+                chiSQCutEff_sample = chiSQCutEff_dyn_sample[taggerArray[iwp]];
+
                 //results[8]=0.605;
                 //results[9]=0.017;
                 
@@ -4363,10 +4646,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					nTimesWP=1;
 				}
 				
-                FitForXSResults[taggerArray[iwp]][((nTimesWP)*5)+4]=results[24];
-				cout << "++> CALCULATING XS WITH BTAG CUT AND Btag EFF Fdata (using array offset: "<< (nTimesWP)*5 << ")" << endl;
-				//XSresults = calcXS(doPseudoExp_,results[8],FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5); // 16 entries for each cut
-				XSresults = calcXS(doPseudoExp_,results[8],results[9],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5); // 16 entries for each cut
+                if (useMeasuredMistag) {
+                    FitForXSResults[taggerArray[iwp]][((nTimesWP)*6)+4]=results[24]; // OVERWRITE THE MISTAG EFF WITH THE MEASURED ONE
+                    FitForXSResults[taggerArray[iwp]][((nTimesWP)*6)+5]=results[25]; // OVERWRITE THE MISTAG EFF WITH THE MEASURED ONE
+                }
+                
+				cout << "++> CALCULATING XS WITH BTAG CUT AND Btag EFF Fdata (using array offset: "<< (nTimesWP)*6 << ")" << endl;
+				//XSresults = calcXS(doPseudoExp_,results[8],FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6); // 16 entries for each cut
+				XSresults = calcXS(doPseudoExp_,results[8],results[9],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6); // 16 entries for each cut
                 
                 // if applying the SF for data now revert to original value
                 
@@ -4466,7 +4753,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					
 					//if (histos1D[title]->GetBinLowEdge(i) > results[8]+results[9] || histos1D[title]->GetBinLowEdge(i-1) < results[8]-results[9]) continue;
 					
-					vector<double> tmpRes = calcXS(true,histos1D[title]->GetXaxis()->GetBinCenter(i),results[9],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5);
+					vector<double> tmpRes = calcXS(true,histos1D[title]->GetXaxis()->GetBinCenter(i),results[9],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6);
 					
 					histos1D[title]->SetBinContent(i,tmpRes[1]);
 					
@@ -4480,7 +4767,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					
 					if (histos1D[title2]->GetBinLowEdge(i) > XSresults[1]+XSresults[2] || histos1D[title2]->GetBinLowEdge(i-1) < XSresults[1]-XSresults[2]) continue;
 					
-					double tmpRes = calcBtag(histos1D[title2]->GetXaxis()->GetBinCenter(i),chiSQCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5);
+					double tmpRes = calcBtag(histos1D[title2]->GetXaxis()->GetBinCenter(i),chiSQCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6);
 					
 					histos1D[title2]->SetBinContent(i,tmpRes);
 					
@@ -4751,9 +5038,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                 InfoForCombinedFit[iwp].push_back(results[8]);
                 InfoForCombinedFit[iwp].push_back(results[9]);
 				
-				cout << "++> CALCULATING XS WITH BTAG CUT AND Btag EFF Fmc (using array offset: "<< (nTimesWP)*5 << ")" << endl;
-				//XSresults = calcXS(doPseudoExp_,results[8],FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5); // 16 entries for each cut
-				XSresults = calcXS(doPseudoExp_,results[6],results[7],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5); // 16 entries for each cut
+				cout << "++> CALCULATING XS WITH BTAG CUT AND Btag EFF Fmc (using array offset: "<< (nTimesWP)*6 << ")" << endl;
+				//XSresults = calcXS(doPseudoExp_,results[8],FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6); // 16 entries for each cut
+				XSresults = calcXS(doPseudoExp_,results[6],results[7],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6); // 16 entries for each cut
 				
 				cout << "+> TTbar Cross Section with TTbar+V MC templates" << endl;
 				cout << " => SigmaTTbar = " << XSresults[1] << " +- " << XSresults[2] << "(stat) pb" <<  endl << endl << endl;
@@ -4768,9 +5055,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				infoForPDF[iwp].push_back(round(1000,results[11]));
 				
 				
-				cout << "++> CALCULATING XS WITH BTAG CUT AND Btag EFF MCTRUTH (using array offset: "<< (nTimesWP)*5 << ")" << endl;
-				//XSresults = calcXS(doPseudoExp_,results[8],FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5); // 16 entries for each cut
-				XSresults = calcXS(doPseudoExp_,results[0],results[1],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*5); // 5 entries for each cut
+				cout << "++> CALCULATING XS WITH BTAG CUT AND Btag EFF MCTRUTH (using array offset: "<< (nTimesWP)*6 << ")" << endl;
+				//XSresults = calcXS(doPseudoExp_,results[8],FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6); // 16 entries for each cut
+				XSresults = calcXS(doPseudoExp_,results[0],results[1],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],lumiToCalc,(nTimesWP)*6); // 5 entries for each cut
 				
 				cout << "+> TTbar Cross Section with TTbar+V MC templates" << endl;
 				cout << " => SigmaTTbar = " << XSresults[1] << " +- " << XSresults[2] << "(stat) pb" <<  endl << endl << endl;
@@ -4782,7 +5069,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				infoForPDF[iwp].push_back(round(10,results[0]*100));
 				infoForPDF[iwp].push_back(round(10,results[1]*100));
 				
-				infoForPDF[iwp].push_back(round(10,FitForXSResults[taggerArray[iwp]][((nTimesWP)*5)+4]*100));
+				infoForPDF[iwp].push_back(round(10,FitForXSResults[taggerArray[iwp]][((nTimesWP)*6)+4]*100));
+				infoForPDF[iwp].push_back(round(10,FitForXSResults[taggerArray[iwp]][((nTimesWP)*6)+5]*100));
+                
 				infoForPDF[iwp].push_back(round(10,FitForXSResults[taggerArray[iwp]][FitForXSResults[taggerArray[iwp]].size()-1]*100));
 				
                 infoForPDF[iwp].push_back(round(10,results[22]*100)); // true mistag
@@ -4791,11 +5080,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				infoForPDF[iwp].push_back(round(10,results[25]*100));
 
                 
-                InfoForCombinedFit[iwp].push_back(FitForXSResults[taggerArray[iwp]][((nTimesWP)*5)+4]);
+                InfoForCombinedFit[iwp].push_back(FitForXSResults[taggerArray[iwp]][((nTimesWP)*6)+4]);
 				InfoForCombinedFit[iwp].push_back(FitForXSResults[taggerArray[iwp]][FitForXSResults[taggerArray[iwp]].size()-1]);
 				
 				
-				//cout << FitForXSResults[taggerArray[iwp]][((nTimesWP)*5)+4] <<" " << infoForPDF[iwp][14] <<  endl;
+				//cout << FitForXSResults[taggerArray[iwp]][((nTimesWP)*6)+4] <<" " << infoForPDF[iwp][14] <<  endl;
 				//cout << FitForXSResults[taggerArray[iwp]][FitForXSResults[taggerArray[iwp]].size()-1] << endl;
 				
 				cout << infoForPDF[iwp].size() << endl;
@@ -4889,6 +5178,11 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             TFile* effs = new TFile(fileEff,"RECREATE");
             			
 			for(int iwp=0; iwp < nWP; iwp++){
+                
+                // change chi2 cut efficiency with dynamic value
+                
+                chiSQCutEff = chiSQCutEff_dyn[taggerArray[iwp]];
+                chiSQCutEff_sample = chiSQCutEff_dyn_sample[taggerArray[iwp]];
 				
 				if (iwp != 0 && taggerArray[iwp] == lastTagger) continue;
 				
@@ -4922,6 +5216,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                  discName="Jet BProbability tagger";
                  sdiscName="JBP";*/
                 
+                stringstream cut; cut << chi2cuts[taggerArray[iwp]];
+
                 if (taggerArray[iwp] == 0) {
                     discName="TrackCountingHighEfficiency tagger";
                     sdiscName="TCHE";
@@ -5008,9 +5304,9 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     if (datasetName == "Data")
                         resultsFile << " - & ";
                     else    
-                        resultsFile << "{\\color{OliveGreen} " << infoForPDF[niwp][20] << " $\\pm$ " << infoForPDF[niwp][21] << "} & ";
+                        resultsFile << "{\\color{OliveGreen} " << infoForPDF[niwp][21] << " $\\pm$ " << infoForPDF[niwp][22] << "} & ";
                     
-                    resultsFile << "{\\color{Purple} " << infoForPDF[niwp][22] << " $\\pm$ " << infoForPDF[niwp][23] << "} ";
+                    resultsFile << "{\\color{Purple} " << infoForPDF[niwp][23] << " $\\pm$ " << infoForPDF[niwp][24] << "} ";
 
                     resultsFile << "\\\\ \n";
 
@@ -5055,13 +5351,13 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     // commented now because we define the SF to the E_b (method)
                     if (datasetName == "Data") {											
                         btagRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][4] << " " << infoForPDF[niwp][5] << "\n"; //method
-                        mistagRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][22] << " " << infoForPDF[niwp][23] << "\n"; //method
+                        mistagRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][23] << " " << infoForPDF[niwp][24] << "\n"; //method
                     }
                     else {
                         btagRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][16] << " " << infoForPDF[niwp][17]; //truth
                         btagRESFile << " " << infoForPDF[niwp][4] << " " << infoForPDF[niwp][5] << "\n"; //meas
-                        mistagRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][20] << " " << infoForPDF[niwp][21]; //truth
-                        mistagRESFile << " " << infoForPDF[niwp][22] << " " << infoForPDF[niwp][23] << "\n"; //meas
+                        mistagRESFile << sdiscName << " " << wpstr << " " << infoForPDF[niwp][21] << " " << infoForPDF[niwp][22]; //truth
+                        mistagRESFile << " " << infoForPDF[niwp][23] << " " << infoForPDF[niwp][24] << "\n"; //meas
 					}
 					if (datasetName != "Data") {												
 						btagANtableFile << tstr << " & " << wpstr << " & " << infoForPDF[niwp][16] << " $\\pm$ " << infoForPDF[niwp][17] << " & ";
@@ -5114,7 +5410,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 				
 				resultsFile << "\t\t\\begin{tabular}{|c|c|c|c|c|c|}\n";
 				resultsFile << "\t\t\t\\hline\n";
-				resultsFile << "\t\t\tWP & Type & $\\epsilon_{b}$ & $\\epsilon_{mistag}$ & $\\frac{\\#b}{\\#b+\\#non-b}$ & $\\sigma_{t\\bar{t}}$ (pb) \\\\ \n";	
+				resultsFile << "\t\t\tWP & Type & $\\epsilon_{b}$ & $\\epsilon_{mistag}$ & $\\frac{\\#b}{\\#b+\\#q}$ & $\\sigma_{t\\bar{t}}$ (pb) \\\\ \n";
 				resultsFile << "\t\t\t\\hline\n"; 
 				resultsFile << "\t\t\t\\hline\n";
 				
@@ -5139,8 +5435,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					resultsFile << "\t\t\t" << wpArray[niwp] << " & ";
 					resultsFile << "{\\color{blue}$\\hat{\\epsilon}_{b}(F^{CS})$} & ";
 					resultsFile << "{\\color{blue}" << infoForPDF[niwp][4] << " $\\pm$ " << infoForPDF[niwp][5] << "} & ";
-					resultsFile << "{\\color{blue}" << infoForPDF[niwp][18] << "} & ";
-					resultsFile << "{\\color{blue}" << infoForPDF[niwp][19] << "} & ";
+					resultsFile << "{\\color{blue}" << infoForPDF[niwp][18] << " $\\pm$ " << infoForPDF[niwp][19] << "} & ";
+					resultsFile << "{\\color{blue}" << infoForPDF[niwp][20] << "} & ";
 					resultsFile << "{\\color{blue}" << infoForPDF[niwp][2] << " $\\pm$ " << infoForPDF[niwp][3] << "}";				
 					resultsFile << "\\\\\n";
 					resultsFile << "\t\t\t\\hline\n";
@@ -5151,8 +5447,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						resultsFile << "\t\t\t & ";
 						resultsFile << "{\\color{BurntOrange}$\\hat{\\epsilon}_{b}(F^{exp})$} & ";
 						resultsFile << "{\\color{BurntOrange}" << infoForPDF[niwp][10] << " $\\pm$ " << infoForPDF[niwp][11] << "} & ";
-						resultsFile << "{\\color{BurntOrange}" << infoForPDF[niwp][18] << "} & ";
-						resultsFile << "{\\color{BurntOrange}" << infoForPDF[niwp][19] << "} & ";
+						resultsFile << "{\\color{BurntOrange}" << infoForPDF[niwp][18] << " $\\pm$ " << infoForPDF[niwp][19] << "} & ";
+						resultsFile << "{\\color{BurntOrange}" << infoForPDF[niwp][20] << "} & ";
 						resultsFile << "{\\color{BurntOrange}" << infoForPDF[niwp][8] << " $\\pm$ " << infoForPDF[niwp][9] << "}";				
 						resultsFile << "\\\\\n";
 						resultsFile << "\t\t\t\\hline\n"; 
@@ -5160,8 +5456,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						resultsFile << "\t\t\t & ";
 						resultsFile << "{\\color{OliveGreen}$\\epsilon_{b}^{true}$} & ";
 						resultsFile << "{\\color{OliveGreen}" << infoForPDF[niwp][16] << " $\\pm$ " << infoForPDF[niwp][17] << "} & ";
-						resultsFile << "{\\color{OliveGreen}" << infoForPDF[niwp][18] << "} & ";
-						resultsFile << "{\\color{OliveGreen}" << infoForPDF[niwp][19] << "} & ";
+						resultsFile << "{\\color{OliveGreen}" << infoForPDF[niwp][18] << " $\\pm$ " << infoForPDF[niwp][19] << "} & ";
+						resultsFile << "{\\color{OliveGreen}" << infoForPDF[niwp][20] << "} & ";
 						resultsFile << "{\\color{OliveGreen}" << infoForPDF[niwp][14] << " $\\pm$ " << infoForPDF[niwp][15] << "}";				
 						resultsFile << "\\\\\n";
 						resultsFile << "\t\t\t\\hline\n"; 
@@ -5189,8 +5485,8 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					xsANtableFile << tstr << " & " << wpstr << " & ";
 					xsANtableFile << "$\\hat{\\epsilon}_{b}(F^{CS})$& ";
 					xsANtableFile << infoForPDF[niwp][4] << " $\\pm$ " << infoForPDF[niwp][5] << " & ";
-					xsANtableFile << infoForPDF[niwp][18] << " & ";
-					xsANtableFile << infoForPDF[niwp][19] << " & ";
+					xsANtableFile << infoForPDF[niwp][18] << " $\\pm$ " << infoForPDF[niwp][19] << "} & ";
+					xsANtableFile << infoForPDF[niwp][20] << " & ";
 					xsANtableFile << infoForPDF[niwp][2] << " $\\pm$ " << infoForPDF[niwp][3] << "";				
 					xsANtableFile << "\\\\\n";					
 					
@@ -5200,16 +5496,16 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						xsANtableFile << "& & ";
 						xsANtableFile << "$\\hat{\\epsilon}_{b}(F^{exp})$& ";
 						xsANtableFile << infoForPDF[niwp][10] << " $\\pm$ " << infoForPDF[niwp][11] << " & ";
-						xsANtableFile << infoForPDF[niwp][18] << " & ";
-						xsANtableFile << infoForPDF[niwp][19] << " & ";
+						xsANtableFile << infoForPDF[niwp][18] << " $\\pm$ " << infoForPDF[niwp][19] << "} & ";
+						xsANtableFile << infoForPDF[niwp][20] << " & ";
 						xsANtableFile << infoForPDF[niwp][8] << " $\\pm$ " << infoForPDF[niwp][9] << "";				
 						xsANtableFile << "\\\\\n";
 						
 						xsANtableFile << "& & ";
 						xsANtableFile << "$\\epsilon_{b}^{true}$& ";
 						xsANtableFile << infoForPDF[niwp][16] << " $\\pm$ " << infoForPDF[niwp][17] << " & ";
-						xsANtableFile << infoForPDF[niwp][18] << " & ";
-						xsANtableFile << infoForPDF[niwp][19] << " & ";
+						xsANtableFile << infoForPDF[niwp][18] << " $\\pm$ " << infoForPDF[niwp][19] << "} & ";
+						xsANtableFile << infoForPDF[niwp][20] << " & ";
 						xsANtableFile << infoForPDF[niwp][14] << " $\\pm$ " << infoForPDF[niwp][15] << "";				
 						xsANtableFile << "\\\\\n";
 						
@@ -5273,7 +5569,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         std::pair<float,float> biasF = calcBias(infoForPDF[niwp][6],infoForPDF[niwp][7],infoForPDF[niwp][12],infoForPDF[niwp][13]);
                         std::pair<float,float> biasEpsFEXP = calcBias(infoForPDF[niwp][10],infoForPDF[niwp][11],infoForPDF[niwp][16],infoForPDF[niwp][17]);
                         std::pair<float,float> biasEpsF = calcBias(infoForPDF[niwp][4],infoForPDF[niwp][5],infoForPDF[niwp][16],infoForPDF[niwp][17]);
-                        std::pair<float,float> biasQEps = calcBias(infoForPDF[niwp][22],infoForPDF[niwp][23],infoForPDF[niwp][20],infoForPDF[niwp][21]);
+                        std::pair<float,float> biasQEps = calcBias(infoForPDF[niwp][23],infoForPDF[niwp][24],infoForPDF[niwp][21],infoForPDF[niwp][22]);
                         
                         //resultsFile << "{\\color{LimeGreen} " << infoForPDF[niwp][20] << " $\\pm$ " << infoForPDF[niwp][21] << "} & ";
 
@@ -5414,7 +5710,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     biasEpsF.first = round(100,biasEpsF.first*100);
                     biasEpsF.second = round(100,biasEpsF.second*100);
                     
-                    std::pair<float,float> biasMistag = calcBias(infoForPDF[niwp][22],infoForPDF[niwp][23],infoForPDF[niwp][20],infoForPDF[niwp][21]);
+                    std::pair<float,float> biasMistag = calcBias(infoForPDF[niwp][23],infoForPDF[niwp][24],infoForPDF[niwp][21],infoForPDF[niwp][22]);
                     biasMistag.first = round(100,biasMistag.first*100);
                     biasMistag.second = round(100,biasMistag.second*100);
                     
@@ -5446,7 +5742,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     SF.close();*/
                     
                     double uSF = round(1000,sqrt((pow(infoForPDF[niwp][5],2)/pow(infoForPDF[niwp][16],2) )+( (pow(infoForPDF[niwp][4],2)*pow(infoForPDF[niwp][17],2))/ pow(infoForPDF[niwp][16],4))));
-                    double uSFq = round(1000,sqrt((pow(infoForPDF[niwp][23],2)/pow(infoForPDF[niwp][20],2) )+( (pow(infoForPDF[niwp][22],2)*pow(infoForPDF[niwp][21],2))/ pow(infoForPDF[niwp][20],4))));
+                    double uSFq = round(1000,sqrt((pow(infoForPDF[niwp][24],2)/pow(infoForPDF[niwp][21],2) )+( (pow(infoForPDF[niwp][23],2)*pow(infoForPDF[niwp][23],2))/ pow(infoForPDF[niwp][20],4))));
                     
                     setNomVal(data_postfix,fitMode,"F",niwp,infoForPDF[niwp][6]);
                     setNomVal(data_postfix,fitMode,"Eb",niwp,biasEpsF.first);
@@ -5457,7 +5753,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     setNomVal(data_postfix,fitMode,"uEq",niwp,biasMistag.second);
                     setNomVal(data_postfix,fitMode,"uXS",niwp,infoForPDF[niwp][3]);
                     setNomVal(data_postfix,fitMode,"SF",niwp,infoForPDF[niwp][4]/infoForPDF[niwp][16]);
-                    setNomVal(data_postfix,fitMode,"SFq",niwp,infoForPDF[niwp][22]/infoForPDF[niwp][20]);
+                    setNomVal(data_postfix,fitMode,"SFq",niwp,infoForPDF[niwp][23]/infoForPDF[niwp][21]);
                     setNomVal(data_postfix,fitMode,"uSF",niwp,uSF);
                     setNomVal(data_postfix,fitMode,"uSFq",niwp,uSFq);
 
@@ -5475,7 +5771,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                         
                         // Eq + SFq
                         csv << biasMistag.first << " " << biasMistag.second << " 0 0 ";
-                        csv << infoForPDF[niwp][22]/infoForPDF[niwp][20] << " " << uSFq << " 0 0 ";
+                        csv << infoForPDF[niwp][23]/infoForPDF[niwp][21] << " " << uSFq << " 0 0 ";
                         
                         // XS
                         csv	<< infoForPDF[niwp][2] << " " << infoForPDF[niwp][3] << " 0 0 " << "\n";
@@ -5493,7 +5789,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     biasEpsF.first = round(100,biasEpsF.first*100);
                     biasEpsF.second = round(100,biasEpsF.second*100);
                     
-                    std::pair<float,float> biasMistag = calcBias(infoForPDF[niwp][22],infoForPDF[niwp][23],infoForPDF[niwp][20],infoForPDF[niwp][21]);
+                    std::pair<float,float> biasMistag = calcBias(infoForPDF[niwp][23],infoForPDF[niwp][24],infoForPDF[niwp][21],infoForPDF[niwp][22]);
                     biasMistag.first = round(100,biasMistag.first*100);
                     biasMistag.second = round(100,biasMistag.second*100);
                     
@@ -5528,10 +5824,10 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     float udiffEq = sqrt(pow(nomuEq,2)+pow(biasMistag.second,2));
                     
                     float SF = infoForPDF[niwp][4]/infoForPDF[niwp][16];
-                    float SFq = infoForPDF[niwp][22]/infoForPDF[niwp][20];
+                    float SFq = infoForPDF[niwp][23]/infoForPDF[niwp][21];
                     
                     double uSF = round(1000,sqrt((pow(infoForPDF[niwp][5],2)/pow(infoForPDF[niwp][16],2) )+( (pow(infoForPDF[niwp][4],2)*pow(infoForPDF[niwp][17],2))/ pow(infoForPDF[niwp][16],4))));
-                    double uSFq = round(1000,sqrt((pow(infoForPDF[niwp][23],2)/pow(infoForPDF[niwp][20],2) )+( (pow(infoForPDF[niwp][22],2)*pow(infoForPDF[niwp][21],2))/ pow(infoForPDF[niwp][20],4))));
+                    double uSFq = round(1000,sqrt((pow(infoForPDF[niwp][24],2)/pow(infoForPDF[niwp][21],2) )+( (pow(infoForPDF[niwp][23],2)*pow(infoForPDF[niwp][22],2))/ pow(infoForPDF[niwp][20],4))));
                     
                     float diffSF = SF-nomSF;
                     float diffSFq = SFq-nomSFq;
@@ -5967,10 +6263,15 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 						psLastTagger=taggerArray[iwp];
 						psnTimesWP=1;
 					}
-					
+                    
+                    if (useMeasuredMistag) {
+                        FitForXSResults[taggerArray[iwp]][((psnTimesWP)*6)+4]=wpEffArray[24]; // OVERWRITE THE MISTAG EFF WITH THE MEASURED ONE
+                        FitForXSResults[taggerArray[iwp]][((psnTimesWP)*6)+5]=wpEffArray[25]; // OVERWRITE THE MISTAG EFF WITH THE MEASURED ONE
+					}
+                    
 					// btag cut
 					
-					if (verbosity_ > 0) cout << "++> Using btag cut to calc XS using array offset " << (psnTimesWP*5) << endl;
+					if (verbosity_ > 0) cout << "++> Using btag cut to calc XS using array offset " << (psnTimesWP*6) << endl;
 					
 					stringstream nd, nwp; nd << taggerArray[iwp]; nwp << wpArray[iwp];
 					
@@ -5978,7 +6279,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					
 					sigmaRes.clear();
 					
-					sigmaRes = calcXS(doPseudoExp_,wpEffArray[8],wpEffArray[9],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],desiredIntLum_,(psnTimesWP*5));
+					sigmaRes = calcXS(doPseudoExp_,wpEffArray[8],wpEffArray[9],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],desiredIntLum_,(psnTimesWP*6));
 					
 					title = "MC_XS_VS_BtagEfficiency_PseudoExps_FDATA_nDisc_"+nd.str()+"_WP_"+nwp.str();
 					
@@ -6002,7 +6303,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					
 					sigmaRes.clear();
 					
-					sigmaRes = calcXS(doPseudoExp_,wpEffArray[6],wpEffArray[7],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],desiredIntLum_,(psnTimesWP*5));
+					sigmaRes = calcXS(doPseudoExp_,wpEffArray[6],wpEffArray[7],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],desiredIntLum_,(psnTimesWP*6));
 					
 					title = "MC_XS_VS_BtagEfficiency_PseudoExps_FMC_nDisc_"+nd.str()+"_WP_"+nwp.str();
 					
@@ -6015,7 +6316,7 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
 					
 					// epsilon_b MC Truth
 					
-					sigmaRes = calcXS(doPseudoExp_,wpEffArray[0],wpEffArray[1],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],desiredIntLum_,(psnTimesWP*5));
+					sigmaRes = calcXS(doPseudoExp_,wpEffArray[0],wpEffArray[1],chiSQCutEff,MLBCutEff,refSelEff,FitForXSResults[taggerArray[iwp]],desiredIntLum_,(psnTimesWP*6));
 					
 					title = "MC_XS_VS_BtagEfficiency_PseudoExps_BTAGMCTRUTH_nDisc_"+nd.str()+"_WP_"+nwp.str();
 					

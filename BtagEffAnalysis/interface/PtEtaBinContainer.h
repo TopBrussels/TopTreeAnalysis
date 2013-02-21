@@ -30,10 +30,10 @@ class PtEtaBinContainer{
   void DefineSignalSamplePlots(int, double, double, int, double, double, int, double, double, int, double, double, int, double, double, int[], double[], double[]);
   void DefineControlSamplePlots(int, double, double,int, double, double,int, double, double,int[], double[], double[]);
   //void FillSignalSamplePlots(double, int, double*, double, double, double, int, double, double, double, double, double, double, double);
-  void FillSignalSamplePlots(double, double, int, bool, bool, double, double*, std::map<int,vector<double> > WPMap, double, double, double, double, double, double, double,double);
-  void FillControlSamplePlots(double, int, bool, bool, double, double*, double, double, double, double, double, double, double);
+  void FillSignalSamplePlots(double, double, int, bool, bool, double, double*, std::map<int,vector<double> > WPMap, double, double, double, double, double, double, double,double,double*);
+  void FillControlSamplePlots(double, int, bool, bool, double, double*, double, double, double, double, double, double, double,double*);
 
-  void FillXStemplates(double weight, string datasetname, int partonFlavour, double* btag,std::map<int,vector<double> > WPMap, double controlVar0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0);
+  void FillXStemplates(double weight, string datasetname, int partonFlavour, double* btag,std::map<int,vector<double> > WPMap, double controlVar0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0,double,double*);
 
 	void SetVarBins(std::map<int,vector<float> > rangesbTag);
     
@@ -63,16 +63,16 @@ class PtEtaBinContainer{
   void ReweighRight();   
   //void ReweighRightChangeFitParams(double, double); //obsolete
   //void FillReweighRight(bool, bool, double, int, double*, double, double, double, int, double, double, double, double, double, double, double);
-  void FillReweighRight(bool, bool, double, int, double*, double, double, double, double, double, double, double);
+  void FillReweighRight(bool, bool, double, int, double*, double, double, double, double, double, double, double,double,double*);
   //void FillReweighControl(bool, bool, double, int, double*, double, double, double, int, double, double, double, double, double, double, double);
-  void FillReweighControl(double*,double*,bool, double, int, bool, bool, double, double, double, double, double, double, double, double);
+  void FillReweighControl(double*,double*,bool, double, int, bool, bool, double, double, double, double, double, double, double, double,double*);
   void MakeReweighRatio();
   void GetLRratio(double, bool, double*, double*);
   void GetPercentiles(double,double,double,int*);
   void MeasureEff(bool);
   void MeasureEffLR(bool);
   void MeasureEffRR(bool);
-    void MeasureMistagEffRR(bool);
+    void MeasureMistagEffRR(bool,string chi2, string data_postfix,int nSystematic);
 
   void GetWPEff(bool, bool, double, int, double*, bool, bool, int, int, bool, double);
   void CoutWPEff(bool, bool, double, int, double*, bool, bool, int, int, bool, double);

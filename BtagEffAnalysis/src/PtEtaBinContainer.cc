@@ -296,9 +296,11 @@ void PtEtaBinContainer::SetErrorsControlSamples(){
 }
 
 //void PtEtaBinContainer::FillSignalSamplePlots(double weight, int partonFlavour, double *bTag, double var1, double var2, double var0, int partonFlavourControl, double bTagControl, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralCutVar0, double upCutVar0){
-void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonrew, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, std::map<int,vector<double> > WPMap, double var1, double var2, double var0, double var3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
+void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonrew, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, std::map<int,vector<double> > WPMap, double var1, double var2, double var0, double var3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0,double* chisqCuts){
   for (int k=0; k<nBdiscrAlgos_; k++){
 	  
+      if (chisq > chisqCuts[k]) continue;
+      
 	  double *bTagCuts = new double[3];
 	  
 	  if (WPMap.find(k) != WPMap.end()) {
@@ -341,9 +343,12 @@ void PtEtaBinContainer::FillSignalSamplePlots(double weight, double weight_nonre
   }
 }
 
-void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, double controlVar1, double controlVar2, double controlVar, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
+void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour, bool isW, bool isR, double chisq, double *bTag, double controlVar1, double controlVar2, double controlVar, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0,double* chisqCuts){
   for (int k=0; k<nBdiscrAlgos_; k++){
-    for(int i=0; i<nPtBins_; i++){ 
+      
+      if (chisq > chisqCuts[k]) continue;
+
+    for(int i=0; i<nPtBins_; i++){
       if(controlVar1>ptBins_[i] && controlVar1<ptBins_[i+1]){
 	binVector_[i][k]->FillControlSamplePlots(weight,partonFlavour,isW,isR,chisq,bTag[k],controlVar1,controlVar2,controlVar,lowCutVar0,centralLowCutVar0,centralUpCutVar0,upCutVar0);
       }
@@ -365,9 +370,11 @@ void PtEtaBinContainer::FillControlSamplePlots(double weight, int partonFlavour,
  }
 }
 
-void PtEtaBinContainer::FillXStemplates(double weight, string datasetname, int partonFlavour, double *btag, std::map<int,vector<double> > WPMap, double controlVar0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0) {
+void PtEtaBinContainer::FillXStemplates(double weight, string datasetname, int partonFlavour, double *btag, std::map<int,vector<double> > WPMap, double controlVar0, double m3, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0,double chisq,double* chisqCuts) {
 	for (int k=0; k<nBdiscrAlgos_; k++){
 		
+        if (chisq > chisqCuts[k]) continue;
+
 		double *btagCuts = new double[3];
 		
 		if (WPMap.find(k) != WPMap.end()) {
@@ -671,9 +678,12 @@ void PtEtaBinContainer::ReweighRight(){
   }*/
 
 //void PtEtaBinContainer::FillReweighRight(bool do2D, bool useFit, double weight, int partonFlavour, double *bTag, double var1, double var2, double var0, int partonFlavourControl, double bTagControl, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralCutVar0, double upCutVar0){
-void PtEtaBinContainer::FillReweighRight(bool do2D, bool useFit, double weight, int partonFlavour, double *bTag, double var1, double var2, double var0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0){
+void PtEtaBinContainer::FillReweighRight(bool do2D, bool useFit, double weight, int partonFlavour, double *bTag, double var1, double var2, double var0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0,double chisq,double* chisqCuts){
   for (int k=0; k<nBdiscrAlgos_; k++){
-    for(int i=0; i<nPtBins_; i++){ 
+      
+      if (chisq > chisqCuts[k]) continue;
+
+    for(int i=0; i<nPtBins_; i++){
       if(var1>ptBins_[i] && var1<ptBins_[i+1]){
 	binVector_[i][k]->FillReweighRight(do2D, useFit, weight, partonFlavour, bTag[k], var1, var2, var0, lowCutVar0, centralLowCutVar0, centralUpCutVar0, upCutVar0, ptBins_[i], ptBins_[i+1],-1,-1);
       }
@@ -702,9 +712,12 @@ void PtEtaBinContainer::FillReweighRight(bool do2D, bool useFit, double weight, 
 }
 
 //void PtEtaBinContainer::FillReweighControl(bool do2D, bool useFit, double weight, int partonFlavour, double *bTag, double var1, double var2, double var0, int partonFlavourControl, double bTagControl, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralCutVar0, double upCutVar0){
-void PtEtaBinContainer::FillReweighControl(double* btag, double* btagCut, bool do2D, double weight, int partonFlavour, bool isW, bool isR, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0, double chisq){
+void PtEtaBinContainer::FillReweighControl(double* btag, double* btagCut, bool do2D, double weight, int partonFlavour, bool isW, bool isR, double controlVar1, double controlVar2, double controlVar0, double lowCutVar0, double centralLowCutVar0, double centralUpCutVar0, double upCutVar0, double chisq,double* chisqCuts){
   for (int k=0; k<nBdiscrAlgos_; k++){
-    for(int i=0; i<nPtBins_; i++){ 
+      
+      if (chisq > chisqCuts[k]) continue;
+
+    for(int i=0; i<nPtBins_; i++){
       if(controlVar1>ptBins_[i] && controlVar1<ptBins_[i+1]){
 	binVector_[i][k]->FillReweighControl(btag[k],btagCut,false, weight, partonFlavour, isW, isR, controlVar1,controlVar2,controlVar0, lowCutVar0, centralLowCutVar0, centralUpCutVar0, upCutVar0, chisq);//switch of the 2D reweigh to reduce the runtime 
       }
@@ -765,15 +778,15 @@ void PtEtaBinContainer::MeasureEffRR(bool doSCreweigh){
   }
 }
 
-void PtEtaBinContainer::MeasureMistagEffRR(bool doSCreweigh){
+void PtEtaBinContainer::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic){
     for (int k=0; k<nBdiscrAlgos_; k++){
         for(int i=0; i<nPtBins_; i++){ 
-            binVector_[i][k]->MeasureMistagEffRR(false);
+            binVector_[i][k]->MeasureMistagEffRR(false,chi2,data_postfix,nSystematic);
         }
         for(int j=nPtBins_; j<nPtBins_+nEtaBins_; j++){
-            binVector_[j][k]->MeasureMistagEffRR(false);
+            binVector_[j][k]->MeasureMistagEffRR(false,chi2,data_postfix,nSystematic);
         }
-        binGlobal_[k]->MeasureMistagEffRR(doSCreweigh);
+        binGlobal_[k]->MeasureMistagEffRR(doSCreweigh,chi2,data_postfix,nSystematic);
     }
 }
 

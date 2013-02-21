@@ -886,7 +886,7 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
     
     int nBinsM3=25;
     int minM3=0;
-    int maxM3=500;
+    int maxM3=800;
     
     /* data */
     name = ""; GiveName(&name); name+="TH1Data_M3"; 
@@ -940,59 +940,67 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
 
     // 2D templates (m_lb vs m3)
     
+    int nbinA=50;
+    double minA=0;
+    double maxA=500;
+    
+    int nbinB=10;
+    double minB=0;
+    double maxB=1200;
+    
     /* data */
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3"; 
-	histo2D["TH2Data_MLB_M3"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagL"; 
-	histo2D["TH2Data_MLB_M3_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_bTagL"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagM"; 
-	histo2D["TH2Data_MLB_M3_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_bTagM"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_bTagT"; 
-	histo2D["TH2Data_MLB_M3_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_bTagT"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     
     // ttbar
     
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar"; 
-	histo2D["TH2Data_MLB_M3_TTbar"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagL"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagL"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagM"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagM"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_TTbar_bTagT"; 
-	histo2D["TH2Data_MLB_M3_TTbar_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_TTbar_bTagT"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 
     // WJets
     
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets"; 
-	histo2D["TH2Data_MLB_M3_WJets"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagL"; 
-	histo2D["TH2Data_MLB_M3_WJets_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets_bTagL"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagM"; 
-	histo2D["TH2Data_MLB_M3_WJets_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets_bTagM"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_WJets_bTagT"; 
-	histo2D["TH2Data_MLB_M3_WJets_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_WJets_bTagT"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     
     // QCD
     
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet"; 
-	histo2D["TH2Data_MLB_M3_multijet"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagL"; 
-	histo2D["TH2Data_MLB_M3_multijet_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet_bTagL"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagM"; 
-	histo2D["TH2Data_MLB_M3_multijet_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet_bTagM"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_multijet_bTagT"; 
-	histo2D["TH2Data_MLB_M3_multijet_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_multijet_bTagT"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 
     // bkg
 	
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC"; 
-	histo2D["TH2Data_MLB_M3_VVMC"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
     name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagL"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagL"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagL"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagM"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagM"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagM"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 	name = ""; GiveName(&name); name+="TH2Data_MLB_M3_VVMC_bTagT"; 
-	histo2D["TH2Data_MLB_M3_VVMC_bTagT"] = new TH2D(name,name,10,lowRangeVar0,upRangeVar0,10,lowRangeVar0,800);
+	histo2D["TH2Data_MLB_M3_VVMC_bTagT"] = new TH2D(name,name,nbinA,minA,maxA,nbinB,minB,maxB);
 
     
 }
@@ -1293,7 +1301,9 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
             
             //weight_nonrew=2;
 
-            TH1Data_Var0_XS->Fill(var0,weight_nonrew); 
+                // XS STUFF
+            
+            /*TH1Data_Var0_XS->Fill(var0,weight_nonrew);
             
             histo2D["TH2Data_MLB_M3"]->Fill(var0,m3,weight_nonrew);
             histo1D["TH1Data_M3"]->Fill(m3,weight_nonrew);
@@ -1332,7 +1342,8 @@ void PtEtaBin::FillSignalSamplePlots(double weight, double weight_nonrew, int pa
 					histo1D["TH1Bkg_Var0_bTagT"]->Fill(var0,weight_nonrew);
 				}
 				
-			}
+			}*/
+            
             //}
 		}
 	}
@@ -1595,12 +1606,55 @@ void PtEtaBin::FillXStemplates(double weight, string dataSetName, int partonFlav
 			
 		}
     }
+    
+    // DATA HISTOGRAMS
+    
+    TH1Data_Var0_XS->Fill(controlVar0,weight);
+    
+    histo2D["TH2Data_MLB_M3"]->Fill(controlVar0,m3,weight);
+    histo1D["TH1Data_M3"]->Fill(m3,weight);
+    
+    if (btag > btagCuts[0]) {
+        histo1D["TH1Data_Var0_bTagL"]->Fill(controlVar0,weight);
+        histo2D["TH2Data_MLB_M3_bTagL"]->Fill(controlVar0,m3,weight);
+        histo1D["TH1Data_M3_bTagL"]->Fill(m3,weight);
+        
+        if(fabs(partonFlavour)==5) {
+            histo1D["TH1Sng_Var0_bTagL"]->Fill(controlVar0,weight);
+        } else {
+            histo1D["TH1Bkg_Var0_bTagL"]->Fill(controlVar0,weight);
+        }
+    }
+    
+    if (btag > btagCuts[1]) {
+        histo1D["TH1Data_Var0_bTagM"]->Fill(controlVar0,weight);
+        histo2D["TH2Data_MLB_M3_bTagM"]->Fill(controlVar0,m3,weight);
+        histo1D["TH1Data_M3_bTagM"]->Fill(m3,weight);
+        
+        if(fabs(partonFlavour)==5) {
+            histo1D["TH1Sng_Var0_bTagM"]->Fill(controlVar0,weight);
+        } else {
+            histo1D["TH1Bkg_Var0_bTagM"]->Fill(controlVar0,weight);
+        }
+    }
+    if (btag > btagCuts[2]) {
+        histo1D["TH1Data_Var0_bTagT"]->Fill(controlVar0,weight);
+        histo2D["TH2Data_MLB_M3_bTagT"]->Fill(controlVar0,m3,weight);
+        histo1D["TH1Data_M3_bTagT"]->Fill(m3,weight);
+        
+        if(fabs(partonFlavour)==5) {
+            histo1D["TH1Sng_Var0_bTagT"]->Fill(controlVar0,weight);
+        } else {
+            histo1D["TH1Bkg_Var0_bTagT"]->Fill(controlVar0,weight);
+        }
+        
+    }
 	
 }
 
 void PtEtaBin::MakeSoverSBPlots(){
  
-  TH1D *TH1temp = new TH1D("temp","temp",TH1Sng_Var0->GetXaxis()->GetNbins(),TH1Sng_Var0->GetXaxis()->GetBinLowEdge(1),TH1Sng_Var0->GetXaxis()->GetBinUpEdge(TH1Sng_Var0->GetXaxis()->GetNbins())); 
+  TH1D *TH1temp = new TH1D("temp","temp",TH1Sng_Var0->GetXaxis()->GetNbins(),TH1Sng_Var0->GetXaxis()->GetBinLowEdge(1),TH1Sng_Var0->GetXaxis()->GetBinUpEdge(TH1Sng_Var0->GetXaxis()->GetNbins()));
      
   TH1temp->Add(TH1Sng_Var0,TH1Bkg_Var0);
   TH1SoverSB_Var0->Divide(TH1Sng_Var0,TH1temp);
@@ -3646,7 +3700,12 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
     
     for (std::map<string,TH1D*>::const_iterator it=histContainer.begin(); it != histContainer.end(); ++it)
         it->second->Write();
-    
+
+  
+    if (fitMode==2)
+        for (std::map<TString,TH2D*>::const_iterator it=histo2D.begin(); it != histo2D.end(); ++it)
+            it->second->Write();
+
     ftmp->Close();
     
     fstream lum(filename2, ios::out | ios::trunc);
@@ -3741,7 +3800,15 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	float misTagRateL=(float)nb_btagL/(float)nb;
 	float misTagRateM=(float)nb_btagM/(float)nb;
 	float misTagRateT=(float)nb_btagT/(float)nb;
+    
+    /*cout << misTagRateL << " " << misTagRateM << " " << misTagRateT << endl;
+    
+    misTagRateL=1;
+    misTagRateM=1;
+    misTagRateT=1;
 		
+    cout << misTagRateL << " " << misTagRateM << " " << misTagRateT << endl;*/
+
 	if (debug_ > 0) cout << "!!! nb_btagL " << nb_btagL << " nb " << nb << endl;
 	
 	// fit without using btag
@@ -3753,6 +3820,8 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	  
 	fitResults.push_back(0); // no mistagrate
     
+    fitResults.push_back(0); // no unc on mistag
+
 	if (debug_ > 0) cout << "doMLJTemplateFit: * Performing BTAGCUT fits with BTAG cut LOOSE" << endl;
 	
 	//histo1D["TH1Data_Var0_bTagL"])
@@ -3768,6 +3837,8 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	
 	fitResults.push_back(misTagRateL);
     
+	fitResults.push_back(0); // unc on mistag
+    
     //exit(1);
 	
     if (debug_ > 0) cout << "doMLJTemplateFit: * Performing BTAGCUT fits with BTAG cut MEDIUM" << endl;
@@ -3781,6 +3852,8 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	
 	fitResults.push_back(misTagRateM);
     
+    fitResults.push_back(0); // unc on mistag
+    
 	if (debug_ > 0) cout << "doMLJTemplateFit: * Performing BTAGCUT fits with BTAG cut TIGHT" << endl;
 	
     if (debug_ > 0) cout << "bTagT Mistag rate: " << misTagRateT << " b/(nb+b): " << fractionBtotal << endl;
@@ -3792,6 +3865,9 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
 	for (unsigned int t=0;t<tmp.size();t++) fitResults.push_back(tmp[t]);
 
 	fitResults.push_back(misTagRateT);
+    
+    fitResults.push_back(0); // unc on mistag
+
 
 	fitResults.push_back(fractionBtotal);
 
@@ -4013,7 +4089,7 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
 
 }
 
-void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh){
+void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic){
     
     GiveName(&titleData_MistagEffMeasuredRR_); titleData_MistagEffMeasuredRR_+="TH1Data_MistagEffMeasuredRR";
     GiveName(&titleData_MistagMeasuredRR_); titleData_MistagMeasuredRR_+="TH1Data_MistagMeasuredRR";
@@ -4048,35 +4124,87 @@ void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh){
     
     double scale=TH1Sng_BtagAll->Integral()/TH1Data_BtagMeasuredRR->Integral();
     
-    cout << "scale before: " << scale << endl;
+    cout << "PtEtaBin::MeasureMistagEffRR - scale before: " << scale << endl;
     
-    TString outname;
-    GiveName(&outname); outname="./mistagscale/"+outname+"BtagShapeScale.txt";
+    TString outname, outnameR;
+    GiveName(&outname); outname="./mistagscale/"+outname+"BtagShapeScale_Chi2Cut_"+chi2+"_channel"+data_postfix+".txt";
+    GiveName(&outnameR); outnameR="./mistagscale/"+outnameR+"BtagShape_Chi2Cut_"+chi2+"_channel"+data_postfix+".root";
     
     bool write=false;
+    
     ifstream check(outname);
-    if (!check) write=true;
-
+    
+    if (nSystematic == 0) write=true;
+    
     if (TH1Sng_BtagAll->Integral() > 0 && write) {
         
         scale = TH1Sng_BtagAll->Integral()/TH1Data_BtagMeasuredRR->Integral();
         
         if (write) {
 
-            cout << "writing to "+outname << endl;
+            cout << "PtEtaBin::MeasureMistagEffRR - writing scale to "+outname << endl;
             fstream out(outname, ios::out);
             out << scale << endl;
             out.close();
             
-        } 
+            // write measured btag distribution to file
+            
+            cout << "PtEtaBin::MeasureMistagEffRR - writing shape to "+outnameR << endl;
+
+            TFile* outR = new TFile(outnameR,"RECREATE");
+            
+            outR->cd();
+            
+            TH1Data_BtagAll->Write();
+            TH1Bkg_BtagEffAll->Write();
+            TH1Data_BtagMeasuredRR->Write();
+            
+            outR->Close();
+            
+            delete outR;
+            //delete meas;
+                        
+        }
         
+    /*} else if (nSystematic > 6 && nSystematic < 17 || nSystematic >= 100) {
+
+        cout << "PtEtaBin::MeasureMistagEffRR - Reading measured btag shape from "+outnameR << endl;
+
+        TFile* inR = new TFile(outnameR,"READ");
+        
+        if (inR) {
+            
+            //cout << "PtEtaBin::MeasureMistagEffRR - opened "+outnameR << endl;
+
+            TString name = TH1Data_BtagMeasuredRR->GetName();
+            TString name2 = TH1Data_BtagAll->GetName();
+            TString name3 = TH1Bkg_BtagEffAll->GetName();
+            
+            TH1Data_BtagMeasuredRR = (TH1D*) inR->Get(name)->Clone();
+            TH1Data_BtagAll = (TH1D*) inR->Get(name2)->Clone();
+            TH1Bkg_BtagEffAll = (TH1D*) inR->Get(name3)->Clone();
+            
+            TH1Data_BtagMeasuredRR->SetDirectory(0);
+            TH1Data_BtagAll->SetDirectory(0);
+            TH1Bkg_BtagEffAll->SetDirectory(0);
+            
+            inR->Close();
+            
+            delete inR;
+
+        } else {
+            cout << "PtEtaBin::MeasureMistagEffRR - Could not open "+outnameR << endl;
+            exit(1);
+        }
+    */
     } else {
         
-        while (!check.eof())
-            check >> scale;
+        if (check)
+            while (!check.eof())
+                check >> scale;
     }    check.close();
     
-    cout << "scale after: " << scale << endl;
+    cout << "PtEtaBin::MeasureMistagEffRR - scale after: " << scale << endl;
 
     //exit(1);
     
@@ -6317,7 +6445,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     return results;*/
 
-    if (fitMode != 0 && ((string)PrefixPlot).find("NOCUT") != string::npos) {
+    /*if (fitMode != 0 && ((string)PrefixPlot).find("NOCUT") != string::npos) {
         cout << "Skipping this for now " << PrefixPlot << endl;
         
         results.push_back(5000);
@@ -6327,7 +6455,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         
         return results;
         
-    }
+    }*/
     
     double fttb=0; double efttb=0;
     double fbkg=0; double efbkg=0;

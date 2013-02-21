@@ -117,12 +117,12 @@ void GetLeftRightPars(double*, double*, double*);
   void MeasureEffLR(bool);
     void MeasureEffRR(bool);
 
-    void MeasureMistagEffRR(bool);
+    void MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic);
 
   void GetWPEff(bool, bool, double, double*, bool, bool, double);
   void CoutWPEff(bool, bool, double, double*, bool, bool, int, int, double);
 
-  vector<double> doMLJTemplateFit(string chi2cut,int mode, string data_postfi,int nSystematic);
+  vector<double> doMLJTemplateFit(string chi2cut,int mode, string data_postfix,int nSystematic);
 	
 	std::map<std::string,float> GetEffCalcDetails() const { return EffCalcDetails_; }
 	

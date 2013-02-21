@@ -270,6 +270,8 @@ private:
     int nTTbarAfterRefSel_nPV[100];
 	double nTTbarAfterRefSel2;
 	
+    std::map<double,double> nTTbarAfterChiSq_dyn;
+
 	std::map<std::string, std::vector<float> > nSelected_;
 	
 	vector<Dataset*> datasets;
