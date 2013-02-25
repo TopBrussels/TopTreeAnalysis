@@ -153,10 +153,10 @@ int main (int argc, char *argv[])
 		if( dataSetName.find("Z_Jets") == 0 )
 		{
 			datasets[d]->SetTitle("Z/#gamma*#rightarrowl^{+}l^{-}");
-			datasets[d]->SetColor(kBlue-2);
+			datasets[d]->SetColor(kMagenta);
 		}
 		if( dataSetName.find("ST") == 0 || dataSetName.find("SingleTop") ==0 )
-			datasets[d]->SetColor(kMagenta);
+			datasets[d]->SetColor(kBlue-2);
 	}
 	
 	if(!foundMu && !foundEl && Luminosity != oldLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
@@ -288,10 +288,13 @@ int main (int argc, char *argv[])
 	CutsSelecTableSemiMu.push_back(string(LabelNJets));
 	CutsSelecTableSemiEl.push_back(string(LabelNJets));
 	
-	CutsSelecTableSemiMu.push_back(">= 1 b-jet (CSVM)");
-	CutsSelecTableSemiMu.push_back(">= 2 b-jets (CSVM)");
-	CutsSelecTableSemiEl.push_back(">= 1 b-jet (CSVM)");
-	CutsSelecTableSemiEl.push_back(">= 2 b-jets (CSVM)");
+	CutsSelecTableSemiMu.push_back("$\\geq$ 1 b-jet (CSVM)");
+	CutsSelecTableSemiMu.push_back("$\\geq$ 2 b-jets (CSVM)");
+	CutsSelecTableSemiEl.push_back("$\\geq$ 1 b-jet (CSVM)");
+	CutsSelecTableSemiEl.push_back("$\\geq$ 2 b-jets (CSVM)");
+	
+	CutsSelecTableSemiMu.push_back("$\\chi^2_{min}$ found");
+	CutsSelecTableSemiEl.push_back("$\\chi^2_{min}$ found");
 	
 	if (verbose > 0)
 		cout << " - CutsSelectionTable instantiated ..." << endl;
@@ -674,20 +677,20 @@ int main (int argc, char *argv[])
 			bool eventselectedSemiEl_onebtag = false;
 			int nb_btags = 0;
 			
-			selecTableSemiMu.Fill(d,0,scaleFactor);
+			if (useMassesAndResolutions) selecTableSemiMu.Fill(d,0,scaleFactor);
 			// semi-mu selection
 			if (triggedSemiMu){
-				selecTableSemiMu.Fill(d,1,scaleFactor);
+				if (useMassesAndResolutions) selecTableSemiMu.Fill(d,1,scaleFactor);
 				if(isGoodPV) {
-					selecTableSemiMu.Fill(d,2,scaleFactor);
+					if (useMassesAndResolutions) selecTableSemiMu.Fill(d,2,scaleFactor);
 					if (selectedMuons.size() == 1) {
-						selecTableSemiMu.Fill(d,3,scaleFactor);
+						if (useMassesAndResolutions) selecTableSemiMu.Fill(d,3,scaleFactor);
 						if (vetoMuons.size() == 1) {
-							selecTableSemiMu.Fill(d,4,scaleFactor);
+							if (useMassesAndResolutions) selecTableSemiMu.Fill(d,4,scaleFactor);
 							if (vetoElectronsSemiMu.size() == 0) {
-								selecTableSemiMu.Fill(d,5,scaleFactor);
+								if (useMassesAndResolutions) selecTableSemiMu.Fill(d,5,scaleFactor);
 		 						if( selectedJets.size()>=4 ) {
-									selecTableSemiMu.Fill(d,6,scaleFactor);
+									if (useMassesAndResolutions) selecTableSemiMu.Fill(d,6,scaleFactor);
 									//cout<<"blabli2 "<<endl;
 									
 			 						for (unsigned int i=0; i < selectedJets.size(); i++) {
@@ -696,14 +699,14 @@ int main (int argc, char *argv[])
 									}
 		 							
 									if( nb_btags>=1 ) {
-										selecTableSemiMu.Fill(d,7,scaleFactor);
+										if (useMassesAndResolutions) selecTableSemiMu.Fill(d,7,scaleFactor);
 										
 										eventselectedSemiMu_onebtag = true;
 										
 										if( nb_btags>=2 ) {
-											selecTableSemiMu.Fill(d,8,scaleFactor);
+											if (useMassesAndResolutions) selecTableSemiMu.Fill(d,8,scaleFactor);
 											eventselectedSemiMu = true;
-											NofSelectedEvents++;
+											if (useMassesAndResolutions) NofSelectedEvents++;
 										} // 2 btags
 									} // at least 1 btag
 								} // at least 4 jets
@@ -1164,7 +1167,7 @@ int main (int argc, char *argv[])
 			int labelBtag2 = -9999;
 			float PtBtag1 = -9999.;
 			float PtBtag2 = -9999.;
-			for (unsigned int i=0; i < 4; i++) {
+			for (unsigned int i=0; i < selectedJets.size(); i++) {
 				//cout << "working with jet[" << i << "] with pt=" << selectedJets[i]->Pt() << " and btag value = " << selectedJets[i]->btag_combinedSecondaryVertexBJetTags() << endl;
 				if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.679) {		// CSVM
 					//cout << "jet[" << i << "] is btagged (CSVM)" << endl;
@@ -1274,7 +1277,7 @@ int main (int argc, char *argv[])
 			if (useMassesAndResolutions && labelBtag1 != -9999 && labelBtag2 != -9999) {
 				Nof2Btags++;
 				float RecoWMass, RecoTopMassB1, RecoTopMassB2, WTerm, TopTermB1, TopTermB2, chi2B1, chi2B2;
-				float smallestChi2 = 9999.;
+				float smallestChi2 = 99999.;
 				for (int ijet=0; ijet<4; ijet++) {
 					for (int jjet=ijet+1; jjet<4; jjet++) {
 						unconditionalLoop++;
@@ -1291,6 +1294,7 @@ int main (int argc, char *argv[])
 							
 							chi2B1 = WTerm + TopTermB1;
 							chi2B2 = WTerm + TopTermB2;
+							
 							
 							if (chi2B1 < smallestChi2) {
 								smallestChi2 = chi2B1;
@@ -1335,6 +1339,8 @@ int main (int argc, char *argv[])
 				//Fill histos
 				if (labelsReco[0] != -9999 && labelsReco[1] != -9999 && labelsReco[2] != -9999 && labelsReco[3] != -9999) {
 					labelsChanged++;
+					if (useMassesAndResolutions && eventselectedSemiMu) selecTableSemiMu.Fill(d,9,scaleFactor);
+					//if (useMassesAndResolutions && eventselectedSemiEl) selecTableSemiEl.Fill(d,10,scaleFactor);
 					
 					MSPlot["Chi2_2btags"+Flav]->Fill(smallestChi2, datasets[d], true, Luminosity*scaleFactor);
 				
@@ -1361,6 +1367,10 @@ int main (int argc, char *argv[])
 				
 				}
 				
+				}
+				else {
+					//When no Chi2 combination is found:
+					cout << "Eventnr. " << ievt << ": no Chi2 found." << endl;
 				}
 		
 				
