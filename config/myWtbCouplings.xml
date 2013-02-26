@@ -20,7 +20,9 @@
 <d name="TTbarJets_FulLHad" title="t#bar{t}+jets had" add="1" color="4" ls="1" lw="2" normf="1" xsection="102.911" EqLumi="302509.7609" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_TTJets_HadronicMGDecays_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A_ext-v1_20122012_105429_TOPTREE/*.root"/>
 -->
 
-<d name="Data_Mu" title="Data" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="17541.645" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2217/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2227/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2262/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2293/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2292/*.root"/>
+<d name="Data_Mu" title="Data" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2217/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2227/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2262/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2423/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2435/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2417/*.root"/>
+
+<!--<d name="Data_El" title="Data" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2205/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2280/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2228/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2507/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2424/*.root,/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2420/*.root"/>-->
 
 <d name="ST_t_t" title="ST" add="1" color="7" ls="1" lw="2" normf="1" xsection="56.4" EqLumi="66448.6525" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_T_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_18122012_094617_TOPTREE/*.root"/>
 
@@ -30,9 +32,9 @@
 
 <d name="ST_tW_tbar" title="ST" add="1" color="7" ls="1" lw="2" normf="1" xsection="11.1" EqLumi="43339.7297" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152233_TOPTREE/*.root"/>
 
-<d name="W_Jets_3jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="618.996" EqLumi="23122.4822" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152244_TOPTREE/*.root"/>
+<d name="W_Jets_3jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="640.3675" EqLumi="22350.7970" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152244_TOPTREE/*.root"/>
 
-<d name="W_Jets_4jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="255.232" EqLumi="52433.8092" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152239_TOPTREE/*.root"/>
+<d name="W_Jets_4jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="264.0436" EqLumi="50684.0007" filenames="home/mmaes/samples/Summer12_DR53X_ProdV4_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152239_TOPTREE/*.root"/>
 
 <d name="Z_Jets_3jets" title="Z+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="60.69" EqLumi="97792.9313" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_19122012_170710_TOPTREE/*.root"/>
 
@@ -81,4 +83,3 @@ VJEstFixParam   : 0: eb, 1: eudsc(TTlike), 2: euds(Vlike)
 <!-- LuminosityError has to be relative [0-1], ex: 0.1 means 10% uncertainty on luminosity -->
 <!-- other errors should be absolute -->
 </analysis>
-
