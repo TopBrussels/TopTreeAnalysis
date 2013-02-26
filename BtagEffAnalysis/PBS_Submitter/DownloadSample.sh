@@ -1,8 +1,8 @@
 #!/bin/bash
 
 maxRetries=5
-timeout=200
-nThreads=3
+timeout=60
+nThreads=2
 
 files=()
 
@@ -20,32 +20,58 @@ mtopstaged=$(grep -R $1 $name | wc -l)
 rm -v $name
 
 # get the final list of files to download
-for i in $(cd $1; ls *.root);do
+if [ -d "$1" ]; then
 
-    # option 2 allows to give a list of files so we can download a subset
-    if [ $# -gt 1 ];then
+    for i in $(cd $1; ls *.root);do
+
+	#option 2 allows to give a list of files so we can download a subset
+	if [ $# -gt 1 ];then
 	
+	    IFS=',' read -a subset <<< "$2"
+
+	    for (( j=0; j<${#subset[@]}; ++j ))
+	      do
+	  
+	      if [ "$i" == "${subset[$j]}" ];then
+
+		  files+=($i)
+
+	      fi
+	  
+	    done
+    
+	else
+
+	    files+=($i)
+	
+	fi
+
+    done
+
+else
+
+    if [ $# -gt 1 ];then
+
+	echo "Warning: cannot directly ls on /pnfs, trusting the input filelist"
+
 	IFS=',' read -a subset <<< "$2"
 
 	for (( j=0; j<${#subset[@]}; ++j ))
 	  do
-	  
-	  #echo $i ${subset[$j]}
-	  if [ "$i" == "${subset[$j]}" ];then
-
-	      files+=($i)
-
-	  fi
+	      
+	  files+=("${subset[$j]}")	      
 	  
 	done
-    
-    else
 
-	files+=($i)
+    else
 	
+	echo "Warning: cannot directly ls on /pnfs, no input filelist provided so cannot continue"
+
+	exit
+
     fi
 
-done
+fi
 
 #echo ${#files[@]}
 
@@ -98,10 +124,16 @@ for (( i=0; i<${#files[@]}; i+=$nThreads ))
 
       pidrunning=$?
 
+      redo=0
+
       if [ $pidrunning == 0 ];then
 	  anyRunning=1
       else
-	  continue
+	  if [ ! -f "${tfiles[$k]}" ];then
+	      redo=1
+	  else
+	      continue
+	  fi
       fi
 
       now=$(date +%s)
@@ -113,9 +145,13 @@ for (( i=0; i<${#files[@]}; i+=$nThreads ))
       #echo "RETRIES IS : ${retries[$k]}"
       #echo ""
 
-      if [ "$running" -gt "$timeout" ]; then
+      if [ "$running" -gt "$timeout" ] || [ $redo -eq 1 ]; then
 
-	  echo "$(date)  !-->! Download of ${tfiles[$k]} got stuck, killing process"
+	  if [ $redo -eq 0 ];then 
+	      echo "$(date)  !-->! Download of ${tfiles[$k]} got stuck, killing process"
+	  else
+	      echo "$(date)  !-->! Download of ${tfiles[$k]} finished but the file is not correctly downloaded"
+	  fi
 
 	  kill -9 ${pid[$k]} >/dev/null 2>&1
 	  

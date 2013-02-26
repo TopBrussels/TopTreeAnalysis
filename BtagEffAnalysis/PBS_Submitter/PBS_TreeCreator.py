@@ -148,7 +148,7 @@ class JobHandler:
 
         os.mkdir(self.workingDir)
 
-        self.log.output(Popen("cp -vfr "+options.WorkingDir+"/BTagTReeCreator "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
+        self.log.output(Popen("cp -vfr "+options.WorkingDir+"/"+options.exeName+" "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
         self.log.output(Popen("cp -vfr "+options.WorkingDir+"/*.xml "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
         self.log.output(Popen("cp -vfr "+options.WorkingDir+"/BtagMassPlots.root "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
         self.log.output(Popen("cp -vfr "+options.WorkingDir+"/ReweightHistos "+self.workingDir, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read())
@@ -331,7 +331,7 @@ class JobHandler:
 
         #pbs.write("exit\n\n")
         
-        pbs.write("./BTagTReeCreator "+str(self.systematicOption)+" 0 myBTAGconfig_"+str(self.nJob)+".xml\n")
+        pbs.write("./"+options.exeName+" "+str(self.systematicOption)+" 0 myBTAGconfig_"+str(self.nJob)+".xml\n")
 
         pbs.write("ls -l BtagTrees/\n")
 
@@ -596,6 +596,8 @@ optParser = OptionParser()
 
 optParser.add_option("-t","--taskName", dest="TaskName",default="BTagTreeCreator",
                      help="TaskName that will be used as prefix for workingdir and logs", metavar="")
+optParser.add_option("-x","--exeName", dest="exeName",default="BTagTReeCreator",
+                     help="Name of the executable that will be copied to WN's", metavar="")
 optParser.add_option("-d","--workingDir", dest="WorkingDir",default="",
                      help="Directory containing the needed TopTreeAnalysis setup and the file containing input datasets (inputSamples.txt)", metavar="")
 optParser.add_option("-m","--mail", dest="Mail", default="",
@@ -608,6 +610,8 @@ optParser.add_option("","--srmcp", action="store_true", dest="usesrmcp",default=
                      help="Use SRMCP on the WNs to download rootfiles first from /pnfs. If false, libDcap is used. THIS IS ONLY FOR SAMPLES ON PNFS", metavar="")
 optParser.add_option("-w","--walltime", dest="walltime",default="07:00:00",
                      help="Define the PBS job walltime.", metavar="")
+optParser.add_option("-j","--jobs", dest="maxjobs",default="10",
+                     help="Define the maximum amount of concurrent jobs.", metavar="")
    
 (options, args) = optParser.parse_args()
 
@@ -750,6 +754,26 @@ for syst in systematics:
 
                 if splitted[1] != "-1": #data -> no syst
 
+                    if len(splitted[1].split("0/")) > 1:
+
+                        skip=bool(False)
+                        for a in splitted[1].split("0/")[1].split(","):
+
+                            if syst == a:
+                                skip=bool(True)
+
+                        if skip: continue
+
+                    if len(splitted[1].split("0+/")) > 1:
+
+                        skip=bool(True)
+                        for a in splitted[1].split("0+/")[1].split(","):
+
+                            if syst == a:
+                                skip=bool(False)
+
+                        if skip: continue
+
                     dir = splitted[4].split("\n")[0]
                     cmd = "ls "+dir+"/*.root | wc -l"
                     nInputFiles = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True).stdout.read()
@@ -840,14 +864,14 @@ for line in open(options.WorkingDir+"/inputSamples.txt"):
 
                     if end > nInputFiles:
                         end=int(nInputFiles)
-                
+
                     if i == 0:
                             
                         if nCycles > 1:
                             log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> No Systematics (nJobs: "+str(nCycles)+")")
                         else:
                             log.output("-> Adding sample "+str(splitted[0])+" <-> Wall Time: " +str(wall)+" <-> No Systematics")
-
+                            
                     job = JobHandler(nJobs, splitted[0], str(0), splitted[2], splitted[3], splitted[4].split("\n")[0],wall,jobNum,start,end)
                     jobsPool.put(job)
                     
@@ -863,7 +887,7 @@ workers = []
 
 nWorkers = int(nJobs)
 
-if nWorkers > 30: nWorkers=30
+if nWorkers > int(options.maxjobs): nWorkers=int(options.maxjobs)
 
 for x in xrange ( nWorkers ):
    workers.append(WorkFlow(x))
