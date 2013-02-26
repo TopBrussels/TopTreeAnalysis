@@ -316,9 +316,9 @@ int main (int argc, char *argv[])
 	
   LumiReWeighting LumiWeights, LumiWeightsUp, LumiWeightsDown;
 	
-  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_down.root", "pileup", "pileup");
+  LumiWeights = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/nominal.root", "pileup", "pileup");
+  LumiWeightsUp = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_up.root", "pileup", "pileup");
+  LumiWeightsDown = LumiReWeighting("PileUpReweighting/pileup_MC_Summer12_S10.root", "PileUpReweighting/pileup_2012Data53X_UpToRun208686_Mu/sys_down.root", "pileup", "pileup");
 	
   cout << " Initialized LumiReWeighting stuff" << endl;
 	
@@ -360,21 +360,21 @@ int main (int argc, char *argv[])
    	    
     vector<JetCorrectorParameters> vCorrParam;
 		
-    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
+//    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
+//    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
+//    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
 		
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
-    vCorrParam.push_back(*L1JetPar);
-    vCorrParam.push_back(*L2JetPar);
-    vCorrParam.push_back(*L3JetPar);
+//    vCorrParam.push_back(*L1JetPar);
+//    vCorrParam.push_back(*L2JetPar);
+//    vCorrParam.push_back(*L3JetPar);
 		
-    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // DATA!
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
-      vCorrParam.push_back(*ResJetCorPar);
-    }
+//    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // DATA!
+//      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
+//      vCorrParam.push_back(*ResJetCorPar);
+//    }
 		
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+		JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
 		
     // true means redo also the L1
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
@@ -560,7 +560,7 @@ int main (int argc, char *argv[])
 	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 	    else if( event->runId() >= 198049 && event->runId() <= 199608)
 	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v14"), currentRun, iFile);
-	    else if( event->runId() >= 199698 && event->runId() <= 208357)
+	    else if( event->runId() >= 199698 && event->runId() <= 208686)
 	      itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v15"), currentRun, iFile);
 	    else {
 	      cout << "Unknown run for HLTpath selection: " << event->runId() << endl;
@@ -584,7 +584,7 @@ int main (int argc, char *argv[])
 	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v9"), currentRun, iFile);
 	    else if( event->runId() >= 191695 && event->runId() <= 196531)
 	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun, iFile);
-	    else if( event->runId() >= 198049 && event->runId() <= 208357)
+	    else if( event->runId() >= 198049 && event->runId() <= 208686)
 	      itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v11"), currentRun, iFile);
 	    else { 
 	      cout << "Unknown run for SemiEl HLTpath selection: " << event->runId() << endl;
@@ -635,8 +635,8 @@ int main (int argc, char *argv[])
 	Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
 			
 	selection.setJetCuts(30.,2.5,0.01,1.,0.98,0.3,0.1);
-	selection.setMuonCuts(35,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
-	selection.setElectronCuts(32,2.5,0.1,0.02,0.5,0.3,0); // Ele25 uses 30 so Ele27 32? DR el-jets cleaning still needed?
+	selection.setMuonCuts(25,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
+	selection.setElectronCuts(32,2.5,0.1,0.02,0.9,0.3,0); // Ele25 uses 30 so Ele27 32? DR el-jets cleaning still needed?
 	selection.setLooseMuonCuts(10,2.5,0.2);
 	selection.setLooseElectronCuts(20,2.5,0.15,0.); // semiMu looseElectron cuts
 			
@@ -650,7 +650,8 @@ int main (int argc, char *argv[])
 			
 	bool isGoodPV = false;
 			
-	isGoodPV = selection.isPVSelected(vertex, anaEnv.PVertexNdofCut, anaEnv.PVertexZCut, anaEnv.PVertexRhoCut);
+	//isGoodPV = selection.isPVSelected(vertex, anaEnv.PVertexNdofCut, anaEnv.PVertexZCut, anaEnv.PVertexRhoCut);
+	isGoodPV = selection.isPVSelected(vertex, 4, 24, 2.);
 			
 	vector<TRootJet*> selectedJets, selectedJetsNoMu, selectedJetsNoEl;
 	vector<TRootMuon*> selectedMuons;
@@ -1737,51 +1738,61 @@ MSPlot["hadTop_Pt_1btag"+Flav]->Fill(hadtoppt_1btag, datasets[d], true, Luminosi
 	    myTransferFunctions<<"\\end{table}"<<endl;
 	    myTransferFunctions<< endl;
 						
-	    if(i==0) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
-	    if(i==0) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: b                                         |" << endl;
-	    if(i==0) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
-	    if(i==3) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
-	    if(i==3) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: nonb                                         |" << endl;
-	    if(i==3) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
-	    if(i==6) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
-	    if(i==6) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: muon                                         |" << endl;
-	    if(i==6) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
-	    if(i==0) myTransferFunctionsForMadWeight<<"BLOCK TF_bjet_E" << endl;
-	    if(i==1) myTransferFunctionsForMadWeight<<"BLOCK TF_bjet_THETA" << endl;
-	    if(i==2) myTransferFunctionsForMadWeight<<"BLOCK TF_bjet_PHI" << endl;
-	    if(i==3) myTransferFunctionsForMadWeight<<"BLOCK TF_nonbjet_E" << endl;
-	    if(i==4) myTransferFunctionsForMadWeight<<"BLOCK TF_nonbjet_THETA" << endl;
-	    if(i==5) myTransferFunctionsForMadWeight<<"BLOCK TF_nonbjet_PHI" << endl;
-	    if(i==6) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_InvPt" << endl;
-	    if(i==7) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_THETA" << endl;
-	    if(i==8) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_PHI" << endl;
-	    if(i<6) { //for jets, should also work for electrons if we have them
-	      for(int j = 0; j<3; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j) << "  # bias broad gaussian b1=#1+#2*sqrt(E)*#3*E" << endl;
-	      for(int j = 3; j<6; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-3) << "  # sigma broad gaussian s1=#4+#5*sqrt(E)*#6*E" << endl;
-	      for(int j = 6; j<9; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-6) << "  # constant broad gaussian c1=#7+#8*sqrt(E)*#9*E" << endl;
-	      for(int j = 9; j<12; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-9) << "  # bias narrow gaussian b2=#10+#11*sqrt(E)*#12*E" << endl;
-	      for(int j = 12; j<15; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-12) << "  # sigma narrow gaussian s2=#13+#14*sqrt(E)*#15*E" << endl;
-	      for(int j = 15; j<18; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-15) << "  # constant narrow gaussian c2=#16+#17*sqrt(E)*#18*E" << endl;
-	    }else{ //for muon (only difference: paramtrization according to InvPt instead of E -> something textual...)
-	      for(int j = 0; j<3; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j) << "  # bias broad gaussian b1=#1+#2*sqrt(InvPt)*#3*InvPt" << endl;
-	      for(int j = 3; j<6; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-3) << "  # sigma broad gaussian s1=#4+#5*sqrt(InvPt)*#6*InvPt" << endl;
-	      for(int j = 6; j<9; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-6) << "  # constant broad gaussian c1=#7+#8*sqrt(InvPt)*#9*InvPt" << endl;
-	      for(int j = 9; j<12; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-9) << "  # bias narrow gaussian b2=#10+#11*sqrt(InvPt)*#12*InvPt" << endl;
-	      for(int j = 12; j<15; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-12) << "  # sigma narrow gaussian s2=#13+#14*sqrt(InvPt)*#15*InvPt" << endl;
-	      for(int j = 15; j<18; j++)
-		myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-15) << "  # constant narrow gaussian c2=#16+#17*sqrt(InvPt)*#18*InvPt" << endl;									}
-	  }
+						if(i==0) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==0) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: b,c,d,u,s,g                               |" << endl;
+						if(i==0) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"#|    Parameter for particles: muon                                      |" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"#+-----------------------------------------------------------------------+" << endl;
+						if(i==0) myTransferFunctionsForMadWeight<<"BLOCK TF_jet_E" << endl;
+						if(i==2) myTransferFunctionsForMadWeight<<"BLOCK TF_jet_THETA" << endl;
+						if(i==4) myTransferFunctionsForMadWeight<<"BLOCK TF_jet_PHI" << endl;
+						if(i==6) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_InvPt" << endl;
+						if(i==7) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_THETA" << endl;
+						if(i==8) myTransferFunctionsForMadWeight<<"BLOCK TF_muon_PHI" << endl;
+						if(i<6) { //for jets, should also work for electrons if we have them
+							if(i==0 || i==2 || i==4){
+								for(int j = 0; j<3; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j) << "  # bias broad gaussian b1=#1+#2*sqrt(E)*#3*E" << endl;
+								for(int j = 3; j<6; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-3) << "  # sigma broad gaussian s1=#4+#5*sqrt(E)*#6*E" << endl;
+								for(int j = 6; j<9; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-6) << "  # constant broad gaussian c1=#7+#8*sqrt(E)*#9*E" << endl;
+								for(int j = 9; j<12; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-9) << "  # bias narrow gaussian b2=#10+#11*sqrt(E)*#12*E" << endl;
+								for(int j = 12; j<15; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-12) << "  # sigma narrow gaussian s2=#13+#14*sqrt(E)*#15*E" << endl;
+								for(int j = 15; j<18; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-15) << "  # constant narrow gaussian c2=#16+#17*sqrt(E)*#18*E" << endl;
+							}else{
+								for(int j = 18; j<21; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j-18) << "  # bias broad gaussian b1=#19+#20*sqrt(E)*#21*E" << endl;
+								for(int j = 21; j<24; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-21) << "  # sigma broad gaussian s1=#22+#23*sqrt(E)*#24*E" << endl;
+								for(int j = 24; j<27; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-24) << "  # constant broad gaussian c1=#25+#26*sqrt(E)*#27*E" << endl;
+								for(int j = 27; j<30; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-27) << "  # bias narrow gaussian b2=#28+#29*sqrt(E)*#30*E" << endl;
+								for(int j = 30; j<33; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-30) << "  # sigma narrow gaussian s2=#31+#32*sqrt(E)*#33*E" << endl;
+								for(int j = 33; j<36; j++)
+									myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-33) << "  # constant narrow gaussian c2=#34+#35*sqrt(E)*#36*E" << endl;
+							}
+						}else{ //for muon (only difference: paramtrization according to InvPt instead of E -> something textual...)
+							for(int j = 0; j<3; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par1->GetParameter(j) << "  # bias broad gaussian b1=#1+#2*sqrt(InvPt)*#3*InvPt" << endl;
+							for(int j = 3; j<6; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par2->GetParameter(j-3) << "  # sigma broad gaussian s1=#4+#5*sqrt(InvPt)*#6*InvPt" << endl;
+							for(int j = 6; j<9; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par3->GetParameter(j-6) << "  # constant broad gaussian c1=#7+#8*sqrt(InvPt)*#9*InvPt" << endl;
+							for(int j = 9; j<12; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par4->GetParameter(j-9) << "  # bias narrow gaussian b2=#10+#11*sqrt(InvPt)*#12*InvPt" << endl;
+							for(int j = 12; j<15; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par5->GetParameter(j-12) << "  # sigma narrow gaussian s2=#13+#14*sqrt(InvPt)*#15*InvPt" << endl;
+							for(int j = 15; j<18; j++)
+								myTransferFunctionsForMadWeight<<j+1 << " " << TF_par6->GetParameter(j-15) << "  # constant narrow gaussian c2=#16+#17*sqrt(InvPt)*#18*InvPt" << endl;									}
+					}
+
 	  tf->Close();
 	}
 	myTransferFunctions.close();
