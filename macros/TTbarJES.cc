@@ -800,7 +800,7 @@ int main (int argc, char *argv[])
         cout << "Event selected in semiEl and semiMu channel???" << endl;
       
       vector<TRootMCParticle*> mcParticles;
-      if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
+      if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 || dataSetName.find("ST_") == 0 || dataSetName.find("SingleTop") == 0 )
       {
         mcParticles = treeLoader.LoadMCPart(ievt);
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
@@ -1116,7 +1116,7 @@ int main (int argc, char *argv[])
           float topMass = -1., antiTopMass = -1.;
           bool topDecayedLept = false;
           
-          if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0)
+          if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 || dataSetName.find("ST_") == 0 || dataSetName.find("SingleTop") == 0)
           {
             for(unsigned int iPart=0; iPart<mcParticles.size(); iPart++)
             {
