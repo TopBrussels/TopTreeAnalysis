@@ -115,7 +115,7 @@ void syst_plotmaker(int mode = 0){
   cout << "-------------------------------------------------------" << endl; 
   
   const int nProcess = 2;
-  const int nPlots = 6;
+  const int nPlots = 16;
   const int nSys = 11;
 
 
@@ -126,9 +126,9 @@ void syst_plotmaker(int mode = 0){
   TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp"}; 
 
 
-  TString cutLabel[nPlots] =     {  "met", "mll", "ptsys", "ht", "pt_leading",  "nvertex" };
-  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1};
-  TString cutTitle[nPlots] =     { "E_{T}^{miss} ", "Inv. Mass ", "P_{T} system [GeV] ", "H_{T} [GeV] ","P_{T} of the leading jet ", "# of vertex "};
+  TString cutLabel[nPlots] =     {  "met", "mll", "ptsys", "ht", "pt_leading", "nvertex", "met_2j1t", "mll_2j1t", "ptsys_2j1t", "ht_2j1t", "pt_leading_2j1t","met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t", "pt_leading_2j2t" };
+  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1,4, 4,  4, 12, 4, 4, 4,  4, 12, 4};
+  TString cutTitle[nPlots] =     { "E_{T}^{miss} ", "Inv. Mass ", "P_{T} system [GeV] ", "H_{T} [GeV] ","P_{T} of the leading jet ", "# of vertex ", "E_{T}^{miss} 2j1t", "Inv. Mass 2j1t", "P_{T} system [GeV] 2j1t", "H_{T} [GeV] 2j1t","P_{T} of the leading jet 2j1t","E_{T}^{miss} 2j2t", "Inv. Mass 2j2t", "P_{T} system [GeV] 2j2t", "H_{T} [GeV] 2j2t","P_{T} of the leading jet 2j2t" };
 
 
   TString modeString[1] = {"0"};

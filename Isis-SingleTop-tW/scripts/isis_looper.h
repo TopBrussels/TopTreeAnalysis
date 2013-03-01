@@ -40,7 +40,9 @@ class isis_looper {
   std::vector<double>  *pyJet;
   std::vector<double>  *pzJet;
   std::vector<double>  *eJet;
+  std::vector<double>  *etaJet;
   std::vector<double>  *qJet;
+  std::vector<double>  *SFjet;
   std::vector<double>  *btJPBJet;
   std::vector<double>  *btBJPBJet;
   std::vector<double>  *btCSVBJet;
@@ -70,7 +72,9 @@ class isis_looper {
   TBranch        *b_pyJet;   //!
   TBranch        *b_pzJet;   //!
   TBranch        *b_eJet;   //!
+  TBranch        *b_etaJet;   //!
   TBranch        *b_qJet;   //!
+  TBranch        *b_SFjet;   //!
   TBranch        *b_btJPBJet;   //!
   TBranch        *b_btBJPBJet;   //!
   TBranch        *b_btCSVBJet;   //!
@@ -141,7 +145,9 @@ void isis_looper::Init(TTree *tree)
   pyJet = 0;
   pzJet = 0;
   eJet = 0;
+  etaJet = 0;
   qJet = 0;
+  SFjet = 0;
   btJPBJet = 0;
   btBJPBJet = 0;
   btCSVBJet = 0;
@@ -179,7 +185,9 @@ void isis_looper::Init(TTree *tree)
   fChain->SetBranchAddress("pyJet", &pyJet, &b_pyJet);
   fChain->SetBranchAddress("pzJet", &pzJet, &b_pzJet);
   fChain->SetBranchAddress("eJet", &eJet, &b_eJet);
+  fChain->SetBranchAddress("etaJet", &etaJet, &b_etaJet);
   fChain->SetBranchAddress("qJet", &qJet, &b_qJet);
+  fChain->SetBranchAddress("SFjet", &SFjet, &b_SFjet);
   
   fChain->SetBranchAddress("btJPBJet",&btJPBJet, &b_btJPBJet);
   fChain->SetBranchAddress("btBJPBJet",&btBJPBJet, &b_btBJPBJet);

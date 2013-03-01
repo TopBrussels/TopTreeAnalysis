@@ -32,9 +32,9 @@ void plotmaker(int mode = 0){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  if (mode == 0) labelcms2->AddText("4.4 fb^{-1}, e#mu channel  ");
-  if (mode == 1) labelcms2->AddText("5.1 fb^{-1}, #mu#mu channel  ");
-  if (mode == 2) labelcms2->AddText("5.1 fb^{-1}, ee channel  ");
+  if (mode == 0) labelcms2->AddText("12 fb^{-1}, e#mu channel  ");
+  if (mode == 1) labelcms2->AddText("12 fb^{-1}, #mu#mu channel  ");
+  if (mode == 2) labelcms2->AddText("12 fb^{-1}, ee channel  ");
   
   labelcms2->SetBorderSize(0);
   
@@ -60,9 +60,10 @@ void plotmaker(int mode = 0){
   char myRootFile[300];
   double lumi = 1000;
   
-  if (mode == 0 )        lumi = 4399; 
-  else if ( mode == 1)   lumi = 1000; // to check 
-  else if ( mode == 2)   lumi = 1000;  // to check 
+    if      (mode == 0)	 lumi = 11966.617;  	
+    else if (mode == 1) lumi = 12067.294;  	
+    else if (mode == 2) lumi = 12093.792;  	
+  
   
   
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);

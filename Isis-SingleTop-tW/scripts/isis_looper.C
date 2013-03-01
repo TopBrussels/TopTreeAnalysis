@@ -15,6 +15,7 @@
 #include "TH2F.h"
 #include "TLorentzVector.h"
 
+
 void isis_looper::Loop(){
   // running default loop:
   myLoop(0,0,0);
@@ -38,6 +39,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
+  
+  /*
   //JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
@@ -67,6 +70,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  14)                   {sprintf(plotName,"tt");}
   else if (nsel == -24)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
+  */
   
   bool nosf = false;
   
@@ -77,7 +81,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     else if (mode == 1) lumi = 12067.294;  	
     else if (mode == 2) lumi = 12093.792;  	
   
-  
+  /*
   if(nsel == -10 || nsel == -20){
   sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
@@ -109,9 +113,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
    sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
   else{
+  
     sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
-  }
+  }*/
  
+ sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
  
   TFile f_var(newRootFile, "UPDATE");
   
@@ -564,44 +570,36 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       
       if (pair.M() > 20){
 	histo->Fill(1, xlWeight);
+        
+       
 
-	double SFval, SFerror;
-	if ( nsel == 666 || nosf){
-	  SFval = 1;
-	  SFerror = 0;
-	} 
-	else if (nsel == 0){
-	  SFval = 0.95;
-	  SFerror = 0.03;
-	} 
-	else {
-	  SFval = 0.97;
-	  SFerror = 0.03;
-	}
-	
-	
 	int nJetsBT = 0;
 	int nTightJetsBT = 0;
-	int nJets = 0;
+	int nJets = 0;	
 	bool bTagged = false;
 	int iJetn[5]={-1, -1,-1,-1,-1};
 	int iJet = -5;
 	int iSF;
-	double tempSF = SFval;
-	
-	int SFvalue = int(tempSF*100);
+	double bTag_SF_b;
 	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
-	  if (ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
+	  
+	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	    
 	    iJetn[nJets] = i;
 	    iJet = i;
 	    nJets++;
-	    
-	    
+
 	    if (btCSVBJet->at(i) > 0.679){
 	      iSF = rand() % 100;
+	      
+	      if ( nsel == 666 || nosf){
+	            bTag_SF_b = 1;
+	      }else{
+	          bTag_SF_b = SFjet->at(i);
+	      }
+	      int SFvalue = int(bTag_SF_b*100);
 	      if (iSF < SFvalue ){
 		bTagged = true;
 		nJetsBT++;
@@ -609,8 +607,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	      } // end if (iSF < SFvalue) 
 	    } // end  if (btCSVBJet->at(i) > 0.679)
 	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
-	  else if (btCSVBJet->at(i) > 0.679){
+	  else if (btCSVBJet->at(i) > 0.679){ // look for jets that aren't proper, but still btagged
 	    iSF = rand() % 100;
+	    if ( nsel == 666 || nosf){
+	            bTag_SF_b = 1;
+	      }else{
+	          bTag_SF_b = SFjet->at(i);
+	      }
+            int SFvalue = int(bTag_SF_b*100);
 	    if (iSF < SFvalue ) nJetsBT++;
 	  }  // end else if (btCSVBJet->at(i) > 0.679)
 	  
