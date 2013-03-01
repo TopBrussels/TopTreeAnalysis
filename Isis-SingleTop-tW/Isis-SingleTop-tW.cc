@@ -577,10 +577,30 @@ int main(int argc, char* argv[]) {
   	sprintf(titlePlot,"ptLjet_%d_%s",mode,name);
   	TH1F* histo_ptLjet = new TH1F(titlePlot, " pt of jets coming from light quarks ", 100 , 0, 200);   
 	
+	sprintf(titlePlot,"etaBTagB_%d_%s",mode,name);
+  	TH1F* histo_etaBTagB = new TH1F(titlePlot, " eta of btagged jets for bjets", 101,  -3, 3);
+	
+	sprintf(titlePlot,"etaBTagC_%d_%s",mode,name);
+  	TH1F* histo_etaBTagC = new TH1F(titlePlot, " eta of btagged jets for cjets", 101,  -3, 3);
+	
+  	sprintf(titlePlot,"etaBTagL_%d_%s",mode,name);
+  	TH1F* histo_etaBTagL = new TH1F(titlePlot, " eta of btagged jets for ljets", 101,  -3, 3);
+  
+  	sprintf(titlePlot,"etaBjet_%d_%s",mode,name);
+  	TH1F* histo_etaBjet = new TH1F(titlePlot, " eta of jets coming from a b quark ", 101,  -3, 3);
+  
+ 	sprintf(titlePlot,"etaCjet_%d_%s",mode,name);
+ 	TH1F* histo_etaCjet = new TH1F(titlePlot, " eta of jets coming from a c quark ", 101 , -3, 3);
+ 
+  	sprintf(titlePlot,"etaLjet_%d_%s",mode,name);
+  	TH1F* histo_etaLjet = new TH1F(titlePlot, " eta of jets coming from light quarks ", 101 , -3, 3); 
+	
 	sprintf(titlePlot,"btagged_jets_%d_%s",mode,name);
   	TH1F* histo_btagged_jets = new TH1F(titlePlot, " Btagged jets",  10,  -0.5, 9.5 ); 
+	
+
   	
-  
+       
  	
  	
  
@@ -1019,62 +1039,82 @@ int main(int argc, char* argv[]) {
 						if(!isData){					
 							sort(selectedJets.begin(),selectedJets.end(),HighestPt()); //Sort the selected jets based on Pt
 							
-							vector <TLorentzVector> mcParticlesTLV,selectedJetsTLV;
+							vector <int> mcParticlesTLV,selectedJetsTLV;
 							TLorentzVector bQuark_vector;
 							
 							mcParticlesTLV.clear(); //make sure nothing is inside this vector
 							selectedJetsTLV.clear();
-
-
-						        int pdgID; 
+							
+      
 							for(unsigned int iJet=0;iJet<selectedJets.size(); iJet++){
-	    							selectedJetsTLV.push_back(*selectedJets[iJet]);
+								TRootJet* tempJet = (TRootJet*) selectedJets[iJet];
+								TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 								
-								TRootJet* Jet_temp = (TRootJet*) selectedJets[iJet];
-		    						pdgID = Jet_temp->partonFlavour(); 
+								int pdgID = tempJet->partonFlavour();
 								
-								mcParticlesTLV.push_back(pdgID);
+								if(tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3){
+	    								selectedJetsTLV.push_back(iJet);
+									mcParticlesTLV.push_back(pdgID);
+								} // closing proper jet statement
 								
 							} // closing for loop over selectedJets.size();
 							
 
+						/*	for(unsigned int iJ=0; iJ<selectedJetsTLV.size(); iJ++) {
+								int jet_Number = selectedJetsTLV[iJ];
+								int pdgID = mcParticlesTLV[iJ];
+								
+								cout << "JETnr: " << jet_Number << " pdgID: " << pdgID << endl; 
+							}
+						*/
 	
 							vector< pair<unsigned int, unsigned int> > JetPartonPair;
 							vector< pair<unsigned int, unsigned int> > JetPartonPair_c;
 							vector< pair<unsigned int, unsigned int> > JetPartonPair_fake;
 							
-							
+								
 							for(unsigned int iJ=0; iJ<selectedJetsTLV.size(); iJ++) {
+								int jet_Number =selectedJetsTLV[iJ];
+								int pdgID = mcParticlesTLV[iJ];
+								
 	    							if(fabs(pdgID) == 5)
 								{
-	      								JetPartonPair.push_back( pair<unsigned int, unsigned int> (pdgID, iJ) );
-									
+	      								JetPartonPair.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
+										
 	 							 } // END JETPARTONPAIR FILLING
 								if(pdgID == 4 )
 								{
-	      								JetPartonPair_c.push_back( pair<unsigned int, unsigned int> (pdgID, iJ) );
+	      								JetPartonPair_c.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 	 							 } // END JETPARTONPAIR FILLING
 								if(pdgID == 21 || fabs(pdgID) < 4) // <5 light quarks, 21 gluon no fabs because electrically neutral
 								{
-	      								JetPartonPair_fake.push_back( pair<unsigned int, unsigned int> (pdgID, iJ) );
+	      								JetPartonPair_fake.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 	 							 } // END JETPARTONPAIR FILLING
 							} // end for loop 
-							
+								
+								
 							for(unsigned int iJ=0; iJ<JetPartonPair.size(); iJ++) {
 								unsigned int jetnumber = JetPartonPair[iJ].second;
+								//cout << "JETNR " << jetnumber << " JET " << endl; 
 								TRootJet* Jet_tempo = (TRootJet*) selectedJets[jetnumber];
 								
 								double jetPT = Jet_tempo->Pt(); 
 								histo_ptBjet->Fill(jetPT);
+								
+								double jetETA = Jet_tempo->Eta(); 
+								histo_etaBjet->Fill(jetETA);
 							
 							}
-							
+								
 							for(unsigned int iJ=0; iJ<JetPartonPair_c.size(); iJ++) {
 								unsigned int jetnumber = JetPartonPair_c[iJ].second;
 								TRootJet* Jet_tempo = (TRootJet*) selectedJets[jetnumber];
 								
 								double jetPT = Jet_tempo->Pt(); 
 								histo_ptCjet->Fill(jetPT);
+								
+								double jetETA = Jet_tempo->Eta(); 
+								histo_etaCjet->Fill(jetETA);
 							
 							}
 							
@@ -1084,12 +1124,16 @@ int main(int argc, char* argv[]) {
 								
 								double jetPT = Jet_tempo->Pt(); 
 								histo_ptLjet->Fill(jetPT);
+								
+								double jetETA = Jet_tempo->Eta(); 
+								histo_etaLjet->Fill(jetETA);
 							
 							}
 							
 							double Number_matched_bquarks =JetPartonPair.size(); 
 							double Number_matched_cquarks =JetPartonPair_c.size(); 
 							double Number_matched_lquarks =JetPartonPair_fake.size();
+							
 							double Number_btagged_jets = 0; 
 							double Number_btagged_jets_c = 0; 
 							double Number_btagged_jets_fake = 0;
@@ -1099,10 +1143,12 @@ int main(int argc, char* argv[]) {
 	    							unsigned int jetnumber = JetPartonPair[iPair].second;
 								TRootJet* Jet_tempo = (TRootJet*) selectedJets[jetnumber];
 								double jetPT = Jet_tempo->Pt();
-								
+								double jetETA = Jet_tempo->Eta();
+							
 								if (Jet_tempo->btag_combinedSecondaryVertexBJetTags()> 0.679){
 			    						Number_btagged_jets++;
 									histo_ptBTagB->Fill(jetPT);
+									histo_etaBTagB->Fill(jetETA);
 									
 								} // closing loop counting btagged jets
 							} // closing for loop over jetpartonpair.size()
@@ -1112,10 +1158,12 @@ int main(int argc, char* argv[]) {
 	    							unsigned int jetnumber = JetPartonPair_c[iPair].second;
 								TRootJet* Jet_tempo = (TRootJet*) selectedJets[jetnumber];
 								double jetPT = Jet_tempo->Pt();
-								
+								double jetETA = Jet_tempo->Eta();
+							
 								if (Jet_tempo->btag_combinedSecondaryVertexBJetTags()> 0.679){
 			    						Number_btagged_jets_c++;
 									histo_ptBTagC->Fill(jetPT);
+									histo_etaBTagC->Fill(jetETA);
 								} // closing loop counting btagged jets
 							} // closing for loop over jetpartonpair.size()
 							
@@ -1124,26 +1172,27 @@ int main(int argc, char* argv[]) {
 	    							unsigned int jetnumber = JetPartonPair_fake[iPair].second;
 								TRootJet* Jet_tempo = (TRootJet*) selectedJets[jetnumber];
 								double jetPT = Jet_tempo->Pt();
+								double jetETA = Jet_tempo->Eta();
 								if (Jet_tempo->btag_combinedSecondaryVertexBJetTags()> 0.679){
 			    						Number_btagged_jets_fake++;
 									histo_ptBTagL->Fill(jetPT);
+									histo_etaBTagL->Fill(jetETA);
 								} // closing loop counting btagged jets
 							} // closing for loop over jetpartonpair.size()
 							
-							btag_eff = Number_btagged_jets/Number_matched_bquarks;
-							btag_eff_c = Number_btagged_jets_c/Number_matched_cquarks;
-							fake_eff = Number_btagged_jets_fake/Number_matched_lquarks;
+								btag_eff = Number_btagged_jets/Number_matched_bquarks;
+								btag_eff_c = Number_btagged_jets_c/Number_matched_cquarks;
+								fake_eff = Number_btagged_jets_fake/Number_matched_lquarks;
 							
-												
+							 					
 							
 							if(Number_matched_bquarks != 0){
 							
-		 						if (dataSetName == "tt"){ 	
-								   btag_eff_tt.push_back(btag_eff ); }
+		 						if (dataSetName == "tt"){ btag_eff_tt.push_back(btag_eff ); }
  								else if (dataSetName == "twdr"){    btag_eff_twdr.push_back(btag_eff ); }	
  								else if (dataSetName == "atwdr"){   btag_eff_atwdr.push_back(btag_eff ); }	
  								else if (dataSetName == "t"){  	    btag_eff_t.push_back(btag_eff ); }
- 								else if (dataSetName == "at"){ 	   btag_eff_at.push_back(btag_eff ); }
+ 										else if (dataSetName == "at"){ 	   btag_eff_at.push_back(btag_eff ); }
 								else if (dataSetName == "s"){      btag_eff_s.push_back(btag_eff ); }	
  								else if (dataSetName == "as"){    btag_eff_as.push_back(btag_eff ); }
 								else if (dataSetName == "ww"){    btag_eff_ww.push_back(btag_eff ); }	
@@ -1153,7 +1202,7 @@ int main(int argc, char* argv[]) {
 								else if (dataSetName == "zjets_lowmll"){    btag_eff_zjets_lowmll.push_back(btag_eff ); }
  								else if (dataSetName == "wjets"){   btag_eff_wjets.push_back(btag_eff ); }	
 								// cout << "BTAGEFFICIENTIE CALCULATION: Btagged jets = " << Number_btagged_jets << " Number bquarks = " <<  Number_matched_bquarks << " Btag_eff = " << btag_eff << endl; 
-						 	}
+							 }
 							
 							if(Number_matched_lquarks != 0){
 							
@@ -1171,8 +1220,8 @@ int main(int argc, char* argv[]) {
  								else if (dataSetName == "zjets"){     fake_eff_zjets.push_back(fake_eff ); }	
 								else if (dataSetName == "zjets_lowmll"){    fake_eff_zjets_lowmll.push_back(fake_eff ); }
  								else if (dataSetName == "wjets"){   fake_eff_wjets.push_back(fake_eff ); }	
-								// cout << "NON BTAGEFFICIENTIE CALCULATION: fake Btagged jets = " << Number_btagged_jets_fake << " Number lquarks = " <<  Number_matched_lquarks << " fake_eff = " << fake_eff << endl; 
-						 	}
+								// cout << "NON BTAGEFFICIENTIE CALCULATION: fake Btagged jets = " << Number_btagged_jets_fake << " Number lquarks = " <<  Number_matched_lquarks << " fake_eff = " << fake_eff << endl; 						 		}
+							}
 								
 						} // closing if(!isData)
 						
@@ -1255,18 +1304,16 @@ int main(int argc, char* argv[]) {
 									}  
 
 									jet_phiSF = tempJet->Phi(); 
-									jet_etaSF = tempJet-> Eta(); 
+									jet_etaSF = TempEta; 
 									
 									
-									if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
+									if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
 			 							nJets++;
 										iJet = iJ;
 
 										
 										if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){  // then btagged
-										
-											
-											
+
 											bTagged = true; 
 											
 											if (!isData){
@@ -1279,7 +1326,6 @@ int main(int argc, char* argv[]) {
 												}
 												
 												if(BTagSF < 0){
-												
 													cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
 													cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
 													
@@ -1370,7 +1416,7 @@ int main(int argc, char* argv[]) {
 
 								} // closing loop over jets 
 
-								histo_btagged_jets->Fill(nJetsBT); 
+								histo_btagged_jets->Fill(nTightJetsBT); 
 
 							
 							
@@ -1909,6 +1955,21 @@ int main(int argc, char* argv[]) {
 	histo_eff_Ljet ->SetNameTitle(titlePlotEff, " Efficiency of Btagging for jets from L quark");
 	histo_eff_Ljet->Divide(histo_ptLjet);
 	
+	sprintf(titlePlotEff,"effeta_Bjet_%d_%s",mode,name);	
+	TH1F* histo_effeta_Bjet = (TH1F*) histo_etaBTagB->Clone("histo_effeta_Bjet"); 
+	histo_effeta_Bjet ->SetNameTitle(titlePlotEff, " efficiency of btagging for jets from b quark");
+	histo_effeta_Bjet->Divide(histo_etaBjet);
+	
+	sprintf(titlePlotEff,"effeta_Cjet_%d_%s",mode,name);	
+	TH1F* histo_effeta_Cjet = (TH1F*) histo_etaBTagC->Clone("histo_effeta_Cjet"); 
+	histo_effeta_Cjet ->SetNameTitle(titlePlotEff, " efficiency of Btagging for jets from C quark");
+	histo_effeta_Cjet->Divide(histo_etaCjet);
+	
+	sprintf(titlePlotEff,"effeta_Ljet_%d_%s",mode,name);	
+	TH1F* histo_effeta_Ljet = (TH1F*) histo_etaBTagL->Clone("histo_effeta_Ljet"); 
+	histo_effeta_Ljet ->SetNameTitle(titlePlotEff, " efficiency of Btagging for jets from L quark");
+	histo_effeta_Ljet->Divide(histo_etaLjet);
+	
 	histo_btagged_jets->SetDirectory(fileEf); 
 	
 	
@@ -1917,25 +1978,33 @@ int main(int argc, char* argv[]) {
 	TCanvas *c1_Eff = new TCanvas();
 	histo_eff_Bjet->SetMaximum(1);
 	//histo_eff_Bjet->Rebin(2);
-        histo_eff_Bjet->Draw();
-        histo_eff_Bjet->GetYaxis()->SetTitle("Eff");
+	histo_eff_Bjet->GetYaxis()->SetTitle("Eff");
         histo_eff_Bjet->GetXaxis()->SetTitle("pt");
-	
-	histo_eff_Cjet->SetMaximum(1);
-	//histo_eff_Cjet->Rebin(2);
-	histo_eff_Cjet ->SetLineColor(kBlue);
-	histo_eff_Cjet->Draw("sames");
-    
+        histo_eff_Bjet->Draw();
+
       char plotNameEff[100]; 
-      sprintf(plotNameEff,"eff_B_C_jet_%d_%s",mode,name);
+      sprintf(plotNameEff,"eff_B_jet_%d_%s",mode,name);
       TString string = plotNameEff;   
       c1_Eff->SaveAs("BtagFiles/plots/" + string  + ".png");
 
-
+	TCanvas *c11_Eff = new TCanvas();
+	histo_eff_Cjet->SetMaximum(1);
+	histo_eff_Cjet->Rebin(4);// put 3 bins into 11
+	//histo_eff_Cjet ->SetLineColor(kBlue);
+        histo_eff_Cjet->GetYaxis()->SetTitle("Eff");
+        histo_eff_Cjet->GetXaxis()->SetTitle("pt");
+	histo_eff_Cjet->Draw();	
+	
+    
+      char plotNameEfff[100]; 
+      sprintf(plotNameEfff,"eff_C_jet_%d_%s",mode,name);
+      TString stringf = plotNameEfff;   
+      c11_Eff->SaveAs("BtagFiles/plots/" + stringf  + ".png");
+      
 	TCanvas *c2_Eff = new TCanvas();
-	histo_eff_Ljet ->SetLineColor(kGreen);
-	histo_eff_Ljet->SetMaximum(1);
-	//histo_eff_Ljet->Rebin(2);
+	//histo_eff_Ljet ->SetLineColor(kGreen);
+	histo_eff_Ljet->SetMaximum(0.5);
+	histo_eff_Ljet->Rebin(4);
       	histo_eff_Ljet->Draw();
       	histo_eff_Ljet->GetYaxis()->SetTitle("Eff");
       	histo_eff_Ljet->GetXaxis()->SetTitle("pt");
@@ -1944,6 +2013,49 @@ int main(int argc, char* argv[]) {
       sprintf(plotNameMisEff,"fake_eff_Bjet_%d_%s",mode,name);
       TString stringMis = plotNameMisEff;  
       c2_Eff->SaveAs("BtagFiles/plots/" + stringMis  + ".png");
+      
+      	TCanvas *c1_EffEta = new TCanvas();
+	histo_effeta_Bjet->SetMaximum(1);
+	//histo_effeta_Bjet->Rebin(2);
+        
+        histo_effeta_Bjet->GetYaxis()->SetTitle("Eff");
+        histo_effeta_Bjet->GetXaxis()->SetTitle("eta");
+	histo_effeta_Bjet->Draw();
+	
+	
+    
+      char plotNameEffEta[100]; 
+      sprintf(plotNameEffEta,"effeta_B_jet_%d_%s",mode,name);
+      TString stringa = plotNameEffEta;   
+      c1_EffEta->SaveAs("BtagFiles/plots/" + stringa  + ".png");
+
+      	TCanvas *c11_EffEta = new TCanvas();
+	histo_effeta_Cjet->SetMaximum(1);
+	//histo_effeta_Cjet->Rebin(3);// put 3 bins into 11
+	histo_effeta_Cjet ->SetLineColor(kBlue);
+        histo_effeta_Bjet->GetYaxis()->SetTitle("Eff");
+        histo_effeta_Bjet->GetXaxis()->SetTitle("eta");
+	histo_effeta_Cjet->Draw();	
+	
+    
+      char plotNameEffEtaa[100]; 
+      sprintf(plotNameEffEtaa,"effeta_C_jet_%d_%s",mode,name);
+      TString stringaa = plotNameEffEtaa;   
+      c11_EffEta->SaveAs("BtagFiles/plots/" + stringaa  + ".png");
+      
+	TCanvas *c2_EffEta = new TCanvas();
+	histo_effeta_Ljet ->SetLineColor(kGreen);
+	histo_effeta_Ljet->SetMaximum(0.5);
+	//histo_effeta_Ljet->Rebin(2);
+   
+      	histo_effeta_Ljet->GetYaxis()->SetTitle("Eff");
+      	histo_effeta_Ljet->GetXaxis()->SetTitle("eta");
+	histo_effeta_Ljet->Draw();
+
+      char plotNameMisEffEta[100]; 
+      sprintf(plotNameMisEffEta,"fake_effeta_Bjet_%d_%s",mode,name);
+      TString stringMisa = plotNameMisEffEta;  
+      c2_EffEta->SaveAs("BtagFiles/plots/" + stringMisa  + ".png");
       
       
      
