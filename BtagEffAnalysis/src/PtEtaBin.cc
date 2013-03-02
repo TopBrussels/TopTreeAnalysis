@@ -886,7 +886,7 @@ void PtEtaBin::DefineSignalSamplePlots(int nBdiscrAlgos,int nBinsVar1, double lo
     
     int nBinsM3=25;
     int minM3=0;
-    int maxM3=800;
+    int maxM3=500;
     
     /* data */
     name = ""; GiveName(&name); name+="TH1Data_M3"; 
@@ -1544,7 +1544,7 @@ void PtEtaBin::FillXStemplates(double weight, string dataSetName, int partonFlav
 		}
 
         else if (dataSetName.find("multijet") != string::npos) {
-            
+        
 			//cout << "pom " << controlVar0 << " " << weight << endl;
 			histo1D["TH1Data_Var0_multijet"]->Fill(controlVar0,weight);
             histo2D["TH2Data_MLB_M3_multijet"]->Fill(controlVar0,m3,weight);
@@ -6481,7 +6481,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     ttbar->SetBinContent(ttbar->GetNbinsX(),ttbar->GetBinContent(ttbar->GetNbinsX())+ttbar->GetBinContent(ttbar->GetNbinsX()+1));
     vvmc->SetBinContent(vvmc->GetNbinsX(),vvmc->GetBinContent(vvmc->GetNbinsX())+vvmc->GetBinContent(vvmc->GetNbinsX()+1));
     if (fitQCD) vvdata->SetBinContent(vvdata->GetNbinsX(),vvdata->GetBinContent(vvdata->GetNbinsX())+vvdata->GetBinContent(vvdata->GetNbinsX()+1));
-
+    
     TObjArray *mc;
     
     if (fitQCD)
@@ -6634,7 +6634,35 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     }
 
     //exit(1);
-	results.push_back(fttb*data->Integral());
+    
+    double tmpttbar =fttb*data->Integral();
+    
+    /*if (PrefixPlot == "Fit_bTagMCut") {
+        
+        cout << "Data lumi " << lumi_ << endl;
+        cout << "MC lumi " << templateLumi_ << endl << endl;
+        
+        cout << "TESTJE ttbar " << ttbar->Integral() << endl;
+        cout << "TESTJE Bkg " << vvmc->Integral() << endl;
+        cout << "TESTJE Data " << data->Integral() << endl;
+        
+        cout << "TESTJE ttbar " << ttbar->Integral()*(lumi_/templateLumi_) << endl;
+        cout << "TESTJE Bkg " << vvmc->Integral()*(lumi_/templateLumi_) << endl;
+        
+        double ndata=data->Integral();
+        double bkg=vvmc->Integral()*(lumi_/templateLumi_);
+                     
+        tmpttbar = ndata-(bkg*1.5);
+    }*/
+    
+    /*double ndata=data->Integral();
+    double bkg=vvmc->Integral()*(lumi_/templateLumi_);
+    
+    tmpttbar = ndata-(bkg);
+    */
+    
+	//results.push_back(fttb*data->Integral());
+    results.push_back(tmpttbar);
 	results.push_back(efttb*data->Integral());	
 	results.push_back(fbkg*data->Integral());
 	results.push_back(efbkg*data->Integral());

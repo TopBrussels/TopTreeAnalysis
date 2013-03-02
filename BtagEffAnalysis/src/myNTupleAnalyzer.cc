@@ -1971,6 +1971,10 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             //if (NTuple->dataSetName()=="Data")
             //    NTuple->setWeight(1/4917.66387);
             
+            //if (NTuple->dataSetName().find("TTbarJets") == 0) {
+            //    NTuple->setWeight(NTuple->weight()*(100.0/225.2));
+            //}
+            
 			origLumi = (1./NTuple->weight());
 			
 			//origLumi = origLumi+(origLumi*0.06);
@@ -2472,7 +2476,10 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
             v_varb.push_back(NTuple->m3());
             //v_varb.push_back(NTuple->ptMuon());
             //v_varb.push_back(NTuple->MET());
+            //v_varb.push_back(NTuple->nJets);
             
+            //v_varb.push_back(NTuple->pt());
+
 			v_pt.push_back(NTuple->pt());
 			v_eta.push_back(fabs(NTuple->eta()));
             
@@ -4220,14 +4227,14 @@ void myNTupleAnalyzer::run(int verbosity, int leftlimit, int centerleftlimit, in
                     //    extraw = 1;
                     //}
                     
-                    /*if (fitMode == 1 && (v_varb[n] < 100 || v_varb[n] > 400) ) {
-                     
-                     extraw=0;
-                     
-                     if (v_dataSetName[n].find("TTbar") == 0)
-                     nTTbarAfterMLBCUT-=v_weight_nonrew[n];
-                     
-                     }*/
+                    //if (fitMode == 1 && v_varb[n] > 499) {
+                        
+                    //    extraw=0;
+                        
+                        //if (v_dataSetName[n].find("TTbar") == 0)
+                        //    nTTbarAfterMLBCUT-=v_weight_nonrew[n];
+                        
+                    //}
 
                     
                     //if (fitMode == 1 && (v_varb[n] > 500) )
