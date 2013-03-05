@@ -230,6 +230,57 @@ int main(int argc, char* argv[]) {
     
     
     /////////////////////////////////
+    /// LOAD BTAG EFF  rootfiles  ///
+    /////////////////////////////////
+    char Load_Eff_File_B[100];
+    sprintf(Load_Eff_File_B,"BtagFiles/rootfiles/EFFbtag_%d_Bjets.root", mode);
+    
+    char Load_Eff_File_C[100];
+    sprintf(Load_Eff_File_C,"BtagFiles/rootfiles/EFFbtag_%d_Cjets.root", mode);
+    
+    char Load_Eff_File_L[100];
+    sprintf(Load_Eff_File_L,"BtagFiles/rootfiles/EFFbtag_%d_Ljets.root", mode);
+    
+    TFile *Efile_B = new TFile(Load_Eff_File_B, "read"); 
+    TFile *Efile_C = new TFile(Load_Eff_File_C, "read"); 
+    TFile *Efile_L = new TFile(Load_Eff_File_L, "read");  
+    
+
+    char TotitlePlot[100];
+    char GetPlot[100];
+    
+    sprintf(TotitlePlot,"Eff_pt_btagB_%d_tt",mode);
+    sprintf(GetPlot,"histo_tt_ptEffB");
+    TH1F* histo_Eff_pt_btagB_tt = (TH1F*) Efile_B->Get(GetPlot); 
+    histo_Eff_pt_btagB_tt->SetName(TotitlePlot); 
+    
+    sprintf(TotitlePlot,"Eff_pt_btagB_%d_twdr",mode);
+    sprintf(GetPlot,"histo_twdr_ptEffB");
+    TH1F* histo_Eff_pt_btagB_twdr = (TH1F*) Efile_B->Get(GetPlot); 
+    histo_Eff_pt_btagB_twdr->SetName(TotitlePlot); 
+    
+     sprintf(TotitlePlot,"Eff_pt_btagC_%d_tt",mode);
+    sprintf(GetPlot,"histo_tt_ptEffC");
+    TH1F* histo_Eff_pt_btagC_tt = (TH1F*) Efile_C->Get(GetPlot); 
+    histo_Eff_pt_btagC_tt->SetName(TotitlePlot); 
+    
+    sprintf(TotitlePlot,"Eff_pt_btagC_%d_twdr",mode);
+    sprintf(GetPlot,"histo_twdr_ptEffC");
+    TH1F* histo_Eff_pt_btagC_twdr = (TH1F*) Efile_C->Get(GetPlot); 
+    histo_Eff_pt_btagC_twdr->SetName(TotitlePlot); 
+    
+    sprintf(TotitlePlot,"Eff_pt_btagL_%d_tt",mode);
+    sprintf(GetPlot,"histo_tt_ptEffL");
+    TH1F* histo_Eff_pt_btagL_tt = (TH1F*) Efile_L->Get(GetPlot); 
+    histo_Eff_pt_btagL_tt->SetName(TotitlePlot); 
+    
+    sprintf(TotitlePlot,"Eff_pt_btagL_%d_twdr",mode);
+    sprintf(GetPlot,"histo_twdr_ptEffL");
+    TH1F* histo_Eff_pt_btagL_twdr = (TH1F*) Efile_L->Get(GetPlot); 
+    histo_Eff_pt_btagL_twdr->SetName(TotitlePlot); 
+ 
+        
+    /////////////////////////////////
     ///       CONFIGURATION       ///
     /////////////////////////////////
     
@@ -578,29 +629,28 @@ int main(int argc, char* argv[]) {
   	TH1F* histo_ptLjet = new TH1F(titlePlot, " pt of jets coming from light quarks ", 100 , 0, 200);   
 	
 	sprintf(titlePlot,"etaBTagB_%d_%s",mode,name);
-  	TH1F* histo_etaBTagB = new TH1F(titlePlot, " eta of btagged jets for bjets", 101,  -3, 3);
+  	TH1F* histo_etaBTagB = new TH1F(titlePlot, " eta of btagged jets for bjets", 100,  -3, 3);
 	
 	sprintf(titlePlot,"etaBTagC_%d_%s",mode,name);
-  	TH1F* histo_etaBTagC = new TH1F(titlePlot, " eta of btagged jets for cjets", 101,  -3, 3);
+  	TH1F* histo_etaBTagC = new TH1F(titlePlot, " eta of btagged jets for cjets", 100,  -3, 3);
 	
   	sprintf(titlePlot,"etaBTagL_%d_%s",mode,name);
-  	TH1F* histo_etaBTagL = new TH1F(titlePlot, " eta of btagged jets for ljets", 101,  -3, 3);
+  	TH1F* histo_etaBTagL = new TH1F(titlePlot, " eta of btagged jets for ljets", 100,  -3, 3);
   
   	sprintf(titlePlot,"etaBjet_%d_%s",mode,name);
-  	TH1F* histo_etaBjet = new TH1F(titlePlot, " eta of jets coming from a b quark ", 101,  -3, 3);
+  	TH1F* histo_etaBjet = new TH1F(titlePlot, " eta of jets coming from a b quark ", 100,  -3, 3);
   
  	sprintf(titlePlot,"etaCjet_%d_%s",mode,name);
- 	TH1F* histo_etaCjet = new TH1F(titlePlot, " eta of jets coming from a c quark ", 101 , -3, 3);
+ 	TH1F* histo_etaCjet = new TH1F(titlePlot, " eta of jets coming from a c quark ", 100 , -3, 3);
  
   	sprintf(titlePlot,"etaLjet_%d_%s",mode,name);
-  	TH1F* histo_etaLjet = new TH1F(titlePlot, " eta of jets coming from light quarks ", 101 , -3, 3); 
+  	TH1F* histo_etaLjet = new TH1F(titlePlot, " eta of jets coming from light quarks ", 100 , -3, 3); 
 	
 	sprintf(titlePlot,"btagged_jets_%d_%s",mode,name);
   	TH1F* histo_btagged_jets = new TH1F(titlePlot, " Btagged jets",  10,  -0.5, 9.5 ); 
 	
+        
 
-  	
-       
  	
  	
  
@@ -1082,11 +1132,11 @@ int main(int argc, char* argv[]) {
 	      								JetPartonPair.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 										
 	 							 } // END JETPARTONPAIR FILLING
-								if(pdgID == 4 )
+								else if(pdgID == 4 )
 								{
 	      								JetPartonPair_c.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 	 							 } // END JETPARTONPAIR FILLING
-								if(pdgID == 21 || fabs(pdgID) < 4) // <5 light quarks, 21 gluon no fabs because electrically neutral
+								else /*if(pdgID == 21 || fabs(pdgID) < 4) */// <5 light quarks, 21 gluon no fabs because electrically neutral
 								{
 	      								JetPartonPair_fake.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 	 							 } // END JETPARTONPAIR FILLING
@@ -1371,21 +1421,22 @@ int main(int argc, char* argv[]) {
 										   		BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,SFsys);
 											}else if(fabs(jet_flavorSF) == 4){
 												BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,4,SFsys);
-											}else if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21) {
+											}else /*if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21)*/
+											{
 												LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,SFsys);
 										
 											}
 											
 											if(BTagSF < 0){
 												
-												cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+												cout << "WARNING (not proper jet): negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
 												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
 													
 													
 												BTagSF = 1;  // temporarly fix
 											} else if (LightJetSF < 0){
 												
-												cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+												cout << "WARNING: negative SF (not proper jet)" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
 												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl;
 											
 												LightJetSF = 1;    // temporarly fix 
@@ -1650,7 +1701,7 @@ int main(int argc, char* argv[]) {
       	cout << "2 jet 1 tag: " << Regions->GetBinContent(7) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(7)/scaler1 << " +/- "  << 100.*Regions->GetBinError(7)/scaler1 << "%" << endl;
       	cout << "2 jet 2 tag: " << Regions->GetBinContent(8) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(8)/scaler1 << " +/- "  << 100.*Regions->GetBinError(8)/scaler1 << "%" <<endl;
      	cout << "--------------------------------------------------" << endl;
-/*      
+      
         ////////////////////////////
 	//   info btag eff       //
 	///////////////////////////
@@ -1924,12 +1975,13 @@ int main(int argc, char* argv[]) {
 	}    
 	
 	cout << "-----------------------------------------------------------------------------------------------------------" << endl; 
-*/    
+    
 
 
 
 
 
+      
        /////////////////////////////////////////////
        /// Writing the efficiency plots in a file //
        /////////////////////////////////////////////
@@ -1940,143 +1992,31 @@ int main(int argc, char* argv[]) {
 	
  	char titlePlotEff[100];
 	
-	sprintf(titlePlotEff,"eff_Bjet_%d_%s",mode,name);	
-	TH1F* histo_eff_Bjet = (TH1F*) histo_ptBTagB->Clone("histo_eff_Bjet"); 
-	histo_eff_Bjet ->SetNameTitle(titlePlotEff, " Efficiency of btagging for jets from b quark");
-	histo_eff_Bjet->Divide(histo_ptBjet);
-	
-	sprintf(titlePlotEff,"eff_Cjet_%d_%s",mode,name);	
-	TH1F* histo_eff_Cjet = (TH1F*) histo_ptBTagC->Clone("histo_eff_Cjet"); 
-	histo_eff_Cjet ->SetNameTitle(titlePlotEff, " Efficiency of Btagging for jets from C quark");
-	histo_eff_Cjet->Divide(histo_ptCjet);
-	
-	sprintf(titlePlotEff,"eff_Ljet_%d_%s",mode,name);	
-	TH1F* histo_eff_Ljet = (TH1F*) histo_ptBTagL->Clone("histo_eff_Ljet"); 
-	histo_eff_Ljet ->SetNameTitle(titlePlotEff, " Efficiency of Btagging for jets from L quark");
-	histo_eff_Ljet->Divide(histo_ptLjet);
-	
-	sprintf(titlePlotEff,"effeta_Bjet_%d_%s",mode,name);	
-	TH1F* histo_effeta_Bjet = (TH1F*) histo_etaBTagB->Clone("histo_effeta_Bjet"); 
-	histo_effeta_Bjet ->SetNameTitle(titlePlotEff, " efficiency of btagging for jets from b quark");
-	histo_effeta_Bjet->Divide(histo_etaBjet);
-	
-	sprintf(titlePlotEff,"effeta_Cjet_%d_%s",mode,name);	
-	TH1F* histo_effeta_Cjet = (TH1F*) histo_etaBTagC->Clone("histo_effeta_Cjet"); 
-	histo_effeta_Cjet ->SetNameTitle(titlePlotEff, " efficiency of Btagging for jets from C quark");
-	histo_effeta_Cjet->Divide(histo_etaCjet);
-	
-	sprintf(titlePlotEff,"effeta_Ljet_%d_%s",mode,name);	
-	TH1F* histo_effeta_Ljet = (TH1F*) histo_etaBTagL->Clone("histo_effeta_Ljet"); 
-	histo_effeta_Ljet ->SetNameTitle(titlePlotEff, " efficiency of Btagging for jets from L quark");
-	histo_effeta_Ljet->Divide(histo_etaLjet);
 	
 	histo_btagged_jets->SetDirectory(fileEf); 
+	histo_ptBjet->SetDirectory(fileEf);
+	histo_ptCjet->SetDirectory(fileEf);
+	histo_ptLjet->SetDirectory(fileEf);
+	histo_etaBjet->SetDirectory(fileEf); 
+	histo_etaCjet->SetDirectory(fileEf);
+	histo_etaLjet->SetDirectory(fileEf);
+	histo_ptBTagB->SetDirectory(fileEf);
+	histo_ptBTagC->SetDirectory(fileEf);
+	histo_ptBTagL->SetDirectory(fileEf);
+	histo_etaBTagB->SetDirectory(fileEf);
+	histo_etaBTagC->SetDirectory(fileEf);
+	histo_etaBTagL->SetDirectory(fileEf);
 	
-	
-	// Drawing them
-	
-	TCanvas *c1_Eff = new TCanvas();
-	histo_eff_Bjet->SetMaximum(1);
-	//histo_eff_Bjet->Rebin(2);
-	histo_eff_Bjet->GetYaxis()->SetTitle("Eff");
-        histo_eff_Bjet->GetXaxis()->SetTitle("pt");
-        histo_eff_Bjet->Draw();
 
-      char plotNameEff[100]; 
-      sprintf(plotNameEff,"eff_B_jet_%d_%s",mode,name);
-      TString string = plotNameEff;   
-      c1_Eff->SaveAs("BtagFiles/plots/" + string  + ".png");
-
-	TCanvas *c11_Eff = new TCanvas();
-	histo_eff_Cjet->SetMaximum(1);
-	histo_eff_Cjet->Rebin(4);// put 3 bins into 11
-	//histo_eff_Cjet ->SetLineColor(kBlue);
-        histo_eff_Cjet->GetYaxis()->SetTitle("Eff");
-        histo_eff_Cjet->GetXaxis()->SetTitle("pt");
-	histo_eff_Cjet->Draw();	
-	
-    
-      char plotNameEfff[100]; 
-      sprintf(plotNameEfff,"eff_C_jet_%d_%s",mode,name);
-      TString stringf = plotNameEfff;   
-      c11_Eff->SaveAs("BtagFiles/plots/" + stringf  + ".png");
-      
-	TCanvas *c2_Eff = new TCanvas();
-	//histo_eff_Ljet ->SetLineColor(kGreen);
-	histo_eff_Ljet->SetMaximum(0.5);
-	histo_eff_Ljet->Rebin(4);
-      	histo_eff_Ljet->Draw();
-      	histo_eff_Ljet->GetYaxis()->SetTitle("Eff");
-      	histo_eff_Ljet->GetXaxis()->SetTitle("pt");
-
-      char plotNameMisEff[100]; 
-      sprintf(plotNameMisEff,"fake_eff_Bjet_%d_%s",mode,name);
-      TString stringMis = plotNameMisEff;  
-      c2_Eff->SaveAs("BtagFiles/plots/" + stringMis  + ".png");
-      
-      	TCanvas *c1_EffEta = new TCanvas();
-	histo_effeta_Bjet->SetMaximum(1);
-	//histo_effeta_Bjet->Rebin(2);
-        
-        histo_effeta_Bjet->GetYaxis()->SetTitle("Eff");
-        histo_effeta_Bjet->GetXaxis()->SetTitle("eta");
-	histo_effeta_Bjet->Draw();
-	
-	
-    
-      char plotNameEffEta[100]; 
-      sprintf(plotNameEffEta,"effeta_B_jet_%d_%s",mode,name);
-      TString stringa = plotNameEffEta;   
-      c1_EffEta->SaveAs("BtagFiles/plots/" + stringa  + ".png");
-
-      	TCanvas *c11_EffEta = new TCanvas();
-	histo_effeta_Cjet->SetMaximum(1);
-	//histo_effeta_Cjet->Rebin(3);// put 3 bins into 11
-	histo_effeta_Cjet ->SetLineColor(kBlue);
-        histo_effeta_Bjet->GetYaxis()->SetTitle("Eff");
-        histo_effeta_Bjet->GetXaxis()->SetTitle("eta");
-	histo_effeta_Cjet->Draw();	
-	
-    
-      char plotNameEffEtaa[100]; 
-      sprintf(plotNameEffEtaa,"effeta_C_jet_%d_%s",mode,name);
-      TString stringaa = plotNameEffEtaa;   
-      c11_EffEta->SaveAs("BtagFiles/plots/" + stringaa  + ".png");
-      
-	TCanvas *c2_EffEta = new TCanvas();
-	histo_effeta_Ljet ->SetLineColor(kGreen);
-	histo_effeta_Ljet->SetMaximum(0.5);
-	//histo_effeta_Ljet->Rebin(2);
-   
-      	histo_effeta_Ljet->GetYaxis()->SetTitle("Eff");
-      	histo_effeta_Ljet->GetXaxis()->SetTitle("eta");
-	histo_effeta_Ljet->Draw();
-
-      char plotNameMisEffEta[100]; 
-      sprintf(plotNameMisEffEta,"fake_effeta_Bjet_%d_%s",mode,name);
-      TString stringMisa = plotNameMisEffEta;  
-      c2_EffEta->SaveAs("BtagFiles/plots/" + stringMisa  + ".png");
-      
-      
-     
-
-      TCanvas *c3_Eff = new TCanvas();
-      histo_btagged_jets->Draw();
-      histo_btagged_jets->GetYaxis()->SetTitle("#evt");
-      histo_btagged_jets->GetXaxis()->SetTitle("#btagged jets");
-
-      char plotNameCheckEff[100]; 
-      sprintf(plotNameCheckEff,"Number_Btagged_jets_%d_%s",mode,name);
-      TString stringCheck = plotNameCheckEff;  
-      c3_Eff->SaveAs("BtagFiles/plots/" + stringCheck + ".png");
-      
-      
       
 
 	
       fileEf->Write(); 
       fileEf->Close(); 
-	
+      
+     
+     fout->Write(); 
+      fout->Close(); 
 	
 
 	
