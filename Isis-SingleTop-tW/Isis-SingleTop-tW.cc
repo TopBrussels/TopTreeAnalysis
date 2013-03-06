@@ -1547,7 +1547,7 @@ int main(int argc, char* argv[]) {
 											
 										}
 
-										if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
+										if (tempJet->Pt() > 30  && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
 				 							nJets++;
 											iJet = iJ;
 										
@@ -1561,7 +1561,7 @@ int main(int argc, char* argv[]) {
 								
 								 
 								
-								if(!isData){
+								if(!isData && check_notbtagged > 0){
 									check_eff = check_btagged/check_notbtagged; 
 									//cout << "number of btagged MC: " << check_btagged << " - number of jets MC " << check_notbtagged << endl; 
 									btag_eff_check1.push_back(check_eff);
