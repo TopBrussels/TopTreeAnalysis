@@ -1409,113 +1409,113 @@ int main(int argc, char* argv[]) {
 									TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 									
 									if (tempJet->Pt() > 20 && fabs(tempJet->Eta()) < 2.4 ){	
-									float TempEta = tempJet->Eta(); 
+										float TempEta = tempJet->Eta(); 
 													
-									float Temp_jetPt = tempJet->Pt();
-									BTagEff = -1; 
-									LightJetEff = -1; 
+										float Temp_jetPt = tempJet->Pt();
+										BTagEff = -1; 
+										LightJetEff = -1; 
 									
 									
-									if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){ 
-										bTagged = true; 
-									}
+										if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){ 
+											bTagged = true; 
+										}
 										
 									
 																	
-									// Getting efficiencies out of histograms 
-									if(!isData &&!isSingleTop){
-										double xvalue = Temp_jetPt;
+										// Getting efficiencies out of histograms 
+										if(!isData &&!isSingleTop){
+											double xvalue = Temp_jetPt;
 										 		
-										int xbinB = histo_Eff_pt_btagB_tt->GetXaxis()->FindBin(xvalue);
-										float btageff_B = histo_Eff_pt_btagB_tt->GetBinContent(xbinB); 							
-										//cout << "Btagging eff (b): trial: jetpt = " << xvalue << " xbin = " << xbinB << " eff = " << btageff_B << endl;
-										BTagEff = btageff_B;
-										
-										int xbinC = histo_Eff_pt_btagC_tt->GetXaxis()->FindBin(xvalue);
-										float btageff_C = histo_Eff_pt_btagC_tt->GetBinContent(xbinC); 							
-										//cout << "Btagging eff (c): trial: jetpt = " << xvalue << " xbin = " << xbinC << " eff = "<< btageff_C << endl;
-										BTagEff_c = btageff_C; 
+											int xbinB = histo_Eff_pt_btagB_tt->GetXaxis()->FindBin(xvalue);
+											float btageff_B = histo_Eff_pt_btagB_tt->GetBinContent(xbinB); 							
+											//cout << "Btagging eff (b): trial: jetpt = " << xvalue << " xbin = " << xbinB << " eff = " << btageff_B << endl;
+											BTagEff = btageff_B;
 											
-										int xbinL = histo_Eff_pt_btagL_tt->GetXaxis()->FindBin(xvalue);
-										float btageff_L = histo_Eff_pt_btagL_tt->GetBinContent(xbinL); 							
-										//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
-										LightJetEff = btageff_L;  
-										
-									}else if(isSingleTop && !isData){
-										double xvalue = Temp_jetPt;
+											int xbinC = histo_Eff_pt_btagC_tt->GetXaxis()->FindBin(xvalue);
+											float btageff_C = histo_Eff_pt_btagC_tt->GetBinContent(xbinC); 							
+											//cout << "Btagging eff (c): trial: jetpt = " << xvalue << " xbin = " << xbinC << " eff = "<< btageff_C << endl;
+											BTagEff_c = btageff_C; 
+												
+											int xbinL = histo_Eff_pt_btagL_tt->GetXaxis()->FindBin(xvalue);
+											float btageff_L = histo_Eff_pt_btagL_tt->GetBinContent(xbinL); 							
+											//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
+											LightJetEff = btageff_L;  
+											
+										}else if(isSingleTop && !isData){
+											double xvalue = Temp_jetPt;
 										 		
-										int xbinB = histo_Eff_pt_btagB_twdr->GetXaxis()->FindBin(xvalue);
-										float btageff_B = histo_Eff_pt_btagB_twdr->GetBinContent(xbinB); 							
-										//cout << "Btagging eff (b): trial: jetpt = " << xvalue << " xbin = " << xbinB << " eff = " << btageff_B << endl;
-										BTagEff = btageff_B;
+											int xbinB = histo_Eff_pt_btagB_twdr->GetXaxis()->FindBin(xvalue);
+											float btageff_B = histo_Eff_pt_btagB_twdr->GetBinContent(xbinB); 							
+											//cout << "Btagging eff (b): trial: jetpt = " << xvalue << " xbin = " << xbinB << " eff = " << btageff_B << endl;
+											BTagEff = btageff_B;
+												
+											int xbinC = histo_Eff_pt_btagC_twdr->GetXaxis()->FindBin(xvalue);
+											float btageff_C = histo_Eff_pt_btagC_twdr->GetBinContent(xbinC); 							
+											//cout << "Btagging eff (c): trial: jetpt = " << xvalue << " xbin = " << xbinC << " eff = "<< btageff_C << endl;
+											BTagEff_c = btageff_C; 
 											
-										int xbinC = histo_Eff_pt_btagC_twdr->GetXaxis()->FindBin(xvalue);
-										float btageff_C = histo_Eff_pt_btagC_twdr->GetBinContent(xbinC); 							
-										//cout << "Btagging eff (c): trial: jetpt = " << xvalue << " xbin = " << xbinC << " eff = "<< btageff_C << endl;
-										BTagEff_c = btageff_C; 
-											
-										int xbinL = histo_Eff_pt_btagL_twdr->GetXaxis()->FindBin(xvalue);
-										float btageff_L = histo_Eff_pt_btagL_twdr->GetBinContent(xbinL); 							
-										//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
-										LightJetEff = btageff_L;
-									}
+											int xbinL = histo_Eff_pt_btagL_twdr->GetXaxis()->FindBin(xvalue);
+											float btageff_L = histo_Eff_pt_btagL_twdr->GetBinContent(xbinL); 							
+											//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
+											LightJetEff = btageff_L;
+										}
 															
 										
 									
 
 									
 
-									if(!isData){	
-										// Get scale factors from btag POG (pt and eta dependent)
-										if(fabs(jet_flavorSF) == 5){											
-											BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,"CSVM",SFsys);
-										}else if(fabs(jet_flavorSF) == 4){
-											BTagSF_c = bTool->getWeight(tempJet->Pt(), TempEta,4,"CSVM",SFsys);
-										}else //if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21) 
-										{
-											LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,"CSVM",SFsys);
-										}
+										if(!isData){	
+											// Get scale factors from btag POG (pt and eta dependent)
+											if(fabs(jet_flavorSF) == 5){											
+												BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,"CSVM",SFsys);
+											}else if(fabs(jet_flavorSF) == 4){
+												BTagSF_c = bTool->getWeight(tempJet->Pt(), TempEta,4,"CSVM",SFsys);
+											}else //if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21) 
+											{
+												LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,"CSVM",SFsys);
+											}
 										
-										// warnings	
-										if(BTagSF < 0){
-											cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-											cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
+											// warnings	
+											if(BTagSF < 0){
+												cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
 												
-											BTagSF = 1;  // temporarly fix
-										} else if (LightJetSF < 0){
+												BTagSF = 1;  // temporarly fix
+											} else if (LightJetSF < 0){
 												
-											cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-											cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl;
+												cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl;
 											
 											LightJetSF = 1;    // temporarly fix 
-										} else if (BTagSF_c < 0){
-											
-											cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-											cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << " c " <<BTagSF_c << endl;
-											BTagSF_c = 1;    // temporarly fix 
+											} else if (BTagSF_c < 0){
+												
+												cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << " c " <<BTagSF_c << endl;
+												BTagSF_c = 1;    // temporarly fix 
+											}
 										}
-									}
-										
-									//set a unique seed 
-									jet_flavorSF = tempJet->partonFlavour();  
-									jet_phiSF = tempJet->Phi(); 
+											
+										//set a unique seed 
+										jet_flavorSF = tempJet->partonFlavour();  
+										jet_phiSF = tempJet->Phi(); 
 									
+										
+										double phi = jet_phiSF; 
+										double sin_phi = sin(phi*1000000);
+										int seed =(int) fabs(static_cast<int>(sin_phi*100000));
+										if(!isData){
+											//Initialize class
+											BTagSFUtil* btsfutil = new BTagSFUtil(seed);
+										
+											//cout << "BTAGGING SF ADAPTION:: Before modification: bTagged = " << bTagged << endl; 
 									
-									double phi = jet_phiSF; 
-									double sin_phi = sin(phi*1000000);
-									int seed =(int) fabs(static_cast<int>(sin_phi*100000));
-									if(!isData){
-										//Initialize class
-										BTagSFUtil* btsfutil = new BTagSFUtil(seed);
+											//modify tags 
 										
-										//cout << "BTAGGING SF ADAPTION:: Before modification: bTagged = " << bTagged << endl; 
-									
-										//modify tags 
+											btsfutil->modifyBTagsWithSF(bTagged, jet_flavorSF, BTagSF, BTagEff, LightJetSF, LightJetEff,BTagSF_c, BTagEff_c);
 										
-										btsfutil->modifyBTagsWithSF(bTagged, jet_flavorSF, BTagSF, BTagEff, LightJetSF, LightJetEff,BTagSF_c, BTagEff_c);
-										
-										//cout << "BTAGGING SF ADAPTION:: After modification: bTagged = " << bTagged << endl; 
-									} // closing MC adaption loop		
+											//cout << "BTAGGING SF ADAPTION:: After modification: bTagged = " << bTagged << endl; 
+										} // closing MC adaption loop		
 										
 										
  
