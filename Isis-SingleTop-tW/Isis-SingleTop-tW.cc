@@ -1400,7 +1400,8 @@ int main(int argc, char* argv[]) {
 								bool bTagged = false; 	
 								
 								double check_btagged=0.; 
-								double check_notbtagged=0.;						
+								double check_notbtagged=0.;
+								double check_eff = 0.; 						
 								
 								for (unsigned int iJ =0; iJ < selectedJets.size(); iJ ++){
 								
@@ -1422,7 +1423,7 @@ int main(int argc, char* argv[]) {
 									
 																	
 									// Getting efficiencies out of histograms 
-									if(!isSingleTop){
+									if(!isData &&!isSingleTop){
 										double xvalue = Temp_jetPt;
 										 		
 										int xbinB = histo_Eff_pt_btagB_tt->GetXaxis()->FindBin(xvalue);
@@ -1440,7 +1441,7 @@ int main(int argc, char* argv[]) {
 										//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
 										LightJetEff = btageff_L;  
 										
-									}else if(isSingleTop){
+									}else if(isSingleTop && !isData){
 										double xvalue = Temp_jetPt;
 										 		
 										int xbinB = histo_Eff_pt_btagB_twdr->GetXaxis()->FindBin(xvalue);
@@ -1521,21 +1522,11 @@ int main(int argc, char* argv[]) {
 										
 										
 
-								if(!isData){
-									if(bTagged == 0){ 
-									   
-											check_notbtagged++;
-											//cout << "btag after is 0" << endl; 
-									}else{ 
-											check_btagged++;
-											//cout << "btag after is 1" << endl;
-									}
-										
-								}
+									
 								
 	
 									 
-									} // pt > 20   eta < 2.4  such that btagging can be usedS
+									} // pt > 20   eta < 2.4  such that btagging can be used
 										
 									// btag booleans for looper
 									btag_booleans.push_back(bTagged);
@@ -1545,6 +1536,16 @@ int main(int argc, char* argv[]) {
 										nJetsBT++;
 			      						}
 	
+									if(!isData){
+										if(bTagged){ 
+											check_btagged++;
+											//cout << "btag after is 0" << endl; 
+										}
+											check_notbtagged++;
+											//cout << "btag after is 1" << endl;
+										
+										check_eff = check_btagged/check_notbtagged; 
+									}
 
 									if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
 				 						nJets++;
@@ -1558,11 +1559,11 @@ int main(int argc, char* argv[]) {
 								} // closing loop over jets
 								
 								if(!isData){
-									//cout << "number of btagged MC: " << check_btagged << " number of not btagged MC " << check_notbtagged << endl; 
-									btag_eff_check1.push_back(check_btagged/check_notbtagged);
-									 
+									//cout << "number of btagged MC: " << check_btagged << " - number of jets MC " << check_notbtagged << endl; 
+									btag_eff_check1.push_back(check_eff);
+									//cout << "eff: " << check_eff << endl;  
 								}
-								        // cout << "number of btagged (all): " << nJetsBT << " tight ones: " << nTightJetsBT << endl; 
+								        //cout << "number of btagged (all): " << nJetsBT << " tight ones: " << nTightJetsBT << endl; 
 								
 								histo_jets->Fill(nJets,weight); 
 								histo_btagged_jets->Fill(nJetsBT,weight); 
@@ -1798,28 +1799,28 @@ int main(int argc, char* argv[]) {
 	cout << "BTAG CHECKING " << endl; 
 	cout << "--------------------------------------------------" << endl;
 	cout << "ALL (tight) JETS : " << endl; 
-	cout << "Number of events with 0 jets: " << histo_jets->GetBinContent(0)  << " +/- " <<histo_jets->GetBinError(0) << endl; 
-	cout << "Number of events with 1 jets: " << histo_jets->GetBinContent(1)  << " +/- " <<histo_jets->GetBinError(1) << endl; 
-	cout << "Number of events with 2 jets: " << histo_jets->GetBinContent(2)  << " +/- " <<histo_jets->GetBinError(2) << endl; 
-	cout << "Number of events with 3 jets: " << histo_jets->GetBinContent(3)  << " +/- " <<histo_jets->GetBinError(3) << endl; 
-	cout << "Number of events with 4 jets: " << histo_jets->GetBinContent(4)  << " +/- " <<histo_jets->GetBinError(4) << endl; 
-	cout << "Number of events with 5 jets: " << histo_jets->GetBinContent(5)  << " +/- " <<histo_jets->GetBinError(5) << endl; 
+	cout << "Number of events with 0 jets: " << histo_jets->GetBinContent(1+0)  << " +/- " <<histo_jets->GetBinError(1+0) << endl; 
+	cout << "Number of events with 1 jets: " << histo_jets->GetBinContent(1+1)  << " +/- " <<histo_jets->GetBinError(1+1) << endl; 
+	cout << "Number of events with 2 jets: " << histo_jets->GetBinContent(1+2)  << " +/- " <<histo_jets->GetBinError(1+2) << endl; 
+	cout << "Number of events with 3 jets: " << histo_jets->GetBinContent(1+3)  << " +/- " <<histo_jets->GetBinError(1+3) << endl; 
+	cout << "Number of events with 4 jets: " << histo_jets->GetBinContent(1+4)  << " +/- " <<histo_jets->GetBinError(1+4) << endl; 
+	cout << "Number of events with 5 jets: " << histo_jets->GetBinContent(1+5)  << " +/- " <<histo_jets->GetBinError(1+5) << endl; 
 	cout << "--------------------------------------------------" << endl;
-	cout << "ALL JETS : " << endl; 
-	cout << "Number of events with 0 bjets: " << histo_btagged_jets->GetBinContent(0)  << " +/- " <<histo_btagged_jets->GetBinError(0) << endl; 
-	cout << "Number of events with 1 bjets: " << histo_btagged_jets->GetBinContent(1)  << " +/- " <<histo_btagged_jets->GetBinError(1) << endl; 
-	cout << "Number of events with 2 bjets: " << histo_btagged_jets->GetBinContent(2)  << " +/- " <<histo_btagged_jets->GetBinError(2) << endl; 
-	cout << "Number of events with 3 bjets: " << histo_btagged_jets->GetBinContent(3)  << " +/- " <<histo_btagged_jets->GetBinError(3) << endl; 
-	cout << "Number of events with 4 bjets: " << histo_btagged_jets->GetBinContent(4)  << " +/- " <<histo_btagged_jets->GetBinError(4) << endl; 
-	cout << "Number of events with 5 bjets: " << histo_btagged_jets->GetBinContent(5)  << " +/- " <<histo_btagged_jets->GetBinError(5) << endl; 
+	cout << "ALL btagged JETS : " << endl; 
+	cout << "Number of events with 0 bjets: " << histo_btagged_jets->GetBinContent(1+0)  << " +/- " <<histo_btagged_jets->GetBinError(1+0) << endl; 
+	cout << "Number of events with 1 bjets: " << histo_btagged_jets->GetBinContent(1+1)  << " +/- " <<histo_btagged_jets->GetBinError(1+1) << endl; 
+	cout << "Number of events with 2 bjets: " << histo_btagged_jets->GetBinContent(1+2)  << " +/- " <<histo_btagged_jets->GetBinError(1+2) << endl; 
+	cout << "Number of events with 3 bjets: " << histo_btagged_jets->GetBinContent(1+3)  << " +/- " <<histo_btagged_jets->GetBinError(1+3) << endl; 
+	cout << "Number of events with 4 bjets: " << histo_btagged_jets->GetBinContent(1+4)  << " +/- " <<histo_btagged_jets->GetBinError(1+4) << endl; 
+	cout << "Number of events with 5 bjets: " << histo_btagged_jets->GetBinContent(1+5)  << " +/- " <<histo_btagged_jets->GetBinError(1+5) << endl; 
 	cout << "--------------------------------------------------" << endl;
-	cout << "TIGHT JETS : " << endl; 
-	cout << "Number of events with 0 bjets: " << histo_btagged_tightjets->GetBinContent(0)  << " +/- " <<histo_btagged_tightjets->GetBinError(0) << endl; 
-	cout << "Number of events with 1 bjets: " << histo_btagged_tightjets->GetBinContent(1)  << " +/- " <<histo_btagged_tightjets->GetBinError(1) << endl; 
-	cout << "Number of events with 2 bjets: " << histo_btagged_tightjets->GetBinContent(2)  << " +/- " <<histo_btagged_tightjets->GetBinError(2) << endl; 
-	cout << "Number of events with 3 bjets: " << histo_btagged_tightjets->GetBinContent(3)  << " +/- " <<histo_btagged_tightjets->GetBinError(3) << endl; 
-	cout << "Number of events with 4 bjets: " << histo_btagged_tightjets->GetBinContent(4)  << " +/- " <<histo_btagged_tightjets->GetBinError(4) << endl; 
-	cout << "Number of events with 5 bjets: " << histo_btagged_tightjets->GetBinContent(5)  << " +/- "<< histo_btagged_tightjets->GetBinError(5) << endl;
+	cout << "TIGHT btagged JETS : " << endl; 
+	cout << "Number of events with 0 bjets: " << histo_btagged_tightjets->GetBinContent(1+0)  << " +/- " <<histo_btagged_tightjets->GetBinError(1+0) << endl; 
+	cout << "Number of events with 1 bjets: " << histo_btagged_tightjets->GetBinContent(1+1)  << " +/- " <<histo_btagged_tightjets->GetBinError(1+1) << endl; 
+	cout << "Number of events with 2 bjets: " << histo_btagged_tightjets->GetBinContent(1+2)  << " +/- " <<histo_btagged_tightjets->GetBinError(1+2) << endl; 
+	cout << "Number of events with 3 bjets: " << histo_btagged_tightjets->GetBinContent(1+3)  << " +/- " <<histo_btagged_tightjets->GetBinError(1+3) << endl; 
+	cout << "Number of events with 4 bjets: " << histo_btagged_tightjets->GetBinContent(1+4)  << " +/- " <<histo_btagged_tightjets->GetBinError(1+4) << endl; 
+	cout << "Number of events with 5 bjets: " << histo_btagged_tightjets->GetBinContent(1+5)  << " +/- "<< histo_btagged_tightjets->GetBinError(1+5) << endl;
 	cout << "--------------------------------------------------" << endl;
         double ef = 0;
         for(int i = 0; i< btag_eff_check1.size(); i++){
@@ -1827,7 +1828,8 @@ int main(int argc, char* argv[]) {
 		
 	}
 	double eff = ef /btag_eff_check1.size(); 
-	cout << "btag eff : " << eff << endl; 
+	cout << " mean btag eff : " << eff << endl;
+	cout << "--------------------------------------------------" << endl; 
 
 
 
