@@ -33,10 +33,10 @@ class BTagSFUtil{
 
  public:
     
-  BTagSFUtil( double seed=0. );
+  BTagSFUtil( int seed=0 );
   ~BTagSFUtil();
     
-  void modifyBTagsWithSF( bool& isBTagged, int pdgIdPart, float Btag_SF = 0.98, float Btag_eff = 1.0, float Bmistag_SF = 1.0, float  Bmistag_eff = 1.0,float Cmistag_SF = 1.0, float Cmistag_eff = 1.0);
+  void modifyBTagsWithSF( bool& isBTagged, int pdgIdPart, float Btag_SF = 0.98, float Btag_eff = 1.0, float Bmistag_SF = 1.0, float  Bmistag_eff = 1.0,float Btag_SF_c=1.0, float Btag_eff_c=1.0);
 
 
  private:
@@ -48,9 +48,9 @@ class BTagSFUtil{
 };
 
 
-BTagSFUtil::BTagSFUtil( double seed ) {
+BTagSFUtil::BTagSFUtil( int seed ) {
 
-  rand_ = new TRandom3((int)seed);
+  rand_ = new TRandom3(seed);
 
 }
 
@@ -61,7 +61,7 @@ BTagSFUtil::~BTagSFUtil() {
 }
 
 
-void BTagSFUtil::modifyBTagsWithSF(bool& isBTagged, int pdgIdPart, float Btag_SF, float Btag_eff, float Bmistag_SF, float Bmistag_eff,float Cmistag_SF = 1.0, float  Cmistag_eff = 1.0){
+void BTagSFUtil::modifyBTagsWithSF(bool& isBTagged, int pdgIdPart, float Btag_SF, float Btag_eff, float Bmistag_SF, float Bmistag_eff,float Btag_SF_c, float Btag_eff_c){
 
   bool newBTag = isBTagged;
 
@@ -69,8 +69,13 @@ void BTagSFUtil::modifyBTagsWithSF(bool& isBTagged, int pdgIdPart, float Btag_SF
   if( abs( pdgIdPart ) == 5 ||  abs( pdgIdPart ) == 4) { 
 
     double bctag_eff = Btag_eff;
-    if ( abs(pdgIdPart)==4 )  bctag_eff = Cmistag_eff; // take ctag eff as one 5th of Btag eff
-    newBTag = applySF(isBTagged, Cmistag_SF, bctag_eff);
+    double bctag_SF = Btag_SF;
+    
+    if ( abs(pdgIdPart)==4 ){
+      bctag_eff = Btag_eff_c ; //Btag_eff/5.0; // take ctag eff as one 5th of Btag eff
+      bctag_SF = Btag_SF_c;
+    }
+    newBTag = applySF(isBTagged, bctag_SF, bctag_eff);
 
   // light quarks:
   } else if( abs( pdgIdPart )>0 ) { //in data it is 0 (save computing time)
@@ -116,3 +121,4 @@ bool BTagSFUtil::applySF(bool& isBTagged, float Btag_SF, float Btag_eff){
 
 
 #endif
+

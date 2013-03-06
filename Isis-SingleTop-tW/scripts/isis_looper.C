@@ -579,8 +579,6 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	bool bTagged = false;
 	int iJetn[5]={-1, -1,-1,-1,-1};
 	int iJet = -5;
-	int iSF;
-	double bTag_SF_b;
 	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
@@ -591,32 +589,17 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    iJet = i;
 	    nJets++;
 
-	    if (btCSVBJet->at(i) > 0.679){
-	      iSF = rand() % 100;
-	      
-	      if ( nsel == 666 || nosf){
-	            bTag_SF_b = 1;
-	      }else{
-	          bTag_SF_b = SFjet->at(i);
-	      }
-	      int SFvalue = int(bTag_SF_b*100);
-	      if (iSF < SFvalue ){
-		bTagged = true;
+	    if (Btagjet->at(i) ==1){
+	        bTagged = true;
 		nJetsBT++;
 		nTightJetsBT++;
-	      } // end if (iSF < SFvalue) 
-	    } // end  if (btCSVBJet->at(i) > 0.679)
+	      
+	    } // end  if 
 	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
-	  else if (btCSVBJet->at(i) > 0.679){ // look for jets that aren't proper, but still btagged
-	    iSF = rand() % 100;
-	    if ( nsel == 666 || nosf){
-	            bTag_SF_b = 1;
-	      }else{
-	          bTag_SF_b = SFjet->at(i);
-	      }
-            int SFvalue = int(bTag_SF_b*100);
-	    if (iSF < SFvalue ) nJetsBT++;
-	  }  // end else if (btCSVBJet->at(i) > 0.679)
+	  else if (Btagjet->at(i) == 1){ // look for jets that aren't proper, but still btagged
+	      bTagged = true; 
+	      JetsBT++;
+	  }  // end else if 
 	  
 	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
 	

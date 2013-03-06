@@ -252,6 +252,11 @@ int main(int argc, char* argv[]) {
     sprintf(TotitlePlot,"Eff_pt_btagB_%d_tt",mode);
     sprintf(GetPlot,"histo_tt_ptEffB");
     TH1F* histo_Eff_pt_btagB_tt = (TH1F*) Efile_B->Get(GetPlot); 
+    if(histo_Eff_pt_btagB_tt == 0){
+    	cout << " ERROR: nullpointer for btag eff plots Bjets" <<endl; 
+	//return; 
+    
+    }
     histo_Eff_pt_btagB_tt->SetName(TotitlePlot); 
     
     sprintf(TotitlePlot,"Eff_pt_btagB_%d_twdr",mode);
@@ -278,7 +283,9 @@ int main(int argc, char* argv[]) {
     sprintf(GetPlot,"histo_twdr_ptEffL");
     TH1F* histo_Eff_pt_btagL_twdr = (TH1F*) Efile_L->Get(GetPlot); 
     histo_Eff_pt_btagL_twdr->SetName(TotitlePlot); 
- 
+    
+    
+    
         
     /////////////////////////////////
     ///       CONFIGURATION       ///
@@ -458,7 +465,7 @@ int main(int argc, char* argv[]) {
         vector <TRootJet*>      initial_jets_corrected; 
         vector <TRootMET*>      mets; 
         vector <TRootGenJet*>   genjets;
-        
+/*        
 	//////////////////////////////////
 	//// Btagging eff             /////
 	////////////////////////////////////
@@ -477,6 +484,25 @@ int main(int argc, char* argv[]) {
  	std::vector<double> btag_eff_wjets;  
 	
 	/////////////////////////////////
+	//// non btag eff for c jets /////
+	////////////////////////////////////
+	std::vector<double> cfake_eff_tt; 
+	std::vector<double> cfake_eff_twdr; 	 
+ 	std::vector<double> cfake_eff_atwdr;  
+ 	std::vector<double> cfake_eff_t; 
+ 	std::vector<double> cfake_eff_at;
+	std::vector<double> cfake_eff_s;    
+ 	std::vector<double> cfake_eff_as;
+	std::vector<double> cfake_eff_ww;  
+ 	std::vector<double> cfake_eff_wz;
+	std::vector<double> cfake_eff_zz;  
+ 	std::vector<double> cfake_eff_zjets;  
+	std::vector<double> cfake_eff_zjets_lowmll; 
+ 	std::vector<double> cfake_eff_wjets; 
+
+	
+	
+	/////////////////////////////////
 	//// Mistag eff  - fakerate - non btag eff /////
 	////////////////////////////////////
 	std::vector<double> fake_eff_tt; 
@@ -492,10 +518,14 @@ int main(int argc, char* argv[]) {
  	std::vector<double> fake_eff_zjets;  
 	std::vector<double> fake_eff_zjets_lowmll; 
  	std::vector<double> fake_eff_wjets; 
-
-
+*/
+	// For setting tbranch 
+	std::vector<double> btag_booleans; 
 	
 	
+	// for checking btagging
+	std::vector<double> btag_eff_check1; 
+	std::vector<double> btag_eff_check2; 
 	
 	
         /////////////////////////////////
@@ -610,6 +640,15 @@ int main(int argc, char* argv[]) {
 	// define histograms
  	char titlePlot[100];
 	
+	sprintf(titlePlot,"btagged_jets_%d_%s",mode,name);
+  	TH1F* histo_btagged_jets = new TH1F(titlePlot, " Btagged all jets",  10,  0, 10 ); 
+	
+	sprintf(titlePlot,"btagged_tightjets_%d_%s",mode,name);
+  	TH1F* histo_btagged_tightjets = new TH1F(titlePlot, " Btagged tight jets",  10,  0, 10 ); 
+	
+	sprintf(titlePlot,"jets_%d_%s",mode,name);
+  	TH1F* histo_jets = new TH1F(titlePlot, " tight jets",  10,  0, 10 ); 
+/*	
 	sprintf(titlePlot,"ptBTagB_%d_%s",mode,name);
   	TH1F* histo_ptBTagB = new TH1F(titlePlot, " pt of btagged jets for bjets", 100,  0, 200);
 	
@@ -646,14 +685,25 @@ int main(int argc, char* argv[]) {
   	sprintf(titlePlot,"etaLjet_%d_%s",mode,name);
   	TH1F* histo_etaLjet = new TH1F(titlePlot, " eta of jets coming from light quarks ", 100 , -3, 3); 
 	
-	sprintf(titlePlot,"btagged_jets_%d_%s",mode,name);
-  	TH1F* histo_btagged_jets = new TH1F(titlePlot, " Btagged jets",  10,  -0.5, 9.5 ); 
+
 	
         
 
- 	
- 	
- 
+ 	histo_ptBTagB ->Sumw2(); 
+   	histo_ptBTagC ->Sumw2(); 
+	histo_ptBTagL ->Sumw2(); 
+	histo_ptBjet ->Sumw2(); 
+	histo_ptCjet ->Sumw2(); 
+	histo_ptLjet ->Sumw2(); 
+	histo_etaBTagB ->Sumw2(); 
+	histo_etaBTagC ->Sumw2(); 
+	histo_etaBTagL ->Sumw2(); 
+	histo_etaBjet ->Sumw2(); 
+	histo_etaCjet ->Sumw2(); 
+	histo_etaLjet ->Sumw2(); 
+*/	histo_btagged_jets->Sumw2(); 
+ 	histo_btagged_tightjets->Sumw2();
+ 	histo_jets->Sumw2();
   	
   	    
         
@@ -689,7 +739,7 @@ int main(int argc, char* argv[]) {
         std::vector<double> *eJet; 
 	std::vector<double> *etaJet;
         std::vector<double> *qJet;  
-	std::vector<double> *SFjet;
+	std::vector<double> *Btagjet;
         std::vector<double> *btJPBJet; 
         std::vector<double> *btBJPBJet; 
         std::vector<double> *btCSVBJet; 
@@ -728,7 +778,7 @@ int main(int argc, char* argv[]) {
         myTree->Branch("eJet","std::vector<double>",&eJet);
 	myTree->Branch("etaJet","std::vector<double>",&etaJet);
         myTree->Branch("qJet","std::vector<double>",&qJet);
-	myTree->Branch("SFjet", "std::vector<double>",&SFjet);
+	myTree->Branch("Btagjet", "std::vector<double>",&Btagjet);
         myTree->Branch("btJPBJet","std::vector<double>",&btJPBJet);
         myTree->Branch("btBJPBJet","std::vector<double>",&btBJPBJet);
         myTree->Branch("btCSVBJet","std::vector<double>",&btCSVBJet);
@@ -1077,7 +1127,7 @@ int main(int argc, char* argv[]) {
 						// 	    3: the eventID ( so which event in that lumiblock)
 		 				OutPut << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 					        
-						
+/*						
 						//////////////////////////////////////////////////
 						// CALCULATION BTAG EFFICIENCY  - fakerate     ///
 						//////////////////////////////////////////////////
@@ -1110,13 +1160,13 @@ int main(int argc, char* argv[]) {
 							} // closing for loop over selectedJets.size();
 							
 
-						/*	for(unsigned int iJ=0; iJ<selectedJetsTLV.size(); iJ++) {
-								int jet_Number = selectedJetsTLV[iJ];
-								int pdgID = mcParticlesTLV[iJ];
+						//	for(unsigned int iJ=0; iJ<selectedJetsTLV.size(); iJ++) {
+					//			int jet_Number = selectedJetsTLV[iJ];
+					//			int pdgID = mcParticlesTLV[iJ];
 								
-								cout << "JETnr: " << jet_Number << " pdgID: " << pdgID << endl; 
-							}
-						*/
+						//		cout << "JETnr: " << jet_Number << " pdgID: " << pdgID << endl; 
+					//		}
+						
 	
 							vector< pair<unsigned int, unsigned int> > JetPartonPair;
 							vector< pair<unsigned int, unsigned int> > JetPartonPair_c;
@@ -1136,7 +1186,7 @@ int main(int argc, char* argv[]) {
 								{
 	      								JetPartonPair_c.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 	 							 } // END JETPARTONPAIR FILLING
-								else /*if(pdgID == 21 || fabs(pdgID) < 4) */// <5 light quarks, 21 gluon no fabs because electrically neutral
+								else //if(pdgID == 21 || fabs(pdgID) < 4) // <5 light quarks, 21 gluon no fabs because electrically neutral
 								{
 	      								JetPartonPair_fake.push_back( pair<unsigned int, unsigned int> (pdgID, jet_Number) );
 	 							 } // END JETPARTONPAIR FILLING
@@ -1254,6 +1304,27 @@ int main(int argc, char* argv[]) {
 								// cout << "BTAGEFFICIENTIE CALCULATION: Btagged jets = " << Number_btagged_jets << " Number bquarks = " <<  Number_matched_bquarks << " Btag_eff = " << btag_eff << endl; 
 							 }
 							
+							if(Number_matched_cquarks != 0){
+							
+		 						if (dataSetName == "tt"){ 	
+								   cfake_eff_tt.push_back(btag_eff_c ); }
+ 								else if (dataSetName == "twdr"){    cfake_eff_twdr.push_back(btag_eff_c ); }	
+ 								else if (dataSetName == "atwdr"){   cfake_eff_atwdr.push_back(btag_eff_c ); }	
+ 								else if (dataSetName == "t"){  	    cfake_eff_t.push_back(btag_eff_c ); }
+ 								else if (dataSetName == "at"){ 	   cfake_eff_at.push_back(btag_eff_c ); }
+								else if (dataSetName == "s"){      cfake_eff_s.push_back(btag_eff_c ); }	
+ 								else if (dataSetName == "as"){    cfake_eff_as.push_back(btag_eff_c ); }
+								else if (dataSetName == "ww"){    cfake_eff_ww.push_back(btag_eff_c ); }	
+ 								else if (dataSetName == "wz"){ 	    cfake_eff_wz.push_back(btag_eff_c ); }
+								else if (dataSetName == "zz"){   cfake_eff_zz.push_back(btag_eff_c ); }	
+ 								else if (dataSetName == "zjets"){     cfake_eff_zjets.push_back(btag_eff_c ); }	
+								else if (dataSetName == "zjets_lowmll"){    cfake_eff_zjets_lowmll.push_back(btag_eff_c ); }
+ 								else if (dataSetName == "wjets"){   cfake_eff_wjets.push_back(btag_eff_c ); }	
+												 		
+							}
+							
+							
+							
 							if(Number_matched_lquarks != 0){
 							
 		 						if (dataSetName == "tt"){ 	
@@ -1275,7 +1346,7 @@ int main(int argc, char* argv[]) {
 								
 						} // closing if(!isData)
 						
-					
+*/					
 	
 						
 						
@@ -1310,166 +1381,194 @@ int main(int argc, char* argv[]) {
 								/////////////////////////////////////////
 								//  CALCULATION BTAGGING SF  adption /////// you have to correct for the fact that the btagging efficiency is not 100%
 								/////////////////////////////////////////  and thus adapt your SF calculated with BtagWeight
-								double bTag_SF_b;
+								//double bTag_SF_b;
 								
 								double BTagSF; 
 								double BTagEff; 
+								double BTagSF_c; 
+								double BTagEff_c; 
 								double LightJetSF; 
 								double LightJetEff; 
 								
-								int jet_flavorSF; 
+								double BTagEff_new;
+								double BTagEff_c_new;
+								double LightJetEff_new;
+							
+								int jet_flavorSF;
 								double jet_phiSF; 
 								double jet_etaSF; 
-								bool bTagged = false; 
+								bool bTagged = false; 	
 								
-								
+								double check_btagged=0.; 
+								double check_notbtagged=0.;						
 								
 								for (unsigned int iJ =0; iJ < selectedJets.size(); iJ ++){
+								
 									TRootJet* tempJet = (TRootJet*) selectedJets[iJ];
 									TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 									
+									if (tempJet->Pt() > 20 && fabs(tempJet->Eta()) < 2.4 ){	
 									float TempEta = tempJet->Eta(); 
-									if(fabs(TempEta)>2.4){ TempEta = 2.4;}  // temporarly fix
-									
-									// Use for the moment default values (from my calculations)
-									if (dataSetName == "tt"){  BTagEff = 0.52;     LightJetEff = 0.31; }
-									else if (dataSetName == "twdr"){   BTagEff = 0.52;     LightJetEff = 0.26; }	
-									else if (dataSetName == "atwdr"){   BTagEff = 0.53;     LightJetEff = 0.25; }	
-									else if (dataSetName == "t"){  	    BTagEff = 0.40;     LightJetEff = 0.14; }
-									else if (dataSetName == "at"){ 	  BTagEff = 0.37;     LightJetEff = 0.14; }
-									else if (dataSetName == "s"){      BTagEff = 0.54;     LightJetEff = 0.30; }	
-									else if (dataSetName == "as"){     BTagEff = 0.33;     LightJetEff = 0.15; }
-									else if (dataSetName == "ww"){     BTagEff = 0.40;     LightJetEff = 0.01;}	
-									else if (dataSetName == "wz"){ 	     BTagEff = 0.34;     LightJetEff = 0.01; }
-									else if (dataSetName == "zz"){   BTagEff = 0.48;     LightJetEff = 0.03; }	
-									else if (dataSetName == "zjets"){      BTagEff = 0.40;     LightJetEff = 0.02;}	
-									else if (dataSetName == "zjets_lowmll"){     BTagEff = 0.5;     LightJetEff = 0.04; }
-									else if (dataSetName == "wjets"){   BTagEff = 0.5;     LightJetEff = 0.02; }	
-										
-
-
-									
-									if(!isData){
-										jet_flavorSF = tempJet->partonFlavour();
-									}  
-
-									jet_phiSF = tempJet->Phi(); 
-									jet_etaSF = TempEta; 
-									
-									
-									if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
-			 							nJets++;
-										iJet = iJ;
-
-										
-										if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){  // then btagged
-
-											bTagged = true; 
-											
-											if (!isData){
-												if(fabs(jet_flavorSF) == 5){											
-											   		BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,"CSVM",SFsys);
-												}else if(fabs(jet_flavorSF) == 4){
-													BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,4,"CSVM",SFsys);
-												}else if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21)  {
-													LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,"CSVM",SFsys);
-												}
-												
-												if(BTagSF < 0){
-													cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-													cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
 													
-													
-													BTagSF = 1;  // temporarly fix
-												} else if (LightJetSF < 0){
-												
-													cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-													cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl;
-												
-													LightJetSF = 1;    // temporarly fix 
-												}
-											}
-										}
-										
-																	
-										//set a unique seed 
-										double phi = jet_phiSF; 
-										double sin_phi = sin(phi*1000000);
-										double seed = fabs(static_cast<int>(sin_phi*100000));
-										if(!isData){
-											//Initialize class
-											BTagSFUtil* btsfutil = new BTagSFUtil(seed);
-										
-											//cout << "BTAGGING SF ADAPTION:: Before modification: bTagged = " << bTagged << endl; 
+									float Temp_jetPt = tempJet->Pt();
+									BTagEff = -1; 
+									LightJetEff = -1; 
 									
-											//modify tags 
-										
-											btsfutil->modifyBTagsWithSF(bTagged, jet_flavorSF, BTagSF, BTagEff, LightJetSF, LightJetEff);
-										}	
-										//cout << "BTAGGING SF ADAPTION:: After modification: bTagged = " << bTagged << endl; 
-										
-										if(bTagged){
-											nJetsBT++;
-			      								nTightJetsBT++;	
-										}
-									} // end proper jet demand
-									else if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679 && fabs(tempJet->Eta()) < 2.5){
+									
+									if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){ 
 										bTagged = true; 
-											
-										if (!isData ){
-											if(fabs(jet_flavorSF) == 5){											
-										   		BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,SFsys);
-											}else if(fabs(jet_flavorSF) == 4){
-												BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,4,SFsys);
-											}else /*if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21)*/
-											{
-												LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,SFsys);
+									}
 										
-											}
+									
+																	
+									// Getting efficiencies out of histograms 
+									if(!isSingleTop){
+										double xvalue = Temp_jetPt;
+										 		
+										int xbinB = histo_Eff_pt_btagB_tt->GetXaxis()->FindBin(xvalue);
+										float btageff_B = histo_Eff_pt_btagB_tt->GetBinContent(xbinB); 							
+										//cout << "Btagging eff (b): trial: jetpt = " << xvalue << " xbin = " << xbinB << " eff = " << btageff_B << endl;
+										BTagEff = btageff_B;
+										
+										int xbinC = histo_Eff_pt_btagC_tt->GetXaxis()->FindBin(xvalue);
+										float btageff_C = histo_Eff_pt_btagC_tt->GetBinContent(xbinC); 							
+										//cout << "Btagging eff (c): trial: jetpt = " << xvalue << " xbin = " << xbinC << " eff = "<< btageff_C << endl;
+										BTagEff_c = btageff_C; 
 											
-											if(BTagSF < 0){
-												
-												cout << "WARNING (not proper jet): negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
-													
-													
-												BTagSF = 1;  // temporarly fix
-											} else if (LightJetSF < 0){
-												
-												cout << "WARNING: negative SF (not proper jet)" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
-												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl;
+										int xbinL = histo_Eff_pt_btagL_tt->GetXaxis()->FindBin(xvalue);
+										float btageff_L = histo_Eff_pt_btagL_tt->GetBinContent(xbinL); 							
+										//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
+										LightJetEff = btageff_L;  
+										
+									}else if(isSingleTop){
+										double xvalue = Temp_jetPt;
+										 		
+										int xbinB = histo_Eff_pt_btagB_twdr->GetXaxis()->FindBin(xvalue);
+										float btageff_B = histo_Eff_pt_btagB_twdr->GetBinContent(xbinB); 							
+										//cout << "Btagging eff (b): trial: jetpt = " << xvalue << " xbin = " << xbinB << " eff = " << btageff_B << endl;
+										BTagEff = btageff_B;
 											
-												LightJetSF = 1;    // temporarly fix 
-											}
-										}
-									} // closing else if 
+										int xbinC = histo_Eff_pt_btagC_twdr->GetXaxis()->FindBin(xvalue);
+										float btageff_C = histo_Eff_pt_btagC_twdr->GetBinContent(xbinC); 							
+										//cout << "Btagging eff (c): trial: jetpt = " << xvalue << " xbin = " << xbinC << " eff = "<< btageff_C << endl;
+										BTagEff_c = btageff_C; 
+											
+										int xbinL = histo_Eff_pt_btagL_twdr->GetXaxis()->FindBin(xvalue);
+										float btageff_L = histo_Eff_pt_btagL_twdr->GetBinContent(xbinL); 							
+										//cout << "Btagging eff (L): trial: jetpt = " << xvalue << " xbin = " << xbinL << " eff = "<<btageff_L << endl;
+										LightJetEff = btageff_L;
+									}
+															
+										
+									
 
+									
+
+									if(!isData){	
+										// Get scale factors from btag POG (pt and eta dependent)
+										if(fabs(jet_flavorSF) == 5){											
+											BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,"CSVM",SFsys);
+										}else if(fabs(jet_flavorSF) == 4){
+											BTagSF_c = bTool->getWeight(tempJet->Pt(), TempEta,4,"CSVM",SFsys);
+										}else //if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21) 
+										{
+											LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,"CSVM",SFsys);
+										}
+										
+										// warnings	
+										if(BTagSF < 0){
+											cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+											cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
+												
+											BTagSF = 1;  // temporarly fix
+										} else if (LightJetSF < 0){
+												
+											cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+											cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl;
+											
+											LightJetSF = 1;    // temporarly fix 
+										} else if (BTagSF_c < 0){
+											
+											cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+											cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << " c " <<BTagSF_c << endl;
+											BTagSF_c = 1;    // temporarly fix 
+										}
+									}
+										
 									//set a unique seed 
+									jet_flavorSF = tempJet->partonFlavour();  
+									jet_phiSF = tempJet->Phi(); 
+									
+									
 									double phi = jet_phiSF; 
 									double sin_phi = sin(phi*1000000);
-									double seed = fabs(static_cast<int>(sin_phi*100000));
-									
+									int seed =(int) fabs(static_cast<int>(sin_phi*100000));
 									if(!isData){
 										//Initialize class
 										BTagSFUtil* btsfutil = new BTagSFUtil(seed);
-									
+										
 										//cout << "BTAGGING SF ADAPTION:: Before modification: bTagged = " << bTagged << endl; 
 									
 										//modify tags 
-										btsfutil->modifyBTagsWithSF(bTagged, jet_flavorSF, BTagSF, BTagEff, LightJetSF, LightJetEff);
-									}
-									//cout << "BTAGGING SF ADAPTION:: After modification: bTagged = " << bTagged << endl; 
 										
+										btsfutil->modifyBTagsWithSF(bTagged, jet_flavorSF, BTagSF, BTagEff, LightJetSF, LightJetEff,BTagSF_c, BTagEff_c);
+										
+										//cout << "BTAGGING SF ADAPTION:: After modification: bTagged = " << bTagged << endl; 
+									} // closing MC adaption loop		
+										
+										
+ 
+										
+										
+
+								if(!isData){
+									if(bTagged == 0){ 
+									   
+											check_notbtagged++;
+											//cout << "btag after is 0" << endl; 
+									}else{ 
+											check_btagged++;
+											//cout << "btag after is 1" << endl;
+									}
+										
+								}
+								
+	
+									 
+									} // pt > 20   eta < 2.4  such that btagging can be usedS
+										
+									// btag booleans for looper
+									btag_booleans.push_back(bTagged);
+									
+									// counting jets and btagged ones
 									if(bTagged){
 										nJetsBT++;
-									}
+			      						}
 	
 
-								} // closing loop over jets 
+									if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
+				 						nJets++;
+										iJet = iJ;
+										
+										if(bTagged){
+											nTightJetsBT++;	
+										}
+											
+									} // end proper jet statement
+								} // closing loop over jets
+								
+								if(!isData){
+									//cout << "number of btagged MC: " << check_btagged << " number of not btagged MC " << check_notbtagged << endl; 
+									btag_eff_check1.push_back(check_btagged/check_notbtagged);
+									 
+								}
+								        // cout << "number of btagged (all): " << nJetsBT << " tight ones: " << nTightJetsBT << endl; 
+								
+								histo_jets->Fill(nJets,weight); 
+								histo_btagged_jets->Fill(nJetsBT,weight); 
+								histo_btagged_tightjets->Fill(nTightJetsBT,weight); 
 
-								histo_btagged_jets->Fill(nTightJetsBT); 
-
-							
+							     //   cout << "Tight btagged jets: " << nTightJetsBT << " Btagged ones: " << nJetsBT << endl; 
 							
 							
 						      		//Filling the Tree (at pre-selection level, leptons and mll)
@@ -1501,7 +1600,7 @@ int main(int argc, char* argv[]) {
 		      						eJet = new std::vector<double>; 
 								etaJet = new std::vector<double>; 
 		      						qJet = new std::vector<double>; 
-								SFjet = new std::vector<double>;
+								Btagjet = new std::vector<double>;
 		      						btJPBJet = new std::vector<double>; 
 		     						btBJPBJet = new std::vector<double>; 
 		      						btCSVBJet = new std::vector<double>;
@@ -1534,17 +1633,7 @@ int main(int argc, char* argv[]) {
 									eJet->push_back(tempJet->Energy());
 									etaJet->push_back(tempJet->Eta());
 									qJet->push_back(tempJet->charge());
-									double bTag_SF_b ;
-									if ( fabs(tempJet->Eta()) < 2.4){
-										if (isData || !scaleFactor){
-											bTag_SF_b= 1;	
-										}else{									
-									   		bTag_SF_b = bTool->getWeight(tempJet->Pt(), tempJet->Eta(),5,"CSVM",0);
-										}
-									} else { 
-										bTag_SF_b = 1;
-									}
-									SFjet->push_back(bTag_SF_b);
+									Btagjet->push_back(btag_booleans[i]);
 									btJPBJet->push_back(tempJet->btag_jetProbabilityBJetTags() );
 									btBJPBJet->push_back(tempJet->btag_jetBProbabilityBJetTags());
 									btCSVBJet->push_back(tempJet->btag_combinedSecondaryVertexBJetTags() );
@@ -1568,7 +1657,7 @@ int main(int argc, char* argv[]) {
 		      						delete eJet;
 								delete etaJet;
 		      						delete qJet;
-								delete SFjet;
+								delete Btagjet;
 		      						delete btJPBJet;
 		      						delete btBJPBJet;
 		      						delete btCSVBJet;
@@ -1627,8 +1716,12 @@ int main(int argc, char* argv[]) {
 			    								cutflow->Fill(8, weight);
 			    								cutflow_raw->Fill(8);
 											
+											//cout << "EXACTLY ONE JET " << endl; 
+											
 											// --> (cut) exactly one btagged jet
 			    								if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
+											
+											        //cout << "EXACTLY ONE BTAGGED JET " << endl; 
 			      									OutPut5 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 
 			      									cutflow->Fill(9,weight);
@@ -1701,9 +1794,47 @@ int main(int argc, char* argv[]) {
       	cout << "2 jet 1 tag: " << Regions->GetBinContent(7) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(7)/scaler1 << " +/- "  << 100.*Regions->GetBinError(7)/scaler1 << "%" << endl;
       	cout << "2 jet 2 tag: " << Regions->GetBinContent(8) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(8)/scaler1 << " +/- "  << 100.*Regions->GetBinError(8)/scaler1 << "%" <<endl;
      	cout << "--------------------------------------------------" << endl;
-      
+	
+	cout << "BTAG CHECKING " << endl; 
+	cout << "--------------------------------------------------" << endl;
+	cout << "ALL (tight) JETS : " << endl; 
+	cout << "Number of events with 0 jets: " << histo_jets->GetBinContent(0)  << " +/- " <<histo_jets->GetBinError(0) << endl; 
+	cout << "Number of events with 1 jets: " << histo_jets->GetBinContent(1)  << " +/- " <<histo_jets->GetBinError(1) << endl; 
+	cout << "Number of events with 2 jets: " << histo_jets->GetBinContent(2)  << " +/- " <<histo_jets->GetBinError(2) << endl; 
+	cout << "Number of events with 3 jets: " << histo_jets->GetBinContent(3)  << " +/- " <<histo_jets->GetBinError(3) << endl; 
+	cout << "Number of events with 4 jets: " << histo_jets->GetBinContent(4)  << " +/- " <<histo_jets->GetBinError(4) << endl; 
+	cout << "Number of events with 5 jets: " << histo_jets->GetBinContent(5)  << " +/- " <<histo_jets->GetBinError(5) << endl; 
+	cout << "--------------------------------------------------" << endl;
+	cout << "ALL JETS : " << endl; 
+	cout << "Number of events with 0 bjets: " << histo_btagged_jets->GetBinContent(0)  << " +/- " <<histo_btagged_jets->GetBinError(0) << endl; 
+	cout << "Number of events with 1 bjets: " << histo_btagged_jets->GetBinContent(1)  << " +/- " <<histo_btagged_jets->GetBinError(1) << endl; 
+	cout << "Number of events with 2 bjets: " << histo_btagged_jets->GetBinContent(2)  << " +/- " <<histo_btagged_jets->GetBinError(2) << endl; 
+	cout << "Number of events with 3 bjets: " << histo_btagged_jets->GetBinContent(3)  << " +/- " <<histo_btagged_jets->GetBinError(3) << endl; 
+	cout << "Number of events with 4 bjets: " << histo_btagged_jets->GetBinContent(4)  << " +/- " <<histo_btagged_jets->GetBinError(4) << endl; 
+	cout << "Number of events with 5 bjets: " << histo_btagged_jets->GetBinContent(5)  << " +/- " <<histo_btagged_jets->GetBinError(5) << endl; 
+	cout << "--------------------------------------------------" << endl;
+	cout << "TIGHT JETS : " << endl; 
+	cout << "Number of events with 0 bjets: " << histo_btagged_tightjets->GetBinContent(0)  << " +/- " <<histo_btagged_tightjets->GetBinError(0) << endl; 
+	cout << "Number of events with 1 bjets: " << histo_btagged_tightjets->GetBinContent(1)  << " +/- " <<histo_btagged_tightjets->GetBinError(1) << endl; 
+	cout << "Number of events with 2 bjets: " << histo_btagged_tightjets->GetBinContent(2)  << " +/- " <<histo_btagged_tightjets->GetBinError(2) << endl; 
+	cout << "Number of events with 3 bjets: " << histo_btagged_tightjets->GetBinContent(3)  << " +/- " <<histo_btagged_tightjets->GetBinError(3) << endl; 
+	cout << "Number of events with 4 bjets: " << histo_btagged_tightjets->GetBinContent(4)  << " +/- " <<histo_btagged_tightjets->GetBinError(4) << endl; 
+	cout << "Number of events with 5 bjets: " << histo_btagged_tightjets->GetBinContent(5)  << " +/- "<< histo_btagged_tightjets->GetBinError(5) << endl;
+	cout << "--------------------------------------------------" << endl;
+        double ef = 0;
+        for(int i = 0; i< btag_eff_check1.size(); i++){
+		ef = ef + btag_eff_check1[i];
+		
+	}
+	double eff = ef /btag_eff_check1.size(); 
+	cout << "btag eff : " << eff << endl; 
+
+
+
+
+/*      
         ////////////////////////////
-	//   info btag eff       //
+	//   info btag eff: b       //
 	///////////////////////////
 
      	if (dataSetName == "tt"){ 	
@@ -1838,9 +1969,144 @@ int main(int argc, char* argv[]) {
 	}    
 	
 	cout << "-----------------------------------------------------------------------------------------------------------" << endl; 
-     
+////////////////////////////
+	//   info btag eff: c       //
+	///////////////////////////
+
+     	if (dataSetName == "tt"){ 	
+	        double  eff_tt = 0.; 
+		double  mean_eff_tt = 0.;  
+		for(int i =0; i <  cfake_eff_tt.size(); i++){
+			//cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_tt[i] << endl; 
+			eff_tt = eff_tt + cfake_eff_tt[i];
+		}
+		mean_eff_tt = eff_tt/cfake_eff_tt.size();
+		cout << "Mean Btag Eff c for tt is: " << mean_eff_tt << endl; 
+	}
+ 	else if (dataSetName == "twdr"){    
+		double  eff_twdr = 0.; 
+		double  mean_eff_twdr = 0.;  
+		for(int i =0; i <  cfake_eff_twdr.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_twdr[i] << endl; 
+			eff_twdr = eff_twdr + cfake_eff_twdr[i];
+		}
+		mean_eff_twdr = eff_twdr/cfake_eff_twdr.size();
+		cout << "Mean Btag Eff c for twdr is: " << mean_eff_twdr << endl; 
+	}	
+ 	else if (dataSetName == "atwdr"){   
+		double  eff_atwdr = 0.; 
+		double  mean_eff_atwdr = 0.;  
+		for(int i =0; i <  cfake_eff_atwdr.size(); i++){
+			//cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_atwdr[i] << endl; 
+			eff_atwdr = eff_atwdr + cfake_eff_atwdr[i];
+		}
+		mean_eff_atwdr = eff_atwdr/cfake_eff_atwdr.size();
+		cout << "Mean Btag Eff c for atwdr is: " << mean_eff_atwdr << endl; 
+	}	
+ 	else if (dataSetName == "t"){  	    
+	        double  eff_t = 0.; 
+		double  mean_eff_t = 0.;  
+		for(int i =0; i <  cfake_eff_t.size(); i++){
+			//cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_t[i] << endl; 
+			eff_t = eff_t + cfake_eff_t[i];
+		}
+		mean_eff_t = eff_t/cfake_eff_t.size();
+		cout << "Mean Btag Eff c for t is: " << mean_eff_t << endl; 
+	}
+ 	else if (dataSetName == "at"){ 	   
+		double  eff_at = 0.; 
+		double  mean_eff_at = 0.;  
+		for(int i =0; i <  cfake_eff_at.size(); i++){
+			//cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_at[i] << endl; 
+			eff_at = eff_at + cfake_eff_at[i];
+		}
+		mean_eff_at = eff_at/cfake_eff_at.size();
+		cout << "Mean Btag Eff c for at is: " << mean_eff_at << endl; 
+	}
+	else if (dataSetName == "s"){     
+		double  eff_s = 0.; 
+		double  mean_eff_s = 0.;  
+		for(int i =0; i <  cfake_eff_s.size(); i++){
+			//cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_s[i] << endl; 
+			eff_s = eff_s + cfake_eff_s[i];
+		}
+		mean_eff_s = eff_s/cfake_eff_s.size();
+		cout << "Mean Btag Eff c for s is: " << mean_eff_s << endl; 
+	}	
+ 	else if (dataSetName == "as"){   
+		double  eff_as = 0.; 
+		double  mean_eff_as = 0.;  
+		for(int i =0; i <  cfake_eff_as.size(); i++){
+			//cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_as[i] << endl; 
+			eff_as = eff_as + cfake_eff_as[i];
+		}
+		mean_eff_as = eff_as/cfake_eff_as.size();
+		cout << "Mean Btag Eff c for as is: " << mean_eff_as << endl; 
+	}
+	else if (dataSetName == "ww"){    
+		double  eff_ww = 0.; 
+		double  mean_eff_ww = 0.;  
+		for(int i =0; i <  cfake_eff_ww.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_ww[i] << endl; 
+			eff_ww = eff_ww + cfake_eff_ww[i];
+		}
+		mean_eff_ww = eff_ww/cfake_eff_ww.size();
+		cout << "Mean Btag Eff c for ww is: " << mean_eff_ww << endl; 
+	}	
+ 	else if (dataSetName == "wz"){ 	   
+		double  eff_wz = 0.; 
+		double  mean_eff_wz = 0.;  
+		for(int i =0; i <  cfake_eff_wz.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_wz[i] << endl; 
+			eff_wz = eff_wz + cfake_eff_wz[i];
+		}
+		mean_eff_wz = eff_wz/cfake_eff_wz.size();
+		cout << "Mean Btag Eff c for wz is: " << mean_eff_wz << endl; 
+	}
+	else if (dataSetName == "zz"){  
+		double  eff_zz = 0.; 
+		double  mean_eff_zz = 0.;  
+		for(int i =0; i <  cfake_eff_zz.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_zz[i] << endl; 
+			eff_zz = eff_zz + cfake_eff_zz[i];
+		}
+		mean_eff_zz = eff_zz/cfake_eff_zz.size();
+		cout << "Mean Btag Eff c for zz is: " << mean_eff_zz << endl; 
+	}	
+ 	else if (dataSetName == "zjets"){    
+	        double  eff_zjets = 0.; 
+		double  mean_eff_zjets = 0.;  
+		for(int i =0; i <  cfake_eff_zjets.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_zjets[i] << endl; 
+			eff_zjets = eff_zjets + cfake_eff_zjets[i];
+		}
+		mean_eff_zjets = eff_zjets/cfake_eff_zjets.size();
+		cout << "Mean Btag Eff c for zjets is: " << mean_eff_zjets << endl; 
+	}	
+	else if (dataSetName == "zjets_lowmll"){    
+		double  eff_zjets_lowmll = 0.; 
+		double  mean_eff_zjets_lowmll = 0.;  
+		for(int i =0; i <  cfake_eff_zjets_lowmll.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_zjets_lowmll[i] << endl; 
+			eff_zjets_lowmll = eff_zjets_lowmll + cfake_eff_zjets_lowmll[i];
+		}
+		mean_eff_zjets_lowmll = eff_zjets_lowmll/cfake_eff_zjets_lowmll.size();
+		cout << "Mean Btag Eff c for zjets_lowmll is: " << mean_eff_zjets_lowmll << endl; 
+	}
+ 	else if (dataSetName == "wjets"){  
+		double  eff_wjets = 0.; 
+		double  mean_eff_wjets = 0.;  
+		for(int i =0; i <  cfake_eff_wjets.size(); i++){
+		//	cout << "Btagefficiency for " << i << "th event: " <<  cfake_eff_wjets[i] << endl; 
+			eff_wjets = eff_wjets + cfake_eff_wjets[i];
+		}
+		mean_eff_wjets = eff_wjets/cfake_eff_wjets.size();
+		cout << "Mean Btag c Eff for wjets is: " << mean_eff_wjets << endl; 
+	}    
+	
+	cout << "-----------------------------------------------------------------------------------------------------------" << endl;      
         ////////////////////////////
-	//   info btag eff       //
+	//   info btag eff : L      //
 	///////////////////////////
 
      	if (dataSetName == "tt"){ 	
@@ -2008,12 +2274,10 @@ int main(int argc, char* argv[]) {
 	histo_etaBTagL->SetDirectory(fileEf);
 	
 
-      
 
-	
       fileEf->Write(); 
       fileEf->Close(); 
-      
+*/      
      
      fout->Write(); 
       fout->Close(); 

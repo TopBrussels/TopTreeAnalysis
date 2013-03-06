@@ -329,23 +329,23 @@ void eff_plotmaker(int mode = 0){
 	histo_tt_ptEffL = (TH1F*) histo_tt_ptBtagL->Clone("histo_tt_ptEffL");
 	
 	
-	histo_twdr_ptEffB->Divide(histo_twdr_ptBtagB,histo_twdr_ptAllB,1.,1., "B"); 
-    	histo_tt_ptEffB->Divide(histo_tt_ptBtagB,histo_tt_ptAllB,1.,1.,"B");
+	histo_twdr_ptEffB->Divide(histo_twdr_ptBtagB,histo_twdr_ptAllB,1.,1., ""); 
+    	histo_tt_ptEffB->Divide(histo_tt_ptBtagB,histo_tt_ptAllB,1.,1.,"");
 	 
- 	histo_twdr_ptEffC->Divide(histo_twdr_ptBtagC,histo_twdr_ptAllC,1.,1., "B"); 
-    	histo_tt_ptEffC->Divide(histo_tt_ptBtagC,histo_tt_ptAllC,1.,1.,"B");
+ 	histo_twdr_ptEffC->Divide(histo_twdr_ptBtagC,histo_twdr_ptAllC,1.,1., ""); 
+    	histo_tt_ptEffC->Divide(histo_tt_ptBtagC,histo_tt_ptAllC,1.,1.,"");
 	
-        histo_twdr_ptEffL->Divide(histo_twdr_ptBtagL,histo_twdr_ptAllL,1.,1., "B"); 
-    	histo_tt_ptEffL->Divide(histo_tt_ptBtagL,histo_tt_ptAllL,1.,1.,"B");
+        histo_twdr_ptEffL->Divide(histo_twdr_ptBtagL,histo_twdr_ptAllL,1.,1., ""); 
+    	histo_tt_ptEffL->Divide(histo_tt_ptBtagL,histo_tt_ptAllL,1.,1.,"");
 	
-	legEffBpt ->AddEntry(histo_tt_ptEffB, "ttbar bckgr. eff" , "l");  
-        legEffBpt ->AddEntry(histo_twdr_ptEffB, "twdr signal eff" , "l");
+	legEffBpt ->AddEntry(histo_tt_ptEffB, "ttbar bckgr. eff" , "");  
+        legEffBpt ->AddEntry(histo_twdr_ptEffB, "twdr signal eff" , "");
 	
-	legEffCpt ->AddEntry(histo_tt_ptEffC, "ttbar bckgr. eff" , "l");  
-        legEffCpt ->AddEntry(histo_twdr_ptEffC, "twdr signal eff" , "l");
+	legEffCpt ->AddEntry(histo_tt_ptEffC, "ttbar bckgr. eff" , "");  
+        legEffCpt ->AddEntry(histo_twdr_ptEffC, "twdr signal eff" , "");
 	
-	legEffLpt ->AddEntry(histo_tt_ptEffL, "ttbar bckgr. eff" , "l");  
-        legEffLpt ->AddEntry(histo_twdr_ptEffL, "twdr signal eff" , "l");
+	legEffLpt ->AddEntry(histo_tt_ptEffL, "ttbar bckgr. eff" , "");  
+        legEffLpt ->AddEntry(histo_twdr_ptEffL, "twdr signal eff" , "");
 	
 	double maxEffBpt = TMath::Max(histo_tt_ptEffB->GetMaximum(), histo_twdr_ptEffB->GetMaximum());
 	double maxEffCpt = TMath::Max(histo_tt_ptEffC->GetMaximum(), histo_twdr_ptEffC->GetMaximum());
@@ -548,12 +548,14 @@ void eff_plotmaker(int mode = 0){
 	
 	TCanvas *c1effBeta = new TCanvas();
        
-       histo_tt_etaEffB->Draw("h");
+       histo_tt_etaEffB->Draw("p");
        histo_tt_etaEffB->SetMaximum(maxEffBeta*1.5 );
        histo_tt_etaEffB->GetYaxis()->SetTitle("Eff");
        histo_tt_etaEffB->GetXaxis()->SetTitle("eta bjets");
+        //->GetYaxis()->SetTitleOffset(1.4);
+       
 
-       histo_twdr_etaEffB->Draw("h, sames");
+       histo_twdr_etaEffB->Draw("psame");
        histo_twdr_etaEffB->SetMaximum(maxEffBeta*1.5);
     
        
