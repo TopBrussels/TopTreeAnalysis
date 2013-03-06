@@ -1526,39 +1526,43 @@ int main(int argc, char* argv[]) {
 								
 	
 									 
-									} // pt > 20   eta < 2.4  such that btagging can be used
-										
-									// btag booleans for looper
-									btag_booleans.push_back(bTagged);
 									
-									// counting jets and btagged ones
-									if(bTagged){
-										nJetsBT++;
-			      						}
-	
-									if(!isData){
-										if(bTagged){ 
-											check_btagged++;
-											//cout << "btag after is 0" << endl; 
-										}
-											check_notbtagged++;
-											//cout << "btag after is 1" << endl;
 										
-										check_eff = check_btagged/check_notbtagged; 
-									}
-
-									if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
-				 						nJets++;
-										iJet = iJ;
-										
+										// btag booleans for looper
+										btag_booleans.push_back(bTagged);
+									
+										// counting jets and btagged ones
 										if(bTagged){
-											nTightJetsBT++;	
-										}
+											nJetsBT++;
+			      							}
+	
+										if(!isData && jet_flavorSF == 5){
+											if(bTagged){ 
+												check_btagged++;
+												//cout << "btag after is 0" << endl; 
+											}
+												check_notbtagged++;
+												//cout << "btag after is 1" << endl;
+										
 											
-									} // end proper jet statement
+										}
+
+										if (tempJet->Pt() > 30 && fabs(tempJet->Eta()) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
+				 							nJets++;
+											iJet = iJ;
+										
+											if(bTagged){
+												nTightJetsBT++;	
+											}
+											
+										} // end proper jet statement
+									} // pt > 20   eta < 2.4  such that btagging can be used	
 								} // closing loop over jets
 								
+								 
+								
 								if(!isData){
+									check_eff = check_btagged/check_notbtagged; 
 									//cout << "number of btagged MC: " << check_btagged << " - number of jets MC " << check_notbtagged << endl; 
 									btag_eff_check1.push_back(check_eff);
 									//cout << "eff: " << check_eff << endl;  
