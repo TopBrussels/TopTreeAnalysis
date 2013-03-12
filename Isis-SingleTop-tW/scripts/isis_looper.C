@@ -73,7 +73,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
   */
   
-  bool nosf = false;
+ 
   
   
   char newRootFile[300];
@@ -600,7 +600,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
 	  else if (btag){ // look for jets that aren't proper, but still btagged
 	      bTagged = true; 
-	      JetsBT++;
+	      nJetsBT++;
 	  }  // end else if 
 	  
 	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
