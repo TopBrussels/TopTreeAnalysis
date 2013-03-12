@@ -59,12 +59,22 @@ int main(int argc, char* argv[]) {
     
     bool SFplus = false; 
     bool SFminus = false; 
+    bool SFplus_c = false; 
+    bool SFminus_c = false; 
+    bool SFplus_l = false; 
+    bool SFminus_l = false; 
     
     bool unclusteredUp = false; 
     bool unclusteredDown = false; 
     
     bool PUsysUp = false; 
     bool PUsysDown = false; 
+    
+    bool eleSFsysUp = false; 
+    bool eleSFsysDown = false; 
+    
+
+    
     
     /////////////////////////////////////////////
     ///                 B-tag SF              ///
@@ -81,7 +91,7 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////
     ///                  Run HLT              ///
     /////////////////////////////////////////////    
-    bool runHLT = false; 
+    bool runHLT = true; 
     
     /////////////////////////////////////////////
     ///                 PU reweighting        ///
@@ -115,6 +125,7 @@ int main(int argc, char* argv[]) {
     
     int mode = 0; 
     double lumi = 1000; //by default is the luminosity 1000
+    double leptonEff_Trig_ID = 1; // default value
     string xmlfile = "config/twemu.xml" ;  // by default, use mode 0
     
     // Set as default the emu mode
@@ -142,8 +153,12 @@ int main(int argc, char* argv[]) {
                 cout << "--JESminus: JES sys -1 sigma MET included" << endl;
                 cout << "--JERplus: JER +" << endl;
                 cout << "--JERminus: JER -" << endl;
-                cout << "--SFplus: SF up +10% syst" << endl;
-                cout << "--SFminus: SF down -10% syst" << endl;
+                cout << "--SFplus: SF up +10% syst for b quarks" << endl;
+                cout << "--SFminus: SF down -10% syst for b quarks" << endl;
+		cout << "--SFplus_c: SF up +10% systfor c quarks" << endl;
+                cout << "--SFminus_c: SF down -10% syst for c quarks" << endl;
+		cout << "--SFplus_l: SF up +10% syst for light quarks" << endl;
+                cout << "--SFminus_l: SF down -10% syst for light quarks" << endl;
                 cout << "--PUup: PU reweghting scaled up " << endl;
                 cout << "--PUdown: PU reweghting scaled down " << endl;
                 cout << "--uncMETup: Unclustered MET syst. Up " << endl;
@@ -153,6 +168,8 @@ int main(int argc, char* argv[]) {
                 cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
                 cout << "--3D: 3D Pileup reweighting" << endl;
 		cout << "--xml myxml.xml Xml file" << endl; 
+		cout << "--eleSFplus   lepton ID/trigger eff scaled up" << endl; 
+		cout << "--eleSFminus:  lepton ID/trigger eff scaled down" << endl; 
                 return 0;
         }
         if (argval=="--ee"){
@@ -193,6 +210,24 @@ int main(int argc, char* argv[]) {
         }
         if (argval=="--SFminus"){
                 SFminus = true;
+        }
+        if (argval=="--eleSFplus") {
+                eleSFsysUp = true;
+        }
+        if (argval=="--eleSFminus"){
+                eleSFsysDown = true;
+        }	
+	if (argval=="--SFplus_c") {
+                SFplus_c = true;
+        }
+        if (argval=="--SFminus_c"){
+                SFminus_c = true;
+        }
+	if (argval=="--SFplus_l") {
+                SFplus_l = true;
+        }
+        if (argval=="--SFminus_l"){
+                SFminus_l = true;
         }
         if (argval=="--NoPU") {
                 reweightPU = false;
@@ -288,14 +323,27 @@ int main(int argc, char* argv[]) {
     
         
     /////////////////////////////////
-    ///       CONFIGURATION       ///
+    ///       CONFIGURATION       ///  leptoneff should be checked!!! (12/3/2013)
     /////////////////////////////////
+    
     
       // Luminosity and xml files
   // Only runs A, A recover, B, C (24, v2)
-     if      (mode == 0){ 	 lumi = 11966.617;  	xmlfile ="config/twemu.xml";}
-     else if (mode == 1){	 lumi = 12067.294;  	xmlfile = "config/twmumu.xml";}
-     else if (mode == 2){	 lumi = 12093.792;  	xmlfile = "config/twee.xml";}
+     if      (mode == 0){  // emu	 
+     	lumi = 11966.617;  	
+	xmlfile ="config/twemu.xml";    
+	leptonEff_Trig_ID = 0.953;
+	}
+     else if (mode == 1){ 
+     	 lumi = 12067.294;  	
+	 xmlfile = "config/twmumu.xml";
+	 leptonEff_Trig_ID = 0.963;
+	}
+     else if (mode == 2){	 
+     	lumi = 12093.792;  	
+     	xmlfile = "config/twee.xml";
+	leptonEff_Trig_ID = 0.975;
+	}
  
     
     // xml file, this file contains the rootfiles of the skimmed toptrees
@@ -528,6 +576,11 @@ int main(int argc, char* argv[]) {
 	std::vector<double> btag_eff_check2; 
 	
 	
+	
+	
+	
+	
+	
         /////////////////////////////////
         ///    Pile Up reweighting    /// 
 	
@@ -536,8 +589,8 @@ int main(int argc, char* argv[]) {
          
         LumiReWeighting LumiWeights; 
 	
-	    bool PUsysUp = false; 
-    bool PUsysDown = false; 
+       bool PUsysUp = false; 
+       bool PUsysDown = false; 
     
       if(PUsysUp){
            LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root","pileupHistos/pileup_tW_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup"); 
@@ -739,7 +792,7 @@ int main(int argc, char* argv[]) {
         std::vector<double> *eJet; 
 	std::vector<double> *etaJet;
         std::vector<double> *qJet;  
-	std::vector<double> *Btagjet;
+	std::vector<bool> *Btagjet;
         std::vector<double> *btJPBJet; 
         std::vector<double> *btBJPBJet; 
         std::vector<double> *btCSVBJet; 
@@ -778,7 +831,7 @@ int main(int argc, char* argv[]) {
         myTree->Branch("eJet","std::vector<double>",&eJet);
 	myTree->Branch("etaJet","std::vector<double>",&etaJet);
         myTree->Branch("qJet","std::vector<double>",&qJet);
-	myTree->Branch("Btagjet", "std::vector<double>",&Btagjet);
+	myTree->Branch("Btagjet", "std::vector<bool>",&Btagjet);
         myTree->Branch("btJPBJet","std::vector<double>",&btJPBJet);
         myTree->Branch("btBJPBJet","std::vector<double>",&btBJPBJet);
         myTree->Branch("btCSVBJet","std::vector<double>",&btCSVBJet);
@@ -791,7 +844,7 @@ int main(int argc, char* argv[]) {
         cout << "[Info:] output rootfile named " << rootFileName << endl; 
         cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
       
-        if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus || unclusteredUp || unclusteredDown 
+        if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus ||SFplus_c || SFminus_c ||SFplus_l || SFminus_l || unclusteredUp || unclusteredDown 
           || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D) {
                 cout << "[Warning:] Non-standard options, ignore if you did it conciously" << endl;
                 
@@ -799,8 +852,12 @@ int main(int argc, char* argv[]) {
                 if (JERMinus) cout << "[Warning:] JER systematics on, minus" << endl;
                 if (JESPlus) cout << "[Warning:] JES systematics on, plus" << endl;
                 if (JESMinus) cout << "[Warning:] JES systematics on, minus" << endl;
-                if (SFplus) cout <<"[Warning:] SF up 10% " << endl;
-                if (SFminus) cout <<"[Warning:]  SF down 10% " << endl;
+                if (SFplus) cout <<"[Warning:] SF up 10% for b quarks " << endl;
+                if (SFminus) cout <<"[Warning:]  SF down 10% for b quarks " << endl;
+		if (SFplus_c) cout <<"[Warning:] SF up 10% for c quarks" << endl;
+                if (SFminus_c) cout <<"[Warning:]  SF down 10% for c quarks " << endl;
+		if (SFplus_l) cout <<"[Warning:] SF up 10% for light quarks " << endl;
+                if (SFminus_l) cout <<"[Warning:]  SF down 10% for light quarks" << endl;
                 if (unclusteredUp) cout <<"[Warning:] unclustered MET up 10% " << endl;
                 if (unclusteredDown) cout <<"[Warning:] unclustered MET down 10% " << endl;
                 if (!reweightPU && !isData) cout << "[Warning:] You are NOT applying PU re-weighting " << endl;
@@ -866,8 +923,9 @@ int main(int argc, char* argv[]) {
 			
                         //If PU reweighting is turned on
                         if(reweightPU){
-                                weight *= lumiWeight;      
+                                weight *= lumiWeight ;      
                         }
+			
                 } // closing loop for PU reweighting for MC
                 
                 ////////////////////////////////
@@ -916,15 +974,15 @@ int main(int argc, char* argv[]) {
                                 // such as reconstruction of physics objects, making intermediate decisions, triggering more refined reconstructions in subsequent modules, 
                                 // or calculating the final decision for that trigger path.
                                 if(mode == 0){
-                                        itrigger = treeLoader.iTrigger ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
-                                        isecondtrigger = treeLoader.iTrigger ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6", currentRun);
+                                        itrigger = treeLoader.iTrigger("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*", currentRun);
+                                        isecondtrigger = treeLoader.iTrigger("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*", currentRun);
                                 } 
                                 else if (mode == 1){
-                                        itrigger = treeLoader.iTrigger ("HLT_Mu17_Mu8_v16", currentRun);
-                                        isecondtrigger = treeLoader.iTrigger ("HLT_Mu17_TkMu8_v9", currentRun);
+                                        itrigger = treeLoader.iTrigger("HLT_Mu17_Mu8_v*", currentRun);
+                                        isecondtrigger = treeLoader.iTrigger("HLT_Mu17_TkMu8_v*", currentRun);
                                 } 
                                 else if (mode == 2){
-                                        itrigger = treeLoader.iTrigger ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17", currentRun);
+                                        itrigger = treeLoader.iTrigger("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*", currentRun);
                                 }
                         } // closing the HLT for data loop
                         
@@ -938,13 +996,14 @@ int main(int argc, char* argv[]) {
 			// only for trigged = true, are cuts made
                         if (itrigger || isecondtrigger){ 
                                 trigged = true;
+				weight *= leptonEff_Trig_ID; // so the event weight is the PUeff * Trig/ID eff * weight from lumi 
                          } 
                          else{
-                                trigged = true;
+                                trigged = false;
                         }       
                 } // closing the HLT run loop
                 else{               
-			trigged = true; 
+	      		trigged = true; 
 		}// HLT makes no difference (CHECK PREVIOUS LOOP)
 		
                 ////////////////////////////////
@@ -1369,9 +1428,17 @@ int main(int argc, char* argv[]) {
 							       //////////////////////////////////////////////
 							       ///                 TAKING BTAG SF        ////
 							       //////////////////////////////////////////////
-								int SFsys = 0;  
-								if (SFminus) 	SFsys = -1;   // systematics down
-		      						if (SFplus) 	SFsys = +1;    // systematics up
+								int SFsys_b = 0;  
+								if (SFminus) 	SFsys_b = -1;   // systematics down
+		      						if (SFplus) 	SFsys_b = +1;    // systematics up
+								
+								int SFsys_c = 0;  
+								if (SFminus_c) 	SFsys_c = -1;   // systematics down
+		      						if (SFplus_c) 	SFsys_c = +1;    // systematics up
+								
+								int SFsys_l= 0;  
+								if (SFminus_l) 	SFsys_l = -1;   // systematics down
+		      						if (SFplus_l) 	SFsys_l = +1;    // systematics up
 								
 		      						int nJetsBT = 0;
 		      						int nTightJetsBT = 0;
@@ -1468,12 +1535,12 @@ int main(int argc, char* argv[]) {
 										if(!isData){	
 											// Get scale factors from btag POG (pt and eta dependent)
 											if(fabs(jet_flavorSF) == 5){											
-												BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,"CSVM",SFsys);
+												BTagSF = bTool->getWeight(tempJet->Pt(), TempEta,5,"CSVM",SFsys_b);
 											}else if(fabs(jet_flavorSF) == 4){
-												BTagSF_c = bTool->getWeight(tempJet->Pt(), TempEta,4,"CSVM",SFsys);
+												BTagSF_c = bTool->getWeight(tempJet->Pt(), TempEta,4,"CSVM",SFsys_c);
 											}else //if( fabs(jet_flavorSF)< 4 || fabs(jet_flavorSF)==21) 
 											{
-												LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,"CSVM",SFsys);
+												LightJetSF = bTool->getWeight(tempJet->Pt(), TempEta,1,"CSVM",SFsys_l);
 											}
 										
 											// warnings	
@@ -1504,7 +1571,7 @@ int main(int argc, char* argv[]) {
 										double phi = jet_phiSF; 
 										double sin_phi = sin(phi*1000000);
 										int seed =(int) fabs(static_cast<int>(sin_phi*100000));
-										if(!isData){
+										if(!isData && scaleFactor){
 											//Initialize class
 											BTagSFUtil* btsfutil = new BTagSFUtil(seed);
 										
@@ -1519,17 +1586,6 @@ int main(int argc, char* argv[]) {
 										
 										
  
-										
-										
-
-									
-								
-	
-									 
-									
-										
-										// btag booleans for looper
-										btag_booleans.push_back(bTagged);
 									
 										// counting jets and btagged ones
 										if(bTagged){
@@ -1556,15 +1612,26 @@ int main(int argc, char* argv[]) {
 											}
 											
 										} // end proper jet statement
-									} // pt > 20   eta < 2.4  such that btagging can be used	
+									} // pt > 20   eta < 2.4  such that btagging can be used
+									else{
+										bTagged = false; 
+									
+									} // jets with pt < 20 and eta > 2.4 aren't btagged
+									// btag booleans for looper
+									btag_booleans.push_back(bTagged);	
 								} // closing loop over jets
 								
-								 
+								 double check_eff_unc;
 								
 								if(!isData && check_notbtagged > 0){
-									check_eff = check_btagged/check_notbtagged; 
+									check_eff = check_btagged/check_notbtagged;
+									double term1 = check_btagged/(check_notbtagged*check_notbtagged);
+									double term2 = (check_btagged*check_btagged)/check_notbtagged;
+									check_eff_unc = sqrt(term1+term2); 
+									 
 									//cout << "number of btagged MC: " << check_btagged << " - number of jets MC " << check_notbtagged << endl; 
 									btag_eff_check1.push_back(check_eff);
+									btag_eff_check2.push_back(check_eff_unc);
 									//cout << "eff: " << check_eff << endl;  
 								}
 								        //cout << "number of btagged (all): " << nJetsBT << " tight ones: " << nTightJetsBT << endl; 
@@ -1605,7 +1672,7 @@ int main(int argc, char* argv[]) {
 		      						eJet = new std::vector<double>; 
 								etaJet = new std::vector<double>; 
 		      						qJet = new std::vector<double>; 
-								Btagjet = new std::vector<double>;
+								Btagjet = new std::vector<bool>;
 		      						btJPBJet = new std::vector<double>; 
 		     						btBJPBJet = new std::vector<double>; 
 		      						btCSVBJet = new std::vector<double>;
@@ -1827,12 +1894,14 @@ int main(int argc, char* argv[]) {
 	cout << "Number of events with 5 bjets: " << histo_btagged_tightjets->GetBinContent(1+5)  << " +/- "<< histo_btagged_tightjets->GetBinError(1+5) << endl;
 	cout << "--------------------------------------------------" << endl;
         double ef = 0;
+	double ef_unc = 0; 
         for(int i = 0; i< btag_eff_check1.size(); i++){
 		ef = ef + btag_eff_check1[i];
-		
+		ef_unc = ef_unc + (btag_eff_check2[i] * btag_eff_check2[i]);
 	}
 	double eff = ef /btag_eff_check1.size(); 
-	cout << " mean btag eff : " << eff << endl;
+	double eff_unc = sqrt(ef_unc)/btag_eff_check1.size();
+	cout << " mean btag eff for bjets (MC): " << eff  << endl;
 	cout << "--------------------------------------------------" << endl; 
 
 

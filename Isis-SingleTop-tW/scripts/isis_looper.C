@@ -20,6 +20,7 @@ void isis_looper::Loop(){
   // running default loop:
   myLoop(0,0,0);
 }
+
 void isis_looper::myLoop(int nsel, int mode, bool silent)
 {
 
@@ -582,6 +583,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
+	  bool btag = Btagjet->at(i);
 	  
 	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	    
@@ -589,14 +591,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    iJet = i;
 	    nJets++;
 
-	    if (Btagjet->at(i) ==1){
+	    if (btag){
 	        bTagged = true;
 		nJetsBT++;
 		nTightJetsBT++;
 	      
 	    } // end  if 
 	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
-	  else if (Btagjet->at(i) == 1){ // look for jets that aren't proper, but still btagged
+	  else if (btag){ // look for jets that aren't proper, but still btagged
 	      bTagged = true; 
 	      JetsBT++;
 	  }  // end else if 
