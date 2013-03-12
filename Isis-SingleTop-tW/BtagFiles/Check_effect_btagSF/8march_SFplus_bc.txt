@@ -1,0 +1,388 @@
+
+[1mRooFit v3.17 -- Developed by Wouter Verkerke and David Kirkby[0m 
+                Copyright (C) 2000-2011 NIKHEF, University of California & Stanford University
+                All rights reserved, please read http://roofit.sourceforge.net/license.txt
+
+BTagWeightTools:INFO: successfully parsed file BtagFiles/SFb-pt_payload_Moriond13.txt, b-tag parameterizations now loaded!
+******************************************************************************
+ Welcome to the single top tW analysis: Summer12 53X at 8 TeV with MC 
+******************************************************************************
+You have chosen:  Electron - Muon channel 
+******************************************************************************
+ Lumi/Pileup Reweighting: Computed Weights per In-Time Nint 
+   0 0.396262
+   1 0.514145
+   2 0.386082
+   3 0.469594
+   4 0.460119
+   5 0.762056
+   6 0.611688
+   7 0.60354
+   8 0.81329
+   9 1.16466
+   10 1.5974
+   11 1.95373
+   12 1.97185
+   13 1.73948
+   14 1.47089
+   15 1.28131
+   16 1.18093
+   17 1.13566
+   18 1.12972
+   19 1.14863
+   20 1.1638
+   21 1.16054
+   22 1.14472
+   23 1.11966
+   24 1.07584
+   25 1.00386
+   26 0.902938
+   27 0.77952
+   28 0.642692
+   29 0.504193
+   30 0.376804
+   31 0.270125
+   32 0.187312
+   33 0.12633
+   34 0.0826648
+   35 0.0519789
+   36 0.0311519
+   37 0.0177197
+   38 0.00957677
+   39 0.00496076
+   40 0.00249461
+   41 0.00123511
+   42 0.000609289
+   43 0.00030164
+   44 0.000150463
+   45 7.54769e-05
+   46 3.79604e-05
+   47 1.90938e-05
+   48 9.58591e-06
+   49 4.80032e-06
+   50 2.40045e-06
+   51 1.19953e-06
+   52 5.99854e-07
+   53 3.00158e-07
+   54 1.49953e-07
+   55 7.46625e-08
+   56 3.69544e-08
+   57 1.81429e-08
+   58 8.81484e-09
+   59 0
+[Info:] output rootfile named outputs/SFsysUp_0_tt.root
+[Info:] mode = 0, lumi: 11966.6 pb, sample: tt, base weight: 0.394535
+[Warning:] Non-standard options, ignore if you did it conciously
+[Warning:] SF up 10% for b quarks 
+[Warning:] SF up 10% for c quarks
+[Info:] 402747 total events
+Processing the 0th eventProcessing the 500th eventProcessing the 1000th eventProcessing the 1500th eventProcessing the 2000th eventProcessing the 2500th eventProcessing the 3000th eventProcessing the 3500th eventProcessing the 4000th eventProcessing the 4500th eventProcessing the 5000th eventProcessing the 5500th eventProcessing the 6000th eventProcessing the 6500th eventProcessing the 7000th eventProcessing the 7500th eventProcessing the 8000th eventProcessing the 8500th eventProcessing the 9000th eventProcessing the 9500th eventProcessing the 10000th eventProcessing the 10500th eventProcessing the 11000th eventProcessing the 11500th eventProcessing the 12000th eventProcessing the 12500th eventProcessing the 13000th eventProcessing the 13500th eventProcessing the 14000th eventProcessing the 14500th eventProcessing the 15000th eventProcessing the 15500th eventProcessing the 16000th eventProcessing the 16500th eventProcessing the 17000th eventProcessing the 17500th eventProcessing the 18000th eventProcessing the 18500th eventProcessing the 19000th eventProcessing the 19500th eventProcessing the 20000th eventProcessing the 20500th eventProcessing the 21000th eventProcessing the 21500th eventProcessing the 22000th eventProcessing the 22500th eventProcessing the 23000th eventProcessing the 23500th eventProcessing the 24000th eventProcessing the 24500th eventProcessing the 25000th eventProcessing the 25500th eventProcessing the 26000th eventProcessing the 26500th eventProcessing the 27000th eventProcessing the 27500th eventProcessing the 28000th eventProcessing the 28500th eventProcessing the 29000th eventProcessing the 29500th eventProcessing the 30000th eventProcessing the 30500th eventProcessing the 31000th eventProcessing the 31500th eventBTagWeightTools::WARNING retrieving for pT value (903.135) outside range of 20,800 which is fine but tread with caution...
+Processing the 32000th eventProcessing the 32500th eventProcessing the 33000th eventProcessing the 33500th eventProcessing the 34000th eventProcessing the 34500th eventProcessing the 35000th eventProcessing the 35500th eventProcessing the 36000th eventProcessing the 36500th eventProcessing the 37000th eventProcessing the 37500th eventProcessing the 38000th eventProcessing the 38500th eventProcessing the 39000th eventProcessing the 39500th eventProcessing the 40000th eventProcessing the 40500th eventProcessing the 41000th eventProcessing the 41500th eventProcessing the 42000th eventProcessing the 42500th eventProcessing the 43000th eventProcessing the 43500th eventProcessing the 44000th eventProcessing the 44500th eventProcessing the 45000th eventProcessing the 45500th eventProcessing the 46000th eventProcessing the 46500th eventProcessing the 47000th eventProcessing the 47500th eventProcessing the 48000th eventProcessing the 48500th eventProcessing the 49000th eventProcessing the 49500th eventProcessing the 50000th eventProcessing the 50500th eventProcessing the 51000th eventProcessing the 51500th eventProcessing the 52000th eventProcessing the 52500th eventProcessing the 53000th eventProcessing the 53500th eventProcessing the 54000th eventProcessing the 54500th eventProcessing the 55000th eventProcessing the 55500th eventProcessing the 56000th eventProcessing the 56500th eventProcessing the 57000th eventProcessing the 57500th eventProcessing the 58000th eventProcessing the 58500th eventProcessing the 59000th eventProcessing the 59500th eventProcessing the 60000th eventProcessing the 60500th eventProcessing the 61000th eventProcessing the 61500th eventProcessing the 62000th eventProcessing the 62500th eventProcessing the 63000th eventProcessing the 63500th eventProcessing the 64000th eventProcessing the 64500th eventProcessing the 65000th eventProcessing the 65500th eventProcessing the 66000th eventProcessing the 66500th eventProcessing the 67000th eventProcessing the 67500th eventProcessing the 68000th eventProcessing the 68500th eventProcessing the 69000th eventProcessing the 69500th eventProcessing the 70000th eventProcessing the 70500th eventProcessing the 71000th eventProcessing the 71500th eventProcessing the 72000th eventProcessing the 72500th eventProcessing the 73000th eventProcessing the 73500th eventProcessing the 74000th eventProcessing the 74500th eventProcessing the 75000th eventProcessing the 75500th eventProcessing the 76000th eventProcessing the 76500th eventProcessing the 77000th eventProcessing the 77500th eventProcessing the 78000th eventProcessing the 78500th eventProcessing the 79000th eventProcessing the 79500th eventProcessing the 80000th eventProcessing the 80500th eventProcessing the 81000th eventProcessing the 81500th eventProcessing the 82000th eventProcessing the 82500th eventProcessing the 83000th eventProcessing the 83500th eventProcessing the 84000th eventProcessing the 84500th eventProcessing the 85000th eventProcessing the 85500th eventProcessing the 86000th eventProcessing the 86500th eventProcessing the 87000th eventProcessing the 87500th eventProcessing the 88000th eventProcessing the 88500th eventProcessing the 89000th eventProcessing the 89500th eventProcessing the 90000th eventProcessing the 90500th eventProcessing the 91000th eventProcessing the 91500th eventProcessing the 92000th eventProcessing the 92500th eventProcessing the 93000th eventProcessing the 93500th eventProcessing the 94000th eventProcessing the 94500th eventProcessing the 95000th eventProcessing the 95500th eventProcessing the 96000th eventProcessing the 96500th eventProcessing the 97000th eventProcessing the 97500th eventProcessing the 98000th eventProcessing the 98500th eventProcessing the 99000th eventProcessing the 99500th eventProcessing the 100000th eventProcessing the 100500th eventProcessing the 101000th eventProcessing the 101500th eventProcessing the 102000th eventProcessing the 102500th eventProcessing the 103000th eventProcessing the 103500th eventProcessing the 104000th eventProcessing the 104500th eventProcessing the 105000th eventProcessing the 105500th eventProcessing the 106000th eventProcessing the 106500th eventProcessing the 107000th eventProcessing the 107500th eventProcessing the 108000th eventProcessing the 108500th eventProcessing the 109000th eventProcessing the 109500th eventProcessing the 110000th eventProcessing the 110500th eventProcessing the 111000th eventProcessing the 111500th eventBTagWeightTools::WARNING retrieving for pT value (812.033) outside range of 20,800 which is fine but tread with caution...
+Processing the 112000th eventProcessing the 112500th eventProcessing the 113000th eventProcessing the 113500th eventProcessing the 114000th eventProcessing the 114500th eventProcessing the 115000th eventProcessing the 115500th eventProcessing the 116000th eventProcessing the 116500th eventProcessing the 117000th eventProcessing the 117500th eventProcessing the 118000th eventProcessing the 118500th eventProcessing the 119000th eventProcessing the 119500th eventProcessing the 120000th eventProcessing the 120500th eventProcessing the 121000th eventProcessing the 121500th eventProcessing the 122000th eventProcessing the 122500th eventProcessing the 123000th eventProcessing the 123500th eventProcessing the 124000th eventProcessing the 124500th eventProcessing the 125000th eventProcessing the 125500th eventProcessing the 126000th eventProcessing the 126500th eventProcessing the 127000th eventProcessing the 127500th eventProcessing the 128000th eventProcessing the 128500th eventProcessing the 129000th eventProcessing the 129500th eventProcessing the 130000th eventProcessing the 130500th eventProcessing the 131000th eventProcessing the 131500th eventProcessing the 132000th eventProcessing the 132500th eventProcessing the 133000th eventProcessing the 133500th eventProcessing the 134000th eventProcessing the 134500th eventProcessing the 135000th eventProcessing the 135500th eventProcessing the 136000th eventProcessing the 136500th eventProcessing the 137000th eventProcessing the 137500th eventProcessing the 138000th eventProcessing the 138500th eventProcessing the 139000th eventProcessing the 139500th eventProcessing the 140000th eventProcessing the 140500th eventProcessing the 141000th eventProcessing the 141500th eventProcessing the 142000th eventProcessing the 142500th eventProcessing the 143000th eventProcessing the 143500th eventProcessing the 144000th eventProcessing the 144500th eventProcessing the 145000th eventProcessing the 145500th eventProcessing the 146000th eventProcessing the 146500th eventProcessing the 147000th eventProcessing the 147500th eventProcessing the 148000th eventProcessing the 148500th eventProcessing the 149000th eventProcessing the 149500th eventProcessing the 150000th eventProcessing the 150500th eventProcessing the 151000th eventProcessing the 151500th eventProcessing the 152000th eventProcessing the 152500th eventProcessing the 153000th eventProcessing the 153500th eventProcessing the 154000th eventProcessing the 154500th eventProcessing the 155000th eventProcessing the 155500th eventProcessing the 156000th eventProcessing the 156500th eventProcessing the 157000th eventProcessing the 157500th eventProcessing the 158000th eventProcessing the 158500th eventProcessing the 159000th eventProcessing the 159500th eventProcessing the 160000th eventProcessing the 160500th eventProcessing the 161000th eventProcessing the 161500th eventProcessing the 162000th eventProcessing the 162500th eventProcessing the 163000th eventProcessing the 163500th eventProcessing the 164000th eventProcessing the 164500th eventProcessing the 165000th eventProcessing the 165500th eventProcessing the 166000th eventProcessing the 166500th eventProcessing the 167000th eventProcessing the 167500th eventProcessing the 168000th eventProcessing the 168500th eventProcessing the 169000th eventProcessing the 169500th eventProcessing the 170000th eventProcessing the 170500th eventProcessing the 171000th eventProcessing the 171500th eventProcessing the 172000th eventProcessing the 172500th eventProcessing the 173000th eventProcessing the 173500th eventProcessing the 174000th eventProcessing the 174500th eventProcessing the 175000th eventProcessing the 175500th eventProcessing the 176000th eventProcessing the 176500th eventProcessing the 177000th eventProcessing the 177500th eventProcessing the 178000th eventProcessing the 178500th eventProcessing the 179000th eventProcessing the 179500th eventProcessing the 180000th eventBTagWeightTools::WARNING retrieving for pT value (969.839) outside range of 20,800 which is fine but tread with caution...
+Processing the 180500th eventProcessing the 181000th eventProcessing the 181500th eventProcessing the 182000th eventProcessing the 182500th eventProcessing the 183000th eventProcessing the 183500th eventProcessing the 184000th eventProcessing the 184500th eventProcessing the 185000th eventProcessing the 185500th eventProcessing the 186000th eventProcessing the 186500th eventProcessing the 187000th eventProcessing the 187500th eventProcessing the 188000th eventProcessing the 188500th eventProcessing the 189000th eventProcessing the 189500th eventProcessing the 190000th eventProcessing the 190500th eventProcessing the 191000th eventProcessing the 191500th eventProcessing the 192000th eventProcessing the 192500th eventProcessing the 193000th eventProcessing the 193500th eventProcessing the 194000th eventProcessing the 194500th eventProcessing the 195000th eventProcessing the 195500th eventProcessing the 196000th eventProcessing the 196500th eventProcessing the 197000th eventProcessing the 197500th eventProcessing the 198000th eventProcessing the 198500th eventProcessing the 199000th eventProcessing the 199500th eventProcessing the 200000th eventProcessing the 200500th eventProcessing the 201000th eventProcessing the 201500th eventProcessing the 202000th eventProcessing the 202500th eventProcessing the 203000th eventProcessing the 203500th eventProcessing the 204000th eventProcessing the 204500th eventProcessing the 205000th eventProcessing the 205500th eventProcessing the 206000th eventProcessing the 206500th eventProcessing the 207000th eventProcessing the 207500th eventProcessing the 208000th eventProcessing the 208500th eventProcessing the 209000th eventProcessing the 209500th eventProcessing the 210000th eventProcessing the 210500th eventProcessing the 211000th eventProcessing the 211500th eventProcessing the 212000th eventProcessing the 212500th eventProcessing the 213000th eventProcessing the 213500th eventProcessing the 214000th eventProcessing the 214500th eventProcessing the 215000th eventProcessing the 215500th eventProcessing the 216000th eventProcessing the 216500th eventProcessing the 217000th eventProcessing the 217500th eventProcessing the 218000th eventProcessing the 218500th eventProcessing the 219000th eventProcessing the 219500th eventProcessing the 220000th eventProcessing the 220500th eventProcessing the 221000th eventProcessing the 221500th eventProcessing the 222000th eventProcessing the 222500th eventProcessing the 223000th eventBTagWeightTools::WARNING retrieving for pT value (804.593) outside range of 20,800 which is fine but tread with caution...
+Processing the 223500th eventProcessing the 224000th eventProcessing the 224500th eventProcessing the 225000th eventProcessing the 225500th eventProcessing the 226000th eventProcessing the 226500th eventProcessing the 227000th eventProcessing the 227500th eventProcessing the 228000th eventProcessing the 228500th eventProcessing the 229000th eventProcessing the 229500th eventProcessing the 230000th eventProcessing the 230500th eventProcessing the 231000th eventProcessing the 231500th eventProcessing the 232000th eventProcessing the 232500th eventProcessing the 233000th eventProcessing the 233500th eventProcessing the 234000th eventProcessing the 234500th eventProcessing the 235000th eventProcessing the 235500th eventProcessing the 236000th eventProcessing the 236500th eventProcessing the 237000th eventProcessing the 237500th eventProcessing the 238000th eventProcessing the 238500th eventProcessing the 239000th eventProcessing the 239500th eventProcessing the 240000th eventProcessing the 240500th eventProcessing the 241000th eventProcessing the 241500th eventProcessing the 242000th eventProcessing the 242500th eventProcessing the 243000th eventProcessing the 243500th eventProcessing the 244000th eventProcessing the 244500th eventProcessing the 245000th eventProcessing the 245500th eventProcessing the 246000th eventProcessing the 246500th eventProcessing the 247000th eventProcessing the 247500th eventProcessing the 248000th eventProcessing the 248500th eventProcessing the 249000th eventProcessing the 249500th eventProcessing the 250000th eventProcessing the 250500th eventProcessing the 251000th eventProcessing the 251500th eventProcessing the 252000th eventProcessing the 252500th eventProcessing the 253000th eventProcessing the 253500th eventProcessing the 254000th eventProcessing the 254500th eventProcessing the 255000th eventProcessing the 255500th eventProcessing the 256000th eventProcessing the 256500th eventProcessing the 257000th eventProcessing the 257500th eventProcessing the 258000th eventProcessing the 258500th eventProcessing the 259000th eventProcessing the 259500th eventProcessing the 260000th eventProcessing the 260500th eventProcessing the 261000th eventProcessing the 261500th eventProcessing the 262000th eventProcessing the 262500th eventProcessing the 263000th eventProcessing the 263500th eventProcessing the 264000th eventProcessing the 264500th eventProcessing the 265000th eventProcessing the 265500th eventProcessing the 266000th eventProcessing the 266500th eventProcessing the 267000th eventProcessing the 267500th eventProcessing the 268000th eventProcessing the 268500th eventProcessing the 269000th eventProcessing the 269500th eventProcessing the 270000th eventProcessing the 270500th eventProcessing the 271000th eventProcessing the 271500th eventProcessing the 272000th eventProcessing the 272500th eventProcessing the 273000th eventProcessing the 273500th eventProcessing the 274000th eventProcessing the 274500th eventProcessing the 275000th eventProcessing the 275500th eventProcessing the 276000th eventProcessing the 276500th eventProcessing the 277000th eventProcessing the 277500th eventProcessing the 278000th eventProcessing the 278500th eventProcessing the 279000th eventProcessing the 279500th eventProcessing the 280000th eventProcessing the 280500th eventProcessing the 281000th eventProcessing the 281500th eventProcessing the 282000th eventProcessing the 282500th eventProcessing the 283000th eventProcessing the 283500th eventProcessing the 284000th eventProcessing the 284500th eventProcessing the 285000th eventProcessing the 285500th eventProcessing the 286000th eventProcessing the 286500th eventProcessing the 287000th eventProcessing the 287500th eventProcessing the 288000th eventProcessing the 288500th eventProcessing the 289000th eventProcessing the 289500th eventProcessing the 290000th eventProcessing the 290500th eventProcessing the 291000th eventProcessing the 291500th eventProcessing the 292000th eventProcessing the 292500th eventProcessing the 293000th eventProcessing the 293500th eventProcessing the 294000th eventProcessing the 294500th eventProcessing the 295000th eventProcessing the 295500th eventProcessing the 296000th eventProcessing the 296500th eventProcessing the 297000th eventProcessing the 297500th eventProcessing the 298000th eventProcessing the 298500th eventProcessing the 299000th eventProcessing the 299500th eventProcessing the 300000th eventProcessing the 300500th eventProcessing the 301000th eventProcessing the 301500th eventProcessing the 302000th eventProcessing the 302500th eventProcessing the 303000th eventProcessing the 303500th eventProcessing the 304000th eventProcessing the 304500th eventProcessing the 305000th eventProcessing the 305500th eventProcessing the 306000th eventProcessing the 306500th eventProcessing the 307000th eventProcessing the 307500th eventProcessing the 308000th eventProcessing the 308500th eventProcessing the 309000th eventProcessing the 309500th eventProcessing the 310000th eventProcessing the 310500th eventProcessing the 311000th eventProcessing the 311500th eventProcessing the 312000th eventProcessing the 312500th eventProcessing the 313000th eventProcessing the 313500th eventProcessing the 314000th eventProcessing the 314500th eventProcessing the 315000th eventProcessing the 315500th eventProcessing the 316000th eventProcessing the 316500th eventProcessing the 317000th eventProcessing the 317500th eventProcessing the 318000th eventProcessing the 318500th eventProcessing the 319000th eventProcessing the 319500th eventProcessing the 320000th eventProcessing the 320500th eventProcessing the 321000th eventProcessing the 321500th eventProcessing the 322000th eventProcessing the 322500th eventProcessing the 323000th eventProcessing the 323500th eventProcessing the 324000th eventProcessing the 324500th eventProcessing the 325000th eventProcessing the 325500th eventProcessing the 326000th eventProcessing the 326500th eventProcessing the 327000th eventProcessing the 327500th eventProcessing the 328000th eventProcessing the 328500th eventProcessing the 329000th eventProcessing the 329500th eventProcessing the 330000th eventProcessing the 330500th eventProcessing the 331000th eventProcessing the 331500th eventProcessing the 332000th eventProcessing the 332500th eventProcessing the 333000th eventProcessing the 333500th eventProcessing the 334000th eventProcessing the 334500th eventProcessing the 335000th eventProcessing the 335500th eventProcessing the 336000th eventProcessing the 336500th eventProcessing the 337000th eventProcessing the 337500th eventProcessing the 338000th eventProcessing the 338500th eventProcessing the 339000th eventProcessing the 339500th eventProcessing the 340000th eventProcessing the 340500th eventProcessing the 341000th eventProcessing the 341500th eventProcessing the 342000th eventProcessing the 342500th eventProcessing the 343000th eventProcessing the 343500th eventProcessing the 344000th eventProcessing the 344500th eventProcessing the 345000th eventProcessing the 345500th eventProcessing the 346000th eventProcessing the 346500th eventProcessing the 347000th eventProcessing the 347500th eventProcessing the 348000th eventProcessing the 348500th eventProcessing the 349000th eventProcessing the 349500th eventProcessing the 350000th eventProcessing the 350500th eventProcessing the 351000th eventProcessing the 351500th eventProcessing the 352000th eventProcessing the 352500th eventProcessing the 353000th eventProcessing the 353500th eventProcessing the 354000th eventProcessing the 354500th eventProcessing the 355000th eventProcessing the 355500th eventProcessing the 356000th eventProcessing the 356500th eventProcessing the 357000th eventProcessing the 357500th eventProcessing the 358000th eventProcessing the 358500th eventProcessing the 359000th eventProcessing the 359500th eventProcessing the 360000th eventProcessing the 360500th eventProcessing the 361000th eventProcessing the 361500th eventProcessing the 362000th eventProcessing the 362500th eventProcessing the 363000th eventProcessing the 363500th eventProcessing the 364000th eventProcessing the 364500th eventProcessing the 365000th eventProcessing the 365500th eventProcessing the 366000th eventProcessing the 366500th eventProcessing the 367000th eventProcessing the 367500th eventProcessing the 368000th eventProcessing the 368500th eventProcessing the 369000th eventProcessing the 369500th eventProcessing the 370000th eventProcessing the 370500th eventProcessing the 371000th eventProcessing the 371500th eventProcessing the 372000th eventProcessing the 372500th eventProcessing the 373000th eventProcessing the 373500th eventProcessing the 374000th eventProcessing the 374500th eventProcessing the 375000th eventProcessing the 375500th eventProcessing the 376000th eventProcessing the 376500th eventProcessing the 377000th eventProcessing the 377500th eventProcessing the 378000th eventProcessing the 378500th eventProcessing the 379000th eventProcessing the 379500th eventProcessing the 380000th eventProcessing the 380500th eventProcessing the 381000th eventProcessing the 381500th eventProcessing the 382000th eventProcessing the 382500th eventProcessing the 383000th eventProcessing the 383500th eventProcessing the 384000th eventProcessing the 384500th eventProcessing the 385000th eventProcessing the 385500th eventProcessing the 386000th eventProcessing the 386500th eventProcessing the 387000th eventProcessing the 387500th eventProcessing the 388000th eventProcessing the 388500th eventProcessing the 389000th eventProcessing the 389500th eventProcessing the 390000th eventProcessing the 390500th eventProcessing the 391000th eventProcessing the 391500th eventProcessing the 392000th eventProcessing the 392500th eventProcessing the 393000th eventProcessing the 393500th eventProcessing the 394000th eventProcessing the 394500th eventProcessing the 395000th eventProcessing the 395500th eventProcessing the 396000th eventProcessing the 396500th eventProcessing the 397000th eventProcessing the 397500th eventProcessing the 398000th eventProcessing the 398500th eventProcessing the 399000th eventProcessing the 399500th eventProcessing the 400000th eventProcessing the 400500th eventProcessing the 401000th eventProcessing the 401500th eventProcessing the 402000th eventProcessing the 402500th event--------------------------------------------------
+[Results Normalized:] 
+All:       158993 +/- 277.047	 = 100 +/- 0.174251%
+HLT:       158993 +/- 277.047	 = 100 +/- 0.174251%
+Lep. Sel:  36873 +/- 133.778	 = 23.1916 +/- 0.0841408%
+Lep. Veto: 36369.9 +/- 132.874	 = 22.8751 +/- 0.0835719%
+mll:       35531.8 +/- 131.328	 = 22.348 +/- 0.0825998%
+MET:       35531.8 +/- 131.328	 = 22.348 +/- 0.0825998%
+1 jet:     7407.72 +/- 59.8594	 = 4.65914 +/- 0.037649%
+1 jet BT:  1931.09 +/- 30.6401	 = 1.21457 +/- 0.0192714%
+Ht tW:     1837.05 +/- 29.8614	 = 1.15543 +/- 0.0187816%
+--------------------------------------------------
+[Results Raw:] 
+All:       402747 +/- 634.624	 = 100 +/- 0.157574%
+HLT:       402747 +/- 634.624	 = 100 +/- 0.157574%
+Lep. Sel:  92407 +/- 303.985	 = 22.9442 +/- 0.075478%
+Lep. Veto: 91132 +/- 301.881	 = 22.6276 +/- 0.0749554%
+mll:       89069 +/- 298.444	 = 22.1154 +/- 0.0741022%
+MET:       89069 +/- 298.444	 = 22.1154 +/- 0.0741022%
+1 jet:     18696 +/- 136.733	 = 4.64212 +/- 0.0339502%
+1 jet BT:  4796 +/- 69.2532	 = 1.19082 +/- 0.0171952%
+Ht:        4575 +/- 67.6387	 = 1.13595 +/- 0.0167944%
+--------------------------------------------------
+[Jet Multiplicity Check:]
+1 jet 1 tag: 1837.05 +/- 29.8614	 = 1.15543 +/- 0.0187816%
+2 jet 1 tag: 3109.21 +/- 29.8614	 = 1.95556 +/- 0.0244138%
+2 jet 2 tag: 8608.09 +/- 29.8614	 = 5.41412 +/- 0.0407027%
+--------------------------------------------------
+BTAG CHECKING 
+--------------------------------------------------
+ALL (tight) JETS : 
+Number of events with 0 jets: 970.561 +/- 21.7221
+Number of events with 1 jets: 7407.72 +/- 59.8594
+Number of events with 2 jets: 15612 +/- 87.1233
+Number of events with 3 jets: 7764.37 +/- 61.3338
+Number of events with 4 jets: 2750.11 +/- 36.5623
+Number of events with 5 jets: 752.625 +/- 19.1251
+--------------------------------------------------
+ALL btagged JETS : 
+Number of events with 0 bjets: 7318.02 +/- 59.4992
+Number of events with 1 bjets: 5605.48 +/- 52.2817
+Number of events with 2 bjets: 10575.1 +/- 71.7963
+Number of events with 3 bjets: 7197.8 +/- 59.0258
+Number of events with 4 bjets: 3207.04 +/- 39.4044
+Number of events with 5 bjets: 1135.56 +/- 23.3245
+--------------------------------------------------
+TIGHT btagged JETS : 
+Number of events with 0 bjets: 8681.61 +/- 64.831
+Number of events with 1 bjets: 8902.43 +/- 65.7083
+Number of events with 2 bjets: 11742.7 +/- 75.5838
+Number of events with 3 bjets: 4551.34 +/- 46.9441
+Number of events with 4 bjets: 1275.14 +/- 24.9594
+Number of events with 5 bjets: 302.828 +/- 12.18
+--------------------------------------------------
+ mean btag eff for bjets (MC): 0.758291
+--------------------------------------------------
+ Lumi/Pileup Reweighting: Computed Weights per In-Time Nint 
+   0 0.396262
+   1 0.514145
+   2 0.386082
+   3 0.469594
+   4 0.460119
+   5 0.762056
+   6 0.611688
+   7 0.60354
+   8 0.81329
+   9 1.16466
+   10 1.5974
+   11 1.95373
+   12 1.97185
+   13 1.73948
+   14 1.47089
+   15 1.28131
+   16 1.18093
+   17 1.13566
+   18 1.12972
+   19 1.14863
+   20 1.1638
+   21 1.16054
+   22 1.14472
+   23 1.11966
+   24 1.07584
+   25 1.00386
+   26 0.902938
+   27 0.77952
+   28 0.642692
+   29 0.504193
+   30 0.376804
+   31 0.270125
+   32 0.187312
+   33 0.12633
+   34 0.0826648
+   35 0.0519789
+   36 0.0311519
+   37 0.0177197
+   38 0.00957677
+   39 0.00496076
+   40 0.00249461
+   41 0.00123511
+   42 0.000609289
+   43 0.00030164
+   44 0.000150463
+   45 7.54769e-05
+   46 3.79604e-05
+   47 1.90938e-05
+   48 9.58591e-06
+   49 4.80032e-06
+   50 2.40045e-06
+   51 1.19953e-06
+   52 5.99854e-07
+   53 3.00158e-07
+   54 1.49953e-07
+   55 7.46625e-08
+   56 3.69544e-08
+   57 1.81429e-08
+   58 8.81484e-09
+   59 0
+[Info:] output rootfile named outputs/SFsysUp_0_tw_dr.root
+[Info:] mode = 0, lumi: 11966.6 pb, sample: tw_dr, base weight: 0.26691
+[Warning:] Non-standard options, ignore if you did it conciously
+[Warning:] SF up 10% for b quarks 
+[Warning:] SF up 10% for c quarks
+[Info:] 24653 total events
+Processing the 0th eventProcessing the 500th eventProcessing the 1000th eventProcessing the 1500th eventProcessing the 2000th eventProcessing the 2500th eventProcessing the 3000th eventProcessing the 3500th eventProcessing the 4000th eventBTagWeightTools::WARNING retrieving for pT value (870.472) outside range of 20,800 which is fine but tread with caution...
+Processing the 4500th eventProcessing the 5000th eventProcessing the 5500th eventProcessing the 6000th eventProcessing the 6500th eventProcessing the 7000th eventProcessing the 7500th eventProcessing the 8000th eventProcessing the 8500th eventProcessing the 9000th eventProcessing the 9500th eventProcessing the 10000th eventProcessing the 10500th eventProcessing the 11000th eventProcessing the 11500th eventProcessing the 12000th eventProcessing the 12500th eventProcessing the 13000th eventProcessing the 13500th eventProcessing the 14000th eventProcessing the 14500th eventProcessing the 15000th eventProcessing the 15500th eventProcessing the 16000th eventProcessing the 16500th eventProcessing the 17000th eventProcessing the 17500th eventProcessing the 18000th eventProcessing the 18500th eventProcessing the 19000th eventProcessing the 19500th eventProcessing the 20000th eventProcessing the 20500th eventProcessing the 21000th eventProcessing the 21500th eventProcessing the 22000th eventProcessing the 22500th eventProcessing the 23000th eventProcessing the 23500th eventProcessing the 24000th eventProcessing the 24500th event--------------------------------------------------
+[Results Normalized:] 
+All:       6587.53 +/- 46.3784	 = 100 +/- 0.704033%
+HLT:       6587.53 +/- 46.3784	 = 100 +/- 0.704033%
+Lep. Sel:  1857.44 +/- 24.6973	 = 28.1962 +/- 0.37491%
+Lep. Veto: 1831.79 +/- 24.524	 = 27.8069 +/- 0.37228%
+mll:       1787.33 +/- 24.2301	 = 27.132 +/- 0.367818%
+MET:       1787.33 +/- 24.2301	 = 27.132 +/- 0.367818%
+1 jet:     894.765 +/- 17.1572	 = 13.5827 +/- 0.26045%
+1 jet BT:  356.032 +/- 10.8289	 = 5.40464 +/- 0.164385%
+Ht tW:     333.337 +/- 10.4619	 = 5.06012 +/- 0.158814%
+--------------------------------------------------
+[Results Raw:] 
+All:       24653 +/- 157.013	 = 100 +/- 0.636891%
+HLT:       24653 +/- 157.013	 = 100 +/- 0.636891%
+Lep. Sel:  6854 +/- 82.7889	 = 27.8019 +/- 0.335817%
+Lep. Veto: 6766 +/- 82.2557	 = 27.4449 +/- 0.333654%
+mll:       6602 +/- 81.2527	 = 26.7797 +/- 0.329585%
+MET:       6602 +/- 81.2527	 = 26.7797 +/- 0.329585%
+1 jet:     3299 +/- 57.4369	 = 13.3817 +/- 0.232981%
+1 jet BT:  1288 +/- 35.8887	 = 5.22452 +/- 0.145575%
+Ht:        1210 +/- 34.7851	 = 4.90812 +/- 0.141099%
+--------------------------------------------------
+[Jet Multiplicity Check:]
+1 jet 1 tag: 333.337 +/- 10.4619	 = 5.06012 +/- 0.158814%
+2 jet 1 tag: 99.8176 +/- 10.4619	 = 1.51525 +/- 0.0880327%
+2 jet 2 tag: 206.917 +/- 10.4619	 = 3.14105 +/- 0.125185%
+--------------------------------------------------
+BTAG CHECKING 
+--------------------------------------------------
+ALL (tight) JETS : 
+Number of events with 0 jets: 201.11 +/- 8.07107
+Number of events with 1 jets: 894.765 +/- 17.1572
+Number of events with 2 jets: 479.581 +/- 12.5792
+Number of events with 3 jets: 161.731 +/- 7.26781
+Number of events with 4 jets: 38.4326 +/- 3.56581
+Number of events with 5 jets: 10.0951 +/- 1.81454
+--------------------------------------------------
+ALL btagged JETS : 
+Number of events with 0 bjets: 656.676 +/- 14.6735
+Number of events with 1 bjets: 512.195 +/- 13.0357
+Number of events with 2 bjets: 378.948 +/- 11.1255
+Number of events with 3 bjets: 160.927 +/- 7.31736
+Number of events with 4 bjets: 58.3875 +/- 4.26681
+Number of events with 5 bjets: 14.9346 +/- 2.15228
+--------------------------------------------------
+TIGHT btagged JETS : 
+Number of events with 0 bjets: 739.665 +/- 15.5785
+Number of events with 1 bjets: 675.349 +/- 14.9123
+Number of events with 2 bjets: 271.061 +/- 9.43692
+Number of events with 3 bjets: 75.1669 +/- 4.93123
+Number of events with 4 bjets: 22.1475 +/- 2.72473
+Number of events with 5 bjets: 3.61725 +/- 1.07089
+--------------------------------------------------
+ mean btag eff for bjets (MC): 0.680986
+--------------------------------------------------
+ Lumi/Pileup Reweighting: Computed Weights per In-Time Nint 
+   0 0.396262
+   1 0.514145
+   2 0.386082
+   3 0.469594
+   4 0.460119
+   5 0.762056
+   6 0.611688
+   7 0.60354
+   8 0.81329
+   9 1.16466
+   10 1.5974
+   11 1.95373
+   12 1.97185
+   13 1.73948
+   14 1.47089
+   15 1.28131
+   16 1.18093
+   17 1.13566
+   18 1.12972
+   19 1.14863
+   20 1.1638
+   21 1.16054
+   22 1.14472
+   23 1.11966
+   24 1.07584
+   25 1.00386
+   26 0.902938
+   27 0.77952
+   28 0.642692
+   29 0.504193
+   30 0.376804
+   31 0.270125
+   32 0.187312
+   33 0.12633
+   34 0.0826648
+   35 0.0519789
+   36 0.0311519
+   37 0.0177197
+   38 0.00957677
+   39 0.00496076
+   40 0.00249461
+   41 0.00123511
+   42 0.000609289
+   43 0.00030164
+   44 0.000150463
+   45 7.54769e-05
+   46 3.79604e-05
+   47 1.90938e-05
+   48 9.58591e-06
+   49 4.80032e-06
+   50 2.40045e-06
+   51 1.19953e-06
+   52 5.99854e-07
+   53 3.00158e-07
+   54 1.49953e-07
+   55 7.46625e-08
+   56 3.69544e-08
+   57 1.81429e-08
+   58 8.81484e-09
+   59 0
+[Info:] output rootfile named outputs/SFsysUp_0_atw_dr.root
+[Info:] mode = 0, lumi: 11966.6 pb, sample: atw_dr, base weight: 0.276112
+[Warning:] Non-standard options, ignore if you did it conciously
+[Warning:] SF up 10% for b quarks 
+[Warning:] SF up 10% for c quarks
+[Info:] 24028 total events
+Processing the 0th eventProcessing the 500th eventProcessing the 1000th eventProcessing the 1500th eventProcessing the 2000th eventProcessing the 2500th eventProcessing the 3000th eventProcessing the 3500th eventProcessing the 4000th eventProcessing the 4500th eventProcessing the 5000th eventProcessing the 5500th eventProcessing the 6000th eventProcessing the 6500th eventProcessing the 7000th eventProcessing the 7500th eventProcessing the 8000th eventProcessing the 8500th eventProcessing the 9000th eventProcessing the 9500th eventProcessing the 10000th eventProcessing the 10500th eventProcessing the 11000th eventProcessing the 11500th eventProcessing the 12000th eventProcessing the 12500th eventProcessing the 13000th eventProcessing the 13500th eventProcessing the 14000th eventProcessing the 14500th eventProcessing the 15000th eventProcessing the 15500th eventProcessing the 16000th eventProcessing the 16500th eventProcessing the 17000th eventProcessing the 17500th eventProcessing the 18000th eventProcessing the 18500th eventProcessing the 19000th eventProcessing the 19500th eventProcessing the 20000th eventProcessing the 20500th eventProcessing the 21000th eventProcessing the 21500th eventProcessing the 22000th eventBTagWeightTools::WARNING retrieving for pT value (828.396) outside range of 20,800 which is fine but tread with caution...
+Processing the 22500th eventProcessing the 23000th eventProcessing the 23500th eventProcessing the 24000th event--------------------------------------------------
+[Results Normalized:] 
+All:       6606.56 +/- 47.2129	 = 100 +/- 0.714637%
+HLT:       6606.56 +/- 47.2129	 = 100 +/- 0.714637%
+Lep. Sel:  1853.19 +/- 25.0264	 = 28.0508 +/- 0.378811%
+Lep. Veto: 1826.94 +/- 24.8502	 = 27.6535 +/- 0.376144%
+mll:       1778.23 +/- 24.5257	 = 26.9161 +/- 0.371233%
+MET:       1778.23 +/- 24.5257	 = 26.9161 +/- 0.371233%
+1 jet:     880.063 +/- 17.2407	 = 13.3211 +/- 0.260963%
+1 jet BT:  356.873 +/- 11.0399	 = 5.4018 +/- 0.167105%
+Ht tW:     333.235 +/- 10.6655	 = 5.044 +/- 0.161438%
+--------------------------------------------------
+[Results Raw:] 
+All:       24028 +/- 155.01	 = 100 +/- 0.645121%
+HLT:       24028 +/- 155.01	 = 100 +/- 0.645121%
+Lep. Sel:  6645 +/- 81.5169	 = 27.6552 +/- 0.339258%
+Lep. Veto: 6549 +/- 80.9259	 = 27.2557 +/- 0.336798%
+mll:       6373 +/- 79.8311	 = 26.5232 +/- 0.332242%
+MET:       6373 +/- 79.8311	 = 26.5232 +/- 0.332242%
+1 jet:     3157 +/- 56.1872	 = 13.1388 +/- 0.23384%
+1 jet BT:  1270 +/- 35.6371	 = 5.2855 +/- 0.148315%
+Ht:        1186 +/- 34.4384	 = 4.93591 +/- 0.143326%
+--------------------------------------------------
+[Jet Multiplicity Check:]
+1 jet 1 tag: 333.235 +/- 10.6655	 = 5.044 +/- 0.161438%
+2 jet 1 tag: 94.211 +/- 10.6655	 = 1.42602 +/- 0.0853499%
+2 jet 2 tag: 219.266 +/- 10.6655	 = 3.31891 +/- 0.129631%
+--------------------------------------------------
+BTAG CHECKING 
+--------------------------------------------------
+ALL (tight) JETS : 
+Number of events with 0 jets: 206.683 +/- 8.36285
+Number of events with 1 jets: 880.063 +/- 17.2407
+Number of events with 2 jets: 485.414 +/- 12.8314
+Number of events with 3 jets: 154.459 +/- 7.18518
+Number of events with 4 jets: 39.0234 +/- 3.6823
+Number of events with 5 jets: 10.1375 +/- 1.93849
+--------------------------------------------------
+ALL btagged JETS : 
+Number of events with 0 bjets: 661.442 +/- 15.0086
+Number of events with 1 bjets: 506.261 +/- 13.1482
+Number of events with 2 bjets: 361.222 +/- 10.9411
+Number of events with 3 bjets: 171.141 +/- 7.60842
+Number of events with 4 bjets: 54.5493 +/- 4.22529
+Number of events with 5 bjets: 16.6194 +/- 2.34058
+--------------------------------------------------
+TIGHT btagged JETS : 
+Number of events with 0 bjets: 745.726 +/- 15.9387
+Number of events with 1 bjets: 651.996 +/- 14.8293
+Number of events with 2 bjets: 283.788 +/- 9.77399
+Number of events with 3 bjets: 72.4631 +/- 4.87367
+Number of events with 4 bjets: 18.6021 +/- 2.51138
+Number of events with 5 bjets: 4.48149 +/- 1.26953
+--------------------------------------------------
+ mean btag eff for bjets (MC): 0.754785
+--------------------------------------------------
+*******************************************************************************************
+It took you 497.47 to run the program
