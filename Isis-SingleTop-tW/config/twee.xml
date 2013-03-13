@@ -13,7 +13,7 @@
   <d name="zz" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/ZZ/*.root"/>  
   <d name="zjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/ZJets/*.root"/> 
   <d name="zjets_lowmll" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/DY_10to50/*.root"/>  
-  <d name="wjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/WJets/WJets/*.root"/>
+  <d name="wjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/WJets/*.root"/>
   <d name="s" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/T_s/*.root"/> 
   <d name="as" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/Tbar_s/*.root"/> 
  

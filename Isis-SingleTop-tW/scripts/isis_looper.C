@@ -82,7 +82,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     else if (mode == 1) lumi = 12067.294;  	
     else if (mode == 2) lumi = 12093.792;  	
   
-  /*
+  
   if(nsel == -10 || nsel == -20){
   sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
@@ -116,9 +116,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else{
   
     sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
-  }*/
+  }
  
- sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
+ 
  
   TFile f_var(newRootFile, "UPDATE");
   
@@ -581,31 +581,34 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	int iJetn[5]={-1, -1,-1,-1,-1};
 	int iJet = -5;
 	
+	if( ptJet->size() != Btagjet->size()){
+		cout << "ERROR: something went wrong with btagging " << endl; 
+	}
+	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
 	  bool btag = Btagjet->at(i);
 	  
-	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-	    
-	    iJetn[nJets] = i;
-	    iJet = i;
-	    nJets++;
-
-	    if (btag){
-	        bTagged = true;
-		nJetsBT++;
-		nTightJetsBT++;
-	      
-	    } // end  if 
-	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
-	  else if (btag){ // look for jets that aren't proper, but still btagged
-	      bTagged = true; 
-	      nJetsBT++;
-	  }  // end else if 
+	 
+	 // cout << "jet: " << i << "btagjet " << btag << endl; 
 	  
+	  if(btag){
+	     	bTagged = true;
+	  	nJetsBT++;
+	  }
+	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
+	  	iJetn[nJets] = i;
+	   	iJet = i;
+	    	nJets++;
+
+	   	 if (btag){
+	        	nTightJetsBT++;
+	      
+	    	} // end  if 
+	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
 	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
 	
-	
+	/*
         if(nJets){
 	 TLorentzVector jet(pxJet->at(iJetn[0]),pyJet->at(iJetn[0]), pzJet->at(iJetn[0]), eJet->at(iJetn[0]));
 	// TLorentzVector jet1(pxJet->at(iJetn[1]),pyJet->at(iJetn[1]), pzJet->at(iJetn[1]), eJet->at(iJetn[1])); //2e jet erbij nemen
@@ -635,7 +638,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	 
 	
 	} // end if(nJets)
-	
+	*/
 
 	histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
 	histo_pt_min->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
@@ -763,7 +766,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  
 		  //Example to access the pu reweighting!
 		  histo_nvertex_final->Fill(nvertex, rawWeight);
-		  histo_nvertex_final_3D->Fill(nvertex, rawWeight*puweight3D);
+		 
 		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
 		  
 		} // end if (ht > htMin || mode !=0)
@@ -859,7 +862,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (i == 6) cout << " jet_bt: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
-    
+  /*  
     cout << "------------------------------------------" << endl; 
     cout << "[eta values:]" << plotName << endl;
     cout << "------------------------------------------" << endl; 
@@ -946,7 +949,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     
     }
     
-    
+  */  
     
     
   }

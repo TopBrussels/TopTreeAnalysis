@@ -18,7 +18,7 @@ class isis_looper {
   // Declaration of leaf types
   Double_t        xlWeight;
   Double_t        puweight;
-  Double_t        puweight3D;
+  
   Double_t        rawWeight;
   Double_t        lum;
   Int_t           npu;
@@ -51,7 +51,7 @@ class isis_looper {
   // List of branches
   TBranch        *b_xlWeight;   //!
   TBranch        *b_puweight;   //!
-  TBranch        *b_puweight3D;   //!
+  
   TBranch        *b_rawWeight;   //!
   TBranch        *b_lum;   //!
   TBranch        *b_npu;   //!
@@ -162,7 +162,7 @@ void isis_looper::Init(TTree *tree)
   
   fChain->SetBranchAddress("xlWeight", &xlWeight, &b_xlWeight);
   fChain->SetBranchAddress("puweight", &puweight, &b_puweight);
-  fChain->SetBranchAddress("puweight3D", &puweight3D, &b_puweight3D);
+
   fChain->SetBranchAddress("rawWeight", &rawWeight, &b_rawWeight);
   
   fChain->SetBranchAddress("lum", &lum, &b_lum);

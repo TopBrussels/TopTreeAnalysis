@@ -75,6 +75,8 @@ int main(int argc, char* argv[]) {
     
 
     
+
+    
     
     /////////////////////////////////////////////
     ///                 B-tag SF              ///
@@ -91,7 +93,7 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////
     ///                  Run HLT              ///
     /////////////////////////////////////////////    
-    bool runHLT = true; 
+    bool runHLT = false; 
     
     /////////////////////////////////////////////
     ///                 PU reweighting        ///
@@ -255,10 +257,10 @@ int main(int argc, char* argv[]) {
     if(mode == 0){
         cout << " Electron - Muon channel " << endl;
     }
-    if(mode == 1){
+    if(mode == 2){
         cout << " Di-Electron channel " << endl;
     }
-    if(mode == 2){
+    if(mode == 1){
         cout << " Di-Muon channel " << endl;
     }
     cout << "******************************************************************************" << endl; 
@@ -268,13 +270,13 @@ int main(int argc, char* argv[]) {
     /// LOAD BTAG EFF  rootfiles  ///
     /////////////////////////////////
     char Load_Eff_File_B[100];
-    sprintf(Load_Eff_File_B,"BtagFiles/rootfiles/EFFbtag_%d_Bjets.root", mode);
+    sprintf(Load_Eff_File_B,"BtagFiles/rootfiles/EFFbtag_0_Bjets.root");
     
     char Load_Eff_File_C[100];
-    sprintf(Load_Eff_File_C,"BtagFiles/rootfiles/EFFbtag_%d_Cjets.root", mode);
+    sprintf(Load_Eff_File_C,"BtagFiles/rootfiles/EFFbtag_0_Cjets.root");
     
     char Load_Eff_File_L[100];
-    sprintf(Load_Eff_File_L,"BtagFiles/rootfiles/EFFbtag_%d_Ljets.root", mode);
+    sprintf(Load_Eff_File_L,"BtagFiles/rootfiles/EFFbtag_0_Ljets.root");
     
     TFile *Efile_B = new TFile(Load_Eff_File_B, "read"); 
     TFile *Efile_C = new TFile(Load_Eff_File_C, "read"); 
@@ -346,20 +348,7 @@ int main(int argc, char* argv[]) {
 	}
  
     
-    // xml file, this file contains the rootfiles of the skimmed toptrees
-  /*  if( mode == 0){
-        lumi = 4399;   // only run B 13July2012
-        xmlfile = "twemu.xml";
-    }
-    if( mode == 1){
-        lumi = 1000;        // Still to check! 
-        xmlfile = "twmumu.xml";
-    }
-    if( mode == 2){
-        lumi = 5103.58; // Still to check! 
-        xmlfile = "twee.xml";
-    }
-  */  
+
     if (foundxml){
       xmlfile = tempxml; 
     }
@@ -425,6 +414,7 @@ int main(int argc, char* argv[]) {
         bool isData = false;    // To make the division between data an MC
         bool isTop = false;     // To make the division between top pair MC and single top MC, this is needed for the btagging SF
         bool isSingleTop = false; 
+	bool isZjets = false; 
 	double xlweight;        // To define the reweighting of the MC compared to the data, if this is 1, then no reweighting is applied. 
                                 // The reweighting is done as follows: 
                                 //       xlweight = (cross-section x luminosity)/number of events in the toptree before the skimming
@@ -446,8 +436,8 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "ww"){          sprintf(name, "ww");            xlweight = lumi*54.838/10000413;          } 
         else if (dataSetName == "wz"){          sprintf(name, "wz");            xlweight = lumi*22.44/9900267;          } 
         else if (dataSetName == "zz"){          sprintf(name, "zz");            xlweight = lumi*9.03/9799891 ;           } 
-        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;        } 
-        else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;          } 
+        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;    isZjets =true;    } 
+        else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;       isZjets = true;   } 
         else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411352;         }  
 
         
@@ -567,8 +557,7 @@ int main(int argc, char* argv[]) {
 	std::vector<double> fake_eff_zjets_lowmll; 
  	std::vector<double> fake_eff_wjets; 
 */
-	// For setting tbranch 
-	std::vector<double> btag_booleans; 
+	
 	
 	
 	// for checking btagging
@@ -882,6 +871,14 @@ int main(int argc, char* argv[]) {
         ///    LOOP OVER THE EVENTS  ///    
         ////////////////////////////////
         for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++){
+	
+	        // For setting tbranch 
+	        std::vector<double> btag_booleans;
+		
+		// for zjets sf 
+		double ZjetsSF = 1.0;
+		
+		 
                 if(ievent%500==0){
                         std::cout << "Processing the " << ievent << "th event" << flush << "\r";        // << flush << "\r" means this line will be overwritten next time 
                 }
@@ -988,7 +985,7 @@ int main(int argc, char* argv[]) {
                         
                         //For the MC, there is no triggerpath
                         else {
-                                itrigger = true;      // WHY?
+                                itrigger = true;     
                                 isecondtrigger = true;
                         } // closing the HLT for MC
                         
@@ -996,7 +993,7 @@ int main(int argc, char* argv[]) {
 			// only for trigged = true, are cuts made
                         if (itrigger || isecondtrigger){ 
                                 trigged = true;
-				weight *= leptonEff_Trig_ID; // so the event weight is the PUeff * Trig/ID eff * weight from lumi 
+				if(!isData){weight *= leptonEff_Trig_ID;} // so the event weight is the PUeff * Trig/ID eff * weight from lumi 
                          } 
                          else{
                                 trigged = false;
@@ -1004,7 +1001,7 @@ int main(int argc, char* argv[]) {
                 } // closing the HLT run loop
                 else{               
 	      		trigged = true; 
-		}// HLT makes no difference (CHECK PREVIOUS LOOP)
+		}// if HLT makes no difference --> it doesn't (is checked, the event count stays the same)
 		
                 ////////////////////////////////
                 /// SELECTION & CUTFLOW      ///
@@ -1059,6 +1056,50 @@ int main(int argc, char* argv[]) {
 	    
 	  	double met_pt = sqrt(met_px*met_px + met_py*met_py);
                 
+		//---------------------------------------------
+		// Zjets sf only for MC zjets (from danny)
+		//------------------------------------------------
+		if(isZjets){
+			if(mode == 0){
+				if(met_pt < 10){ ZjetsSF = 0.8799; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9257; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 0.99445; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0721; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.14595; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.21935; }	
+				else{ ZjetsSF = 1.20315; }
+				
+			}
+			else if (mode == 1){
+				if(met_pt < 10){ ZjetsSF = 0.8856; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9398; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0142; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.1017; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1839; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2458; }	
+				else{ ZjetsSF = 1.2872; }			
+			}
+			else{
+				if(met_pt < 10){ ZjetsSF = 0.8742; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9116; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 0.9747; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0425; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1080; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.1929; }	
+				else{ ZjetsSF = 1.1191; }			
+			}
+		
+		
+		
+		
+			weight *= ZjetsSF;
+		
+		}
+		
+		
+		
+		
+		
                 //--------------------------------------------------------------
                 // START OF CUTFLOW
                 //---------------------------------------------------------------
@@ -1066,6 +1107,10 @@ int main(int argc, char* argv[]) {
 		// Fill the histograms cutflow and cutflow_raw in the first bin with the number of events before any cut
                 cutflow->Fill(1, weight);
 	  	cutflow_raw->Fill(1);
+		
+		if(!trigged){
+			cout << " not trigged" << endl; 
+		}
 		
 		//If the trigged , the cutflow is started
 	  	if(trigged){
@@ -1470,6 +1515,8 @@ int main(int argc, char* argv[]) {
 								double check_notbtagged=0.;
 								double check_eff = 0.; 						
 								
+								btag_booleans.clear(); 
+								
 								for (unsigned int iJ =0; iJ < selectedJets.size(); iJ ++){
 								
 									TRootJet* tempJet = (TRootJet*) selectedJets[iJ];
@@ -1620,6 +1667,11 @@ int main(int argc, char* argv[]) {
 									// btag booleans for looper
 									btag_booleans.push_back(bTagged);	
 								} // closing loop over jets
+								
+								if(btag_booleans.size() != selectedJets.size()){
+								
+									cout << "WARNING tree for btagging is not correctly filled " << endl; 
+								}
 								
 								 double check_eff_unc;
 								

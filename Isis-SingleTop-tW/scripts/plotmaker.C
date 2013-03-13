@@ -72,15 +72,15 @@ void plotmaker(int mode = 0){
   cout << myRootFile << endl;
   
   const int nProcess = 8;
-   const int nPlots = 11;
+   const int nPlots = 12;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
 
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex", "pt_max", "pt_min"  };
-  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 2, 2};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex", "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex_2lep", "nvertex", "pt_max", "pt_min"  };
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ", "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]"};
 
 
   TString modeString[3] = {"0", "1", "2"};
