@@ -426,6 +426,8 @@ int main(int argc, char* argv[]) {
         char name[100];
 	
         if (dataSetName == "data"){             sprintf(name, "data");          xlweight = 1;                           isData = true;}
+	else if (dataSetName == "data1"){       sprintf(name, "data1");          xlweight = 1;                           isData = true;}
+	else if (dataSetName == "data2"){       sprintf(name, "data2");          xlweight = 1;                           isData = true;}
         else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
         else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
@@ -831,7 +833,7 @@ int main(int argc, char* argv[]) {
         ///    INFORMATION FOR USER  ///    
         ////////////////////////////////
         cout << "[Info:] output rootfile named " << rootFileName << endl; 
-        cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << endl;
+        cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << " , xml file: " << xmlfile << endl;
       
         if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus ||SFplus_c || SFminus_c ||SFplus_l || SFminus_l || unclusteredUp || unclusteredDown 
           || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D) {
