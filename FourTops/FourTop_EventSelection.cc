@@ -1,27 +1,21 @@
-/////////////
-////////////
-// TODO + COMMENTS
-//1.  Validate  all those electron ID variables...
-//2a. Add JER systematic calculation, using GEN Jets.
-//2b. Add btag scale factor systematic calculation, need to update number for appropriate taggers.
-//3. Change to 52X JES correction
-//4. Need  to do jet-parton matching to plot hadronic W mass and  estimate sigma(M_{w}), example in Petra's code.]
-//5. Add e + jets final state, prob leave this till last.
-//6. The setElectroncuts, setmuoncuts and getselectedelectrons methods need to be updated with the correct arguements for 53X_v4
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+////         Analysis code for search for Four Top Production.                           ////
+////                                                                                     ////
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+#define _USE_MATH_DEFINES
 
 #include "TStyle.h"
 #include "TPaveText.h"
-
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
 #include "TRandom3.h"
 #include "TRandom.h"
-
 #include <iostream>
 #include <map>
-
 #include <cstdlib> 
 
 //user code
@@ -42,19 +36,17 @@
 #include "TopTreeAnalysisBase/Reconstruction/interface/MEzCalculator.h"
 
 #include "TopTreeAnalysisBase/Reconstruction/interface/TTreeObservables.h"
-//#include "TopTreeAnalysis/InclFourthGenSearch/interface/InclFourthGenTree.h"
-//#include "TopTreeAnalysis/InclFourthGenSearch/interface/InclFourthGenSearchTools.h"
 
+//This header file is taken directly from the BTV wiki. It contains
+// to correctly apply an event level Btag SF. It is not yet on CVS
+// as I hope to merge the functionality into BTagWeigtTools.h
+#include "TopTreeAnalysisBase/Tools/interface/BTagSFUtil.h"
+#include "TopTreeAnalysisBase/Tools/interface/BTagWeightTools.h"
 
 #include "TopTreeAnalysisBase/Tools/interface/JetCombiner.h"
 #include "TopTreeAnalysisBase/Tools/interface/MVATrainer.h"
 #include "TopTreeAnalysisBase/Tools/interface/MVAComputer.h"
 #include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
-
-#include "TopTreeAnalysisBase/Tools/interface/BTagWeightTools.h"
-
-
-//#include "interface/FourTopTree.h"
 
 #include "TopTreeAnalysis/macros/Style.C"
 
@@ -69,7 +61,6 @@ pair<float, vector<unsigned int> > MVAvals2;
 pair<float, vector<unsigned int> > MVAvals2ndPass;
 int nMVASuccesses=0;
 int nMatchedEvents=0;
-
 
 /// Normal Plots (TH1F* and TH2F*)
 map<string,TH1F*> histo1D;
@@ -94,18 +85,15 @@ struct HighestCVSBtag{
 
 bool match;
 
-
 int Factorial(int N);
-
 
 int main (int argc, char *argv[])
 {
+    TRandom3* rand = new TRandom3();
 
     BTagWeightTools * bTool = new BTagWeightTools("SFb-pt_payload_Moriond13.txt", "CSVM") ;
     
-    TRandom *rand = new TRandom();
 
-  
     
   int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
@@ -193,10 +181,9 @@ int main (int argc, char *argv[])
   if(domisTagEffShift == 2)
     postfix= postfix+"_misTagPlus";
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////// Configuration ///////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 
+  ///////////////////////////////////////
+  // Configuration
+  ///////////////////////////////////////
 
   string channelpostfix = "";
   string xmlFileName = "";
@@ -227,20 +214,19 @@ int main (int argc, char *argv[])
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;    
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////// AnalysisEnvironment////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////
+/// AnalysisEnvironment
+/////////////////////////////
 
   AnalysisEnvironment anaEnv;
   cout<<" - Loading environment ..."<<endl;
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile);
   int verbose = 2;//anaEnv.Verbose;
 
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////// Load Datasets ////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////
+//  Load datasets
+////////////////////////////////
+    
   TTreeLoader treeLoader;
   vector < Dataset* > datasets;
   cout << " - Loading datasets ..." << endl;
@@ -248,30 +234,25 @@ int main (int argc, char *argv[])
   float Luminosity = 5343.64; //pb^-1??
   vector<string> MVAvars;
 
-    
   //A few bools to steer the MassReco and Event MVAs
-  bool Tprime = false; // If false, regular variables are used in MVA
   string MVAmethod = "BDT"; // MVAmethod to be used to get the good jet combi calculation (not for training! this is chosen in the jetcombiner class)
   bool TrainMVA = false; // If false, the previously trained MVA will be used to calculate stuff
   bool trainEventMVA = false; // If false, the previously trained MVA will be used to calculate stuff
   bool computeEventMVA = false;
     
-  JetCombiner* jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, Tprime);
+  JetCombiner* jetCombiner = new JetCombiner(TrainMVA, Luminosity, datasets, MVAmethod, false);
     
     double bestTopMass1 =0.;
     double bestTopMass2 = 0.;
     double bestTopMass2ndPass = 0.;
     double bestTopPt =0.;
-  //  MVATrainer* Eventtrainer_ =0;
+
     MVAComputer* Eventcomputer_ =0;
     
     MVATrainer* Eventtrainer_ = new MVATrainer("BDT","EventMVA", "EventMVA.root");
 
-    
     if(trainEventMVA){
         cout<<"instantiating trainer..."<<endl;
-    
-        cout<<"instantiated trainer..."<<endl;
         
     Eventtrainer_->bookInputVar("H");
     Eventtrainer_->bookInputVar("HT");
@@ -285,11 +266,9 @@ int main (int argc, char *argv[])
     Eventtrainer_->bookInputVar("PTBalTopEventX");
     Eventtrainer_->bookInputVar("PTBalTopSumJetX");
     Eventtrainer_->bookInputVar("bestTopMass2");
-    
     Eventtrainer_->bookInputVar("nJets");
     Eventtrainer_->bookInputVar("bTagRatio13");
     Eventtrainer_->bookInputVar("bTagRatio14");
-    
     Eventtrainer_->bookInputVar("Jet1Pt");
     Eventtrainer_->bookInputVar("Jet2Pt");
     Eventtrainer_->bookInputVar("Jet3Pt");
@@ -325,7 +304,6 @@ int main (int argc, char *argv[])
 
     }
 
-        
   for (unsigned int d = 0; d < datasets.size (); d++)
   {
      cout <<"found sample with equivalent lumi "<<  datasets[d]->EquivalentLumi() <<endl;
@@ -337,8 +315,7 @@ int main (int argc, char *argv[])
 		  break;
 	 }
   }
-    
-    
+
   cout << "Rescaling to an integrated luminosity of "<< Luminosity <<" pb^-1" << endl;
 
     // for splitting the ttbar sample, it is essential to have the ttjets sample as the last
@@ -382,21 +359,12 @@ int main (int argc, char *argv[])
 
   //Global variable
   TRootEvent* event = 0;
-
     
-    ///Histos
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    ///////////////////////////////////
-    /////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     ////////////////// MultiSample plots  //////////////////////////////
     ////////////////////////////////////////////////////////////////////
-    
     MSPlot["RhoCorrection"]              = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
     MSPlot["NbOfVertices"]               = new MultiSamplePlot(datasets, "NbOfVertices", 40, 0, 40, "Nb. of vertices");
-    
     //Muons
     MSPlot["NbOfIsolatedMuons"]          = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
     MSPlot["NbOfIsolatedElectrons"]      = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -406,15 +374,10 @@ int main (int argc, char *argv[])
     MSPlot["MuonRelIsolation_PreTrig"] = new MultiSamplePlot(datasets, "MuonRelIsolation_PreTrig", 15, 0, .25, "RelIso");
     MSPlot["MuonRelIsolation_PostTrig"] = new MultiSamplePlot(datasets, "MuonRelIsolation_PreTrig", 15, 0, .25, "RelIso");
 
-    
     MSPlot["MuonPt"]              = new MultiSamplePlot(datasets, "MuonPt", 75, 0, 300, "PT_{#mu}");
-
     MSPlot["TriggerMuonPt"]              = new MultiSamplePlot(datasets, "MuonPt", 75, 0, 300, "PT_{#mu}");
-
-    
     MSPlot["MuonPt_PreTrig"]              = new MultiSamplePlot(datasets, "MuonPt_PreTrig", 75, 0, 300, "PT_{#mu}");
     MSPlot["MuonPt_PostTrig"]              = new MultiSamplePlot(datasets, "MuonPt_PostTrig", 75, 0, 300, "PT_{#mu}");
-
     
     MSPlot["Muond0_PreTrig"]              = new MultiSamplePlot(datasets, "Muond0_PreTrig", 50, 0, .05, "d0_{#mu}");
     MSPlot["Muond0_PostTrig"]              = new MultiSamplePlot(datasets, "Muond0_PostTrig", 50, 0, .05, "d0_{#mu}");
@@ -514,25 +477,123 @@ int main (int argc, char *argv[])
     
     MSPlot["PTBalTopEventX"] = new MultiSamplePlot(datasets, "PTBal_TopX", 35, 0, 500, "PTBal_TopX");
     MSPlot["PTBalTopSumJetX"] = new MultiSamplePlot(datasets, "PTBal_TopSumJetX", 35, 0, 500, "PTBal_TopSumJetX");
-    
     MSPlot["PTBalTopMuMet"] = new MultiSamplePlot(datasets, "PTBal_TopMuMet", 35, 0, 600, "PTBal_TopMuMet");
     MSPlot["PTBalTopMuMetB"] = new MultiSamplePlot(datasets, "PTBal_TopMuMetB", 35, 0, 600, "PTBal_TopMuMetB");
-
-    
     MSPlot["deltaMTopMuMet"] = new MultiSamplePlot(datasets, "deltaMTopMuMet", 75, -500, 500, "deltaMTopMuMet");
 
     MSPlot["deltaMTopMuMetB"] = new MultiSamplePlot(datasets, "deltaMTopMuMetB", 75, -500, 500, "deltaMTopMuMetB");
 
-    
-    
     MSPlot["HT_CombinationRatio"] = new MultiSamplePlot(datasets, "HT_CombinationRatio", 50, 0, 1, "HT_Ratio");
-    
     MSPlot["MVA"] = new MultiSamplePlot(datasets, "MVA", 50, -1, 1, "BDT Disciminator");
 
-    
     //Electrons
     MSPlot["ElectronPt"]              = new MultiSamplePlot(datasets, "ElectronPt", 50, 0, 100, "PT_{e}");
     MSPlot["NbOfLooseElectron"] = new MultiSamplePlot(datasets, "NbOfLooseElectron", 10, 0, 10, "Nb. of loose electrons");
+
+    //Plots of UCR variables
+    //H sum for Selected Jets
+    MSPlot["H_SelectedJets"]                  = new MultiSamplePlot(datasets, "H_SelectedJets", 50, 0, 2000, "H");
+    //CSV ordered Jet plots
+    MSPlot["CSV_HSumMoreThan5Jets"]           = new MultiSamplePlot(datasets, "CSV_HSumMoreThan5Jets", 50, 0, 1500, "H_{CSV}^{>5Jets}");
+    MSPlot["CSV_HTSumMoreThan5Jets"]          = new MultiSamplePlot(datasets, "CSV_HTSumMoreThan5Jets", 50, 0, 1500, "H_{T CSV}^{>5Jets}");
+    MSPlot["CSV_HTSumToHSumMoreThan5Jets"]    = new MultiSamplePlot(datasets, "CSV_HTSumToHSumMoreThan5Jets", 50, 0, 1, "H_{T CSV}^{>5Jets}/H_{CSV}^{>5Jets}"\
+                                                                    );
+    
+    MSPlot["CSV_dRBetweenJet1AndJet5"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet1AndJet5", 50, 0, 6, "dR^{CSV 1}_{5}");
+    MSPlot["CSV_dRBetweenJet1AndJet6"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet1AndJet6", 50, 0, 6, "dR^{CSV 1}_{6}");
+    MSPlot["CSV_dRBetweenJet1AndJet7"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet1AndJet7", 50, 0, 6, "dR^{CSV 1}_{7}");
+    MSPlot["CSV_dRBetweenJet1AndJet8"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet1AndJet8", 50, 0, 6, "dR^{CSV 1}_{8}");
+    
+    MSPlot["CSV_dRBetweenJet2AndJet5"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet2AndJet5", 50, 0, 6, "dR^{CSV 2}_{5}");
+    MSPlot["CSV_dRBetweenJet2AndJet6"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet2AndJet6", 50, 0, 6, "dR^{CSV 2}_{6}");
+    MSPlot["CSV_dRBetweenJet2AndJet7"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet2AndJet7", 50, 0, 6, "dR^{CSV 2}_{7}");
+    MSPlot["CSV_dRBetweenJet2AndJet8"]        = new MultiSamplePlot(datasets, "CSV_dRBetweenJet2AndJet8", 50, 0, 6, "dR^{CSV 2}_{8}");
+    
+    MSPlot["CSV_dRPlotSum"]                   = new MultiSamplePlot(datasets, "CSV_dRPlotSum", 50, 0, 35, "Sum dR^{CSV 1,2}_{5,6,7,8}");
+    
+    MSPlot["CSV_PtOrderNumberForCSV1"]        = new MultiSamplePlot(datasets, "CSV_PtOrderNumberForCSV1", 10, 0, 10, "p_{T} Ordering");
+    MSPlot["CSV_PtOrderNumberForCSV2"]        = new MultiSamplePlot(datasets, "CSV_PtOrderNumberForCSV2", 10, 0, 10, "p_{T} Ordering");
+    
+    MSPlot["CSV_Jet1Pt"]                      = new MultiSamplePlot(datasets, "CSV_Jet1Pt", 50, 0, 400, "PT_{Jet}");
+    MSPlot["CSV_Jet2Pt"]                      = new MultiSamplePlot(datasets, "CSV_Jet2Pt", 50, 0, 400, "PT_{Jet}");
+    MSPlot["CSV_Jet3Pt"]                      = new MultiSamplePlot(datasets, "CSV_Jet3Pt", 50, 0, 400, "PT_{Jet}");
+    MSPlot["CSV_Jet4Pt"]                      = new MultiSamplePlot(datasets, "CSV_Jet4Pt", 50, 0, 400, "PT_{Jet}");
+    
+    MSPlot["CSV_Jet1BDisc"]                   = new MultiSamplePlot(datasets, "CSV_Jet1BDisc", 50, 0, 1, "CSV Disc");
+    MSPlot["CSV_Jet2BDisc"]                   = new MultiSamplePlot(datasets, "CSV_Jet2BDisc", 50, 0, 1, "CSV Disc");
+    MSPlot["CSV_Jet3BDisc"]                   = new MultiSamplePlot(datasets, "CSV_Jet3BDisc", 50, 0, 1, "CSV Disc");
+    MSPlot["CSV_Jet4BDisc"]                   = new MultiSamplePlot(datasets, "CSV_Jet4BDisc", 50, 0, 1, "CSV Disc");
+    MSPlot["CSV_Jet3Jet4ProductBDisc"]        = new MultiSamplePlot(datasets, "CSV_Jet3Jet4ProductBDisc", 50, 0, 1, "CSV Disc");
+    //HT Ratios
+    MSPlot["HTRatio2Jets"]                    = new MultiSamplePlot(datasets, "HTRatio2Jets", 50, 0, 1, "H_{T}^{2Jets}");
+    MSPlot["HTRatio3Jets"]                    = new MultiSamplePlot(datasets, "HTRatio3Jets", 50, 0, 1, "H_{T}^{3Jets}");
+    MSPlot["HTRatio4Jets"]                    = new MultiSamplePlot(datasets, "HTRatio4Jets", 50, 0, 1, "H_{T}^{4Jets}");
+    MSPlot["HTRatioMoreThan5Jets"]            = new MultiSamplePlot(datasets, "HTRatioMoreThan5Jets", 50, 0, 1, "H_{T}^{>5Jets}");
+    //H Ratios not in the Transverse Plane
+    MSPlot["HRatio2Jets"]                     = new MultiSamplePlot(datasets, "HRatio2Jets", 50, 0, 1, "H^{2Jets}");
+    MSPlot["HRatio3Jets"]                     = new MultiSamplePlot(datasets, "HRatio3Jets", 50, 0, 1, "H^{3Jets}");
+    MSPlot["HRatio4Jets"]                     = new MultiSamplePlot(datasets, "HRatio4Jets", 50, 0, 1, "H^{4Jets}");
+    MSPlot["HRatioMoreThan5Jets"]             = new MultiSamplePlot(datasets, "HRatioMoreThan5Jets", 50, 0, 1, "H^{>5Jets}");
+    //HT to H Ratio for Centrality
+    MSPlot["HTToHRatio"]                      = new MultiSamplePlot(datasets, "HTToHRatio", 50, 0, 1, "H_{T}/H");
+    //Spatial Separation between leading pT B-Jets and Selected jets 4, 5, and 6
+    MSPlot["dRBetweenBJet1AndLightJet3"]      = new MultiSamplePlot(datasets, "dRBetweenBJet1AndLightJet3", 50, 0, 6, "dR^{b1}_{3}");
+    MSPlot["dRBetweenBJet1AndLightJet4"]      = new MultiSamplePlot(datasets, "dRBetweenBJet1AndLightJet4", 50, 0, 6, "dR^{b1}_{4}");
+    MSPlot["dRBetweenBJet1AndLightJet5"]      = new MultiSamplePlot(datasets, "dRBetweenBJet1AndLightJet5", 50, 0, 6, "dR^{b1}_{5}");
+    MSPlot["dRBetweenBJet2AndLightJet3"]      = new MultiSamplePlot(datasets, "dRBetweenBJet2AndLightJet3", 50, 0, 6, "dR^{b2}_{3}");
+    MSPlot["dRBetweenBJet2AndLightJet4"]      = new MultiSamplePlot(datasets, "dRBetweenBJet2AndLightJet4", 50, 0, 6, "dR^{b2}_{4}");
+    MSPlot["dRBetweenBJet2AndLightJet5"]      = new MultiSamplePlot(datasets, "dRBetweenBJet2AndLightJet5", 50, 0, 6, "dR^{b2}_{5}");
+    //Spatial Separation between Selected Jets up to 8 Jets
+    MSPlot["dRBetweenJet1AndJet2"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet2", 50, 0, 6, "dR_{1}^{2}");
+    MSPlot["dRBetweenJet1AndJet3"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet3", 50, 0, 6, "dR_{1}^{3}");
+    MSPlot["dRBetweenJet1AndJet4"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet4", 50, 0, 6, "dR_{1}^{4}");
+    MSPlot["dRBetweenJet1AndJet5"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet5", 50, 0, 6, "dR_{1}^{5}");
+    MSPlot["dRBetweenJet1AndJet6"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet6", 50, 0, 6, "dR_{1}^{6}");
+    MSPlot["dRBetweenJet1AndJet7"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet7", 50, 0, 6, "dR_{1}^{7}");
+    MSPlot["dRBetweenJet1AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet1AndJet8", 50, 0, 6, "dR_{1}^{8}");
+    
+    MSPlot["dRBetweenJet2AndJet3"]            = new MultiSamplePlot(datasets, "dRBetweenJet2AndJet3", 50, 0, 6, "dR_{2}^{3}");
+    MSPlot["dRBetweenJet2AndJet4"]            = new MultiSamplePlot(datasets, "dRBetweenJet2AndJet4", 50, 0, 6, "dR_{2}^{4}");
+    MSPlot["dRBetweenJet2AndJet5"]            = new MultiSamplePlot(datasets, "dRBetweenJet2AndJet5", 50, 0, 6, "dR_{2}^{5}");
+    MSPlot["dRBetweenJet2AndJet6"]            = new MultiSamplePlot(datasets, "dRBetweenJet2AndJet6", 50, 0, 6, "dR_{2}^{6}");
+    MSPlot["dRBetweenJet2AndJet7"]            = new MultiSamplePlot(datasets, "dRBetweenJet2AndJet7", 50, 0, 6, "dR_{2}^{7}");
+    MSPlot["dRBetweenJet2AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet2AndJet8", 50, 0, 6, "dR_{2}^{8}");
+    
+    MSPlot["dRBetweenJet3AndJet4"]            = new MultiSamplePlot(datasets, "dRBetweenJet3AndJet4", 50, 0, 6, "dR_{3}^{4}");
+    MSPlot["dRBetweenJet3AndJet5"]            = new MultiSamplePlot(datasets, "dRBetweenJet3AndJet5", 50, 0, 6, "dR_{3}^{5}");
+    MSPlot["dRBetweenJet3AndJet6"]            = new MultiSamplePlot(datasets, "dRBetweenJet3AndJet6", 50, 0, 6, "dR_{3}^{6}");
+    MSPlot["dRBetweenJet3AndJet7"]            = new MultiSamplePlot(datasets, "dRBetweenJet3AndJet7", 50, 0, 6, "dR_{3}^{7}");
+    MSPlot["dRBetweenJet3AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet3AndJet8", 50, 0, 6, "dR_{3}^{8}");
+    
+    MSPlot["dRBetweenJet4AndJet5"]            = new MultiSamplePlot(datasets, "dRBetweenJet4AndJet5", 50, 0, 6, "dR_{4}^{5}");
+    MSPlot["dRBetweenJet4AndJet6"]            = new MultiSamplePlot(datasets, "dRBetweenJet4AndJet6", 50, 0, 6, "dR_{4}^{6}");
+    MSPlot["dRBetweenJet4AndJet7"]            = new MultiSamplePlot(datasets, "dRBetweenJet4AndJet7", 50, 0, 6, "dR_{4}^{7}");
+    MSPlot["dRBetweenJet4AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet4AndJet8", 50, 0, 6, "dR_{4}^{8}");
+    
+    MSPlot["dRBetweenJet5AndJet6"]            = new MultiSamplePlot(datasets, "dRBetweenJet5AndJet6", 50, 0, 6, "dR_{5}^{6}");
+    MSPlot["dRBetweenJet5AndJet7"]            = new MultiSamplePlot(datasets, "dRBetweenJet5AndJet7", 50, 0, 6, "dR_{5}^{7}");
+    MSPlot["dRBetweenJet5AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet5AndJet8", 50, 0, 6, "dR_{5}^{8}");
+    
+    MSPlot["dRBetweenJet6AndJet7"]            = new MultiSamplePlot(datasets, "dRBetweenJet6AndJet7", 50, 0, 6, "dR_{6}^{7}");
+    MSPlot["dRBetweenJet6AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet6AndJet8", 50, 0, 6, "dR_{6}^{8}");
+    
+    MSPlot["dRBetweenJet7AndJet8"]            = new MultiSamplePlot(datasets, "dRBetweenJet7AndJet8", 50, 0, 6, "dR_{7}^{8}");
+    
+    MSPlot["dRSum"]                           = new MultiSamplePlot(datasets, "dRSum", 50, 0, 70, "Sum dR"); //1vs5-8 2vs5-8 3vs5-8 4vs5-8 5vs6-8 6vs7-8
+    MSPlot["dRLeadingJetSum"]                 = new MultiSamplePlot(datasets, "dRLeadingJetSum", 50, 0, 50, "Sum dR_{1}^{i}");
+    
+    //Muon variable plots added by JH
+    MSPlot["dRMinMuon"]                       = new MultiSamplePlot(datasets, "dRMinMuon", 75, 0, 6, "dR_{min}");
+    MSPlot["Muondz"]                          = new MultiSamplePlot(datasets, "Muondz", 75, -0.3, 0.3, "dz_{#mu}");
+    MSPlot["PTRelMuon"]                       = new MultiSamplePlot(datasets, "PTRelMuon", 75, 0, 300, "p_{T}^{rel}");
+    
+    //Truth Matching Plots added by JH
+    MSPlot["TaggedJetTruth"]                  = new MultiSamplePlot(datasets, "TaggedJetTruth", 20, 0, 4, "Truth Type");
+    MSPlot["OtherJetTruth"]                   = new MultiSamplePlot(datasets, "OtherJetTruth", 20, 0, 4, "Truth Type");
+    MSPlot["LeptonTruth"]                     = new MultiSamplePlot(datasets, "LeptonTruth", 20, 0, 4, "Truth Type");
+    MSPlot["DiagnosticJetTruth"]              = new MultiSamplePlot(datasets, "DiagnosticJetTruth", 35, 0, 7, "Truth Type");
+    MSPlot["NEMF"]                            = new MultiSamplePlot(datasets, "NEMF", 100, 0, 100, "Neutral EM Fraction");
+    //endJH
 
     //Declare arrays of MSPlots
     Int_t minNJets=6, maxNJets=9, minNBJets=1, maxNBJets=4;
@@ -548,7 +609,6 @@ int main (int argc, char *argv[])
     string HX_Name = "HX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
     string HTH_Name = "HTH_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
     string HTXHX_Name = "HTXHX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
-
 
     string EventMass_Name = "EventMass_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
     string EventMassX_Name = "EventMassX_"+NJets_str+"Jets_"+NBJets_str+"Tags" ;
@@ -597,22 +657,20 @@ int main (int argc, char *argv[])
 }
 }
 
-  ////////////////////////////////////////////////////////////////////
-  ////////////////// 1D histograms  //////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
+  ///////////////////
+  // 1D histograms
+  ///////////////////
 
     histo1D["RelIso_PreTrig"] = new TH1F("RelIso_PreTrig","RelIso_PreTrig;RelIso_PreTrig;#events",40,0,0.75);
     histo1D["RelIso_PostTrig"] = new TH1F("RelIso_PostTrig","RelIso_PostTrig;RelIso_PostTrig;#events",40,0,0.75);
 
     histo1D["Pt_PreTrig"] = new TH1F("Pt_PreTrig","Pt_PreTrig;Pt_PreTrig;#events",25,0,500);
     histo1D["Pt_PostTrig"] = new TH1F("Pt_PostTrig","Pt_PostTrig;Pt_PostTrig;#events",25,0,500);
-    
     histo1D["d0_PreTrig"] = new TH1F("d0_PreTrig","d0_PreTrig;d0_PreTrig;#events",20,0,0.02);
     histo1D["d0_PostTrig"] = new TH1F("d0_PostTrig","d0_PostTrig;d0_PostTrig;#events",20,0,0.02);
-    
     histo1D["Eta_PreTrig"] = new TH1F("Eta_PreTrig","Eta_PreTrig;Eta_PreTrig;#events",20,-2.5,2.5);
     histo1D["Eta_PostTrig"] = new TH1F("Eta_PostTrig","Eta_PostTrig;Eta_PostTrig;#events",20,-2.5,2.5);
-    
+    histo1D["triggerScales"] = new TH1F("triggerScales","triggerScales;triggerScales;#events",100,0,4);
     histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
     
     
@@ -628,51 +686,57 @@ int main (int argc, char *argv[])
       histo2D[("OfflineMuonPt_vs_TriggerMuonPt"+datasets[d]->Name()).c_str()] = new TH2F(("OfflineMuonPt_vs_TriggerMuonPt"+datasets[d]->Name()).c_str(),"OfflineMuonPt_vs_TriggerMuonPt",75,0,300, 75, 0,300);
       
      histo2D[("OfflineMuonEta_vs_TriggerMuonEta"+datasets[d]->Name()).c_str()] = new TH2F(("OfflineMuonEta_vs_TriggerMuonEta"+datasets[d]->Name()).c_str(),"OfflineMuonEta_vs_TriggerMuonEta",15,-2.5,2.5, 15, -2.5,2.5);
-
+      
+      histo2D[("CSV3xCSV2_"+datasets[d]->Name()).c_str()]                      = new TH2F(("CSV3xCSV2_"+datasets[d]->Name()).c_str(),"CSV3 vs. CSV2",20,0,1\
+                                                                                          , 20, 0,1);
+      histo2D[("CSV4xCSV3_"+datasets[d]->Name()).c_str()]                      = new TH2F(("CSV4xCSV3_"+datasets[d]->Name()).c_str(),"CSV4 vs. CSV3",20,0,1\
+                                                                                          , 20, 0,1);
+      histo2D[("CSV_dR_2_3xCSV3_"+datasets[d]->Name()).c_str()]               = new TH2F(("CSV_dR_2_3xCSV3_"+datasets[d]->Name()).c_str(),"CSVdR(2,3) vs. C\
+                                                                                         SV3",40,0,1, 120, 0,6);
+      histo2D[("CSV_dR_3_4xCSV3_"+datasets[d]->Name()).c_str()]               = new TH2F(("CSV_dR_3_4xCSV3_"+datasets[d]->Name()).c_str(),"CSVdR(3,4) vs. C\
+                                                                                         SV3",40,0,1, 120, 0,6);
+      histo2D[("pTRelxdRMin_"+datasets[d]->Name()).c_str()]               = new TH2F(("pTRelxdRMin_"+datasets[d]->Name()).c_str(),"p_{T}^{rel} vs. dR_{min}\
+                                                                                     ",30,0,3, 90, 0,300);
   }
     
-    
-  //  cout << " - Declared histograms ..." <<  endl;
-	
-  ////////////////////////////////////////////////////////////////////
-  ////////////////// Plots  //////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
-
-    string pathPNG_MVA = "MVAPlots_"+postfix+channelpostfix;
-
-    
+  
+  //Plots
+  string pathPNG_MVA = "MVAPlots_"+postfix+channelpostfix;
   string pathPNG = "FourTop"+postfix+channelpostfix;
   pathPNG += "_MSPlots/"; 	
-//  pathPNG = pathPNG +"/"; 	
+  //pathPNG = pathPNG +"/";
   mkdir(pathPNG.c_str(),0777);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////// Selection Table/////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
-  ///////////////////// Channel : µ + jets  //////////////////////////
-  ////////////////////////////////////////////////////////////////////
+    
+  /////////////////////
+  // Selection table: µ + jets
+  /////////////////////////////////
   vector<string> CutsSelecTableMu;
   CutsSelecTableMu.push_back(string("initial"));
   //  CutsSelecTableMu.push_back(string("PU reweighting"));
-  CutsSelecTableMu.push_back(string("Event cleaning and Trigger"));
-  CutsSelecTableMu.push_back(string("Exactly 1 isolated muon"));
-  CutsSelecTableMu.push_back(string("Loose muon veto"));
-  CutsSelecTableMu.push_back(string("Electron veto"));
-  CutsSelecTableMu.push_back(string("$\\geq$ 1 jet"));
-  CutsSelecTableMu.push_back(string("$\\geq$ 2 jet"));
-  CutsSelecTableMu.push_back(string("$\\geq$ 3 jet"));
-  CutsSelecTableMu.push_back(string("$\\geq$ 4 jet"));
-  CutsSelecTableMu.push_back(string("$b\\texttt{-}disc \\geq 0.679$ (CSVM)"));
+    CutsSelecTableMu.push_back(string("Event cleaning and Trigger"));
+    CutsSelecTableMu.push_back(string("Exactly 1 isolated muon"));
+    CutsSelecTableMu.push_back(string("$>$= 6 Jets (40 GeV)"));
+    CutsSelecTableMu.push_back(string("$>$= 2 CSVM Tags"));
+    CutsSelecTableMu.push_back(string(" HT $>$= 2 400 GeV"));
+
+    
+//  CutsSelecTableMu.push_back(string("Event cleaning and Trigger"));
+//  CutsSelecTableMu.push_back(string("Exactly 1 isolated muon"));
+//  CutsSelecTableMu.push_back(string("Loose muon veto"));
+//  CutsSelecTableMu.push_back(string("Electron veto"));
+//  CutsSelecTableMu.push_back(string("$\\geq$ 1 jet"));
+//  CutsSelecTableMu.push_back(string("$\\geq$ 2 jet"));
+//  CutsSelecTableMu.push_back(string("$\\geq$ 3 jet"));
+//  CutsSelecTableMu.push_back(string("$\\geq$ 4 jet"));
+//  CutsSelecTableMu.push_back(string("$b\\texttt{-}disc \\geq 0.679$ (CSVM)"));
 
   SelectionTable selecTableMu(CutsSelecTableMu, datasets);
   selecTableMu.SetLuminosity(Luminosity);
   selecTableMu.SetPrecision(1);
 
-
-  ////////////////////////////////////////////////////////////////////
-  ///////////////////// Channel : e + jets    ////////////////////////
-  ////////////////////////////////////////////////////////////////////
+  /////////////////////////////
+  // Selection table: e + jets
+  /////////////////////////////
 
   vector<string> CutsSelecTableEl;
   CutsSelecTableEl.push_back(string("initial"));
@@ -689,56 +753,36 @@ int main (int argc, char *argv[])
   CutsSelecTableEl.push_back(string("$b\\texttt{-}disc \\geq 0.679$ (CSVM)"));
   //CutsSelecTableEl.push_back(string("MET > 40 GeV"));
 
-
   SelectionTable selecTableEl(CutsSelecTableEl, datasets);
   selecTableEl.SetLuminosity(Luminosity);
   selecTableEl.SetPrecision(1);
   
-  //cout << " - SelectionTable instantiated ..." << endl;
 
-    ////////////////////////////////////////////////////////////////////
-    ///////////////////// Tree for MVA    ////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    
-   // string TreeFileName = "FourTopTree.root";
-    
-   // TFile* treeFile;
-    TTree* myFourTopTree;
-   // FourTopTree* myBranch_selectedEvents = 0;	
+////////////////////////////
+//  Pile up reweighting
+////////////////////////////
+//NEW METHOD (TRUE INTERACTIONS)
 
-    //cout << "INFO: creating FourTopTree file "+TreeFileName << endl;
-    
-    bool datadriven = false;
-    
-    if(!datadriven){
-     //treeFile = new TFile(TreeFileName.c_str(),"RECREATE");
-      //  myFourTopTree = new TTree("FourTopTree;","Tree containing the Four top information");
-      //  myFourTopTree->Branch("FourTopBranch_selectedEvents","FourTopTree",&myBranch_selectedEvents);
-    }
-    
-    
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////// PileUp Reweighting - N True interactions, recommended method for 2012 //////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-  //NEW METHOD (TRUE INTERACTIONS)
     LumiReWeighting LumiWeights;
- 
-    LumiWeights = LumiReWeighting("PUReweighting/pileup_MC_S10.root", "PUReweighting/PURewtoptree_id_2014_1350565897_PileupHistogram.root", "pileup", "pileup");
+    LumiWeights = LumiReWeighting("PUReweighting/pileup_MC_S10.root", "PUReweighting/PURewtoptree_id_2217_2227_2262_2423_2435_2417_PileupHistogram.root", "pileup", "pileup");
     
-//  reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
-  //reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
+    //reweight::PoissonMeanShifter PShiftDown_ = reweight::PoissonMeanShifter(-0.6);
+    //reweight::PoissonMeanShifter PShiftUp_ = reweight::PoissonMeanShifter(0.6);
 
-  cout << " Initialized LumiReWeighting stuff" << endl;
+   cout << " Initialized LumiReWeighting stuff" << endl;
   
-  //exit(1);
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////// Loop on datasets
-  //////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////
+//////// Loop on datasets
+/////////////////////////////////
 
   cout << " - Loop over datasets ... " << datasets.size () << " datasets !" << endl;
-
+    
+    TGraph *scaleGraph;
+    TFile *scaleFile, *abFile, *cFile, *dFile;
+    abFile = new TFile("LeptonScaleFactors/MuonEfficiencies_Run_2012A_2012B_53X.root","READ");
+    cFile = new TFile("LeptonScaleFactors/MuonEfficiencies_Run_2012C_53X.root","READ");
+    dFile = new TFile("LeptonScaleFactors/TriggerMuonEfficiencies_Run_2012D_53X.root","READ");
+    
   for (unsigned int d = 0; d < datasets.size(); d++) //d < datasets.size()
   {
     if (verbose > 1){
@@ -756,9 +800,9 @@ int main (int argc, char *argv[])
     
     string dataSetName = datasets[d]->Name();	
     
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////// Initialize JEC factors /////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////
+/// Initialize JEC factors ///////////////////////
+//////////////////////////////////////////////////
 		
     vector<JetCorrectorParameters> vCorrParam;
 
@@ -780,13 +824,11 @@ int main (int argc, char *argv[])
       }
     
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../macros/JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
-    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!    
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////                      Loop on events                                                    ///////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////
+//      Loop on events
+/////////////////////////////////////////////////
 
     int itrigger = -1, previousRun = -1;
    
@@ -794,38 +836,75 @@ int main (int argc, char *argv[])
     unsigned int end = datasets[d]->NofEvtsToRunOver();
 
     cout <<"Number of events = "<<  end  <<endl;
-
       
     bool debug = false;
-      int event_start;
-      if (dataSetName == "Data")TrainMVA=false, trainEventMVA=false;
+    int event_start;
+    if (dataSetName == "Data")TrainMVA=false, trainEventMVA=false;
       
+      
+      /*
       if (TrainMVA){
+          cout <<"Training Mass Reconstruction MVA"<<endl;
         event_start = 0;
         end = 200000;
       }
- //     else if (trainEventMVA){
+      else{
+      
+       if (trainEventMVA){
           if(  (dataSetName == "NP_overlay_TTTT" ) ){
-        event_start = 0;
-     //   end = 9000;
-        end = datasets[d]->NofEvtsToRunOver();
+          event_start = 0;
+          end = 9000;
+      //  end = datasets[d]->NofEvtsToRunOver();
 
           }
-          else if (dataSetName == "Data"){
+          else{
+              event_start = 200000;
+              end = 250000;
+            //end = datasets[d]->NofEvtsToRunOver();
+          }
+
+      }
+      
+      else if (computeEventMVA){
+      
+           if (dataSetName == "Data"){
               event_start = 0;
               
-             // end = 100;
+              // end = 100;
+              end = datasets[d]->NofEvtsToRunOver();
+          }
+           else if(  (dataSetName == "NP_overlay_TTTT" ) ){
+               event_start = 9000;
+               end = datasets[d]->NofEvtsToRunOver();
+           }
+           else if(  (dataSetName == "TTJets" ) ){
+               event_start = 250000;
+               end = datasets[d]->NofEvtsToRunOver();
+           }
+          
+      }
+      else{
+          
+          if (dataSetName == "Data"){
+              event_start = 0;
               end = datasets[d]->NofEvtsToRunOver();
           }
           
-          
-          else{
+         else if(  (dataSetName == "NP_overlay_TTTT" ) ){
               event_start = 0;
-          //    end = 100000;
-            end = datasets[d]->NofEvtsToRunOver();
+              end = datasets[d]->NofEvtsToRunOver();
+             
           }
-
-     // }
+          else{
+              event_start = 200000;
+              end = 250000;
+          }
+      
+      }
+      }
+       
+       */
+      
       
       
       cout <<"Starting event = = = = "<< event_start  << endl;
@@ -835,18 +914,34 @@ int main (int argc, char *argv[])
       int nBBBar, nCCBar, nLLBar;
       nBBBar=  nCCBar = nLLBar = 0;
       
-      
-      double MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0., SumJetMassX=0.  ,H = 0., HX =0., HT = 0., HTX = 0.,HTH=0.,HTXHX=0., sumpx_X = 0., sumpy_X= 0., sumpz_X =0., sume_X= 0. , sumpx =0., sumpy=0., sumpz=0., sume=0., jetpt =0., PTBalTopEventX = 0., PTBalTopSumJetX =0., PTBalTopMuMet=0;
-      
+      double MHT, MHTSig, STJet, EventMass, EventMassX , SumJetMass, SumJetMassX,H,HX , HT, HTX,HTH,HTXHX, sumpx_X, sumpy_X, sumpz_X, sume_X, sumpx, sumpy, sumpz, sume, jetpt,PTBalTopEventX,PTBalTopSumJetX , PTBalTopMuMet;
 
-      
+      double currentfrac =0.;
       double end_d = end;
-      double endfrac = end_d/1.;
+      //uncomment this line to only run on 10% of the ttbar sample
+      // remember to alter the int. lumi of the sample
+     // if(dataSetName=="TTJets") {end_d = end_d/10. + 250000.;
+//          cout <<"N ttjets to run over =   "<< end_d <<endl;
+  //    }
       
-    for (unsigned int ievt = event_start; ievt < end ; ievt++)
+      
+      // Fractions for choosing correct scalegraph: change this to random Number Generator
+      float eventFraction=0;
+      float sfSplit1, sfSplit2, sfSplit3;
+
+      sfSplit1 = 0.042;
+      sfSplit2 = 0.275;
+      sfSplit3 = 0.623;
+      
+    for (unsigned int ievt = event_start; ievt <end_d ; ievt++)
     {
         
 MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0., SumJetMassX=0.  ,H = 0., HX =0., HT = 0., HTX = 0.,HTH=0.,HTXHX=0., sumpx_X = 0., sumpy_X= 0., sumpz_X =0., sume_X= 0. , sumpx =0., sumpy=0., sumpz=0., sume=0., jetpt =0., PTBalTopEventX = 0., PTBalTopSumJetX =0.;
+        
+        
+        double ievt_d = ievt;
+        currentfrac = ievt_d/end_d;
+        
         
 	if(ievt%1000 == 0)
 		std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
@@ -857,15 +952,36 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 	//load event
 	event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
 
-  //  cout <<"test rho :  " <<event->kt6PFJets_rho() <<endl;   
         float rho = event->kt6PFJets_rho();
+        string graphName;
+        
+        //load scale factor file
+	    if(currentfrac < sfSplit1){
+            scaleFile = abFile;
+            graphName = "DATA_over_MC_IsoMu24_eta2p1_TightIso_eta_2p1_pt25-500_2012A" ;
+        }
+        else if(currentfrac > sfSplit1 && currentfrac < sfSplit2 ){
+            scaleFile = abFile;
+            graphName = "DATA_over_MC_IsoMu24_eta2p1_TightIso_eta_2p1_pt25-500_2012B" ;
+
+        }
+        else if(currentfrac > sfSplit2 && currentfrac < sfSplit3 ) {
+            scaleFile = cFile;
+            graphName = "DATA_over_MC_IsoMu24_eta2p1_TightIso_eta_2p1_pt25-500" ;
+
+        } else{
+            scaleFile = dFile;
+            graphName = "DATA_over_MC_IsoMu24_eta2p1_TightIso_eta_2p1_pt25-500_2012D" ;
+        }
+    
+////////////////////////////////////////////////////////////////////////////
+/// Splitting TTBar sample into tt +ll, tt+ cc and tt + bb /////////////////
+////////////////////////////////////////////////////////////////////////////
         
     //load mcparticles to check jet flavour for ttjets events
-        
     vector<TRootMCParticle*> mcParticles_flav;
     Int_t ttbar_flav = -1;
 
-        
         double nExB,nExC,nExL;
         nExB = nExC = nExL = 0.;
         
@@ -873,8 +989,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
     genEvt_flav = treeLoader.LoadGenEvent(ievt,false);
     treeLoader.LoadMCEvent(ievt, genEvt_flav, 0, mcParticles_flav,false); 
         
-       // cout <<" mc parts "<< mcParticles_flav.size()  <<endl;
-
         if(  (dataSetName == "TTJets_ll" || dataSetName == "TTJets_cc" || dataSetName == "TTJets_bb" ) )
         {
         for(unsigned int p=0; p<mcParticles_flav.size(); p++) {
@@ -920,6 +1034,10 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
             if (ttbar_flav ==2 && (dataSetName == "TTJets_ll"  || dataSetName == "TTJets_cc" ))  continue;
         
         }
+
+//////////////////
+//Loading Gen jets
+//////////////////
         
 	vector<TRootGenJet*> genjets;
 	if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
@@ -936,9 +1054,10 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         	iFile++;
 		cout<<"File changed!!! => iFile = "<<iFile<<endl;
 	}
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////// trigger /////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+///////////////////////////////////////////
+//  Trigger
+///////////////////////////////////////////
 	bool trigged = false;
     std::string filterName = "";
 	int currentRun = event->runId();
@@ -948,30 +1067,26 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
       		previousRun = currentRun;
 		if(Muon)
 		{
-			//if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-		//	{
-                
-                
                 // semi-muon
                 if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
                 {
-                    if( event->runId() <= 190738 ){
+                    if( event->runId() >= 190456 && event->runId() <= 190738 ){
                         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun, iFile);
                         filterName = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoFiltered10";
                     }
-                    else if( event->runId() >= 191043 && event->runId() <= 193621 ){
+                    else if( event->runId() >= 190782 && event->runId() <= 193621){
                         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v12"), currentRun, iFile);
                         filterName = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoFiltered10";
                     }
-                    else if( event->runId() >= 193834 && event->runId() <= 196531 ){
+                    else if(event->runId() >= 193834  && event->runId() <= 196531 ){
                         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
                         filterName = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15";
                     }
-                    else if( event->runId() >= 198049 && event->runId() <= 199608){
+                    else if( event->runId() >= 198022  && event->runId() <= 199608){
                         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v14"), currentRun, iFile);
                         filterName = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15";
                     }
-                    else if( event->runId() >= 199698 && event->runId() <= 208357){
+                    else if( event->runId() >= 199698 && event->runId() <= 209151){
                         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v15"), currentRun, iFile);
                         filterName = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15";
                     }
@@ -986,88 +1101,34 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                         exit(-1);
                     }
                 }
-                
-                
-                
-		      /*
-			  if(event->runId() >= 190456 && event->runId() <= 190761)
-				 itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
-			  else if ( event->runId() >= 190762 && event->runId() <= 191511 )
-			         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);
-			  else if ( event->runId() >= 191512  && event->runId() <= 193805  )
-			         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-			  //for  top triggers change PD at this point.
-			  else if ( event->runId() >= 193806  && event->runId() <= 194269  )
-			         itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_v1"), currentRun, iFile);
-                //extendidng the 52X 1 fb
-			  else if ( event->runId() >= 194269 && event->runId() <= 196531  )
-			    itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-                
-              else if ( event->runId() >= 196532 && event->runId() <= 198522  )
-                  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-
-              else if ( event->runId() >= 198523 && event->runId() <= 199608  )
-                  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"), currentRun, iFile);
-                
-              else if ( event->runId() >= 199609 && event->runId() <= 201678  )
-                  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
-                
-              else if ( event->runId() >= 201679 && event->runId() <= 202016  )
-                  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet45_35_25_v1"), currentRun, iFile);
-			
-  		  if(itrigger == 9999)
-				{
-    		  cout << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
-		    exit(1);
- 	 			}
-	   		}
-               */
-	   		else 
+    
+            else 
 	   		{
-			  //for refsel, HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2 recommended not HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2
-			 // if(dataSetName == "TTJets" || dataSetName == "TTJets_ll" || dataSetName == "TTJets_cc"  || dataSetName == "TTJets_bb" ) itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v2"), currentRun, iFile);
+                  if(dataSetName == "TTJets" || dataSetName == "TTJets_ll" || dataSetName == "TTJets_cc"  || dataSetName == "TTJets_bb" ) itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
                 
-                  if(dataSetName == "TTJets" || dataSetName == "TTJets_ll" || dataSetName == "TTJets_cc"  || dataSetName == "TTJets_bb" ) itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+                else  if(dataSetName == "NP_overlay_TTTT") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"),currentRun, iFile);
                 
+                else  if(dataSetName == "T1TTTT") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"),currentRun, iFile);
 
-			 // else  if(dataSetName == "TTTT") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v2"),currentRun, iFile);
-                //else  if(dataSetName == "TTTT") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu20_eta2p1_TriCentralPFNoPUJet30_v2"),currentRun, iFile);
-                else  if(dataSetName == "NP_overlay_TTTT") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"),currentRun, iFile);
-                
-                else  if(dataSetName == "T1TTTT") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v2"),currentRun, iFile);
+      			else if (dataSetName == "WJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 
-			  // 	    if(dataSetName == "TTJets") itrigger = treeLoader.iTrigger (string ("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v8"), currentRun, iFile);
-      			else if (dataSetName == "WJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+                else if (dataSetName == "ZJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 
-                else if (dataSetName == "ZJets") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+			    else if (dataSetName == "SingleTop_t") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 
-			    else if (dataSetName == "SingleTop_t") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-
-       			else if (dataSetName == "SingleTop_tW_T") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
-       			else if (dataSetName == "SingleTop_tW_TBar") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile);
+       			else if (dataSetName == "SingleTop_tW_T") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
+       			else if (dataSetName == "SingleTop_tW_TBar") itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
 
 				else if (dataSetName == "MultiJet") {
                                                                    
-	                 	  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet30_30_20_v1"), currentRun, iFile); 
+	                 	  itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile); 
 				
-				  // if(event->runId() >= 193575 && event->runId() <= 193621)			
-				  // if(event->runId() >= 190645 && event->runId() <= 190738)
-				  //   itrigger = treeLoader.iTrigger (string ("HLT_Mu20_eta2p1_TriCentralPFJet30_v3"), currentRun, iFile);  
-				  //                                  if(event->runId() >= 191057 && event->runId() <= 191411)
-				  //  itrigger = treeLoader.iTrigger (string ("HLT_Mu20_eta2p1_TriCentralPFJet30_v4"), currentRun, iFile);
-
-				  //         			  if(event->runId() >= 191695 && event->runId() <= 191810)
-				  //  itrigger = treeLoader.iTrigger (string ("HLT_Mu20_eta2p1_TriCentralPFJet30_v5"), currentRun, iFile);    
-				  	
-				  // if(event->runId() >= 193093 && event->runId() <= 191859)
-				  //    itrigger = treeLoader.iTrigger (string ("HLT_Mu20_eta2p1_TriCentralPFJet30_v5"), currentRun, iFile);    
-				  }
-		    
+							  }
 				       
   				if(itrigger == 9999)
 				{
     			  		cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
-					//		exit(1);
+						exit(1);
 				}
 			}
 
@@ -1103,9 +1164,10 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 		} //end if Electron
 	} //end previousRun != currentRun
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////// Jet energy scale corrections     /////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+//  JES Corrections: The nominal corrections are already applied at PAT level     //
+//    so these tools should only be used for studies of the effect of systematics //
+////////////////////////////////////////////////////////////////////////////////////
 
 	// Apply Jet Corrections on-the-fly
 	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
@@ -1115,9 +1177,38 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 //		jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
 	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////// Type I MET corrections: (Only for |eta| <=4.7 ) //////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        ///////////////////////
+        // JER smearing
+        //////////////////////
+        
+        if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
+        {
+            //JER
+            doJERShift == 0;
+            if(doJERShift == 1)
+                jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
+            else if(doJERShift == 2)
+                jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
+            else
+                jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
+            
+            //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");
+            
+            // JES systematic!
+            if (doJESShift == 1)
+                jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
+            else if (doJESShift == 2)
+                jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
+            
+            //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction:");
+            
+        }
+        
+        
+/////////////////////////////////////////////////////////
+// Type I MET corrections: (Only for |eta| <=4.7 )
+/////////////////////////////////////////////////////////
 
 	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
 	//if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
@@ -1126,36 +1217,11 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 	//	jetTools->correctMETTypeOne(init_jets,mets[0],false);
 	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////// Jet energy smearing and systematic uncertainty ///////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-	{
-	  //JER 
-	  doJERShift == 0;
-		if(doJERShift == 1)
-			jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
-		else if(doJERShift == 2)
-			jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
-		else
-			jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
-	  
-		//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");	       
-
-		// JES systematic! 
-		if (doJESShift == 1)
-			jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-		else if (doJESShift == 2)
-			jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
-	
-		//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction:");
-	
-	}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////// Beam scrapping veto and PU reweighting ///////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
+////////////////////////////////////////
+//  Beam scraping and PU reweighting
+////////////////////////////////////////
+        
 	// scale factor for the event
 	float scaleFactor = 1.;
 
@@ -1173,18 +1239,18 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 	else{
 	double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
 	double lumiWeightOLD=lumiWeight;
-	if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
+        if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0){
 	  lumiWeight=1;
+        }
 	scaleFactor = scaleFactor*lumiWeight;
 
 	}
 
 	histo1D["lumiWeights"]->Fill(scaleFactor);	
 			
-////////////////////////////////////////////////////////////////////////////////////////////// Event selection///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//	selecTableMu.Fill(d,0, 1.);//datasets[d]->Xsection() * datasets[d]->EquivalentLumi() );
-	//	selecTableEl.Fill(d,1,scaleFactor);
+///////////////////////////////////////////////////////////
+//   Event selection
+///////////////////////////////////////////////////////////
 	       
 	// Apply trigger selection
 	trigged = treeLoader.EventTrigged (itrigger);
@@ -1192,7 +1258,7 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 
 
 	//Applying trigger selection again with 2012 Muon+Jets triggers.
-//	if(!trigged)		   continue;
+	if(!trigged)		   continue;
 
 	// Declare selection instance    
 	Selection selection(init_jets, init_muons, init_electrons, mets);
@@ -1200,34 +1266,21 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 	// Define object selection cuts
 	selection.setJetCuts(40.,2.5,0.01,1.,0.98,0,0);//Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
 
-        
-        selection.setElectronCuts();
-//	selection.setElectronCuts(30.,2.5,0.1,0.02,0.,999.,0,1); //Pt,Eta,RelIso,d0,MVAId,DistVzPVz, DRJets, MaxMissingHits
+    selection.setElectronCuts();//	selection.setElectronCuts(30.,2.5,0.1,0.02,0.,999.,0,1); //Pt,Eta,RelIso,d0,MVAId,DistVzPVz, DRJets, MaxMissingHits
 	selection.setLooseElectronCuts(20,2.5,0.2,0.);
 
-        //for muon + jets channel
-	//selection.setMuonCuts(26.,2.1,.12,0,0.2,0,1,0.5,5,1 ); //Pt,Eta,RelIso,NValidMuHits,d0, dRJets, NMatchedStations,DistVzPVz,NTrackerLayersWithMeas 
-        
-        //for dimuon + jets channel
-   // selection.setMuonCuts(20.,2.4,.2,0,0.2,0,1,0.5,5,1 ); //Pt,Eta,RelIso,NValidMuHits,d0, dRJets, NMatchedStations,DistVzPVz,
-	//selection.setMuonCuts();
-        
-    selection.setMuonCuts(26,2.1,0.12,0.2,0.3,1,0.5,5,0); // refSel 2012 values: Pt, Eta, RelIso, d0, dRJets, NMatchedStations, Dz, NTrackerLayerswithMeas, nValidPixelHits
-
-        
+	//selection.setMuonCuts(26.,2.1,.12,0,0.2,0,1,0.5,5,1 ); //Pt,Eta,RelIso,NValidMuHits,d0, dRJets, NMatchedStations,DistVzPVz,NTrackerLayersWithMeas
+    selection.setMuonCuts(26.0,2.1,.12,0.2,0.3,1,0.5,5,0 );
     selection.setLooseMuonCuts(10,2.5,0.2);
 	  
 	//Select objects 
 	//	vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedElectrons(20,2.4,999.,vertex[0]);
 	//vector<TRootElectron*> selectedElectrons        = selection.GetSelectedElectrons(vertex[0]);
-//    vector<TRootElectron*> selectedElectrons        = selection.GetSelectedElectrons(vertex[0], rho);
    
-        vector<TRootElectron*> selectedElectrons        = selection.GetSelectedElectrons();
-
-        
+    vector<TRootElectron*> selectedElectrons        = selection.GetSelectedElectrons();
 	vector<TRootElectron*> selectedExtraElectrons;
 	vector<TRootMuon*>     selectedMuons_NoIso      = selection.GetSelectedMuons(26,2.4,999.); 
-	vector<TRootMuon*>     selectedMuons            = selection.GetSelectedMuons();
+	vector<TRootMuon*>     selectedMuons            = selection.GetSelectedMuons(vertex[0]);
 	vector<TRootMuon*>     selectedExtraMuons;
 	vector<TRootJet*>      selectedJets             = selection.GetSelectedJets(true); // ApplyJetId
     vector<TRootJet*>      selectedJets2ndPass;
@@ -1236,77 +1289,20 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
     vector<TRootElectron*> selectedLooseElectrons   = selection.GetSelectedElectrons(); // VBTF ID
     vector<TRootJet*>      selectedBJets; // B-Jets
     vector<TRootJet*>      selectedLightJets; // light-Jets
+    vector<TRootJet*>       selectedCSVOrderedJets     = selection.GetSelectedJets(true); //CSV ordered Jet collection added by JH
 
-	//order jets wrt to Pt, then set bool corresponding to RefSel cuts.                                                                                 
+	//order jets wrt to Pt, then set bool corresponding to RefSel cuts.
     sort(selectedJets.begin(),selectedJets.end(),HighestPt()); //order muons wrt Pt.                                                                    
+    sort(selectedCSVOrderedJets.begin(), selectedCSVOrderedJets.end(), HighestCVSBtag()); //order Jets wrt CSVtag
 
     int JetCut =0;
     int nMu = selectedMuons.size();
     int nEl = selectedElectrons.size();
 
-
 	// Apply primary vertex selection
 	bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
         if(!isGoodPV) continue;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////// Sync'ing cutflow//////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
-                
-	selecTableMu.Fill(d,1,1.) ;
-	//selecTableEl.Fill(d,1,1.) ;
-	int nTags = 0;
-        
-        
-	  if (nMu ==1){selecTableMu.Fill(d,2,1.) ;
-	    if (selectedLooseMuons.size()==1){  selecTableMu.Fill(d,3,1.);
-	         if (selectedLooseElectrons.size()==0)  {selecTableMu.Fill(d,4,1.);     
-		   if (selectedJets.size() >= 1 && selectedJets[0]->Pt() >45.) {  selecTableMu.Fill(d,5,1.) ;
-		     if (selectedJets.size() >= 2 && selectedJets[1]->Pt() >45.) { selecTableMu.Fill(d,6,1.) ;
-		       if (selectedJets.size() >= 3 && selectedJets[2]->Pt() >45.){  selecTableMu.Fill(d,7,1.) ;
-			 if (selectedJets.size() >= 4 && selectedJets[3]->Pt() >20.) { selecTableMu.Fill(d,8,1.) ;
-
-			   for (int testjet=0; testjet<selectedJets.size(); testjet++) {
-			     if (selectedJets[testjet]->btag_combinedSecondaryVertexBJetTags() > 0.679)  nTags++;
-			   }
-        if (nTags >= 1) selecTableMu.Fill(d,9,1.);
-	}
-		}
-		}
-	      }
-	    }
-	  }
-	  }
-
-	  //Sync'ing cutflow -electrons
-	   nTags = 0;
-/*
-	   if (nEl ==1){selecTableEl.Fill(d,2,1.) ;//one isolated electron
-	     if (selectedLooseMuons.size()==0){  selecTableEl.Fill(d,3,1.);// loose muon veto
-	       if (selectedLooseElectrons.size()==1)  {selecTableEl.Fill(d,4,1.);    // di-lepton veto 
-		if( selectedElectrons[0]->passConversion() == true  ){selecTableEl.Fill(d,5,1.); //put conversion rejection cut here
-		  if (selectedJets.size() >= 1 && selectedJets[0]->Pt() >45.) {  selecTableEl.Fill(d,6,1.) ; //1 jet 45
-		    if (selectedJets.size() >= 2 && selectedJets[1]->Pt() >45.) { selecTableEl.Fill(d,7,1.) ; //2 jet 45
-		      if (selectedJets.size() >= 3 && selectedJets[2]->Pt() >45.){  selecTableEl.Fill(d,8,1.) ; //3 jet 45
-			if (selectedJets.size() >= 4 && selectedJets[3]->Pt() >20.) { selecTableEl.Fill(d,9,1.) ; //4 jet 20
-		      for (int testjet=0; testjet<selectedJets.size(); testjet++) {
-			if (selectedJets[testjet]->btag_combinedSecondaryVertexBJetTags() > 0.679)  nTags++;
-        }
-                      if (nTags >= 1) selecTableEl.Fill(d,10,1.);  //1 CSVM Btag
-	}
-                  
-    
-                  
-	}
-	}
-		}
-	      }
-	    }
-	  }
- 
- 
-	  }
-        */
         
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Applying baseline offline event selection here
@@ -1318,32 +1314,136 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         
         int nbadcombs = Factorial(selectedJets.size())    /  (  (Factorial(3)) * (Factorial(  selectedJets.size() - 3     ) )       ) ;
         
-    //Apply the staggered Jet Pt cut (lep + jets)
-//	if  ( selectedJets[0]->Pt() >45. &&  selectedJets[1]->Pt() >45. && selectedJets[2]->Pt() >45. && selectedJets[3]->Pt() >45. && selectedJets[4]->Pt() >45. ) JetCut = 1;
-        
-        
-        //Apply the staggered Jet Pt cut (dilep + jets)
-        //if  ( selectedJets[0]->Pt() >45. &&  selectedJets[1]->Pt() >45. && selectedJets[2]->Pt() >45. && selectedJets[3]->Pt() >45. && selectedJets[4]->Pt() >45. && selectedJets[5]->Pt() >45. ) JetCut = 1;
-        JetCut=1;
-        
+
 	if (debug) cout<<" jet1 pt =  "<<selectedJets[0]->Pt() << "   "<< " jet2 pt =  "<<selectedJets[1]->Pt() << "   "<< " jet2 pt =  "<<selectedJets[2]->Pt() << "   "<< " jet3 pt =  "<<selectedJets[3]->Pt() << "  JetCut?"  << JetCut  <<endl;
- 
-	if (debug)	cout <<" filling bjet vec "<<endl;
-	//filling vector of b-jets
-	for (Int_t seljet =0; seljet < selectedJets.size(); seljet++ ){
-	  if( selectedJets[seljet]->btag_combinedSecondaryVertexBJetTags() > workingpointvalue) selectedBJets.push_back(selectedJets[seljet]);
-	  else selectedLightJets.push_back(selectedJets[seljet]);
-	}
-                
+         
+        bool isTagged =false;
+        int seljet;
         
-        double temp_HT = 0;
-        double temp_jetpt = 0;
-        for (Int_t seljet0 =0; seljet0 < selectedJets.size(); seljet0++ ){
-          
-            //Event-level variables
-            temp_jetpt = selectedJets[seljet0]->Pt();
-            temp_HT = temp_HT + temp_jetpt;
+        //boolean which controls the application of the Btag scalefactor
+        bool applyBTagSF =false;
+        
+        if (applyBTagSF){
+        for ( seljet =0; seljet < selectedJets.size(); seljet++ ){
+            
+            if(dataSetName!="Data"){
+            
+            if( selectedJets[seljet]->btag_combinedSecondaryVertexBJetTags() > workingpointvalue  ){
+                isTagged = true;
+            }
+            else{
+            
+                isTagged = false;
+
+            }
+            double phi = selectedJets[seljet]->Phi() ;
+            double sin_phi = sin(phi*1000000);
+            double seed = abs(static_cast<int>(sin_phi*100000));
+            
+            double BTageff = 0.67;
+            double LightJeteff = 0.01;
+            int jet_flavor = selectedJets[seljet]->partonFlavour();
+            
+            //Initialize class
+            BTagSFUtil* btsfutil = new BTagSFUtil( seed );
+            
+            double bTagSF_b = ( bTool->getWeight(selectedJets[seljet]->Pt(), selectedJets[seljet]->Eta(), 5,0 )*  bTool->getWeight(selectedJets[seljet]->Pt(), selectedJets[seljet]->Eta(), 5   ,0 ));
+            
+            double bTagSF_c = ( bTool->getWeight(selectedJets[seljet]->Pt(), selectedJets[seljet]->Eta(), 5,0 )*  bTool->getWeight(selectedJets[seljet]->Pt(), selectedJets[seljet]->Eta(), 4   ,0 ));
+            
+            double bTagSF_l = ( bTool->getWeight(selectedJets[seljet]->Pt(), selectedJets[seljet]->Eta(), 5,0 )*  bTool->getWeight(selectedJets[seljet]->Pt(), selectedJets[seljet]->Eta(), 1   ,0 ));
+            
+          //  cout <<"   "<<endl;
+         //   cout << "Before modification: Is tagged = "<<isTagged<<endl;
+            
+                btsfutil->modifyBTagsWithSF(isTagged, jet_flavor, bTagSF_b, BTageff, bTagSF_l, LightJeteff);
+            
+            //    cout << "After modification: Is tagged = "<<isTagged<<endl;
+            if(isTagged) selectedBJets.push_back(selectedJets[seljet]);
+            else selectedLightJets.push_back(selectedJets[seljet]);
         }
+
+ else{
+     
+     if (selectedJets[seljet]->btag_combinedSecondaryVertexBJetTags() > workingpointvalue   ){
+         
+         selectedBJets.push_back(selectedJets[seljet]);
+     }
+     
+     else{
+         selectedLightJets.push_back(selectedJets[seljet]);
+     }
+ }
+ 
+ }
+        }
+        
+        else{
+   
+            
+            
+            for ( seljet =0; seljet < selectedJets.size(); seljet++ ){
+                if (selectedJets[seljet]->btag_combinedSecondaryVertexBJetTags() > workingpointvalue   ){
+                    
+                    selectedBJets.push_back(selectedJets[seljet]);
+                }
+                
+                else{
+                    selectedLightJets.push_back(selectedJets[seljet]);
+                }
+
+            }
+        
+        }
+        
+        ////////////////////
+       // Sync'ing cutflow
+       /////////////////////
+        selecTableMu.Fill(d,1,1.) ;
+        //selecTableEl.Fill(d,1,1.) ;
+        
+        double temp_HT = 0.;
+        for (Int_t seljet0 =0; seljet0 < selectedJets.size(); seljet0++ ){
+            temp_HT += selectedJets[seljet0]->Pt();
+        }
+        
+        if (nMu==1){  selecTableMu.Fill(d,2,1.);
+            if (selectedJets.size() >= 6) {  selecTableMu.Fill(d,3,1.) ;
+                if (selectedBJets.size() >= 2){ selecTableMu.Fill(d,4,1.) ;
+                    if (temp_HT >= 400.){ selecTableMu.Fill(d,5,1.) ;
+                    }
+                }
+            }
+        }
+        
+        
+        /*
+         if (nEl ==1){selecTableEl.Fill(d,2,1.) ;//one isolated electron
+	     if (selectedLooseMuons.size()==0){  selecTableEl.Fill(d,3,1.);// loose muon veto
+         if (selectedLooseElectrons.size()==1)  {selecTableEl.Fill(d,4,1.);    // di-lepton veto
+         if( selectedElectrons[0]->passConversion() == true  ){selecTableEl.Fill(d,5,1.); //put conversion rejection cut here
+         if (selectedJets.size() >= 1 && selectedJets[0]->Pt() >45.) {  selecTableEl.Fill(d,6,1.) ; //1 jet 45
+         if (selectedJets.size() >= 2 && selectedJets[1]->Pt() >45.) { selecTableEl.Fill(d,7,1.) ; //2 jet 45
+         if (selectedJets.size() >= 3 && selectedJets[2]->Pt() >45.){  selecTableEl.Fill(d,8,1.) ; //3 jet 45
+         if (selectedJets.size() >= 4 && selectedJets[3]->Pt() >20.) { selecTableEl.Fill(d,9,1.) ; //4 jet 20
+         for (int testjet=0; testjet<selectedJets.size(); testjet++) {
+         if (selectedJets[testjet]->btag_combinedSecondaryVertexBJetTags() > 0.679)  nTags++;
+         }
+         if (nTags >= 1) selecTableEl.Fill(d,10,1.);  //1 CSVM Btag
+         }
+    
+         }
+         }
+         }
+         }
+         }
+         }
+         
+         
+         }
+         */
+
+        
         
         
 	if(Muon){
@@ -1352,7 +1452,7 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 
 
 	  //Apply the selection
-	  if  (  !( JetCut==1 && selectedBJets.size() >= 2 && temp_HT > 400. &&  nMu == 1 )) continue;
+	  if  (  !( selectedJets.size() >= 6 && selectedBJets.size() >= 2  &&  nMu == 1 && temp_HT >= 400.)) continue;
         double trigmuonPT=500.;
         double trigmuonEta=500.;
         double trigmuonPhi=500.;
@@ -1360,22 +1460,42 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 
         double offlinemuonPT=500;;
         int matchmu_index;
-       // if(dataSetName!="Data"){
-     //   double bTagSF = (  bTool->getWeight(selectedBJets[0]->Pt(), selectedBJets[0]->Eta(), 5,0 )*  bTool->getWeight(selectedBJets[0]->Pt(), selectedBJets[0]->Eta(), 5,0 ));
-
-      //  double bTagSF_b =   bTool->getWeight(selectedBJets[0]->Pt(), selectedBJets[0]->Eta(), 5,1 );
-      //  double bTagSF_c =   bTool->getWeight(selectedBJets[0]->Pt(), selectedBJets[0]->Eta(), 4,1 );
-       // double bTagSF_l =   bTool->getWeight(selectedBJets[0]->Pt(), selectedBJets[0]->Eta(), 1,1 );
+        double delr = 999.;
         
-       // cout <<" SF = >"<< bTagSF_b <<"  "<< bTagSF_c<< "  "<< bTagSF_l <<endl;
-       // scaleFactor = scaleFactor*bTagSF;
-        //}
+        
+        //Muon-Jet selection criteria added by JH
+        double dR = 0, dPhi = 0, dEta = 0;
+        double dRTemp = 0, dRMin = 999999, pTRel = 0;
+        int jetPos1 = 0, jetPos2 = 0, jetPosMin = 0;
+        
+        for (vector<TRootJet*>::iterator it = selectedJets.begin(); it != selectedJets.end(); ++it) {
+            jetPos1 = distance(selectedJets.begin(), it);
+            dPhi = sqrt( pow(( (*it)->Phi() - selectedMuons[0]->Phi() ), 2));
+            if (dPhi > M_PI) dPhi = (2*M_PI) - dPhi;
+            dRTemp = sqrt( pow(dPhi, 2) + pow(( (*it)->Eta() - selectedMuons[0]->Eta() ), 2) );
+            if (dRTemp <= dRMin) {
+                dRMin = dRTemp;
+                jetPosMin = jetPos1;
+            }
+        }
+        
+        double lepSq = pow(selectedMuons[0]->Px(),2) + pow(selectedMuons[0]->Py(),2) + pow(selectedMuons[0]->Pz(),2); //square of lepton momentum
+        double projSq = pow(selectedMuons[0]->Px() * selectedJets[jetPosMin]->Px() + selectedMuons[0]->Py() * selectedJets[jetPosMin]->Py() + selectedMuons[0]->Pz() * selectedJets[jetPosMin]->Pz(),2); //square of lepton momentum projected onto jet axis
+        double jetSq = pow(selectedJets[jetPosMin]->Px(),2) + pow(selectedJets[jetPosMin]->Py(),2) + pow(selectedJets[jetPosMin]->Pz(),2); //square of jet momentum
+        pTRel = sqrt( lepSq - (projSq/jetSq) );
+        
+        //      if ( !(dRMin >= 0.5 && pTRel >= 15.0)) continue;
+        //      selecTableMu.Fill(d,15,1.);
+        //endJH
+     
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// Accessing trigger objects //////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         
         std::map<std::string,std::vector<TopTree::triggeredObject> > filters= event->getTriggerFilters(); //previously: double instead of TopTree::triggeredObject
 
-        double delr = 999.;
-       // std::map<std::string,std::vector<TopTree::triggeredObject> >::iterator itr = filters.begin();
-        
+
         for(std::map<std::string, std::vector<TopTree::triggeredObject> > ::iterator itr = filters.begin(), itr_end = filters.end(); itr != itr_end; ++itr) {
             //itr->second.M;
             string sub_string = itr->first.substr(0,6);
@@ -1420,39 +1540,41 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         
 
         //best offline muon which matches best to trigger muon
-
         
         histo2D[("OfflineMuonPt_vs_TriggerMuonPt"+datasets[d]->Name()).c_str()]->Fill( trigmuonPT,selectedMuons[matchmu_index]->Pt()  );        
         histo2D[("OfflineMuonEta_vs_TriggerMuonEta"+datasets[d]->Name()).c_str()]->Fill( trigmuonEta,selectedMuons[matchmu_index]->Eta()  );
 
         MSPlot["TriggerMuonPt"]->Fill(trigmuonPT , datasets[d], true, Luminosity*scaleFactor);
         
-        
-//From ConfDB:   path HLT_IsoMu24_eta2p1_v15 = HLTBeginSequence + hltL1sMu16Eta2p1 + hltPreIsoMu24eta2p1 + hltL1fL1sMu16Eta2p1L1Filtered0 + HLTL2muonrecoSequence + hltL2fL1sMu16Eta2p1L1f0L2Filtered16Q + HLTL3muonrecoSequence + hltL3fL1sMu16Eta2p1L1f0L2f16QL3Filtered24Q + HLTL3muoncaloisorecoSequenceNoBools + HLTL3muonisorecoSequence + hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15 + HLTEndSequence
-        
-        
-        //for (std::map<std::string,std::vector<TopTree::triggeredObject>::iterator it=filters.begin(); it != filters.end(); ++it){
-       //     std::cout <<"trig filter  = = >   "<< it->first << " => " << it->second << '\n';
-        
-       // return 0;
-   // }
-      //  cout <<<" trig filter  "<< filters.first.c_str()    << endl;
-        
-        
-	  if(debug) cout<< "Event passed..."<<endl;
-        
-        vector<TLorentzVector> mcParticlesTLV, selectedJetsTLV;
+        vector<TLorentzVector> mcParticlesTLV, selectedJetsTLV, mcMuonsTLV;
         vector<TRootMCParticle*> mcParticlesMatching_;
         bool muPlusFromTop = false, muMinusFromTop = false;
         bool elPlusFromTop = false, elMinusFromTop = false;
         pair<unsigned int, unsigned int> leptonicBJet_, hadronicBJet_, hadronicWJet1_, hadronicWJet2_; //First index is the JET number, second one is the parton
         leptonicBJet_ = hadronicBJet_ = hadronicWJet1_ = hadronicWJet2_ = pair<unsigned int,unsigned int>(9999,9999);
-
-
+        
+        if(dataSetName == "Data"){
+            
+            
+            MSPlot["MuonPt_PreTrig"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["Muond0_PreTrig"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
+            
+            MSPlot["MuonRelIsolation_PreTrig"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
+            
+            if (trigged) {
+                
+                MSPlot["MuonRelIsolation_PostTrig"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["MuonPt_PostTrig"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["Muond0_PostTrig"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
+                
+            }
+        }
         
 ////////////////////////////////////////////////////////////////////////////////////
 //// Getting Gen Event
 ////////////////////////////////////////////////////////////////////////////////////
+        vector<TRootMCParticle*> mcParticles;
+
          if(dataSetName != "data" && dataSetName != "Data" && dataSetName != "Data"){
         vector<TRootMCParticle*> mcParticles;
         vector<TRootMCParticle*> mcTops;
@@ -1473,7 +1595,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
     
         if (debug) cout <<"size   "<< mcParticles.size()<<endl;
 
-         
          
              //Pick out MCParticles of interest
              for (Int_t i=0; i<mcParticles.size(); i++){
@@ -1500,103 +1621,91 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                  
              }
          
-         
-         
          }
-        
-        if(dataSetName == "Data"){
 
-      
-        MSPlot["MuonPt_PreTrig"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-        MSPlot["Muond0_PreTrig"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
         
-        MSPlot["MuonRelIsolation_PreTrig"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
-    
-        if (trigged) {
+//////////////////////
+//  Apply trigger SF
+//////////////////////
+
+       if (dataSetName != "Data") {
+        if(nMu ==1) {
+            double muEta = selectedMuons[0]->Eta();
+            scaleFile->GetObject(graphName.c_str(), scaleGraph);
             
-            MSPlot["MuonRelIsolation_PostTrig"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
-            MSPlot["MuonPt_PostTrig"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-            MSPlot["Muond0_PostTrig"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
-            
-            
-         //   histo1D["RelIso_PostTrig"]->Fill(reliso);
-           // histo1D["Pt_PostTrig"]->Fill(selectedMuons[0]->Pt());
-           // histo1D["d0_PostTrig"]->Fill(selectedMuons[0]->d0());
+            if(scaleGraph) {
+                scaleFactor = scaleFactor*scaleGraph->Eval(muEta,0,"");
+            }
+            else {
+                cerr<< "Unable to open Scale Factor Graph." << endl;
+                exit(1);
+            }
         }
-        }
-    
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ////Filling histograms / plotting
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //Order of plotting
-	  // 0. Vertices
-	  // 1. Muons
-	  // 2. Jets: per jet plots, event level variables, jet combinations,discriminants.
+    }
 
+//////////////////////////////////////
+////Filling histograms / plotting
+//////////////////////////////////////
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////Vertices
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////Muons
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        if (debug) cout <<"  nMUons  "<< selectedMuons.size()<< "  n loose muons " << selectedLooseMuons.size()    <<endl;
-    //loop to get inv. masses of muon-loosemuon combinations
-    for (Int_t mu1 = 0; mu1 < selectedMuons.size(); mu1++){	 
-	  for (Int_t mu2 = 0; mu2 < selectedMuons.size(); mu2++){
-          
-          if (debug) cout <<"making dimuosss   "<< endl;
-          
-     	    TRootMuon DiMu (TLorentzVector ( selectedMuons[mu1]->Px() + selectedMuons[mu2]->Px() ,selectedMuons[mu1]->Py() + selectedMuons[mu2]->Py()    ,selectedMuons[mu1]->Pz() + selectedMuons[mu2]->Pz() , selectedMuons[mu1]->E() + selectedMuons[mu2]->E() ));
-            MSPlot["DiMuon_InvMass"]->Fill( DiMu.M(), datasets[d], true, Luminosity*scaleFactor );  
-	  }
-	  }
+        MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
         
+/////////////////
+////Muons
+/////////////////
         
-        if (debug) cout <<"made dimuons...   "<< endl;
-        
-	  MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
+	    MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
+	    MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
 
         if (debug) cout <<"filling muid   "<< selectedMuons[0]->Pt()<<endl;
         
 	  //Fill Muon ID plots
         double muzPVz = fabs(selectedMuons[0]->vz() - vertex[0]->Z());
-        MSPlot["MuonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
         MSPlot["Muond0"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
         MSPlot["MuonDistVzPVz"]->Fill(muzPVz, datasets[d], true, Luminosity*scaleFactor );
         MSPlot["MuonDz"]->Fill( selectedMuons[0]->dz() , datasets[d], true, Luminosity*scaleFactor );
-
+        MSPlot["MuonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["MuonEta"]->Fill(selectedMuons[0]->Eta(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["MuonPhi"]->Fill(selectedMuons[0]->Phi(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["MuonNValidHits"]->Fill(selectedMuons[0]->nofValidHits(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["Muond0"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["MuonDistVzPVz"]->Fill(muzPVz, datasets[d], true, Luminosity*scaleFactor );
+        MSPlot["MuonNMatchedStations"]->Fill(selectedMuons[0]->nofMatchedStations(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["MuonTrackerLayersWithMeasurement"]->Fill(selectedMuons[0]->nofTrackerLayersWithMeasurement(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["MuonRelIsolation"]->Fill(reliso, datasets[d], true, Luminosity*scaleFactor);
         
-        /*
-        double muzPVz = selectedMuons[0]->vz() - vertex[0]->Z();
-      double Mtrans =  (*selectedMuons[0] + *mets[0]).Mt();
-	  MSPlot["MuonRelIsolation"]->Fill(selectedMuons[0]->relativePfIso03(), datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["MuonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["MuonEta"]->Fill(selectedMuons[0]->Eta(), datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["MuonPhi"]->Fill(selectedMuons[0]->Phi(), datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["MuonNValidHits"]->Fill(selectedMuons[0]->nofValidHits(), datasets[d], true, Luminosity*scaleFactor);	 
-	  MSPlot["Muond0"]->Fill(selectedMuons[0]->d0(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["MuonDistVzPVz"]->Fill(muzPVz, datasets[d], true, Luminosity*scaleFactor );
-      MSPlot["MuonNMatchedStations"]->Fill(selectedMuons[0]->nofMatchedStations(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["MuonTrackerLayersWithMeasurement"]->Fill(selectedMuons[0]->nofTrackerLayersWithMeasurement(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["WMt"]->Fill(Mtrans,datasets[d], true, Luminosity*scaleFactor);
-      histo2D[("RelIso_vs_MET_"+datasets[d]->Name()).c_str()]->Fill(mets[0]->Et(),selectedMuons_NoIso[0]->relativePfIso03(), Luminosity*scaleFactor );
-
-         */
       if (debug) cout <<"filled all muID plots  .."<<endl;
+        
+        //Muon-Jet correlation variables added by JH
+        MSPlot["dRMinMuon"]->Fill(dRMin, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["PTRelMuon"]->Fill(pTRel, datasets[d], true, Luminosity*scaleFactor);
+        histo2D[("pTRelxdRMin_"+datasets[d]->Name()).c_str()]->Fill(dRMin, pTRel, Luminosity*scaleFactor );
+        
+        //Muon Truth added by JH
+        if(dataSetName != "data" && dataSetName != "DATA" && dataSetName != "Data") {
+            for(unsigned int i=0; i<mcParticles.size(); i++) {
+                if( abs(mcParticles[i]->type()) == 13 && mcParticles[i]->status() == 3) { //Matrix Element Level Muon
+                    mcMuonsTLV.push_back(*mcParticles[i]);
+                }
+            }
+            vector<TLorentzVector> selectedMuonTLV;
+            selectedMuonTLV.push_back(*selectedMuons[0]);
+            JetPartonMatching muonMatching = JetPartonMatching(mcMuonsTLV, selectedMuonTLV, 2, true, true, 0.3);
+            
+            for(unsigned int i=0; i<mcMuonsTLV.size(); i++) {
+                int matchedMuonNumber = muonMatching.getMatchForParton(i, 0);
+                if(matchedMuonNumber != -1) MSPlot["LeptonTruth"]->Fill(2, datasets[d], true, Luminosity*scaleFactor);
+                else MSPlot["LeptonTruth"]->Fill(1, datasets[d], true, Luminosity*scaleFactor);
+            }
+        }
+        
 
-   
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////Jets
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////
+////Jets
+/////////////
 	  MSPlot["NbOfSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 	  MSPlot["NbOfSelectedLightJets"]->Fill(selectedLightJets.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfSelectedBJets"]->Fill(selectedBJets.size(), datasets[d], true, Luminosity*scaleFactor);
-	//  MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
+	  //  MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
 	  if (debug) cout <<"per jet plots.."<<endl;
 
 	//plots to to inspire staggered Jet Pt selection
@@ -1607,10 +1716,9 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 	
     if (debug) cout <<"got muons and mets"<<endl;
         
-        
-        /////////////////////////////////
-        /// Find indices of jets from Tops
-        ////////////////////////////////
+/////////////////////////////////
+/// Find indices of jets from Tops
+////////////////////////////////
             
         for(unsigned int i=0; i<selectedJets.size(); i++) selectedJetsTLV.push_back(*selectedJets[i]);
         JetPartonMatching matching = JetPartonMatching(mcParticlesTLV, selectedJetsTLV, 2, true, true, 0.3);
@@ -1622,7 +1730,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
             if(matchedJetNumber != -1)
                 JetPartonPair.push_back( pair<unsigned int, unsigned int> (matchedJetNumber, i) );// Jet index, MC Particle index
         }
- 
         
        if (debug) cout <<"n sel jets  "<<selectedJets.size()  << "   n mc particles tlv : "<< mcParticlesTLV.size() << " jet parton pari size :   "<< JetPartonPair.size()<<"  "<< muPlusFromTop<<muMinusFromTop<<endl;
         
@@ -1630,10 +1737,8 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         {
             unsigned int j = JetPartonPair[i].second;	  //get index of matched mc particle
         
-            
             if( fabs(mcParticlesMatching_[j]->type()) < 5 )
             {
-
                 if( ( muPlusFromTop && mcParticlesMatching_[j]->motherType() == -24 && mcParticlesMatching_[j]->grannyType() == -6 )
                    || ( muMinusFromTop && mcParticlesMatching_[j]->motherType() == 24 && mcParticlesMatching_[j]->grannyType() == 6 ) )
                 {
@@ -1650,11 +1755,9 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                     //else cerr<<"Found a third jet coming from a W boson which comes from a top quark..."<<endl;
                 }
             }
-            
             else if( fabs(mcParticlesMatching_[j]->type()) == 5 )
             {
                
-
                 if(  ( muPlusFromTop && mcParticlesMatching_[j]->motherType() == -6) || ( muMinusFromTop && mcParticlesMatching_[j]->motherType() == 6 ) )
                 {
                     hadronicBJet_ = JetPartonPair[i];
@@ -1666,67 +1769,56 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                     //MCPermutation[3] = JetPartonPair[i].first;
                 }
             }
-            
         }
  
-//        cout <<"setting w1  "<<endl;
-   
   //  cout <<"  "<<endl;
    if (debug) cout <<"Indices of matched jets are :  "<< hadronicBJet_.first<<"  "<< hadronicWJet1_.first  <<" " << hadronicWJet2_.first <<endl;
-   
         
-        /////////////////////////////////
-        /// TMVA for mass reconstruction
-        ////////////////////////////////
+/////////////////////////////////
+/// TMVA for mass reconstruction
+////////////////////////////////
 
-        
-        jetCombiner->ProcessEvent_SingleHadTop(datasets[d], mcParticles_flav, selectedJets,  genEvt_flav, scaleFactor);
-        if (debug) cout <<"Processing event with jetcombiner :  "<< endl;
+jetCombiner->ProcessEvent_SingleHadTop(datasets[d], mcParticles_flav, selectedJets,  genEvt_flav, scaleFactor);
+if (debug) cout <<"Processing event with jetcombiner :  "<< endl;
       
-        if(!TrainMVA){
+if(!TrainMVA){
         MVAvals1 = jetCombiner->getMVAValue(MVAmethod, 1); // 1 means the highest MVA value
-        MVAvals2 = jetCombiner->getMVAValue(MVAmethod, 8); // 2 means the highest MVA value
         selectedJets2ndPass.clear();
-            
-            
-
-          //  jetCombiner->ProcessEvent_SingleHadTop(datasets[d], mcParticles_flav, selectedJets2ndPass,  genEvt_flav, scaleFactor);
-
-            MVAvals2ndPass = jetCombiner->getMVAValue(MVAmethod, 1); // 2 means the highest MVA value
+    
+    //make vector of jets excluding thise selected by 1st pass of mass reco
+    for (Int_t seljet1 =0; seljet1 < selectedJets.size(); seljet1++ ){
+        if (seljet1 == MVAvals1.second[0] || seljet1 == MVAvals1.second[1] || seljet1 == MVAvals1.second[2]) continue;
+        selectedJets2ndPass.push_back(selectedJets[seljet1]);
+         }
+    
+            jetCombiner->ProcessEvent_SingleHadTop(datasets[d], mcParticles_flav, selectedJets2ndPass,  genEvt_flav, scaleFactor);
+            MVAvals2ndPass = jetCombiner->getMVAValue(MVAmethod, 1);
 
           //  cout <<"sel jets 1st pass = "<< selectedJets.size() << "sel jets 2nd pass =  " << selectedJets2ndPass.size() << endl;
             
          bestTopMass1 =( *selectedJets[MVAvals1.second[0]] + *selectedJets[MVAvals1.second[1]] + *selectedJets[MVAvals1.second[2]]).M();
-         bestTopMass2 =( *selectedJets[MVAvals2.second[0]] + *selectedJets[MVAvals2.second[1]] + *selectedJets[MVAvals2.second[2]]).M();
          bestTopMass2ndPass =( *selectedJets[MVAvals2ndPass.second[0]] + *selectedJets[MVAvals2ndPass.second[1]] + *selectedJets[MVAvals2ndPass.second[2]]).M();
 
          bestTopPt =( *selectedJets[MVAvals1.second[0]] + *selectedJets[MVAvals1.second[1]] + *selectedJets[MVAvals1.second[2]]).Pt();
 
-            
-            
      if (debug)   cout <<"Indices of best MVA jets are :  "<< MVAvals1.second[0] <<"  "<< MVAvals1.second[1]  <<" " << MVAvals1.second[2]<<endl;
-
             
-          //  cout <<"MVA Mass 1 = "<< bestTopMass1 << " MVA Mass 2 = "<< bestTopMass2 << endl;
+          //  cout <<"MVA Mass 1 = "<< bestTopMass1 << " MVA Mass 2 = "<< bestTopMass2ndPass << endl;
             
         MSPlot["MVA1TriJetMass"]->Fill(bestTopMass1,  datasets[d], true, Luminosity*scaleFactor );
-        MSPlot["MVA2TriJetMass"]->Fill(bestTopMass2,  datasets[d], true, Luminosity*scaleFactor );
         MSPlot["MVA2ndPassTriJetMass"]->Fill(bestTopMass2ndPass,  datasets[d], true, Luminosity*scaleFactor );
 
        if (debug)  cout <<"MVA Mass 1 = "<< bestTopMass1 << " MVA Mass 2 = "<< bestTopMass2 << endl;
 
-            
-        //////////////////////////////////////////////////////////////////////////////////
-        /////          Calculating how well the MVA jet selection is doing         //////
-        /////                                                                       //////
-        //////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////  Calculating how well the MVA jet selection is doing: Fraction of ttbar events            ////
+        ////    where the jets selected by the TMVA massReco match the true jets from the hadronic top) ////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         
         if(   ( hadronicBJet_.first == MVAvals1.second[0] || hadronicBJet_.first == MVAvals1.second[1] || hadronicBJet_.first == MVAvals1.second[2]   )  && ( hadronicWJet1_.first == MVAvals1.second[0] || hadronicWJet1_.first == MVAvals1.second[1] || hadronicWJet1_.first == MVAvals1.second[2]   )    && ( hadronicWJet2_.first == MVAvals1.second[0] || hadronicWJet2_.first == MVAvals1.second[1] || hadronicWJet2_.first == MVAvals1.second[2]   )      ){
             nMVASuccesses++;
         }
-        
             if (debug)  cout <<"checked mva success..."<< endl;
-
             double matchedMass, unmatchedMass;
             
             // Pick some random jets to investigate wrong combinations...
@@ -1751,7 +1843,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
    
                     }
                 }
-                
             } 
             unmatchedMass =( *selectedJets[badjet1] + *selectedJets[badjet2] + *selectedJets[badjet3]).M();
 
@@ -1761,26 +1852,21 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
            // cout <<"Indices of random  jets are :  "<<badjet1 <<"  "<< badjet2  <<" " << badjet3  <<endl;
             //cout<<" "<<endl;
         
-
         if(   ( hadronicBJet_.first != 9999 )  && ( hadronicWJet1_.first != 9999   )    && ( hadronicWJet2_.first != 9999  )      ){
             nMatchedEvents++;
             if (debug) cout <<"matched..." <<endl;
             
             matchedMass =( *selectedJets[hadronicBJet_.first] + *selectedJets[hadronicWJet1_.first] + *selectedJets[hadronicWJet2_.first]).M();
 
-
             MSPlot["MVA1TriJetMassMatched"]->Fill(bestTopMass1,  datasets[d], true, Luminosity*scaleFactor );
-
             MSPlot["TriJetMass_Matched"]->Fill(matchedMass,  datasets[d], true, Luminosity*scaleFactor );
         }
         }
         
 	       
-//////////////////////////////////////////////////////////////////////////////////
-/////          Calculate derived variables for rejecting ttbar + X          //////
-/////                                                                       //////
-///// 1. HT, 2. HTX, 3.EventMass, 4.EventMassX                              //////
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+//          Plotting jet and event-level variables for rejecting ttbar + X
+////////////////////////////////////////////////////////////////////////
         
         if (debug) cout <<"Caculating event level variables...  "<< endl;
 
@@ -1806,7 +1892,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
             
             if(!TrainMVA){
             if(seljet1 == MVAvals1.second[0]  || seljet1 == MVAvals1.second[1] || seljet1 == MVAvals1.second[2]  ) continue;
-            selectedJets2ndPass.push_back(selectedJets[seljet1]);
             HTX = HTX + jetpt;
             HX = HX + selectedJets[seljet1]->P();
             sumpx_X = sumpx_X + selectedJets[seljet1]->Px();
@@ -1816,12 +1901,10 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
             }
         }
         
-        
         sort(selectedJets2ndPass.begin(),selectedJets2ndPass.end(),HighestCVSBtag()); //order muons wrt dsicriminator
 
         if (debug) cout <<"Creating sumjets "<< endl;
 
-        
         TRootJet sumjet (TLorentzVector (sumpx, sumpy, sumpz,sume )); //Object representing all the jets summed
         TRootJet sumjet_X (TLorentzVector (sumpx_X, sumpy_X, sumpz_X,sume_X )); //Object representing all the jets summed minus the hadronic system
 
@@ -1831,7 +1914,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         sumpy_X = sumpy_X + selectedMuons[0]->Py();
         sumpz_X = sumpz_X + selectedMuons[0]->Pz();
         sume_X  = sume_X  + selectedMuons[0]->E();
-
         
         //2. add MET
         sumpx_X = sumpx_X + mets[0]->Px();
@@ -1860,7 +1942,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 
         TRootJet Event_X (TLorentzVector (sumpx_X, sumpy_X, sumpz_X,sume_X )); //Object representing the event minus the hadronic top
 
-    
         EventMass = Event.M();
         EventMassX = Event_X.M();
         SumJetMass = sumjet.M();
@@ -2077,8 +2158,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         MSPlot["PTBalTopSumJetX"]->Fill(PTBalTopSumJetX, datasets[d], true, Luminosity*scaleFactor);
         MSPlot["PTBalTopMuMet"]->Fill(muMETHadTop.Pt(), datasets[d], true, Luminosity*scaleFactor);
         MSPlot["PTBalTopMuMetB"]->Fill(muMETBHadTop.Pt(), datasets[d], true, Luminosity*scaleFactor);
-
-        
         
         MSPlot["HT_SelectedJets"]->Fill(HT, datasets[d], true, Luminosity*scaleFactor);
 	    MSPlot["MHTSig_SelectedJets"]->Fill(MHTSig, datasets[d], true, Luminosity*scaleFactor);
@@ -2138,8 +2217,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                 MSPlot[HX_Name.c_str() ]->Fill(HX,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[HTH_Name.c_str() ]->Fill(HTH,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[HTXHX_Name.c_str() ]->Fill(HTXHX,datasets[d], true, Luminosity*scaleFactor);
-
-                
                 MSPlot[EventMass_Name.c_str() ]->Fill(EventMass,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[EventMassX_Name.c_str() ]->Fill(EventMassX,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[SumJetMass_Name.c_str() ]->Fill(SumJetMass,datasets[d], true, Luminosity*scaleFactor);
@@ -2147,13 +2224,8 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                 MSPlot[PTBalTopEventX_Name.c_str() ]->Fill(PTBalTopEventX,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[PTBalTopSumJetX_Name.c_str() ]->Fill(PTBalTopSumJetX,datasets[d], true, Luminosity*scaleFactor);
             
-             //   MSPlot[FirstTriJetMass_1BJet_g_Name.c_str()]->Fill(fir_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-              //  MSPlot[FirstDiJetMass_1BJet_g_Name.c_str()]->Fill(fir_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-               // MSPlot[SecondDiJetMass_1BJet_g_Name.c_str()]->Fill(sec_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-                //MSPlot[SecondTriJetMass_1BJet_g_Name.c_str()]->Fill(sec_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor );
-              //  MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str()]->Fill(firstchi2_g ,  datasets[d], true, Luminosity*scaleFactor );
                 MSPlot[MET_Name.c_str()]->Fill(mets[0]->Et() ,  datasets[d], true, Luminosity*scaleFactor );
-               // MSPlot[MuMetMasses_g_Name.c_str()]->Fill(lep_w_mass_chosen_g ,  datasets[d], true, Luminosity*scaleFactor );
+              
                 MSPlot[MVA1TriJetMass_Name.c_str()]->Fill(bestTopMass1,  datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[MVA2TriJetMass_Name.c_str()]->Fill(bestTopMass2,  datasets[d], true, Luminosity*scaleFactor);
                       }
@@ -2169,9 +2241,7 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                 
                 MSPlot[EventMass_Name.c_str() ]->Fill(EventMass,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[EventMassX_Name.c_str() ]->Fill(EventMassX,datasets[d], true, Luminosity*scaleFactor);
-                //MSPlot[FirstTriJetMass_1BJet_g_Name.c_str()]->Fill(fir_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-                //MSPlot[FirstDiJetMass_1BJet_g_Name.c_str()]->Fill(fir_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
-                //MSPlot[SecondDiJetMass_1BJet_g_Name.c_str()]->Fill(sec_w_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor);
+
                 MSPlot[MET_Name.c_str()]->Fill(mets[0]->Et() ,  datasets[d], true, Luminosity*scaleFactor );
                 
                 MSPlot[SumJetMass_Name.c_str() ]->Fill(SumJetMass,datasets[d], true, Luminosity*scaleFactor);
@@ -2179,10 +2249,7 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
                 MSPlot[PTBalTopEventX_Name.c_str() ]->Fill(PTBalTopEventX,datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[PTBalTopSumJetX_Name.c_str() ]->Fill(PTBalTopSumJetX,datasets[d], true, Luminosity*scaleFactor);
                 
-                //MSPlot[SecondTriJetMass_1BJet_g_Name.c_str()]->Fill(sec_top_mass_chosen_g,  datasets[d], true, Luminosity*scaleFactor );
-                //MSPlot[SecondTriJetMass_1BJet_g_chi2_Name.c_str()]->Fill(firstchi2_g ,  datasets[d], true, Luminosity*scaleFactor );
-               // MSPlot[MuMetBMasses_g_Name.c_str()]->Fill(lep_top_mass_chosen_g ,  datasets[d], true, Luminosity*scaleFactor );
-               // MSPlot[MuMetMasses_g_Name.c_str()]->Fill(lep_w_mass_chosen_g ,  datasets[d], true, Luminosity*scaleFactor );
+      
                 MSPlot[MVA1TriJetMass_Name.c_str()]->Fill(bestTopMass1,  datasets[d], true, Luminosity*scaleFactor);
                 MSPlot[MVA2TriJetMass_Name.c_str()]->Fill(bestTopMass2,  datasets[d], true, Luminosity*scaleFactor);
 
@@ -2192,61 +2259,20 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 }
 }
  
-        //histo2D[("ThirdTopMass_vs_HT_"+datasets[d]->Name()).c_str()]->Fill(sec_top_mass_chosen, HT);
-      //  histo2D[("ThirdTopMass_vs_SecondTopMass"+datasets[d]->Name()).c_str()]->Fill(sec_top_mass_chosen,fir_top_mass_chosen_g );
-        //histo2D[("MassChi2_vs_HT"+datasets[d]->Name()).c_str()]->Fill(firstchi2,HT );
         histo2D[("EventMassX_vs_HT"+datasets[d]->Name()).c_str()]->Fill(EventMassX, HT);
         histo2D[("EventMassX_vs_HTX"+datasets[d]->Name()).c_str()]->Fill(EventMassX, HTX);
-        
-    
-        
-        
-
-        if(!datadriven)
-        {
-           
-    //       myBranch_selectedEvents = new FourTopTree();
-            //myBranch_selectedEvents->setEventID( 100 );
-            //myBranch_selectedEvents->setRunID( 100 );
-            //yBranch_selectedEvents->setLumiBlockID( 100 );
-           // myBranch_selectedEvents->setNPV( vertex.size() );
-            //myBranch_selectedEvents->setNPUBXm1( event->nPu(-1) );
-        }
-        
-        
-        if (debug) cout <<"filling tree  "<<endl;        
-       // myInclFourthGenTree->Fill(); 
-        
-        if (debug) cout <<"filling tree  "<<endl;        
-    //    delete myBranch_selectedEvents;
         
 	}
 	else if(Electron){
 	  //	MSPlot["1stLeadingElectronRelIsolation"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
 
 	}
-        
-        
-    //myTree->Fill();
-        
+    
     }//loop on events
     
     if (debug)cout <<"N BBar = = " << nBBBar <<"  N CCBar = = " << nCCBar <<"  N LLBar = =  " << nLLBar << endl;
       
-     cout <<"setting tree"<<endl;
-      string crannfilename = dataSetName + "_Crann.root";
-      
-     // TFile *crann = new TFile (crannfilename.c_str(),"RECREATE");
-      //crann->cd();
-      //myTree->Write();
-
-      //crann->Write();
-      //crann->Close();
-      
-    //  treeFile->Write();
-      //treeFile->Close();
-    //  delete treeFile;
-      
+    
     if(jetTools) delete jetTools;
     
     
@@ -2255,7 +2281,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
       
       double nMVASuccessesd = nMVASuccesses;
       double nMatchedEventsd = nMatchedEvents;
-      
       
       cout <<"Efficiency of MVA jet selection = = "<<  nMVASuccessesd/nMatchedEventsd   <<endl;
       
@@ -2276,9 +2301,7 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
   if(Muon){ 
 	//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
 	selecTableMu.TableCalculator(  false, true, true, true, true);
-
-       
-
+      
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
   	selecTableMu.Write(  "FourTop"+postfix+"Table_Mu.tex",    true,false,true,true,false,false,false);
   }
@@ -2317,7 +2340,6 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
    
 //   jetCombiner->Write(fout, true, pathPNGJetCombi.c_str());
     
-    
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
     {
         string name = it->first;
@@ -2332,19 +2354,19 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         if (doJESShift == 1){
             string filename = "ErrorBands/Error_"+name+".root";
             TFile* tempErrorFile = new TFile(filename.c_str(),"UPDATE");
-            TH1F * tempHisto = temp->getTH1F("TTJets");
-            tempHisto->Write("Minus");
+            //TH1F * tempHisto = temp->getTH1F("TTJets");
+            //tempHisto->Write("Minus");
            // tempErrorFile->Write();
-            tempErrorFile->Close();
+            //tempErrorFile->Close();
         }
         else if  (doJESShift ==2){
             
             string filename = "ErrorBands/Error_"+name+".root";
             TFile* tempErrorFile = new TFile(filename.c_str(),"UPDATE");
-            TH1F * tempHisto = temp->getTH1F("TTJets");
-            tempHisto->Write("Plus");
-            tempErrorFile->Write();
-            tempErrorFile->Close();
+            //TH1F * tempHisto = temp->getTH1F("TTJets");
+            //tempHisto->Write("Plus");
+            //tempErrorFile->Write();
+            //tempErrorFile->Close();
 
             cout <<"JES sys down"<<endl;
             
@@ -2352,26 +2374,19 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
         else if  (doJESShift ==0){
             cout <<"JES sys off "<<endl;
       
-
-	//	temp->addText("CMS preliminary");
-	
+   // temp->addText("CMS preliminary");
 	temp->Draw(false, name, true, true, true, true, true,100.,true); // merge TT/QCD/W/Z/ST/
 	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
-      
       cout <<" looping plots..., name ... "<< name<<endl;
-        
-        temp->Write(fout, name, true, pathPNG, "pdf");
+      temp->Write(fout, name, true, pathPNG, "pdf");
     }
   }
-
-  cout <<"1D  "<< histo1D.size()  <<"2D   "  <<  histo2D.size() <<endl;
 
   TDirectory* th1dir = fout->mkdir("Histos1D");
   th1dir->cd();
   for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
   {
 
-    
 	TH1F *temp = it->second;
 	temp->Write();
 	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
@@ -2388,14 +2403,9 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
 	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
   }
     
-
-
-
-  //delete  
   delete fout;
 
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
-
   cout << "********************************************" << endl;
   cout << "           End of the program !!            " << endl;
   cout << "********************************************" << endl;
@@ -2403,15 +2413,11 @@ MHT = 0.,MHTSig = 0., STJet = 0., EventMass =0., EventMassX =0., SumJetMass = 0.
   return 0;
 }
 
-
-
-
 int Factorial(int N = 1)
 {
     int fact = 1;
     for( int i=1; i<=N; i++ )
         fact = fact * i;  // OR fact *= i;
-    
     return fact;
 }
 
