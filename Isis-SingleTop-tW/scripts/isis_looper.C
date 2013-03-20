@@ -1,5 +1,6 @@
 #include "isis_looper.h"
 #include <TH2.h>
+#include <TH3.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include "TLorentzVector.h"
@@ -130,6 +131,15 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   //////////
   char title[300];
+  
+  sprintf(title,"3d_btagged_tightjets_%s",plotName);
+  TH3F* histo_3d_btagged_tightjets = new TH3F(title, " Btagged  jets",  10,  -0.5, 9.5,   10,  -0.5, 9.5,10,  -0.5, 9.5  ); 
+  histo_3d_btagged_tightjets->Sumw2();
+ 
+  sprintf(title,"2d_btagged_tightjets_noHt_%s",plotName);
+  	TH2F* histo_2d_btagged_tightjets_noHt = new TH2F(title, " Btagged  jets - no Ht cut",  10,  -0.5, 9.5,10,  -0.5, 9.5  );
+  histo_2d_btagged_tightjets_noHt->Sumw2();
+  
   sprintf(title,"cuts_%s",plotName);
   TH1F* histo = new TH1F( title, " ", 10,  0, 10 );
   histo->Sumw2();
@@ -590,9 +600,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	int nJetsBT = 0;
 	int nTightJetsBT = 0;
 	int nJets = 0;	
-	bool bTagged = false;
-	int iJetn[5]={-1, -1,-1,-1,-1};
-	int iJet = -5;
+	bool bTagged = false;;
 	
 	if( ptJet->size() != Btagjet->size()){
 		cout << "ERROR: something went wrong with btagging " << endl; 
@@ -605,13 +613,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	 
 	 // cout << "jet: " << i << "btagjet " << btag << endl; 
 	  
-	  if(btag){
-	     	bTagged = true;
-	  	nJetsBT++;
-	  }
-	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
-	  	iJetn[nJets] = i;
-	   	iJet = i;
+          	
+	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.4 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 		ht_temp += ptJet->at(i);
 		ptsysX_temp += pxJet->at(i);
 		ptsysY_temp += pyJet->at(i); 
@@ -620,9 +623,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 
 	   	 if (btag){
 	        	nTightJetsBT++;
-	      
+	                nJetsBT++;
 	    	} // end  if 
 	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
+	  else if (btag && ptJet->at(i) > 20 && fabs(etaJet->at(i)) < 2.4){
+	  	bTagged = true;
+	  	nJetsBT++;
+	  
+	  }
 	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
 	
 	//cout << " number of btagged jets: " << nJetsBT << " tight: " << nTightJetsBT << endl; 
@@ -636,17 +644,6 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	histo_met->Fill(metPt,  xlWeight);
 	histo_promet->Fill(promet, xlWeight);
 	
-
-	if (nvertex > 5){
-	  histo_met_high->Fill(metPt,  xlWeight);
-	  histo_njets_high->Fill(nJets,  xlWeight);
-	  histo_njetsbt_high->Fill(nJetsBT,  xlWeight);
-	} 
-	else {
-	  histo_met_low->Fill(metPt,  xlWeight);
-	  histo_njets_low->Fill(nJets,  xlWeight);
-	  histo_njetsbt_low->Fill(nJetsBT,  xlWeight);  
-	}
 	
 	if (nJets) histo_pt_leading->Fill(ptJet->at(0), xlWeight);
 	
@@ -657,16 +654,6 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	
 	if (nJets == 1){
 	  histo_etalepton->Fill(lepton0.Eta(), xlWeight);
-	  TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
-	   
-	  double ptSysPx1 = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
-	  double ptSysPy1 = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
-	  double ptSystem1 = sqrt(ptSysPx1*ptSysPx1 + ptSysPy1*ptSysPy1);
-	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	  double ht1_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ;
-	  histo_ptsys_bf->Fill(ptSystem1, xlWeight);
-	  histo_ht_bf->Fill(ht1, xlWeight);
-	  histo_ht_nomet_bf->Fill(ht1_nomet, xlWeight);
 	} // end (nJets == 1)
 	
 	bool invMass = false;
@@ -695,12 +682,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 
            
 	  
-          if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(14, xlWeight);
-	  if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(15, xlWeight);
-	  if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(16, xlWeight); 
-	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(17, xlWeight);
-	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(18, xlWeight);
-	  if(nJets==2 && nJetsBT == 2) histo_R->Fill(19, xlWeight);
+         
 
 
 	if (invMass){
@@ -708,90 +690,62 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  histo_mll_after->Fill(pair.M(),  xlWeight);
 	  histo_met_cut->Fill(metPt,  xlWeight);
 	  
-	  if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(8, xlWeight);
-	  if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(9, xlWeight);
-	  if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(10, xlWeight); 
-	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(11, xlWeight);
-	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(12, xlWeight);
-	  if(nJets==2 && nJetsBT == 2) histo_R->Fill(13, xlWeight); 
 	  
 	  
-	  if (metPt >= metCut || mode ==0){
+	  
+	  if (metPt >= 50 || mode ==0){
 	   
 	    histo->Fill(3, xlWeight);
 	    histo_njets_cut->Fill(nJets, xlWeight);
 	    
-	    double ptSysPx1_R = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
-	    double ptSysPy1_R = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
-	    double ptSystem_R = sqrt(ptSysPx1_R *ptSysPx1_R + ptSysPy1_R *ptSysPy1_R );
-	    double ht1_R = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
+	    double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
+	    double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
+	    double ptSystem = sqrt(ptSysPx *ptSysPx + ptSysPy *ptSysPy);
+	    double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
+	    double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ; 
 	    
+	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1 &&  (ht > 160 || mode !=0)) histo_R->Fill(2, xlWeight); // after all cuts 2j1t veto on loose
+	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2 &&  (ht > 160 || mode !=0)) histo_R->Fill(3, xlWeight);  // after all cuts 2j2t veto on loose
 	    
-	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1&&  (ht1_R > htMin || mode !=0)) histo_R->Fill(2, xlWeight); // after all cuts 2j1t
-	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2&&  (ht1_R > htMin || mode !=0)) histo_R->Fill(3, xlWeight);  // after all cuts 2j2t
-	    if(nJets==2 && nJetsBT == 1 &&  (ht1_R > htMin || mode !=0)) histo_R->Fill(6, xlWeight); // after all cuts 2j1t loose
-	    if(nJets==2 && nJetsBT == 2 &&  (ht1_R > htMin || mode !=0)) histo_R->Fill(7, xlWeight); // after all cuts 2j2t loose
-	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(20, xlWeight); // before 1jet cut and before ht> 160 cut: 2j1t
-	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(21, xlWeight); // before 1jet cut and before ht> 160 cut: 2j2t
-	    if(nJets==2 && nJetsBT == 1) histo_R->Fill(22, xlWeight);// before 1jet cut and before ht> 160 cut: 2j1t loose
-	    if(nJets==2 && nJetsBT == 2) histo_R->Fill(23, xlWeight);  // before 1jet cut and before ht> 160 cut: 2j2t loose 
+	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(5, xlWeight); // before 1jet cut and before ht> 160 cut: 2j1t veto on loose
+	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(6, xlWeight); // before 1jet cut and before ht> 160 cut: 2j2t veto on loose
+	    if(nJets==2 && nJetsBT == 1) histo_R->Fill(8, xlWeight);// before 1jet cut and before ht> 160 cut: 2j1t 
+	    if(nJets==2 && nJetsBT == 2) histo_R->Fill(9, xlWeight);  // before 1jet cut and before ht> 160 cut: 2j2t 
+	    
+	    if(ht > 160 || mode !=0){
+	    	histo_3d_btagged_tightjets->Fill(nJetsBT,nTightJetsBT,nJets, xlWeight);
+	    }
+	    histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, xlWeight);
+	    
 	    
 	    if (nJets == 1){
 	      histo->Fill(4, xlWeight);
 	      histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
-	      TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	      
+	      TLorentzVector jet(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
 		
-	      double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
-	      double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
-	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-	      double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt; 
-	      double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ; 
 	      
-	      histo_mll_1j->Fill(pair.M(),  xlWeight);
-	      histo_met_1j->Fill(metPt,  xlWeight);
-	      histo_ptsys_1j->Fill(ptSystem, xlWeight);
-	      histo_ht_1j->Fill(ht, xlWeight);
-	      histo_ht_nomet_1j->Fill(ht_nomet, xlWeight);
-	      histo_pt_leading_1j->Fill(jet.Pt(), xlWeight);
 	      
-	      if(nJetsBT == 1) histo_R->Fill(5, xlWeight); 
+	      if(nTightJetsBT == 1) {histo_R->Fill(7, xlWeight); }
 	      
 	      
 	      
-	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1){
+	      if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 ){
 		histo->Fill(5, xlWeight);
-		
-	      
-	        histo_mll_1j1t->Fill(pair.M(),  xlWeight);
-	        histo_met_1j1t->Fill(metPt,  xlWeight);
-	        histo_ptsys_1j1t->Fill(ptSystem, xlWeight);
-	        histo_ht_1j1t->Fill(ht, xlWeight);
-		histo_ht_nomet_1j1t->Fill(ht_nomet, xlWeight);
-	        histo_pt_leading_1j1t->Fill(jet.Pt(), xlWeight);
+	
 	      
 		histo_ptsys->Fill(ptSystem, xlWeight);
 		histo_ht->Fill(ht, xlWeight);
 		histo_ht_nomet->Fill(ht_nomet, xlWeight);
-		
-		histo_met_bt->Fill(metPt, xlWeight);
+	
 		
 		histo_nvertex->Fill(nvertex, xlWeight);
 		histo_npu->Fill(npu, xlWeight);
+	
 		
-		if (nvertex > 5) {
-		  histo_ptsys_high->Fill(ptSystem, xlWeight);
-		  histo_ht_high->Fill(ht, xlWeight);
-		  histo_ht_nomet_high->Fill(ht_nomet, xlWeight);
-		} // end if nvertex > 5 
-		else {
-		  histo_ptsys_low->Fill(ptSystem, xlWeight);
-		  histo_ht_low->Fill(ht, xlWeight);
-		   histo_ht_nomet_low->Fill(ht_nomet, xlWeight);
-		} // end else
+		histo_R->Fill(4, xlWeight);   // 1j1t1L no ht cut 
 		
-		histo_R->Fill(4, xlWeight); 
-		
-		if (ht > htMin || mode !=0){
+		if (ht > 160 || mode !=0){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
 		  histo_ht_nomet_cut->Fill(ht_nomet, xlWeight);
@@ -800,82 +754,17 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  histo_nvertex_final->Fill(nvertex, rawWeight);
 		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
 		  
-		  histo_R->Fill(1, xlWeight); //signal passing all the cuts 
+		  
+		  
+		  
+		  histo_R->Fill(1, xlWeight); //signal passing all the cuts
 		  
 		} // end if (ht > htMin || mode !=0)
 	      } // end  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)
 	    } // end if (nJets == 1
 	  } // end if (met cut)
 	  
-/*	  
-	  //Filling of all region from here
-	  if (metPt >= metCut || mode ==0){
-	
-	    if (nJets != 0){
-	      
-	      TLorentzVector jet_for_regions(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
-	      
-	      double ptSysPx_for_regions = lepton0.Px() + lepton1.Px() + jet_for_regions.Px() + metPx;
-	      double ptSysPy_for_regions = lepton0.Py() + lepton1.Py() + jet_for_regions.Py() + metPy;
-	      double ptSystem_for_regions = sqrt(ptSysPx_for_regions*ptSysPx_for_regions + ptSysPy_for_regions*ptSysPy_for_regions);
-	      double ht_for_regions = lepton0.Pt() + lepton1.Pt() + jet_for_regions.Pt() + metPt; 
-	      double ht_nomet_for_regions = lepton0.Pt() + lepton1.Pt() + jet_for_regions.Pt() ;
-	      
-	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1) {
-	        histo_mll_2j1t->Fill(pair.M(),  xlWeight);
-	        histo_met_2j1t->Fill(metPt,  xlWeight);
-	        histo_ptsys_2j1t->Fill(ptSystem, xlWeight);
-	        histo_ht_2j1t->Fill(ht, xlWeight);
-		histo_ht_nomet_2j1t->Fill(ht_nomet, xlWeight);
-	        histo_pt_leading_2j1t->Fill(jet.Pt(), xlWeight);
-	      } else if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  {
-	        histo_mll_2j2t->Fill(pair.M(),  xlWeight);
-	        histo_met_2j2t->Fill(metPt,  xlWeight);
-	        histo_ptsys_2j2t->Fill(ptSystem, xlWeight);
-	        histo_ht_2j2t->Fill(ht, xlWeight);
-		histo_ht_nomet_2j2t->Fill(ht_nomet, xlWeight);
-	        histo_pt_leading_2j2t->Fill(jet.Pt(), xlWeight);
-	      }
-	      
-	      
-	   
-		  
-	      //All possible regions
-	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))histo_R->Fill(1, xlWeight); //signal
-	      if (nJets == 1 && nTightJetsBT == 2)  histo_R->Fill(2, xlWeight);
-	      if (nJets == 1 && nTightJetsBT > 0)  histo_R->Fill(3, xlWeight);
-	      if (nJets == 1 && nTightJetsBT > 1)  histo_R->Fill(4, xlWeight);
-	      if (nJets == 2 && nTightJetsBT == 0)  histo_R->Fill(5, xlWeight);
-	      if (nJets == 2 && nTightJetsBT == 1)  histo_R->Fill(6, xlWeight); //CR1 no ht no ptsys
-	      if (nJets == 2 && nTightJetsBT == 2)  histo_R->Fill(7, xlWeight); //CR2 no ht no ptsys
-	      if (nJets == 2 && nTightJetsBT > 0)  histo_R->Fill(8, xlWeight);
-	      if (nJets == 2 && nTightJetsBT > 1)  histo_R->Fill(9, xlWeight);
-	      if (nJets > 1 && nTightJetsBT == 0)  histo_R->Fill(10, xlWeight);
-	      if (nJets > 1 && nTightJetsBT == 1)  histo_R->Fill(11, xlWeight);
-	      if (nJets > 1 && nTightJetsBT == 2)  histo_R->Fill(12, xlWeight);
-	      if (nJets > 1 && nTightJetsBT !=0 )  histo_R->Fill(13, xlWeight);
-	      if (nJets > 1 && nTightJetsBT > 1 )  histo_R->Fill(14, xlWeight);
-	      if (nJets == 3 && nTightJetsBT ==3 )  histo_R->Fill(15, xlWeight);
-	      if (nJets == 1 && nTightJetsBT ==1 && bTagged && nJetsBT == 1)  histo_R->Fill(16, xlWeight);
-	      if (nJets == 2 && nTightJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(17, xlWeight); //CR 1 regular
-	      if (nJets == 2 && nTightJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(18, xlWeight); //CR 2 regular
-	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(19, xlWeight);
-	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(20, xlWeight);
-	      if (nJets == 2 && nJetsBT == 1 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(21, xlWeight); //CR 1 another way
-	      if (nJets == 2 && nJetsBT == 2 && ptSystem <= ptsysCut && (ht > htMin || mode !=0))  histo_R->Fill(22, xlWeight); //CR 2 another way
-	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1)  histo_R->Fill(23, xlWeight); //CR1 no ht no ptsys tighter
-	      if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  histo_R->Fill(24, xlWeight); //CR2 no ht no ptsys tighter
-	      if (nJets == 2 && nJetsBT == 1)  histo_R->Fill(25, xlWeight); //CR1 no ht no ptsys another flavor
-	      if (nJets == 2 && nJetsBT == 2)  histo_R->Fill(26, xlWeight); //CR2 no ht no ptsys another flavor
-	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && (ht > htMin || mode !=0))histo_R->Fill(27, xlWeight); //signal no ptsys
-	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1 && ptSystem <= ptsysCut)histo_R->Fill(28, xlWeight); //signal no ht
-	      if (nJets == 2 && nTightJetsBT == 1 &&  (ht > htMin || mode !=0))  histo_R->Fill(29, xlWeight); //CR 1 
-	      if (nJets == 2 && nTightJetsBT == 2 &&  (ht > htMin || mode !=0))  histo_R->Fill(30, xlWeight); //CR 2 
-				
-	      
-	    } //jets in the event
-	  } //all CR
-*/	  
+
 	} // mll
       } //mll pre
     } // 2 leptons
@@ -899,14 +788,34 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
      cout << "------------------------------------------" << endl;
     cout << "[Results: regions - ] " << plotName <<  endl;
     cout << "------------------------------------------" << endl;  
-     
+     cout << " tight - loose jets are vetoed" << endl; 
       cout << " 1jet 1tag: " <<  histo_R->GetBinContent(1) << " +/-  " <<  histo_R->GetBinError(1)  << endl;
-       cout << " 2jets 1tag: " <<  histo_R->GetBinContent(2) << " +/-  " <<  histo_R->GetBinError(2)  << endl;
+       cout << "2jets 1tag: " <<  histo_R->GetBinContent(2) << " +/-  " <<  histo_R->GetBinError(2)  << endl;
        cout << "2jets 2tags: " <<  histo_R->GetBinContent(3) << " +/-  " <<  histo_R->GetBinError(3)  << endl;
-    
-    
-    
-    
+       cout << endl; 
+    cout << "tight - veto on loose jets - no ht cut" << endl; 
+     cout << " 1jet 1tag: " <<  histo_R->GetBinContent(4) << " +/-  " <<  histo_R->GetBinError(4)  << endl;
+       cout << "2jets 1tag: " <<  histo_R->GetBinContent(5) << " +/-  " <<  histo_R->GetBinError(5)  << endl;
+       cout << "2jets 2tags: " <<  histo_R->GetBinContent(6) << " +/-  " <<  histo_R->GetBinError(6)  << endl;
+       cout << endl; 
+    cout << "tight - no on loose jets - no ht cut" << endl; 
+     cout << " 1jet 1tag: " <<  histo_R->GetBinContent(7) << " +/-  " <<  histo_R->GetBinError(7)  << endl;
+       cout << "2jets 1tag: " <<  histo_R->GetBinContent(8) << " +/-  " <<  histo_R->GetBinError(8)  << endl;
+       cout << "2jets 2tags: " <<  histo_R->GetBinContent(9) << " +/-  " <<  histo_R->GetBinError(9)  << endl;
+       
+ 	cout << "--------------------------------------------------" << endl;
+	cout << " btag check (no logistics) " << endl; 
+	cout << "--------------------------------------------------" << endl;
+	
+	cout << "VETOING LOOSE JETS: "<< endl;
+	cout << "1jet 1tag: " << histo_3d_btagged_tightjets->GetBinContent(2,2,2) << "+/-" << histo_3d_btagged_tightjets->GetBinError(2,2,2) << endl; 
+	cout << "2jet 1tag: " << histo_3d_btagged_tightjets->GetBinContent(2,2,3) << "+/-" << histo_3d_btagged_tightjets->GetBinError(2,2,3) << endl;
+	cout << "2jet 2tag: " << histo_3d_btagged_tightjets->GetBinContent(3,3,3) << "+/-" << histo_3d_btagged_tightjets->GetBinError(3,3,3) << endl;  
+	cout << endl;  
+        cout << " NO VETO ON LOOSE JETS - NO HT CUT " << endl; 
+	cout << "1jet 1tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(2,2) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(2,2) << endl; 
+	cout << "2jet 1tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(2,3) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(2,3) << endl;
+	cout << "2jet 2tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(3,3) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(3,3) << endl;
   /*  
     cout << "------------------------------------------" << endl; 
     cout << "[eta values:]" << plotName << endl;

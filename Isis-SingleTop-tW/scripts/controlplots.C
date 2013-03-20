@@ -93,11 +93,11 @@ void controlplots(int mode = 0){
     histo[iProcess]->SetLineWidth(1);
     histo[iProcess]->SetFillColor(color[iProcess]);
     histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(1)); //28
-    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(6));  //30
-    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(7));   //31
+    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(2));  //30
+    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(3));   //31
     histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(1));
-    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(6));
-    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(7));
+    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(2));
+    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(3));
     
     if (iProcess == 0){
       h[iProcess]->SetLineColor(kBlack);

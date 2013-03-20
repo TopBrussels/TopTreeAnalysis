@@ -50,23 +50,121 @@ void controlplots_main(int mode = 0){
   gStyle->SetTitleXOffset(1.2);//1.5
   gStyle->SetTitleYOffset(1.2);//1.7
   
-  char myRootFile[300];
+
   double lumi = 0;
   
     if      (mode == 0)	 lumi = 11966.617;  	
     else if (mode == 1) lumi = 12067.294;  	
     else if (mode == 2) lumi = 12093.792;
 
-  sprintf(myRootFile,"outputs/an_%dpb_%d.root", lumi, mode);
+/*
+sprintf(name, "data");       
+sprintf(name, "data1");      
+sprintf(name, "data2");      
+sprintf(name, "tt");         
+sprintf(name, "tw_dr");      
+sprintf(name, "atw_dr");     
+sprintf(name, "t");          
+sprintf(name, "at");         
+sprintf(name, "s");          
+sprintf(name, "as");         
+sprintf(name, "ww");         
+sprintf(name, "wz");         
+sprintf(name, "zz");         
+sprintf(name, "zjets");      
+sprintf(name, "zjets_lowmll")
+sprintf(name, "wjets");     
+*/ 
+  TString name;
+  char myRootFile0[300];
+  char myRootFile1[300];
+  char myRootFile2[300];
+  char myRootFile3[300];
+  char myRootFile4[300];
+  char myRootFile5[300];
+  char myRootFile6[300];
+  char myRootFile7[300];
+  char myRootFile8[300];
+  char myRootFile9[300];
+  char myRootFile10[300];
+  char myRootFile11[300];
+  char myRootFile12[300];
+  char myRootFile13[300];
   
   
-  TFile *_file0 = TFile::Open(myRootFile);
-  cout << myRootFile << endl;
+  
+  const int nProcess = 13;
+  TString processName[nProcess] =  { "tw_dr", "atw_dr", "s", "as","t", "at",  "tt","ww","wz","zz", "zjets","zjets_lowmll", "wjets",  "data"};
+  
+  
+  
+  name = processName[0];
+  sprintf(myRootFile0,"../outputs/out_%d_tw_dr.root", mode);
+  name = processName[1];
+  sprintf(myRootFile1,"../outputs/out_%d_atw_dr.root", mode);
+  name = processName[2];
+  sprintf(myRootFile2,"../outputs/out_%d_s.root", mode);
+  name = processName[3];
+  sprintf(myRootFile3,"../outputs/out_%d_as.root", mode);
+  name = processName[3];
+  sprintf(myRootFile3,"../outputs/out_%d_t.root", mode);
+  name = processName[4];
+  sprintf(myRootFile4,"../outputs/out_%d_at.root", mode);
+  name = processName[5];
+  sprintf(myRootFile5,"../outputs/out_%d_tt.root", mode);
+  name = processName[6];
+  sprintf(myRootFile6,"../outputs/out_%d_ww.root", mode);
+  name = processName[7];
+  sprintf(myRootFile7,"../outputs/out_%d_wz.root", mode);
+  name = processName[8];
+  sprintf(myRootFile8,"../outputs/out_%d_zz.root", mode);
+  name = processName[9];
+  sprintf(myRootFile9,"../outputs/out_%d_zjets.root", mode);
+  name = processName[10];
+  sprintf(myRootFile10,"../outputs/out_%d_zjets_lowmll.root", mode);
+  name = processName[11];
+  sprintf(myRootFile11,"../outputs/out_%d_wjets.root", mode);
+  name = processName[12];
+  sprintf(myRootFile12,"../outputs/out_%d_data.root", mode);
+ 
+  
+  
+  TFile *_file0 = TFile::Open(myRootFile0);
+  cout << myRootFile0 << endl;
+    TFile *_file1 = TFile::Open(myRootFile1);
+  cout << myRootFile1 << endl;
+    TFile *_file2 = TFile::Open(myRootFile2);
+  cout << myRootFile2 << endl;
+    TFile *_file3 = TFile::Open(myRootFile3);
+  cout << myRootFile3 << endl;
+    TFile *_file4 = TFile::Open(myRootFile4);
+  cout << myRootFile4 << endl;
+    TFile *_file5 = TFile::Open(myRootFile5);
+  cout << myRootFile5 << endl;
+    TFile *_file6 = TFile::Open(myRootFile6);
+  cout << myRootFile6 << endl;
+    TFile *_file7 = TFile::Open(myRootFile7);
+  cout << myRootFile7 << endl;
+    TFile *_file8 = TFile::Open(myRootFile8);
+  cout << myRootFile8 << endl;
+    TFile *_file9 = TFile::Open(myRootFile9);
+  cout << myRootFile9 << endl;
+    TFile *_file10 = TFile::Open(myRootFile10);
+  cout << myRootFile10 << endl;
+    TFile *_file11 = TFile::Open(myRootFile11);
+  cout << myRootFile11 << endl;
+    TFile *_file12 = TFile::Open(myRootFile12);
+  cout << myRootFile12 << endl;
+ 
+  
 
-  const int nProcess = 14;
-  TString processName[nProcess] =  { "twdr", "atwdr", "s", "as","t", "at",  "tt","ww","wz","zz", "zjets","zjets_lowmll", "wjets",  "data"};
+
+  
+  
+  
+  
   TString processTitle[nProcess] = { "tW", "tbar W" "s-channel t", "s-channel at", "t-channel t", "t-channel at","t#bar{t}", "WW","WZ","ZZ", "Z/#gamma*+jets", "Z/#gamma*+jets low mll", "W+jets", "data"};
-  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,   kAzure-2, kGreen-3, 40, kBlack, kBlue, kMagenta,kRed,kGreen,kYellow,kAzure};
+  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,   kAzure-2, kGreen-3, 40, kBlack, kBlue, kMagenta,kRed,kGreen,kYellow};
   TString modeString[3] = {"0", "1", "2"};
 
   TString cutLabel = "R";
@@ -83,12 +181,82 @@ void controlplots_main(int mode = 0){
   leg ->SetTextSize(0.03);
   hStack = new THStack();
   hStack2 = new THStack();
-  for (int iProcess = 0; iProcess <nProcess; iProcess++){
-    // Get the histogram of for each process and store it as h[iProcess], so h[0] is twdr, h[1] is atwdr, etc 
-    h[iProcess] = (TH3F*) _file0->Get("3d_btagged_tightjets_" + processName[iProcess]);
+    
+    //get histo
+    h[0] = (TH3F*) _file0->Get("3d_btagged_tightjets_" + processName[0]);
     // Set the fill color of the histogram and line 
-    h[iProcess]->SetFillColor(color[iProcess]);
-    h[iProcess]->SetLineColor(kBlack);
+    h[0]->SetFillColor(color[0]);
+    h[0]->SetLineColor(kBlack);
+        //get histo
+    h[1] = (TH3F*) _file1->Get("3d_btagged_tightjets_" + processName[1]);
+    // Set the fill color of the histogram and line 
+    h[1]->SetFillColor(color[1]);
+    h[1]->SetLineColor(kBlack);
+   
+    //get histo
+    h[2] = (TH3F*) _file2->Get("3d_btagged_tightjets_" + processName[2]);
+    // Set the fill color of the histogram and line 
+    h[2]->SetFillColor(color[2]);
+    h[2]->SetLineColor(kBlack);
+        //get histo
+    h[3] = (TH3F*) _file3->Get("3d_btagged_tightjets_" + processName[3]);
+    // Set the fill color of the histogram and line 
+    h[3]->SetFillColor(color[3]);
+    h[3]->SetLineColor(kBlack);
+        //get histo
+    h[4] = (TH3F*) _file4->Get("3d_btagged_tightjets_" + processName[4]);
+    // Set the fill color of the histogram and line 
+    h[4]->SetFillColor(color[4]);
+    h[4]->SetLineColor(kBlack);
+        //get histo
+    h[5] = (TH3F*) _file5->Get("3d_btagged_tightjets_" + processName[5]);
+    // Set the fill color of the histogram and line 
+    h[5]->SetFillColor(color[5]);
+    h[5]->SetLineColor(kBlack);
+    //get histo
+    h[6] = (TH3F*) _file6->Get("3d_btagged_tightjets_" + processName[6]);
+    // Set the fill color of the histogram and line 
+    h[6]->SetFillColor(color[6]);
+    h[6]->SetLineColor(kBlack);
+    //get histo
+    h[7] = (TH3F*) _file7->Get("3d_btagged_tightjets_" + processName[7]);
+    // Set the fill color of the histogram and line 
+    h[7]->SetFillColor(color[7]);
+    h[7]->SetLineColor(kBlack);
+    //get histo
+    h[8] = (TH3F*) _file8->Get("3d_btagged_tightjets_" + processName[8]);
+    // Set the fill color of the histogram and line 
+    h[8]->SetFillColor(color[8]);
+    h[8]->SetLineColor(kBlack);
+    //get histo
+    h[9] = (TH3F*) _file9->Get("3d_btagged_tightjets_" + processName[9]);
+    // Set the fill color of the histogram and line 
+    h[9]->SetFillColor(color[9]);
+    h[9]->SetLineColor(kBlack);
+    //get histo
+    h[10] = (TH3F*) _file10->Get("3d_btagged_tightjets_" + processName[10]);
+    // Set the fill color of the histogram and line 
+    h[10]->SetFillColor(color[10]);
+    h[10]->SetLineColor(kBlack);
+    //get histo
+    h[11] = (TH3F*) _file11->Get("3d_btagged_tightjets_" + processName[11]);
+    // Set the fill color of the histogram and line 
+    h[11]->SetFillColor(color[11]);
+    h[11]->SetLineColor(kBlack);
+    //get histo
+    h[12] = (TH3F*) _file12->Get("3d_btagged_tightjets_" + processName[12]);
+    // Set the fill color of the histogram and line 
+    h[12]->SetFillColor(color[12]);
+    h[12]->SetLineColor(kBlack);
+    //get histo
+    h[13] = (TH3F*) _file13->Get("3d_btagged_tightjets_" + processName[13]);
+    // Set the fill color of the histogram and line 
+    h[13]->SetFillColor(color[13]);
+    h[13]->SetLineColor(kBlack);
+    
+    
+  for (int iProcess = 0; iProcess <nProcess; iProcess++){
+
     
     //Define histo as histo+processname, eg histotwdr, histoatwdr
     histo[iProcess] = new TH1F("histo"+processName[iProcess], "", 3, 0, 3);

@@ -28,7 +28,7 @@ void tables_region(int mode = 0){
   ofstream salida(myTexFile); 
   
   char myRootFile[300];
-  sprintf(myRootFile,"outputs/an_%dpb_%d.root", lumi, mode);
+  sprintf(myRootFile,"../outputs/out_%dpb_%d.root", lumi, mode);
   TFile *_file0 = TFile::Open(myRootFile);
   
   const int nProcess = 19;
