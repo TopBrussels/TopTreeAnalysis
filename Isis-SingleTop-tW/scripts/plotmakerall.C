@@ -147,7 +147,7 @@ void plotmakerall(){
     hStack[iVariable]->SetMaximum(max * 1.2);
     hStack[iVariable]->SetMinimum(1);
     hStack[iVariable]->GetXaxis()->SetTitle(cutTitle[iVariable]);
-    hStack[iVariable]->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
+    hStack[iVariable]->GetYaxis()->SetTitle("events / 12 fb^{-1}");
     //hStack[iVariable]->GetYaxis()->SetTitle("events / 2.1 fb^{-1}");
 
     hStack[iVariable]->GetYaxis()->CenterTitle(); 

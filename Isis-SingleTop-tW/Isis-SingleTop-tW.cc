@@ -721,6 +721,9 @@ int main(int argc, char* argv[]) {
 	
 	sprintf(titlePlot,"2d_btagged_tightjets_%d_%s",mode,name);
   	TH2F* histo_2d_btagged_tightjets = new TH2F(titlePlot, " Btagged  jets",  10,  -0.5, 9.5,10,  -0.5, 9.5  );
+	
+	sprintf(titlePlot,"2d_btagged_tightjets_noHt_%d_%s",mode,name);
+  	TH2F* histo_2d_btagged_tightjets_noHt = new TH2F(titlePlot, " Btagged  jets - no Ht cut",  10,  -0.5, 9.5,10,  -0.5, 9.5  );
 /*	
 	sprintf(titlePlot,"ptBTagB_%d_%s",mode,name);
   	TH1F* histo_ptBTagB = new TH1F(titlePlot, " pt of btagged jets for bjets", 100,  0, 200);
@@ -779,7 +782,7 @@ int main(int argc, char* argv[]) {
  	histo_jets->Sumw2();
 	histo_3d_btagged_tightjets->Sumw2();
   	histo_2d_btagged_tightjets->Sumw2();
-  	    
+  	histo_2d_btagged_tightjets_noHt->Sumw2();    
         
         ////////////////////////////////
         ///    CREATION OUTPUT TREE   //    
@@ -1845,7 +1848,7 @@ int main(int argc, char* argv[]) {
 			    								double Ht = lepton0.Pt() + lepton1.Pt() + Ht_temp + met_pt; 
 											
 											
-											
+											histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, weight);
 											
 											// --> Ht cut for the emu mode in order to remove additional drell yann background
 			    								if (Ht > 160 || mode != 0){
@@ -1994,6 +1997,11 @@ int main(int argc, char* argv[]) {
 	cout << "1jet 1tag: " << histo_2d_btagged_tightjets->GetBinContent(2,2) << "+/-" << histo_2d_btagged_tightjets->GetBinError(2,2) << endl; 
 	cout << "2jet 1tag: " << histo_2d_btagged_tightjets->GetBinContent(2,3) << "+/-" << histo_2d_btagged_tightjets->GetBinError(2,3) << endl;
 	cout << "2jet 2tag: " << histo_2d_btagged_tightjets->GetBinContent(3,3) << "+/-" << histo_2d_btagged_tightjets->GetBinError(3,3) << endl;
+	cout << " " << endl; 
+	cout << " NO VETO ON LOOSE JETS - NO HT CUT " << endl; 
+	cout << "1jet 1tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(2,2) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(2,2) << endl; 
+	cout << "2jet 1tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(2,3) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(2,3) << endl;
+	cout << "2jet 2tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(3,3) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(3,3) << endl;
 	
 	cout << "--------------------------------------------------" << endl;
 	cout << "BTAG CHECKING " << endl; 
