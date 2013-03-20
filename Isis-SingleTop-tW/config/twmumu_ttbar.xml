@@ -3,7 +3,7 @@
 
 
   
-  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/TTJets/*.root"/> 
+  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/TTJets1/*.root"/> 
   
  
 </datasets>

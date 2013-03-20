@@ -24,7 +24,7 @@ void controlplots(int mode = 0){
   labelcms->SetTextAlign(12);
   labelcms->SetTextSize(0.045);
   labelcms->SetFillColor(kWhite);
-  labelcms->AddText("CMS Preliminary, #sqrt{s} = 7 TeV");
+  labelcms->AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
   labelcms->SetBorderSize(0);
   
   labelcms2  = new TPaveText(0.12,0.85,0.5,0.88,"NDCBR");
@@ -32,9 +32,9 @@ void controlplots(int mode = 0){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  if (mode == 0) labelcms2->AddText("4.9 fb^{-1}, e#mu channel  ");
-  if (mode == 1) labelcms2->AddText("4.9 fb^{-1}, #mu#mu channel  ");
-  if (mode == 2) labelcms2->AddText("4.9 fb^{-1}, ee channel  ");
+  if (mode == 0) labelcms2->AddText("12 fb^{-1}, e#mu channel  ");
+  if (mode == 1) labelcms2->AddText("12 fb^{-1}, #mu#mu channel  ");
+  if (mode == 2) labelcms2->AddText("12 fb^{-1}, ee channel  ");
   labelcms2->SetBorderSize(0);
   
   gStyle->SetOptStat(0);
@@ -52,11 +52,11 @@ void controlplots(int mode = 0){
   char myRootFile[300];
   double lumi = 0;
   
-  if (mode == 0 )        lumi = 4904.338;
-  else if ( mode == 1)   lumi = 4919.924;
-  else if ( mode == 2)   lumi = 4895.249;
+    if      (mode == 0)	 lumi = 11966.617;  	
+    else if (mode == 1) lumi = 12067.294;  	
+    else if (mode == 2) lumi = 12093.792;
 
-  sprintf(myRootFile,"results/sf_an_%dpb_%d.root", lumi, mode);
+  sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   
   
   TFile *_file0 = TFile::Open(myRootFile);
@@ -92,12 +92,12 @@ void controlplots(int mode = 0){
     histo[iProcess]->SetLineColor(kBlack);
     histo[iProcess]->SetLineWidth(1);
     histo[iProcess]->SetFillColor(color[iProcess]);
-    histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(28));
-    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(30));
-    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(31));
-    histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(28));
-    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(30));
-    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(31));
+    histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(1)); //28
+    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(6));  //30
+    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(7));   //31
+    histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(1));
+    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(6));
+    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(7));
     
     if (iProcess == 0){
       h[iProcess]->SetLineColor(kBlack);
@@ -134,9 +134,9 @@ void controlplots(int mode = 0){
   double max = TMath::Max(hStack->GetMaximum(), histo[7]->GetMaximum());
   TCanvas *c1 = new TCanvas();
   hStack->Draw("histo");
-  hStack->SetMaximum(max * 1.25);
+  hStack->SetMaximum(max * 1.5);
   hStack->SetMinimum(1);
-  hStack->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
+  hStack->GetYaxis()->SetTitle("events / 12 fb^{-1}");
   hStack->GetYaxis()->SetTitleOffset(1.4);
   hStack->GetYaxis()->CenterTitle(); 
   
@@ -151,11 +151,11 @@ void controlplots(int mode = 0){
   labelcms->Draw();
   labelcms2->Draw();
   
-  c1->SaveAs("plots/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".png");
-  c1->SaveAs("plots/pdf/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + ".pdf");
+  c1->SaveAs("plots/control_tt_" + modeString[mode] + "_" + cutLabel + ".png");
+  c1->SaveAs("plots/pdf/control_tt_" + modeString[mode] + "_" + cutLabel + ".pdf");
   c1->SetLogy();
   hStack->SetMaximum(max * 10);
-  c1->SaveAs("plots/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.png");
-  c1->SaveAs("plots/pdf/sf_control_summer_tt_" + modeString[mode] + "_" + cutLabel + "_log.pdf");
+  c1->SaveAs("plots/control_tt_" + modeString[mode] + "_" + cutLabel + "_log.png");
+  c1->SaveAs("plots/pdf/control_tt_" + modeString[mode] + "_" + cutLabel + "_log.pdf");
   
 }

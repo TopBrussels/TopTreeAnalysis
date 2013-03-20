@@ -25,7 +25,7 @@ void plotmakerall(){
   labelcms->SetTextAlign(12);
   labelcms->SetTextSize(0.045);
   labelcms->SetFillColor(kWhite);
-  labelcms->AddText("CMS Preliminary, #sqrt{s} = 7 TeV");
+  labelcms->AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
   labelcms->SetBorderSize(0);
   
   
@@ -34,7 +34,7 @@ void plotmakerall(){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  labelcms2->AddText("4.9 fb^{-1}, ee/e#mu/#mu#mu");
+  labelcms2->AddText("12 fb^{-1}, ee/e#mu/#mu#mu");
     //labelcms2->AddText("2.1 fb^{-1}, ee/e#mu/#mu#mu");
   labelcms2->SetBorderSize(0);
   
@@ -55,15 +55,15 @@ void plotmakerall(){
   
   
   const int nProcess = 8;
-  const int nPlots = 9;
+  const int nPlots = 8;
   
-  TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
+   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
-  Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
+  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
   
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading",  "min_met"};
-  int rebinHisto[nPlots] =       { 1, 4, 2, 1, 1, 4, 12, 4, 4};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "Tracker E_{T}^{miss}"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading"};
+  int rebinHisto[nPlots] =       { 1, 4, 2, 1, 1, 4, 12, 4};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet"};
  
   TH1F*  h [nPlots][nProcess];
   TH1F*   histo[3][nPlots][nProcess];
@@ -77,7 +77,7 @@ void plotmakerall(){
 
     hStack[iVariable] = new THStack(cutLabel[iVariable],cutLabel[iVariable]);
     for (int iProcess = 0; iProcess < nProcess; iProcess++){
-      sprintf(myRootFile,"results/sf_an_4904pb_0.root");
+      sprintf(myRootFile,"results/an_11966pb_0.root");
       
       TFile *_file0 = TFile::Open(myRootFile);
       histo[0][iVariable][iProcess] = (TH1F*) _file0->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
@@ -88,7 +88,7 @@ void plotmakerall(){
       if (iProcess == 0) histo[0][iVariable][iProcess]->SetLineColor(kBlack);
      // if (iProcess == 4) histo[0][iVariable][iProcess]->Scale(1.77);
       
-      sprintf(myRootFile,"results/sf_an_4919pb_1.root");
+      sprintf(myRootFile,"results/an_12067pb_1.root");
       
       TFile *_file1 = TFile::Open(myRootFile);
       histo[1][iVariable][iProcess] = (TH1F*) _file1->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
@@ -100,7 +100,7 @@ void plotmakerall(){
      // if (iProcess == 4) histo[1][iVariable][iProcess]->Scale(1.59);
       
       
-      sprintf(myRootFile,"results/sf_an_4895pb_2.root");
+      sprintf(myRootFile,"results/an_12093pb_2.root");
   
       TFile *_file2 = TFile::Open(myRootFile);
       histo[2][iVariable][iProcess] = (TH1F*) _file2->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
@@ -168,12 +168,12 @@ void plotmakerall(){
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/sf_plot_3_" + cutLabel[iVariable] + ".png");
-    c1->SaveAs("plots/pdf/sf_plot_3_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("plots/pdf/plot_3_" + cutLabel[iVariable] + ".pdf");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/sf_plot_3_" + cutLabel[iVariable] + "_log.png");
-    c1->SaveAs("plots/pdf/sf_plot_3_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("plots/pdf/plot_3_" + cutLabel[iVariable] + "_log.pdf");
 
      delete _file0;
      delete _file1;

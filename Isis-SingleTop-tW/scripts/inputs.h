@@ -1,7 +1,7 @@
 
-double luminosity = 867;
+double luminosity = 1; //default value
 
-double metCut = 30;
+double metCut = 50;
 double prometCut = 20;
 double jetCut = 30;
 double secondJetCut = 20;

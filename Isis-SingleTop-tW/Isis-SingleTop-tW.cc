@@ -7,6 +7,7 @@
 // This is a program that runs over the toptrees
 
 #include "TStyle.h"
+#include "TH3F.h"
 #include <cmath>
 #include <fstream>
 #include <sstream>
@@ -334,18 +335,33 @@ int main(int argc, char* argv[]) {
      if      (mode == 0){  // emu	 
      	lumi = 11966.617;  	
 	xmlfile ="config/twemu.xml";    
-	leptonEff_Trig_ID = 0.953;
+	leptonEff_Trig_ID = 0.915;
+	if(eleSFsysUp){
+		leptonEff_Trig_ID += 0.017;
+	}else if(eleSFsysDown){
+		leptonEff_Trig_ID = leptonEff_Trig_ID - 0.017;
 	}
+      }
      else if (mode == 1){ 
      	 lumi = 12067.294;  	
 	 xmlfile = "config/twmumu.xml";
 	 leptonEff_Trig_ID = 0.963;
+	 if(eleSFsysUp){
+		leptonEff_Trig_ID += 0.022;
+	}else if(eleSFsysDown){
+		leptonEff_Trig_ID = leptonEff_Trig_ID - 0.022;
 	}
+     }
      else if (mode == 2){	 
      	lumi = 12093.792;  	
      	xmlfile = "config/twee.xml";
-	leptonEff_Trig_ID = 0.975;
+	leptonEff_Trig_ID = 0.903;
+	if(eleSFsysUp){
+		leptonEff_Trig_ID += 0.021;
+	}else if(eleSFsysDown){
+		leptonEff_Trig_ID = leptonEff_Trig_ID - 0.021;
 	}
+     }
  
     
 
@@ -464,6 +480,8 @@ int main(int argc, char* argv[]) {
         else if (!isData && JERPlus){        sprintf(rootFileName,"outputs/JERsysUp_%d_%s.root", mode, name);}
         else if (!isData && SFplus){         sprintf(rootFileName,"outputs/SFsysUp_%d_%s.root", mode, name);}
         else if (!isData && SFminus){        sprintf(rootFileName,"outputs/SFsysDown_%d_%s.root", mode, name);}
+        else if (!isData && eleSFsysUp){     sprintf(rootFileName,"outputs/eleSFsysUp_%d_%s.root", mode, name);}
+        else if (!isData && eleSFsysDown){   sprintf(rootFileName,"outputs/eleSFsysDown_%d_%s.root", mode, name);}
         else if (!isData && unclusteredUp){  sprintf(rootFileName,"outputs/METsysUp_%d_%s.root", mode, name);}
         else if (!isData && unclusteredDown){sprintf(rootFileName,"outputs/METsysDown_%d_%s.root", mode, name);}
         else if (!isData && PUsysUp){        sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);}
@@ -493,6 +511,11 @@ int main(int argc, char* argv[]) {
         sprintf(myTexFile,"information/bt_run_lumi_event_%d_%s.txt", mode, name);
         ofstream OutPut5(myTexFile);
         
+	
+	
+	char myFile[300];
+        sprintf(myFile,"information/pdf_signal_%d_%s.txt", mode, name);
+        ofstream salida(myFile); 
         
         // Define the objects
         // ==> vector <kind> V
@@ -580,8 +603,8 @@ int main(int argc, char* argv[]) {
          
         LumiReWeighting LumiWeights; 
 	
-       bool PUsysUp = false; 
-       bool PUsysDown = false; 
+       //bool PUsysUp = false; 
+       //bool PUsysDown = false; 
     
       if(PUsysUp){
            LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root","pileupHistos/pileup_tW_2012Data53X_UpToRun203002/sys_up.root", "pileup", "pileup"); 
@@ -656,7 +679,7 @@ int main(int argc, char* argv[]) {
         TH1F* cutflow = new TH1F("cutflow", "The cutflow", 31, -0.5,30.5);     // A 1 dimensional histo with reference cutflow, title "The cutflow", 31 bins, starting from -0.5 till 30.5
                                                                                 // This shows the influence of every selection the number of events, reweighted
         TH1F* cutflow_raw = new TH1F("cutflow_raw", "The raw cutflow", 31,-0.5, 30.5); // same but not reweighted 
-        TH1F* Regions = new TH1F ("Regions" ," The different regions", 40,0,40); // for example  according to number of jets and b-tagged jets
+        TH1F* Regions = new TH1F ("Regions" ," The different regions", 40,0.5,40.5); // for example  according to number of jets and b-tagged jets
         
         TH1F* pileup_weights = new TH1F("pileup_weights", "The calculated PU weights", 1000,0,10); 
         TH1F* pileup_weights3D = new TH1F("pileup_weights3D", "The calculated 3DPU weights", 1000,0,10); 
@@ -692,6 +715,12 @@ int main(int argc, char* argv[]) {
 	
 	sprintf(titlePlot,"jets_%d_%s",mode,name);
   	TH1F* histo_jets = new TH1F(titlePlot, " tight jets",  10,  0, 10 ); 
+	
+	sprintf(titlePlot,"3d_btagged_tightjets_%d_%s",mode,name);
+  	TH3F* histo_3d_btagged_tightjets = new TH3F(titlePlot, " Btagged  jets",  10,  -0.5, 9.5,   10,  -0.5, 9.5,10,  -0.5, 9.5  ); 
+	
+	sprintf(titlePlot,"2d_btagged_tightjets_%d_%s",mode,name);
+  	TH2F* histo_2d_btagged_tightjets = new TH2F(titlePlot, " Btagged  jets",  10,  -0.5, 9.5,10,  -0.5, 9.5  );
 /*	
 	sprintf(titlePlot,"ptBTagB_%d_%s",mode,name);
   	TH1F* histo_ptBTagB = new TH1F(titlePlot, " pt of btagged jets for bjets", 100,  0, 200);
@@ -748,7 +777,8 @@ int main(int argc, char* argv[]) {
 */	histo_btagged_jets->Sumw2(); 
  	histo_btagged_tightjets->Sumw2();
  	histo_jets->Sumw2();
-  	
+	histo_3d_btagged_tightjets->Sumw2();
+  	histo_2d_btagged_tightjets->Sumw2();
   	    
         
         ////////////////////////////////
@@ -873,6 +903,9 @@ int main(int argc, char* argv[]) {
         ///    LOOP OVER THE EVENTS  ///    
         ////////////////////////////////
         for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++){
+		// HT DEFINING 
+		double Ht_temp = 0;
+	
 	
 	        // For setting tbranch 
 	        std::vector<double> btag_booleans;
@@ -1003,6 +1036,7 @@ int main(int argc, char* argv[]) {
                 } // closing the HLT run loop
                 else{               
 	      		trigged = true; 
+			if(!isData){weight *= leptonEff_Trig_ID;} 
 		}// if HLT makes no difference --> it doesn't (is checked, the event count stays the same)
 		
                 ////////////////////////////////
@@ -1636,10 +1670,7 @@ int main(int argc, char* argv[]) {
 										
  
 									
-										// counting jets and btagged ones
-										if(bTagged){
-											nJetsBT++;
-			      							}
+										
 	
 										if(!isData && jet_flavorSF == 5){
 											if(bTagged){ 
@@ -1655,12 +1686,19 @@ int main(int argc, char* argv[]) {
 										if (tempJet->Pt() > 30  && TMath::Min(fabs(lepton0.DeltaR(tJet)),fabs(lepton1.DeltaR(tJet))) > 0.3) { // if proper jet 
 				 							nJets++;
 											iJet = iJ;
+											
+											Ht_temp += tempJet->Pt();
 										
 											if(bTagged){
 												nTightJetsBT++;	
+												nJetsBT++;
 											}
 											
 										} // end proper jet statement
+										else if(bTagged)
+										{
+											nJetsBT++;
+										}
 									} // pt > 20   eta < 2.4  such that btagging can be used
 									else{
 										bTagged = false; 
@@ -1690,10 +1728,7 @@ int main(int argc, char* argv[]) {
 								}
 								        //cout << "number of btagged (all): " << nJetsBT << " tight ones: " << nTightJetsBT << endl; 
 								
-								histo_jets->Fill(nJets,weight); 
-								histo_btagged_jets->Fill(nJetsBT,weight); 
-								histo_btagged_tightjets->Fill(nTightJetsBT,weight); 
-
+								
 							     //   cout << "Tight btagged jets: " << nTightJetsBT << " Btagged ones: " << nJetsBT << endl; 
 							
 							
@@ -1799,7 +1834,7 @@ int main(int argc, char* argv[]) {
 									cutflow_raw->Fill(6);
 									
 									// --> MET cut in ee and mumu such that events without genuine MET are reduced
-									if (met_pt > 30 || mode == 0){
+									if (met_pt > 50 || mode == 0){
 			 							cutflow->Fill(7, weight);
 			  							cutflow_raw->Fill(7);
 			  							OutPut3 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
@@ -1807,17 +1842,41 @@ int main(int argc, char* argv[]) {
 										// Filling all the regions, so just regions with jets
 			  							if (nJets !=0){
 			    								TRootJet* jet = (TRootJet*) selectedJets[iJet];
-			    								double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
+			    								double Ht = lepton0.Pt() + lepton1.Pt() + Ht_temp + met_pt; 
+											
+											
+											
 											
 											// --> Ht cut for the emu mode in order to remove additional drell yann background
 			    								if (Ht > 160 || mode != 0){
-			      									if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged)Regions->Fill(1, weight);
-			      									if (nJets == 1 && nTightJetsBT == 2)  Regions->Fill(2, weight);
+											
+										/*		if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
+				
+													xlWeight = weight;
+				int id1 = event->idParton1();
+				int id2 = event->idParton2();
+				float x1 = event->xParton1();
+				float x2 = event->xParton2();
+				float q = event->factorizationScale();
+				float ptsys = 1;
+				float ht = Ht;
+				
+				salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+				
+				}*/
+											histo_jets->Fill(nJets,weight); 
+								                        histo_btagged_jets->Fill(nJetsBT,weight); 
+								                        histo_btagged_tightjets->Fill(nTightJetsBT,weight); 
+											histo_3d_btagged_tightjets->Fill(nJetsBT,nTightJetsBT,nJets, weight);
+											histo_2d_btagged_tightjets->Fill(nTightJetsBT,nJets, weight);
+											
+		      									        if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1)Regions->Fill(1, weight);
+			      									if (nJets == 1 && nJetsBT == 2)  Regions->Fill(2, weight);
 			      									if (nJets == 1 && nTightJetsBT > 0)  Regions->Fill(3, weight);
 			      									if (nJets == 1 && nTightJetsBT > 1)  Regions->Fill(4, weight);
 			      									if (nJets == 2 && nTightJetsBT == 0)  Regions->Fill(5, weight);
-			      									if (nJets == 2 && nTightJetsBT == 1)  Regions->Fill(6, weight);
-			      									if (nJets == 2 && nTightJetsBT == 2)  Regions->Fill(7, weight);
+			      									if (nJets == 2 && nTightJetsBT == 1 && nJetsBT ==1)  Regions->Fill(6, weight);
+			      									if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2)  Regions->Fill(7, weight);
 			      									if (nJets == 2 && nTightJetsBT > 0)  Regions->Fill(8, weight);
 			      									if (nJets == 2 && nTightJetsBT > 1)  Regions->Fill(9, weight);
 			      									if (nJets > 1 && nTightJetsBT == 0)  Regions->Fill(10, weight);
@@ -1845,7 +1904,7 @@ int main(int argc, char* argv[]) {
 											//cout << "EXACTLY ONE JET " << endl; 
 											
 											// --> (cut) exactly one btagged jet
-			    								if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
+			    								if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1){
 											
 											        //cout << "EXACTLY ONE BTAGGED JET " << endl; 
 			      									OutPut5 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
@@ -1854,7 +1913,7 @@ int main(int argc, char* argv[]) {
 			      									cutflow_raw->Fill(9);
 												
 												// --> Ht cut for emu mode 
-			      									double Ht = lepton0.Pt() + lepton1.Pt() + jet->Pt() + met_pt; 
+			      									double Ht = lepton0.Pt() + lepton1.Pt() + Ht_temp + met_pt; 
 			      									if (Ht > 160 || mode != 0){
 													cutflow->Fill(10, weight);
 													cutflow_raw->Fill(10);	
@@ -1916,11 +1975,27 @@ int main(int argc, char* argv[]) {
       
       	cout << "--------------------------------------------------" << endl;
       	cout << "[Jet Multiplicity Check:]" << endl;
-      	cout << "1 jet 1 tag: " << Regions->GetBinContent(2) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(2)/scaler1 << " +/- "  << 100.*Regions->GetBinError(2)/scaler1 << "%" << endl;
-      	cout << "2 jet 1 tag: " << Regions->GetBinContent(7) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(7)/scaler1 << " +/- "  << 100.*Regions->GetBinError(7)/scaler1 << "%" << endl;
-      	cout << "2 jet 2 tag: " << Regions->GetBinContent(8) << " +/- " << Regions->GetBinError(2) << "\t = " << 100.*Regions->GetBinContent(8)/scaler1 << " +/- "  << 100.*Regions->GetBinError(8)/scaler1 << "%" <<endl;
+      	cout << "1 jet 1 tag: " << Regions->GetBinContent(1) << " +/- " << Regions->GetBinError(1) << "\t = " << 100.*Regions->GetBinContent(1)/scaler1 << " +/- "  << 100.*Regions->GetBinError(1)/scaler1 << "%" << endl;
+      	cout << "2 jet 1 tag: " << Regions->GetBinContent(6) << " +/- " << Regions->GetBinError(6) << "\t = " << 100.*Regions->GetBinContent(6)/scaler1 << " +/- "  << 100.*Regions->GetBinError(6)/scaler1 << "%" << endl;
+      	cout << "2 jet 2 tag: " << Regions->GetBinContent(7) << " +/- " << Regions->GetBinError(7) << "\t = " << 100.*Regions->GetBinContent(7)/scaler1 << " +/- "  << 100.*Regions->GetBinError(7)/scaler1 << "%" <<endl;
      	cout << "--------------------------------------------------" << endl;
 	
+	
+	cout << "--------------------------------------------------" << endl;
+	cout << " btag check (no logistics) " << endl; 
+	cout << "--------------------------------------------------" << endl;
+	
+	cout << "VETOING LOOSE JETS: "<< endl;
+	cout << "1jet 1tag: " << histo_3d_btagged_tightjets->GetBinContent(2,2,2) << "+/-" << histo_3d_btagged_tightjets->GetBinError(2,2,2) << endl; 
+	cout << "2jet 1tag: " << histo_3d_btagged_tightjets->GetBinContent(2,2,3) << "+/-" << histo_3d_btagged_tightjets->GetBinError(2,2,3) << endl;
+	cout << "2jet 2tag: " << histo_3d_btagged_tightjets->GetBinContent(3,3,3) << "+/-" << histo_3d_btagged_tightjets->GetBinError(3,3,3) << endl;
+	cout << "" << endl;
+	cout << " NO VETO ON LOOSE JETS: " << endl; 
+	cout << "1jet 1tag: " << histo_2d_btagged_tightjets->GetBinContent(2,2) << "+/-" << histo_2d_btagged_tightjets->GetBinError(2,2) << endl; 
+	cout << "2jet 1tag: " << histo_2d_btagged_tightjets->GetBinContent(2,3) << "+/-" << histo_2d_btagged_tightjets->GetBinError(2,3) << endl;
+	cout << "2jet 2tag: " << histo_2d_btagged_tightjets->GetBinContent(3,3) << "+/-" << histo_2d_btagged_tightjets->GetBinError(3,3) << endl;
+	
+	cout << "--------------------------------------------------" << endl;
 	cout << "BTAG CHECKING " << endl; 
 	cout << "--------------------------------------------------" << endl;
 	cout << "ALL (tight) JETS : " << endl; 

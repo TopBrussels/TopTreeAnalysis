@@ -25,7 +25,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   labelcms->SetTextAlign(12);
   labelcms->SetTextSize(0.045);
   labelcms->SetFillColor(kWhite);
-  labelcms->AddText("CMS Preliminary, #sqrt{s} = 7 TeV");
+  labelcms->AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
   labelcms->SetBorderSize(0);
   
   
@@ -34,7 +34,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
   
-  labelcms2->AddText("4.9 fb^{-1}, ee/e#mu/#mu#mu");
+  labelcms2->AddText("12 fb^{-1}, ee/e#mu/#mu#mu");
   //labelcms2->AddText("2.1 fb^{-1}, ee/e#mu/#mu#mu");
   
   labelcms2->SetBorderSize(0);
@@ -80,17 +80,17 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   hStack2 = new THStack();
   for (int iProcess = 0; iProcess < 8; iProcess++){
     
-    sprintf(myRootFile,"results/sf_an_4904pb_0.root");
+    sprintf(myRootFile,"results/an_11966pb_0.root");
     
     TFile *_file0 = TFile::Open(myRootFile);
     h0[iProcess] = (TH1F*) _file0->Get("R_" + processName[iProcess]);
    
-    sprintf(myRootFile,"results/sf_an_4919pb_1.root");
+    sprintf(myRootFile,"results/an_12067pb_1.root");
     
     TFile *_file1 = TFile::Open(myRootFile);
     h1[iProcess] = (TH1F*) _file1->Get("R_" + processName[iProcess]);
  
-    sprintf(myRootFile,"results/sf_an_4895pb_2.root");
+    sprintf(myRootFile,"results/an_12093pb_2.root");
     
     TFile *_file2 = TFile::Open(myRootFile);
     h2[iProcess] = (TH1F*) _file2->Get("R_" + processName[iProcess]);
@@ -126,12 +126,12 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
     histo[iProcess] = new TH1F("histo"+processName[iProcess], "", 3, 0, 3);
     histo[iProcess]->SetLineColor(kBlack);
     histo[iProcess]->SetFillColor(color[iProcess]);
-    histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(28));
-    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(30));
-    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(31));
-    histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(28));
-    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(30));
-    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(31));
+    histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(1));
+    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(6));
+    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(7));
+    histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(1));
+    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(6));
+    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(7));
     /*
     if (dyonly == true){
       if (iProcess == 4){
@@ -204,7 +204,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   hStack->SetMaximum(max * 1.25);
   hStack->SetMinimum(1);
   hStack->GetXaxis()->SetTitle(cutTitle);
-  hStack->GetYaxis()->SetTitle("events / 4.9 fb^{-1}");
+  hStack->GetYaxis()->SetTitle("events / 12 fb^{-1}");
   //hStack->GetYaxis()->SetTitle("events / 2.1 fb^{-1}");
   hStack->GetYaxis()->SetTitleOffset(1.4);
   hStack->GetYaxis()->CenterTitle(); 
@@ -220,12 +220,12 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   labelcms->Draw();
   labelcms2->Draw();
   
-  c1->SaveAs("plots/sf_control_summer_" + nregion + "_3_" + cutLabel + ".png");
-  c1->SaveAs("plots/pdf/sf_control_summer_" + nregion + "_3_" + cutLabel + ".pdf");
+  c1->SaveAs("plots/control_" + nregion + "_3_" + cutLabel + ".png");
+  c1->SaveAs("plots/pdf/control_" + nregion + "_3_" + cutLabel + ".pdf");
   c1->SetLogy();
   hStack->SetMaximum(max * 20);
-  c1->SaveAs("plots/sf_control_summer_" + nregion + "_3_" + cutLabel + "_log.png");  
-  c1->SaveAs("plots/pdf/sf_control_summer_" + nregion + "_3_" + cutLabel + "_log.pdf"); 
+  c1->SaveAs("plots/control_" + nregion + "_3_" + cutLabel + "_log.png");  
+  c1->SaveAs("plots/pdf/control_" + nregion + "_3_" + cutLabel + "_log.pdf"); 
   
   
 }

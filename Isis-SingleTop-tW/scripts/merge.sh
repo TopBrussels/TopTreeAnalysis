@@ -20,8 +20,8 @@ hadd -f outputs/out_1_di.root outputs/out_1_ww.root outputs/out_1_wz.root output
 hadd -f outputs/out_2_di.root outputs/out_2_ww.root outputs/out_2_wz.root outputs/out_2_zz.root ;
 
 hadd -f outputs/out_0_others.root outputs/out_0_di.root outputs/out_0_st.root outputs/out_0_wjets.root  ;
-hadd -f outputs/out_1_others.root outputs/out_1_di.root outputs/out_1_st.root outputs/out_1_wjets.root outputs/out_1_qcd_mu.root ;
-hadd -f outputs/out_2_others.root outputs/out_2_di.root outputs/out_2_st.root outputs/out_2_wjets.root outputs/out_2_qcd_mu.root ;
+hadd -f outputs/out_1_others.root outputs/out_1_di.root outputs/out_1_st.root outputs/out_1_wjets.root  ;
+hadd -f outputs/out_2_others.root outputs/out_2_di.root outputs/out_2_st.root outputs/out_2_wjets.root  ;
 
 hadd -f outputs/out_0_mc.root outputs/out_0_twdr.root outputs/out_0_tt.root outputs/out_0_others.root outputs/out_0_zjetsall.root ;
 hadd -f outputs/out_1_mc.root outputs/out_1_twdr.root outputs/out_1_tt.root outputs/out_1_others.root outputs/out_1_zjetsall.root ; 

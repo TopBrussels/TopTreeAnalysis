@@ -2,11 +2,11 @@
 <datasets>
 
 
-  
-  
-  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/TTJets/*.root"/> 
-  <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
+    <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
   <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_tW_DR/*.root"/> 
+  
+  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/TTJets1/*.root"/> 
+
 
  
 </datasets>

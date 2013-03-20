@@ -17,9 +17,9 @@ void tables(int mode = 0){
 
   double lumi = luminosity;
   
-  if (mode == 0 )        lumi = 5085.246;
-  else if ( mode == 1)   lumi = 4919.924;
-  else if ( mode == 2)   lumi = 4895.249;
+  if (mode == 0 )        lumi =  11966.617;
+  else if ( mode == 1)   lumi = 12067.294;
+  else if ( mode == 2)   lumi = 12093.792;
   
   
   char myTexFile[300];

@@ -122,6 +122,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
  
   TFile f_var(newRootFile, "UPDATE");
   
+  
   if(!silent){
     std::cout << "[Info:] results root file " << newRootFile << std::endl;
   }
@@ -419,7 +420,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   // all regions
   sprintf(title,"R_%s",plotName);
-  TH1F* histo_R = new TH1F( title, " ", 40,  0, 40 );
+  TH1F* histo_R = new TH1F( title, " ", 40,  0.5, 40.5 );
   histo_R->Sumw2();
   
   
@@ -514,6 +515,15 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_met_zgamma= new TH1F( title, " ", 50,  0, 200 );
   histo_met_zgamma->Sumw2();
   
+      sprintf(title,"mll_outside_%s",plotName);
+  TH1F* histo_mll_outside = new TH1F( title, " ", 50,  0, 200 );
+  histo_mll_outside->Sumw2();
+  
+  
+    sprintf(title,"met_outside_%s",plotName);
+  TH1F* histo_met_outside= new TH1F( title, " ", 50,  0, 200 );
+  histo_met_outside->Sumw2();
+  
 //=======
 //>>>>>>> 1.1.2.3
 
@@ -529,7 +539,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   Long64_t nentries = fChain->GetEntriesFast();
   
   Long64_t nbytes = 0, nb = 0;
-  for (Long64_t jentry=0; jentry<nentries;jentry++) {
+  for (Long64_t jentry=0; jentry<nentries;jentry++) {  // start eventloop
     
     
     Long64_t ientry = LoadTree(jentry);
@@ -544,6 +554,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     }
     
   //  if(puweight > 5){ continue ;}
+    double ht_temp = 0; 
+    double ptsysX_temp = 0; 
+    double ptsysY_temp = 0; 
     
     if(ptLepton->size() != 2){
       std::cout << "[Warning:] Something is wrong, your Tree is not correctly filled" << std::endl;
@@ -599,6 +612,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  if (ptJet->at(i) > 30 && fabs(etaJet->at(i)) < 2.5 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3) {
 	  	iJetn[nJets] = i;
 	   	iJet = i;
+		ht_temp += ptJet->at(i);
+		ptsysX_temp += pxJet->at(i);
+		ptsysY_temp += pyJet->at(i); 
+		
 	    	nJets++;
 
 	   	 if (btag){
@@ -608,37 +625,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  } // end ptJet->at(i) > 30 && TMath::Min(fabs(lepton0.DeltaR(tempJet)), fabs(lepton1.DeltaR(tempJet))) > 0.3
 	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
 	
-	/*
-        if(nJets){
-	 TLorentzVector jet(pxJet->at(iJetn[0]),pyJet->at(iJetn[0]), pzJet->at(iJetn[0]), eJet->at(iJetn[0]));
-	// TLorentzVector jet1(pxJet->at(iJetn[1]),pyJet->at(iJetn[1]), pzJet->at(iJetn[1]), eJet->at(iJetn[1])); //2e jet erbij nemen
-	 histo_eta_jet->Fill(jet.Eta(),xlWeight);      
-	 //histo_eta_jet1->Fill(jet1.Eta(),xlWeight);    // 2e jet in dezelfde plot steken , misschien beter om aparte plot te maken? 
-	 
-	 if( ptJet->at(iJet) > 110 ){
-	   histo_eta_jet_110->Fill(jet.Eta(),xlWeight); 
-	  // histo_eta_jet1_110->Fill(jet1.Eta(),xlWeight); 
-	}
-	 if (ptJet->at(iJet) > 90){
-	   histo_eta_jet_90->Fill(jet.Eta(),xlWeight);
-	 //  histo_eta_jet1_90->Fill(jet1.Eta(),xlWeight);  
-	 }
-	 if (ptJet->at(iJet) > 70){
-	   histo_eta_jet_70->Fill(jet.Eta(),xlWeight);
-	 //  histo_eta_jet1_70->Fill(jet1.Eta(),xlWeight);  
-	 }
-	 if(ptJet->at(iJet) > 50){
-	  histo_eta_jet_50->Fill(jet.Eta(),xlWeight); 
-	 // histo_eta_jet1_50->Fill(jet1.Eta(),xlWeight); 
-	 }
-	 if (ptJet->at(iJet) > 30){
-	  histo_eta_jet_30->Fill(jet.Eta(),xlWeight);
-	 // histo_eta_jet1_30->Fill(jet1.Eta(),xlWeight); 
-	 }
-	 
-	
-	} // end if(nJets)
-	*/
+	//cout << " number of btagged jets: " << nJetsBT << " tight: " << nTightJetsBT << endl; 
+
 
 	histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
 	histo_pt_min->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
@@ -671,8 +659,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  histo_etalepton->Fill(lepton0.Eta(), xlWeight);
 	  TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
 	   
-	  double ptSysPx1 = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-	  double ptSysPy1 = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
+	  double ptSysPx1 = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
+	  double ptSysPy1 = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
 	  double ptSystem1 = sqrt(ptSysPx1*ptSysPx1 + ptSysPy1*ptSysPy1);
 	  double ht1 = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
 	  double ht1_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ;
@@ -696,29 +684,68 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  histo_mll_zgamma->Fill(pair.M(),  xlWeight);
 	          histo_met_zgamma->Fill(metPt,  xlWeight);
 	          
+	}else{
+		histo_mll_outside->Fill(pair.M(),  xlWeight);
+	          histo_met_outside->Fill(metPt,  xlWeight);
+	
 	}	 
 
 	//______________________________________
+
+
+           
+	  
+          if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(14, xlWeight);
+	  if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(15, xlWeight);
+	  if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(16, xlWeight); 
+	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(17, xlWeight);
+	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(18, xlWeight);
+	  if(nJets==2 && nJetsBT == 2) histo_R->Fill(19, xlWeight);
 
 
 	if (invMass){
 	  histo->Fill(2, xlWeight);
 	  histo_mll_after->Fill(pair.M(),  xlWeight);
 	  histo_met_cut->Fill(metPt,  xlWeight);
+	  
+	  if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(8, xlWeight);
+	  if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(9, xlWeight);
+	  if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(10, xlWeight); 
+	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(11, xlWeight);
+	  if(nJets==2 && nJetsBT == 1) histo_R->Fill(12, xlWeight);
+	  if(nJets==2 && nJetsBT == 2) histo_R->Fill(13, xlWeight); 
+	  
+	  
 	  if (metPt >= metCut || mode ==0){
 	   
 	    histo->Fill(3, xlWeight);
 	    histo_njets_cut->Fill(nJets, xlWeight);
+	    
+	    double ptSysPx1_R = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
+	    double ptSysPy1_R = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
+	    double ptSystem_R = sqrt(ptSysPx1_R *ptSysPx1_R + ptSysPy1_R *ptSysPy1_R );
+	    double ht1_R = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
+	    
+	    
+	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1&&  (ht1_R > htMin || mode !=0)) histo_R->Fill(2, xlWeight); // after all cuts 2j1t
+	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2&&  (ht1_R > htMin || mode !=0)) histo_R->Fill(3, xlWeight);  // after all cuts 2j2t
+	    if(nJets==2 && nJetsBT == 1 &&  (ht1_R > htMin || mode !=0)) histo_R->Fill(6, xlWeight); // after all cuts 2j1t loose
+	    if(nJets==2 && nJetsBT == 2 &&  (ht1_R > htMin || mode !=0)) histo_R->Fill(7, xlWeight); // after all cuts 2j2t loose
+	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(20, xlWeight); // before 1jet cut and before ht> 160 cut: 2j1t
+	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(21, xlWeight); // before 1jet cut and before ht> 160 cut: 2j2t
+	    if(nJets==2 && nJetsBT == 1) histo_R->Fill(22, xlWeight);// before 1jet cut and before ht> 160 cut: 2j1t loose
+	    if(nJets==2 && nJetsBT == 2) histo_R->Fill(23, xlWeight);  // before 1jet cut and before ht> 160 cut: 2j2t loose 
+	    
 	    if (nJets == 1){
 	      histo->Fill(4, xlWeight);
 	      histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
 	      TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
 		
-	      double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
+	      double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
+	      double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
 	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	       double ht_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ; 
+	      double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt; 
+	      double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ; 
 	      
 	      histo_mll_1j->Fill(pair.M(),  xlWeight);
 	      histo_met_1j->Fill(metPt,  xlWeight);
@@ -726,6 +753,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	      histo_ht_1j->Fill(ht, xlWeight);
 	      histo_ht_nomet_1j->Fill(ht_nomet, xlWeight);
 	      histo_pt_leading_1j->Fill(jet.Pt(), xlWeight);
+	      
+	      if(nJetsBT == 1) histo_R->Fill(5, xlWeight); 
+	      
 	      
 	      
 	      if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1){
@@ -759,6 +789,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		   histo_ht_nomet_low->Fill(ht_nomet, xlWeight);
 		} // end else
 		
+		histo_R->Fill(4, xlWeight); 
+		
 		if (ht > htMin || mode !=0){
 		  histo->Fill(6, xlWeight);
 		  histo_ht_cut->Fill(ht, xlWeight);
@@ -766,27 +798,28 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  
 		  //Example to access the pu reweighting!
 		  histo_nvertex_final->Fill(nvertex, rawWeight);
-		 
 		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
+		  
+		  histo_R->Fill(1, xlWeight); //signal passing all the cuts 
 		  
 		} // end if (ht > htMin || mode !=0)
 	      } // end  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)
 	    } // end if (nJets == 1
-	  } // end if (invMass)
+	  } // end if (met cut)
 	  
-	  
+/*	  
 	  //Filling of all region from here
 	  if (metPt >= metCut || mode ==0){
 	
 	    if (nJets != 0){
 	      
-	      TLorentzVector jet(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
+	      TLorentzVector jet_for_regions(pxJet->at(iJet),pyJet->at(iJet), pzJet->at(iJet), eJet->at(iJet));
 	      
-	      double ptSysPx = lepton0.Px() + lepton1.Px() + jet.Px() + metPx;
-	      double ptSysPy = lepton0.Py() + lepton1.Py() + jet.Py() + metPy;
-	      double ptSystem = sqrt(ptSysPx*ptSysPx + ptSysPy*ptSysPy);
-	      double ht = lepton0.Pt() + lepton1.Pt() + jet.Pt() + metPt; 
-	      double ht_nomet = lepton0.Pt() + lepton1.Pt() + jet.Pt() ;
+	      double ptSysPx_for_regions = lepton0.Px() + lepton1.Px() + jet_for_regions.Px() + metPx;
+	      double ptSysPy_for_regions = lepton0.Py() + lepton1.Py() + jet_for_regions.Py() + metPy;
+	      double ptSystem_for_regions = sqrt(ptSysPx_for_regions*ptSysPx_for_regions + ptSysPy_for_regions*ptSysPy_for_regions);
+	      double ht_for_regions = lepton0.Pt() + lepton1.Pt() + jet_for_regions.Pt() + metPt; 
+	      double ht_nomet_for_regions = lepton0.Pt() + lepton1.Pt() + jet_for_regions.Pt() ;
 	      
 	      if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1) {
 	        histo_mll_2j1t->Fill(pair.M(),  xlWeight);
@@ -842,7 +875,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	      
 	    } //jets in the event
 	  } //all CR
-	  
+*/	  
 	} // mll
       } //mll pre
     } // 2 leptons
@@ -862,6 +895,18 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (i == 6) cout << " jet_bt: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
       if (i == 7) cout << " ht: " <<  histo->GetBinContent(i) << " +/-  " <<  histo->GetBinError(i)  << endl;
     }
+    
+     cout << "------------------------------------------" << endl;
+    cout << "[Results: regions - ] " << plotName <<  endl;
+    cout << "------------------------------------------" << endl;  
+     
+      cout << " 1jet 1tag: " <<  histo_R->GetBinContent(1) << " +/-  " <<  histo_R->GetBinError(1)  << endl;
+       cout << " 2jets 1tag: " <<  histo_R->GetBinContent(2) << " +/-  " <<  histo_R->GetBinError(2)  << endl;
+       cout << "2jets 2tags: " <<  histo_R->GetBinContent(3) << " +/-  " <<  histo_R->GetBinError(3)  << endl;
+    
+    
+    
+    
   /*  
     cout << "------------------------------------------" << endl; 
     cout << "[eta values:]" << plotName << endl;
@@ -953,6 +998,6 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     
     
   }
-  f_var.Write();
+  f_var.Write(newRootFile,TFile::kOverwrite);
   f_var.Close();
 }
