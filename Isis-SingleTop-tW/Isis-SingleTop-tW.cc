@@ -614,13 +614,7 @@ int main(int argc, char* argv[]) {
 	  LumiWeights = LumiReWeighting("pileupHistos/pileup_MC_Summer12.root","pileupHistos/pileup_tW_2012Data53X_UpToRun203002/nominal.root", "pileup", "pileup"); 
 	   }
 	  
-	//LumiWeights = LumiReWeighting("pileupHistos/toptree_id_2126_canvas_36.root", "pileupHistos/pileup_2012Data53X_UpToRun196531.root", "pileup", "pileup");  
-       //  LumiWeights = LumiReWeighting("pileupHistos/Summer12.root","pileupHistos/Run2012AB_new.root","pileup","pileup");  // gives PU weights per bin
-        /* OLD 7 TeV analysis
-        //systematics   : je maakt dezelfde  distributie met mean 0.6 naar links or rechts
-        reweight::PoissonMeanShifter PShiftDown_= reweight::PoissonMeanShifter(-0.6); 
-        reweight::PoissonMeanShifter PShiftUp_= reweight::PoissonMeanShifter(0.6); 
-        */
+
         
         
         ////////////////////////////////////
@@ -647,7 +641,7 @@ int main(int argc, char* argv[]) {
         //With the new JEC correction uncertainties , you only apply these onces for systematics because the correction itself is already applied in the MC Samples themselves, 
 	// each new tag comes with a new correction, in brussels they have  way of avoiding the problem that you have to skim your samples again, but in this case it isnt necessary 
 	// Load the JEC corrections uncertainties                                    
-                JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
+          JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Summer12_V3_MC_Uncertainty_AK5PFchs.txt");
          //if (isData) JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt");
     
         // true means redo also the L1
@@ -1060,7 +1054,7 @@ int main(int argc, char* argv[]) {
                                                                         //      }
         
         
-                //is useless for single top  ==> WHY? 
+                //is already applied at skim level so won't make any difference 
                 isGoodPV = true; 
                 
                 //--------------------------------------------------------------
@@ -1557,7 +1551,8 @@ int main(int argc, char* argv[]) {
 								btag_booleans.clear(); 
 								
 								for (unsigned int iJ =0; iJ < selectedJets.size(); iJ ++){
-								
+									bTagged = false;
+									
 									TRootJet* tempJet = (TRootJet*) selectedJets[iJ];
 									TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 									

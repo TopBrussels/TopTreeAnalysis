@@ -137,7 +137,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   histo_3d_btagged_tightjets->Sumw2();
  
   sprintf(title,"2d_btagged_tightjets_noHt_%s",plotName);
-  	TH2F* histo_2d_btagged_tightjets_noHt = new TH2F(title, " Btagged  jets - no Ht cut",  10,  -0.5, 9.5,10,  -0.5, 9.5  );
+  TH2F* histo_2d_btagged_tightjets_noHt = new TH2F(title, " Btagged  jets - no Ht cut",  10,  -0.5, 9.5,10,  -0.5, 9.5  );
   histo_2d_btagged_tightjets_noHt->Sumw2();
   
   sprintf(title,"cuts_%s",plotName);
@@ -168,13 +168,30 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_mll_after = new TH1F( title, " ", 100,  0, 200 );
   histo_mll_after->Sumw2();
   
-  sprintf(title,"njets_cut_%s",plotName);
-  TH1F* histo_njets_cut = new TH1F( title, " ", 10,  -0.5, 9.5 );
-  histo_njets_cut->Sumw2();
+  sprintf(title,"njets_noHT_%s",plotName);
+  TH1F* histo_njets_noHT= new TH1F( title, " ", 10,  -0.5, 9.5 );
+  histo_njets_noHT->Sumw2();
   
-  sprintf(title,"njetsbt_cut_%s",plotName);
-  TH1F* histo_njetsbt_cut = new TH1F( title, " ", 10,   -0.5, 9.5 );
-  histo_njetsbt_cut->Sumw2();
+  sprintf(title,"njetsbt_noHT_%s",plotName);
+  TH1F* histo_njetsbt_noHT= new TH1F( title, " ", 10,   -0.5, 9.5 );
+  histo_njetsbt_noHT->Sumw2();
+  
+  sprintf(title,"njetsbt_noHT_loose_%s",plotName);
+  TH1F* histo_njetsbt_noHT_loose= new TH1F( title, " ", 10,   -0.5, 9.5 );
+  histo_njetsbt_noHT_loose->Sumw2();
+  
+  sprintf(title,"njets_begin_%s",plotName);
+  TH1F* histo_njets_begin= new TH1F( title, " ", 10,  -0.5, 9.5 );
+  histo_njets_begin->Sumw2();
+  
+  sprintf(title,"njetsbt_begin_%s",plotName);
+  TH1F* histo_njetsbt_begin= new TH1F( title, " ", 10,   -0.5, 9.5 );
+  histo_njetsbt_begin->Sumw2();
+  
+  sprintf(title,"njetsbt_begin_loose_%s",plotName);
+  TH1F* histo_njetsbt_begin_loose= new TH1F( title, " ", 10,   -0.5, 9.5 );
+  histo_njetsbt_begin_loose->Sumw2();
+  
   
   sprintf(title,"njetsbt_high_%s",plotName);
   TH1F* histo_njetsbt_high = new TH1F( title, " ", 10,   -0.5, 9.5 );
@@ -600,13 +617,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	int nJetsBT = 0;
 	int nTightJetsBT = 0;
 	int nJets = 0;	
-	bool bTagged = false;;
+	bool bTagged = false;
 	
 	if( ptJet->size() != Btagjet->size()){
 		cout << "ERROR: something went wrong with btagging " << endl; 
 	}
 	
 	for (unsigned int i =0; i < ptJet->size(); i ++){ 
+	  bTagged = false;
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
 	  bool btag = Btagjet->at(i);
 	  
@@ -634,7 +652,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	} // end for (unsigned int i =0; i < ptJet->size(); i ++)
 	
 	//cout << " number of btagged jets: " << nJetsBT << " tight: " << nTightJetsBT << endl; 
-
+	
+	
+	histo_njets_begin->Fill(nJets, xlWeight);
+        histo_njetsbt_begin->Fill(nTightJetsBT, xlWeight);
+        histo_njetsbt_begin_loose->Fill(nJetsBT, xlWeight);
 
 	histo_pt_max->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
 	histo_pt_min->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
@@ -696,7 +718,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  if (metPt >= 50 || mode ==0){
 	   
 	    histo->Fill(3, xlWeight);
-	    histo_njets_cut->Fill(nJets, xlWeight);
+	    
+	    histo_njets_noHT->Fill(nJets, xlWeight);
+	    histo_njetsbt_noHT->Fill(nTightJetsBT, xlWeight);
+	    histo_njetsbt_noHT_loose->Fill(nJetsBT, xlWeight);
 	    
 	    double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
 	    double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
@@ -720,7 +745,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    
 	    if (nJets == 1){
 	      histo->Fill(4, xlWeight);
-	      histo_njetsbt_cut->Fill(nJetsBT, xlWeight);
+	      
 	      
 	      TLorentzVector jet(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
 		
