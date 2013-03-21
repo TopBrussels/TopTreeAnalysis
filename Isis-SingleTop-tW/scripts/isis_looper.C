@@ -709,14 +709,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    histo_njets_noHT->Fill(nJets, xlWeight);
 	    histo_njetsbt_noHT->Fill(nTightJetsBT, xlWeight);
 	    histo_njetsbt_noHT_loose->Fill(nJetsBT, xlWeight);
-	    
+	   
 	    double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
 	    double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
 	    double ptSystem = sqrt(ptSysPx *ptSysPx + ptSysPy *ptSysPy);
 	    double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
 	    double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ; 
-	    TLorentzVector jet_fill(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
-	    
+	     
+	   
 	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1 &&  (ht > 160 || mode !=0)) {
 	    	histo_R->Fill(2, xlWeight); // after all cuts 2j1t veto on loose
 		
@@ -730,7 +730,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		
 		histo_nvertex_2j1t->Fill(nvertex, xlWeight);
 		
-				  
+		TLorentzVector jet_fill(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));		  
 		histo_eta_leading_2j1t->Fill(jet_fill.Eta(), xlWeight);
 		
 		histo_pt_max_2j1t->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
@@ -748,6 +748,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		
 		histo_nvertex_2j2t->Fill(nvertex, xlWeight);
 		
+		TLorentzVector jet_fill(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
 		histo_eta_leading_2j2t->Fill(jet_fill.Eta(), xlWeight);
 		
 		histo_pt_max_2j2t->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
@@ -769,6 +770,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		
 		
 	    }
+	    
 	    histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, xlWeight);
 	    
 	    
@@ -810,6 +812,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  
 		  histo_pt_leading_1j1t->Fill(ptJet->at(0), xlWeight);
 		  
+		  TLorentzVector jet_fill(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
 		  histo_eta_leading_final->Fill(jet_fill.Eta(), xlWeight);
 		  
 		  histo_met_1j1t->Fill(metPt,  xlWeight);
@@ -819,8 +822,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  histo_R->Fill(1, xlWeight); //signal passing all the cuts
 		  
 		} // end if (ht > htMin || mode !=0)
+		
 	      } // end  if (nJets == 1 && nTightJetsBT == 1 && bTagged && nJetsBT == 1)
-	    } // end if (nJets == 1
+	      
+	    } // end if (nJets == 1 
+	    
 	  } // end if (met cut)
 	  
 
@@ -875,94 +881,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	cout << "1jet 1tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(2,2) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(2,2) << endl; 
 	cout << "2jet 1tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(2,3) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(2,3) << endl;
 	cout << "2jet 2tag: " << histo_2d_btagged_tightjets_noHt->GetBinContent(3,3) << "+/-" << histo_2d_btagged_tightjets_noHt->GetBinError(3,3) << endl;
-  /*  
-    cout << "------------------------------------------" << endl; 
-    cout << "[eta values:]" << plotName << endl;
-    cout << "------------------------------------------" << endl; 
-    for (int j =1 ; j<7; j++){
-      if(j == 1) {
-         double amount = 0; 
-	 //double amounterror = 0; 
-      
-         for(int k = 0; k< 50; k++) {   
-	     amount = amount + histo_eta_jet_30->GetBinContent(k); 
-	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
-           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
-         }
-	 
-	 cout << "pt higher then 30: " << amount <<  endl;
-      
-      }
-        if(j == 2) {
-         double amount = 0; 
-	 //double amounterror = 0; 
-      
-         for(int k = 0; k< 50; k++) {   
-	     amount = amount + histo_eta_jet_50->GetBinContent(k); 
-	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
-           //cout << "pt higher then 50: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
-         }
-	 
-	 cout << "pt higher then 50: " << amount <<  endl;
-      
-      }
-      
-            if(j == 3) {
-         double amount = 0; 
-	 //double amounterror = 0; 
-      
-         for(int k = 0; k< 50; k++) {   
-	     amount = amount + histo_eta_jet_70->GetBinContent(k); 
-	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
-           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
-         }
-	 
-	 cout << "pt higher then 70: " << amount <<  endl;
-      
-      }
-            if(j == 4) {
-         double amount = 0; 
-	 //double amounterror = 0; 
-      
-         for(int k = 0; k< 50; k++) {   
-	     amount = amount + histo_eta_jet_70->GetBinContent(k); 
-	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
-           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
-         }
-	 
-	 cout << "pt higher then 70: " << amount <<  endl;
-      
-      }
-            if(j == 5) {
-         double amount = 0; 
-	 //double amounterror = 0; 
-      
-         for(int k = 0; k< 50; k++) {   
-	     amount = amount + histo_eta_jet_90->GetBinContent(k); 
-	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
-           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
-         }
-	 
-	 cout << "pt higher then 90: " << amount <<  endl;
-      
-      }
-            if(j == 6) {
-         double amount = 0; 
-	 //double amounterror = 0; 
-      
-         for(int k = 0; k< 50; k++) {   
-	     amount = amount + histo_eta_jet_110->GetBinContent(k); 
-	  //   amounterror = sqrt(amounterror^2 + (histo_eta_jet_30->GetBinError(k))^2);
-           //cout << "pt higher then 30: " << histo_eta_jet_30->GetBinContent(k) << " +/- " << histo_eta_jet_30->GetBinError(k) << endl; 
-         }
-	 
-	 cout << "pt higher then 110: " << amount <<  endl;
-      
-      }
-    
-    }
-    
-  */  
+
     
     
   }
