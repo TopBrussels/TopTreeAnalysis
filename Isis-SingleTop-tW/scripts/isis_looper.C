@@ -1,6 +1,5 @@
 #include "isis_looper.h"
 #include <TH2.h>
-#include <TH3.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include "TLorentzVector.h"
@@ -14,6 +13,7 @@
 #include "TROOT.h"
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TH3F.h"
 #include "TLorentzVector.h"
 
 
@@ -202,7 +202,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   sprintf(title,"njetsbt_final_loose_%s",plotName);
   TH1F* histo_njetsbt_final_loose= new TH1F( title, " ", 10,   -0.5, 9.5 );
-  histo_njetsbt_final_loose->Sumw2()
+  histo_njetsbt_final_loose->Sumw2();
   
   sprintf(title,"njetsbt_high_%s",plotName);
   TH1F* histo_njetsbt_high = new TH1F( title, " ", 10,   -0.5, 9.5 );
@@ -321,9 +321,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_njetsbt = new TH1F( title, " ", 10,  -0.5, 9.5 );
   histo_njetsbt->Sumw2();
   
-  sprintf(title,"ptsys_%s",plotName);
-  TH1F* histo_ptsys = new TH1F( title, " ", 100,  0, 200 );
-  histo_ptsys->Sumw2();
+
   
   sprintf(title,"ht_%s",plotName);
   TH1F* histo_ht = new TH1F( title, " ", 300,  0, 600 );
@@ -483,7 +481,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   sprintf(title,"eta_leading_2j2t_%s",plotName);
   TH1F* histo_eta_leading_2j2t = new TH1F( title, " ", 101,  -3, 3);
-  histo_eta_leading_2j2t->Sumw2()
+  histo_eta_leading_2j2t->Sumw2();
 
   sprintf(title,"pt_max_2j2t_%s",plotName);
   TH1F* histo_pt_max_2j2t = new TH1F( title, " ", 100,  0, 200 );
@@ -722,7 +720,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1 &&  (ht > 160 || mode !=0)) {
 	    	histo_R->Fill(2, xlWeight); // after all cuts 2j1t veto on loose
 		
-		histo_ptsys_2j1t-> ->Fill(ptSystem, xlWeight);
+		histo_ptsys_2j1t->Fill(ptSystem, xlWeight);
 		histo_mll_2j1t->Fill(pair.M(),  xlWeight);
 		histo_pt_leading_2j1t->Fill(ptJet->at(0), xlWeight);
 		
@@ -741,7 +739,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2 &&  (ht > 160 || mode !=0)) {
 	     	histo_R->Fill(3, xlWeight);  // after all cuts 2j2t veto on loose
 		
-		histo_ptsys_2j2t-> ->Fill(ptSystem, xlWeight);
+		histo_ptsys_2j2t->Fill(ptSystem, xlWeight);
 		histo_mll_2j2t->Fill(pair.M(),  xlWeight);
 		histo_pt_leading_2j2t->Fill(ptJet->at(0), xlWeight);
 		
@@ -805,7 +803,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  //Example to access the pu reweighting!
 		  histo_nvertex_final->Fill(nvertex, rawWeight);
 		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
-		  histo_ptsys_final->Fill(ptSystem, xlWeight);
+		  histo_ptsys_1j1t->Fill(ptSystem, xlWeight);
 		  
 		  histo_pt_max_final->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
 		  histo_pt_min_final->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
