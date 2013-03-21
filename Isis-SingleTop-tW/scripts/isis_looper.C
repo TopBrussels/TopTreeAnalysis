@@ -192,6 +192,17 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_njetsbt_begin_loose= new TH1F( title, " ", 10,   -0.5, 9.5 );
   histo_njetsbt_begin_loose->Sumw2();
   
+  sprintf(title,"njets_final_%s",plotName);
+  TH1F* histo_njets_final= new TH1F( title, " ", 10,  -0.5, 9.5 );
+  histo_njets_final->Sumw2();
+  
+  sprintf(title,"njetsbt_final_%s",plotName);
+  TH1F* histo_njetsbt_final= new TH1F( title, " ", 10,   -0.5, 9.5 );
+  histo_njetsbt_final->Sumw2();
+  
+  sprintf(title,"njetsbt_final_loose_%s",plotName);
+  TH1F* histo_njetsbt_final_loose= new TH1F( title, " ", 10,   -0.5, 9.5 );
+  histo_njetsbt_final_loose->Sumw2()
   
   sprintf(title,"njetsbt_high_%s",plotName);
   TH1F* histo_njetsbt_high = new TH1F( title, " ", 10,   -0.5, 9.5 );
@@ -241,6 +252,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ht_nomet_cut = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_nomet_cut->Sumw2();
   
+  sprintf(title,"ptsys_%s",plotName);
+  TH1F* histo_ptsys = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys->Sumw2();
+  
   sprintf(title,"pt_max_%s",plotName);
   TH1F* histo_pt_max = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_max->Sumw2();
@@ -248,6 +263,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"pt_min_%s",plotName);
   TH1F* histo_pt_min = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_min->Sumw2();
+  
+  sprintf(title,"pt_max_final_%s",plotName);
+  TH1F* histo_pt_max_final = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_max_final->Sumw2();
+  
+  sprintf(title,"pt_min_final_%s",plotName);
+  TH1F* histo_pt_min_final = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_min_final->Sumw2();
   
   sprintf(title,"btagHE_%s",plotName);
   TH2F* histo_btagHE = new TH2F( title, " ", 300,  -200, 100, 100, -2, 7);
@@ -277,6 +300,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_npu = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_npu->Sumw2();
   
+    sprintf(title,"eta_leading_final_%s",plotName);
+  TH1F* histo_eta_leading_final = new TH1F( title, " ", 101,  -3, 3);
+  histo_eta_leading_final->Sumw2();
   
   /// Classic plotmaker plots
   sprintf(title,"met_%s",plotName);
@@ -413,6 +439,17 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_nvertex_2j1t = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_nvertex_2j1t->Sumw2();
   
+  sprintf(title,"eta_leading_2j1t_%s",plotName);
+  TH1F* histo_eta_leading_2j1t = new TH1F( title, " ", 101,  -3, 3);
+  histo_eta_leading_2j1t->Sumw2();
+  
+    sprintf(title,"pt_max_2j1t_%s",plotName);
+  TH1F* histo_pt_max_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_max_2j1t->Sumw2();
+  
+  sprintf(title,"pt_min_2j1t_%s",plotName);
+  TH1F* histo_pt_min_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_min_2j1t->Sumw2();
   
   // 2j2t
   /// Classic plotmaker plots
@@ -443,8 +480,19 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_2j2t_%s",plotName);
   TH1F* histo_nvertex_2j2t = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_nvertex_2j2t->Sumw2();
-
   
+  sprintf(title,"eta_leading_2j2t_%s",plotName);
+  TH1F* histo_eta_leading_2j2t = new TH1F( title, " ", 101,  -3, 3);
+  histo_eta_leading_2j2t->Sumw2()
+
+  sprintf(title,"pt_max_2j2t_%s",plotName);
+  TH1F* histo_pt_max_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_max_2j2t->Sumw2();
+  
+  sprintf(title,"pt_min_2j2t_%s",plotName);
+  TH1F* histo_pt_min_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_min_2j2t->Sumw2();
+    
   // all regions
   sprintf(title,"R_%s",plotName);
   TH1F* histo_R = new TH1F( title, " ", 40,  0.5, 40.5 );
@@ -469,67 +517,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   sprintf(title,"nvertex_2lep_%s",plotName);
   TH1F* histo_nvertex_2lep = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex_2lep->Sumw2();
-//<<<<<<< isis_looper.C
+
   
-  //_________________________________________________________________________________
-  //added by Isis
-  
-  // -- Leading jet --- 
-    sprintf(title,"eta_jet_%s",plotName);
-  TH1F* histo_eta_jet = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet->Sumw2();
-  
- 
-     sprintf(title,"eta_jet_110_%s",plotName);
-  TH1F* histo_eta_jet_110 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet_110->Sumw2();
-  
-      sprintf(title,"eta_jet_90_%s",plotName);
-  TH1F* histo_eta_jet_90 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet_90->Sumw2();
-  
-  
-      sprintf(title,"eta_jet_70_%s",plotName);
-  TH1F* histo_eta_jet_70 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet_70->Sumw2();
-  
-  
-      sprintf(title,"eta_jet_50_%s",plotName);
-  TH1F* histo_eta_jet_50 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet_50->Sumw2();
-  
-      sprintf(title,"eta_jet_30_%s",plotName);
-  TH1F* histo_eta_jet_30 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet_30->Sumw2();
- 
- 
-   // -- Second Leading jet --- 
-    sprintf(title,"eta_jet1_%s",plotName);
-  TH1F* histo_eta_jet1 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet1->Sumw2();
-  
- 
-     sprintf(title,"eta_jet1_110_%s",plotName);
-  TH1F* histo_eta_jet1_110 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet1_110->Sumw2();
-  
-      sprintf(title,"eta_jet1_90_%s",plotName);
-  TH1F* histo_eta_jet1_90 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet1_90->Sumw2();
-  
-  
-      sprintf(title,"eta_jet1_70_%s",plotName);
-  TH1F* histo_eta_jet1_70 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet1_70->Sumw2();
-  
-  
-      sprintf(title,"eta_jet1_50_%s",plotName);
-  TH1F* histo_eta_jet1_50 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet1_50->Sumw2();
-  
-      sprintf(title,"eta_jet1_30_%s",plotName);
-  TH1F* histo_eta_jet1_30 = new TH1F( title, " ", 50,-5, 5 );  //#bins - begin - end
-  histo_eta_jet1_30->Sumw2();
+
   
   // ---- Z/gamma controlregion 
  
@@ -551,8 +541,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_met_outside= new TH1F( title, " ", 50,  0, 200 );
   histo_met_outside->Sumw2();
   
-//=======
-//>>>>>>> 1.1.2.3
+
 
 
 
@@ -728,9 +717,44 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    double ptSystem = sqrt(ptSysPx *ptSysPx + ptSysPy *ptSysPy);
 	    double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
 	    double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ; 
+	    TLorentzVector jet_fill(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
 	    
-	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1 &&  (ht > 160 || mode !=0)) histo_R->Fill(2, xlWeight); // after all cuts 2j1t veto on loose
-	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2 &&  (ht > 160 || mode !=0)) histo_R->Fill(3, xlWeight);  // after all cuts 2j2t veto on loose
+	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1 &&  (ht > 160 || mode !=0)) {
+	    	histo_R->Fill(2, xlWeight); // after all cuts 2j1t veto on loose
+		
+		histo_ptsys_2j1t-> ->Fill(ptSystem, xlWeight);
+		histo_mll_2j1t->Fill(pair.M(),  xlWeight);
+		histo_pt_leading_2j1t->Fill(ptJet->at(0), xlWeight);
+		
+		histo_ht_2j1t->Fill(ht, xlWeight);
+		histo_ht_nomet_2j1t->Fill(ht_nomet, xlWeight);
+	
+		
+		histo_nvertex_2j1t->Fill(nvertex, xlWeight);
+		
+				  
+		histo_eta_leading_2j1t->Fill(jet_fill.Eta(), xlWeight);
+		
+		histo_pt_max_2j1t->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
+		histo_pt_min_2j1t->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
+	    }
+	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2 &&  (ht > 160 || mode !=0)) {
+	     	histo_R->Fill(3, xlWeight);  // after all cuts 2j2t veto on loose
+		
+		histo_ptsys_2j2t-> ->Fill(ptSystem, xlWeight);
+		histo_mll_2j2t->Fill(pair.M(),  xlWeight);
+		histo_pt_leading_2j2t->Fill(ptJet->at(0), xlWeight);
+		
+		histo_ht_2j2t->Fill(ht, xlWeight);
+		histo_ht_nomet_2j2t->Fill(ht_nomet, xlWeight);
+		
+		histo_nvertex_2j2t->Fill(nvertex, xlWeight);
+		
+		histo_eta_leading_2j2t->Fill(jet_fill.Eta(), xlWeight);
+		
+		histo_pt_max_2j2t->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
+		histo_pt_min_2j2t->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
+	    }
 	    
 	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_R->Fill(5, xlWeight); // before 1jet cut and before ht> 160 cut: 2j1t veto on loose
 	    if(nJets==2 && nTightJetsBT ==2 && nJetsBT == 2) histo_R->Fill(6, xlWeight); // before 1jet cut and before ht> 160 cut: 2j2t veto on loose
@@ -739,6 +763,13 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    
 	    if(ht > 160 || mode !=0){
 	    	histo_3d_btagged_tightjets->Fill(nJetsBT,nTightJetsBT,nJets, xlWeight);
+		
+		histo_njets_final->Fill(nJets,  xlWeight);
+		histo_njetsbt_final->Fill(nTightJetsBT,  xlWeight);
+		histo_njetsbt_final_loose->Fill(nJetsBT,  xlWeight);
+		
+		
+		
 	    }
 	    histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, xlWeight);
 	    
@@ -746,11 +777,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    if (nJets == 1){
 	      histo->Fill(4, xlWeight);
 	      
-	      
-	      TLorentzVector jet(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
-		
-	      
-	      
+
 	      if(nTightJetsBT == 1) {histo_R->Fill(7, xlWeight); }
 	      
 	      
@@ -778,9 +805,18 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  //Example to access the pu reweighting!
 		  histo_nvertex_final->Fill(nvertex, rawWeight);
 		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
+		  histo_ptsys_final->Fill(ptSystem, xlWeight);
 		  
+		  histo_pt_max_final->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
+		  histo_pt_min_final->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
 		  
+		  histo_pt_leading_1j1t->Fill(ptJet->at(0), xlWeight);
 		  
+		  histo_eta_leading_final->Fill(jet_fill.Eta(), xlWeight);
+		  
+		  histo_met_1j1t->Fill(metPt,  xlWeight);
+		  
+		  histo_mll_1j1t->Fill(pair.M(),  xlWeight);
 		  
 		  histo_R->Fill(1, xlWeight); //signal passing all the cuts
 		  

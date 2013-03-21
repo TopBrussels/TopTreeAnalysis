@@ -127,11 +127,11 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
     histo[iProcess]->SetLineColor(kBlack);
     histo[iProcess]->SetFillColor(color[iProcess]);
     histo[iProcess]->SetBinContent(1, h[iProcess]->GetBinContent(1));
-    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(6));
-    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(7));
+    histo[iProcess]->SetBinContent(2, h[iProcess]->GetBinContent(2));
+    histo[iProcess]->SetBinContent(3, h[iProcess]->GetBinContent(3));
     histo[iProcess]->SetBinError(1, h[iProcess]->GetBinError(1));
-    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(6));
-    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(7));
+    histo[iProcess]->SetBinError(2, h[iProcess]->GetBinError(2));
+    histo[iProcess]->SetBinError(3, h[iProcess]->GetBinError(3));
     /*
     if (dyonly == true){
       if (iProcess == 4){

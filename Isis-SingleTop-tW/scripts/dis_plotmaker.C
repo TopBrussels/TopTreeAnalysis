@@ -34,7 +34,7 @@ void dis_plotmaker(int mode = 0){
   labelcms2->SetTextAlign(12);
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
-  labelcms2->AddText("4.4 fb^{-1}, e#mu channel  ");
+  labelcms2->AddText("12 fb^{-1}, e#mu channel  ");
   labelcms2->SetBorderSize(0);
   
   gStyle->SetOptStat(0);
@@ -59,15 +59,15 @@ void dis_plotmaker(int mode = 0){
   cout << myRootFile << endl;
   
   const int nProcess = 2;
-  const int nPlots = 6;
+  const int nPlots = 8;
   TString processName[nProcess] =  { "twdr", "tt"};
   TString processTitle[nProcess] = { "tW","t#bar{t}"};
   Color_t color[nProcess] =        { kBlue, kRed};
   
 
-  TString cutLabel[nPlots] =     {  "met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t", "pt_leading_2j2t",  "nvertex_2j2t" };
-  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1};
-  TString cutTitle[nPlots] =     { "E_{T}^{miss} 2j2t", "Inv. Mass 2j2t", "P_{T} system [GeV] 2j2t", "H_{T} [GeV] 2j2t","P_{T} of the leading jet 2j2t", "# ofvertex 2j2t"};
+  TString cutLabel[nPlots] =     {  "met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t","pt_leading_2j2t",  "nvertex_2j2t", "pt_max_2j2t","pt_min_2j2t","ht_nomet_2j2t","eta_leading_2j2t", };
+  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1,2,2,12,1};
+  TString cutTitle[nPlots] =     { "E_{T}^{miss} 2j2t", "Inv. Mass 2j2t", "P_{T} system [GeV] 2j2t","H_{T} [GeV] 2j2t","P_{T} of the leading jet 2j2t", "# of vertex 2j2t", "p_T of the first lepton [GeV] 2j2t", "p_T  of the second lepton [GeV] 2j2t", "H_{T} no met [GeV] 2j2t","Eta of the leading jet 2j2t"};
 
 
   TString modeString[1] = {"0"};
