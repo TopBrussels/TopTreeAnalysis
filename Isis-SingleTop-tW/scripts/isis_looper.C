@@ -264,13 +264,13 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_pt_min = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_min->Sumw2();
   
-  sprintf(title,"pt_max_final_%s",plotName);
-  TH1F* histo_pt_max_final = new TH1F( title, " ", 100,  0, 200 );
-  histo_pt_max_final->Sumw2();
+  sprintf(title,"pt_max_1j1t_%s",plotName);
+  TH1F* histo_pt_max_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_max_1j1t->Sumw2();
   
-  sprintf(title,"pt_min_final_%s",plotName);
-  TH1F* histo_pt_min_final = new TH1F( title, " ", 100,  0, 200 );
-  histo_pt_min_final->Sumw2();
+  sprintf(title,"pt_min_1j1t_%s",plotName);
+  TH1F* histo_pt_min_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_pt_min_1j1t->Sumw2();
   
   sprintf(title,"btagHE_%s",plotName);
   TH2F* histo_btagHE = new TH2F( title, " ", 300,  -200, 100, 100, -2, 7);
@@ -300,9 +300,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_npu = new TH1F( title, " ", 30,   -0.5, 29.5 );
   histo_npu->Sumw2();
   
-    sprintf(title,"eta_leading_final_%s",plotName);
-  TH1F* histo_eta_leading_final = new TH1F( title, " ", 101,  -3, 3);
-  histo_eta_leading_final->Sumw2();
+    sprintf(title,"eta_leading_1j1t_%s",plotName);
+  TH1F* histo_eta_leading_1j1t = new TH1F( title, " ", 101,  -3, 3);
+  histo_eta_leading_1j1t->Sumw2();
   
   /// Classic plotmaker plots
   sprintf(title,"met_%s",plotName);
@@ -799,21 +799,21 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		
 		if (ht > 160 || mode !=0){
 		  histo->Fill(6, xlWeight);
-		  histo_ht_cut->Fill(ht, xlWeight);
-		  histo_ht_nomet_cut->Fill(ht_nomet, xlWeight);
+		  histo_ht_1j1t->Fill(ht, xlWeight);
+		  histo_ht_nomet_1j1t->Fill(ht_nomet, xlWeight);
 		  
 		  //Example to access the pu reweighting!
-		  histo_nvertex_final->Fill(nvertex, rawWeight);
-		  histo_nvertex_final_purw->Fill(nvertex, rawWeight*puweight);
+		  histo_nvertex_1j1t->Fill(nvertex, rawWeight);
+		//  histo_nvertex_1j1t_purw->Fill(nvertex, rawWeight*puweight);
 		  histo_ptsys_1j1t->Fill(ptSystem, xlWeight);
 		  
-		  histo_pt_max_final->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
-		  histo_pt_min_final->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
+		  histo_pt_max_1j1t->Fill(TMath::Max(lepton0.Pt(), lepton1.Pt()), xlWeight);
+		  histo_pt_min_1j1t->Fill(TMath::Min(lepton0.Pt(), lepton1.Pt()), xlWeight);
 		  
 		  histo_pt_leading_1j1t->Fill(ptJet->at(0), xlWeight);
 		  
 		  TLorentzVector jet_fill(pxJet->at(0),pyJet->at(0), pzJet->at(0), eJet->at(0));
-		  histo_eta_leading_final->Fill(jet_fill.Eta(), xlWeight);
+		  histo_eta_leading_1j1t->Fill(jet_fill.Eta(), xlWeight);
 		  
 		  histo_met_1j1t->Fill(metPt,  xlWeight);
 		  
