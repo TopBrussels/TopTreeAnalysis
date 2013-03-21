@@ -14,7 +14,7 @@
 //#include "../Tools/interface/PlottingTools.h"
 using namespace std;
 
-void dis_plotmaker(int mode = 0){
+void dis_plotmaker(int mode = 0, int region = 0){
   
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
@@ -34,7 +34,10 @@ void dis_plotmaker(int mode = 0){
   labelcms2->SetTextAlign(12);
   labelcms2->SetTextSize(0.045);
   labelcms2->SetFillColor(kWhite);
-  labelcms2->AddText("12 fb^{-1}, e#mu channel  ");
+     if      (mode == 0) labelcms2->AddText("12 fb^{-1}, e#mu channel  ");	
+    else if (mode == 1) labelcms2->AddText("12 fb^{-1}, #mu#mu channel  "); 	
+    else if (mode == 2) labelcms2->AddText("12 fb^{-1}, ee channel  "); 
+  
   labelcms2->SetBorderSize(0);
   
   gStyle->SetOptStat(0);
@@ -50,7 +53,10 @@ void dis_plotmaker(int mode = 0){
   gStyle->SetTitleYOffset(1.2);//1.7
   
   char myRootFile[300];
-  double lumi = 4399; // emu channel
+   if      (mode == 0)	 lumi = 11966.617;  	
+    else if (mode == 1) lumi = 12067.294;  	
+    else if (mode == 2) lumi = 12093.792; 
+  
 
     
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode); // take output from looper
@@ -59,16 +65,29 @@ void dis_plotmaker(int mode = 0){
   cout << myRootFile << endl;
   
   const int nProcess = 2;
-  const int nPlots = 8;
+  const int nPlots = 10;
   TString processName[nProcess] =  { "twdr", "tt"};
   TString processTitle[nProcess] = { "tW","t#bar{t}"};
   Color_t color[nProcess] =        { kBlue, kRed};
   
-
-  TString cutLabel[nPlots] =     {  "met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t","pt_leading_2j2t",  "nvertex_2j2t", "pt_max_2j2t","pt_min_2j2t","ht_nomet_2j2t","eta_leading_2j2t", };
-  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1,2,2,12,1};
+  if(region == 0){
+  TString cutLabel[nPlots] =     {  "met_1j1t", "mll_1j1t", "ptsys_1j1t", "ht_1j1t","pt_leading_1j1t",  "nvertex_1j1t", "pt_max_1j1t","pt_min_1j1t","ht_nomet_1j1t","eta_leading_1j1t" };
+  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1,4,4,12,4};
+  TString cutTitle[nPlots] =     { "E_{T}^{miss} 1j1t", "Inv. Mass 1j1t", "P_{T} system [GeV] 1j1t","H_{T} [GeV] 1j1t","P_{T} of the leading jet 1j1t", "# of vertex 1j1t", "p_T of the first lepton [GeV] 1j1t", "p_T  of the second lepton [GeV] 1j1t", "H_{T} no met [GeV] 1j1t","Eta of the leading jet 1j1t"};
+  } else if(region == 1){
+   TString cutLabel[nPlots] =     {  "met_2j1t", "mll_2j1t", "ptsys_2j1t", "ht_2j1t","pt_leading_2j1t",  "nvertex_2j1t", "pt_max_2j1t","pt_min_2j1t","ht_nomet_2j1t","eta_leading_2j1t" };
+  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1,4,4,12,4};
+  TString cutTitle[nPlots] =     { "E_{T}^{miss} 2j1t", "Inv. Mass 2j1t", "P_{T} system [GeV] 2j1t","H_{T} [GeV] 2j1t","P_{T} of the leading jet 2j1t", "# of vertex 2j1t", "p_T of the first lepton [GeV] 2j1t", "p_T  of the second lepton [GeV] 2j1t", "H_{T} no met [GeV] 2j1t","Eta of the leading jet 2j1t"};
+ 
+  
+  
+  }else if(region == 2){
+   TString cutLabel[nPlots] =     {  "met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t","pt_leading_2j2t",  "nvertex_2j2t", "pt_max_2j2t","pt_min_2j2t","ht_nomet_2j2t","eta_leading_2j2t" };
+  int rebinHisto[nPlots] =       {  4, 4,  4, 12, 4, 1,4,4,12,4};
   TString cutTitle[nPlots] =     { "E_{T}^{miss} 2j2t", "Inv. Mass 2j2t", "P_{T} system [GeV] 2j2t","H_{T} [GeV] 2j2t","P_{T} of the leading jet 2j2t", "# of vertex 2j2t", "p_T of the first lepton [GeV] 2j2t", "p_T  of the second lepton [GeV] 2j2t", "H_{T} no met [GeV] 2j2t","Eta of the leading jet 2j2t"};
-
+ 
+  
+  }
 
   TString modeString[1] = {"0"};
   
