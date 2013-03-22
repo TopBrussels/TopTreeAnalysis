@@ -98,21 +98,24 @@ int main (int argc, char *argv[])
     inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
     inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
     inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
+    
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mcatnlo_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
@@ -122,6 +125,70 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
+
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JESPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JESPlus_SemiLep.root");
+
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JESMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JESMinus_SemiLep.root");
+
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JERPlus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JERPlus_SemiLep.root");
+
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JERMinus_SemiLep.root");
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -293,6 +360,7 @@ int main (int argc, char *argv[])
 //  MSPlot["AllJets_pt_leptonMinus"]->setMaxY(70000.);
   MSPlot["Leading_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["Leading_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+  MSPlot["Leading_jet_pt"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt",100,20,1020,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["4th_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
   MSPlot["4th_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
   MSPlot["MET"] = new MultiSamplePlot(dataSetsOneData,"MET",50,0,300,"MET (GeV)","Nr. of events");
@@ -300,14 +368,18 @@ int main (int argc, char *argv[])
   MSPlot["MET_el"] = new MultiSamplePlot(datasetsSemiEl,"MET_el",50,0,300,"MET (GeV)","Nr. of events");
   MSPlot["MET_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonPlus",50,0,300,"MET (GeV)","Nr. of events");
   MSPlot["MET_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonMinus",50,0,300,"MET (GeV)","Nr. of events");
+  MSPlot["MTW_mu"] = new MultiSamplePlot(dataSetsOneData,"MTW_mu",50,0,300,"M_{T}^{W} (GeV)","Nr. of events");
+  MSPlot["MTW_el"] = new MultiSamplePlot(dataSetsOneData,"MTW_el",50,0,300,"M_{T}^{W} (GeV)","Nr. of events");
   MSPlot["Nr_of_jets"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"No. of jets","Events");
 //  MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
   MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"No. of jets","Events");
 //  MSPlot["Nr_of_jets_leptonMinus"]->setMaxY(50000.);
   MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}","Events");
+  MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMinLogY(10.);
 //  MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMaxY(18000.);
   MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}","Events");
+  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMinLogY(10.);
 //  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(28000.);
   MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
 //  MSPlot["mTop_Fit_leptonPlus"]->setMaxY(6000.);
@@ -504,6 +576,14 @@ int main (int argc, char *argv[])
   leptonTools->readMuonSF("LeptonSF/Muon_ID_iso_Efficiencies_Run_2012ABCD_53X.root", "LeptonSF/MuonEfficiencies_Run_2012A_2012B_53X.root", "LeptonSF/MuonEfficiencies_Run_2012C_53X.root", "LeptonSF/TriggerMuonEfficiencies_Run_2012D_53X.root");
   leptonTools->readElectronSF();
   
+  // Reqeight leading JetPt
+  cout << "Applying LeadingJetPtSF" << endl;
+  TFile* inFile = new TFile("/home/stijn/JES+MTop/Presentatie/28_02_2013_JetPtReweighting/leadingJetPtSF.root","READ");
+  TH1F* LeadingJetPtSF = (TH1F*) inFile->Get("Leading_jet_pt_Data")->Clone();
+  LeadingJetPtSF->SetDirectory(0);
+  inFile->Close();
+  delete inFile;
+  
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
   resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
@@ -559,6 +639,12 @@ int main (int argc, char *argv[])
       dataSetElSF = 1.;
       dataSetMuSF = 1.;
     }
+    
+/*    if( ! dataSet->Name().find("TT") == 0 )
+    {
+      dataSetElSF *= 1.257827452;
+      dataSetMuSF *= 1.257827452;
+    }*/
     
     cout << "Processing DataSet: " << dataSetName << "  containing " << nEvent << " events" << endl;
     cout << "Cross section = " << dataSet->Xsection() << "  intLumi = " << dataSet->EquivalentLumi() << "  NormFactor = " << dataSet->NormFactor() << endl;
@@ -765,6 +851,9 @@ int main (int argc, char *argv[])
       vector<float> btagCSV = monster->bTagCSV();
       int nBtags = 0, nJets = 0;
       
+//      if( !dataSet->Title().find("Data") == 0 )
+//        monster->setEventWeight( monster->eventWeight() * LeadingJetPtSF->GetBinContent( LeadingJetPtSF->FindBin( selectedJets[0].Pt() ) ) );
+      
       for(unsigned int i=0; i<selectedJets.size(); i++)
       {
         if(btagCSV[i] > bTagCut) nBtags++;
@@ -833,7 +922,7 @@ int main (int argc, char *argv[])
           float chi2MTopFit = monster->chi2MTopFit(iCombi);
           
   //        if( chi2MTopFit < 99999 ) // 99999 means no mTopFit value was calculated, see FullKinFit.cc
-          if( chi2MTopFit < maxChi2 )
+          if( chi2MTopFit < maxChi2 && selectedJets[combi[0]].Pt() > 30 && selectedJets[combi[1]].Pt() > 30 && selectedJets[combi[2]].Pt() > 50 )
           {
             if( chi2MTopFit < bestChi2 ) bestChi2 = chi2MTopFit; //For PDG reweighing
             nFinalCombis++;
@@ -943,12 +1032,14 @@ int main (int argc, char *argv[])
         MSPlot["Nr_of_jets"]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["Nr_of_jets"+leptonChargeIncl]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["Leading_jet_pt"+leptonChargeIncl]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+        MSPlot["Leading_jet_pt"]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["4th_jet_pt"+leptonChargeIncl]->Fill(selectedJets[3].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["MET"+leptonChargeIncl]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["MET"+leptonDecay]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+        MSPlot["MTW"+leptonDecay]->Fill(sqrt(2*MET.Pt()*lepton.Pt()*(1-cos(lepton.DeltaPhi(MET)))), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["MET"]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["Lepton_pt"+leptonDecay]->Fill(lepton.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
-        MSPlot["Lepton_eta"+leptonDecay]->Fill(lepton.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+        MSPlot["Lepton_eta"+leptonDecay]->Fill(lepton.Eta(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         
         for(int i=0; i<mTop.size(); i++)
         {
@@ -1224,8 +1315,8 @@ int main (int argc, char *argv[])
 	  RooRealVar mTopFitWjets("mTopFitWjets","mTopFitWjets",50.,650.);
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
 	
-	  RooRealVar mean("mean","mean",150.,130.,180.);
-	  RooRealVar sigma("sigma","sigma",35.,33.,50.);
+	  RooRealVar mean("mean","mean",150.,130.,200.);
+	  RooRealVar sigma("sigma","sigma",35.,25.,50.);
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
     
@@ -1273,15 +1364,15 @@ int main (int argc, char *argv[])
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first;
-    temp->showNumberEntries(true);
+    temp->showNumberEntries(false);
     if(name.find("muPlus") < name.size()) temp->addText("#mu^{+}+jets");
     else if(name.find("muMinus") < name.size()) temp->addText("#mu^{-}+jets");
     else if(name.find("elPlus") < name.size()) temp->addText("e^{+}+jets");
     else if(name.find("elMinus") < name.size()) temp->addText("e^{-}+jets");
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
-    temp->Draw(false, name, true, true, true, true, true, 1, true);
-//    temp->Draw(false, name, false, false, false, false, false, 1, true); // void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+//    temp->Draw(false, name, true, true, true, true, true, 1, true);
+    temp->Draw(false, name, false, false, false, false, false, 1, true); // void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
 //    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
