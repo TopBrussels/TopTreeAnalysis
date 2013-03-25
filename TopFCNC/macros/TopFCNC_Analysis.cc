@@ -27,6 +27,10 @@
 
 #include "../../macros/Style.C"
 
+#include "BTagWeight.h"
+#include "SFbFuncs_Moriond2013.C"
+#include "SFlightFuncs_Moriond2013.C"
+
 using namespace std;
 using namespace TopTree;
 
@@ -179,53 +183,53 @@ int main (int argc, char *argv[])
   // NO BTAG CUT________________________________________________________________________________________
   MSPlot["KinFit_Prob"]        = new MultiSamplePlot(dataSets,"KinFit_Prob",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2",500,0,100,"#chi^{2}");
-  MSPlot["KinFit_ReducedChi2"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2",100,0,1,"#chi^{2}/Ndf");
+  MSPlot["KinFit_ReducedChi2"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2",200,0,10,"#chi^{2}/Ndf");
 
   MSPlot["KinFit_HadWMass"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass",120,50,110,"m_{W} [Gev/c^{2}]");
   MSPlot["KinFit_HadTopMass"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
 
-  MSPlot["KinFit_LepZ_Pt"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt",300,0,150,"p^{ll}_{T} [Gev/c]");
-  MSPlot["KinFit_Lep_DR"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_LepZ_Pt"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt",400,0,200,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR",50,0,5,"#Delta R(l^{+}l^{-})");
   MSPlot["KinFit_Met"]         = new MultiSamplePlot(dataSets,"KinFit_Met",300,0,150,"\\slashE_{T} [Gev/c]");
 
   // CSV Tight Working point_____________________________________________________________________________
   MSPlot["KinFit_Prob_AtLeast1Btag_CSVT"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_AtLeast1Btag_CSVT",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2_AtLeast1Btag_CSVT"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_AtLeast1Btag_CSVT",500,0,100,"#chi^{2}");
-  MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVT"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVT",100,0,1,"#chi^{2}/Ndf");
+  MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVT"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVT",200,0,10,"#chi^{2}/Ndf");
   
   MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVT"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_AtLeast1Btag_CSVT",120,50,110,"m_{W} [Gev/c^{2}]");
   MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVT"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_AtLeast1Btag_CSVT",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVT"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_AtLeast1Btag_CSVT",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
   
-  MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVT"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_AtLeast1Btag_CSVT",300,0,150,"p^{ll}_{T} [Gev/c]");
-  MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVT"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_AtLeast1Btag_CSVT",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVT"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_AtLeast1Btag_CSVT",400,0,200,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVT"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_AtLeast1Btag_CSVT",50,0,5,"#Delta R(l^{+}l^{-})");
   MSPlot["KinFit_Met_AtLeast1Btag_CSVT"]         = new MultiSamplePlot(dataSets,"KinFit_Met_AtLeast1Btag_CSVT",300,0,150,"\\slashE_{T} [Gev/c]");
 
   // CSV Medium Working point____________________________________________________________________________
   MSPlot["KinFit_Prob_AtLeast1Btag_CSVM"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_AtLeast1Btag_CSVM",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2_AtLeast1Btag_CSVM"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_AtLeast1Btag_CSVM",500,0,100,"#chi^{2}");
-  MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVM",100,0,1,"#chi^{2}/Ndf");
+  MSPlot["KinFit_ReducedChi2_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_AtLeast1Btag_CSVM",200,0,10,"#chi^{2}/Ndf");
 
   MSPlot["KinFit_HadWMass_AtLeast1Btag_CSVM"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_AtLeast1Btag_CSVM",120,50,110,"m_{W} [Gev/c^{2}]");
   MSPlot["KinFit_HadTopMass_AtLeast1Btag_CSVM"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_AtLeast1Btag_CSVM",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass_AtLeast1Btag_CSVM"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_AtLeast1Btag_CSVM",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
 
-  MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVM"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_AtLeast1Btag_CSVM",300,0,150,"p^{ll}_{T} [Gev/c]");
-  MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVM"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_AtLeast1Btag_CSVM",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_LepZ_Pt_AtLeast1Btag_CSVM"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_AtLeast1Btag_CSVM",400,0,200,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR_AtLeast1Btag_CSVM"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_AtLeast1Btag_CSVM",50,0,5,"#Delta R(l^{+}l^{-})");
   MSPlot["KinFit_Met_AtLeast1Btag_CSVM"]         = new MultiSamplePlot(dataSets,"KinFit_Met_AtLeast1Btag_CSVM",300,0,150,"\\slashE_{T} [Gev/c]");
   
   // CSV Loose Working point (Veto) _____________________________________________________________________
   MSPlot["KinFit_Prob_NoBtag_CVSL"]        = new MultiSamplePlot(dataSets,"KinFit_Prob_NoBtag_CVSL",100,0,1,"Prob.");
   MSPlot["KinFit_Chi2_NoBtag_CVSL"]        = new MultiSamplePlot(dataSets,"KinFit_Chi2_NoBtag_CVSL",500,0,100,"#chi^{2}");
-  MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_NoBtag_CVSL",100,0,1,"#chi^{2}/Ndf");
+  MSPlot["KinFit_ReducedChi2_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_ReducedChi2_NoBtag_CVSL",200,0,10,"#chi^{2}/Ndf");
 
   MSPlot["KinFit_HadWMass_NoBtag_CVSL"]    = new MultiSamplePlot(dataSets,"KinFit_HadWMass_NoBtag_CVSL",120,50,110,"m_{W} [Gev/c^{2}]");
   MSPlot["KinFit_HadTopMass_NoBtag_CVSL"]  = new MultiSamplePlot(dataSets,"KinFit_HadTopMass_NoBtag_CVSL",280,100,240,"m^{SM}_{top} [Gev/c^{2}]");
   MSPlot["KinFit_FcncTopMass_NoBtag_CVSL"] = new MultiSamplePlot(dataSets,"KinFit_FcncTopMass_NoBtag_CVSL",280,100,240,"m^{FCNC}_{top} [Gev/c^{2}]");
   
-  MSPlot["KinFit_LepZ_Pt_NoBtag_CVSL"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_NoBtag_CVSL",300,0,150,"p^{ll}_{T} [Gev/c]");
-  MSPlot["KinFit_Lep_DR_NoBtag_CVSL"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_NoBtag_CVSL",60,0,6,"#Delta R(l^{+}l^{-})");
+  MSPlot["KinFit_LepZ_Pt_NoBtag_CVSL"]     = new MultiSamplePlot(dataSets,"KinFit_LepZ_Pt_NoBtag_CVSL",400,0,200,"p^{ll}_{T} [Gev/c]");
+  MSPlot["KinFit_Lep_DR_NoBtag_CVSL"]      = new MultiSamplePlot(dataSets,"KinFit_Lep_DR_NoBtag_CVSL",50,0,5,"#Delta R(l^{+}l^{-})");
   MSPlot["KinFit_Met_NoBtag_CVSL"]         = new MultiSamplePlot(dataSets,"KinFit_Met_NoBtag_CVSL",300,0,150,"\\slashE_{T} [Gev/c]");
   
 
@@ -256,6 +260,35 @@ int main (int argc, char *argv[])
   }
 */
   cout << " - Declared counters ..." <<  endl;
+
+  ////////////////////////////////////////////////////////////////////
+  ////////////////// B-tagging SF ////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////
+
+  string value  = "mean"; // "mean", "min", "max"
+  string tagger = "CSV";
+  string period = "AB";
+
+  // CSV tagger (loose working point)
+  // - btagging effiency;
+  TF1* SFb_Loose = GetSFb(tagger,"L");
+  // - mis-tagging efficiency:
+  TF1* SFlight_Loose_Eta_0p0_0p5 = GetSFLight(value,tagger,"L",0.0, 0.5, period)
+  TF1* SFlight_Loose_Eta_0p5_1p0 = GetSFLight(value,tagger,"L",0.5, 1.0, period)
+  TF1* SFlight_Loose_Eta_1p0_1p5 = GetSFLight(value,tagger,"L",1.0, 1.5, period)
+  TF1* SFlight_Loose_Eta_1p5_2p4 = GetSFLight(value,tagger,"L",1.5, 2.4, period)
+  // CSV tagger (medium working point)
+  // - btagging efficiency
+  TF1* SFb_Medium = GetSFb(tagger,"M");
+  // - mis-tagging efficiency
+  TF1* SFlight_Medium_Eta_0p0_0p8 = GetSFLight(value,tagger,"M",0.0, 0.8, period)
+  TF1* SFlight_Medium_Eta_0p8_1p6 = GetSFLight(value,tagger,"M",0.8, 1.6, period)
+  TF1* SFlight_Medium_Eta_1p6_2p4 = GetSFLight(value,tagger,"M",1.6, 2.4, period)
+  // CSV tagger (tight working point)
+  // - btagging efficiency
+  TF1* SFb_Tight = GetSFb(tagger,"T");
+  // - mis-tagging efficiency
+  TF1* SFlight_Tight_Eta_0p0_2p4 = GetSFLight(value,tagger,"T",0.0, 2.4, period)
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,6 +422,9 @@ int main (int argc, char *argv[])
         kin_nbofbtag_csvm++;
         if(disc_csv<0.898) continue;
         kin_nbofbtag_csvt++;
+        jetInfo.eff = 0; // Get tagging eff from payload
+        jetInfo.sf = 0; // Get SF from payload
+        vJetInfo.push_back(jetInfo);
       }
       MSPlot["KinFit_NbOfBtaggedJets_CSVL"]->Fill(kin_nbofbtag_csvl, dataSets[iDataSet], true, Luminosity*EventWeight);
       MSPlot["KinFit_NbOfBtaggedJets_CSVM"]->Fill(kin_nbofbtag_csvm, dataSets[iDataSet], true, Luminosity*EventWeight);
@@ -458,7 +494,7 @@ int main (int argc, char *argv[])
 	  MultiSamplePlot *temp = it->second;
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
-    //name += postfix;
+    name += comments;
 	  cout<<"Booking MS :"<<name<<endl;
 	  temp->Draw(false, name, true, true, true, true, true,1,true); // merge TT/QCD/W/Z/ST/
 	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);

@@ -613,8 +613,9 @@ int main (int argc, char *argv[])
       //         - apply cross-trigger MuEG SF
 
       if(selectedMuons_NoIso.size()<1 && selectedElectrons_NoIso.size()<1) continue;
-      scaleFactor *= MuEffSF_Id_Run2012(selectedMuons_NoIso[0]->Eta(), selectedMuons_NoIso[0]->Pt());// Id SF
-      
+      scaleFactor *= MuEffSF_Id_Run2012(selectedMuons_NoIso[0]->Eta(), selectedMuons_NoIso[0]->Pt());// Muon Id SF
+      // Elec Id SF
+
       MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
       
       histo2D[("d0_vs_phi_1stleadingmuon_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
@@ -634,7 +635,7 @@ int main (int argc, char *argv[])
       MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       
-      // Select events with at least two isolated muons
+      // Select events with at least one isolated muon and one isolated electron
       if(selectedMuons.size()<1 && selectedElectrons.size()<1) continue;
       scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
       
@@ -743,11 +744,9 @@ int main (int argc, char *argv[])
         MyTopFCNC_EvtCand->SetnPV(vertex.size());
         MyTopFCNC_EvtCand->SetnTruePU(event->nTruePU());
         MyTopFCNC_EvtCand->SetEventWeight(scaleFactor);
+        Tree->Fill();
+        delete MyTopFCNC_EvtCand;
       }
-      Tree->Fill();
-      
-      //delete selection;
-      if(MyTopFCNC_EvtCand) delete MyTopFCNC_EvtCand;
     }//loop on events
     
     cout<<endl;
@@ -784,9 +783,9 @@ int main (int argc, char *argv[])
   //Selection tables
 
   //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)	
-  selecTableMuEl.TableCalculator(  false, true, true, true, true);
+  selecTableMuEl.TableCalculator(false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-  selecTableMuEl.Write(  "TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiMu.tex",    true,true,true,true,false,false,true);
+  selecTableMuEl.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiMu.tex",    true,true,true,true,false,false,true);
 
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)

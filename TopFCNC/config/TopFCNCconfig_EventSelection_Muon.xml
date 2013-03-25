@@ -27,14 +27,14 @@
  <d name="wjets"    title="W\rightarrow l\nu"             add="1" color="413" ls="1" lw="2" normf="1" xsection="XXX" PreselEff="XXX" NofPSEvts="1"  filenames=""/>
 -->
 
-<d name="ttjets"   title="t\bar{t}" add="1" color="633"  ls="1"  lw="2" normf="1" xsection="234" PreselEff="0.007567303" NofPSEvts="52394" filenames="/user_mnt/user/ghammad/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeProducer/skimmer/TTJets_MassiveBinDECAY_TopTreeID_1967_Skim_DoubleMuPt20_26092012_162858_1to50.root"/>
+<d name="TTJets"   title="t\bar{t}" add="1" color="633"  ls="1"  lw="2" normf="1" xsection="234" PreselEff="0.007567303" NofPSEvts="52394" filenames="/user_mnt/user/ghammad/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeProducer/skimmer/TTJets_MassiveBinDECAY_TopTreeID_1967_Skim_DoubleMuPt20_26092012_162858_1to50.root"/>
 
-<d name="zjets"   title="Z/\gamma^{*}\rightarrow ll" add="1" color="858"  ls="1"  lw="2" normf="1" xsection="3532.71" PreselEff="0.132544432" NofPSEvts="-1" filenames="/user_mnt/user/ghammad/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeProducer/skimmer/DYJetsToLL_M-50_TopTreeID_1980_Skim_DoubleMuPt20_26092012_161858_*to*.root"/>
+<d name="ZJets"   title="Z/\gamma^{*}\rightarrow ll" add="1" color="858"  ls="1"  lw="2" normf="1" xsection="3532.71" PreselEff="0.132544432" NofPSEvts="-1" filenames="/user_mnt/user/ghammad/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeProducer/skimmer/DYJetsToLL_M-50_TopTreeID_1980_Skim_DoubleMuPt20_26092012_161858_*to*.root"/>
 <!--
  <d name="Z_Jets_m10to50" title="Z/\gamma^{*}\rightarrow ll  (10<m_{ll}<50)" add="1"   color="868" ls="1"  lw="2" normf="1" xsection="XXX" PreselEff="XXX"  NofPSEvts="-1"  filenames=""/>
 -->
 <!--
-<d name="ttbar_fcnc" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="5000" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE_StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504_21092012_122612_TOPTREE_1_1_tgl.root"/>
+<d name="TTbar_FCNC" title="FCNC"        add="1"   color="2"  ls="1"  lw="2" normf="1" xsection="1.0"    NofEvts="5000" filenames="/home/gregory/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/rootfiles/TTbar_FCNC_8TeV_500k_CMSSW_526_LHE_StoreResults-TTJets_TuneZ2star_8TeV_madgraph_tauola_cff_py_GEN_FASTSIM_HLT_PU.root-0d50c43c063c5143eba7a6c9858e3504_21092012_122612_TOPTREE_1_1_tgl.root"/>
 -->
 </datasets>
 
