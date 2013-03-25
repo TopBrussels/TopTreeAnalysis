@@ -311,10 +311,12 @@ void TopFCNC_KinFit::FitEvent(TopFCNC_Evt *topFCNC_Evt)
    	}
     while(next_combination(numbers,numbers+jets.size(),Comb,Comb+NofJets));
 
-    topFCNC_Evt->SetB(bJet_fitted);
+    topFCNC_Evt->SetLepton1FromZ(lepton1FromZ_fitted);
+    topFCNC_Evt->SetLepton2FromZ(lepton2FromZ_fitted);
     topFCNC_Evt->SetQ(qJet_fitted);
     topFCNC_Evt->SetQuark1FromW(lightJet1_fitted);
     topFCNC_Evt->SetQuark2FromW(lightJet2_fitted);
+    topFCNC_Evt->SetB(bJet_fitted);
 
     delete Permutation;
     delete Comb;
