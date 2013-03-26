@@ -62,6 +62,15 @@ void syst_plotmaker(int mode = 0, int region = 0){
   char myRootFileSFsysUp[300];
   char myRootFileMETsysDown[300];
   char myRootFileMETsysUp[300];
+  char myRootFileTopMassDown[300];
+  char myRootFileTopMassUp[300];
+  char myRootFileQ2Down[300];
+  char myRootFileQ2Up[300];
+  char myRootFileeleSFsysDown[300];
+  char myRootFileeleSFsysUp[300];
+  char myRootFilematchingDown[300];
+  char myRootFilematchingUp[300];
+  
   
   double lumi = 1000;
    if      (mode == 0)	 lumi = 11966.617;  	
@@ -90,6 +99,21 @@ void syst_plotmaker(int mode = 0, int region = 0){
  
   sprintf(myRootFileMETsysUp,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
+   sprintf(myRootFileTopMassDown,"results/TopMassDown_an_%dpb_%d.root", (int)lumi, mode);
+ 
+  sprintf(myRootFileTopMassUp,"results/TopMassUp_an_%dpb_%d.root", (int)lumi, mode);
+  
+   sprintf(myRootFileQ2Down,"results/Q2Down_an_%dpb_%d.root", (int)lumi, mode);
+ 
+  sprintf(myRootFileQ2Up,"results/Q2Up_an_%dpb_%d.root", (int)lumi, mode);
+  
+   sprintf(myRootFileeleSFsysDown,"results/eleSFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+ 
+  sprintf(myRootFileeleSFsysUp,"results/eleSFsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  
+   sprintf(myRootFilematchingDown,"results/matchingDown_an_%dpb_%d.root", (int)lumi, mode);
+ 
+  sprintf(myRootFilematchingUp,"results/matchingUp_an_%dpb_%d.root", (int)lumi, mode);
   
    
   TFile *_file0 = TFile::Open(myRootFile);
@@ -103,6 +127,16 @@ void syst_plotmaker(int mode = 0, int region = 0){
   TFile *_fileSFsysDown = TFile::Open(myRootFileSFsysDown);
   TFile *_fileMETsysUp = TFile::Open(myRootFileMETsysUp);
   TFile *_fileMETsysDown = TFile::Open(myRootFileMETsysDown);
+  TFile *_fileTopMassUp = TFile::Open(myRootFileTopMassUp);
+  TFile *_fileTopMassDown = TFile::Open(myRootFileTopMassDown);
+  TFile *_fileQ2Up = TFile::Open(myRootFileQ2Up);
+  TFile *_fileQ2Down = TFile::Open(myRootFileQ2Down);
+  TFile *_fileeleSFsysUp = TFile::Open(myRootFileeleSFsysUp);
+  TFile *_fileeleSFsysDown = TFile::Open(myRootFileeleSFsysDown);
+  TFile *_filematchingUp = TFile::Open(myRootFilematchingUp);
+  TFile *_filematchingDown = TFile::Open(myRootFilematchingDown);
+
+  
   
   cout << "-------------------------------------------------------" << endl; 
   cout << " ------------ USED FILES ------------------------------" << endl; 
@@ -117,18 +151,26 @@ void syst_plotmaker(int mode = 0, int region = 0){
   cout << "SFsysUp: " << myRootFileSFsysUp << endl;
   cout << "METsysDown: " << myRootFileMETsysDown << endl;
   cout << "METsysUp: " << myRootFileMETsysUp << endl;
+  cout << "TopMassDown: " << myRootFileTopMassDown << endl;
+  cout << "TopMassUp: " << myRootFileTopMassUp << endl;
+  cout << "Q2Down: " << myRootFileQ2Down << endl;
+  cout << "Q2Up: " << myRootFileQ2Up << endl;
+  cout << "eleSFsysDown: " << myRootFileeleSFsysDown << endl;
+  cout << "eleSFsysUp: " << myRootFileeleSFsysUp << endl;
+  cout << "matchingDown: " << myRootFilematchingDown << endl;
+  cout << "matchingUp: " << myRootFilematchingUp << endl;
   cout << "-------------------------------------------------------" << endl; 
   
   const int nProcess = 2;
   const int nPlots = 10; // 16
-  const int nSys = 11;
+  const int nSys = 19;
 
 
   TString processName[nProcess] =  { "twdr", "tt"};
   TString processTitle[nProcess] = { "tW","t#bar{t}"};
   Color_t color[nProcess] =        { kBlue, kRed};
   
-  TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp"}; 
+  TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp","TopMassDown" , "TopMassUp","Q2Down" , "Q2Up","eleSFsysDown" , "eleSFsysUp","matchingDown" , "matchingUp"}; 
 
 /*
   TString cutLabel[nPlots] =     {  "met", "mll", "ptsys", "ht", "pt_leading", "nvertex", "met_2j1t", "mll_2j1t", "ptsys_2j1t", "ht_2j1t", "pt_leading_2j1t","met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t", "pt_leading_2j2t" };
@@ -159,6 +201,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
   TString plotPU = "PU_";
   TString plotSF = "SF_";
   TString plotMET = "MET_";
+  TString plotTopMass = "TopMass_";
+  TString plotQ2 = "Q2_";
+  TString ploteleSF = "eleSF_";
+  TString plotmatching = "matching_";
+  
+  
   TString plotAnalysis = "Systematics"; // directory in plots where the plots are saved
   
 
@@ -178,6 +226,16 @@ void syst_plotmaker(int mode = 0, int region = 0){
   TH1F* histo_tt_SFsysUp;
   TH1F* histo_tt_METsysDown;
   TH1F* histo_tt_METsysUp;
+  TH1F* histo_tt_TopMassDown;
+  TH1F* histo_tt_TopMassUp;
+  TH1F* histo_tt_Q2Down;
+  TH1F* histo_tt_Q2Up;
+  TH1F* histo_tt_eleSFsysDown;
+  TH1F* histo_tt_eleSFsysUp;
+  TH1F* histo_tt_matchingDown;
+  TH1F* histo_tt_matchingUp;
+  
+  
   
   TH1F* histo_twdr;
   TH1F* histo_twdr_JERsysDown; 
@@ -190,6 +248,14 @@ void syst_plotmaker(int mode = 0, int region = 0){
   TH1F* histo_twdr_SFsysUp;
   TH1F* histo_twdr_METsysDown; 
   TH1F* histo_twdr_METsysUp;
+  TH1F* histo_twdr_TopMassDown; 
+  TH1F* histo_twdr_TopMassUp;
+  TH1F* histo_twdr_Q2Down; 
+  TH1F* histo_twdr_Q2Up;
+  TH1F* histo_twdr_eleSFsysDown; 
+  TH1F* histo_twdr_eleSFsysUp;
+  TH1F* histo_twdr_matchingDown; 
+  TH1F* histo_twdr_matchingUp;
    
   
    for(int iPlots = 0; iPlots< nPlots; iPlots++)
@@ -219,6 +285,27 @@ void syst_plotmaker(int mode = 0, int region = 0){
      legMET ->SetFillStyle(1001);
      legMET ->SetFillColor(kWhite);
      legMET ->SetBorderSize(1);
+     
+     legTopMass = new TLegend(0.7,0.7,0.94,0.94);
+     legTopMass ->SetFillStyle(1001);
+     legTopMass ->SetFillColor(kWhite);
+     legTopMass ->SetBorderSize(1);
+     
+     legQ2 = new TLegend(0.7,0.7,0.94,0.94);
+     legQ2 ->SetFillStyle(1001);
+     legQ2 ->SetFillColor(kWhite);
+     legQ2 ->SetBorderSize(1);
+     
+     legeleSF = new TLegend(0.7,0.7,0.94,0.94);
+     legeleSF ->SetFillStyle(1001);
+     legeleSF ->SetFillColor(kWhite);
+     legeleSF ->SetBorderSize(1);
+     
+     legmatching = new TLegend(0.7,0.7,0.94,0.94);
+     legmatching ->SetFillStyle(1001);
+     legmatching ->SetFillColor(kWhite);
+     legmatching ->SetBorderSize(1);
+ 
  
 	
        // Get histos tt bar 
@@ -243,7 +330,24 @@ void syst_plotmaker(int mode = 0, int region = 0){
        histo_tt_METsysDown= (TH1F*) _fileMETsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
 	    //   cout << "METsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
        histo_tt_METsysUp= (TH1F*) _fileMETsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
-	    //   cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+	    //   cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl;
+       histo_tt_TopMassDown= (TH1F*) _fileTopMassDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "TopMassDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_TopMassUp= (TH1F*) _fileTopMassUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "TopMassUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+	histo_tt_Q2Down= (TH1F*) _fileQ2Down->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "Q2Down: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_Q2Up= (TH1F*) _fileQ2Up->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "Q2Up: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+	histo_tt_eleSFsysDown= (TH1F*) _fileeleSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "eleSFsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_eleSFsysUp= (TH1F*) _fileeleSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "eleSFsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+	histo_tt_matchingDown= (TH1F*) _filematchingDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "matchingDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_matchingUp= (TH1F*) _filematchingUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "matchingUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+		       
 	       
 	       	       
        histo_tt->Rebin(rebinHisto[iPlots]);
@@ -298,8 +402,50 @@ void syst_plotmaker(int mode = 0, int region = 0){
        histo_tt_METsysUp->Rebin(rebinHisto[iPlots]);
        histo_tt_METsysUp->SetLineColor(color[0]);
        histo_tt_METsysUp->SetLineStyle(7); 
-       histo_tt_METsysUp->SetLineWidth(2);        
+       histo_tt_METsysUp->SetLineWidth(2);   
        
+       histo_tt_TopMassDown->Rebin(rebinHisto[iPlots]);
+       histo_tt_TopMassDown->SetLineColor(color[0]);
+       histo_tt_TopMassDown->SetLineStyle(3); 
+       histo_tt_TopMassDown->SetLineWidth(2);
+       
+       histo_tt_TopMassUp->Rebin(rebinHisto[iPlots]);
+       histo_tt_TopMassUp->SetLineColor(color[0]);
+       histo_tt_TopMassUp->SetLineStyle(7); 
+       histo_tt_TopMassUp->SetLineWidth(2);
+       
+       histo_tt_Q2Down->Rebin(rebinHisto[iPlots]);
+       histo_tt_Q2Down->SetLineColor(color[0]);
+       histo_tt_Q2Down->SetLineStyle(3); 
+       histo_tt_Q2Down->SetLineWidth(2);
+       
+       histo_tt_Q2Up->Rebin(rebinHisto[iPlots]);
+       histo_tt_Q2Up->SetLineColor(color[0]);
+       histo_tt_Q2Up->SetLineStyle(7); 
+       histo_tt_Q2Up->SetLineWidth(2);
+       
+       
+       histo_tt_eleSFsysDown->Rebin(rebinHisto[iPlots]);
+       histo_tt_eleSFsysDown->SetLineColor(color[0]);
+       histo_tt_eleSFsysDown->SetLineStyle(3); 
+       histo_tt_eleSFsysDown->SetLineWidth(2);
+       
+       histo_tt_eleSFsysUp->Rebin(rebinHisto[iPlots]);
+       histo_tt_eleSFsysUp->SetLineColor(color[0]);
+       histo_tt_eleSFsysUp->SetLineStyle(7); 
+       histo_tt_eleSFsysUp->SetLineWidth(2);
+       
+       histo_tt_matchingDown->Rebin(rebinHisto[iPlots]);
+       histo_tt_matchingDown->SetLineColor(color[0]);
+       histo_tt_matchingDown->SetLineStyle(3); 
+       histo_tt_matchingDown->SetLineWidth(2);
+       
+       histo_tt_matchingUp->Rebin(rebinHisto[iPlots]);
+       histo_tt_matchingUp->SetLineColor(color[0]);
+       histo_tt_matchingUp->SetLineStyle(7); 
+       histo_tt_matchingUp->SetLineWidth(2);     
+       
+
        // get histos twdr
        histo_twdr= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[0]);
         //cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
@@ -323,6 +469,22 @@ void syst_plotmaker(int mode = 0, int region = 0){
        // cout << "METsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_METsysUp= (TH1F*) _fileMETsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
        // cout << "METsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_TopMassDown= (TH1F*) _fileTopMassDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "TopMassDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_TopMassUp= (TH1F*) _fileTopMassUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "TopMassUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_Q2Down= (TH1F*) _fileQ2Down->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "Q2Down: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_Q2Up= (TH1F*) _fileQ2Up->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "Q2Up: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_eleSFsysDown= (TH1F*) _fileeleSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "eleSFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_eleSFsysUp= (TH1F*) _fileeleSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "eleSFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_matchingDown= (TH1F*) _filematchingDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "matchingDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_matchingUp= (TH1F*) _filematchingUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+       // cout << "matchingUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
 	
 	
        histo_twdr->Rebin(rebinHisto[iPlots]);
@@ -378,7 +540,48 @@ void syst_plotmaker(int mode = 0, int region = 0){
        histo_twdr_METsysUp->Rebin(rebinHisto[iPlots]);
        histo_twdr_METsysUp->SetLineColor(color[1]);
        histo_twdr_METsysUp->SetLineStyle(7); 
-       histo_twdr_METsysUp->SetLineWidth(2);       
+       histo_twdr_METsysUp->SetLineWidth(2);   
+       
+       histo_twdr_TopMassDown->Rebin(rebinHisto[iPlots]);       
+       histo_twdr_TopMassDown->SetLineColor(color[1]);
+       histo_twdr_TopMassDown->SetLineStyle(3); 
+       histo_twdr_TopMassDown->SetLineWidth(2);
+       
+       histo_twdr_TopMassUp->Rebin(rebinHisto[iPlots]);
+       histo_twdr_TopMassUp->SetLineColor(color[1]);
+       histo_twdr_TopMassUp->SetLineStyle(7); 
+       histo_twdr_TopMassUp->SetLineWidth(2); 
+       
+       histo_twdr_Q2Down->Rebin(rebinHisto[iPlots]);       
+       histo_twdr_Q2Down->SetLineColor(color[1]);
+       histo_twdr_Q2Down->SetLineStyle(3); 
+       histo_twdr_Q2Down->SetLineWidth(2);
+       
+       histo_twdr_Q2Up->Rebin(rebinHisto[iPlots]);
+       histo_twdr_Q2Up->SetLineColor(color[1]);
+       histo_twdr_Q2Up->SetLineStyle(7); 
+       histo_twdr_Q2Up->SetLineWidth(2); 
+       
+       histo_twdr_eleSFsysDown->Rebin(rebinHisto[iPlots]);       
+       histo_twdr_eleSFsysDown->SetLineColor(color[1]);
+       histo_twdr_eleSFsysDown->SetLineStyle(3); 
+       histo_twdr_eleSFsysDown->SetLineWidth(2);
+       
+       histo_twdr_eleSFsysUp->Rebin(rebinHisto[iPlots]);
+       histo_twdr_eleSFsysUp->SetLineColor(color[1]);
+       histo_twdr_eleSFsysUp->SetLineStyle(7); 
+       histo_twdr_eleSFsysUp->SetLineWidth(2); 
+       
+       
+       histo_twdr_matchingDown->Rebin(rebinHisto[iPlots]);       
+       histo_twdr_matchingDown->SetLineColor(color[1]);
+       histo_twdr_matchingDown->SetLineStyle(3); 
+       histo_twdr_matchingDown->SetLineWidth(2);
+       
+       histo_twdr_matchingUp->Rebin(rebinHisto[iPlots]);
+       histo_twdr_matchingUp->SetLineColor(color[1]);
+       histo_twdr_matchingUp->SetLineStyle(7); 
+       histo_twdr_matchingUp->SetLineWidth(2);     
         
        
        
@@ -419,9 +622,23 @@ void syst_plotmaker(int mode = 0, int region = 0){
        legMET ->AddEntry(histo_tt_METsysDown, "tt bckgr. METsysDown" , "l"); 
        legMET ->AddEntry(histo_tt_METsysUp, "tt bckgr. METsysUp" , "l");   
 
-       legMET ->AddEntry(histo_twdr, "twdr signal", "l"); 
-       legMET ->AddEntry(histo_twdr_METsysDown, "twdr signal METsysDown", "l"); 
-       legMET ->AddEntry(histo_twdr_METsysUp, "twdr signal METsysUp", "l"); 
+       legTopMass ->AddEntry(histo_twdr, "twdr signal", "l"); 
+       legTopMass ->AddEntry(histo_twdr_TopMasssysDown, "twdr signal Top mass 166.5 GeV", "l"); 
+       legTopMass ->AddEntry(histo_twdr_TopMasssysUp, "twdr signal Top mass 178.5 GeV", "l"); 
+       
+       legQ2 ->AddEntry(histo_twdr, "twdr signal", "l"); 
+       legQ2 ->AddEntry(histo_twdr_Q2sysDown, "twdr signal Q2 halved", "l"); 
+       legQ2 ->AddEntry(histo_twdr_Q2sysUp, "twdr signal Q2 doubled", "l");
+       
+       legeleSF ->AddEntry(histo_twdr, "twdr signal", "l"); 
+       legeleSF ->AddEntry(histo_twdr_eleSFsysDown, "twdr signal eleSF Down", "l"); 
+       legeleSF ->AddEntry(histo_twdr_eleSFsysUp, "twdr signal eleSF Up", "l");
+       
+       legmatching ->AddEntry(histo_twdr, "twdr signal", "l"); 
+       legmatching ->AddEntry(histo_twdr_matchingsysDown, "twdr signal matching Down", "l"); 
+       legmatching ->AddEntry(histo_twdr_matchingsysUp, "twdr signal matching Up", "l");
+       
+       
               
        
        // determine maxima
@@ -455,6 +672,30 @@ void syst_plotmaker(int mode = 0, int region = 0){
        double max_MET_4 = TMath::Max(max_MET_1,max_MET_2);
        double max_MET = TMath::Max(max_MET_3,max_MET_4);    
     
+       double max_TopMass_1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
+       double max_TopMass_2 = TMath::Max( histo_tt_TopMasssysUp->GetMaximum(), histo_twdr_TopMasssysUp->GetMaximum());
+       double max_TopMass_3 = TMath::Max(histo_tt_TopMasssysDown->GetMaximum(), histo_twdr_TopMasssysDown->GetMaximum());
+       double max_TopMass_4 = TMath::Max(max_TopMass_1,max_TopMass_2);
+       double max_TopMass = TMath::Max(max_TopMass_3,max_TopMass_4)
+       
+       double max_Q2_1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
+       double max_Q2_2 = TMath::Max( histo_tt_Q2sysUp->GetMaximum(), histo_twdr_Q2sysUp->GetMaximum());
+       double max_Q2_3 = TMath::Max(histo_tt_Q2sysDown->GetMaximum(), histo_twdr_Q2sysDown->GetMaximum());
+       double max_Q2_4 = TMath::Max(max_Q2_1,max_Q2_2);
+       double max_Q2 = TMath::Max(max_Q2_3,max_Q2_4)
+       
+       double max_eleSF_1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
+       double max_eleSF_2 = TMath::Max( histo_tt_eleSFsysUp->GetMaximum(), histo_twdr_eleSFsysUp->GetMaximum());
+       double max_eleSF_3 = TMath::Max(histo_tt_eleSFsysDown->GetMaximum(), histo_twdr_eleSFsysDown->GetMaximum());
+       double max_eleSF_4 = TMath::Max(max_eleSF_1,max_eleSF_2);
+       double max_eleSF = TMath::Max(max_eleSF_3,max_eleSF_4)
+       
+       double max_matching_1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
+       double max_matching_2 = TMath::Max( histo_tt_matchingsysUp->GetMaximum(), histo_twdr_matchingsysUp->GetMaximum());
+       double max_matching_3 = TMath::Max(histo_tt_matchingsysDown->GetMaximum(), histo_twdr_matchingsysDown->GetMaximum());
+       double max_matching_4 = TMath::Max(max_matching_1,max_matching_2);
+       double max_matching = TMath::Max(max_matching_3,max_matching_4)
+       
        
        TCanvas *c1 = new TCanvas();
        // ttbar
@@ -644,6 +885,156 @@ void syst_plotmaker(int mode = 0, int region = 0){
       c1_MET->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotMET+ modeString[mode] + "_" + cutLabel[iPlots] + ".png");
      // c1_MET->SaveAs("plots/pdf/" + plotExtension + plotMET +modeString[mode] + "_" + cutLabel[iPlots] + ".pdf");      
       
+      
+    TCanvas *c1_TopMass = new TCanvas();
+       // ttbar
+       histo_tt->Draw("h");
+       histo_tt->SetMaximum(max * 1.5);
+       histo_tt->SetMinimum(1);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+    
+       histo_tt_TopMassUp->Draw("h, sames");
+       histo_tt_TopMassUp->SetMaximum(max * 1.5);
+       histo_tt_TopMassUp->SetMinimum(1);
+       
+       histo_tt_TopMassDown->Draw("h, sames");
+       histo_tt_TopMassDown->SetMaximum(max * 1.5);
+       histo_tt_TopMassDown->SetMinimum(1);     
+       
+       // twdr
+       histo_twdr->Draw("histo , sames");
+       histo_twdr->SetMaximum(max * 1.5);
+       histo_twdr->SetMinimum(1);
+
+       histo_twdr_TopMassUp->Draw("histo , sames");
+       histo_twdr_TopMassUp->SetMaximum(max * 1.5);
+       histo_twdr_TopMassUp->SetMinimum(1);
+
+       histo_twdr_TopMassDown->Draw("histo , sames");
+       histo_twdr_TopMassDown->SetMaximum(max * 1.5);
+       histo_twdr_TopMassDown->SetMinimum(1);
+
+       
+      legTopMass->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
+    
+      c1_TopMass->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotTopMass+ modeString[mode] + "_" + cutLabel[iPlots] + ".png");
+     // c1_TopMass->SaveAs("plots/pdf/" + plotExtension + plotTopMass +modeString[mode] + "_" + cutLabel[iPlots] + ".pdf");         
+      
+  TCanvas *c1_Q2 = new TCanvas();
+       // ttbar
+       histo_tt->Draw("h");
+       histo_tt->SetMaximum(max * 1.5);
+       histo_tt->SetMinimum(1);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+    
+       histo_tt_Q2Up->Draw("h, sames");
+       histo_tt_Q2Up->SetMaximum(max * 1.5);
+       histo_tt_Q2Up->SetMinimum(1);
+       
+       histo_tt_Q2Down->Draw("h, sames");
+       histo_tt_Q2Down->SetMaximum(max * 1.5);
+       histo_tt_Q2Down->SetMinimum(1);     
+       
+       // twdr
+       histo_twdr->Draw("histo , sames");
+       histo_twdr->SetMaximum(max * 1.5);
+       histo_twdr->SetMinimum(1);
+
+       histo_twdr_Q2Up->Draw("histo , sames");
+       histo_twdr_Q2Up->SetMaximum(max * 1.5);
+       histo_twdr_Q2Up->SetMinimum(1);
+
+       histo_twdr_Q2Down->Draw("histo , sames");
+       histo_twdr_Q2Down->SetMaximum(max * 1.5);
+       histo_twdr_Q2Down->SetMinimum(1);
+
+       
+      legQ2->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
+    
+      c1_Q2->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotQ2+ modeString[mode] + "_" + cutLabel[iPlots] + ".png");
+     // c1_Q2->SaveAs("plots/pdf/" + plotExtension + plotQ2 +modeString[mode] + "_" + cutLabel[iPlots] + ".pdf");           
+      
+ TCanvas *c1_eleSF = new TCanvas();
+       // ttbar
+       histo_tt->Draw("h");
+       histo_tt->SetMaximum(max * 1.5);
+       histo_tt->SetMinimum(1);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+    
+       histo_tt_eleSFsysUp->Draw("h, sames");
+       histo_tt_eleSFsysUp->SetMaximum(max * 1.5);
+       histo_tt_eleSFsysUp->SetMinimum(1);
+       
+       histo_tt_eleSFsysDown->Draw("h, sames");
+       histo_tt_eleSFsysDown->SetMaximum(max * 1.5);
+       histo_tt_eleSFsysDown->SetMinimum(1);     
+       
+       // twdr
+       histo_twdr->Draw("histo , sames");
+       histo_twdr->SetMaximum(max * 1.5);
+       histo_twdr->SetMinimum(1);
+
+       histo_twdr_eleSFsysUp->Draw("histo , sames");
+       histo_twdr_eleSFsysUp->SetMaximum(max * 1.5);
+       histo_twdr_eleSFsysUp->SetMinimum(1);
+
+       histo_twdr_eleSFsysDown->Draw("histo , sames");
+       histo_twdr_eleSFsysDown->SetMaximum(max * 1.5);
+       histo_twdr_eleSFsysDown->SetMinimum(1);
+
+       
+      legeleSF->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
+    
+      c1_eleSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + ploteleSF+ modeString[mode] + "_" + cutLabel[iPlots] + ".png");
+     // c1_eleSF->SaveAs("plots/pdf/" + plotExtension + ploteleSF +modeString[mode] + "_" + cutLabel[iPlots] + ".pdf");            
+      
+ TCanvas *c1_matching = new TCanvas();
+       // ttbar
+       histo_tt->Draw("h");
+       histo_tt->SetMaximum(max * 1.5);
+       histo_tt->SetMinimum(1);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+    
+       histo_tt_matchingUp->Draw("h, sames");
+       histo_tt_matchingUp->SetMaximum(max * 1.5);
+       histo_tt_matchingUp->SetMinimum(1);
+       
+       histo_tt_matchingDown->Draw("h, sames");
+       histo_tt_matchingDown->SetMaximum(max * 1.5);
+       histo_tt_matchingDown->SetMinimum(1);     
+       
+       // twdr
+       histo_twdr->Draw("histo , sames");
+       histo_twdr->SetMaximum(max * 1.5);
+       histo_twdr->SetMinimum(1);
+
+       histo_twdr_matchingUp->Draw("histo , sames");
+       histo_twdr_matchingUp->SetMaximum(max * 1.5);
+       histo_twdr_matchingUp->SetMinimum(1);
+
+       histo_twdr_matchingDown->Draw("histo , sames");
+       histo_twdr_matchingDown->SetMaximum(max * 1.5);
+       histo_twdr_matchingDown->SetMinimum(1);
+
+       
+      legmatching->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
+    
+      c1_matching->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotmatching+ modeString[mode] + "_" + cutLabel[iPlots] + ".png");
+     // c1_matching->SaveAs("plots/pdf/" + plotExtension + plotmatching +modeString[mode] + "_" + cutLabel[iPlots] + ".pdf");      
+     
+           
       TCanvas *c2 = new TCanvas();
        histo_tt->DrawNormalized("h",1);
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
@@ -747,9 +1138,93 @@ void syst_plotmaker(int mode = 0, int region = 0){
      labelcms2->Draw();
     
       c2_MET->SaveAs("plots/"  + plotAnalysis +"/"  + plotExtension +plotMET+ modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" +  ".png");
-    //  c2_MET->SaveAs("plots/pdf/" + plotExtension + plotMET + modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" + ".pdf");      
+    //  c2_MET->SaveAs("plots/pdf/" + plotExtension + plotMET + modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" + ".pdf"); 
+         
+    TCanvas *c2_TopMass = new TCanvas();
+       histo_tt->DrawNormalized("h",1);
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       
+       histo_tt_TopMassDown->DrawNormalized("h, sames",1); 
+       histo_tt_TopMassUp->DrawNormalized("h, sames",1);
+    
+       
+       
+       histo_twdr->DrawNormalized("h,sames",1);
+       histo_twdr_TopMassDown->DrawNormalized("h,sames",1);
+       histo_twdr_TopMassUp->DrawNormalized("h,sames",1);
+       
+      legTopMass->Draw();
+     labelcms->Draw();
+     labelcms2->Draw();
+    
+      c2_TopMass->SaveAs("plots/"  + plotAnalysis +"/"  + plotExtension +plotTopMass+ modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" +  ".png");
+    //  c2_TopMass->SaveAs("plots/pdf/" + plotExtension + plotTopMass + modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" + ".pdf");      
 
-      
+    TCanvas *c2_Q2 = new TCanvas();
+       histo_tt->DrawNormalized("h",1);
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       
+       histo_tt_Q2Down->DrawNormalized("h, sames",1); 
+       histo_tt_Q2Up->DrawNormalized("h, sames",1);
+    
+       
+       
+       histo_twdr->DrawNormalized("h,sames",1);
+       histo_twdr_Q2Down->DrawNormalized("h,sames",1);
+       histo_twdr_Q2Up->DrawNormalized("h,sames",1);
+       
+      legQ2->Draw();
+     labelcms->Draw();
+     labelcms2->Draw();
+    
+      c2_Q2->SaveAs("plots/"  + plotAnalysis +"/"  + plotExtension +plotQ2+ modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" +  ".png");
+    //  c2_Q2->SaveAs("plots/pdf/" + plotExtension + plotQ2 + modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" + ".pdf");      
+
+      TCanvas *c2_eleSF = new TCanvas();
+       histo_tt->DrawNormalized("h",1);
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       
+       histo_tt_eleSFsysDown->DrawNormalized("h, sames",1); 
+       histo_tt_eleSFsysUp->DrawNormalized("h, sames",1);
+    
+       
+       
+       histo_twdr->DrawNormalized("h,sames",1);
+       histo_twdr_eleSFsysDown->DrawNormalized("h,sames",1);
+       histo_twdr_eleSFsysUp->DrawNormalized("h,sames",1);
+       
+      legeleSF->Draw();
+     labelcms->Draw();
+     labelcms2->Draw();
+    
+      c2_eleSF->SaveAs("plots/"  + plotAnalysis +"/"  + plotExtension +ploteleSF+ modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" +  ".png");
+    //  c2_eleSF->SaveAs("plots/pdf/" + plotExtension + ploteleSF + modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" + ".pdf");      
+    
+    
+        TCanvas *c2_matching = new TCanvas();
+       histo_tt->DrawNormalized("h",1);
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       
+       histo_tt_matchingDown->DrawNormalized("h, sames",1); 
+       histo_tt_matchingUp->DrawNormalized("h, sames",1);
+    
+       
+       
+       histo_twdr->DrawNormalized("h,sames",1);
+       histo_twdr_matchingDown->DrawNormalized("h,sames",1);
+       histo_twdr_matchingUp->DrawNormalized("h,sames",1);
+       
+      legmatching->Draw();
+     labelcms->Draw();
+     labelcms2->Draw();
+    
+      c2_matching->SaveAs("plots/"  + plotAnalysis +"/"  + plotExtension +plotmatching+ modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" +  ".png");
+    //  c2_matching->SaveAs("plots/pdf/" + plotExtension + plotmatching + modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + "_normalized" + ".pdf");      
+
     } // end plots loop 
     
  
