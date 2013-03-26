@@ -53,6 +53,7 @@ void dis_plotmaker(int mode = 0, int region = 0){
   gStyle->SetTitleYOffset(1.2);//1.7
   
   char myRootFile[300];
+  double lumi = 0; 
    if      (mode == 0)	 lumi = 11966.617;  	
     else if (mode == 1) lumi = 12067.294;  	
     else if (mode == 2) lumi = 12093.792; 
@@ -89,7 +90,8 @@ void dis_plotmaker(int mode = 0, int region = 0){
   
   }
 
-  TString modeString[1] = {"0"};
+  TString modeString[3] = {"0","1","2"};
+  TString regionString[3] = {"0","1","2"};
   
   TString plotExtension = "discriminatingVar_plot_"; // name of the plots
   TString plotAnalysis = "DiscriminatingVar"; // directory in plots where the plots are saved

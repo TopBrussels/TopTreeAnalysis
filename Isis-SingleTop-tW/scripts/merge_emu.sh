@@ -103,3 +103,81 @@ hadd -f outputs/METsysUp_0_st.root outputs/METsysUp_0_t.root outputs/METsysUp_0_
 hadd -f outputs/METsysUp_0_di.root outputs/METsysUp_0_ww.root outputs/METsysUp_0_wz.root outputs/METsysUp_0_zz.root ;
 hadd -f outputs/METsysUp_0_others.root outputs/METsysUp_0_di.root outputs/METsysUp_0_st.root outputs/METsysUp_0_wjets.root  ;
 hadd -f outputs/METsysUp_0_mc.root outputs/METsysUp_0_twdr.root outputs/METsysUp_0_tt.root outputs/METsysUp_0_others.root outputs/METsysUp_0_zjetsall.root ;
+
+
+rm outputs/TopMassDown_*_zjetsall.root;
+hadd -f outputs/TopMassDown_0_zjetsall.root outputs/TopMassDown_0_zjets*;
+hadd -f outputs/TopMassDown_0_twdr.root outputs/TopMassDown_0_tw_dr.root outputs/TopMassDown_0_atw_dr.root;
+hadd -f outputs/TopMassDown_0_twds.root outputs/TopMassDown_0_tw_ds.root outputs/TopMassDown_0_atw_ds.root;
+hadd -f outputs/TopMassDown_0_st.root outputs/TopMassDown_0_t.root outputs/TopMassDown_0_at.root outputs/TopMassDown_0_s.root outputs/TopMassDown_0_as.root;
+hadd -f outputs/TopMassDown_0_di.root outputs/TopMassDown_0_ww.root outputs/TopMassDown_0_wz.root outputs/TopMassDown_0_zz.root ;
+hadd -f outputs/TopMassDown_0_others.root outputs/TopMassDown_0_di.root outputs/TopMassDown_0_st.root outputs/TopMassDown_0_wjets.root  ;
+hadd -f outputs/TopMassDown_0_mc.root outputs/TopMassDown_0_twdr.root outputs/TopMassDown_0_tt.root outputs/TopMassDown_0_others.root outputs/TopMassDown_0_zjetsall.root ;
+
+
+rm outputs/TopMassUp_*_zjetsall.root;
+hadd -f outputs/TopMassUp_0_zjetsall.root outputs/TopMassUp_0_zjets*;
+hadd -f outputs/TopMassUp_0_twdr.root outputs/TopMassUp_0_tw_dr.root outputs/TopMassUp_0_atw_dr.root;
+hadd -f outputs/TopMassUp_0_twds.root outputs/TopMassUp_0_tw_ds.root outputs/TopMassUp_0_atw_ds.root;
+hadd -f outputs/TopMassUp_0_st.root outputs/TopMassUp_0_t.root outputs/TopMassUp_0_at.root outputs/TopMassUp_0_s.root outputs/TopMassUp_0_as.root;
+hadd -f outputs/TopMassUp_0_di.root outputs/TopMassUp_0_ww.root outputs/TopMassUp_0_wz.root outputs/TopMassUp_0_zz.root ;
+hadd -f outputs/TopMassUp_0_others.root outputs/TopMassUp_0_di.root outputs/TopMassUp_0_st.root outputs/TopMassUp_0_wjets.root  ;
+hadd -f outputs/TopMassUp_0_mc.root outputs/TopMassUp_0_twdr.root outputs/TopMassUp_0_tt.root outputs/TopMassUp_0_others.root outputs/TopMassUp_0_zjetsall.root ;
+
+rm outputs/Q2Down_*_zjetsall.root;
+hadd -f outputs/Q2Down_0_zjetsall.root outputs/Q2Down_0_zjets*;
+hadd -f outputs/Q2Down_0_twdr.root outputs/Q2Down_0_tw_dr.root outputs/Q2Down_0_atw_dr.root;
+hadd -f outputs/Q2Down_0_twds.root outputs/Q2Down_0_tw_ds.root outputs/Q2Down_0_atw_ds.root;
+hadd -f outputs/Q2Down_0_st.root outputs/Q2Down_0_t.root outputs/Q2Down_0_at.root outputs/Q2Down_0_s.root outputs/Q2Down_0_as.root;
+hadd -f outputs/Q2Down_0_di.root outputs/Q2Down_0_ww.root outputs/Q2Down_0_wz.root outputs/Q2Down_0_zz.root ;
+hadd -f outputs/Q2Down_0_others.root outputs/Q2Down_0_di.root outputs/Q2Down_0_st.root outputs/Q2Down_0_wjets.root  ;
+hadd -f outputs/Q2Down_0_mc.root outputs/Q2Down_0_twdr.root outputs/Q2Down_0_tt.root outputs/Q2Down_0_others.root outputs/Q2Down_0_zjetsall.root ;
+
+
+rm outputs/Q2Up_*_zjetsall.root;
+hadd -f outputs/Q2Up_0_zjetsall.root outputs/Q2Up_0_zjets*;
+hadd -f outputs/Q2Up_0_twdr.root outputs/Q2Up_0_tw_dr.root outputs/Q2Up_0_atw_dr.root;
+hadd -f outputs/Q2Up_0_twds.root outputs/Q2Up_0_tw_ds.root outputs/Q2Up_0_atw_ds.root;
+hadd -f outputs/Q2Up_0_st.root outputs/Q2Up_0_t.root outputs/Q2Up_0_at.root outputs/Q2Up_0_s.root outputs/Q2Up_0_as.root;
+hadd -f outputs/Q2Up_0_di.root outputs/Q2Up_0_ww.root outputs/Q2Up_0_wz.root outputs/Q2Up_0_zz.root ;
+hadd -f outputs/Q2Up_0_others.root outputs/Q2Up_0_di.root outputs/Q2Up_0_st.root outputs/Q2Up_0_wjets.root  ;
+hadd -f outputs/Q2Up_0_mc.root outputs/Q2Up_0_twdr.root outputs/Q2Up_0_tt.root outputs/Q2Up_0_others.root outputs/Q2Up_0_zjetsall.root ;
+
+
+rm outputs/eleSFsysDown_*_zjetsall.root;
+hadd -f outputs/eleSFsysDown_0_zjetsall.root outputs/eleSFsysDown_0_zjets*;
+hadd -f outputs/eleSFsysDown_0_twdr.root outputs/eleSFsysDown_0_tw_dr.root outputs/eleSFsysDown_0_atw_dr.root;
+hadd -f outputs/eleSFsysDown_0_twds.root outputs/eleSFsysDown_0_tw_ds.root outputs/eleSFsysDown_0_atw_ds.root;
+hadd -f outputs/eleSFsysDown_0_st.root outputs/eleSFsysDown_0_t.root outputs/eleSFsysDown_0_at.root outputs/eleSFsysDown_0_s.root outputs/eleSFsysDown_0_as.root;
+hadd -f outputs/eleSFsysDown_0_di.root outputs/eleSFsysDown_0_ww.root outputs/eleSFsysDown_0_wz.root outputs/eleSFsysDown_0_zz.root ;
+hadd -f outputs/eleSFsysDown_0_others.root outputs/eleSFsysDown_0_di.root outputs/eleSFsysDown_0_st.root outputs/eleSFsysDown_0_wjets.root  ;
+hadd -f outputs/eleSFsysDown_0_mc.root outputs/eleSFsysDown_0_twdr.root outputs/eleSFsysDown_0_tt.root outputs/eleSFsysDown_0_others.root outputs/eleSFsysDown_0_zjetsall.root ;
+
+
+rm outputs/eleSFsysUp_*_zjetsall.root;
+hadd -f outputs/eleSFsysUp_0_zjetsall.root outputs/eleSFsysUp_0_zjets*;
+hadd -f outputs/eleSFsysUp_0_twdr.root outputs/eleSFsysUp_0_tw_dr.root outputs/eleSFsysUp_0_atw_dr.root;
+hadd -f outputs/eleSFsysUp_0_twds.root outputs/eleSFsysUp_0_tw_ds.root outputs/eleSFsysUp_0_atw_ds.root;
+hadd -f outputs/eleSFsysUp_0_st.root outputs/eleSFsysUp_0_t.root outputs/eleSFsysUp_0_at.root outputs/eleSFsysUp_0_s.root outputs/eleSFsysUp_0_as.root;
+hadd -f outputs/eleSFsysUp_0_di.root outputs/eleSFsysUp_0_ww.root outputs/eleSFsysUp_0_wz.root outputs/eleSFsysUp_0_zz.root ;
+hadd -f outputs/eleSFsysUp_0_others.root outputs/eleSFsysUp_0_di.root outputs/eleSFsysUp_0_st.root outputs/eleSFsysUp_0_wjets.root  ;
+hadd -f outputs/eleSFsysUp_0_mc.root outputs/eleSFsysUp_0_twdr.root outputs/eleSFsysUp_0_tt.root outputs/eleSFsysUp_0_others.root outputs/eleSFsysUp_0_zjetsall.root ;
+
+rm outputs/matchingDown_*_zjetsall.root;
+hadd -f outputs/matchingDown_0_zjetsall.root outputs/matchingDown_0_zjets*;
+hadd -f outputs/matchingDown_0_twdr.root outputs/matchingDown_0_tw_dr.root outputs/matchingDown_0_atw_dr.root;
+hadd -f outputs/matchingDown_0_twds.root outputs/matchingDown_0_tw_ds.root outputs/matchingDown_0_atw_ds.root;
+hadd -f outputs/matchingDown_0_st.root outputs/matchingDown_0_t.root outputs/matchingDown_0_at.root outputs/matchingDown_0_s.root outputs/matchingDown_0_as.root;
+hadd -f outputs/matchingDown_0_di.root outputs/matchingDown_0_ww.root outputs/matchingDown_0_wz.root outputs/matchingDown_0_zz.root ;
+hadd -f outputs/matchingDown_0_others.root outputs/matchingDown_0_di.root outputs/matchingDown_0_st.root outputs/matchingDown_0_wjets.root  ;
+hadd -f outputs/matchingDown_0_mc.root outputs/matchingDown_0_twdr.root outputs/matchingDown_0_tt.root outputs/matchingDown_0_others.root outputs/matchingDown_0_zjetsall.root ;
+
+
+rm outputs/matchingUp_*_zjetsall.root;
+hadd -f outputs/matchingUp_0_zjetsall.root outputs/matchingUp_0_zjets*;
+hadd -f outputs/matchingUp_0_twdr.root outputs/matchingUp_0_tw_dr.root outputs/matchingUp_0_atw_dr.root;
+hadd -f outputs/matchingUp_0_twds.root outputs/matchingUp_0_tw_ds.root outputs/matchingUp_0_atw_ds.root;
+hadd -f outputs/matchingUp_0_st.root outputs/matchingUp_0_t.root outputs/matchingUp_0_at.root outputs/matchingUp_0_s.root outputs/matchingUp_0_as.root;
+hadd -f outputs/matchingUp_0_di.root outputs/matchingUp_0_ww.root outputs/matchingUp_0_wz.root outputs/matchingUp_0_zz.root ;
+hadd -f outputs/matchingUp_0_others.root outputs/matchingUp_0_di.root outputs/matchingUp_0_st.root outputs/matchingUp_0_wjets.root  ;
+hadd -f outputs/matchingUp_0_mc.root outputs/matchingUp_0_twdr.root outputs/matchingUp_0_tt.root outputs/matchingUp_0_others.root outputs/matchingUp_0_zjetsall.root ;

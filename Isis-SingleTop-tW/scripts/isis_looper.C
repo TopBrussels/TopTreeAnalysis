@@ -35,7 +35,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel == 3)   		{sprintf(plotName,"di");}
   else if (nsel == 4)			{sprintf(plotName, "st");}
   else if (nsel == 5)   		{sprintf(plotName,"wjets");}
-  else if (nsel == 6)   		{sprintf(plotName,"qcd_mu");}
+ // else if (nsel == 6)   		{sprintf(plotName,"qcd_mu");}
   else if (nsel == 7)                	{sprintf(plotName,"others");}
   
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
@@ -43,6 +43,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel == 666)                	{sprintf(plotName,"data");}
   
   /*
+  
   //JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
@@ -72,6 +73,34 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  14)                   {sprintf(plotName,"tt");}
   else if (nsel == -24)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
+  
+  
+        //topmass
+  else if (nsel == -15)                   {sprintf(plotName,"tt");}  
+  else if (nsel ==  15)                   {sprintf(plotName,"tt");}
+  else if (nsel == -25)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  25)                   {sprintf(plotName,"twdr");}
+  
+  
+      //Q2
+  else if (nsel == -16)                   {sprintf(plotName,"tt");}  
+  else if (nsel ==  16)                   {sprintf(plotName,"tt");}
+  else if (nsel == -26)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  26)                   {sprintf(plotName,"twdr");}
+  
+  
+      //LES
+  else if (nsel == -17)                   {sprintf(plotName,"tt");}  
+  else if (nsel ==  17)                   {sprintf(plotName,"tt");}
+  else if (nsel == -27)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  27)                   {sprintf(plotName,"twdr");}
+  
+      //Matching
+  else if (nsel == -18)                   {sprintf(plotName,"tt");}  
+  else if (nsel ==  18)                   {sprintf(plotName,"tt");}
+  else if (nsel == -28)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
+  
   */
   
  
@@ -113,9 +142,23 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   }
   else if(nsel == 14 || nsel == 24 ){
    sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }
-  else{
-  
+  }else if(nsel == -15 || nsel == -25 ){
+   sprintf(newRootFile,"results/TopMassDown_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == 15 || nsel == 25 ){
+   sprintf(newRootFile,"results/TopMassUp_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == -16 || nsel == -26 ){
+   sprintf(newRootFile,"results/Q2Down_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == 16 || nsel == 26 ){
+   sprintf(newRootFile,"results/Q2Up_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == -17 || nsel == -27 ){
+   sprintf(newRootFile,"results/eleSFsysDown_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == 17 || nsel == 27 ){
+   sprintf(newRootFile,"results/eleSFsysUp_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == -18 || nsel == -28 ){
+   sprintf(newRootFile,"results/matchingDown_%dpb_%d.root", (int) lumi, mode);
+  }else if(nsel == 18 || nsel == 28 ){
+   sprintf(newRootFile,"results/matchingUp_%dpb_%d.root", (int) lumi, mode);
+  }else{
     sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   }
  
@@ -301,7 +344,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   histo_npu->Sumw2();
   
     sprintf(title,"eta_leading_1j1t_%s",plotName);
-  TH1F* histo_eta_leading_1j1t = new TH1F( title, " ", 101,  -3, 3);
+  TH1F* histo_eta_leading_1j1t = new TH1F( title, " ", 100,  -3, 3);
   histo_eta_leading_1j1t->Sumw2();
   
   /// Classic plotmaker plots
@@ -338,7 +381,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   
   sprintf(title,"eta_leading_%s",plotName);
-  TH1F* histo_eta_leading = new TH1F( title, " ", 101,  -3, 3);
+  TH1F* histo_eta_leading = new TH1F( title, " ", 100,  -3, 3);
   histo_eta_leading->Sumw2();
   
   sprintf(title,"nvertex_%s",plotName);
@@ -438,7 +481,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   histo_nvertex_2j1t->Sumw2();
   
   sprintf(title,"eta_leading_2j1t_%s",plotName);
-  TH1F* histo_eta_leading_2j1t = new TH1F( title, " ", 101,  -3, 3);
+  TH1F* histo_eta_leading_2j1t = new TH1F( title, " ", 100,  -3, 3);
   histo_eta_leading_2j1t->Sumw2();
   
     sprintf(title,"pt_max_2j1t_%s",plotName);
@@ -480,7 +523,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   histo_nvertex_2j2t->Sumw2();
   
   sprintf(title,"eta_leading_2j2t_%s",plotName);
-  TH1F* histo_eta_leading_2j2t = new TH1F( title, " ", 101,  -3, 3);
+  TH1F* histo_eta_leading_2j2t = new TH1F( title, " ", 100,  -3, 3);
   histo_eta_leading_2j2t->Sumw2();
 
   sprintf(title,"pt_max_2j2t_%s",plotName);
@@ -519,7 +562,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
 
   
-  // ---- Z/gamma controlregion 
+  // Z/gamma controlregion 
  
     sprintf(title,"mll_zgamma_%s",plotName);
   TH1F* histo_mll_zgamma = new TH1F( title, " ", 50,  0, 200 );

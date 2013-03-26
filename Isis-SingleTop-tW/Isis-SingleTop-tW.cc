@@ -74,9 +74,14 @@ int main(int argc, char* argv[]) {
     bool eleSFsysUp = false; 
     bool eleSFsysDown = false; 
     
-
+    bool topmass_plus = false; 
+    bool topmass_minus = false; 
     
-
+    bool Q2_plus = false; 
+    bool Q2_minus = false; 
+    
+    bool matching_plus = false; 
+    bool matching_minus = false; 
     
     
     /////////////////////////////////////////////
@@ -173,6 +178,12 @@ int main(int argc, char* argv[]) {
 		cout << "--xml myxml.xml Xml file" << endl; 
 		cout << "--eleSFplus   lepton ID/trigger eff scaled up" << endl; 
 		cout << "--eleSFminus:  lepton ID/trigger eff scaled down" << endl; 
+		cout << "--topmassPLUS: topmass is set to 178.5 GeV remember to take right xml file" << endl; 
+		cout << "--topmassMINUS: topmass is set to 166.5 GeV remember to take right xml file" << endl; 
+		cout << "--Q2PLUS: factorisation scale is doubled. remember to take right xml file" << endl; 
+		cout << "--Q2MINUS: factorisation scale is halved. remember to take right xml file" << endl;
+		cout << "--matchingPLUS: larger MLM scale. remember to take right xml file" << endl; 
+		cout << "--matchingMINUS: smaller MLM scale. remember to take right xml file" << endl;
                 return 0;
         }
         if (argval=="--ee"){
@@ -231,6 +242,24 @@ int main(int argc, char* argv[]) {
         }
         if (argval=="--SFminus_l"){
                 SFminus_l = true;
+        }
+	if (argval=="--topmassPLUS") {
+                topmass_plus = true;
+        }
+        if (argval=="--topmassMINUS"){
+                topmass_minus = true;
+        }
+	if (argval=="--Q2PLUS") {
+                Q2_plus = true;
+        }
+        if (argval=="--Q2MINUS"){
+                Q2_minus = true;
+        }
+	if (argval=="--matchingPLUS") {
+                matching_plus = true;
+        }
+        if (argval=="--matchingMINUS"){
+                matching_minus = true;
         }
         if (argval=="--NoPU") {
                 reweightPU = false;
@@ -333,8 +362,9 @@ int main(int argc, char* argv[]) {
       // Luminosity and xml files
   // Only runs A, A recover, B, C (24, v2)
      if      (mode == 0){  // emu	 
-     	lumi = 11966.617;  	
+     	lumi = 11966.617;  
 	xmlfile ="config/twemu.xml";    
+
 	leptonEff_Trig_ID = 0.915;
 	if(eleSFsysUp){
 		leptonEff_Trig_ID += 0.017;
@@ -447,6 +477,8 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
         else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
+	else if (dataSetName == "twds"){        sprintf(name, "tw_ds");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
+        else if (dataSetName == "atwds"){       sprintf(name, "atw_ds");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
         else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/3748832;             } 
         else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/180719;           }
 	else if (dataSetName == "s"){           sprintf(name, "s");             xlweight = lumi*3.79/259960;             } 
@@ -480,6 +512,12 @@ int main(int argc, char* argv[]) {
         else if (!isData && JERPlus){        sprintf(rootFileName,"outputs/JERsysUp_%d_%s.root", mode, name);}
         else if (!isData && SFplus){         sprintf(rootFileName,"outputs/SFsysUp_%d_%s.root", mode, name);}
         else if (!isData && SFminus){        sprintf(rootFileName,"outputs/SFsysDown_%d_%s.root", mode, name);}
+	else if (!isData && topmass_plus){   sprintf(rootFileName,"outputs/TopMassUp_%d_%s.root", mode, name);}
+	else if (!isData && topmass_minus){  sprintf(rootFileName,"outputs/TopMassDown_%d_%s.root", mode, name);}
+	else if (!isData && Q2_plus)	 {   sprintf(rootFileName,"outputs/Q2Up_%d_%s.root", mode, name);}
+	else if (!isData && Q2_minus){       sprintf(rootFileName,"outputs/Q2Down_%d_%s.root", mode, name);}
+	else if (!isData && matching_plus){  sprintf(rootFileName,"outputs/matchingUp_%d_%s.root", mode, name);}
+	else if (!isData && matching_minus){ sprintf(rootFileName,"outputs/matchingDown_%d_%s.root", mode, name);}
         else if (!isData && eleSFsysUp){     sprintf(rootFileName,"outputs/eleSFsysUp_%d_%s.root", mode, name);}
         else if (!isData && eleSFsysDown){   sprintf(rootFileName,"outputs/eleSFsysDown_%d_%s.root", mode, name);}
         else if (!isData && unclusteredUp){  sprintf(rootFileName,"outputs/METsysUp_%d_%s.root", mode, name);}
@@ -487,7 +525,6 @@ int main(int argc, char* argv[]) {
         else if (!isData && PUsysUp){        sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);}
         else if (!isData && PUsysDown){      sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);}
         else if (!isData && !reweightPU){    sprintf(rootFileName,"outputs/out_noPU_%d_%s.root", mode, name);}
-        else if (!isData && Pu3D){           sprintf(rootFileName,"outputs/out_3D_%d_%s.root", mode, name);}
         else{                                sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);}
       
 
@@ -514,8 +551,14 @@ int main(int argc, char* argv[]) {
 	
 	
 	char myFile[300];
-        sprintf(myFile,"information/pdf_signal_%d_%s.txt", mode, name);
+        sprintf(myFile,"pdf_unc/forPDF/pdf_signal_%d_%s.txt", mode, name);
         ofstream salida(myFile); 
+	
+	sprintf(myFile,"pdf_unc/forPDF/pdf_2j1t_%d_%s.txt", mode, name);
+        ofstream salida2j1t(myFile);
+	
+	sprintf(myFile,"pdf_unc/forPDF/pdf_2j2t_%d_%s.txt", mode, name);
+        ofstream salida2j2t(myFile);
         
         // Define the objects
         // ==> vector <kind> V
@@ -867,7 +910,7 @@ int main(int argc, char* argv[]) {
         cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << " , xml file: " << xmlfile << endl;
       
         if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus ||SFplus_c || SFminus_c ||SFplus_l || SFminus_l || unclusteredUp || unclusteredDown 
-          || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D) {
+          || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D || topmass_plus ||topmass_minus) {
                 cout << "[Warning:] Non-standard options, ignore if you did it conciously" << endl;
                 
                 if (JERPlus) cout << "[Warning:] JER systematics on, plus. Note that for btagging the nominal values are used" << endl;
@@ -886,7 +929,8 @@ int main(int argc, char* argv[]) {
                 if (!scaleFactor && !isData) cout << "[Warning:] You are NOT applying the b-tagging SF " << endl;
                 if (PUsysUp) cout <<"[Warning:] PU up " << endl;
                 if (PUsysDown) cout <<"[Warning:] PU down " << endl;
-        
+        	if (topmass_plus) cout << " Warning: topmass is 178.5 GeV " << endl; 
+		if (topmass_minus) cout << "Warning: topmass is 166.5 GeV" << endl; 
         } 
         else{
                 cout << "[Info:] Standard setup " << endl;
@@ -985,8 +1029,8 @@ int main(int argc, char* argv[]) {
                         jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "plus", false); // false means don't use old numbers, but new ones
                 }
                 else{
-			if(JESminus) jetTools->correctJetJER(initial_jets_corrected_beforeJES_minus,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
-			if(JESplus) jetTools->correctJetJER(initial_jets_corrected_beforeJES_plus,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
+			if(JESMinus) jetTools->correctJetJER(initial_jets_corrected_beforeJES_minus,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
+			if(JESPlus) jetTools->correctJetJER(initial_jets_corrected_beforeJES_plus,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
 			jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
                 }
                 
@@ -1045,15 +1089,15 @@ int main(int argc, char* argv[]) {
                 ////////////////////////////////
                 Selection selection(initial_jets_corrected, initial_muons,initial_electrons,mets); 
 		
-		if(JESplus){
+		
 			Selection selection_beforeJES_plus(initial_jets_corrected_beforeJES_plus, initial_muons,initial_electrons,mets);
-		}else if(JESminus){
+		
 			Selection selection_beforeJES_minus(initial_jets_corrected_beforeJES_minus, initial_muons,initial_electrons,mets);
-		}else if(JERplus){
+		
 			Selection selection_beforeJER_plus(initial_jets_corrected_beforeJER_plus, initial_muons,initial_electrons,mets);
-		}else if(JERminus){
+		
 			Selection selection_beforeJER_minus(initial_jets_corrected_beforeJER_minus, initial_muons,initial_electrons,mets);
-		}
+		
 
                 
                 //----------------------------------------------------------------
@@ -1181,10 +1225,10 @@ int main(int argc, char* argv[]) {
 				// 	void Selection::setLooseMuonCuts(float Pt, float Eta, float RelIso) 
 				//
 	      			selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
-				if(JESplus) selection_beforeJES_plus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
-				if(JERplus) selection_beforeJER_plus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
-				if(JESminus) selection_beforeJES_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
-				if(JERminus) selection_beforeJER_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JESPlus) selection_beforeJES_plus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JERPlus) selection_beforeJER_plus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JESMinus) selection_beforeJES_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JERMinus) selection_beforeJER_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
              		 	selection.setDiMuonCuts(20.,2.4,0.20,999.);
               			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.,1,0.3,1);
               			selection.setLooseMuonCuts(10.,2.5,0.2);
@@ -1194,10 +1238,10 @@ int main(int argc, char* argv[]) {
 		
 	      			//Select Objects and put them in a vector 
 	      			vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
-				if (JESplus) vector<TRootJet*> selectedJets_beforeJES_plus = selection_beforeJES_plus.GetSelectedJets(true);
-				if (JERplus) vector<TRootJet*> selectedJets_beforeJER_plus = selection_beforeJER_plus.GetSelectedJets(true);
-				if (JESminus) vector<TRootJet*> selectedJets_beforeJES_minus = selection_beforeJES_minus.GetSelectedJets(true);
-				if (JERminus) vector<TRootJet*> selectedJets_beforeJER_minus = selection_beforeJER_minus.GetSelectedJets(true);
+				vector<TRootJet*> selectedJets_beforeJES_plus = selection_beforeJES_plus.GetSelectedJets(true);
+				vector<TRootJet*> selectedJets_beforeJER_plus = selection_beforeJER_plus.GetSelectedJets(true);
+				vector<TRootJet*> selectedJets_beforeJES_minus = selection_beforeJES_minus.GetSelectedJets(true);
+				vector<TRootJet*> selectedJets_beforeJER_minus = selection_beforeJER_minus.GetSelectedJets(true);
 	      			vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      			vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 	      			vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
@@ -1577,10 +1621,10 @@ int main(int argc, char* argv[]) {
 									bTagged = false;
 									
 									TRootJet* tempJet = (TRootJet*) selectedJets[iJ];
-									if(JESplus) tempJet = (TRootJet*) selectedJets_beforeJES_plus[iJ]; 
-									if(JERplus) tempJet = (TRootJet*) selectedJets_beforeJER_plus[iJ];
-									if(JESminus) tempJet = (TRootJet*) selectedJets_beforeJES_minus[iJ];
-									if(JERminus) tempJet = (TRootJet*) selectedJets_beforeJER_minus[iJ];
+									if(JESPlus) tempJet = (TRootJet*) selectedJets_beforeJES_plus[iJ]; 
+									if(JERPlus) tempJet = (TRootJet*) selectedJets_beforeJER_plus[iJ];
+									if(JESMinus) tempJet = (TRootJet*) selectedJets_beforeJES_minus[iJ];
+									if(JERMinus) tempJet = (TRootJet*) selectedJets_beforeJER_minus[iJ];
 									TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 									
 									if (tempJet->Pt() > 20 && fabs(tempJet->Eta()) < 2.4 ){	
@@ -1875,25 +1919,53 @@ int main(int argc, char* argv[]) {
 											// --> Ht cut for the emu mode in order to remove additional drell yann background
 			    								if (Ht > 160 || mode != 0){
 											
-										/*		if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 && bTagged){
+												if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1){
 				
 													xlWeight = weight;
-				int id1 = event->idParton1();
-				int id2 = event->idParton2();
-				float x1 = event->xParton1();
-				float x2 = event->xParton2();
-				float q = event->factorizationScale();
-				float ptsys = 1;
-				float ht = Ht;
+													int id1 = event->idParton1();
+													int id2 = event->idParton2();
+													float x1 = event->xParton1();
+													float x2 = event->xParton2();
+													float q = event->factorizationScale();
+													float ptsys = 1;
+													float ht = Ht;
 				
-				salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
 				
-				}*/
-											histo_jets->Fill(nJets,weight); 
-								                        histo_btagged_jets->Fill(nJetsBT,weight); 
-								                        histo_btagged_tightjets->Fill(nTightJetsBT,weight); 
-											histo_3d_btagged_tightjets->Fill(nJetsBT,nTightJetsBT,nJets, weight);
-											histo_2d_btagged_tightjets->Fill(nTightJetsBT,nJets, weight);
+												}
+												if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1){
+				
+													xlWeight = weight;
+													int id1 = event->idParton1();
+													int id2 = event->idParton2();
+													float x1 = event->xParton1();
+													float x2 = event->xParton2();
+													float q = event->factorizationScale();
+													float ptsys = 1;
+													float ht = Ht;
+				
+													salida2j1t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+				
+												}
+												if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2){
+				
+													xlWeight = weight;
+													int id1 = event->idParton1();
+													int id2 = event->idParton2();
+													float x1 = event->xParton1();
+													float x2 = event->xParton2();
+													float q = event->factorizationScale();
+													float ptsys = 1;
+													float ht = Ht;
+				
+													salida2j2t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+				
+												}
+												histo_jets->Fill(nJets,weight); 
+								                        	histo_btagged_jets->Fill(nJetsBT,weight); 
+								                        	histo_btagged_tightjets->Fill(nTightJetsBT,weight); 
+												histo_3d_btagged_tightjets->Fill(nJetsBT,nTightJetsBT,nJets, weight);
+												histo_2d_btagged_tightjets->Fill(nTightJetsBT,nJets, weight);
 											
 		      									        if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1)Regions->Fill(1, weight);
 			      									if (nJets == 1 && nJetsBT == 2)  Regions->Fill(2, weight);

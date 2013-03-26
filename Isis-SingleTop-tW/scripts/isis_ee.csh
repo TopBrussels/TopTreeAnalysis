@@ -1,0 +1,67 @@
+root.exe -b -l -q isis_chain.C\(666\,2\,0\)
+root.exe -b -l -q isis_chain.C\(555\,2\,0\)
+root.exe -b -l -q isis_chain.C\(2\,2\,0\)
+root.exe -b -l -q isis_chain.C\(1\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-1\,2\,0\)
+root.exe -b -l -q isis_chain.C\(2\,2\,0\)
+root.exe -b -l -q isis_chain.C\(3\,2\,0\)
+root.exe -b -l -q isis_chain.C\(4\,2\,0\)
+root.exe -b -l -q isis_chain.C\(5\,2\,0\)
+root.exe -b -l -q isis_chain.C\(6\,2\,0\)
+root.exe -b -l -q isis_chain.C\(7\,2\,0\)
+
+
+root.exe -b -l -q isis_chain.C\(12\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-12\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(22\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-22\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(11\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-11\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(21\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-21\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(12\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-12\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(22\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-22\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(13\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-13\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(23\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-23\,2\,0\)
+
+
+root.exe -b -l -q isis_chain.C\(14\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-14\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(24\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-24\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(15\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-15\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(25\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-25\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(16\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-16\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(26\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-26\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(17\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-17\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(27\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-27\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(18\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-18\,2\,0\)
+
+root.exe -b -l -q isis_chain.C\(28\,2\,0\)
+root.exe -b -l -q isis_chain.C\(-28\,2\,0\)

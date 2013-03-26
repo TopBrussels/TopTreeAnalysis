@@ -6,6 +6,8 @@
   <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/TTJets/*.root"/> 
   <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/T_tW_DR/*.root"/> 
   <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/Tbar_tW_DR/*.root"/> 
+  <d name="twds" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_DS/*.root"/> 
+  <d name="atwds" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_DS/*.root"/> 
   <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/T_t/*.root"/> 
   <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/Tbar_t/*.root"/> 
   <d name="ww" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/WW/*.root"/> 
