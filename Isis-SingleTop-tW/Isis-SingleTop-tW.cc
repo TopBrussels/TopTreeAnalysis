@@ -526,6 +526,10 @@ int main(int argc, char* argv[]) {
         vector <TRootElectron*> initial_electrons; 
         vector <TRootJet*>      initial_jets; 
         vector <TRootJet*>      initial_jets_corrected; 
+	vector <TRootJet*>      initial_jets_corrected_beforeJES_plus; 
+	vector <TRootJet*>      initial_jets_corrected_beforeJES_minus;
+	vector <TRootJet*>      initial_jets_corrected_beforeJER_plus;
+	vector <TRootJet*>      initial_jets_corrected_beforeJER_minus;
         vector <TRootMET*>      mets; 
         vector <TRootGenJet*>   genjets;
 /*        
@@ -866,10 +870,10 @@ int main(int argc, char* argv[]) {
           || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D) {
                 cout << "[Warning:] Non-standard options, ignore if you did it conciously" << endl;
                 
-                if (JERPlus) cout << "[Warning:] JER systematics on, plus" << endl;
-                if (JERMinus) cout << "[Warning:] JER systematics on, minus" << endl;
-                if (JESPlus) cout << "[Warning:] JES systematics on, plus" << endl;
-                if (JESMinus) cout << "[Warning:] JES systematics on, minus" << endl;
+                if (JERPlus) cout << "[Warning:] JER systematics on, plus. Note that for btagging the nominal values are used" << endl;
+                if (JERMinus) cout << "[Warning:] JER systematics on, minus. Note that for btagging the nominal values are used" << endl;
+                if (JESPlus) cout << "[Warning:] JES systematics on, plus. Note that for btagging the nominal values are used" << endl;
+                if (JESMinus) cout << "[Warning:] JES systematics on, minus. Note that for btagging the nominal values are used" << endl;
                 if (SFplus) cout <<"[Warning:] SF up 10% for b quarks " << endl;
                 if (SFminus) cout <<"[Warning:]  SF down 10% for b quarks " << endl;
 		if (SFplus_c) cout <<"[Warning:] SF up 10% for c quarks" << endl;
@@ -892,7 +896,11 @@ int main(int argc, char* argv[]) {
         if (runHLT) cout << "[Info:] You have the HLT activated, this might be slower than the usual. " << endl;
 	
 	
-
+        if(SFplus && !SFplus_c){
+		cout << "[WARNING: have you forgotten the c jets? ]" << endl; 
+	}else if(!SFplus && SFplus_c){
+		cout << "[WARNING: have you forgotten the b jets? ]" << endl;
+	}
 	
 	
 
@@ -938,17 +946,7 @@ int main(int argc, char* argv[]) {
                 if(!isData){
                         lumiWeight = LumiWeights.ITweight( (int) event -> nTruePU() );
                         
-			/* OLD 7 tEV 
-                        // If one wants the PU reweighting scaled down   ==> WHY WOULD SOMEONE WANT THIS?
-                        if(PUsysDown){
-                                lumiWeight*PShiftDown_.ShiftWeight(event ->nPu(0));     // Why not event->nTruePU() like in michael's code? 
-                        }
-                        
-                        // If one wants the PU reweighting scaled up
-                        if(PUsysUp){
-                                lumiWeight*PShiftUp_.ShiftWeight(event ->nPu(0)); 
-                        }
-                        */
+			
 			
                         //If PU reweighting is turned on
                         if(reweightPU){
@@ -964,11 +962,13 @@ int main(int argc, char* argv[]) {
                 
                 // If the JES systematics are on, minus
                 if(JESPlus){
-                        jetTools->correctJetJESUnc(initial_jets_corrected, "minus", 1); 
+			initial_jets_corrected_beforeJES_plus = initial_jets_corrected; 
+                        jetTools->correctJetJESUnc(initial_jets_corrected, "plus", 1); 
                 }
                 // If the JES systematics are on, plus
                 else if(JESMinus){
-                        jetTools->correctJetJESUnc(initial_jets_corrected, "plus", 1); 
+		 	initial_jets_corrected_beforeJES_minus = initial_jets_corrected;
+                        jetTools->correctJetJESUnc(initial_jets_corrected, "minus", 1); 
                 }
                 
                 
@@ -977,13 +977,17 @@ int main(int argc, char* argv[]) {
                 ///       SMEARING           ///     Smear the MC energy resolution in order to mimic the one from data.       
                 ////////////////////////////////
                 if(JERMinus){
+		        initial_jets_corrected_beforeJER_minus = initial_jets_corrected;
                         jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "minus", false); // false means don't use old numbers, but new ones
                 }
                 else if(JERPlus){
+			initial_jets_corrected_beforeJER_plus = initial_jets_corrected;
                         jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "plus", false); // false means don't use old numbers, but new ones
                 }
                 else{
-                        jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
+			if(JESminus) jetTools->correctJetJER(initial_jets_corrected_beforeJES_minus,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
+			if(JESplus) jetTools->correctJetJER(initial_jets_corrected_beforeJES_plus,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
+			jetTools->correctJetJER(initial_jets_corrected,genjets,mets[0], "nominal", false); // false means don't use old numbers, but new ones
                 }
                 
                 ////////////////////////////////
@@ -1040,6 +1044,17 @@ int main(int argc, char* argv[]) {
                 /// SELECTION & CUTFLOW      ///
                 ////////////////////////////////
                 Selection selection(initial_jets_corrected, initial_muons,initial_electrons,mets); 
+		
+		if(JESplus){
+			Selection selection_beforeJES_plus(initial_jets_corrected_beforeJES_plus, initial_muons,initial_electrons,mets);
+		}else if(JESminus){
+			Selection selection_beforeJES_minus(initial_jets_corrected_beforeJES_minus, initial_muons,initial_electrons,mets);
+		}else if(JERplus){
+			Selection selection_beforeJER_plus(initial_jets_corrected_beforeJER_plus, initial_muons,initial_electrons,mets);
+		}else if(JERminus){
+			Selection selection_beforeJER_minus(initial_jets_corrected_beforeJER_minus, initial_muons,initial_electrons,mets);
+		}
+
                 
                 //----------------------------------------------------------------
                 //Cut on primary vertex ==> WHY IS THIS USELESS FOR SINGLE TOP? 
@@ -1090,36 +1105,36 @@ int main(int argc, char* argv[]) {
 	  	double met_pt = sqrt(met_px*met_px + met_py*met_py);
                 
 		//---------------------------------------------
-		// Zjets sf only for MC zjets (from danny)
+		// Zjets sf only for MC zjets (from danny meeting single top 21/3)
 		//------------------------------------------------
 		if(isZjets){
 			if(mode == 0){
-				if(met_pt < 10){ ZjetsSF = 0.8799; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9257; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 0.99445; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0721; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.14595; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.21935; }	
-				else{ ZjetsSF = 1.20315; }
+				if(met_pt < 10){ ZjetsSF = 0.9028; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9497; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0189; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0988; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.17415; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.25145; }	
+				else{ ZjetsSF = 1.26325; }
 				
 			}
 			else if (mode == 1){
-				if(met_pt < 10){ ZjetsSF = 0.8856; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9398; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0142; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.1017; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1839; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2458; }	
-				else{ ZjetsSF = 1.2872; }			
+				if(met_pt < 10){ ZjetsSF = 0.8841; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9386; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0131; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.1012; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1850; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2500; }	
+				else{ ZjetsSF = 1.3071; }			
 			}
 			else{
-				if(met_pt < 10){ ZjetsSF = 0.8742; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9116; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 0.9747; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0425; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1080; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.1929; }	
-				else{ ZjetsSF = 1.1191; }			
+				if(met_pt < 10){ ZjetsSF = 0.9215; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9608; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0247; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0964; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1633; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2529; }	
+				else{ ZjetsSF = 1.2194; }			
 			}
 		
 		
@@ -1166,6 +1181,10 @@ int main(int argc, char* argv[]) {
 				// 	void Selection::setLooseMuonCuts(float Pt, float Eta, float RelIso) 
 				//
 	      			selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JESplus) selection_beforeJES_plus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JERplus) selection_beforeJER_plus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JESminus) selection_beforeJES_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+				if(JERminus) selection_beforeJER_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
              		 	selection.setDiMuonCuts(20.,2.4,0.20,999.);
               			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.,1,0.3,1);
               			selection.setLooseMuonCuts(10.,2.5,0.2);
@@ -1175,6 +1194,10 @@ int main(int argc, char* argv[]) {
 		
 	      			//Select Objects and put them in a vector 
 	      			vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
+				if (JESplus) vector<TRootJet*> selectedJets_beforeJES_plus = selection_beforeJES_plus.GetSelectedJets(true);
+				if (JERplus) vector<TRootJet*> selectedJets_beforeJER_plus = selection_beforeJER_plus.GetSelectedJets(true);
+				if (JESminus) vector<TRootJet*> selectedJets_beforeJES_minus = selection_beforeJES_minus.GetSelectedJets(true);
+				if (JERminus) vector<TRootJet*> selectedJets_beforeJER_minus = selection_beforeJER_minus.GetSelectedJets(true);
 	      			vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
 	      			vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 	      			vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
@@ -1554,6 +1577,10 @@ int main(int argc, char* argv[]) {
 									bTagged = false;
 									
 									TRootJet* tempJet = (TRootJet*) selectedJets[iJ];
+									if(JESplus) tempJet = (TRootJet*) selectedJets_beforeJES_plus[iJ]; 
+									if(JERplus) tempJet = (TRootJet*) selectedJets_beforeJER_plus[iJ];
+									if(JESminus) tempJet = (TRootJet*) selectedJets_beforeJES_minus[iJ];
+									if(JERminus) tempJet = (TRootJet*) selectedJets_beforeJER_minus[iJ];
 									TLorentzVector tJet(tempJet->Px(), tempJet->Py(), tempJet->Pz(), tempJet->Energy());
 									
 									if (tempJet->Pt() > 20 && fabs(tempJet->Eta()) < 2.4 ){	
