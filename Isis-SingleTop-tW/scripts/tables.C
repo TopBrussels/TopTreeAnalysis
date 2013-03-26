@@ -68,7 +68,7 @@ void tables(int mode = 0){
     }  
   }
 
-  salida << "\\documentclass{cmspaper}" << endl;
+  salida << "\\documentclass[a4paper,12pt]{article}" << endl;
   salida << "\\begin{document}" << endl;
   salida << endl;
   salida << endl;

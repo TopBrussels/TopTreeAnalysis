@@ -25,50 +25,37 @@ void tables_regions(int mode = 0){
   char myTexFile[300];
   sprintf(myTexFile,"tables/region_table_%d_%dpb.tex", mode, lumi);
   ofstream salida(myTexFile); 
-  
+ 
   char myRootFile[300];
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   TFile *_file0 = TFile::Open(myRootFile);
   
-  const int nProcess = 10;
-  TString processName[nProcess] = { "twdr", "tt", "di", "wjets", "zjets", "st", "qcd_mu", "others", "data", "mc"};
+  const int nProcess = 9;
+  TString processName[nProcess] = { "twdr", "tt", "di", "wjets", "zjets", "st",  "others", "data", "mc"};
   TString processLabel[nProcess] = { "\\textbf{$tW$}", "\\textbf{$t \\bar{t}$}", "\\textbf{$WW$, $WZ$, $ZZ$}", "\\textbf{$W+jets$}", "\\textbf{$Z+jets$}",
-			       "\\textbf{$single$ $top$}","\\textbf{$QCD$}", "\\textbf{$Other$}", "\\textbf{$MuEG$}", "\\textbf{$MC$}"};
+			       "\\textbf{$single$ $top$}", "\\textbf{$Other$}", "\\textbf{$MuEG$}", "\\textbf{$MC$}"};
   
-  if (mode == 1)        processLabel[8] = "\\textbf{$DoubleMu$}";
-  else if (mode == 2)   processLabel[8] = "\\textbf{$DoubleElectron$}";
+  if (mode == 1)        processLabel[7] = "\\textbf{$DoubleMu$}";
+  else if (mode == 2)   processLabel[7] = "\\textbf{$DoubleElectron$}";
   
-  TString cutLabel[8] = { "blank0", "blank1", "1jet 1tag 1 loose", "2jets 1 tag 1 loose", "2jets 2tags 2 loose", "1 jet 1 tag" , "2jets 1tag", "2 jets 2 tags"};
+  TString cutLabel[8] = { "blank0", "blank1", "1jet 1tag 1 loose", "2jets 1 tag 1 loose", "2jets 2tags 2 loose", "1 jet 1 tag no Ht cut" , "2jets 1tag no Ht cut", "2 jets 2 tags no Ht cut"};
   
   TH1F*  h [nProcess];
-  for(int i=0; i<10; i++){
-    if (i == 9) {
-     h[i] =  (TH1F*)h[0]->Clone();
-     h[i]->Add(h[1]);
-    // h[i]->Add(h[2]);
-     //h[i]->Add(h[3]);
-     h[i]->Add(h[4]);
-     //h[i]->Add(h[5]);
-    // h[i]->Add(h[6]);
-      h[i]->Add(h[7]);
-    }
-    else h[i] = (TH1F*) _file0->Get("R_"+processName[i]);
-    // Lepton ID and HLT SF
-    // if (mode == 0 && i != 8) h[i]->Scale(0.97713);
-    // if (mode == 1 && i != 8) h[i]->Scale(0.910067);
-    // if (mode == 2 && i != 8) h[i]->Scale(0.945736);
+  for(int i=0; i<nProcess; i++){
+    h[i] = (TH1F*) _file0->Get("R_"+processName[i]);
+    cout << "Get for " << i << " th loop " << "R_" << processName[i] << endl;
   }
   
   double vectorValue[nProcess][10][3];
   for (int i = 1; i < 10; i++){
-    for (int j = 0; j < 10; j++){
+    for (int j = 0; j < nProcess; j++){
       vectorValue[j][i][0] = h[j]->GetBinContent(i);
       vectorValue[j][i][1] = precision(h[j]->GetBinError(i));
       vectorValue[j][i][2] = h[j]->GetBinError(i);
     }  
   }
 
-  salida << "\\documentclass{cmspaper}" << endl;
+  salida << "\\documentclass[a4paper,12pt]{article}" << endl;
   salida << "\\begin{document}" << endl;
   salida << endl;
   salida << endl;
@@ -76,21 +63,49 @@ void tables_regions(int mode = 0){
   
   salida << "  \\begin{table}" << endl;
   salida << "  \\begin{center}" << endl;
-  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  for (int i = 0; i < 7; i++){
+  for (int i = 0; i < 6; i++){
     salida << " & " << processLabel[i] ;
   }
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
   
-  for (int i=0; i < 8; i++){
-    salida << cutLabel[i];
-    for (int j = 0; j < 7; j++){
+  for (int i=1; i <4; i++){
+    
+    	salida << cutLabel[i+1];
+    
+    for (int j = 0; j < 6; j++){
        if(i < 4 ){
 	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
 	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-       }else if(i > 6 ){
+       }
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+  
+    salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  for (int i = 0; i < 6; i++){
+    salida << " & " << processLabel[i] ;
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+  
+  for (int i=7; i <10; i++){
+        salida << cutLabel[i-2];
+    
+    for (int j = 0; j < 6; j++){
+       if(i > 6 ){
          salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
 	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
       
@@ -105,29 +120,30 @@ void tables_regions(int mode = 0){
   salida << endl;
   salida << endl;
 
+// tw tt zjets other
   salida << "  \\begin{table}" << endl;
   salida << "  \\begin{center}" << endl;
   salida << "  \\begin{tabular} {|l|c|c|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  for (int i = 0; i < 9; i++){
-    if (i == 0 || i == 1 || i ==4 || i == 7) salida << " & " << processLabel[i] ;
+  for (int i = 0; i < 7; i++){
+    if( i ==0 || i == 1 || i == 4 || i ==6 ){
+       salida << " & " << processLabel[i] ;
+    }
   }
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
-  
-  for (int i=2; i < 8; i++){
-    salida << cutLabel[i];
-    for (int j = 0; j < 8; j++){
-       if(i< 4 ){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-       }else if(i > 6 ){
-         salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-      
+    
+  for (int i=1; i < 4; i++){
+    
+    	salida << cutLabel[i+1];
+    
+    for (int j = 0; j < 7; j++){
+        if(j < 2 || j == 4 || j ==6){
+	 salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	 salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
        }
     }
-    salida <<  " \\\\  " << endl;
+    salida <<  " \\\\  " << endl; 
   }
   salida << "   \\hline " << endl;
   salida << "  \\end{tabular}" << endl;
@@ -137,41 +153,62 @@ void tables_regions(int mode = 0){
   salida << endl;
   
   
+    salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  for (int i = 0; i < 7; i++){
+    if(i < 2 || i == 4 || i ==6){
+      salida << " & " << processLabel[i] ;
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+  
+  for (int i=7; i <10; i++){
+        salida << cutLabel[i-2];
+    
+    for (int j = 0; j < 7; j++){
+       if(j < 2 || j == 4 || j ==6){
+         salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+      
+       }
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;  
+  
+  
+  // data MC
   salida << "  \\begin{table}" << endl;
   salida << "  \\begin{center}" << endl;
-  salida << "  \\begin{tabular} {|l|c|c|}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  for (int i = 8; i < 10; i++){
-    salida << " & " << processLabel[i] ;
+  for (int i = 7; i < 9; i++){
+    
+       salida << " & " << processLabel[i] ;
+    
   }
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
-  
-  for (int i=2; i < 8; i++){
-    salida << cutLabel[i] << "	";
-    for (int j = 8; j < 10; j++){
-      if (j == 8){
-       if(i < 4 ){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-       }else if(i > 6 ){
-         salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-      
-       }
-      } else {
-        if(i< 4 ){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-       }else if(i > 6 ){
-         salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-      
-       } 
-      }
-      
+    
+  for (int i=1; i < 4; i++){
+    
+    	salida << cutLabel[i+1];
+    
+    for (int j = 7; j < 9; j++){
+        
+	 salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	 salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+       
     }
-    salida <<  " \\\\  " << endl;
+    salida <<  " \\\\  " << endl; 
   }
   salida << "   \\hline " << endl;
   salida << "  \\end{tabular}" << endl;
@@ -181,6 +218,37 @@ void tables_regions(int mode = 0){
   salida << endl;
   
   
+    salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  for (int i = 7; i < 9; i++){
+    
+      salida << " & " << processLabel[i] ;
+    
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+  
+  for (int i=7; i <10; i++){
+        salida << cutLabel[i-2];
+    
+    for (int j = 7; j <9; j++){
+       
+         salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+      
+       
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+
   salida << "\\end{document}" << endl;
   
 }
