@@ -9,8 +9,7 @@
   <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_matching_up/*.root"/> 
   <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
   <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_tW_DR/*.root"/> 
-  <d name="twds" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tW_DS/*.root"/> 
-  <d name="atwds" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tbarW_DS/*.root"/> 
+> 
   <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_t/*.root"/> 
   <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_t/*.root"/> 
   <d name="ww" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WW/*.root"/> 
