@@ -69,21 +69,21 @@ void sys_tables(int mode = 0){
  
   sprintf(myRootFileMETsysUp,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   
-   sprintf(myRootFileTopMassDown,"results/TopMassDown_an_%dpb_%d.root", (int)lumi, mode);
+   sprintf(myRootFileTopMassDown,"results/TopMassDown_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFileTopMassUp,"results/TopMassUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileTopMassUp,"results/TopMassUp_%dpb_%d.root", (int)lumi, mode);
   
-   sprintf(myRootFileQ2Down,"results/Q2Down_an_%dpb_%d.root", (int)lumi, mode);
+   sprintf(myRootFileQ2Down,"results/Q2Down_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFileQ2Up,"results/Q2Up_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileQ2Up,"results/Q2Up_%dpb_%d.root", (int)lumi, mode);
   
-   sprintf(myRootFileeleSFsysDown,"results/eleSFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+   sprintf(myRootFileeleSFsysDown,"results/eleSFsysDown_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFileeleSFsysUp,"results/eleSFsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileeleSFsysUp,"results/eleSFsysUp_%dpb_%d.root", (int)lumi, mode);
   
-   sprintf(myRootFilematchingDown,"results/matchingDown_an_%dpb_%d.root", (int)lumi, mode);
+   sprintf(myRootFilematchingDown,"results/matchingDown_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFilematchingUp,"results/matchingUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFilematchingUp,"results/matchingUp_%dpb_%d.root", (int)lumi, mode);
   
    
   TFile *_file0 = TFile::Open(myRootFile);
@@ -167,25 +167,25 @@ void sys_tables(int mode = 0){
   
   
   for(int i=0; i<nProcess; i++){
-     h[i] = (TH1F*) _file0->Get("ptsys_1j1t_"+processName[i]);
-     h_JERsysUp [i] = (TH1F*) _fileJERsysUp->Get("ptsys_1j1t_"+processName[i]);
-     h_JERsysDown [i] = (TH1F*) _fileJERsysDown->Get("ptsys_1j1t_"+processName[i]);
-     h_JESsysUp [i] = (TH1F*) _fileJESsysUp->Get("ptsys_1j1t_"+processName[i]);
-     h_JESsysDown [i] = (TH1F*) _fileJESsysDown->Get("ptsys_1j1t_"+processName[i]);
-     h_PUsysUp [i] = (TH1F*) _filePUsysUp->Get("ptsys_1j1t_"+processName[i]);
-     h_PUsysDown [i] = (TH1F*) _filePUsysDown->Get("ptsys_1j1t_"+processName[i]);
-     h_SFsysUp [i] = (TH1F*) _fileSFsysUp->Get("ptsys_1j1t_"+processName[i]);
-     h_SFsysDown [i] = (TH1F*) _fileSFsysDown->Get("ptsys_1j1t_"+processName[i]);
-     h_METsysUp [i] = (TH1F*) _fileMETsysUp->Get("ptsys_1j1t_"+processName[i]);
-     h_METsysDown [i] = (TH1F*) _fileMETsysDown->Get("ptsys_1j1t_"+processName[i]);
-     h_eleSFsysUp [i] = (TH1F*) _fileeleSFsysUp->Get("ptsys_1j1t_"+processName[i]);
-     h_eleSFsysDown [i] = (TH1F*) _fileeleSFsysDown->Get("ptsys_1j1t_"+processName[i]);
-     h_TopMassUp [i] = (TH1F*) _fileTopMassUp->Get("ptsys_1j1t_"+processName[i]);
-     h_TopMassDown [i] = (TH1F*) _fileTopMassDown->Get("ptsys_1j1t_"+processName[i]);
-     h_Q2Up [i] = (TH1F*) _fileQ2Up->Get("ptsys_1j1t_"+processName[i]);
-     h_Q2Down [i] = (TH1F*) _fileQ2Down->Get("ptsys_1j1t_"+processName[i]); 
-     h_matchingUp [i] = (TH1F*) _filematchingUp->Get("ptsys_1j1t_"+processName[i]);
-     h_matchingDown [i] = (TH1F*) _filematchingDown->Get("ptsys_1j1t_"+processName[i]);
+     h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
+     h_JERsysUp[i]=(TH1F*) _fileJERsysUp->Get("cuts_"+processName[i]);
+     h_JERsysDown[i]= (TH1F*) _fileJERsysDown->Get("cuts_"+processName[i]);
+     h_JESsysUp[i]=(TH1F*) _fileJESsysUp->Get("cuts_"+processName[i]);
+     h_JESsysDown[i]= (TH1F*) _fileJESsysDown->Get("cuts_"+processName[i]);
+     h_PUsysUp[i]=(TH1F*) _filePUsysUp->Get("cuts_"+processName[i]);
+     h_PUsysDown[i]=(TH1F*) _filePUsysDown->Get("cuts_"+processName[i]);
+     h_SFsysUp[i]=(TH1F*) _fileSFsysUp->Get("cuts_"+processName[i]);
+     h_SFsysDown[i]=(TH1F*) _fileSFsysDown->Get("cuts_"+processName[i]);
+     h_METsysUp[i]=(TH1F*) _fileMETsysUp->Get("cuts_"+processName[i]);
+     h_METsysDown[i]= (TH1F*) _fileMETsysDown->Get("cuts_"+processName[i]);
+     h_eleSFsysUp[i]= (TH1F*) _fileeleSFsysUp->Get("cuts_"+processName[i]);
+     h_eleSFsysDown[i] = (TH1F*) _fileeleSFsysDown->Get("cuts_"+processName[i]);
+     h_TopMassUp[i]=(TH1F*) _fileTopMassUp->Get("cuts_"+processName[i]);
+     h_TopMassDown[i]= (TH1F*) _fileTopMassDown->Get("cuts_"+processName[i]);
+     h_Q2Up[i]=(TH1F*) _fileQ2Up->Get("cuts_"+processName[i]);
+     h_Q2Down[i]=(TH1F*) _fileQ2Down->Get("cuts_"+processName[i]); 
+     h_matchingUp[i]= (TH1F*) _filematchingUp->Get("cuts_"+processName[i]);
+     h_matchingDown[i] = (TH1F*) _filematchingDown->Get("cuts_"+processName[i]);
     
   }
   
@@ -212,85 +212,87 @@ void sys_tables(int mode = 0){
   
   
   for (int i = 0; i < 16; i++){
-    for (int j = 0; j < 10; j++){
+    for (int j = 0; j < nProcess; j++){
       vectorValue[j][i][0] = h[j]->GetBinContent(i);
       vectorValue[j][i][1] = precision(h[j]->GetBinError(i));
       vectorValue[j][i][2] = h[j]->GetBinError(i);
       
-      vectorValue_JERsysUp[j][i][0] = h_JERsysUp[j]->GetBinContent(i);
-      vectorValue_JERsysUp[j][i][1] = precision(h[j]_JERsysUp->GetBinError(i));
-      vectorValue_JERsysUp[j][i][2] = h[j]_JERsysUp->GetBinError(i);
-      
-      vectorValue_JERsysDown[j][i][0] = h[j]_JERsysDown->GetBinContent(i);
-      vectorValue_JERsysDown[j][i][1] = precision(h[j]_JERsysDown->GetBinError(i));
-      vectorValue_JERsysDown[j][i][2] = h[j]_JERsysDown->GetBinError(i);
-      
+ /*     vectorValue_JERsysUp[j][i][0] =  h_JERsysUp[j]->GetBinContent(i);
+      vectorValue_JERsysUp[j][i][1] = precision(h_JERsysUp[j]->GetBinError(i));
+      vectorValue_JERsysUp[j][i][2] = h_JERsysUp[j]->GetBinError(i);
+
+      vectorValue_JERsysDown[j][i][0] = h_JERsysDown[j]->GetBinContent(i);
+      vectorValue_JERsysDown[j][i][1] = precision(h_JERsysDown[j]->GetBinError(i));
+      vectorValue_JERsysDown[j][i][2] = h_JERsysDown[j]->GetBinError(i);
+            
       vectorValue_JESsysUp[j][i][0] = h_JESsysUp[j]->GetBinContent(i);
-      vectorValue_JESsysUp[j][i][1] = precision(h[j]_JESsysUp->GetBinError(i));
-      vectorValue_JESsysUp[j][i][2] = h[j]_JESsysUp->GetBinError(i);
-      
-      vectorValue_JESsysDown[j][i][0] = h[j]_JESsysDown->GetBinContent(i);
-      vectorValue_JESsysDown[j][i][1] = precision(h[j]_JESsysDown->GetBinError(i));
-      vectorValue_JESsysDown[j][i][2] = h[j]_JESsysDown->GetBinError(i)
+      vectorValue_JESsysUp[j][i][1] = precision(h_JESsysUp[j]->GetBinError(i));
+      vectorValue_JESsysUp[j][i][2] = h_JESsysUp[j]->GetBinError(i);
+
+      vectorValue_JESsysDown[j][i][0] = h_JESsysDown[j]->GetBinContent(i);
+      vectorValue_JESsysDown[j][i][1] = precision(h_JESsysDown[j]->GetBinError(i));
+      vectorValue_JESsysDown[j][i][2] = h_JESsysDown[j]->GetBinError(i);	    
+
       
       vectorValue_PUsysUp[j][i][0] = h_PUsysUp[j]->GetBinContent(i);
-      vectorValue_PUsysUp[j][i][1] = precision(h[j]_PUsysUp->GetBinError(i));
-      vectorValue_PUsysUp[j][i][2] = h[j]_PUsysUp->GetBinError(i);
-      
-      vectorValue_PUsysDown[j][i][0] = h[j]_PUsysDown->GetBinContent(i);
-      vectorValue_PUsysDown[j][i][1] = precision(h[j]_PUsysDown->GetBinError(i));
-      vectorValue_PUsysDown[j][i][2] = h[j]_PUsysDown->GetBinError(i)
+      vectorValue_PUsysUp[j][i][1] = precision(h_PUsysUp[j]->GetBinError(i));
+      vectorValue_PUsysUp[j][i][2] = h_PUsysUp[j]->GetBinError(i);
+
+      vectorValue_PUsysDown[j][i][0] = h_PUsysDown[j]->GetBinContent(i);
+      vectorValue_PUsysDown[j][i][1] = precision(h_PUsysDown[j]->GetBinError(i));
+      vectorValue_PUsysDown[j][i][2] = h_PUsysDown[j]->GetBinError(i);
       
       vectorValue_SFsysUp[j][i][0] = h_SFsysUp[j]->GetBinContent(i);
-      vectorValue_SFsysUp[j][i][1] = precision(h[j]_SFsysUp->GetBinError(i));
-      vectorValue_SFsysUp[j][i][2] = h[j]_SFsysUp->GetBinError(i);
-      
-      vectorValue_SFsysDown[j][i][0] = h[j]_SFsysDown->GetBinContent(i);
-      vectorValue_SFsysDown[j][i][1] = precision(h[j]_SFsysDown->GetBinError(i));
-      vectorValue_SFsysDown[j][i][2] = h[j]_SFsysDown->GetBinError(i)
+      vectorValue_SFsysUp[j][i][1] = precision(h_SFsysUp[j]->GetBinError(i));
+      vectorValue_SFsysUp[j][i][2] = h_SFsysUp[j]->GetBinError(i);
+
+      vectorValue_SFsysDown[j][i][0] = h_SFsysDown[j]->GetBinContent(i);
+      vectorValue_SFsysDown[j][i][1] = precision(h_SFsysDown[j]->GetBinError(i));
+      vectorValue_SFsysDown[j][i][2] = h_SFsysDown[j]->GetBinError(i);
       
       vectorValue_METsysUp[j][i][0] = h_METsysUp[j]->GetBinContent(i);
-      vectorValue_METsysUp[j][i][1] = precision(h[j]_METsysUp->GetBinError(i));
-      vectorValue_METsysUp[j][i][2] = h[j]_METsysUp->GetBinError(i);
-      
-      vectorValue_METsysDown[j][i][0] = h[j]_METsysDown->GetBinContent(i);
-      vectorValue_METsysDown[j][i][1] = precision(h[j]_METsysDown->GetBinError(i));
-      vectorValue_METsysDown[j][i][2] = h[j]_METsysDown->GetBinError(i)
+      vectorValue_METsysUp[j][i][1] = precision(h_METsysUp[j]->GetBinError(i));
+      vectorValue_METsysUp[j][i][2] = h_METsysUp[j]->GetBinError(i);
+
+      vectorValue_METsysDown[j][i][0] = h_METsysDown[j]->GetBinContent(i);
+      vectorValue_METsysDown[j][i][1] = precision(h_METsysDown[j]->GetBinError(i));
+      vectorValue_METsysDown[j][i][2] = h_METsysDown[j]->GetBinError(i);
       
       vectorValue_eleSFsysUp[j][i][0] = h_eleSFsysUp[j]->GetBinContent(i);
-      vectorValue_eleSFsysUp[j][i][1] = precision(h[j]_eleSFsysUp->GetBinError(i));
-      vectorValue_eleSFsysUp[j][i][2] = h[j]_eleSFsysUp->GetBinError(i);
-      
-      vectorValue_eleSFsysDown[j][i][0] = h[j]_eleSFsysDown->GetBinContent(i);
-      vectorValue_eleSFsysDown[j][i][1] = precision(h[j]_eleSFsysDown->GetBinError(i));
-      vectorValue_eleSFsysDown[j][i][2] = h[j]_eleSFsysDown->GetBinError(i)
+      vectorValue_eleSFsysUp[j][i][1] = precision(h_eleSFsysUp[j]->GetBinError(i));
+      vectorValue_eleSFsysUp[j][i][2] = h_eleSFsysUp[j]->GetBinError(i);
+
+      vectorValue_eleSFsysDown[j][i][0] = h_eleSFsysDown[j]->GetBinContent(i);
+      vectorValue_eleSFsysDown[j][i][1] = precision(h_eleSFsysDown[j]->GetBinError(i));
+      vectorValue_eleSFsysDown[j][i][2] = h_eleSFsysDown[j]->GetBinError(i);
       
       vectorValue_TopMassUp[j][i][0] = h_TopMassUp[j]->GetBinContent(i);
-      vectorValue_TopMassUp[j][i][1] = precision(h[j]_TopMassUp->GetBinError(i));
-      vectorValue_TopMassUp[j][i][2] = h[j]_TopMassUp->GetBinError(i);
-      
-      vectorValue_TopMassDown[j][i][0] = h[j]_TopMassDown->GetBinContent(i);
-      vectorValue_TopMassDown[j][i][1] = precision(h[j]_TopMassDown->GetBinError(i));
-      vectorValue_TopMassDown[j][i][2] = h[j]_TopMassDown->GetBinError(i)
+      vectorValue_TopMassUp[j][i][1] = precision(h_TopMassUp[j]->GetBinError(i));
+      vectorValue_TopMassUp[j][i][2] = h_TopMassUp[j]->GetBinError(i);
+
+      vectorValue_TopMassDown[j][i][0] = h_TopMassDown[j]->GetBinContent(i);
+      vectorValue_TopMassDown[j][i][1] = precision(h_TopMassDown[j]->GetBinError(i));
+      vectorValue_TopMassDown[j][i][2] = h_TopMassDown[j]->GetBinError(i);
       
       vectorValue_Q2Up[j][i][0] = h_Q2Up[j]->GetBinContent(i);
-      vectorValue_Q2Up[j][i][1] = precision(h[j]_Q2Up->GetBinError(i));
-      vectorValue_Q2Up[j][i][2] = h[j]_Q2Up->GetBinError(i);
-      
-      vectorValue_Q2Down[j][i][0] = h[j]_Q2Down->GetBinContent(i);
-      vectorValue_Q2Down[j][i][1] = precision(h[j]_Q2Down->GetBinError(i));
-      vectorValue_Q2Down[j][i][2] = h[j]_Q2Down->GetBinError(i)
+      vectorValue_Q2Up[j][i][1] = precision(h_Q2Up[j]->GetBinError(i));
+      vectorValue_Q2Up[j][i][2] = h_Q2Up[j]->GetBinError(i);
+
+      vectorValue_Q2Down[j][i][0] = h_Q2Down[j]->GetBinContent(i);
+      vectorValue_Q2Down[j][i][1] = precision(h_Q2Down[j]->GetBinError(i));
+      vectorValue_Q2Down[j][i][2] = h_Q2Down[j]->GetBinError(i);
       
       vectorValue_matchingUp[j][i][0] = h_matchingUp[j]->GetBinContent(i);
-      vectorValue_matchingUp[j][i][1] = precision(h[j]_matchingUp->GetBinError(i));
-      vectorValue_matchingUp[j][i][2] = h[j]_matchingUp->GetBinError(i);
-      
-      vectorValue_matchingDown[j][i][0] = h[j]_matchingDown->GetBinContent(i);
-      vectorValue_matchingDown[j][i][1] = precision(h[j]_matchingDown->GetBinError(i));
-      vectorValue_matchingDown[j][i][2] = h[j]_matchingDown->GetBinError(i)
+      vectorValue_matchingUp[j][i][1] = precision(h_matchingUp[j]->GetBinError(i));
+      vectorValue_matchingUp[j][i][2] = h_matchingUp[j]->GetBinError(i);
+
+      vectorValue_matchingDown[j][i][0] = h_matchingDown[j]->GetBinContent(i);
+      vectorValue_matchingDown[j][i][1] = precision(h_matchingDown[j]->GetBinError(i));
+      vectorValue_matchingDown[j][i][2] = h_matchingDown[j]->GetBinError(i);
+ */
     }  
   }
-
+/*
   salida << "\\documentclass[a4paper,12pt]{article}" << endl;
   salida << "\\begin{document}" << endl;
   salida << endl;
@@ -439,7 +441,7 @@ void sys_tables(int mode = 0){
 
   
   salida << "\\end{document}" << endl;
-  
+ */ 
 }
 
 

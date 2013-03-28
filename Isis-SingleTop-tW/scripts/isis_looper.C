@@ -26,29 +26,28 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 {
 
   char plotName[300];
-  sprintf(plotName,"test");
+  bool isZjets = false; // to check zgamma reweighing
   
   if (nsel == 0)                	{sprintf(plotName,"tt");}
   else if (nsel == 1)   		{sprintf(plotName,"twdr");}
   else if (nsel == -1)   		{sprintf(plotName,"twds");}
-  else if (nsel == 2)   		{sprintf(plotName,"zjets");}
+  else if (nsel == 2)   		{sprintf(plotName,"zjets");  }
   else if (nsel == 3)   		{sprintf(plotName,"di");}
   else if (nsel == 4)			{sprintf(plotName, "st");}
   else if (nsel == 5)   		{sprintf(plotName,"wjets");}
- // else if (nsel == 6)   		{sprintf(plotName,"qcd_mu");}
   else if (nsel == 7)                	{sprintf(plotName,"others");}
   
   else if (nsel == 555)                	{sprintf(plotName,"mc");}
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
   
-  /*
+  
   
   //JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
   else if (nsel == -20)                   {sprintf(plotName,"twdr");}
-  else if (nsel ==  20)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  20)                   {sprintf(plotName,"twdr");} 
   
   //JES
   else if (nsel == -11)                   {sprintf(plotName,"tt");}
@@ -101,7 +100,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel == -28)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
   
-  */
+  
   
  
   
@@ -158,7 +157,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
    sprintf(newRootFile,"results/matchingDown_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 18 || nsel == 28 ){
    sprintf(newRootFile,"results/matchingUp_%dpb_%d.root", (int) lumi, mode);
-  }else{
+  }else if(isZjets){
+     sprintf(newRootFile,"results/noZjetsSF_%dpb_%d.root", (int) lumi, mode);
+  } else{
     sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   }
  
@@ -379,6 +380,9 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_pt_leading = new TH1F( title, " ", 100,  0, 200 );
   histo_pt_leading->Sumw2();
   
+  sprintf(title,"et_jet_%s",plotName);
+  TH1F* histo_et_jet = new TH1F( title, " ", 100,  0, 200 );
+  histo_et_jet->Sumw2();
   
   sprintf(title,"eta_leading_%s",plotName);
   TH1F* histo_eta_leading = new TH1F( title, " ", 100,  -3, 3);
@@ -599,6 +603,13 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   for (Long64_t jentry=0; jentry<nentries;jentry++) {  // start eventloop
     
     
+    
+    
+    
+    
+    
+ 
+    
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -640,8 +651,56 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (phipairmet_t == pi_m) promet = metPt;
       
       if (pair.M() > 20){
+      
+      
+             // zjets reweighing
+        // if put to true, no zjets reweighing
+       double ZjetsSF; 
+       		if(isZjets){
+			if(mode == 0){
+				if(metPt < 10){ ZjetsSF = 0.9028; }
+				else if(metPt > 10 && metPt < 20){ ZjetsSF = 0.9497; }
+				else if(metPt >= 20 && metPt < 30){ ZjetsSF = 1.0189; }
+				else if(metPt >= 30 && metPt < 40){ ZjetsSF = 1.0988; }
+				else if(metPt >= 40 && metPt < 50){ ZjetsSF = 1.17415; }
+				else if(metPt >= 50 && metPt < 60){ ZjetsSF = 1.25145; }	
+				else{ ZjetsSF = 1.26325; }
+				
+			}
+			else if (mode == 1){
+				if(metPt < 10){ ZjetsSF = 0.8841; }
+				else if(metPt > 10 && metPt < 20){ ZjetsSF = 0.9386; }
+				else if(metPt >= 20 && metPt < 30){ ZjetsSF = 1.0131; }
+				else if(metPt >= 30 && metPt < 40){ ZjetsSF = 1.1012; }
+				else if(metPt >= 40 && metPt < 50){ ZjetsSF = 1.1850; }
+				else if(metPt >= 50 && metPt < 60){ ZjetsSF = 1.2500; }	
+				else{ ZjetsSF = 1.3071; }			
+			}
+			else{
+				if(metPt < 10){ ZjetsSF = 0.9215; }
+				else if(metPt > 10 && metPt < 20){ ZjetsSF = 0.9608; }
+				else if(metPt >= 20 && metPt < 30){ ZjetsSF = 1.0247; }
+				else if(metPt >= 30 && metPt < 40){ ZjetsSF = 1.0964; }
+				else if(metPt >= 40 && metPt < 50){ ZjetsSF = 1.1633; }
+				else if(metPt >= 50 && metPt < 60){ ZjetsSF = 1.2529; }	
+				else{ ZjetsSF = 1.2194; }			
+			}
+		
+		
+		
+		
+			 xlWeight *= 1/ZjetsSF;
+		
+		}
+      
+      
+      
+      
 	histo->Fill(1, xlWeight);
         
+       
+
+       
        
 
 	int nJetsBT = 0;
@@ -658,6 +717,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	  TLorentzVector tempJet(pxJet->at(i),pyJet->at(i), pzJet->at(i), eJet->at(i));
 	  bool btag = Btagjet->at(i);
 	  
+	  histo_et_jet->Fill(eJet->at(i),xlWeight);
 	 
 	 // cout << "jet: " << i << "btagjet " << btag << endl; 
 	  

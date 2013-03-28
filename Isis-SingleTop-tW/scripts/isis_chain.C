@@ -12,7 +12,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   // samples used
   double x_sec = 0.;
   char plotName[300];
-  sprintf(plotName,"test");
+  
   
   if (nsel == 0)                	{sprintf(plotName,"tt");}
   else if (nsel == 1)   		{sprintf(plotName,"twdr");}
@@ -28,7 +28,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   
   else if (nsel == 666)                	{sprintf(plotName,"data");}
   
-  /*
+  
   
   // JER  
   else if (nsel == -10)                   {sprintf(plotName,"tt");}  
@@ -85,7 +85,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
   else if (nsel == -28)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
-  */
+  
   
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;
   if (!silent){
@@ -97,7 +97,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   
   char myRootFile[300];
   
-  /*
+  
   if(nsel == -10 || nsel == -20){
   sprintf(myRootFile,"outputs/JERsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 10 || nsel == 20 ){
@@ -137,8 +137,8 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   }  else{
    sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
   }
-  */
-  sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);
+  
+  
   
   TChain *myCh = new TChain("myTree","myTree");
   myCh->Add(myRootFile);
