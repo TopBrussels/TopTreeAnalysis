@@ -130,10 +130,10 @@ void sys_tables(int mode = 0){
   cout << "-------------------------------------------------------" << endl;
   
   
-  const int nProcess = 6;
+  const int nProcess = 2;
   const int nSys = 19;
-  TString processName[nProcess] = { "twdr", "tt", "zjets", "others", "data", "mc"};
-  TString processLabel[nProcess] = { "\\textbf{$tW$}", "\\textbf{$t \\bar{t}$}",  "\\textbf{$Z+jets$}","\\textbf{$Other$}", "\\textbf{$MuEG$}", "\\textbf{$MC$}"};
+  TString processName[nProcess] = { "twdr", "tt"};
+  TString processLabel[nProcess] = { "\\textbf{$tW$}", "\\textbf{$t \\bar{t}$}"};
    TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp","TopMassDown" , "TopMassUp","Q2Down" , "Q2Up","eleSFsysDown" , "eleSFsysUp","matchingDown" , "matchingUp"}; 
 
   
@@ -144,24 +144,24 @@ void sys_tables(int mode = 0){
   TString cutLabel[8] = { "blank0", "blank1", "Lepton Sel.", "Inv. Mass", "$E_{T}^{miss}$", "1 Jet", "b-tagging", "$H_{T}$"};
   
   TH1F*  h [nProcess];
-  TH1F*  h_JERsysUp [nProcess];
-  TH1F*  h_JERsysDown [nProcess];
-  TH1F*  h_JESsysUp [nProcess];
-  TH1F*  h_JESsysDown [nProcess];
-  TH1F*  h_PUsysUp [nProcess];
-  TH1F*  h_PUsysDown [nProcess];
-  TH1F*  h_SFsysUp [nProcess];
-  TH1F*  h_SFsysDown [nProcess];
-  TH1F*  h_METsysUp [nProcess];
-  TH1F*  h_METsysDown [nProcess];
-  TH1F*  h_eleSFsysUp [nProcess];
-  TH1F*  h_eleSFsysDown [nProcess];
-  TH1F*  h_TopMassUp [nProcess];
-  TH1F*  h_TopMassDown [nProcess];
-  TH1F*  h_Q2Up [nProcess];
-  TH1F*  h_Q2Down [nProcess];
-  TH1F*  h_matchingUp [nProcess];
-  TH1F*  h_matchingDown [nProcess];
+  TH1F*  h_JERsysUp[nProcess];
+  TH1F*  h_JERsysDown[nProcess];
+  TH1F*  h_JESsysUp[nProcess];
+  TH1F*  h_JESsysDown[nProcess];
+  TH1F*  h_PUsysUp[nProcess];
+  TH1F*  h_PUsysDown[nProcess];
+  TH1F*  h_SFsysUp[nProcess];
+  TH1F*  h_SFsysDown[nProcess];
+  TH1F*  h_METsysUp[nProcess];
+  TH1F*  h_METsysDown[nProcess];
+  TH1F*  h_eleSFsysUp[nProcess];
+  TH1F*  h_eleSFsysDown[nProcess];
+  TH1F*  h_TopMassUp[nProcess];
+  TH1F*  h_TopMassDown[nProcess];
+  TH1F*  h_Q2Up[nProcess];
+  TH1F*  h_Q2Down[nProcess];
+  TH1F*  h_matchingUp[nProcess];
+  TH1F*  h_matchingDown[nProcess];
   
   
   
@@ -189,24 +189,26 @@ void sys_tables(int mode = 0){
     
   }
   
+
+  
   double vectorValue[nProcess][17][4];
-  double vectorValue_JERsysUp [nProcess][17][4];
+  double vectorValue_JERsysUp[nProcess][17][4];
   double vectorValue_JERsysDown[nProcess][17][4];
-  double vectorValue_JESsysUp [nProcess][17][4];
+  double vectorValue_JESsysUp[nProcess][17][4];
   double vectorValue_JESsysDown[nProcess][17][4];
-  double vectorValue_PUsysUp [nProcess][17][4];
+  double vectorValue_PUsysUp[nProcess][17][4];
   double vectorValue_PUsysDown[nProcess][17][4];
-  double vectorValue_SFsysUp [nProcess][17][4];
+  double vectorValue_SFsysUp[nProcess][17][4];
   double vectorValue_SFsysDown[nProcess][17][4];
-  double vectorValue_METsysUp [nProcess][17][4];
+  double vectorValue_METsysUp[nProcess][17][4];
   double vectorValue_METsysDown[nProcess][17][4];
-  double vectorValue_eleSFsysUp [nProcess][17][4];
+  double vectorValue_eleSFsysUp[nProcess][17][4];
   double vectorValue_eleSFsysDown[nProcess][17][4];
-  double vectorValue_TopMassUp [nProcess][17][4];
+  double vectorValue_TopMassUp[nProcess][17][4];
   double vectorValue_TopMassDown[nProcess][17][4];
-  double vectorValue_Q2Up [nProcess][17][4];
+  double vectorValue_Q2Up[nProcess][17][4];
   double vectorValue_Q2Down[nProcess][17][4];
-  double vectorValue_matchingUp [nProcess][17][4];
+  double vectorValue_matchingUp[nProcess][17][4];
   double vectorValue_matchingDown[nProcess][17][4];
   
   
@@ -216,8 +218,8 @@ void sys_tables(int mode = 0){
       vectorValue[j][i][0] = h[j]->GetBinContent(i);
       vectorValue[j][i][1] = precision(h[j]->GetBinError(i));
       vectorValue[j][i][2] = h[j]->GetBinError(i);
-      
- /*     vectorValue_JERsysUp[j][i][0] =  h_JERsysUp[j]->GetBinContent(i);
+    
+      vectorValue_JERsysUp[j][i][0] =  h_JERsysUp[j]->GetBinContent(i);
       vectorValue_JERsysUp[j][i][1] = precision(h_JERsysUp[j]->GetBinError(i));
       vectorValue_JERsysUp[j][i][2] = h_JERsysUp[j]->GetBinError(i);
 
@@ -289,10 +291,10 @@ void sys_tables(int mode = 0){
       vectorValue_matchingDown[j][i][0] = h_matchingDown[j]->GetBinContent(i);
       vectorValue_matchingDown[j][i][1] = precision(h_matchingDown[j]->GetBinError(i));
       vectorValue_matchingDown[j][i][2] = h_matchingDown[j]->GetBinError(i);
- */
+ 
     }  
   }
-/*
+  
   salida << "\\documentclass[a4paper,12pt]{article}" << endl;
   salida << "\\begin{document}" << endl;
   salida << endl;
@@ -307,14 +309,15 @@ void sys_tables(int mode = 0){
   salida << "  \\begin{center}" << endl;
   salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  //for (int i = 0; i < 7; i++){
   
-    for (int k = 0; k < 3){
-            int i = 0; 
-            salida << " & " << processLabel[i] << " " << systName[k];
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 3; k++){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
 	
     }
- // }
+  }
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
  
@@ -343,6 +346,382 @@ void sys_tables(int mode = 0){
   salida << endl;
   salida << endl;
 
+  /////////////////////
+  /// JES      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 5; k++){
+      if(k == 0|| k == 3 || k == 4){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_JESsysDown[j][i][1]) << vectorValue_JESsysDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_JESsysDown[j][i][1])<< vectorValue_JESsysDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_JESsysUp[j][i][1]) << vectorValue_JESsysUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_JESsysUp[j][i][1])<< vectorValue_JESsysUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+  
+    /////////////////////
+  /// PU      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 7; k++){
+       if(k == 0|| k == 5 || k == 6){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_PUsysDown[j][i][1]) << vectorValue_PUsysDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_PUsysDown[j][i][1])<< vectorValue_PUsysDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_PUsysUp[j][i][1]) << vectorValue_PUsysUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_PUsysUp[j][i][1])<< vectorValue_PUsysUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+    /////////////////////
+  /// SF      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 9; k++){
+       if(k == 0|| k == 7 || k == 8){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_SFsysDown[j][i][1]) << vectorValue_SFsysDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_SFsysDown[j][i][1])<< vectorValue_SFsysDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_SFsysUp[j][i][1]) << vectorValue_SFsysUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_SFsysUp[j][i][1])<< vectorValue_SFsysUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+  
+  
+    /////////////////////
+  /// MET      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 11; k++){
+      if(k == 0|| k == 9 || k == 10){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	
+    }
+  }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_METsysDown[j][i][1]) << vectorValue_METsysDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_METsysDown[j][i][1])<< vectorValue_METsysDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_METsysUp[j][i][1]) << vectorValue_METsysUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_METsysUp[j][i][1])<< vectorValue_METsysUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+  
+    /////////////////////
+  /// eleSF      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 17; k++){
+       if(k == 0|| k == 15 || k == 16){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_eleSFsysDown[j][i][1]) << vectorValue_eleSFsysDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_eleSFsysDown[j][i][1])<< vectorValue_eleSFsysDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_eleSFsysUp[j][i][1]) << vectorValue_eleSFsysUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_eleSFsysUp[j][i][1])<< vectorValue_eleSFsysUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+  
+  
+    /////////////////////
+  /// TopMass      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 13; k++){
+       if(k == 0|| k == 11 || k == 12){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_TopMassDown[j][i][1]) << vectorValue_TopMassDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_TopMassDown[j][i][1])<< vectorValue_TopMassDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_TopMassUp[j][i][1]) << vectorValue_TopMassUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_TopMassUp[j][i][1])<< vectorValue_TopMassUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+  
+    
+    /////////////////////
+  /// Q2      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 15; k++){
+      if(k == 0|| k == 13 || k == 16){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_Q2Down[j][i][1]) << vectorValue_Q2Down[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_Q2Down[j][i][1])<< vectorValue_Q2Down[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_Q2Up[j][i][1]) << vectorValue_Q2Up[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_Q2Up[j][i][1])<< vectorValue_Q2Up[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+
+  
+    /////////////////////
+  /// matching      ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < nProcess; l++){
+
+   for (int k = 0; k < 19; k++){
+     if(k == 0|| k ==  17|| k == 18){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_matchingDown[j][i][1]) << vectorValue_matchingDown[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_matchingDown[j][i][1])<< vectorValue_matchingDown[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_matchingUp[j][i][1]) << vectorValue_matchingUp[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_matchingUp[j][i][1])<< vectorValue_matchingUp[j][i][2];
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
+ 
+ 
+  salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
 
 
    //////////////////////////////////////////// 
@@ -355,7 +734,7 @@ void sys_tables(int mode = 0){
   salida << "  \\hline " << endl;
  
  
-  for (int i = 0; i < 6; i++){
+  for (int i = 0; i < nProcess; i++){
             salida << " & " << processLabel[i] ;
 
   }
@@ -441,7 +820,7 @@ void sys_tables(int mode = 0){
 
   
   salida << "\\end{document}" << endl;
- */ 
+ 
 }
 
 
