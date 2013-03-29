@@ -72,15 +72,15 @@ void plotmaker(int mode = 0){
   cout << myRootFile << endl;
   
   const int nProcess = 7;
-   const int nPlots = 22;
+   const int nPlots = 16;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW", "Z/#gamma*+jets", "W+jets",   "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3,  kBlack};
   
 
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex_2lep", "nvertex", "pt_max",  "pt_min","njets_noHT","njetsbt_noHT","njetsbt_noHT_loose","njets_begin","njetsbt_begin","njetsbt_begin_loose","njets_final","njetsbt_final","njetsbt_final_loose","et_jet"};
-  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2,1,1,1,1,1,1,1,1,1,4};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" ,  "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ",  "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of jets no HT cut", "# of jets(bt) no HT cut", "# of jets(bt) no HT cut - loose" , "# of jets (mll > 20)", "# of jets(bt) (mll > 20)","# of jets(bt) (mll > 20) - loose" , "# of jets final", "# of jets(bt) final","# of jets(bt) final -  loose","energy jet (GeV)"};
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex_2lep", "nvertex", "pt_max", "pt_min","njets_final","njetsbt_final","et_jet",  "met_zgamma"};
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2,1,1,4,4};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" ,  "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ",  "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of jets final", "# of jets(bt) final","energy jet (GeV)", "E_{T}^{miss} inside Zmass window"};
 
 
   TString modeString[3] = {"0", "1", "2"};

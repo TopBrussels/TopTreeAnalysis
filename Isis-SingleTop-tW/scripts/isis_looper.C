@@ -653,46 +653,6 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (pair.M() > 20){
       
       
-             // zjets reweighing
-        // if put to true, no zjets reweighing
-       double ZjetsSF; 
-       		if(isZjets){
-			if(mode == 0){
-				if(metPt < 10){ ZjetsSF = 0.9028; }
-				else if(metPt > 10 && metPt < 20){ ZjetsSF = 0.9497; }
-				else if(metPt >= 20 && metPt < 30){ ZjetsSF = 1.0189; }
-				else if(metPt >= 30 && metPt < 40){ ZjetsSF = 1.0988; }
-				else if(metPt >= 40 && metPt < 50){ ZjetsSF = 1.17415; }
-				else if(metPt >= 50 && metPt < 60){ ZjetsSF = 1.25145; }	
-				else{ ZjetsSF = 1.26325; }
-				
-			}
-			else if (mode == 1){
-				if(metPt < 10){ ZjetsSF = 0.8841; }
-				else if(metPt > 10 && metPt < 20){ ZjetsSF = 0.9386; }
-				else if(metPt >= 20 && metPt < 30){ ZjetsSF = 1.0131; }
-				else if(metPt >= 30 && metPt < 40){ ZjetsSF = 1.1012; }
-				else if(metPt >= 40 && metPt < 50){ ZjetsSF = 1.1850; }
-				else if(metPt >= 50 && metPt < 60){ ZjetsSF = 1.2500; }	
-				else{ ZjetsSF = 1.3071; }			
-			}
-			else{
-				if(metPt < 10){ ZjetsSF = 0.9215; }
-				else if(metPt > 10 && metPt < 20){ ZjetsSF = 0.9608; }
-				else if(metPt >= 20 && metPt < 30){ ZjetsSF = 1.0247; }
-				else if(metPt >= 30 && metPt < 40){ ZjetsSF = 1.0964; }
-				else if(metPt >= 40 && metPt < 50){ ZjetsSF = 1.1633; }
-				else if(metPt >= 50 && metPt < 60){ ZjetsSF = 1.2529; }	
-				else{ ZjetsSF = 1.2194; }			
-			}
-		
-		
-		
-		
-			 xlWeight *= 1/ZjetsSF;
-		
-		}
-      
       
       
       
