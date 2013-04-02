@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
   mkdir(pathPNG.c_str(),0777);
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
   
-  float LuminosityMu = 19125.189, LuminosityEl = 18716.074; // Average:  18920.6315 +- 756.82526
+  float LuminosityMu = 19574.023, LuminosityEl = 19133.908; // Average:  19353.966
   
   bool doAllMSPlots = false;
   bool writeASCIIstuff = false; // false:  files are created but no events are filled
@@ -92,103 +92,39 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
     
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mcatnlo_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mcatnlo_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
-
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JESPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JESPlus_SemiLep.root");
-
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JESMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JESMinus_SemiLep.root");
-
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JERPlus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JERPlus_SemiLep.root");
-
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_4jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_3jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_2jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_WJets_1jets_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_JERMinus_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_JERMinus_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass166_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass169_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -204,18 +140,18 @@ int main (int argc, char *argv[])
 	histo1D["mTop_gen"] = new TH1F("mTop_gen","mTop_gen;mTop;#events",500,150,200);
 	histo1D["mTopDiff_gen"] = new TH1F("mTopDiff_gen","mTopDiff_gen;mTop;#events",100,-5,5);
 	
-	histo1D["RunNr_Data_mu"] = new TH1F("RunNr_Data_mu","RunNr_Data_mu;RunNr;#events",180400-160400,160400,180400);
-	histo1D["RunNr_Data_el"] = new TH1F("RunNr_Data_el","RunNr_Data_el;RunNr;#events",180400-160400,160400,180400);
-	histo1D["RunNr_DataDrivenQCD_mu"] = new TH1F("RunNr_DataDrivenQCD_mu","RunNr_DataDrivenQCD_mu;RunNr;#events",180400-160400,160400,180400);
-	histo1D["RunNr_DataDrivenQCD_el"] = new TH1F("RunNr_DataDrivenQCD_el","RunNr_DataDrivenQCD_el;RunNr;#events",180400-160400,160400,180400);
-  histo2D["RunNr_Data_VS_Lepton_pt_mu"] = new TH2F("RunNr_Data_VS_Lepton_pt_mu","RunNr_Data_VS_Lepton_pt_mu;RunNr;Lepton Pt",180400-160400/100,160400,180400,50,0,250);
-  histo2D["RunNr_Data_VS_Lepton_pt_el"] = new TH2F("RunNr_Data_VS_Lepton_pt_el","RunNr_Data_VS_Lepton_pt_el;RunNr;Lepton Pt",180400-160400/100,160400,180400,50,0,250);
-  histo2D["RunNr_DataDrivenQCD_VS_Lepton_pt_mu"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_pt_mu","RunNr_DataDrivenQCD_VS_Lepton_pt_mu;RunNr;Lepton Pt",180400-160400/100,160400,180400,50,0,250);
-  histo2D["RunNr_DataDrivenQCD_VS_Lepton_pt_el"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_pt_el","RunNr_DataDrivenQCD_VS_Lepton_pt_el;RunNr;Lepton Pt",180400-160400/100,160400,180400,50,0,250);
-  histo2D["RunNr_Data_VS_Lepton_eta_mu"] = new TH2F("RunNr_Data_VS_Lepton_eta_mu","RunNr_Data_VS_Lepton_eta_mu;RunNr;Lepton Eta",180400-160400/100,160400,180400,50,-2.5,2.5);
-  histo2D["RunNr_Data_VS_Lepton_eta_el"] = new TH2F("RunNr_Data_VS_Lepton_eta_el","RunNr_Data_VS_Lepton_eta_el;RunNr;Lepton Eta",180400-160400/100,160400,180400,50,-2.5,2.5);
-  histo2D["RunNr_DataDrivenQCD_VS_Lepton_eta_mu"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_eta_mu","RunNr_DataDrivenQCD_VS_Lepton_eta_mu;RunNr;Lepton Eta",180400-160400/100,160400,180400,50,-2.5,2.5);
-  histo2D["RunNr_DataDrivenQCD_VS_Lepton_eta_el"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_eta_el","RunNr_DataDrivenQCD_VS_Lepton_eta_el;RunNr;Lepton Eta",180400-160400/100,160400,180400,50,-2.5,2.5);
+	histo1D["RunNr_Data_mu"] = new TH1F("RunNr_Data_mu","RunNr_Data_mu;RunNr;#events",208700-190600,190600,208700);
+	histo1D["RunNr_Data_el"] = new TH1F("RunNr_Data_el","RunNr_Data_el;RunNr;#events",208700-190600,190600,208700);
+	histo1D["RunNr_DataDrivenQCD_mu"] = new TH1F("RunNr_DataDrivenQCD_mu","RunNr_DataDrivenQCD_mu;RunNr;#events",208700-190600,190600,208700);
+	histo1D["RunNr_DataDrivenQCD_el"] = new TH1F("RunNr_DataDrivenQCD_el","RunNr_DataDrivenQCD_el;RunNr;#events",208700-190600,190600,208700);
+  histo2D["RunNr_Data_VS_Lepton_pt_mu"] = new TH2F("RunNr_Data_VS_Lepton_pt_mu","RunNr_Data_VS_Lepton_pt_mu;RunNr;Lepton Pt",208700-190600,190600,208700,50,0,250);
+  histo2D["RunNr_Data_VS_Lepton_pt_el"] = new TH2F("RunNr_Data_VS_Lepton_pt_el","RunNr_Data_VS_Lepton_pt_el;RunNr;Lepton Pt",208700-190600,190600,208700,50,0,250);
+  histo2D["RunNr_DataDrivenQCD_VS_Lepton_pt_mu"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_pt_mu","RunNr_DataDrivenQCD_VS_Lepton_pt_mu;RunNr;Lepton Pt",208700-190600,190600,208700,50,0,250);
+  histo2D["RunNr_DataDrivenQCD_VS_Lepton_pt_el"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_pt_el","RunNr_DataDrivenQCD_VS_Lepton_pt_el;RunNr;Lepton Pt",208700-190600,190600,208700,50,0,250);
+  histo2D["RunNr_Data_VS_Lepton_eta_mu"] = new TH2F("RunNr_Data_VS_Lepton_eta_mu","RunNr_Data_VS_Lepton_eta_mu;RunNr;Lepton Eta",208700-190600,190600,208700,50,-2.5,2.5);
+  histo2D["RunNr_Data_VS_Lepton_eta_el"] = new TH2F("RunNr_Data_VS_Lepton_eta_el","RunNr_Data_VS_Lepton_eta_el;RunNr;Lepton Eta",208700-190600,190600,208700,50,-2.5,2.5);
+  histo2D["RunNr_DataDrivenQCD_VS_Lepton_eta_mu"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_eta_mu","RunNr_DataDrivenQCD_VS_Lepton_eta_mu;RunNr;Lepton Eta",208700-190600,190600,208700,50,-2.5,2.5);
+  histo2D["RunNr_DataDrivenQCD_VS_Lepton_eta_el"] = new TH2F("RunNr_DataDrivenQCD_VS_Lepton_eta_el","RunNr_DataDrivenQCD_VS_Lepton_eta_el;RunNr;Lepton Eta",208700-190600,190600,208700,50,-2.5,2.5);
   
 	histo1D["mTop_Fit"] = new TH1F("mTop_Fit","mTop_Fit;mTop;#jet-combis",125,0,500);
 	histo1D["sigmaMtop_Fit"] = new TH1F("sigmaMtop_Fit","sigmaMtop_Fit;sigmaMtop;#jet-combis",100,0,50);
@@ -234,13 +170,6 @@ int main (int argc, char *argv[])
 	histo1D["nUsedCombis_TTJets"] = new TH1F("nUsedCombis_TTJets","nUsedCombis_TTJets",13,-0.5,12.5);
 	histo1D["nUsedCombis_WJets"] = new TH1F("nUsedCombis_WJets","nUsedCombis_WJets",13,-0.5,12.5);
 	histo1D["maxIndexHadrJets"] = new TH1F("maxIndexHadrJets","maxIndexHadrJets",10,-0.5,9.5);
-  
-  histo1D["bjets_CSV"] = new TH1F("bjets_CSV","bjets_CSV;bjets_CSV;#b-jets",60,0,6);
-  
-  histo1D["lightJets_pt"] = new TH1F("lightJets_pt","lightJets_pt;lightJets_pt;#jets",100,20,270);
-  histo1D["lightJets_eta"] = new TH1F("lightJets_eta","lightJets_eta;lightJets_eta;#jets",100,-2.5,2.5);
-  histo1D["bJets_pt"] = new TH1F("bJets_pt","bJets_pt;bJets_pt;#jets",100,20,270);
-  histo1D["bJets_eta"] = new TH1F("bJets_eta","bJets_eta;bJets_eta;#jets",100,-2.5,2.5);
   
   histo1D["EtaMostForwardJet"] = new TH1F("EtaMostForwardJet","EtaMostForwardJet",50,-2.5,2.5);
   
@@ -301,8 +230,11 @@ int main (int argc, char *argv[])
     if( dataSet->Name().find("QCD") == 0 ) color = kYellow;
     if( dataSet->Name().find("TT") == 0 )
     {
+      double newXS_SF = 245.794 / 225.197; //NNLO, see http://arxiv.org/pdf/1303.6254.pdf
       color = kRed+1;
       dataSet->SetTitle("t#bar{t}");
+      dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / newXS_SF );
+      dataSet->SetXsection( dataSet->Xsection() * newXS_SF );
     }
     if( dataSet->Name().find("TTbarJets_Other") == 0 ) color = kRed-7;
     if( dataSet->Name().find("WJets") == 0 )
@@ -408,9 +340,9 @@ int main (int argc, char *argv[])
   MSPlot["leptonCharge"] = new MultiSamplePlot(dataSetsOneData,"leptonCharge",2,-2,2,"leptonCharge","Nr. of events");
   
   MSPlot["etaTop"] = new MultiSamplePlot(dataSetsOneData,"etaTop",45,-4.5,4.5,"#eta_{top}","Nr. of events");
-  MSPlot["PtTop"] = new MultiSamplePlot(dataSetsOneData,"PtTop",50,0,400,"#P_{T, top}","Nr. of events");
+  MSPlot["PtTop"] = new MultiSamplePlot(dataSetsOneData,"PtTop",50,0,400,"P_{T, top}","Nr. of events");
   MSPlot["etaBjet"] = new MultiSamplePlot(dataSetsOneData,"etaBjet",50,-2.5,2.5,"#eta_{b-jet}","Nr. of events");
-  MSPlot["PtBjet"] = new MultiSamplePlot(dataSetsOneData,"PtBjet",50,0,300,"#P_{T, b-jet}","Nr. of events");
+  MSPlot["PtBjet"] = new MultiSamplePlot(dataSetsOneData,"PtBjet",50,0,300,"P_{T, b-jet}","Nr. of events");
   MSPlot["MinDRLightB"] = new MultiSamplePlot(dataSetsOneData,"MinDRLightB",50,0,4.5,"Min. #DeltaR(light jet, b-jet)","Nr. of events");
   MSPlot["DRLightJets"] = new MultiSamplePlot(dataSetsOneData,"DRLightJets",50,0,4,"#DeltaR(light1, light2)","Nr. of events");
   
@@ -577,12 +509,12 @@ int main (int argc, char *argv[])
   leptonTools->readElectronSF();
   
   // Reqeight leading JetPt
-  cout << "Applying LeadingJetPtSF" << endl;
-  TFile* inFile = new TFile("/home/stijn/JES+MTop/Presentatie/28_02_2013_JetPtReweighting/leadingJetPtSF.root","READ");
-  TH1F* LeadingJetPtSF = (TH1F*) inFile->Get("Leading_jet_pt_Data")->Clone();
-  LeadingJetPtSF->SetDirectory(0);
-  inFile->Close();
-  delete inFile;
+//  cout << "Applying LeadingJetPtSF" << endl;
+//  TFile* inFile = new TFile("/home/stijn/JES+MTop/Presentatie/28_02_2013_JetPtReweighting/leadingJetPtSF.root","READ");
+//  TH1F* LeadingJetPtSF = (TH1F*) inFile->Get("Leading_jet_pt_Data")->Clone();
+//  LeadingJetPtSF->SetDirectory(0);
+//  inFile->Close();
+//  delete inFile;
   
   // load L7Corrections
   ResolutionFit* resFitLightJets = new ResolutionFit("LightJet");
@@ -631,10 +563,10 @@ int main (int argc, char *argv[])
     double dataSetElSF = 1., dataSetMuSF = 1.;
     if(dataSet->Name().find("QCD") == 0)
     {
-      dataSetElSF = 0.868831;
-      dataSetMuSF = 0.947696;
+      dataSetElSF = 0.599546; // PAS: 0.868831;
+      dataSetMuSF = 1.40788; // PAS: 0.947696;
     }
-    else if( ! ( dataSet->Name().find("Data") == 0 ) )
+    else if( ! ( dataSet->Name().find("Data") == 0 ) ) // Other (non-QCD )MC
     {
       dataSetElSF = 1.;
       dataSetMuSF = 1.;
@@ -868,9 +800,15 @@ int main (int argc, char *argv[])
     	
       if(dataSetName.find("Data") == 0)
       {
-        histo1D["RunNr_Data"+leptonDecay]->Fill(monster->runID(), monster->eventWeight());
-        histo2D["RunNr_Data_VS_Lepton_pt"+leptonDecay]->Fill(monster->runID(),lepton.Pt());
-        histo2D["RunNr_Data_VS_Lepton_eta"+leptonDecay]->Fill(monster->runID(),lepton.Eta());
+        histo1D["RunNr_Data"+leptonDecay]->Fill(monster->runID());
+        histo2D["RunNr_Data_VS_Lepton_pt"+leptonDecay]->Fill(monster->runID(), lepton.Pt());
+        histo2D["RunNr_Data_VS_Lepton_eta"+leptonDecay]->Fill(monster->runID(), lepton.Eta());
+      }
+      if(dataSet->Name().find("QCD") == 0)
+      {
+      	histo1D["RunNr_DataDrivenQCD"+leptonDecay]->Fill(monster->runID());
+        histo2D["RunNr_DataDrivenQCD_VS_Lepton_pt"+leptonDecay]->Fill(monster->runID(), lepton.Pt());
+        histo2D["RunNr_DataDrivenQCD_VS_Lepton_eta"+leptonDecay]->Fill(monster->runID(), lepton.Eta());
       }
       
       histo1D["lumiWeights"]->Fill(lumiWeight);
@@ -922,7 +860,7 @@ int main (int argc, char *argv[])
           float chi2MTopFit = monster->chi2MTopFit(iCombi);
           
   //        if( chi2MTopFit < 99999 ) // 99999 means no mTopFit value was calculated, see FullKinFit.cc
-          if( chi2MTopFit < maxChi2 && selectedJets[combi[0]].Pt() > 30 && selectedJets[combi[1]].Pt() > 30 && selectedJets[combi[2]].Pt() > 50 )
+          if( chi2MTopFit < maxChi2 && selectedJets[combi[0]].Pt() > 30 && selectedJets[combi[1]].Pt() > 30 && selectedJets[combi[2]].Pt() > 30 )
           {
             if( chi2MTopFit < bestChi2 ) bestChi2 = chi2MTopFit; //For PDG reweighing
             nFinalCombis++;
@@ -1315,8 +1253,8 @@ int main (int argc, char *argv[])
 	  RooRealVar mTopFitWjets("mTopFitWjets","mTopFitWjets",50.,650.);
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
 	
-	  RooRealVar mean("mean","mean",150.,130.,200.);
-	  RooRealVar sigma("sigma","sigma",35.,25.,50.);
+	  RooRealVar mean("mean","mean",150.,130.,280.);
+	  RooRealVar sigma("sigma","sigma",35.,25.,70.);
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
     
@@ -1364,7 +1302,7 @@ int main (int argc, char *argv[])
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first;
-    temp->showNumberEntries(false);
+    temp->showNumberEntries(true);
     if(name.find("muPlus") < name.size()) temp->addText("#mu^{+}+jets");
     else if(name.find("muMinus") < name.size()) temp->addText("#mu^{-}+jets");
     else if(name.find("elPlus") < name.size()) temp->addText("e^{+}+jets");
