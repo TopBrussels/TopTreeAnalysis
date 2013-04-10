@@ -1,0 +1,4 @@
+inputfile fullpathtohisto outputfile fullpathtoouthisto
+an_11966pb_0.root ptsys_2j2t_others outputfile.root histo1
+an_11966pb_0.root ptsys_2j1t_others outputfile.root histo2
+an_12067pb_1.root mll_zgamma_others outputfile.root histo3
