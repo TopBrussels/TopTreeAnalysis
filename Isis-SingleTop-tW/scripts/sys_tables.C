@@ -1,5 +1,4 @@
-//Rebeca Gonzalez Suarez
-//rebeca@cern.ch
+
 
 #include "TH1.h"
 #include "TH2.h"
@@ -131,10 +130,10 @@ void sys_tables(int mode = 0){
   
   
   const int nProcess = 2;
-  const int nSys = 19;
+  const int nSys = 20;
   TString processName[nProcess] = { "twdr", "tt"};
   TString processLabel[nProcess] = { "\\textbf{$tW$}", "\\textbf{$t \\bar{t}$}"};
-   TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp","TopMassDown" , "TopMassUp","Q2Down" , "Q2Up","eleSFsysDown" , "eleSFsysUp","matchingDown" , "matchingUp"}; 
+   TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp","TopMassDown" ,"TopMassUp","Q2Down" , "Q2Up","eleSFsysDown" , "eleSFsysUp","matchingDown" , "matchingUp", "tW DS"}; 
 
   
   
@@ -162,6 +161,7 @@ void sys_tables(int mode = 0){
   TH1F*  h_Q2Down[nProcess];
   TH1F*  h_matchingUp[nProcess];
   TH1F*  h_matchingDown[nProcess];
+  TH1F*  h_twds;
   
   
   
@@ -189,6 +189,8 @@ void sys_tables(int mode = 0){
     
   }
   
+  h_twds = (TH1F*) _file0->Get("cuts_twds");
+  
 
   
   double vectorValue[nProcess][17][4];
@@ -210,7 +212,7 @@ void sys_tables(int mode = 0){
   double vectorValue_Q2Down[nProcess][17][4];
   double vectorValue_matchingUp[nProcess][17][4];
   double vectorValue_matchingDown[nProcess][17][4];
-  
+  double vectorValue_twds[1][17][4];
   
   
   for (int i = 0; i < 16; i++){
@@ -293,6 +295,10 @@ void sys_tables(int mode = 0){
       vectorValue_matchingDown[j][i][2] = h_matchingDown[j]->GetBinError(i);
  
     }  
+    
+      vectorValue_twds[0][i][0] = h_twds->GetBinContent(i);
+      vectorValue_twds[0][i][1] = precision(h_twds->GetBinError(i));
+      vectorValue_twds[0][i][2] = h_twds->GetBinError(i);
   }
   
   salida << "\\documentclass[a4paper,12pt]{article}" << endl;
@@ -714,6 +720,50 @@ void sys_tables(int mode = 0){
     }
     salida <<  " \\\\  " << endl; 
   }
+  
+    salida << "   \\hline " << endl;
+  salida << "  \\end{tabular}" << endl;
+  salida << "  \\end{center}" << endl;
+  salida << "  \\end{table}" << endl;
+  salida << endl;
+  salida << endl;
+ 
+     /////////////////////
+  /// twds     ///////
+  ////////////////////
+  
+  salida << "  \\begin{table}" << endl;
+  salida << "  \\begin{center}" << endl;
+  salida << "  \\begin{tabular} {|l|c|c|c|}" << endl;
+  salida << "  \\hline " << endl;
+  
+  for (int l = 0; l < 1; l++){
+
+   for (int k = 0; k < 20; k++){
+     if(k == 0|| k ==  19){
+         //   cout << " & " <<  processLabel[l] << " " << systName[k]; 
+            salida << " & " << processLabel[l] << " " << systName[k];
+	}
+    }
+  }
+  salida << "  \\\\ " << endl; 
+  salida << "  \\hline " << endl;
+ 
+  for (int i=2; i < 8; i++){
+    salida << cutLabel[i];
+    for (int j = 0; j < 1; j++){ // only for twdr
+      
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
+	
+	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_twds[0][i][1]) << vectorValue_twds[0][i][0] ; 
+	salida << " $\\pm $"  << setprecision(vectorValue_twds[0][i][1])<< vectorValue_twds[0][i][2];
+	
+	
+      
+    }
+    salida <<  " \\\\  " << endl; 
+  }
  
  
   salida << "   \\hline " << endl;
@@ -722,6 +772,8 @@ void sys_tables(int mode = 0){
   salida << "  \\end{table}" << endl;
   salida << endl;
   salida << endl;
+ 
+
 
 ///// FOR TTBAR /////////
 
@@ -1146,6 +1198,8 @@ void sys_tables(int mode = 0){
   salida << "  \\end{table}" << endl;
   salida << endl;
   salida << endl;
+  
+
 
 
    //////////////////////////////////////////// 
@@ -1165,7 +1219,7 @@ void sys_tables(int mode = 0){
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
  
-  for (int k=0; k < nSys; k++){
+  for (int k=0; k < (nSys-1); k++){
     salida << systName[k];
     
     int i = 7; 
@@ -1228,7 +1282,7 @@ void sys_tables(int mode = 0){
        } else if (k == 18){
 	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_eleSFsysUp[j][i][1]) << vectorValue_eleSFsysUp[j][i][0] ; 
 	salida << " $\\pm $"  << setprecision(vectorValue_eleSFsysUp[j][i][1])<< vectorValue_eleSFsysUp[j][i][2];
-      }
+      } 
     }
     salida <<  " \\\\  " << endl; 
   }

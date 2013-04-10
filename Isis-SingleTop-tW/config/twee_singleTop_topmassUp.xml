@@ -2,8 +2,8 @@
 <datasets>
 
 
-  <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_topmass_175_5/*.root"/> 
-  <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_topmass_175_5/*.root"/> 
+  <d name="twdr_Topmass_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_topmass_175_5/*.root"/> 
+  <d name="atwdr_Topmass_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_topmass_175_5/*.root"/> 
   <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/T_t/*.root"/> 
   <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/Tbar_t/*.root"/> 
   

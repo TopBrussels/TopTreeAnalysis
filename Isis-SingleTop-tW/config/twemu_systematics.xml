@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<datasets>
+
+  <d name="tt_Matching_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_matching_down/*.root"/> 
+
+
+  <d name="tt_Matching_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_matching_up/*.root"/> 
+
+  <d name="tt_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_topmass_166_5/*.root"/> 
+  <d name="twdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tW_topmass_166_5/*.root"/> 
+  <d name="atwdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tbarW_topmass_166_5/*.root"/> 
+
+  
+
+
+  
+</datasets>
+
+<analysis>
+
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patType1CorrectedPFMetPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJetsNoNu" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
+
+
+</analysis>

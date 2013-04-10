@@ -3,7 +3,7 @@
 
 
   
-  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/mumu/TTbar_matching_up/*.root"/> 
+  <d name="tt_Matching_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/mumu/TTbar_matching_up/*.root"/> 
   
  
 </datasets>

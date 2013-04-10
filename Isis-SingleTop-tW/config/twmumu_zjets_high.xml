@@ -3,8 +3,13 @@
 
 
   
-  <d name="tt_Q2_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/mumu/TTbar_Q2_up/*.root"/> 
+ 
+ 
+ 
+  <d name="zjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/ZJets/*.root"/> 
+
   
+ 
  
 </datasets>
 

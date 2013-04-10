@@ -5,7 +5,7 @@
   
   
  
-   <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/TTbar_topmass_178_5/*.root"/> 
+   <d name="tt_Topmass_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/TTbar_topmass_178_5/*.root"/> 
 
 
 </datasets>

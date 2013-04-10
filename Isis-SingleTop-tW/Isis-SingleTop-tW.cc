@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////
     ///               SYSTEMATICS             ///
     /////////////////////////////////////////////
+    bool pdf = false;
     
     bool JESPlus = false; 
     bool JESMinus = false; 
@@ -178,12 +179,6 @@ int main(int argc, char* argv[]) {
 		cout << "--xml myxml.xml Xml file" << endl; 
 		cout << "--eleSFplus   lepton ID/trigger eff scaled up" << endl; 
 		cout << "--eleSFminus:  lepton ID/trigger eff scaled down" << endl; 
-		cout << "--topmassPLUS: topmass is set to 178.5 GeV remember to take right xml file" << endl; 
-		cout << "--topmassMINUS: topmass is set to 166.5 GeV remember to take right xml file" << endl; 
-		cout << "--Q2PLUS: factorisation scale is doubled. remember to take right xml file" << endl; 
-		cout << "--Q2MINUS: factorisation scale is halved. remember to take right xml file" << endl;
-		cout << "--matchingPLUS: larger MLM scale. remember to take right xml file" << endl; 
-		cout << "--matchingMINUS: smaller MLM scale. remember to take right xml file" << endl;
                 return 0;
         }
         if (argval=="--ee"){
@@ -242,24 +237,6 @@ int main(int argc, char* argv[]) {
         }
         if (argval=="--SFminus_l"){
                 SFminus_l = true;
-        }
-	if (argval=="--topmassPLUS") {
-                topmass_plus = true;
-        }
-        if (argval=="--topmassMINUS"){
-                topmass_minus = true;
-        }
-	if (argval=="--Q2PLUS") {
-                Q2_plus = true;
-        }
-        if (argval=="--Q2MINUS"){
-                Q2_minus = true;
-        }
-	if (argval=="--matchingPLUS") {
-                matching_plus = true;
-        }
-        if (argval=="--matchingMINUS"){
-                matching_minus = true;
         }
         if (argval=="--NoPU") {
                 reweightPU = false;
@@ -461,6 +438,12 @@ int main(int argc, char* argv[]) {
         bool isTop = false;     // To make the division between top pair MC and single top MC, this is needed for the btagging SF
         bool isSingleTop = false; 
 	bool isZjets = false; 
+	bool isQ2up = false;
+	bool isQ2down = false; 
+	bool isTopmassup = false; 
+	bool isTopmassdown = false; 
+	bool isMatchingup = false; 
+	bool isMatchingdown = false; 
 	double xlweight;        // To define the reweighting of the MC compared to the data, if this is 1, then no reweighting is applied. 
                                 // The reweighting is done as follows: 
                                 //       xlweight = (cross-section x luminosity)/number of events in the toptree before the skimming
@@ -472,13 +455,11 @@ int main(int argc, char* argv[]) {
         char name[100];
 	
         if (dataSetName == "data"){             sprintf(name, "data");          xlweight = 1;                           isData = true;}
-	else if (dataSetName == "data1"){       sprintf(name, "data1");          xlweight = 1;                           isData = true;}
-	else if (dataSetName == "data2"){       sprintf(name, "data2");          xlweight = 1;                           isData = true;}
         else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
         else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
-	else if (dataSetName == "twds"){        sprintf(name, "tw_ds");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
-        else if (dataSetName == "atwds"){       sprintf(name, "atw_ds");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
+	else if (dataSetName == "twds"){        sprintf(name, "tw_ds"); 	xlweight =lumi*11.1/2970009;             isSingleTop = true;} 
+        else if (dataSetName == "atwds"){       sprintf(name, "atw_ds");     	xlweight = lumi*11.1/2940588;            isSingleTop = true;} 
         else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/3748832;             } 
         else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/180719;           }
 	else if (dataSetName == "s"){           sprintf(name, "s");             xlweight = lumi*3.79/259960;             } 
@@ -489,7 +470,24 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;    isZjets =true;    } 
         else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;       isZjets = true;   } 
         else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411352;         }  
-
+	
+	// systematics
+	else if (dataSetName == "tt_Q2_up"){          sprintf(name, "tt");       xlweight = lumi*225.197/4703202;        isTop = true;       isQ2up = true;} 
+        else if (dataSetName == "twdr_Q2_up"){        sprintf(name, "tw_dr");        xlweight =lumi*11.1/1492814;             isSingleTop = true;  isQ2up = true;} 
+        else if (dataSetName == "atwdr_Q2_up"){       sprintf(name, "atw_dr");  	     xlweight = lumi*11.1/1492532;            isSingleTop = true;   isQ2up = true;} 
+	else if (dataSetName == "tt_Q2_down"){          sprintf(name, "tt");           xlweight = lumi*225.197/5166768;        isTop = true;       isQ2down = true;} 
+        else if (dataSetName == "twdr_Q2_down"){        sprintf(name,	"tw_dr");         xlweight =lumi*11.1/1493129;             isSingleTop = true;  isQ2down = true;} 
+        else if (dataSetName == "atwdr_Q2_down"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1/1493099;            isSingleTop = true;   isQ2down = true;}
+	
+	else if (dataSetName == "tt_Topmass_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/4733472;        isTop = true;       isTopmassup = true;} 
+        else if (dataSetName == "twdr_Topmass_up"){ sprintf(name,"tw_dr");         xlweight =lumi*11.1/1493427;             isSingleTop = true;  isTopmassup = true;} 
+        else if (dataSetName == "atwdr_Topmass_up"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1/1493387;            isSingleTop = true;   isTopmassup = true;} 
+	else if (dataSetName == "tt_Topmass_down"){          sprintf(name,"tt");            xlweight = lumi*225.197/4358130;        isTop = true;       isTopmassdown = true;} 
+        else if (dataSetName == "twdr_Topmass_down"){        sprintf(name,"tw_dr");         xlweight =lumi*11.1/1489878;             isSingleTop = true;  isTopmassdown = true;} 
+        else if (dataSetName == "atwdr_Topmass_down"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/1478196;            isSingleTop = true;   isTopmassdown = true;}
+	
+	else if (dataSetName == "tt_Matching_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/5415003;        isTop = true;       isMatchingup = true;} 
+	else if (dataSetName == "tt_Matching_down"){          sprintf(name,"tt");            xlweight = lumi*225.197/5456715;        isTop = true;       isMatchingdown = true;} 
         
 	
 	
@@ -512,12 +510,12 @@ int main(int argc, char* argv[]) {
         else if (!isData && JERPlus){        sprintf(rootFileName,"outputs/JERsysUp_%d_%s.root", mode, name);}
         else if (!isData && SFplus){         sprintf(rootFileName,"outputs/SFsysUp_%d_%s.root", mode, name);}
         else if (!isData && SFminus){        sprintf(rootFileName,"outputs/SFsysDown_%d_%s.root", mode, name);}
-	else if (!isData && topmass_plus){   sprintf(rootFileName,"outputs/TopMassUp_%d_%s.root", mode, name);}
-	else if (!isData && topmass_minus){  sprintf(rootFileName,"outputs/TopMassDown_%d_%s.root", mode, name);}
-	else if (!isData && Q2_plus)	 {   sprintf(rootFileName,"outputs/Q2Up_%d_%s.root", mode, name);}
-	else if (!isData && Q2_minus){       sprintf(rootFileName,"outputs/Q2Down_%d_%s.root", mode, name);}
-	else if (!isData && matching_plus){  sprintf(rootFileName,"outputs/matchingUp_%d_%s.root", mode, name);}
-	else if (!isData && matching_minus){ sprintf(rootFileName,"outputs/matchingDown_%d_%s.root", mode, name);}
+	else if (!isData && isTopmassup){   sprintf(rootFileName,"outputs/TopMassUp_%d_%s.root", mode, name);}
+	else if (!isData && isTopmassdown){  sprintf(rootFileName,"outputs/TopMassDown_%d_%s.root", mode, name);}
+	else if (!isData && isQ2up)	 {   sprintf(rootFileName,"outputs/Q2Up_%d_%s.root", mode, name);}
+	else if (!isData && isQ2down){       sprintf(rootFileName,"outputs/Q2Down_%d_%s.root", mode, name);}
+	else if (!isData && isMatchingup){  sprintf(rootFileName,"outputs/matchingUp_%d_%s.root", mode, name);}
+	else if (!isData && isMatchingdown){ sprintf(rootFileName,"outputs/matchingDown_%d_%s.root", mode, name);}
         else if (!isData && eleSFsysUp){     sprintf(rootFileName,"outputs/eleSFsysUp_%d_%s.root", mode, name);}
         else if (!isData && eleSFsysDown){   sprintf(rootFileName,"outputs/eleSFsysDown_%d_%s.root", mode, name);}
         else if (!isData && unclusteredUp){  sprintf(rootFileName,"outputs/METsysUp_%d_%s.root", mode, name);}
@@ -917,6 +915,8 @@ int main(int argc, char* argv[]) {
                 if (JERMinus) cout << "[Warning:] JER systematics on, minus. Note that for btagging the nominal values are used" << endl;
                 if (JESPlus) cout << "[Warning:] JES systematics on, plus. Note that for btagging the nominal values are used" << endl;
                 if (JESMinus) cout << "[Warning:] JES systematics on, minus. Note that for btagging the nominal values are used" << endl;
+		if ( eleSFsysUp) cout <<"[Warning:] SF up with one sigma for leptons " << endl;
+                if (eleSFsysDown) cout <<"[Warning:]  SF down with one sigma for leptons " << endl;
                 if (SFplus) cout <<"[Warning:] SF up 10% for b quarks " << endl;
                 if (SFminus) cout <<"[Warning:]  SF down 10% for b quarks " << endl;
 		if (SFplus_c) cout <<"[Warning:] SF up 10% for c quarks" << endl;
@@ -934,6 +934,7 @@ int main(int argc, char* argv[]) {
         } 
         else{
                 cout << "[Info:] Standard setup " << endl;
+		pdf = true; 
         }
         
         cout << "[Info:] " << datasets[d]->NofEvtsToRunOver() << " total events" << endl;
@@ -994,6 +995,7 @@ int main(int argc, char* argv[]) {
 			
                         //If PU reweighting is turned on
                         if(reweightPU){
+			       
                                 weight *= lumiWeight ;      
                         }
 			
@@ -1718,7 +1720,7 @@ int main(int argc, char* argv[]) {
 										//set a unique seed 
 										jet_flavorSF = tempJet->partonFlavour();  
 										jet_phiSF = tempJet->Phi(); 
-									
+										
 										
 										double phi = jet_phiSF; 
 										double sin_phi = sin(phi*1000000);
@@ -1930,7 +1932,7 @@ int main(int argc, char* argv[]) {
 													float ptsys = 1;
 													float ht = Ht;
 				
-													salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													if (pdf) salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
 				
 												}
 												if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1){
@@ -1944,7 +1946,7 @@ int main(int argc, char* argv[]) {
 													float ptsys = 1;
 													float ht = Ht;
 				
-													salida2j1t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													if (pdf) salida2j1t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
 				
 												}
 												if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2){
@@ -1958,7 +1960,7 @@ int main(int argc, char* argv[]) {
 													float ptsys = 1;
 													float ht = Ht;
 				
-													salida2j2t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													if (pdf) salida2j2t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
 				
 												}
 												histo_jets->Fill(nJets,weight); 

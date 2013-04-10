@@ -2,10 +2,11 @@
 <datasets>
 
 
-  
-  <d name="tt_Q2_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/mumu/TTbar_Q2_up/*.root"/> 
-  
  
+  
+  <d name="zjets_lowmll" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/DY_10to50/*.root"/>  
+
+
 </datasets>
 
 <analysis>
@@ -14,4 +15,3 @@
 
 
 </analysis>
-

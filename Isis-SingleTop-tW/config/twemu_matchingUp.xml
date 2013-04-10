@@ -6,7 +6,7 @@
   <d name="data" title="data" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/data/*.root"/> 
  
   
-  <d name="tt" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_matching_up/*.root"/> 
+  <d name="tt_Matching_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_matching_up/*.root"/> 
   <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
   <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_tW_DR/*.root"/> 
 > 

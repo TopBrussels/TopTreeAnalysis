@@ -2,14 +2,21 @@
 <datasets>
 
 
+  
+ <d name="twdr_Topmass_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_topmass_175_5/*.root"/> 
+  <d name="atwdr_Topmass_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_topmass_175_5/*.root"/> 
+  <d name="twdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_topmass_166_5/*.root"/> 
+  <d name="atwdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_topmass_166_5/*.root"/> 
+
   <d name="twdr_Q2_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_Q2_up/*.root"/> 
   <d name="atwdr_Q2_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_Q2_up/*.root"/> 
-  <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/T_t/*.root"/> 
-  <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/Tbar_t/*.root"/> 
-  
-  <d name="s" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/T_s/*.root"/> 
-  <d name="as" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_ee/Tbar_s/*.root"/> 
+  <d name="twdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_Q2_down/*.root"/> 
+  <d name="atwdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_Q2_down/*.root"/> 
+
  
+
+
+
 </datasets>
 
 <analysis>
