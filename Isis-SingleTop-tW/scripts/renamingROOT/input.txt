@@ -630,69 +630,66 @@
 ../results/an_12293pb_2.root ptsys_2j1t_twds output_for_theta/outputfile.root ee2j1t__twdr__DRDS__minus
 ../results/an_12293pb_2.root ptsys_2j2t_twds output_for_theta/outputfile.root ee2j2t__twdr__DRDS__minus
 
+PDF_unc_results/pdf_1j1t_0_twdr_outputfile.root  histo1b outputfile.root emu1j1t__twdr__PDF__plus
+PDF_unc_results/pdf_1j1t_0_tt_outputfile.root    histo1b outputfile.root emu1j1t__tt__PDF__plus
+PDF_unc_results/pdf_1j1t_0_other_outputfile.root histo1b outputfile.root emu1j1t__other__PDF__plus
+PDF_unc_results/pdf_2j1t_0_twdr_outputfile.root histo1b outputfile.root emu2j1t__twdr__PDF__plus
+PDF_unc_results/pdf_2j1t_0_tt_outputfile.root histo1b outputfile.root emu2j1t__tt__PDF__plus
+PDF_unc_results/pdf_2j1t_0_other_outputfile.root histo1b outputfile.root emu2j1t__other__PDF__plus
+PDF_unc_results/pdf_2j2t_0_twdr_outputfile.root histo1b outputfile.root emu2j2t_twdr__PDF__plus
+PDF_unc_results/pdf_2j2t_0_tt_outputfile.root histo1b outputfile.root emu2j2t_tt__PDF__plus
+PDF_unc_results/pdf_2j2t_0_other_outputfile.root histo1b outputfile.root emu2j2t_other__PDF__plus
 
-../results/PDFsysUp_an_11966pb_0.root ptsys_1j1t_twdr outpufile.root emu1j1t__twdr__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_1j1t_tt outpufile.root emu1j1t__tt__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_1j1t_others outpufile.root emu1j1t__other__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_2j1t_twdr outpufile.root emu2j1t__twdr__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_2j1t_tt outpufile.root emu2j1t__tt__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_2j1t_others outpufile.root emu2j1t__other__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_2j2t_twdr outpufile.root emu2j2t_twdr__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_2j2t_tt outpufile.root emu2j2t_tt__PDF__plus
-../results/PDFsysUp_an_11966pb_0.root ptsys_2j2t_others outpufile.root emu2j2t_other__PDF__plus
+PDF_unc_results/pdf_1j1t_1_twdr_outputfile.root  histo1b outputfile.root mumu1j1t__twdr__PDF__plus
+PDF_unc_results/pdf_1j1t_1_tt_outputfile.root    histo1b outputfile.root mumu1j1t__tt__PDF__plus
+PDF_unc_results/pdf_1j1t_1_other_outputfile.root histo1b outputfile.root mumu1j1t__other__PDF__plus
+PDF_unc_results/pdf_2j1t_1_twdr_outputfile.root histo1b outputfile.root mumu2j1t__twdr__PDF__plus
+PDF_unc_results/pdf_2j1t_1_tt_outputfile.root histo1b outputfile.root mumu2j1t__tt__PDF__plus
+PDF_unc_results/pdf_2j1t_1_other_outputfile.root histo1b outputfile.root mumu2j1t__other__PDF__plus
+PDF_unc_results/pdf_2j2t_1_twdr_outputfile.root histo1b outputfile.root mumu2j2t_twdr__PDF__plus
+PDF_unc_results/pdf_2j2t_1_tt_outputfile.root histo1b outputfile.root mumu2j2t_tt__PDF__plus
+PDF_unc_results/pdf_2j2t_1_other_outputfile.root histo1b outputfile.root mumu2j2t_other__PDF__plus
 
-
-../results/PDFsysUp_an_12067pb_1.root ptsys_1j1t_twdr outpufile.root mumu1j1t__twdr__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_1j1t_tt outpufile.root mumu1j1t__tt__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_1j1t_others outpufile.root mumu1j1t__other__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_2j1t_twdr outpufile.root mumu2j1t__twdr__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_2j1t_tt outpufile.root mumu2j1t__tt__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_2j1t_others outpufile.root mumu2j1t__other__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_2j2t_twdr outpufile.root mumu2j2t__twdr__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_2j2t_tt outpufile.root mumu2j2t__tt__PDF__plus
-../results/PDFsysUp_an_12067pb_1.root ptsys_2j2t_others outpufile.root mumu2j2t__other__PDF__plus
-
-
-../results/PDFsysUp_an_12293pb_2.root ptsys_1j1t_twdr outpufile.root ee1j1t__twdr__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_1j1t_tt outpufile.root ee1j1t__tt__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_1j1t_others outpufile.root ee1j1t__other__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_2j1t_twdr outpufile.root ee2j1t__twdr__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_2j1t_tt outpufile.root ee2j1t__tt__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_2j1t_others outpufile.root ee2j1t__other__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_2j2t_twdr outpufile.root ee2j2t__twdr__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_2j2t_tt outpufile.root ee2j2t__tt__PDF__plus
-../results/PDFsysUp_an_12293pb_2.root ptsys_2j2t_others outpufile.root ee2j2t__other__PDF__plus
+PDF_unc_results/pdf_1j1t_2_twdr_outputfile.root  histo1b outputfile.root ee1j1t__twdr__PDF__plus
+PDF_unc_results/pdf_1j1t_2_tt_outputfile.root    histo1b outputfile.root ee1j1t__tt__PDF__plus
+PDF_unc_results/pdf_1j1t_2_other_outputfile.root histo1b outputfile.root ee1j1t__other__PDF__plus
+PDF_unc_results/pdf_2j1t_2_twdr_outputfile.root histo1b outputfile.root ee2j1t__twdr__PDF__plus
+PDF_unc_results/pdf_2j1t_2_tt_outputfile.root histo1b outputfile.root ee2j1t__tt__PDF__plus
+PDF_unc_results/pdf_2j1t_2_other_outputfile.root histo1b outputfile.root ee2j1t__other__PDF__plus
+PDF_unc_results/pdf_2j2t_2_twdr_outputfile.root histo1b outputfile.root ee2j2t_twdr__PDF__plus
+PDF_unc_results/pdf_2j2t_2_tt_outputfile.root histo1b outputfile.root ee2j2t_tt__PDF__plus
+PDF_unc_results/pdf_2j2t_2_other_outputfile.root histo1b outputfile.root ee2j2t_other__PDF__plus
 
 
-../results/PDFsysDown_an_11966pb_0.root ptsys_1j1t_twdr outpufile.root emu1j1t__twdr__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_1j1t_tt outpufile.root emu1j1t__tt__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_1j1t_others outpufile.root emu1j1t__other__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_2j1t_twdr outpufile.root emu2j1t__twdr__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_2j1t_tt outpufile.root emu2j1t__tt__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_2j1t_others outpufile.root emu2j1t__other__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_2j2t_twdr outpufile.root emu2j2t_twdr__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_2j2t_tt outpufile.root emu2j2t_tt__PDF__minus
-../results/PDFsysDown_an_11966pb_0.root ptsys_2j2t_others outpufile.root emu2j2t_other__PDF__minus
+PDF_unc_results/pdf_1j1t_0_twdr_outputfile.root  histo1a outputfile.root emu1j1t__twdr__PDF__minus
+PDF_unc_results/pdf_1j1t_0_tt_outputfile.root    histo1a outputfile.root emu1j1t__tt__PDF__minus
+PDF_unc_results/pdf_1j1t_0_other_outputfile.root histo1a outputfile.root emu1j1t__other__PDF__minus
+PDF_unc_results/pdf_2j1t_0_twdr_outputfile.root histo1a outputfile.root emu2j1t__twdr__PDF__minus
+PDF_unc_results/pdf_2j1t_0_tt_outputfile.root histo1a outputfile.root emu2j1t__tt__PDF__minus
+PDF_unc_results/pdf_2j1t_0_other_outputfile.root histo1a outputfile.root emu2j1t__other__PDF__minus
+PDF_unc_results/pdf_2j2t_0_twdr_outputfile.root histo1a outputfile.root emu2j2t_twdr__PDF__minus
+PDF_unc_results/pdf_2j2t_0_tt_outputfile.root histo1a outputfile.root emu2j2t_tt__PDF__minus
+PDF_unc_results/pdf_2j2t_0_other_outputfile.root histo1a outputfile.root emu2j2t_other__PDF__minus
 
-../results/PDFsysDown_an_12067pb_1.root ptsys_1j1t_twdr outpufile.root mumu1j1t__twdr__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_1j1t_tt outpufile.root mumu1j1t__tt__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_1j1t_others outpufile.root mumu1j1t__other__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_2j1t_twdr outpufile.root mumu2j1t__twdr__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_2j1t_tt outpufile.root mumu2j1t__tt__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_2j1t_others outpufile.root mumu2j1t__other__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_2j2t_twdr outpufile.root mumu2j2t__twdr__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_2j2t_tt outpufile.root mumu2j2t__tt__PDF__minus
-../results/PDFsysDown_an_12067pb_1.root ptsys_2j2t_others outpufile.root mumu2j2t__other__PDF__minus
+PDF_unc_results/pdf_1j1t_1_twdr_outputfile.root  histo1a outputfile.root mumu1j1t__twdr__PDF__minus
+PDF_unc_results/pdf_1j1t_1_tt_outputfile.root    histo1a outputfile.root mumu1j1t__tt__PDF__minus
+PDF_unc_results/pdf_1j1t_1_other_outputfile.root histo1a outputfile.root mumu1j1t__other__PDF__minus
+PDF_unc_results/pdf_2j1t_1_twdr_outputfile.root histo1a outputfile.root mumu2j1t__twdr__PDF__minus
+PDF_unc_results/pdf_2j1t_1_tt_outputfile.root histo1a outputfile.root mumu2j1t__tt__PDF__minus
+PDF_unc_results/pdf_2j1t_1_other_outputfile.root histo1a outputfile.root mumu2j1t__other__PDF__minus
+PDF_unc_results/pdf_2j2t_1_twdr_outputfile.root histo1a outputfile.root mumu2j2t_twdr__PDF__minus
+PDF_unc_results/pdf_2j2t_1_tt_outputfile.root histo1a outputfile.root mumu2j2t_tt__PDF__minus
+PDF_unc_results/pdf_2j2t_1_other_outputfile.root histo1a outputfile.root mumu2j2t_other__PDF__minus
 
-../results/PDFsysDown_an_12293pb_2.root ptsys_1j1t_twdr outpufile.root ee1j1t__twdr__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_1j1t_tt outpufile.root ee1j1t__tt__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_1j1t_others outpufile.root ee1j1t__other__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_2j1t_twdr outpufile.root ee2j1t__twdr__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_2j1t_tt outpufile.root ee2j1t__tt__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_2j1t_others outpufile.root ee2j1t__other__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_2j2t_twdr outpufile.root ee2j2t__twdr__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_2j2t_tt outpufile.root ee2j2t__tt__PDF__minus
-../results/PDFsysDown_an_12293pb_2.root ptsys_2j2t_others outpufile.root ee2j2t__other__PDF__minus
+PDF_unc_results/pdf_1j1t_2_twdr_outputfile.root  histo1a outputfile.root ee1j1t__twdr__PDF__minus
+PDF_unc_results/pdf_1j1t_2_tt_outputfile.root    histo1a outputfile.root ee1j1t__tt__PDF__minus
+PDF_unc_results/pdf_1j1t_2_other_outputfile.root histo1a outputfile.root ee1j1t__other__PDF__minus
+PDF_unc_results/pdf_2j1t_2_twdr_outputfile.root histo1a outputfile.root ee2j1t__twdr__PDF__minus
+PDF_unc_results/pdf_2j1t_2_tt_outputfile.root histo1a outputfile.root ee2j1t__tt__PDF__minus
+PDF_unc_results/pdf_2j1t_2_other_outputfile.root histo1a outputfile.root ee2j1t__other__PDF__minus
+PDF_unc_results/pdf_2j2t_2_twdr_outputfile.root histo1a outputfile.root ee2j2t_twdr__PDF__minus
+PDF_unc_results/pdf_2j2t_2_tt_outputfile.root histo1a outputfile.root ee2j2t_tt__PDF__minus
+PDF_unc_results/pdf_2j2t_2_other_outputfile.root histo1a outputfile.root ee2j2t_other__PDF__minus
 
 
 

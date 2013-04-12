@@ -42,7 +42,7 @@ class isis_looper {
   std::vector<double>  *eJet;
   std::vector<double>  *etaJet;
   std::vector<double>  *qJet;
-  std::vector<bool>  *Btagjet;
+  std::vector<bool>    *Btagjet;
   std::vector<double>  *btJPBJet;
   std::vector<double>  *btBJPBJet;
   std::vector<double>  *btCSVBJet;

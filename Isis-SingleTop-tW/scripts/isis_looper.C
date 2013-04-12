@@ -97,8 +97,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       //Matching
   else if (nsel == -18)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
-  else if (nsel == -28)                   {sprintf(plotName,"twdr");}
-  else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
+ 
   
   
   
@@ -153,13 +152,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
    sprintf(newRootFile,"results/eleSFsysDown_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 17 || nsel == 27 ){
    sprintf(newRootFile,"results/eleSFsysUp_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == -18 || nsel == -28 ){
+  }else if(nsel == -18  ){
    sprintf(newRootFile,"results/matchingDown_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == 18 || nsel == 28 ){
+  }else if(nsel == 18 ){
    sprintf(newRootFile,"results/matchingUp_%dpb_%d.root", (int) lumi, mode);
   }else if(isZjets){
      sprintf(newRootFile,"results/noZjetsSF_%dpb_%d.root", (int) lumi, mode);
-  } else{
+  } 
+  else{
     sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   }
  
@@ -549,9 +549,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_nvertex_final = new TH1F( title, " ", 70,   -0.5, 69.5 );
   histo_nvertex_final->Sumw2();
   
-  sprintf(title,"nvertex_final_3D_%s",plotName);
-  TH1F* histo_nvertex_final_3D = new TH1F( title, " ", 70,   -0.5, 69.5 );
-  histo_nvertex_final_3D->Sumw2();
+
   
   sprintf(title,"nvertex_final_purw_%s",plotName);
   TH1F* histo_nvertex_final_purw = new TH1F( title, " ", 70,   -0.5, 69.5 );

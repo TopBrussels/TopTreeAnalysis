@@ -955,7 +955,8 @@ int main(int argc, char* argv[]) {
         for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++){
 		// HT DEFINING 
 		double Ht_temp = 0;
-	
+		double ptsysX_temp = 0; 
+		double ptsysY_temp = 0; 
 	
 	        // For setting tbranch 
 	        std::vector<double> btag_booleans;
@@ -1759,6 +1760,8 @@ int main(int argc, char* argv[]) {
 											iJet = iJ;
 											
 											Ht_temp += tempJet->Pt();
+											ptsysX_temp += tempJet->Px();
+											ptsysY_temp += tempJet->Py();
 										
 											if(bTagged){
 												nTightJetsBT++;	
@@ -1914,7 +1917,9 @@ int main(int argc, char* argv[]) {
 			  							if (nJets !=0){
 			    								TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			    								double Ht = lepton0.Pt() + lepton1.Pt() + Ht_temp + met_pt; 
-											
+											double ptsysX = lepton0.Px() + lepton1.Px() + ptsysX_temp + met_px;
+											double ptsysY = lepton0.Py() + lepton1.Py() + ptsysY_temp + met_py;
+											double ptsystem = sqrt(ptsysX *ptsysX + ptsysY *ptsysY);
 											
 											histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, weight);
 											
@@ -1929,7 +1934,7 @@ int main(int argc, char* argv[]) {
 													float x1 = event->xParton1();
 													float x2 = event->xParton2();
 													float q = event->factorizationScale();
-													float ptsys = 1;
+													float ptsys = ptsystem;
 													float ht = Ht;
 				
 													if (pdf) salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
@@ -1943,7 +1948,7 @@ int main(int argc, char* argv[]) {
 													float x1 = event->xParton1();
 													float x2 = event->xParton2();
 													float q = event->factorizationScale();
-													float ptsys = 1;
+													float ptsys = ptsystem;
 													float ht = Ht;
 				
 													if (pdf) salida2j1t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
@@ -1957,7 +1962,7 @@ int main(int argc, char* argv[]) {
 													float x1 = event->xParton1();
 													float x2 = event->xParton2();
 													float q = event->factorizationScale();
-													float ptsys = 1;
+													float ptsys = ptsystem;
 													float ht = Ht;
 				
 													if (pdf) salida2j2t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;

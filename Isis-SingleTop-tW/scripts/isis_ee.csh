@@ -7,7 +7,7 @@ root.exe -b -l -q isis_chain.C\(2\,2\,0\)
 root.exe -b -l -q isis_chain.C\(3\,2\,0\)
 root.exe -b -l -q isis_chain.C\(4\,2\,0\)
 root.exe -b -l -q isis_chain.C\(5\,2\,0\)
-root.exe -b -l -q isis_chain.C\(6\,2\,0\)
+
 root.exe -b -l -q isis_chain.C\(7\,2\,0\)
 
 
@@ -64,5 +64,4 @@ root.exe -b -l -q isis_chain.C\(-27\,2\,0\)
 root.exe -b -l -q isis_chain.C\(18\,2\,0\)
 root.exe -b -l -q isis_chain.C\(-18\,2\,0\)
 
-root.exe -b -l -q isis_chain.C\(28\,2\,0\)
-root.exe -b -l -q isis_chain.C\(-28\,2\,0\)
+
