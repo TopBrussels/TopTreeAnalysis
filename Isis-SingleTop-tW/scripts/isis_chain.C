@@ -35,36 +35,47 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
   else if (nsel == -20)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  20)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -30)                   {sprintf(plotName,"others");}
+  else if (nsel ==  30)                   {sprintf(plotName,"others");}
   
   //JES
   else if (nsel == -11)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  11)                   {sprintf(plotName,"tt");}
   else if (nsel == -21)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  21)                   {sprintf(plotName,"twdr");}
-  
+  else if (nsel == -31)                   {sprintf(plotName,"others");}
+  else if (nsel ==  31)                   {sprintf(plotName,"others");}
   //PU
   else if (nsel == -12)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  12)                   {sprintf(plotName,"tt");}
   else if (nsel == -22)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  22)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -32)                   {sprintf(plotName,"others");}
+  else if (nsel ==  32)                   {sprintf(plotName,"others");}
   
   //SF
   else if (nsel == -13)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  13)                   {sprintf(plotName,"tt");}
  else if (nsel == -23)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  23)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -33)                   {sprintf(plotName,"others");}
+  else if (nsel ==  33)                   {sprintf(plotName,"others");}
   
     //MET
   else if (nsel == -14)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  14)                   {sprintf(plotName,"tt");}
   else if (nsel == -24)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -34)                   {sprintf(plotName,"others");}
+  else if (nsel ==  34)                   {sprintf(plotName,"others");}
   
       //topmass
   else if (nsel == -15)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  15)                   {sprintf(plotName,"tt");}
   else if (nsel == -25)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  25)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -35)                   {sprintf(plotName,"others");}
+  else if (nsel ==  35)                   {sprintf(plotName,"others");}
   
   
       //Q2
@@ -72,6 +83,8 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel ==  16)                   {sprintf(plotName,"tt");}
   else if (nsel == -26)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  26)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -36)                   {sprintf(plotName,"others");}
+  else if (nsel ==  36)                   {sprintf(plotName,"others");}
   
   
       //LES
@@ -79,12 +92,16 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel ==  17)                   {sprintf(plotName,"tt");}
   else if (nsel == -27)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  27)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -37)                   {sprintf(plotName,"others");}
+  else if (nsel ==  37)                   {sprintf(plotName,"others");}
   
       //Matching
   else if (nsel == -18)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
   else if (nsel == -28)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -38)                   {sprintf(plotName,"others");}
+  else if (nsel ==  38)                   {sprintf(plotName,"others");}
   
   
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;

@@ -16,7 +16,7 @@ void read_and_merge(void){
     TFile *infile;
     TFile *outfile;
     
-    while(1){
+   while(1){
         in >> filename >> sourcename >> outfilename >> destname;
         if(!in.good()) break;
         
@@ -27,7 +27,7 @@ void read_and_merge(void){
             cout << "tried to get " << sourcename << " from file " << filename << " and failed - check your input file! continueing without copy." << endl;
             continue;
         }
-        if(nlines < 10)
+        if(nlines < 550)
             std::cout << "line " << nlines << " read: " << filename << ":" << sourcename  << " --> " << outfilename << ":" << destname << std::endl;
         
         

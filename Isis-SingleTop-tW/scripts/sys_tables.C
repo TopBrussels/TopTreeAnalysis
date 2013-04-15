@@ -137,8 +137,8 @@ void sys_tables(int mode = 0){
 
   
   
-  if (mode == 1)        processLabel[4] = "\\textbf{$DoubleMu$}";
-  else if (mode == 2)   processLabel[4] = "\\textbf{$DoubleElectron$}";
+ // if (mode == 1)        processLabel[4] = "\\textbf{$DoubleMu$}";
+ // else if (mode == 2)   processLabel[4] = "\\textbf{$DoubleElectron$}";
   
   TString cutLabel[8] = { "blank0", "blank1", "Lepton Sel.", "Inv. Mass", "$E_{T}^{miss}$", "1 Jet", "b-tagging", "$H_{T}$"};
   
@@ -1202,98 +1202,7 @@ void sys_tables(int mode = 0){
 
 
 
-   //////////////////////////////////////////// 
-  // final numbers for each systematic  //////
-  ///////////////////////////////////////////
-  
-  salida << "  \\begin{table}" << endl;
-  salida << "  \\begin{center}" << endl;
-  salida << "  \\begin{tabular} {|l|c|c|c|}" << endl;
-  salida << "  \\hline " << endl;
- 
- 
-  for (int i = 0; i < nProcess; i++){
-            salida << " & " << processLabel[i] ;
 
-  }
-  salida << "  \\\\ " << endl; 
-  salida << "  \\hline " << endl;
- 
-  for (int k=0; k < (nSys-1); k++){
-    salida << systName[k];
-    
-    int i = 7; 
-    
-    for (int j = 0; j < nProcess ; j++){ 
-      if(k == 0){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][2];
-      } else if (k == 1){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_JERsysDown[j][i][1]) << vectorValue_JERsysDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_JERsysDown[j][i][1])<< vectorValue_JERsysDown[j][i][2];
-       } else if (k == 2){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_JERsysUp[j][i][1]) << vectorValue_JERsysUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_JERsysUp[j][i][1])<< vectorValue_JERsysUp[j][i][2];
-      }else if (k == 3){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_JESsysDown[j][i][1]) << vectorValue_JESsysDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_JESsysDown[j][i][1])<< vectorValue_JESsysDown[j][i][2];
-       } else if (k == 4){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_JESsysUp[j][i][1]) << vectorValue_JESsysUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_JESsysUp[j][i][1])<< vectorValue_JESsysUp[j][i][2];
-      }else if (k == 5){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_PUsysDown[j][i][1]) << vectorValue_PUsysDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_PUsysDown[j][i][1])<< vectorValue_PUsysDown[j][i][2];
-       } else if (k == 6){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_PUsysUp[j][i][1]) << vectorValue_PUsysUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_PUsysUp[j][i][1])<< vectorValue_PUsysUp[j][i][2];
-      }else if (k == 7){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_SFsysDown[j][i][1]) << vectorValue_SFsysDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_SFsysDown[j][i][1])<< vectorValue_SFsysDown[j][i][2];
-       } else if (k == 8){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_SFsysUp[j][i][1]) << vectorValue_SFsysUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_SFsysUp[j][i][1])<< vectorValue_SFsysUp[j][i][2];
-      }else if (k == 9){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_METsysDown[j][i][1]) << vectorValue_METsysDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_METsysDown[j][i][1])<< vectorValue_METsysDown[j][i][2];
-       } else if (k == 10){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_METsysUp[j][i][1]) << vectorValue_METsysUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_METsysUp[j][i][1])<< vectorValue_METsysUp[j][i][2];
-      }else if (k == 11){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_TopMassDown[j][i][1]) << vectorValue_TopMassDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_TopMassDown[j][i][1])<< vectorValue_TopMassDown[j][i][2];
-       } else if (k == 12){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_TopMassUp[j][i][1]) << vectorValue_TopMassUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_TopMassUp[j][i][1])<< vectorValue_TopMassUp[j][i][2];
-      }else if (k == 13){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_Q2Down[j][i][1]) << vectorValue_Q2Down[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_Q2Down[j][i][1])<< vectorValue_Q2Down[j][i][2];
-       } else if (k == 14){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_Q2Up[j][i][1]) << vectorValue_Q2Up[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_Q2Up[j][i][1])<< vectorValue_Q2Up[j][i][2];
-      }else if (k == 15){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_matchingDown[j][i][1]) << vectorValue_matchingDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_matchingDown[j][i][1])<< vectorValue_matchingDown[j][i][2];
-       } else if (k == 16){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_matchingUp[j][i][1]) << vectorValue_matchingUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_matchingUp[j][i][1])<< vectorValue_matchingUp[j][i][2];
-      }else if (k == 17){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_eleSFsysDown[j][i][1]) << vectorValue_eleSFsysDown[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_eleSFsysDown[j][i][1])<< vectorValue_eleSFsysDown[j][i][2];
-       } else if (k == 18){
-	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue_eleSFsysUp[j][i][1]) << vectorValue_eleSFsysUp[j][i][0] ; 
-	salida << " $\\pm $"  << setprecision(vectorValue_eleSFsysUp[j][i][1])<< vectorValue_eleSFsysUp[j][i][2];
-      } 
-    }
-    salida <<  " \\\\  " << endl; 
-  }
- 
- 
-  salida << "   \\hline " << endl;
-  salida << "  \\end{tabular}" << endl;
-  salida << "  \\end{center}" << endl;
-  salida << "  \\end{table}" << endl;
-  salida << endl;
-  salida << endl;
 
 
   

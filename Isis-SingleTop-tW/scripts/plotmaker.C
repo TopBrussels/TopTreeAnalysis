@@ -12,7 +12,7 @@
 #include "setTDRStyle.C"
 using namespace std;
 
-void plotmaker(int mode = 0){
+void plotmaker(int mode = 1){
   
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
@@ -101,13 +101,13 @@ void plotmaker(int mode = 0){
     for (int iProcess = 0; iProcess < nProcess; iProcess++){
       h[iVariable][iProcess] = (TH1F*) _file0->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
       h[iVariable][iProcess]->Rebin(rebinHisto[iVariable]);
-      h[iVariable][iProcess]->SetFillColor(color[iProcess]);
-      h[iVariable][iProcess]->SetLineColor(kBlack);
-      h[iVariable][iProcess]->SetLineWidth(1);
+    //  h[iVariable][iProcess]->SetFillColor(color[iProcess]);
+    //  h[iVariable][iProcess]->SetLineColor(kBlack);
+    //  h[iVariable][iProcess]->SetLineWidth(1);
    
       
     }
-    
+   /* 
     h[iVariable][5]->Add(h[iVariable][1]);
     h[iVariable][5]->Add(h[iVariable][3]);
     
@@ -201,7 +201,7 @@ void plotmaker(int mode = 0){
     c1->SaveAs("plots/error_" + plotExtension+ modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
     c1->SaveAs("plots/pdf/error_" + plotExtension + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
     
-    
+*/    
   }
-  
+
 }

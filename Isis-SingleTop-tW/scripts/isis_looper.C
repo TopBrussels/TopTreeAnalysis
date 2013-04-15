@@ -43,42 +43,52 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   
   
   
-  //JER  
-  else if (nsel == -10)                   {sprintf(plotName,"tt");}
+  // JER  
+  else if (nsel == -10)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  10)                   {sprintf(plotName,"tt");}
   else if (nsel == -20)                   {sprintf(plotName,"twdr");}
-  else if (nsel ==  20)                   {sprintf(plotName,"twdr");} 
+  else if (nsel ==  20)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -30)                   {sprintf(plotName,"others");}
+  else if (nsel ==  30)                   {sprintf(plotName,"others");}
   
   //JES
-  else if (nsel == -11)                   {sprintf(plotName,"tt");}
+  else if (nsel == -11)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  11)                   {sprintf(plotName,"tt");}
   else if (nsel == -21)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  21)                   {sprintf(plotName,"twdr");}
-  
-    //PU
-  else if (nsel == -12)                   {sprintf(plotName,"tt");}
+  else if (nsel == -31)                   {sprintf(plotName,"others");}
+  else if (nsel ==  31)                   {sprintf(plotName,"others");}
+  //PU
+  else if (nsel == -12)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  12)                   {sprintf(plotName,"tt");}
   else if (nsel == -22)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  22)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -32)                   {sprintf(plotName,"others");}
+  else if (nsel ==  32)                   {sprintf(plotName,"others");}
   
   //SF
-  else if (nsel == -13)                   {sprintf(plotName,"tt");}
+  else if (nsel == -13)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  13)                   {sprintf(plotName,"tt");}
-  else if (nsel == -23)                   {sprintf(plotName,"twdr");}
+ else if (nsel == -23)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  23)                   {sprintf(plotName,"twdr");}
-
-  //MET
-  else if (nsel == -14)                   {sprintf(plotName,"tt");}
+  else if (nsel == -33)                   {sprintf(plotName,"others");}
+  else if (nsel ==  33)                   {sprintf(plotName,"others");}
+  
+    //MET
+  else if (nsel == -14)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  14)                   {sprintf(plotName,"tt");}
   else if (nsel == -24)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  24)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -34)                   {sprintf(plotName,"others");}
+  else if (nsel ==  34)                   {sprintf(plotName,"others");}
   
-  
-        //topmass
+      //topmass
   else if (nsel == -15)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  15)                   {sprintf(plotName,"tt");}
   else if (nsel == -25)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  25)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -35)                   {sprintf(plotName,"others");}
+  else if (nsel ==  35)                   {sprintf(plotName,"others");}
   
   
       //Q2
@@ -86,6 +96,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  16)                   {sprintf(plotName,"tt");}
   else if (nsel == -26)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  26)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -36)                   {sprintf(plotName,"others");}
+  else if (nsel ==  36)                   {sprintf(plotName,"others");}
   
   
       //LES
@@ -93,11 +105,16 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  17)                   {sprintf(plotName,"tt");}
   else if (nsel == -27)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  27)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -37)                   {sprintf(plotName,"others");}
+  else if (nsel ==  37)                   {sprintf(plotName,"others");}
   
       //Matching
   else if (nsel == -18)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
- 
+  else if (nsel == -28)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -38)                   {sprintf(plotName,"others");}
+  else if (nsel ==  38)                   {sprintf(plotName,"others");}
   
   
   
@@ -111,46 +128,46 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     else if (mode == 2) lumi = 12093.792;  	
   
   
-  if(nsel == -10 || nsel == -20){
+  if(nsel == -10 || nsel == -20 || nsel == -30){
   sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == 10 || nsel == 20){
+  else if(nsel == 10 || nsel == 20 || nsel == 30){
    sprintf(newRootFile,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == -11 || nsel == -21 ){
+  else if(nsel == -11 || nsel == -21 || nsel == -31 ){
    sprintf(newRootFile,"results/JESsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == 11 || nsel == 21 ){
+  else if(nsel == 11 || nsel == 21 || nsel == 31 ){
    sprintf(newRootFile,"results/JESsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == -12 || nsel == -22 ){
+  else if(nsel == -12 || nsel == -22 || nsel == -32){
    sprintf(newRootFile,"results/PUsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == 12 || nsel == 22 ){
+  else if(nsel == 12 || nsel == 22 || nsel == 32){
    sprintf(newRootFile,"results/PUsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == -13 || nsel == -23 ){
+  else if(nsel == -13 || nsel == -23 || nsel == -33){
    sprintf(newRootFile,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == 13 || nsel == 23 ){
+  else if(nsel == 13 || nsel == 23 || nsel == 33){
    sprintf(newRootFile,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == -14 || nsel == -24 ){
+  else if(nsel == -14 || nsel == -24 || nsel == -34){
    sprintf(newRootFile,"results/METsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
-  else if(nsel == 14 || nsel == 24 ){
+  else if(nsel == 14 || nsel == 24 || nsel == 34){
    sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == -15 || nsel == -25 ){
+  }else if(nsel == -15 || nsel == -25 || nsel == -35){
    sprintf(newRootFile,"results/TopMassDown_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == 15 || nsel == 25 ){
+  }else if(nsel == 15 || nsel == 25 || nsel ==35){
    sprintf(newRootFile,"results/TopMassUp_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == -16 || nsel == -26 ){
+  }else if(nsel == -16 || nsel == -26 || nsel == -36){
    sprintf(newRootFile,"results/Q2Down_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == 16 || nsel == 26 ){
+  }else if(nsel == 16 || nsel == 26 || nsel == 36){
    sprintf(newRootFile,"results/Q2Up_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == -17 || nsel == -27 ){
+  }else if(nsel == -17 || nsel == -27 || nsel == -37){
    sprintf(newRootFile,"results/eleSFsysDown_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == 17 || nsel == 27 ){
+  }else if(nsel == 17 || nsel == 27 || nsel == 37){
    sprintf(newRootFile,"results/eleSFsysUp_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == -18  ){
    sprintf(newRootFile,"results/matchingDown_%dpb_%d.root", (int) lumi, mode);
