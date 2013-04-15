@@ -9,7 +9,7 @@
 ../results/an_11966pb_0.root ptsys_2j2t_twdr output_for_theta/outputfile.root emu2j2t__twdr
 ../results/an_11966pb_0.root ptsys_2j2t_tt output_for_theta/outputfile.root emu2j2t__tt
 ../results/an_11966pb_0.root ptsys_2j2t_others output_for_theta/outputfile.root emu2j2t__other
-../results/an_11966pb_0.root ptsys_2j2t_data output_for_theta/outputfile.root emu2j2t_DATA
+../results/an_11966pb_0.root ptsys_2j2t_data output_for_theta/outputfile.root emu2j2t__DATA
 
 ../results/an_12067pb_1.root ptsys_1j1t_twdr output_for_theta/outputfile.root mumu1j1t__twdr
 ../results/an_12067pb_1.root ptsys_1j1t_tt output_for_theta/outputfile.root mumu1j1t__tt
@@ -534,7 +534,7 @@
 ../results/TopMassUp_12093pb_2.root ptsys_2j2t_tt output_for_theta/outputfile.root ee2j2t__tt__TopMass__plus
 
 ../results/TopMassDown_11966pb_0.root ptsys_1j1t_twdr output_for_theta/outputfile.root emu1j1t__twdr__TopMass__minus
-../results/TopMassDown_11966pb_0.root ptsys_1j1t_tt output_for_theta/outputfile.root emu1j1t__tt__TopMass__minusus
+../results/TopMassDown_11966pb_0.root ptsys_1j1t_tt output_for_theta/outputfile.root emu1j1t__tt__TopMass__minus
 ../results/TopMassDown_11966pb_0.root ptsys_2j1t_twdr output_for_theta/outputfile.root emu2j1t__twdr__TopMass__minus
 ../results/TopMassDown_11966pb_0.root ptsys_2j1t_tt output_for_theta/outputfile.root emu2j1t__tt__TopMass__minus
 ../results/TopMassDown_11966pb_0.root ptsys_2j2t_twdr output_for_theta/outputfile.root emu2j2t__twdr__TopMass__minus
@@ -576,7 +576,7 @@
 ../results/Q2Up_12093pb_2.root ptsys_2j2t_tt output_for_theta/outputfile.root ee2j2t__tt__Q2__plus
 
 ../results/Q2Down_11966pb_0.root ptsys_1j1t_twdr output_for_theta/outputfile.root emu1j1t__twdr__Q2__minus
-../results/Q2Down_11966pb_0.root ptsys_1j1t_tt output_for_theta/outputfile.root emu1j1t__tt__Q2__minusus
+../results/Q2Down_11966pb_0.root ptsys_1j1t_tt output_for_theta/outputfile.root emu1j1t__tt__Q2__minus
 ../results/Q2Down_11966pb_0.root ptsys_2j1t_twdr output_for_theta/outputfile.root emu2j1t__twdr__Q2__minus
 ../results/Q2Down_11966pb_0.root ptsys_2j1t_tt output_for_theta/outputfile.root emu2j1t__tt__Q2__minus
 ../results/Q2Down_11966pb_0.root ptsys_2j2t_twdr output_for_theta/outputfile.root emu2j2t__twdr__Q2__minus
@@ -614,7 +614,7 @@
 
 ../results/an_11966pb_0.root ptsys_1j1t_twdr output_for_theta/outputfile.root emu1j1t__twdr__DRDS__minus
 ../results/an_11966pb_0.root ptsys_2j1t_twdr output_for_theta/outputfile.root emu2j1t__twdr__DRDS__minus
-../results/an_11966pb_0.root ptsys_2j2t_twdr output_for_theta/outputfile.root emu2j2t__twds__DRDS__minus
+../results/an_11966pb_0.root ptsys_2j2t_twdr output_for_theta/outputfile.root emu2j2t__twdr__DRDS__minus
 
 ../results/an_12067pb_1.root ptsys_1j1t_twdr output_for_theta/outputfile.root mumu1j1t__twdr__DRDS__minus
 ../results/an_12067pb_1.root ptsys_2j1t_twdr output_for_theta/outputfile.root mumu2j1t__twdr__DRDS__minus
