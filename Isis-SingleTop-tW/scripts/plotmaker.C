@@ -87,8 +87,8 @@ void plotmaker(int mode = 0){
   
   TString plotExtension = "plot_";
   
-  TH1F*  h [nPlots][nProcess];
-  TH1F*  hextra [nPlots];
+  TH1F*  h[nPlots][nProcess];
+  TH1F*  hextra[nPlots];
   THStack* hStack[nPlots];
   TGraphAsymmErrors *GE[nPlots];
   
