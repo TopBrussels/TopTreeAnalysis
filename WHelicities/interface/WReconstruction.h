@@ -8,10 +8,10 @@
 //#include "PhysicsTools/KinFitter/interface/TFitParticleEtThetaPhi.h"
 //#include "PhysicsTools/KinFitter/interface/TFitConstraintM.h"
 
-#include "TopTreeAnalysis/MCInformation/interface/ResolutionFit.h"
-#include "TopTreeAnalysis/KinFitter/interface/TKinFitter.h"
-#include "TopTreeAnalysis/KinFitter/interface/TFitParticleEtThetaPhi.h"
-#include "TopTreeAnalysis/KinFitter/interface/TFitConstraintM.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/KinFitter/interface/TKinFitter.h"
+#include "TopTreeAnalysisBase/KinFitter/interface/TFitParticleEtThetaPhi.h"
+#include "TopTreeAnalysisBase/KinFitter/interface/TFitConstraintM.h"
 
 // system include files
 #include <memory>
