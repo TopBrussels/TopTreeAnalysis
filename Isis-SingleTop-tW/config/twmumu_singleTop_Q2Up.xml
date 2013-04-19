@@ -6,10 +6,7 @@
  
   <d name="twdr_Q2_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/mumu/tW_Q2_up/*.root"/> 
   <d name="atwdr_Q2_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/mumu/tbarW_Q2_up/*.root"/> 
-  <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/T_t/*.root"/> 
-  <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/Tbar_t/*.root"/> 
-  <d name="s" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/T_s/*.root"/> 
-  <d name="as" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_mumu/Tbar_s/*.root"/> 
+  
  
 </datasets>
 

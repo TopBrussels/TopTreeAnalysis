@@ -167,21 +167,21 @@ void dis_plotmaker(int mode = 0, int region = 0){
       
       TCanvas *c2 = new TCanvas();
        histo_tt->DrawNormalized("h",1);
-      // histo_tt->SetMaximum(max * 1.2);
+       histo_tt->SetMaximum(max * 2);
        //histo_tt->SetMinimum(1);
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    //   histo_tt->GetYaxis()->SetTitle("events / 4.4 fb^{-1}");
+       histo_tt->GetYaxis()->SetTitle("events / 12 fb^{-1}");
     
        
        
        histo_twdr->DrawNormalized("h,sames",1);
-    //   histo_twdr->SetMaximum(max * 1.2);
+      histo_twdr->SetMaximum(max * 2);
      //  histo_twdr->SetMinimum(1);
 
        
       leg->Draw();
-     // labelcms->Draw();
-     // labelcms2->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
     
       c2->SaveAs("plots/"  + plotAnalysis +"/"  + plotExtension + modeString[mode] + "_" + cutLabel[iPlots] + "_normalized" +  ".png");
     //  c2->SaveAs("plots/pdf/" + plotExtension + modeString[mode] + "_" + cutLabel[iPlots] + "_normalized" + ".pdf");

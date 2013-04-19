@@ -157,11 +157,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   }
   else if(nsel == 14 || nsel == 24 || nsel == 34){
    sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
-  }else if(nsel == -15 || nsel == -25 || nsel == -35){
+  }else if(nsel == -15 || nsel == -25){
    sprintf(newRootFile,"results/TopMassDown_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == 15 || nsel == 25 || nsel ==35){
+  }else if(nsel == 15 || nsel == 25 ){
    sprintf(newRootFile,"results/TopMassUp_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == -16 || nsel == -26 || nsel == -36){
+  }else if(nsel == -16 || nsel == -26 ){
    sprintf(newRootFile,"results/Q2Down_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 16 || nsel == 26 || nsel == 36){
    sprintf(newRootFile,"results/Q2Up_%dpb_%d.root", (int) lumi, mode);
@@ -205,6 +205,76 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo = new TH1F( title, " ", 10,  0, 10 );
   histo->Sumw2();
   
+  sprintf(title,"mll_before_%s",plotName);
+  TH1F* histo_mll_before = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_before->Sumw2();
+  
+   sprintf(title,"mll_after_%s",plotName);
+  TH1F* histo_mll_after = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_after->Sumw2();
+  
+  sprintf(title,"mll_after2_%s",plotName);
+  TH1F* histo_mll_after2 = new TH1F( title, " ", 100,  0, 200 );
+  histo_mll_after2->Sumw2(); 
+  
+  sprintf(title,"met_before_1j1t_%s",plotName);
+  TH1F* histo_met_before_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_before_1j1t->Sumw2();
+  
+  sprintf(title,"met_after_1j1t_%s",plotName);
+  TH1F* histo_met_after_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_after_1j1t->Sumw2();
+  
+  
+  sprintf(title,"ptsys_before_met_%s",plotName);
+  TH1F* histo_ptsys_before_met = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_met->Sumw2();
+  
+   sprintf(title,"ht_before_1j1t_%s",plotName);
+  TH1F* histo_ht_before_1j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_before_1j1t->Sumw2();
+  
+  
+    sprintf(title,"met_before_2j1t_%s",plotName);
+  TH1F* histo_met_before_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_before_2j1t->Sumw2();
+  
+  sprintf(title,"met_after_2j1t_%s",plotName);
+  TH1F* histo_met_after_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_after_2j1t->Sumw2();
+  
+  
+   sprintf(title,"ht_before_2j1t_%s",plotName);
+  TH1F* histo_ht_before_2j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_before_2j1t->Sumw2();
+  
+      sprintf(title,"met_before_2j2t_%s",plotName);
+  TH1F* histo_met_before_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_before_2j2t->Sumw2();
+  
+  sprintf(title,"met_after_2j2t_%s",plotName);
+  TH1F* histo_met_after_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_met_after_2j2t->Sumw2();
+  
+  
+   sprintf(title,"ht_before_2j2t_%s",plotName);
+  TH1F* histo_ht_before_2j2t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_before_2j2t->Sumw2();
+  
+  
+    sprintf(title,"ptsys_before_1j1t_%s",plotName);
+  TH1F* histo_ptsys_before_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_1j1t->Sumw2();
+  
+      sprintf(title,"ptsys_before_2j1t_%s",plotName);
+  TH1F* histo_ptsys_before_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_2j1t->Sumw2();
+  
+      sprintf(title,"ptsys_before_2j2t_%s",plotName);
+  TH1F* histo_ptsys_before_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_2j2t->Sumw2();
+  
+  
   sprintf(title,"met_high_%s",plotName);
   TH1F* histo_met_high = new TH1F( title, " ", 100,  0, 200 );
   histo_met_high->Sumw2();
@@ -225,9 +295,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_met_bt = new TH1F( title, " ", 100,  0, 200 );
   histo_met_bt->Sumw2();
   
-  sprintf(title,"mll_after_%s",plotName);
-  TH1F* histo_mll_after = new TH1F( title, " ", 100,  0, 200 );
-  histo_mll_after->Sumw2();
+ 
   
   sprintf(title,"njets_noHT_%s",plotName);
   TH1F* histo_njets_noHT= new TH1F( title, " ", 10,  -0.5, 9.5 );
@@ -664,13 +732,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       if (fabs(m1.DeltaPhi(vmet)) < phipairmet_t) phipairmet_t = fabs(m1.DeltaPhi(vmet));
       
       if (phipairmet_t == pi_m) promet = metPt;
+       histo_mll_before->Fill(pair.M(),xlWeight);
       
       if (pair.M() > 20){
       
-      
-      
-      
-      
+        histo_mll_after->Fill(pair.M(),xlWeight);   
 	histo->Fill(1, xlWeight);
         
        
@@ -774,26 +840,41 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 
 	if (invMass){
 	  histo->Fill(2, xlWeight);
-	  histo_mll_after->Fill(pair.M(),  xlWeight);
+	  histo_mll_after2->Fill(pair.M(),  xlWeight);
 	  histo_met_cut->Fill(metPt,  xlWeight);
+	   if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_met_before_1j1t->Fill(metPt,  xlWeight);
+	   if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_met_before_2j1t->Fill(metPt,  xlWeight);
+	   if(nJets==2 && nTightJetsBT == 2 && nJetsBT == 2) histo_met_before_2j2t->Fill(metPt,  xlWeight);
 	  
 	  
+	  	    double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
+	    double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
+	    double ptSystem = sqrt(ptSysPx *ptSysPx + ptSysPy *ptSysPy);
+	    double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
+	    double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ;
 	  
+	  histo_ptsys_before_met->Fill(ptSystem,xlWeight);
 	  
 	  if (metPt >= 50 || mode ==0){
-	   
+	    if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_met_after_1j1t->Fill(metPt,  xlWeight);
+	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_met_after_2j1t->Fill(metPt,  xlWeight);
+            if(nJets==2 && nTightJetsBT == 2 && nJetsBT == 2) histo_met_after_2j2t->Fill(metPt,  xlWeight);
+	    
+	    
 	    histo->Fill(3, xlWeight);
 	    
 	    histo_njets_noHT->Fill(nJets, xlWeight);
 	    histo_njetsbt_noHT->Fill(nTightJetsBT, xlWeight);
 	    histo_njetsbt_noHT_loose->Fill(nJetsBT, xlWeight);
 	   
-	    double ptSysPx = lepton0.Px() + lepton1.Px() + ptsysX_temp + metPx;
-	    double ptSysPy = lepton0.Py() + lepton1.Py() + ptsysY_temp + metPy;
-	    double ptSystem = sqrt(ptSysPx *ptSysPx + ptSysPy *ptSysPy);
-	    double ht = lepton0.Pt() + lepton1.Pt() + ht_temp + metPt;
-	    double ht_nomet = lepton0.Pt() + lepton1.Pt() + ht_temp ; 
-	     
+ 
+	    
+	    
+	    if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_ptsys_before_1j1t->Fill(ptSystem, xlWeight);   histo_ht_before_1j1t->Fill(ht, xlWeight);
+            if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1) histo_ptsys_before_2j1t->Fill(ptSystem, xlWeight);   histo_ht_before_2j1t->Fill(ht, xlWeight);
+            if(nJets==2 && nTightJetsBT == 2 && nJetsBT == 2) histo_ptsys_before_2j2t->Fill(ptSystem, xlWeight);   histo_ht_before_2j2t->Fill(ht, xlWeight);
+
+	    
 	   
 	    if(nJets==2 && nTightJetsBT == 1 && nJetsBT == 1 &&  (ht > 160 || mode !=0)) {
 	    	histo_R->Fill(2, xlWeight); // after all cuts 2j1t veto on loose
@@ -805,6 +886,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		histo_ht_2j1t->Fill(ht, xlWeight);
 		histo_ht_nomet_2j1t->Fill(ht_nomet, xlWeight);
 	
+		histo_met_2j1t->Fill(metPt,  xlWeight);
 		
 		histo_nvertex_2j1t->Fill(nvertex, xlWeight);
 		
@@ -823,6 +905,8 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		
 		histo_ht_2j2t->Fill(ht, xlWeight);
 		histo_ht_nomet_2j2t->Fill(ht_nomet, xlWeight);
+		
+		histo_met_2j2t->Fill(metPt,  xlWeight);
 		
 		histo_nvertex_2j2t->Fill(nvertex, xlWeight);
 		
@@ -850,11 +934,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    }
 	    
 	    histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, xlWeight);
-	    
-	    
+	   
+	   
 	    if (nJets == 1){
 	      histo->Fill(4, xlWeight);
-	      
+	     
 
 	      if(nTightJetsBT == 1) {histo_R->Fill(7, xlWeight); }
 	      
@@ -862,10 +946,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	      
 	      if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1 ){
 		histo->Fill(5, xlWeight);
-	
+	       
 	      
-		histo_ptsys->Fill(ptSystem, xlWeight);
-		histo_ht->Fill(ht, xlWeight);
+		
+		
 		histo_ht_nomet->Fill(ht_nomet, xlWeight);
 	
 		
@@ -879,6 +963,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 		  histo->Fill(6, xlWeight);
 		  histo_ht_1j1t->Fill(ht, xlWeight);
 		  histo_ht_nomet_1j1t->Fill(ht_nomet, xlWeight);
+		  
 		  
 		  //Example to access the pu reweighting!
 		  histo_nvertex_1j1t->Fill(nvertex, rawWeight);

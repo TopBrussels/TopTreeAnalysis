@@ -458,8 +458,8 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
         else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
-	else if (dataSetName == "twds"){        sprintf(name, "tw_ds"); 	xlweight =lumi*11.1/2970009;             isSingleTop = true;} 
-        else if (dataSetName == "atwds"){       sprintf(name, "atw_ds");     	xlweight = lumi*11.1/2940588;            isSingleTop = true;} 
+	else if (dataSetName == "twds"){        sprintf(name, "tw_ds"); 	xlweight =lumi*11.1*0.1/2970009;             isSingleTop = true;} 
+        else if (dataSetName == "atwds"){       sprintf(name, "atw_ds");     	xlweight = lumi*11.1*0.1/2940588;            isSingleTop = true;} 
         else if (dataSetName == "t"){           sprintf(name, "t");             xlweight = lumi*56.4/3748832;             } 
         else if (dataSetName == "at"){          sprintf(name, "at");            xlweight = lumi*30.7/180719;           }
 	else if (dataSetName == "s"){           sprintf(name, "s");             xlweight = lumi*3.79/259960;             } 
@@ -473,18 +473,18 @@ int main(int argc, char* argv[]) {
 	
 	// systematics
 	else if (dataSetName == "tt_Q2_up"){          sprintf(name, "tt");       xlweight = lumi*225.197/4703202;        isTop = true;       isQ2up = true;} 
-        else if (dataSetName == "twdr_Q2_up"){        sprintf(name, "tw_dr");        xlweight =lumi*11.1/1492814;             isSingleTop = true;  isQ2up = true;} 
-        else if (dataSetName == "atwdr_Q2_up"){       sprintf(name, "atw_dr");  	     xlweight = lumi*11.1/1492532;            isSingleTop = true;   isQ2up = true;} 
-	else if (dataSetName == "tt_Q2_down"){          sprintf(name, "tt");           xlweight = lumi*225.197/5166768;        isTop = true;       isQ2down = true;} 
-        else if (dataSetName == "twdr_Q2_down"){        sprintf(name,	"tw_dr");         xlweight =lumi*11.1/1493129;             isSingleTop = true;  isQ2down = true;} 
-        else if (dataSetName == "atwdr_Q2_down"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1/1493099;            isSingleTop = true;   isQ2down = true;}
+        else if (dataSetName == "twdr_Q2_up"){        sprintf(name, "tw_dr");        xlweight =lumi*11.1*0.1/1493129;             isSingleTop = true;  isQ2up = true;} //10% BR, onlydilepton
+        else if (dataSetName == "atwdr_Q2_up"){       sprintf(name, "atw_dr");  	     xlweight = lumi*11.1*0.1/1492532;            isSingleTop = true;   isQ2up = true;} 
+	else if (dataSetName == "tt_Q2_down"){          sprintf(name, "tt");           xlweight = lumi*225.197/5346767;       isTop = true;       isQ2down = true;} 
+        else if (dataSetName == "twdr_Q2_down"){        sprintf(name,	"tw_dr");         xlweight =lumi*11.1*0.1/14923129;             isSingleTop = true;  isQ2down = true;} 
+        else if (dataSetName == "atwdr_Q2_down"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1*0.1/1493099;            isSingleTop = true;   isQ2down = true;}
 	
 	else if (dataSetName == "tt_Topmass_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/4733472;        isTop = true;       isTopmassup = true;} 
-        else if (dataSetName == "twdr_Topmass_up"){ sprintf(name,"tw_dr");         xlweight =lumi*11.1/1493427;             isSingleTop = true;  isTopmassup = true;} 
-        else if (dataSetName == "atwdr_Topmass_up"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1/1493387;            isSingleTop = true;   isTopmassup = true;} 
+        else if (dataSetName == "twdr_Topmass_up"){ sprintf(name,"tw_dr");                xlweight =lumi*11.1*0.1/1493427;             isSingleTop = true;  isTopmassup = true;} 
+        else if (dataSetName == "atwdr_Topmass_up"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1*0.1/1493387;            isSingleTop = true;   isTopmassup = true;} 
 	else if (dataSetName == "tt_Topmass_down"){          sprintf(name,"tt");            xlweight = lumi*225.197/4358130;        isTop = true;       isTopmassdown = true;} 
-        else if (dataSetName == "twdr_Topmass_down"){        sprintf(name,"tw_dr");         xlweight =lumi*11.1/1489878;             isSingleTop = true;  isTopmassdown = true;} 
-        else if (dataSetName == "atwdr_Topmass_down"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/1478196;            isSingleTop = true;   isTopmassdown = true;}
+        else if (dataSetName == "twdr_Topmass_down"){        sprintf(name,"tw_dr");         xlweight =lumi*11.1*0.1/1489878;             isSingleTop = true;  isTopmassdown = true;} 
+        else if (dataSetName == "atwdr_Topmass_down"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1*0.1/1478196;            isSingleTop = true;   isTopmassdown = true;}
 	
 	else if (dataSetName == "tt_Matching_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/5415003;        isTop = true;       isMatchingup = true;} 
 	else if (dataSetName == "tt_Matching_down"){          sprintf(name,"tt");            xlweight = lumi*225.197/5456715;        isTop = true;       isMatchingdown = true;} 
@@ -726,7 +726,12 @@ int main(int argc, char* argv[]) {
 	TH1F* nvertex_beforePU = new TH1F("nvertex_beforePU", "The #vertices before PU reweighting", 1000,0,1000); 
         TH1F* nvertex_afterPU = new TH1F("nvertex_afterPU", "The #vertices after PU reweighting", 1000,0,1000); 
         
-        
+        TH1F* met_check_nom = new TH1F("met_check_nom", "The checking of nominal uncMet", 1000,0,2); 
+        TH1F* met_check_up = new TH1F("met_check_up", "The checking of up uncMet", 1000,0,2);
+	TH1F* met_check_down = new TH1F("met_check_down", "The checking of down uncMet", 1000,0,2); 
+	
+	TH1F* ptsys_check = new TH1F("ptsys_check", "The checking of pt sys for uncMET", 1000,0,2);
+	TH1F* ptsys_check_1j1t = new TH1F("ptsys_check_1j1t", "The checking of pt sys for uncMET", 1000,0,2);
         
          //Create structure to store sum of squares of weights:   if histogram is already filled, the sum of squares of weights is filled with the existing bin contents. 
          //                                                       The error per bin will be computed as sqrt(sum of squares of weight) for each bin
@@ -1139,6 +1144,9 @@ int main(int argc, char* argv[]) {
 	    
 	  	double met_px = mets[0]->Px();
 	  	double met_py = mets[0]->Py();
+		
+		double met_px_0 = mets[0]->Px();
+	  	double met_py_0 = mets[0]->Py();
 	    
 	  	if(unclusteredUp){
 	    		met_px += uncmet_px*0.1;
@@ -1150,6 +1158,17 @@ int main(int argc, char* argv[]) {
 	  	}
 	    
 	  	double met_pt = sqrt(met_px*met_px + met_py*met_py);
+		double met_pt_0 = sqrt(met_px_0*met_px_0 + met_py_0*met_py_0);
+		
+		double met_diff = met_pt_0/met_pt; 
+		
+		if(unclusteredUp){
+			met_check_up ->Fill(met_diff);
+		} else if(unclusteredDown){
+			met_check_down->Fill(met_diff);
+		} else {
+			met_check_nom->Fill(met_diff);
+ 		}
                 
 		//---------------------------------------------
 		// Zjets sf only for MC zjets (from danny meeting single top 21/3)
@@ -1921,13 +1940,23 @@ int main(int argc, char* argv[]) {
 											double ptsysY = lepton0.Py() + lepton1.Py() + ptsysY_temp + met_py;
 											double ptsystem = sqrt(ptsysX *ptsysX + ptsysY *ptsysY);
 											
+											double ptsysX_0 = lepton0.Px() + lepton1.Px() + ptsysX_temp + met_px_0;
+											double ptsysY_0 = lepton0.Py() + lepton1.Py() + ptsysY_temp + met_py_0;
+											double ptsystem_0 = sqrt(ptsysX_0 *ptsysX_0 + ptsysY_0 *ptsysY_0);
+											
+											double ptdiff = ptsystem_0/ptsystem; 
 											histo_2d_btagged_tightjets_noHt->Fill(nTightJetsBT,nJets, weight);
+											
+											
+											ptsys_check->Fill(ptdiff);
+											
+											
 											
 											// --> Ht cut for the emu mode in order to remove additional drell yann background
 			    								if (Ht > 160 || mode != 0){
 											
 												if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1){
-				
+													ptsys_check_1j1t->Fill(ptdiff);
 													xlWeight = weight;
 													int id1 = event->idParton1();
 													int id2 = event->idParton2();
@@ -2009,7 +2038,7 @@ int main(int argc, char* argv[]) {
 											
 											// --> (cut) exactly one btagged jet
 			    								if (nJets == 1 && nTightJetsBT == 1 && nJetsBT == 1){
-											
+											        
 											        //cout << "EXACTLY ONE BTAGGED JET " << endl; 
 			      									OutPut5 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 

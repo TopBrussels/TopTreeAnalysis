@@ -62,10 +62,10 @@ void controlplots(int mode = 0){
   TFile *_file0 = TFile::Open(myRootFile);
   cout << myRootFile << endl;
 
-  const int nProcess = 8;
-  TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
-  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
-  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
+  const int nProcess = 7;
+  TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",   "data"};
+  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",   "data"};
+  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3,  kBlack};
   TString modeString[3] = {"0", "1", "2"};
 
   TString cutLabel = "R";
@@ -82,7 +82,7 @@ void controlplots(int mode = 0){
   leg ->SetTextSize(0.03);
   hStack = new THStack();
   hStack2 = new THStack();
-  for (int iProcess = 0; iProcess < 8; iProcess++){
+  for (int iProcess = 0; iProcess < 7; iProcess++){
     h[iProcess] = (TH1F*) _file0->Get("R_" + processName[iProcess]);
     
     h[iProcess]->SetFillColor(color[iProcess]);
@@ -108,16 +108,16 @@ void controlplots(int mode = 0){
   
   histo[5]->Add(histo[1]);
   histo[5]->Add(histo[3]);
-  histo[5]->Add(histo[6]);
+  
   
   hStack->Add(histo[5]);
   hStack->Add(histo[4]);
   hStack->Add(histo[2]);
   hStack->Add(histo[0]);
   
-  if (mode == 0) leg->AddEntry(histo[7], processTitle[7], "p");
-  if (mode == 1) leg->AddEntry(histo[7], processTitle[7], "p");
-  if (mode == 2) leg->AddEntry(histo[7], processTitle[7], "p");
+  if (mode == 0) leg->AddEntry(histo[6], processTitle[6], "p");
+  if (mode == 1) leg->AddEntry(histo[6], processTitle[6], "p");
+  if (mode == 2) leg->AddEntry(histo[6], processTitle[6], "p");
   
   leg->AddEntry(histo[0], processTitle[0], "f");
   leg->AddEntry(histo[2], processTitle[2], "f");
@@ -125,13 +125,13 @@ void controlplots(int mode = 0){
   leg->AddEntry(histo[5], "Other", "f");
  
   
-  histo[7]->SetMarkerStyle(20);
-  histo[7]->SetMarkerSize(1.2);
-  histo[7]->SetMarkerColor(kBlack);
-  histo[7]->SetLineColor(kBlack);
-  histo[7]->SetLineWidth(1);
+  histo[6]->SetMarkerStyle(20);
+  histo[6]->SetMarkerSize(1.2);
+  histo[6]->SetMarkerColor(kBlack);
+  histo[6]->SetLineColor(kBlack);
+  histo[6]->SetLineWidth(1);
   
-  double max = TMath::Max(hStack->GetMaximum(), histo[7]->GetMaximum());
+  double max = TMath::Max(hStack->GetMaximum(), histo[6]->GetMaximum());
   TCanvas *c1 = new TCanvas();
   hStack->Draw("histo");
   hStack->SetMaximum(max * 1.5);
@@ -146,7 +146,7 @@ void controlplots(int mode = 0){
   hStack->GetXaxis()->SetBinLabel(2,"2 jet 1 tag");
   hStack->GetXaxis()->SetBinLabel(3,"2 jet 2 tag");
   
-  histo[7]->Draw("e, sames");
+  histo[6]->Draw("e, sames");
   leg->Draw();
   labelcms->Draw();
   labelcms2->Draw();

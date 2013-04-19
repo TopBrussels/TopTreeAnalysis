@@ -115,41 +115,41 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   char myRootFile[300];
   
   
-  if(nsel == -10 || nsel == -20){
+  if(nsel == -10 || nsel == -20 || nsel == -30){
   sprintf(myRootFile,"outputs/JERsysDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 10 || nsel == 20 ){
+  }else if(nsel == 10 || nsel == 20 || nsel == 30){
    sprintf(myRootFile,"outputs/JERsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -11 || nsel == -21 ){
+  }else if(nsel == -11 || nsel == -21 || nsel == -31){
    sprintf(myRootFile,"outputs/JESsysDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 11 || nsel == 21 ){
+  }else if(nsel == 11 || nsel == 21 || nsel == 31){
    sprintf(myRootFile,"outputs/JESsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -12 || nsel == -22 ){
+  }else if(nsel == -12 || nsel == -22 || nsel == -32){
    sprintf(myRootFile,"outputs/PUsysDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 12 || nsel == 22 ){
+  }else if(nsel == 12 || nsel == 22 || nsel == 32){
    sprintf(myRootFile,"outputs/PUsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -13 || nsel == -23 ){
+  }else if(nsel == -13 || nsel == -23 || nsel == -33 ){
    sprintf(myRootFile,"outputs/SFsysDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 13 || nsel == 23 ){
+  }else if(nsel == 13 || nsel == 23 || nsel == 33){
    sprintf(myRootFile,"outputs/SFsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -14 || nsel == -24 ){
+  }else if(nsel == -14 || nsel == -24 || nsel == -34){
    sprintf(myRootFile,"outputs/METsysDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 14 || nsel == 24 ){
+  }else if(nsel == 14 || nsel == 24 || nsel == 34){
    sprintf(myRootFile,"outputs/METsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -15 || nsel == -25 ){
+  }else if(nsel == -15 || nsel == -25 || nsel == -35 ){
    sprintf(myRootFile,"outputs/TopMassDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 15 || nsel == 25 ){
+  }else if(nsel == 15 || nsel == 25 || nsel == 35){
    sprintf(myRootFile,"outputs/TopMassUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -16 || nsel == -26 ){
+  }else if(nsel == -16 || nsel == -26 || nsel == -36){
    sprintf(myRootFile,"outputs/Q2Down_%d_%s.root", mode, plotName);
-  }else if(nsel == 16 || nsel == 26 ){
+  }else if(nsel == 16 || nsel == 26 || nsel == 36){
    sprintf(myRootFile,"outputs/Q2Up_%d_%s.root", mode, plotName);
-  }else if(nsel == -17 || nsel == -27 ){
+  }else if(nsel == -17 || nsel == -27 || nsel == -37){
    sprintf(myRootFile,"outputs/eleSFsysDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 17 || nsel == 27 ){
+  }else if(nsel == 17 || nsel == 27 || nsel == 37){
    sprintf(myRootFile,"outputs/eleSFsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -18 || nsel == -28 ){
+  }else if(nsel == -18 || nsel == -28 || nsel == -38){
    sprintf(myRootFile,"outputs/matchingDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 18 || nsel == 28 ){
+  }else if(nsel == 18 || nsel == 28 || nsel == 38){
    sprintf(myRootFile,"outputs/matchingUp_%d_%s.root", mode, plotName);
   }  else{
    sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);

@@ -12,7 +12,7 @@
 #include "setTDRStyle.C"
 using namespace std;
 
-void plotmaker(int mode = 1){
+void plotmaker(int mode = 0){
   
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
@@ -79,8 +79,8 @@ void plotmaker(int mode = 1){
   
 
   TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex_2lep", "nvertex", "pt_max", "pt_min","njets_final","njetsbt_final","et_jet",  "met_zgamma"};
-  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2,1,1,4,4};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" ,  "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ",  "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of jets final", "# of jets(bt) final","energy jet (GeV)", "E_{T}^{miss} inside Zmass window"};
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2,1,1,4,5};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" ,  "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ",  "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of jets final", "# of jets(bt) final","transverse energy jet (GeV)", "E_{T}^{miss} inside Zmass window"};
 
 
   TString modeString[3] = {"0", "1", "2"};
@@ -101,13 +101,13 @@ void plotmaker(int mode = 1){
     for (int iProcess = 0; iProcess < nProcess; iProcess++){
       h[iVariable][iProcess] = (TH1F*) _file0->Get(cutLabel[iVariable]+ "_" + processName[iProcess]);
       h[iVariable][iProcess]->Rebin(rebinHisto[iVariable]);
-    //  h[iVariable][iProcess]->SetFillColor(color[iProcess]);
-    //  h[iVariable][iProcess]->SetLineColor(kBlack);
-    //  h[iVariable][iProcess]->SetLineWidth(1);
+      h[iVariable][iProcess]->SetFillColor(color[iProcess]);
+      h[iVariable][iProcess]->SetLineColor(kBlack);
+      h[iVariable][iProcess]->SetLineWidth(1);
    
       
     }
-   /* 
+   
     h[iVariable][5]->Add(h[iVariable][1]);
     h[iVariable][5]->Add(h[iVariable][3]);
     
@@ -201,7 +201,7 @@ void plotmaker(int mode = 1){
     c1->SaveAs("plots/error_" + plotExtension+ modeString[mode] + "_" + cutLabel[iVariable] + "_log.png");
     c1->SaveAs("plots/pdf/error_" + plotExtension + modeString[mode] + "_" + cutLabel[iVariable] + "_log.pdf");
     
-*/    
+   
   }
 
 }

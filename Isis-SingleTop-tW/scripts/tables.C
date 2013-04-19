@@ -30,19 +30,19 @@ void tables(int mode = 0){
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode);
   TFile *_file0 = TFile::Open(myRootFile);
   
-  const int nProcess = 10;
-  TString processName[nProcess] = { "twdr", "tt", "di", "wjets", "zjets", "st", "qcd_mu", "others", "data", "mc"};
+  const int nProcess = 9;
+  TString processName[nProcess] = { "twdr", "tt", "di", "wjets", "zjets", "st", "others", "data", "mc"};
   TString processLabel[nProcess] = { "\\textbf{$tW$}", "\\textbf{$t \\bar{t}$}", "\\textbf{$WW$, $WZ$, $ZZ$}", "\\textbf{$W+jets$}", "\\textbf{$Z+jets$}",
-			       "\\textbf{$single$ $top$}","\\textbf{$QCD$}", "\\textbf{$Other$}", "\\textbf{$MuEG$}", "\\textbf{$MC$}"};
+			       "\\textbf{$single$ $top$}", "\\textbf{$Other$}", "\\textbf{$MuEG$}", "\\textbf{$MC$}"};
   
-  if (mode == 1)        processLabel[8] = "\\textbf{$DoubleMu$}";
-  else if (mode == 2)   processLabel[8] = "\\textbf{$DoubleElectron$}";
+  if (mode == 1)        processLabel[7] = "\\textbf{$DoubleMu$}";
+  else if (mode == 2)   processLabel[7] = "\\textbf{$DoubleElectron$}";
   
   TString cutLabel[8] = { "blank0", "blank1", "Lepton Sel.", "Inv. Mass", "$E_{T}^{miss}$", "1 Jet", "b-tagging", "$H_{T}$"};
   
   TH1F*  h [nProcess];
-  for(int i=0; i<10; i++){
-    if (i == 9) {
+  for(int i=0; i<9; i++){
+    if (i == 8) {
      h[i] =  (TH1F*)h[0]->Clone();
      h[i]->Add(h[1]);
     // h[i]->Add(h[2]);
@@ -50,7 +50,7 @@ void tables(int mode = 0){
      h[i]->Add(h[4]);
      //h[i]->Add(h[5]);
     // h[i]->Add(h[6]);
-      h[i]->Add(h[7]);
+      h[i]->Add(h[6]);
     }
     else h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
     // Lepton ID and HLT SF
@@ -61,7 +61,8 @@ void tables(int mode = 0){
   
   double vectorValue[nProcess][17][4];
   for (int i = 0; i < 16; i++){
-    for (int j = 0; j < 10; j++){
+    for (int j = 0; j < 9; j++){
+  
       vectorValue[j][i][0] = h[j]->GetBinContent(i);
       vectorValue[j][i][1] = precision(h[j]->GetBinError(i));
       vectorValue[j][i][2] = h[j]->GetBinError(i);
@@ -78,7 +79,7 @@ void tables(int mode = 0){
   salida << "  \\begin{center}" << endl;
   salida << "  \\begin{tabular} {|l|c|c|c|c|c|c|c|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  for (int i = 0; i < 7; i++){
+  for (int i = 0; i < 6; i++){
     salida << " & " << processLabel[i] ;
   }
   salida << "  \\\\ " << endl; 
@@ -86,7 +87,7 @@ void tables(int mode = 0){
   
   for (int i=2; i < 8; i++){
     salida << cutLabel[i];
-    for (int j = 0; j < 7; j++){
+    for (int j = 0; j < 6; j++){
       if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] != 0){
         salida << " & $\\leq$ " << setprecision(vectorValue[j][i-1][1]) << 2*vectorValue[j][i-1][2];
       } else if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] == 0){
@@ -109,17 +110,17 @@ void tables(int mode = 0){
   salida << "  \\begin{center}" << endl;
   salida << "  \\begin{tabular} {|l|c|c|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  for (int i = 0; i < 9; i++){
-    if (i == 0 || i == 1 || i ==4 || i == 7) salida << " & " << processLabel[i] ;
+  for (int i = 0; i < 8; i++){
+    if (i == 0 || i == 1 || i ==4 || i == 6) salida << " & " << processLabel[i] ;
   }
   salida << "  \\\\ " << endl; 
   salida << "  \\hline " << endl;
   
   for (int i=2; i < 8; i++){
     salida << cutLabel[i];
-    for (int j = 0; j < 8; j++){
+    for (int j = 0; j < 7; j++){
       if (j == 2) j = 4;
-      if (j == 5) j = 7;
+      if (j == 5) j = 6;
       if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] != 0){
         salida << " & $\\leq$ " << setprecision(vectorValue[j][i-1][1]) << 2*vectorValue[j][i-1][2];
       } else if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] == 0){
@@ -139,12 +140,12 @@ void tables(int mode = 0){
   salida << endl;
   salida << endl;
   
-  
+ 
   salida << "  \\begin{table}" << endl;
   salida << "  \\begin{center}" << endl;
   salida << "  \\begin{tabular} {|l|c|c|}" << endl;
   salida << "  \\hline " << endl;
-  for (int i = 8; i < 10; i++){
+  for (int i = 7; i < 9; i++){
     salida << " & " << processLabel[i] ;
   }
   salida << "  \\\\ " << endl; 
@@ -152,8 +153,8 @@ void tables(int mode = 0){
   
   for (int i=2; i < 8; i++){
     salida << cutLabel[i] << "	";
-    for (int j = 8; j < 10; j++){
-      if (j == 8){
+    for (int j = 7; j < 9; j++){
+      if (j == 7){
 	if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] != 0){
 	  salida << " & $\\leq$ " << setprecision(vectorValue[j][i-1][1]) << 2*vectorValue[j][i-1][2];
 	} else if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] == 0){

@@ -54,16 +54,21 @@ void plotmakerall(){
   char myRootFile[300];
   
   
-  const int nProcess = 8;
-  const int nPlots = 8;
+
+   const int nProcess = 7;
+   const int nPlots = 16;
+  TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "data"};
+  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW", "Z/#gamma*+jets", "W+jets",   "data"};
+  Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3,  kBlack};
   
-   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
-  TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
-  Color_t color[nProcess] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
-  
-  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading"};
-  int rebinHisto[nPlots] =       { 1, 4, 2, 1, 1, 4, 12, 4};
-  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" , "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet"};
+
+  TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex_2lep", "nvertex", "pt_max", "pt_min","njets_final","njetsbt_final","et_jet",  "met_zgamma"};
+  int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2,1,1,4,5};
+  TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" ,  "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ",  "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of jets final", "# of jets(bt) final","transverse energy jet (GeV)", "E_{T}^{miss} inside Zmass window"};
+
+
+ 
+ 
  
   TH1F*  h [nPlots][nProcess];
   TH1F*   histo[3][nPlots][nProcess];
@@ -122,26 +127,26 @@ void plotmakerall(){
 
     h[iVariable][5]->Add(h[iVariable][1]);
     h[iVariable][5]->Add(h[iVariable][3]);
-    h[iVariable][5]->Add(h[iVariable][6]);
+    
     
     hStack[iVariable]->Add(h[iVariable][5]);
     hStack[iVariable]->Add(h[iVariable][4]);
     hStack[iVariable]->Add(h[iVariable][2]);
     hStack[iVariable]->Add(h[iVariable][0]);
     
-    leg->AddEntry(h[iVariable][7], processTitle[7], "p");
+    leg->AddEntry(h[iVariable][6], processTitle[6], "p");
     leg->AddEntry(h[iVariable][0], processTitle[0], "f");
     leg->AddEntry(h[iVariable][2], processTitle[2], "f");
     leg->AddEntry(h[iVariable][4], processTitle[4], "f");
     leg->AddEntry(h[iVariable][5], "Other", "f");
      
-    h[iVariable][7]->SetMarkerStyle(20);
-    h[iVariable][7]->SetMarkerSize(1.2);
-    h[iVariable][7]->SetLineWidth(1);
-    h[iVariable][7]->SetMarkerColor(kBlack);
-    h[iVariable][7]->SetLineColor(kBlack);
+    h[iVariable][6]->SetMarkerStyle(20);
+    h[iVariable][6]->SetMarkerSize(1.2);
+    h[iVariable][6]->SetLineWidth(1);
+    h[iVariable][6]->SetMarkerColor(kBlack);
+    h[iVariable][6]->SetLineColor(kBlack);
     
-    double max = TMath::Max(hStack[iVariable]->GetMaximum(), h[iVariable][7]->GetMaximum());
+    double max = TMath::Max(hStack[iVariable]->GetMaximum(), h[iVariable][6]->GetMaximum());
     TCanvas *c1 = new TCanvas();
     hStack[iVariable]->Draw("histo");
     hStack[iVariable]->SetMaximum(max * 1.2);
@@ -163,17 +168,20 @@ void plotmakerall(){
      }
     
     if (iVariable == 5) hStack[iVariable]->GetYaxis()->SetRangeUser(1,100);
-    h[iVariable][7]->Draw("e, sames");
+    h[iVariable][6]->Draw("e, sames");
     leg->Draw();
     labelcms->Draw();
     labelcms2->Draw();
     
-    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + ".png");
-    c1->SaveAs("plots/pdf/plot_3_" + cutLabel[iVariable] + ".pdf");
+    c1->SaveAs("allTogether/plots/plot_3_" + cutLabel[iVariable] + ".png");
+    c1->SaveAs("allTogether/plots/pdf/plot_3_" + cutLabel[iVariable] + ".pdf");
     c1->SetLogy();
     hStack[iVariable]->SetMaximum(max * 10);
-    c1->SaveAs("plots/plot_3_" + cutLabel[iVariable] + "_log.png");
-    c1->SaveAs("plots/pdf/plot_3_" + cutLabel[iVariable] + "_log.pdf");
+    c1->SaveAs("allTogether/plots/plot_3_" + cutLabel[iVariable] + "_log.png");
+    c1->SaveAs("allTogether/plots/pdf/plot_3_" + cutLabel[iVariable] + "_log.pdf");
+    
+    
+
 
      delete _file0;
      delete _file1;
