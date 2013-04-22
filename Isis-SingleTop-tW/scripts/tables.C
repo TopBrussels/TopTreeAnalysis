@@ -42,7 +42,7 @@ void tables(int mode = 0){
   
   TH1F*  h [nProcess];
   for(int i=0; i<9; i++){
-    if (i == 8) {
+   /* if (i == 8) {
      h[i] =  (TH1F*)h[0]->Clone();
      h[i]->Add(h[1]);
     // h[i]->Add(h[2]);
@@ -52,7 +52,9 @@ void tables(int mode = 0){
     // h[i]->Add(h[6]);
       h[i]->Add(h[6]);
     }
-    else h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
+    else 
+    */
+    h[i] = (TH1F*) _file0->Get("cuts_"+processName[i]);
     // Lepton ID and HLT SF
     // if (mode == 0 && i != 8) h[i]->Scale(0.97713);
     // if (mode == 1 && i != 8) h[i]->Scale(0.910067);
@@ -119,13 +121,14 @@ void tables(int mode = 0){
   for (int i=2; i < 8; i++){
     salida << cutLabel[i];
     for (int j = 0; j < 7; j++){
-      if (j == 2) j = 4;
-      if (j == 5) j = 6;
-      if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] != 0){
-        salida << " & $\\leq$ " << setprecision(vectorValue[j][i-1][1]) << 2*vectorValue[j][i-1][2];
-      } else if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] == 0){
-        salida << " & $-$ " ;
-      } else {
+    //  if (j == 2) j = 4;
+    //  if (j == 5) j = 6;
+   //   if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] != 0){
+     //   salida << " & $\\leq$ " << setprecision(vectorValue[j][i-1][1]) << 2*vectorValue[j][i-1][2];
+   //   } else if (i != 0 && vectorValue[j][i][0] == 0 && vectorValue[j][i-1][0] == 0){
+   //     salida << " & $-$ " ;
+   //   } else {
+    if (j == 0 || j == 1 || j ==4 || j == 6){
 	salida << " & " << std::setiosflags(std::ios::fixed) << setprecision(vectorValue[j][i][1])<< vectorValue[j][i][0] ; 
 	salida << " $\\pm $"  << setprecision(vectorValue[j][i][1]) << vectorValue[j][i][2];
 	

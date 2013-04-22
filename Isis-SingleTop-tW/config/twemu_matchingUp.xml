@@ -3,23 +3,11 @@
 
 
   
-  <d name="data" title="data" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/data/*.root"/> 
+ 
  
   
   <d name="tt_Matching_up" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_matching_up/*.root"/> 
-  <d name="twdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_tW_DR/*.root"/> 
-  <d name="atwdr" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_tW_DR/*.root"/> 
-> 
-  <d name="t" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_t/*.root"/> 
-  <d name="at" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_t/*.root"/> 
-  <d name="ww" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WW/*.root"/> 
-  <d name="wz" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WZ/*.root"/> 
-  <d name="zz" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/ZZ/*.root"/>  
-  <d name="zjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/ZJets/*.root"/> 
-  <d name="zjets_lowmll" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/DY_10to50/*.root"/>  
-   <d name="wjets" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/WJets/*.root"/> 
-  <d name="s" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/T_s/*.root"/> 
-  <d name="as" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Summer12_53X_emu/Tbar_s/*.root"/> 
+ 
  
   
 </datasets>
