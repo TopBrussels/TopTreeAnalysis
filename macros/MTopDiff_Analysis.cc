@@ -89,19 +89,21 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_Data_MuHad_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
     
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_TTbarJets_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Mu15_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_QCD_Pt-20to30_BCtoE_Nominal_SemiLep.root");
@@ -1067,8 +1069,12 @@ int main (int argc, char *argv[])
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
             if( dataSetName.find("WJets") == 0 )
             {
-              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
-              histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], monster->eventWeight()*lumiWeight);
+              float factor = 1;
+              if( monster->selectedSemiMu() ) factor = LuminosityMu*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
+              else factor = LuminosityEl*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
+              
+              histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], factor*monster->eventWeight()*lumiWeight*(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
+              histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], factor*monster->eventWeight()*lumiWeight);
               histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
               histo2D["wJets_mTopFitted_VS_combiWeight"]->Fill(mTop[iCombi], (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
             }
@@ -1226,7 +1232,7 @@ int main (int argc, char *argv[])
     temp->Draw(false, name, false, true, true, true, true, 1, true);
 //    temp->Draw(false, name, false, false, false, false, false, 1, true);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
-    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
+//    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
 	
 	// 2D
