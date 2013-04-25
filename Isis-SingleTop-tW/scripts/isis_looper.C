@@ -87,8 +87,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  15)                   {sprintf(plotName,"tt");}
   else if (nsel == -25)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  25)                   {sprintf(plotName,"twdr");}
-  else if (nsel == -35)                   {sprintf(plotName,"others");}
-  else if (nsel ==  35)                   {sprintf(plotName,"others");}
+
   
   
       //Q2
@@ -96,8 +95,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  16)                   {sprintf(plotName,"tt");}
   else if (nsel == -26)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  26)                   {sprintf(plotName,"twdr");}
-  else if (nsel == -36)                   {sprintf(plotName,"others");}
-  else if (nsel ==  36)                   {sprintf(plotName,"others");}
+ 
   
   
       //LES
@@ -111,10 +109,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
       //Matching
   else if (nsel == -18)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
-  else if (nsel == -28)                   {sprintf(plotName,"twdr");}
-  else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
-  else if (nsel == -38)                   {sprintf(plotName,"others");}
-  else if (nsel ==  38)                   {sprintf(plotName,"others");}
+
   
   
   
@@ -163,7 +158,7 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
    sprintf(newRootFile,"results/TopMassUp_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == -16 || nsel == -26 ){
    sprintf(newRootFile,"results/Q2Down_%dpb_%d.root", (int) lumi, mode);
-  }else if(nsel == 16 || nsel == 26 || nsel == 36){
+  }else if(nsel == 16 || nsel == 26 ){
    sprintf(newRootFile,"results/Q2Up_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == -17 || nsel == -27 || nsel == -37){
    sprintf(newRootFile,"results/eleSFsysDown_%dpb_%d.root", (int) lumi, mode);

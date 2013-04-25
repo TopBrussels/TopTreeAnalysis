@@ -116,6 +116,7 @@ hadd -f outputs/Q2Up_0_twdr.root outputs/Q2Up_0_tw_dr.root outputs/Q2Up_0_atw_dr
 
 
 
+
 rm outputs/eleSFsysDown_0_zjetsall.root;
 hadd -f outputs/eleSFsysDown_0_zjetsall.root outputs/eleSFsysDown_0_zjets*;
 hadd -f outputs/eleSFsysDown_0_twdr.root outputs/eleSFsysDown_0_tw_dr.root outputs/eleSFsysDown_0_atw_dr.root;
@@ -134,5 +135,4 @@ hadd -f outputs/eleSFsysUp_0_st.root outputs/eleSFsysUp_0_t.root outputs/eleSFsy
 hadd -f outputs/eleSFsysUp_0_di.root outputs/eleSFsysUp_0_ww.root outputs/eleSFsysUp_0_wz.root outputs/eleSFsysUp_0_zz.root ;
 hadd -f outputs/eleSFsysUp_0_others.root outputs/eleSFsysUp_0_di.root outputs/eleSFsysUp_0_st.root outputs/eleSFsysUp_0_wjets.root outputs/eleSFsysUp_0_zjetsall.root  ;
 hadd -f outputs/eleSFsysUp_0_mc.root outputs/eleSFsysUp_0_twdr.root outputs/eleSFsysUp_0_tt.root outputs/eleSFsysUp_0_others.root ;
-
 

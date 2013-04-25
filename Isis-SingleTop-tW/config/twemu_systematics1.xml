@@ -2,7 +2,7 @@
 <datasets>
 
 
-  <d name="tt_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_Q2_down/*.root"/> 
+  <d name="tt_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_Q2_down_new/*.root"/> 
   <d name="twdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tW_Q2_down/*.root"/> 
   <d name="atwdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tbarW_Q2_down/*.root"/> 
 

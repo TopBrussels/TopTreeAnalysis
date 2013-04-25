@@ -96,12 +96,8 @@ root.exe -b -l -q isis_chain.C\(-34\,0\,0\)
 
 
 
-root.exe -b -l -q isis_chain.C\(35\,0\,0\)
-root.exe -b -l -q isis_chain.C\(-35\,0\,0\)
 
 
-root.exe -b -l -q isis_chain.C\(36\,0\,0\)
-root.exe -b -l -q isis_chain.C\(-36\,0\,0\)
 
 
 

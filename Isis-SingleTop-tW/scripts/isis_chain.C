@@ -74,8 +74,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel ==  15)                   {sprintf(plotName,"tt");}
   else if (nsel == -25)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  25)                   {sprintf(plotName,"twdr");}
-  else if (nsel == -35)                   {sprintf(plotName,"others");}
-  else if (nsel ==  35)                   {sprintf(plotName,"others");}
+ 
   
   
       //Q2
@@ -83,8 +82,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel ==  16)                   {sprintf(plotName,"tt");}
   else if (nsel == -26)                   {sprintf(plotName,"twdr");}
   else if (nsel ==  26)                   {sprintf(plotName,"twdr");}
-  else if (nsel == -36)                   {sprintf(plotName,"others");}
-  else if (nsel ==  36)                   {sprintf(plotName,"others");}
+
   
   
       //LES
@@ -98,10 +96,7 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
       //Matching
   else if (nsel == -18)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
-  else if (nsel == -28)                   {sprintf(plotName,"twdr");}
-  else if (nsel ==  28)                   {sprintf(plotName,"twdr");}
-  else if (nsel == -38)                   {sprintf(plotName,"others");}
-  else if (nsel ==  38)                   {sprintf(plotName,"others");}
+ 
   
   
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;
@@ -135,21 +130,21 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
    sprintf(myRootFile,"outputs/METsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 14 || nsel == 24 || nsel == 34){
    sprintf(myRootFile,"outputs/METsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -15 || nsel == -25 || nsel == -35 ){
+  }else if(nsel == -15 || nsel == -25 ){
    sprintf(myRootFile,"outputs/TopMassDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 15 || nsel == 25 || nsel == 35){
+  }else if(nsel == 15 || nsel == 25 ){
    sprintf(myRootFile,"outputs/TopMassUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -16 || nsel == -26 || nsel == -36){
+  }else if(nsel == -16 || nsel == -26 ){
    sprintf(myRootFile,"outputs/Q2Down_%d_%s.root", mode, plotName);
-  }else if(nsel == 16 || nsel == 26 || nsel == 36){
+  }else if(nsel == 16 || nsel == 26) {
    sprintf(myRootFile,"outputs/Q2Up_%d_%s.root", mode, plotName);
   }else if(nsel == -17 || nsel == -27 || nsel == -37){
    sprintf(myRootFile,"outputs/eleSFsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 17 || nsel == 27 || nsel == 37){
    sprintf(myRootFile,"outputs/eleSFsysUp_%d_%s.root", mode, plotName);
-  }else if(nsel == -18 || nsel == -28 || nsel == -38){
+  }else if(nsel == -18 ){
    sprintf(myRootFile,"outputs/matchingDown_%d_%s.root", mode, plotName);
-  }else if(nsel == 18 || nsel == 28 || nsel == 38){
+  }else if(nsel == 18 ){
    sprintf(myRootFile,"outputs/matchingUp_%d_%s.root", mode, plotName);
   }  else{
    sprintf(myRootFile,"outputs/out_%d_%s.root", mode, plotName);

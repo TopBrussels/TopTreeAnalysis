@@ -1125,7 +1125,7 @@ int main(int argc, char* argv[]) {
                 isGoodPV = true; 
                 
                 //--------------------------------------------------------------
-                // Set up of the unclustered MET systematic    ==> WHAT IS THIS?
+                // Set up of the unclustered MET systematic    
                 //---------------------------------------------------------------
 	  	double uncmet_px = mets[0]->Px();
 	  	double uncmet_py = mets[0]->Py();
@@ -1252,7 +1252,7 @@ int main(int argc, char* argv[]) {
 				if(JESMinus) selection_beforeJES_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
 				if(JERMinus) selection_beforeJER_minus.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
              		 	selection.setDiMuonCuts(20.,2.4,0.20,999.);
-              			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.,1,0.3,1);
+              			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.5,1,0.3,1); //(20.,2.5,0.15,0.04,0.,1,0.3,1)
               			selection.setLooseMuonCuts(10.,2.5,0.2);
               			selection.setLooseDiElectronCuts(15.0,2.5,0.2,0.5); 
 		
@@ -1835,10 +1835,12 @@ int main(int argc, char* argv[]) {
 					
 		      						npu = event->nPu(0);
 		      						nvertex = vertex.size();
-			
-		      						metPt = mets[0]->Pt();
-		      						metPx = mets[0]->Px();
-		      						metPy = mets[0]->Py();
+			                                        
+								
+								
+		      						metPt = met_pt; //mets[0]->Pt();
+		      						metPx = met_px; // mets[0]->Px();
+		      						metPy = met_py; //mets[0]->Py();
 		      
 		      						ptLepton = new std::vector<double>; 
 		      						pxLepton = new std::vector<double>; 
