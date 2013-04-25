@@ -29,6 +29,7 @@ class LightMonster : public TObject
     ,idParton2_(-9999)
     ,xParton2_(-9999.)
     ,factorizationScale_(-9999.)
+    ,flavHistPath_(-9999.)
     ,nPV_(0)
     ,nPUBXm1_(0)
     ,nPU_(0)
@@ -53,10 +54,7 @@ class LightMonster : public TObject
     ,leptBJet_(0)
     ,MET_()
     ,selectedJets_()
-    ,bTagTCHE_()
-    ,bTagTCHP_()
-    ,bTagSSVHE_()
-    ,bTagSSVHP_()
+    ,bTagCSV_()
     ,lepton_()
     ,leptonCharge_(0)
     ,leptonPFRelIso_(-9999.)
@@ -64,6 +62,8 @@ class LightMonster : public TObject
     ,hadrLQuark1_()
     ,hadrLQuark2_()
     ,leptBQuark_()
+    ,genTop_()
+    ,genAntiTop_()
    {;}
   
   ~LightMonster() {;}
@@ -76,6 +76,7 @@ class LightMonster : public TObject
   int idParton2() const { return idParton2_; }
   float xParton2() const { return xParton2_; }
   float factorizationScale() const { return factorizationScale_; }
+  int flavHistPath() const { return flavHistPath_; }
   unsigned int nPV() const { return nPV_; }
   unsigned int nPUBXm1() const { return nPUBXm1_; }
   unsigned int nPU() const { return nPU_; }
@@ -102,10 +103,7 @@ class LightMonster : public TObject
   TLorentzVector met() const { return MET_; }
   vector<TLorentzVector> selectedJets() const { return selectedJets_; }
   TLorentzVector selectedJet(int i) const { return selectedJets_[i]; }
-  vector<float> bTagTCHE() const { return bTagTCHE_; }
-  vector<float> bTagTCHP() const { return bTagTCHP_; }
-  vector<float> bTagSSVHE() const { return bTagSSVHE_; }
-  vector<float> bTagSSVHP() const { return bTagSSVHP_; }
+  vector<float> bTagCSV() const { return bTagCSV_; }
   TLorentzVector lepton() const { return lepton_; }
   int leptonCharge() const { return leptonCharge_; }
   float leptonPFRelIso() const { return leptonPFRelIso_; }
@@ -113,6 +111,8 @@ class LightMonster : public TObject
   TLorentzVector hadrLQuark1() const { return hadrLQuark1_; }
   TLorentzVector hadrLQuark2() const { return hadrLQuark2_; }
   TLorentzVector leptBQuark() const { return leptBQuark_; }
+  TLorentzVector genTop() const { return genTop_; }
+  TLorentzVector genAntiTop() const { return genAntiTop_; }
   
   void setEventID(unsigned int eventID) { eventID_ = eventID; }
   void setRunID(unsigned int runID) { runID_ = runID; }
@@ -122,6 +122,7 @@ class LightMonster : public TObject
   void setIdParton2(int Id2) { idParton2_ = Id2; }
   void setXParton2(float x2) { xParton2_ = x2; }
   void setFactorizationScale(float scale) { factorizationScale_ = scale; }
+  void setFlavHistPath(int path) { flavHistPath_ = path; }
   void setNPV(unsigned int nPV) { nPV_ = nPV; }
   void setNPUBXm1(unsigned int nPUBXm1) { nPUBXm1_ = nPUBXm1; }
   void setNPU(unsigned int nPU) { nPU_ = nPU; }
@@ -161,10 +162,7 @@ class LightMonster : public TObject
   void setLeptBJet(int leptBJet) { leptBJet_ = leptBJet; }
   void setMET(TLorentzVector MET) { MET_ = MET; }
   void setSelectedJets(vector<TLorentzVector> selectedJets) { selectedJets_ = selectedJets; }
-  void setBTagTCHE(vector<float> bTagTCHE) { bTagTCHE_ = bTagTCHE; }
-  void setBTagTCHP(vector<float> bTagTCHP) { bTagTCHP_ = bTagTCHP; }
-  void setBTagSSVHE(vector<float> bTagSSVHE) { bTagSSVHE_ = bTagSSVHE; }
-  void setBTagSSVHP(vector<float> bTagSSVHP) { bTagSSVHP_ = bTagSSVHP; }
+  void setBTagCSV(vector<float> bTagCSV) { bTagCSV_ = bTagCSV; }
   void setLepton(TLorentzVector lepton) { lepton_ = lepton; }
   void setLeptonCharge(int leptonCharge) { leptonCharge_ = leptonCharge; }
   void setLeptonPFRelIso(float leptonPFRelIso) { leptonPFRelIso_ = leptonPFRelIso; }
@@ -172,6 +170,8 @@ class LightMonster : public TObject
   void setHadrLQuark1(TLorentzVector hadrLQuark1) { hadrLQuark1_ = hadrLQuark1; }
   void setHadrLQuark2(TLorentzVector hadrLQuark2) { hadrLQuark2_ = hadrLQuark2; }
   void setLeptBQuark(TLorentzVector leptBQuark) { leptBQuark_ = leptBQuark; }
+  void setGenTop(TLorentzVector genTop) { genTop_ = genTop; }
+  void setGenAntiTop(TLorentzVector genAntiTop) { genAntiTop_ = genAntiTop; }
   
  protected:
   
@@ -183,6 +183,7 @@ class LightMonster : public TObject
   int idParton2_;
   float xParton2_;
   float factorizationScale_;
+  int flavHistPath_; // flavor history path, see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFlavorHistory
   unsigned int nPV_;
   unsigned int nPUBXm1_;
   unsigned int nPU_;
@@ -207,10 +208,7 @@ class LightMonster : public TObject
   int leptBJet_;
   TLorentzVector MET_;
   vector<TLorentzVector> selectedJets_; // all selected jets
-  vector<float> bTagTCHE_; // indices like selectedJets indices
-  vector<float> bTagTCHP_;
-  vector<float> bTagSSVHE_;
-  vector<float> bTagSSVHP_;
+  vector<float> bTagCSV_; // indices like selectedJets indices
   TLorentzVector lepton_;
   int leptonCharge_;
   float leptonPFRelIso_;
@@ -218,7 +216,9 @@ class LightMonster : public TObject
   TLorentzVector hadrLQuark1_;
   TLorentzVector hadrLQuark2_;
   TLorentzVector leptBQuark_;
-  
+  TLorentzVector genTop_;
+  TLorentzVector genAntiTop_;
+ 
   ClassDef (LightMonster,2);
 };
 

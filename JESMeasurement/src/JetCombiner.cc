@@ -67,7 +67,7 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
     MSPlot_["MVA_input_AngleThBh"] = new MultiSamplePlot(datasets, "MVA_input_AngleThBh", 16, -0.0001, 3.2, "AngleThBh");
     MSPlot_["MVA_input_AngleThMu"] = new MultiSamplePlot(datasets, "MVA_input_AngleThMu", 16, -0.0001, 3.2, "AngleThMu");
     MSPlot_["MVA_input_HadrWmass"] = new MultiSamplePlot(datasets, "MVA_input_HadrWmass", 50, -0.0001, 200, "HadrWmass");
-
+    
     MSPlot_["maxMVA_btag"] = new MultiSamplePlot(datasets, "MVA_btag", 10, -0.0001, 1, "btag");
     MSPlot_["maxMVA_ThPtOverSumPt"] = new MultiSamplePlot(datasets, "MVA_ThPtOverSumPt", 10, -0.0001, 1, "ThPtOverSumPt");
     MSPlot_["maxMVA_AngleThWh"] = new MultiSamplePlot(datasets, "MVA_AngleThWh", 8, -0.0001, 3.2, "AngleThWh");
@@ -78,7 +78,7 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
     MSPlot_["maxMVA_HadrWmass"] = new MultiSamplePlot(datasets, "MVA_HadrWmass", 50, -0.0001, 200, "HadrWmass");
     MSPlot_["maxMVA_HadrWMassCalc"] = new MultiSamplePlot(datasets, "maxMVA_HadrWMassCalc", 20, -0.0001, 600, "Hadronic W Mass");
     MSPlot_["maxMVA_HadrTopMass"] = new MultiSamplePlot(datasets, "maxMVA_HadrTopMass", 20, -0.0001, 1000, "Hadronic Top Mass");
-        
+    
 	  vector<string> MVAvars;
 	  MVAvars.push_back("btag");
 	  MVAvars.push_back("ThPtOverSumPt");
@@ -89,7 +89,6 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
 	  MVAvars.push_back("AngleThMu");
 		if(Tprime_)
 			MVAvars.push_back("HadrWmass");
-
 	  computer_ = new MVAComputer(MVAMethod,MVAOut,MVAPrefix,MVAvars,postfix_);
 		
 	//    computer_->addMethod("LikelihoodD");
@@ -135,7 +134,7 @@ JetCombiner::JetCombiner(bool trainMVA, float Luminosity, const vector<Dataset*>
   histo2D_["hadronicWMassVSAngleThBh"] = new TH2F("hadronicWMassVSAngleThBh","Hadronic W Mass VS Angle Th Bh",100,0,150,100,-0.0001,3.2);
   histo2D_["hadronicWMassVSAngleThMu"] = new TH2F("hadronicWMassVSAngleThMu","Hadronic W Mass VS Angle Th Mu",100,0,150,100,-0.0001,3.2);
   histo2D_["hadronicWMassVSThPtOverSumPt"] = new TH2F("hadronicWMassVSThPtOverSumPt","Hadronic W Mass VS ThPtOverSumPt",100,0,150,100,-0.0001,1);
-      
+  
   histo2D_["hadronicTopMassVSbtag"] = new TH2F("hadronicTopMassVSbtag","Hadronic Top Mass VS btag product",100,100,250,100,-0.0001,1);
   histo2D_["hadronicTopMassVSAngleThWh"] = new TH2F("hadronicTopMassVSAngleThWh","Hadronic Top Mass VS Angle Th Wh",100,100,250,100,-0.0001,3.2);
   histo2D_["hadronicTopMassVSAngleBlMu"] = new TH2F("hadronicTopMassVSAngleBlMu","Hadronic Top Mass VS Angle Bl Mu",100,100,250,100,-0.0001,3.2);

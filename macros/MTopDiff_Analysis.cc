@@ -78,7 +78,7 @@ int main (int argc, char *argv[])
   float LuminosityMu = 4974, LuminosityEl = 4967;
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = false; // false:  files are created but no events are filled
+  bool writeASCIIstuff = true; // false:  files are created but no events are filled
   bool useOnlyHighestWeight = false;
   if(writeASCIIstuff) useOnlyHighestWeight = false;
   
