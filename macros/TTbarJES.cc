@@ -4,6 +4,7 @@
 
 #include "TStyle.h"
 #include "TF2.h"
+#include "TGraph2D.h"
 #include <cmath>
 #include <fstream>
 #include <sstream>
@@ -37,16 +38,12 @@ using namespace std;
 using namespace TopTree;
 using namespace reweight;
 
-/// TGraphAsymmErrors
 map<string,TGraphAsymmErrors*> graphAsymmErr;
 map<string,TGraphErrors*> graphErr;
-
-/// Normal Plots (TH1F* and TH2F*)
 map<string,TH1F*> histo1D;
 map<string,TH2F*> histo2D;
-
-/// MultiSamplePlot
 map<string,MultiSamplePlot*> MSPlot;
+map<string,TGraph2D*> graph2D;
 
 int main (int argc, char *argv[])
 {
@@ -410,24 +407,49 @@ int main (int argc, char *argv[])
 //      vCorrParam.push_back(*ResJetCorPar);
 //    }
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
+    JetCorrectionUncertainty *jecUncTotal = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
     
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
     
-    histo2D["jesUncPlus"] = new TH2F("jesUncPlus", "jesUncPlus", 51, 29.5, 80.5, 51, -2.55, 2.55);
-    histo2D["jesUncMinus"] = new TH2F("jesUncMinus", "jesUncMinus", 51, 29.5, 80.5, 51, -2.55, 2.55);
-    for(float jetPt=30; jetPt<=80; jetPt++)
+    histo2D["jesUnc"] = new TH2F("jesUnc", "jesUnc", 101, 29.5, 130.5, 25, -0.05, 2.45);
+    histo2D["jesUncDiff"] = new TH2F("jesUncDiff", "jesUncDiff", 101, 29.5, 130.5, 25, -0.05, 2.45);
+    graph2D["jesUnc_graph2D"] = new TGraph2D(101*25);
+    
+    histo1D["jesUncPt30"] = new TH1F("jesUncPt30", "jesUncPt30", 25, -0.05, 2.45);
+    histo1D["jesUncPt40"] = new TH1F("jesUncPt40", "jesUncPt40", 25, -0.05, 2.45);
+    histo1D["jesUncPt50"] = new TH1F("jesUncPt50", "jesUncPt50", 25, -0.05, 2.45);
+    histo1D["jesUncPt60"] = new TH1F("jesUncPt60", "jesUncPt60", 25, -0.05, 2.45);
+    histo1D["jesUncPt70"] = new TH1F("jesUncPt70", "jesUncPt70", 25, -0.05, 2.45);
+    
+    int iP=0;
+    for(float jetPt=30; jetPt<=130; jetPt++)
     {
-      for(float jetEta=-2.4; jetEta<=2.4; jetEta+=0.1)
+      for(float jetEta=0; jetEta<2.5; jetEta+=0.1)
       {
         jecUnc->setJetEta(jetEta);
         jecUnc->setJetPt(jetPt);
-        histo2D["jesUncPlus"]->Fill(jetPt, jetEta, jecUnc->getUncertainty(true));
+        float uncPos = jecUnc->getUncertainty(true);
         jecUnc->setJetEta(jetEta);
         jecUnc->setJetPt(jetPt);
-        histo2D["jesUncMinus"]->Fill(jetPt, jetEta, jecUnc->getUncertainty(false));
+        float uncNeg = jecUnc->getUncertainty(true);
+        histo2D["jesUnc"]->Fill(jetPt, jetEta, 0.5*(uncPos+uncNeg));
+        graph2D["jesUnc_graph2D"]->SetPoint(iP, jetPt, jetEta, 0.5*(uncPos+uncNeg));
+        if(jetPt == 30) histo1D["jesUncPt30"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
+        else if(jetPt == 40) histo1D["jesUncPt40"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
+        else if(jetPt == 50) histo1D["jesUncPt50"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
+        else if(jetPt == 60) histo1D["jesUncPt60"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
+        else if(jetPt == 70) histo1D["jesUncPt70"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
+        jecUncTotal->setJetEta(jetEta);
+        jecUncTotal->setJetPt(jetPt);
+        float uncPosTotal = jecUncTotal->getUncertainty(false);
+        jecUncTotal->setJetEta(jetEta);
+        jecUncTotal->setJetPt(jetPt);
+        float uncNegTotal = jecUncTotal->getUncertainty(false);
+        histo2D["jesUncDiff"]->Fill(jetPt, jetEta, 0.5*(uncPosTotal+uncNegTotal) - 0.5*(uncPos+uncNeg));
+        iP++;
       }
     }
-    
+
     ////////////////////////////////
     // LOAD THE FULLKINFIT OBJECT //
     ////////////////////////////////
@@ -478,8 +500,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 100; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 10; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -532,7 +554,7 @@ int main (int argc, char *argv[])
         {
           if( event->runId() <= 190738 )
       	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun, iFile);
-      	  else if( event->runId() >= 191043 && event->runId() <= 193621 )
+      	  else if( event->runId() >= 190782 && event->runId() <= 193621 )
       	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v12"), currentRun, iFile);
       	  else if( event->runId() >= 193834 && event->runId() <= 196531 )
       	    itriggerSemiMu = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v13"), currentRun, iFile);
@@ -555,7 +577,7 @@ int main (int argc, char *argv[])
         {
           if( event->runId() <= 190738 )
       	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v8"), currentRun, iFile);
-      	  else if( event->runId() >= 191043 && event->runId() <= 191411 )
+      	  else if( event->runId() >= 190782 && event->runId() <= 191411 )
 	          itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v9"), currentRun, iFile);
       	  else if( event->runId() >= 191695 && event->runId() <= 196531)
       	    itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun, iFile);
@@ -1115,6 +1137,7 @@ int main (int argc, char *argv[])
           // check top quark masses and which top is decaying hadronically
           float topMass = -1., antiTopMass = -1.;
           bool topDecayedLept = false;
+          TLorentzVector top, antiTop;
           
           if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 || dataSetName.find("ST_") == 0 || dataSetName.find("SingleTop") == 0)
           {
@@ -1123,9 +1146,15 @@ int main (int argc, char *argv[])
               if( mcParticles[iPart]->status() != 3) continue;
 //                cout << "type: " << mcParticles[iPart]->type() << endl;
               if( mcParticles[iPart]->type() == 6 )
+              {
                 topMass = mcParticles[iPart]->M();
+                top = *mcParticles[iPart];
+              }
               else if( mcParticles[iPart]->type() == -6 )
+              {
                 antiTopMass = mcParticles[iPart]->M();
+                antiTop = *mcParticles[iPart];
+              }
               else if( mcParticles[iPart]->type() == -13 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
                 topDecayedLept = true;
               else if( mcParticles[iPart]->type() == -11 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
@@ -1230,6 +1259,8 @@ int main (int argc, char *argv[])
           lightMonster->setHadrLQuark1( jetCombiner->GetLightQuark1() );
           lightMonster->setHadrLQuark2( jetCombiner->GetLightQuark2() );
           lightMonster->setLeptBQuark( jetCombiner->GetLeptBQuark() );
+          lightMonster->setGenTop( top );
+          lightMonster->setGenAntiTop( antiTop );
           
           MonsterTree->Fill();
           delete lightMonster;
@@ -1368,9 +1399,6 @@ int main (int argc, char *argv[])
   //Write histograms
   fout->cd();
   th1dir->cd();
-  
-  fout->cd();
-  
 	for(std::map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
 	{
 		TH1F *temp = it->second;
@@ -1397,6 +1425,15 @@ int main (int argc, char *argv[])
 	  temp->Write();
     TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
 		tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+	}
+	
+	fout->cd();
+	//Write TGraph2D
+	for(map<string,TGraph2D*>::const_iterator it = graph2D.begin(); it != graph2D.end(); it++)
+	{
+	  TGraph2D *temp = it->second;
+	  temp->SetNameTitle( (it->first).c_str(), (it->first).c_str() );
+	  temp->Write();
 	}
 	
   fout->cd();

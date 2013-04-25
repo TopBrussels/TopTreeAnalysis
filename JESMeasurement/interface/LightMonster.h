@@ -61,6 +61,8 @@ class LightMonster : public TObject
     ,hadrLQuark1_()
     ,hadrLQuark2_()
     ,leptBQuark_()
+    ,genTop_()
+    ,genAntiTop_()
    {;}
   
   ~LightMonster() {;}
@@ -107,6 +109,9 @@ class LightMonster : public TObject
   TLorentzVector hadrLQuark1() const { return hadrLQuark1_; }
   TLorentzVector hadrLQuark2() const { return hadrLQuark2_; }
   TLorentzVector leptBQuark() const { return leptBQuark_; }
+  TLorentzVector genTop() const { return genTop_; }
+  TLorentzVector genAntiTop() const { return genAntiTop_; }
+
   
   void setEventID(unsigned int eventID) { eventID_ = eventID; }
   void setRunID(unsigned int runID) { runID_ = runID; }
@@ -163,6 +168,9 @@ class LightMonster : public TObject
   void setHadrLQuark1(TLorentzVector hadrLQuark1) { hadrLQuark1_ = hadrLQuark1; }
   void setHadrLQuark2(TLorentzVector hadrLQuark2) { hadrLQuark2_ = hadrLQuark2; }
   void setLeptBQuark(TLorentzVector leptBQuark) { leptBQuark_ = leptBQuark; }
+  void setGenTop(TLorentzVector genTop) { genTop_ = genTop; }
+  void setGenAntiTop(TLorentzVector genAntiTop) { genAntiTop_ = genAntiTop; }
+  
   
  protected:
   
@@ -206,6 +214,8 @@ class LightMonster : public TObject
   TLorentzVector hadrLQuark1_;
   TLorentzVector hadrLQuark2_;
   TLorentzVector leptBQuark_;
+  TLorentzVector genTop_;
+  TLorentzVector genAntiTop_;
   
   ClassDef (LightMonster,2);
 };

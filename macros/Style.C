@@ -414,7 +414,7 @@ void setMyStyle(){
 // Margins:
   tdrStyle->SetPadTopMargin(0.07);
   tdrStyle->SetPadBottomMargin(0.13);
-  tdrStyle->SetPadLeftMargin(0.13); //aaa 0.13
+  tdrStyle->SetPadLeftMargin(0.17); //aaa 0.13
   tdrStyle->SetPadRightMargin(0.05); //aaa 0.05
 
 // For the Global title:

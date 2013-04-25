@@ -54,10 +54,15 @@ FullKinFit::FullKinFit(Dataset* d, ResolutionFit *resFitLightJets, ResolutionFit
     string mTopUnCorrtitle = "mTopUnCorr_"+dataset_->Name();
     string mWCorrtitle = "mWCorr_"+dataset_->Name();
     string mTopCorrtitle = "mTopCorr_"+dataset_->Name();
+    string mWSFCorrTitle = "mWSFCorr_"+dataset_->Name();
+    string mTopSFCorrTitle = "mTopSFCorr_"+dataset_->Name();
     histo1D_[mWUnCorrtitle] = new TH1F(mWUnCorrtitle.c_str(),mWUnCorrtitle.c_str(),50,0,150);
     histo1D_[mTopUnCorrtitle] = new TH1F(mTopUnCorrtitle.c_str(),mTopUnCorrtitle.c_str(),50,100,250);
     histo1D_[mWCorrtitle] = new TH1F(mWCorrtitle.c_str(),mWCorrtitle.c_str(),50,0,150);
     histo1D_[mTopCorrtitle] = new TH1F(mTopCorrtitle.c_str(),mTopCorrtitle.c_str(),50,100,250);
+    histo1D_[mWSFCorrTitle] = new TH1F(mWSFCorrTitle.c_str(),mWSFCorrTitle.c_str(),50,0,150);
+    histo1D_[mTopSFCorrTitle] = new TH1F(mTopSFCorrTitle.c_str(),mTopSFCorrTitle.c_str(),50,100,250);
+
   }
   
   string MonsterDir = "Monsters/";
@@ -364,6 +369,8 @@ float* FullKinFit::EstimateTopMass(TRootEvent* event, float WMass, bool writePNG
     histo1D_["mTopUnCorr_"+dataset_->Name()]->Fill(mTopRaw);
     histo1D_["mWCorr_"+dataset_->Name()]->Fill(mWCorr);
     histo1D_["mTopCorr_"+dataset_->Name()]->Fill(mTopCorr);
+//    histo1D_["mWSFCorr_"+dataset_->Name()]->Fill();
+//    histo1D_["mTopSFCorr_"+dataset_->Name()]->Fill();
   }
   
   Float_t mTopConstraint[51], chi2[51];
@@ -542,6 +549,8 @@ void FullKinFit::Write(TFile* fout, bool savePNG, string pathPNG)
   
   string mWCorrtitle = "mWCorr_"+dataset_->Name();
   string mTopCorrtitle = "mTopCorr_"+dataset_->Name();
+  string mWSFCorrTitle = "mWSFCorr_"+dataset_->Name();
+  string mTopSFCorrTitle = "mTopSFCorr_"+dataset_->Name();
   
   if(histo1D_[mWCorrtitle]->GetEntries() > 5)
   {

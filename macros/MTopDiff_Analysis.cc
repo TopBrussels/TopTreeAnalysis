@@ -92,30 +92,34 @@ int main (int argc, char *argv[])
 		inputMonsters.push_back( string(argv[1]) );
   else
   {
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Electron_Nominal_MERGED.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Mu_Nominal_MERGED.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Electron_InvertedIso_MERGED.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_Data_Mu_InvertedIso_MERGED.root");
     
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_3jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_2jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_ZJets_1jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_2jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_WJets_1jets_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_SemiLept_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_FullLept_Nominal_SemiLep.root");
+    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_Hadronic_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mcatnlo_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_powheg_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingdown_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_matchingup_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaledown_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_scaleup_Nominal_SemiLep.root");
     
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass161_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass163_5_Nominal_SemiLep.root");
@@ -124,7 +128,7 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass175_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass178_5_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass181_5_Nominal_SemiLep.root");
-    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/GoodFiles_JetEta2p4/KinFit_LightMonsters_TopMassDiff_TTbarJets_mass184_5_Nominal_SemiLep.root");
   }
   
   TFile *fout = new TFile ("MTopDiff_Analysis.root", "RECREATE");
@@ -139,6 +143,7 @@ int main (int argc, char *argv[])
  	histo1D["lumiWeightsDown"] = new TH1F("lumiWeightsDown","lumiWeightsDown;lumiWeightDown;#events",100,0,4);
 	histo1D["mTop_gen"] = new TH1F("mTop_gen","mTop_gen;mTop;#events",500,150,200);
 	histo1D["mTopDiff_gen"] = new TH1F("mTopDiff_gen","mTopDiff_gen;mTop;#events",100,-5,5);
+	histo1D["genWeight"] = new TH1F("genWeight","genWeight",100,0,2);
 	
 	histo1D["RunNr_Data_mu"] = new TH1F("RunNr_Data_mu","RunNr_Data_mu;RunNr;#events",208700-190600,190600,208700);
 	histo1D["RunNr_Data_el"] = new TH1F("RunNr_Data_el","RunNr_Data_el;RunNr;#events",208700-190600,190600,208700);
@@ -282,19 +287,25 @@ int main (int argc, char *argv[])
   MSPlot["RelPFISo_mu"] = new MultiSamplePlot(datasetsSemiMu,"RelPFIso_mu",50,0,1,"RelPFIso","Nr. of events");
   MSPlot["RelPFISo_el"] = new MultiSamplePlot(datasetsSemiEl,"RelPFIso_el",50,0,1,"RelPFIso","Nr. of events");
   
-  MSPlot["M3"] = new MultiSamplePlot(dataSetsOneData,"M3",80,0,800,"M3","Nr. of events");
-  MSPlot["PtTopM3"] = new MultiSamplePlot(dataSetsOneData,"PtTopM3",75,0,450,"PtTopM3","Nr. of events");
+  MSPlot["M3"] = new MultiSamplePlot(dataSetsOneData,"M3",50,0,1000,"M3","Nr. of events");
+  MSPlot["PtTopM3"] = new MultiSamplePlot(dataSetsOneData,"PtTopM3",45,0,450,"PtTopM3","Nr. of events");
   MSPlot["PtTTbar"] = new MultiSamplePlot(dataSetsOneData,"PtTTbar",50,0,250,"PtTTbar","Nr. of events");
   
   MSPlot["AllJets_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonPlus",50,30,530,"Jet p_{T} (GeV)","Jets / 10 GeV");
 //  MSPlot["AllJets_pt_leptonPlus"]->setMaxY(70000.);
   MSPlot["AllJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonMinus",50,30,530,"Jet p_{T} (GeV)","Jets / 10 GeV");
 //  MSPlot["AllJets_pt_leptonMinus"]->setMaxY(70000.);
+  MSPlot["AllJets_eta_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_eta_leptonPlus",50,-2.5,2.5,"Jet #eta","Nr. of Jets");
+  MSPlot["AllJets_eta_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_eta_leptonMinus",50,-2.5,2.5,"Jet #eta","Nr. of Jets");
   MSPlot["Leading_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["Leading_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["Leading_jet_pt"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt",100,20,1020,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
+  MSPlot["Leading_jet_eta_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_eta_leptonPlus",50,-2.5,2.5,"Jet #eta","Nr. of events");
+  MSPlot["Leading_jet_eta_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_eta_leptonMinus",50,-2.5,2.5,"Jet #eta","Nr. of events");
   MSPlot["4th_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
   MSPlot["4th_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonMinus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
+  MSPlot["4th_jet_eta_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_eta_leptonPlus",50,-2.5,2.5,"Jet #eta","Nr. of events");
+  MSPlot["4th_jet_eta_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_eta_leptonMinus",50,-2.5,2.5,"Jet #eta","Nr. of events");
   MSPlot["MET"] = new MultiSamplePlot(dataSetsOneData,"MET",50,0,300,"MET (GeV)","Nr. of events");
   MSPlot["MET_mu"] = new MultiSamplePlot(datasetsSemiMu,"MET_mu",50,0,300,"MET (GeV)","Nr. of events");
   MSPlot["MET_el"] = new MultiSamplePlot(datasetsSemiEl,"MET_el",50,0,300,"MET (GeV)","Nr. of events");
@@ -563,8 +574,8 @@ int main (int argc, char *argv[])
     double dataSetElSF = 1., dataSetMuSF = 1.;
     if(dataSet->Name().find("QCD") == 0)
     {
-      dataSetElSF = 0.599546; // PAS: 0.868831;
-      dataSetMuSF = 1.40788; // PAS: 0.947696;
+      dataSetElSF = 0.554599; // 4t30_Eta2p4_powheg: 0.585571   4t30_Eta2p4_MCatNLO: 0.514803   4t30_Eta2p4_GenTopPtRew: 0.554599   4t30_Eta2p4: 0.599546   PAS: 0.868831
+      dataSetMuSF = 1.257730; // 4t30_Eta2p4_powheg: 1.28806   4t30_Eta2p4_MCatNLO: 1.099734   4t30_Eta2p4_GenTopPtRew: 1.257730   4t30_Eta2p4: 1.40788   PAS: 0.947696;
     }
     else if( ! ( dataSet->Name().find("Data") == 0 ) ) // Other (non-QCD )MC
     {
@@ -819,9 +830,14 @@ int main (int argc, char *argv[])
       
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
       {
-        histo1D["mTop_gen"]->Fill(monster->topMass());
-        histo1D["mTop_gen"]->Fill(monster->antiTopMass());
-        histo1D["mTopDiff_gen"]->Fill( monster->topMass() - monster->antiTopMass() );
+        float pTgenTop = (monster->hadrBQuark() + monster->hadrLQuark1() + monster->hadrLQuark2()).Pt();
+//        float genWeight = exp(0.156 - 0.00137*pTgenTop);
+        float genWeight = (1.4*pow(10.0,-6.0)*pTgenTop*pTgenTop)-(2.0*pow(10.0,-3.0)*pTgenTop)+1.2;
+        histo1D["genWeight"]->Fill( genWeight );
+        monster->setEventWeight( monster->eventWeight() * genWeight );
+        histo1D["mTop_gen"]->Fill(monster->topMass(), monster->eventWeight());
+        histo1D["mTop_gen"]->Fill(monster->antiTopMass(), monster->eventWeight());
+        histo1D["mTopDiff_gen"]->Fill( monster->topMass() - monster->antiTopMass(), monster->eventWeight());
         float etaMostForwardJet = selectedJets[0].Eta();
         for(unsigned int i=1; i< selectedJets.size(); i++)
           if( fabs(selectedJets[i].Eta()) > fabs(etaMostForwardJet) )
@@ -971,7 +987,9 @@ int main (int argc, char *argv[])
         MSPlot["Nr_of_jets"+leptonChargeIncl]->Fill(selectedJets.size(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["Leading_jet_pt"+leptonChargeIncl]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["Leading_jet_pt"]->Fill(selectedJets[0].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+        MSPlot["Leading_jet_eta"+leptonChargeIncl]->Fill(selectedJets[0].Eta(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["4th_jet_pt"+leptonChargeIncl]->Fill(selectedJets[3].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+        MSPlot["4th_jet_eta"+leptonChargeIncl]->Fill(selectedJets[3].Eta(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["MET"+leptonChargeIncl]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["MET"+leptonDecay]->Fill(MET.Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
         MSPlot["MTW"+leptonDecay]->Fill(sqrt(2*MET.Pt()*lepton.Pt()*(1-cos(lepton.DeltaPhi(MET)))), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
@@ -1020,6 +1038,7 @@ int main (int argc, char *argv[])
           if(i<4)
           {
             MSPlot["AllJets_pt"+leptonChargeIncl]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
+            MSPlot["AllJets_eta"+leptonChargeIncl]->Fill(selectedJets[i].Eta(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
             if(doAllMSPlots)
             {
               MSPlot["AllJets_pt"+leptonCharge]->Fill(selectedJets[i].Pt(), dataSet, true, monster->eventWeight()*lumiWeight*Luminosity);
@@ -1160,13 +1179,13 @@ int main (int argc, char *argv[])
         {
           if( minChi2[iCombi] < maxChi2 )
           {
+            float factor = 1;
+            if( monster->selectedSemiMu() ) factor = LuminosityMu*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
+            else factor = LuminosityEl*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
+            
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
             if( dataSetName.find("W_WJets") == 0 || dataSetName.find("QCD") == 0 )
             {
-              float factor = 1;
-              if( monster->selectedSemiMu() ) factor = LuminosityMu*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
-              else factor = LuminosityEl*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
-              
               histo1D["wJets_mTopFitted"]->Fill(mTop[iCombi], factor * (TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
               histo1D["wJets_mTopFitted_noWeight"]->Fill(mTop[iCombi], factor / (double) mTop.size() );
               histo1D["wJets_combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
@@ -1174,10 +1193,10 @@ int main (int argc, char *argv[])
             }
             if( dataSetName.find("TTbarJets") == 0)
             {
-              histo1D["nBtags_allcombi"]->Fill(nBtags, monster->eventWeight()*lumiWeight*/*PDGscale*/(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
+              histo1D["nBtags_allcombi"]->Fill(nBtags, factor*monster->eventWeight()*lumiWeight*/*PDGscale*/(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
               if(mcCombiIndex == iCombi)
               {
-             	  histo1D["nBtags_goodcombi"]->Fill(nBtags, monster->eventWeight()*lumiWeight*/*PDGscale*/(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
+             	  histo1D["nBtags_goodcombi"]->Fill(nBtags, factor*monster->eventWeight()*lumiWeight*/*PDGscale*/(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight));
               }
               else if(lumiTTJetsSemiLept > 0)
               {
@@ -1254,7 +1273,7 @@ int main (int argc, char *argv[])
 	  RooDataHist dataHistWjets("dataHistWjets","dataHistWjets",mTopFitWjets,histo1D["wJets_mTopFitted"]);
 	
 	  RooRealVar mean("mean","mean",150.,130.,280.);
-	  RooRealVar sigma("sigma","sigma",35.,25.,70.);
+	  RooRealVar sigma("sigma","sigma",35.,15.,70.);
     RooLandau wJetsShapeLandau("wJetsShapeLandau","wJetsShapeLandau",mTopFitWjets,mean,sigma);
     wJetsShapeLandau.fitTo(dataHistWjets, SumW2Error(false), PrintLevel(-3), Verbose(false), Extended(false));
     
