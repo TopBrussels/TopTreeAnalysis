@@ -1169,7 +1169,6 @@ int main (int argc, char *argv[])
           // check top quark masses and which top is decaying hadronically
           float topMass = -1., antiTopMass = -1.;
           bool topDecayedLept = false;
-          
           TLorentzVector top, antiTop;
           
           if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0)

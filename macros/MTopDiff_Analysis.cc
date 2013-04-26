@@ -78,7 +78,7 @@ int main (int argc, char *argv[])
   float LuminosityMu = 4974, LuminosityEl = 4967;
   
   bool doAllMSPlots = false;
-  bool writeASCIIstuff = true; // false:  files are created but no events are filled
+  bool writeASCIIstuff = false; // false:  files are created but no events are filled
   bool useOnlyHighestWeight = false;
   if(writeASCIIstuff) useOnlyHighestWeight = false;
   
@@ -95,10 +95,10 @@ int main (int argc, char *argv[])
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_ElectronHad_4p7fb_InvertedIso_SemiLep.root");
 //    inputMonsters.push_back("Monsters/KinFit_LightMonsters_TopMassDiff_Data_MuHad_4p7fb_InvertedIso_SemiLep.root");
     
-//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_t_Nominal_SemiLep.root");
-//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tChannel_tbar_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_t_Nominal_SemiLep.root");
+//    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ST_SingleTop_tWChannel_tbar_Nominal_SemiLep.root");
 //    inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_ZJets_Nominal_SemiLep.root");
     inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_4jets_Nominal_SemiLep.root");
     inputMonsters.push_back("Monsters/Nominal/KinFit_LightMonsters_TopMassDiff_WJets_3jets_Nominal_SemiLep.root");
@@ -135,6 +135,7 @@ int main (int argc, char *argv[])
  	histo1D["lumiWeightsDown"] = new TH1F("lumiWeightsDown","lumiWeightsDown;lumiWeightDown;#events",100,0,4);
 	histo1D["mTop_gen"] = new TH1F("mTop_gen","mTop_gen;mTop;#events",500,150,200);
 	histo1D["mTopDiff_gen"] = new TH1F("mTopDiff_gen","mTopDiff_gen;mTop;#events",100,-5,5);
+	histo1D["genWeight"] = new TH1F("genWeight","genWeight",100,0,2);
 	
 	histo1D["RunNr_Data_mu"] = new TH1F("RunNr_Data_mu","RunNr_Data_mu;RunNr;#events",180400-160400,160400,180400);
 	histo1D["RunNr_Data_el"] = new TH1F("RunNr_Data_el","RunNr_Data_el;RunNr;#events",180400-160400,160400,180400);
@@ -166,8 +167,6 @@ int main (int argc, char *argv[])
 	histo1D["nUsedCombis_TTJets"] = new TH1F("nUsedCombis_TTJets","nUsedCombis_TTJets",13,-0.5,12.5);
 	histo1D["nUsedCombis_WJets"] = new TH1F("nUsedCombis_WJets","nUsedCombis_WJets",13,-0.5,12.5);
 	histo1D["maxIndexHadrJets"] = new TH1F("maxIndexHadrJets","maxIndexHadrJets",10,-0.5,9.5);
-  
-  histo1D["bjets_SSVHE"] = new TH1F("bjets_SSVHE","bjets_SSVHE;bjets_SSVHE;#b-jets",60,0,6);
   
   histo1D["lightJets_pt"] = new TH1F("lightJets_pt","lightJets_pt;lightJets_pt;#jets",100,20,270);
   histo1D["lightJets_eta"] = new TH1F("lightJets_eta","lightJets_eta;lightJets_eta;#jets",100,-2.5,2.5);
@@ -233,8 +232,12 @@ int main (int argc, char *argv[])
     if( dataSet->Name().find("QCD") == 0 ) color = kYellow;
     if( dataSet->Name().find("TT") == 0 )
     {
+      double newXS_SF = 172.025 / 157.5; //NNLO, see http://arxiv.org/pdf/1303.6254.pdf
       color = kRed+1;
       dataSet->SetTitle("t#bar{t}");
+      dataSet->SetEquivalentLuminosity( dataSet->EquivalentLumi() / newXS_SF );
+      dataSet->SetXsection( dataSet->Xsection() * newXS_SF );
+
     }
     if( dataSet->Name().find("TTbarJets_Other") == 0 ) color = kRed-7;
     if( dataSet->Name().find("Chamonix") == 0 )
@@ -245,6 +248,7 @@ int main (int argc, char *argv[])
     if( dataSet->Name().find("WJets") == 0 )
     {
       dataSet->SetTitle("W#rightarrowl#nu");
+      dataSet->SetName("W_"+dataSet->Name());
       color = kGreen-3;
     }
     if( dataSet->Name().find("ZJets") == 0 )
@@ -276,16 +280,14 @@ int main (int argc, char *argv[])
   MSPlot["RelPFISo_mu"] = new MultiSamplePlot(datasetsSemiMu,"RelPFIso_mu",100,0,1,"RelPFIso","Nr. of events");
   MSPlot["RelPFISo_el"] = new MultiSamplePlot(datasetsSemiMu,"RelPFIso_el",100,0,1,"RelPFIso","Nr. of events");
   
-  MSPlot["M3"] = new MultiSamplePlot(datasetsSemiMu,"M3",160,0,800,"M3","Nr. of events");
+  MSPlot["M3"] = new MultiSamplePlot(datasetsSemiMu,"M3",50,0,1000,"M3","Nr. of events");
   MSPlot["M3_PtTop300"] = new MultiSamplePlot(datasetsSemiMu,"M3_PtTop300",80,0,800,"M3_PtTop300","Nr. of events");  
   MSPlot["M3_PtTTbar200"] = new MultiSamplePlot(datasetsSemiMu,"M3_PtTTbar200",80,0,800,"M3_PtTTbar200","Nr. of events");  
   MSPlot["PtTopM3"] = new MultiSamplePlot(datasetsSemiMu,"PtTopM3",150,0,450,"PtTopM3","Nr. of events");
   MSPlot["PtTTbar"] = new MultiSamplePlot(datasetsSemiMu,"PtTTbar",100,0,250,"PtTTbar","Nr. of events");
   
   MSPlot["AllJets_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonPlus",50,30,530,"Jet p_{T} (GeV)","Jets / 10 GeV");
-  MSPlot["AllJets_pt_leptonPlus"]->setMaxY(70000.);
   MSPlot["AllJets_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"AllJets_pt_leptonMinus",50,30,530,"Jet p_{T} (GeV)","Jets / 10 GeV");
-  MSPlot["AllJets_pt_leptonMinus"]->setMaxY(70000.);
   MSPlot["Leading_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonPlus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["Leading_jet_pt_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Leading_jet_pt_leptonMinus",50,20,520,"Leading Jet p_{T} (GeV)","Nr. of events / 10 GeV");
   MSPlot["4th_jet_pt_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"4th_jet_pt_leptonPlus",50,20,120,"4th Jet p_{T} (GeV)","Nr. of events / 2 GeV");
@@ -295,17 +297,11 @@ int main (int argc, char *argv[])
   MSPlot["MET_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MET_leptonMinus",100,0,250,"MET (GeV)","Nr. of events");
   MSPlot["Nr_of_jets"] = new MultiSamplePlot(datasetsSemiEl,"Nr_of_jets",5,3.5,8.5,"Nr. of jets","Nr. of events");
   MSPlot["Nr_of_jets_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonPlus",5,3.5,8.5,"No. of jets","Events");
-  MSPlot["Nr_of_jets_leptonPlus"]->setMaxY(50000.);
   MSPlot["Nr_of_jets_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"Nr_of_jets_leptonMinus",5,3.5,8.5,"No. of jets","Events");
-  MSPlot["Nr_of_jets_leptonMinus"]->setMaxY(50000.);
   MSPlot["MinChi2ndf_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonPlus",50,0,10,"Min #chi^{2}","Events");
-  MSPlot["MinChi2ndf_Fit_leptonPlus"]->setMaxY(18000.);
   MSPlot["MinChi2ndf_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"MinChi2ndf_Fit_leptonMinus",50,0,10,"Min #chi^{2}","Events");
-  MSPlot["MinChi2ndf_Fit_leptonMinus"]->setMaxY(28000.);
   MSPlot["mTop_Fit_leptonPlus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonPlus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
-  MSPlot["mTop_Fit_leptonPlus"]->setMaxY(6000.);
   MSPlot["mTop_Fit_leptonMinus"] = new MultiSamplePlot(dataSetsOneData,"mTop_Fit_leptonMinus",50,0,1000,"Fitted Top Mass (GeV)","Events / 20 GeV");
-  MSPlot["mTop_Fit_leptonMinus"]->setMaxY(6000.);
   
   MSPlot["mTop_Fit_AllCombi_muPlus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_AllCombi_muPlus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
   MSPlot["mTop_Fit_AllCombi_muMinus"] = new MultiSamplePlot(datasetsSemiMu,"mTop_Fit_AllCombi_muMinus",100,0,1000,"Fitted Top Mass (GeV)","Nr. of events / 10 GeV");
@@ -681,15 +677,24 @@ int main (int argc, char *argv[])
       }
       else cout << "leptonCharge = " << monster->leptonCharge() << endl;
       
+      // Change b-tag cutValue for b-tag systematics?
+      if(dataSetName.find("bTagPlus") != string::npos) bTagCut = 0.63;
+      else if(dataSetName.find("bTagMinus") != string::npos) bTagCut = 0.727;
+      else if(dataSetName.find("bVSbbarTag") != string::npos)
+      {
+        if(monster->leptonCharge() > 0) bTagCut = 0.653;
+        else bTagCut = 0.705;
+      }
+      
       // the selected jets!
       vector<TLorentzVector> selectedJets = monster->selectedJets();
       TLorentzVector lepton = monster->lepton();
       TLorentzVector MET = monster->met();
-      vector<float> btagSSVHE = monster->bTagSSVHE();
+      vector<float> btagCSV = monster->bTagCSV();
       int nBtags = 0, nJets = 0;
       for(unsigned int i=0; i<selectedJets.size(); i++)
       {
-        if(btagSSVHE[i] > bTagCut) nBtags++;
+        if(btagCSV[i] > bTagCut) nBtags++;
         if(selectedJets[0].Pt()>pTjetCut) nJets++;
       }
       if( !(selectedJets[0].Pt()>pTjetCut && selectedJets[1].Pt()>pTjetCut && selectedJets[2].Pt()>pTjetCut && selectedJets[3].Pt()>pTjetCut) )
@@ -736,9 +741,13 @@ int main (int argc, char *argv[])
       
       if( dataSetName.find("TTbarJets") == 0 || dataSetName.find("TT_") == 0 )
       {
-        histo1D["mTop_gen"]->Fill(monster->topMass());
-        histo1D["mTop_gen"]->Fill(monster->antiTopMass());
-        histo1D["mTopDiff_gen"]->Fill( monster->topMass() - monster->antiTopMass() );
+        float pTgenTop = (monster->hadrBQuark() + monster->hadrLQuark1() + monster->hadrLQuark2()).Pt();
+        float genWeight = exp(0.199 - 0.00166*pTgenTop);
+        histo1D["genWeight"]->Fill( genWeight );
+        monster->setEventWeight( monster->eventWeight() * genWeight );
+        histo1D["mTop_gen"]->Fill(monster->topMass(), monster->eventWeight() );
+        histo1D["mTop_gen"]->Fill(monster->antiTopMass(), monster->eventWeight() );
+        histo1D["mTopDiff_gen"]->Fill( monster->topMass() - monster->antiTopMass(), monster->eventWeight() );
         float etaMostForwardJet = selectedJets[0].Eta();
         for(unsigned int i=1; i< selectedJets.size(); i++)
           if( fabs(selectedJets[i].Eta()) > fabs(etaMostForwardJet) )
@@ -787,7 +796,7 @@ int main (int argc, char *argv[])
             float bTagW = 1;
             for(size_t i=0; i<4; i++)
             {
-              if(btagSSVHE[combi[i]] > bTagCut) // b-tagged!
+              if(btagCSV[combi[i]] > bTagCut) // b-tagged!
               {
                 if(i == 0 || i == 1) bTagW *= misTagRate;
                 else bTagW *= bTagEff;
@@ -865,13 +874,13 @@ int main (int argc, char *argv[])
         if(monster->hadrBJet() < 9999)
         {
           nRealBjets++;
-          if(btagSSVHE[monster->hadrBJet()] > bTagCut) nRealBjetsBtag++;
+          if(btagCSV[monster->hadrBJet()] > bTagCut) nRealBjetsBtag++;
         }
         
         if(monster->leptBJet() < 9999)
         {
           nRealBjets++;
-          if(btagSSVHE[monster->leptBJet()] > bTagCut) nRealBjetsBtag++;
+          if(btagCSV[monster->leptBJet()] > bTagCut) nRealBjetsBtag++;
         }
         
         if(leptonCharge == "_muPlus") nMuPlus += (monster->eventWeight()*lumiWeight);
@@ -1008,10 +1017,10 @@ int main (int argc, char *argv[])
           outFileSemiMu << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightDown << "  " << lumiWeightUp << endl;
           outFileSemiMu << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nPU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
           outFileSemiMu << lepton.Phi() << "  " << lepton.Eta() << "  " << lepton.Pt() << "  " << monster->leptonCharge() << "  " << MET.Px() << "  " << MET.Py() << endl;
-          outFileSemiMu << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagSSVHE[0] << "  "
-            << selectedJets[1].Pt() << "  " << selectedJets[1].Eta() << "  " << selectedJets[1].Phi() << "  " << btagSSVHE[1] << "  "
-            << selectedJets[2].Pt() << "  " << selectedJets[2].Eta() << "  " << selectedJets[2].Phi() << "  " << btagSSVHE[2] << "  " 
-            << selectedJets[3].Pt() << "  " << selectedJets[3].Eta() << "  " << selectedJets[3].Phi() << "  " << btagSSVHE[3] << endl;
+          outFileSemiMu << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagCSV[0] << "  "
+            << selectedJets[1].Pt() << "  " << selectedJets[1].Eta() << "  " << selectedJets[1].Phi() << "  " << btagCSV[1] << "  "
+            << selectedJets[2].Pt() << "  " << selectedJets[2].Eta() << "  " << selectedJets[2].Phi() << "  " << btagCSV[2] << "  " 
+            << selectedJets[3].Pt() << "  " << selectedJets[3].Eta() << "  " << selectedJets[3].Phi() << "  " << btagCSV[3] << endl;
           outFileSemiMu << "goodCombi: " << monster->hadrLJet1() << "  " << monster->hadrLJet2() << "  " << monster->hadrBJet() << "  index: " << mcCombiIndex << endl;
           for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++)
             outFileSemiMu << mTop[iCombi] << "  " << sigmaMtop[iCombi] << "  " << minChi2[iCombi] << "  " << light1index[iCombi] << "  " << light2index[iCombi] << "  " << hadrBindex[iCombi] << endl;
@@ -1047,10 +1056,10 @@ int main (int argc, char *argv[])
           outFileSemiEl << "EventWeight: " << monster->eventWeight() << "  " << lumiWeight << "  " << lumiWeightDown << "  " << lumiWeightUp << endl;
           outFileSemiEl << selectedJets.size() << "  " << monster->nPV() << "  " << monster->nPU() << "  " << monster->topMass() << "  " << monster->antiTopMass() << "  " << monster->topDecayedLept() << endl;
           outFileSemiEl << lepton.Phi() << "  " << lepton.Eta() << "  " << lepton.Pt() << "  " << monster->leptonCharge() << "  " << MET.Px() << "  " << MET.Py() << endl;
-          outFileSemiEl << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagSSVHE[0] << "  "
-            << selectedJets[1].Pt() << "  " << selectedJets[1].Eta() << "  " << selectedJets[1].Phi() << "  " << btagSSVHE[1] << "  "
-            << selectedJets[2].Pt() << "  " << selectedJets[2].Eta() << "  " << selectedJets[2].Phi() << "  " << btagSSVHE[2] << "  " 
-            << selectedJets[3].Pt() << "  " << selectedJets[3].Eta() << "  " << selectedJets[3].Phi() << "  " << btagSSVHE[3] << endl;
+          outFileSemiEl << selectedJets[0].Pt() << "  " << selectedJets[0].Eta() << "  " << selectedJets[0].Phi() << "  " << btagCSV[0] << "  "
+            << selectedJets[1].Pt() << "  " << selectedJets[1].Eta() << "  " << selectedJets[1].Phi() << "  " << btagCSV[1] << "  "
+            << selectedJets[2].Pt() << "  " << selectedJets[2].Eta() << "  " << selectedJets[2].Phi() << "  " << btagCSV[2] << "  " 
+            << selectedJets[3].Pt() << "  " << selectedJets[3].Eta() << "  " << selectedJets[3].Phi() << "  " << btagCSV[3] << endl;
           outFileSemiEl << "goodCombi: " << monster->hadrLJet1() << "  " << monster->hadrLJet2() << "  " << monster->hadrBJet() << "  index: " << mcCombiIndex << endl;
           for(unsigned int iCombi=0; iCombi<mTop.size(); iCombi++)
             outFileSemiEl << mTop[iCombi] << "  " << sigmaMtop[iCombi] << "  " << minChi2[iCombi] << "  " << light1index[iCombi] << "  " << light2index[iCombi] << "  " << hadrBindex[iCombi] << endl;
@@ -1067,7 +1076,7 @@ int main (int argc, char *argv[])
           if( minChi2[iCombi] < maxChi2 )
           {
             histo1D["combiWeight"]->Fill(TMath::Exp(-0.5*minChi2[iCombi]) * bTagWeight[iCombi] / totalWeight);
-            if( dataSetName.find("WJets") == 0 )
+            if( dataSetName.find("W_WJets") == 0 )
             {
               float factor = 1;
               if( monster->selectedSemiMu() ) factor = LuminosityMu*dataSet->NormFactor()*monster->eventWeight()*lumiWeight;
@@ -1222,15 +1231,15 @@ int main (int argc, char *argv[])
   {
     MultiSamplePlot *temp = it->second;
     string name = it->first;
-    temp->showNumberEntries(false);
+    temp->showNumberEntries(true);
     if(name.find("muPlus") < name.size()) temp->addText("#mu^{+}+jets");
     else if(name.find("muMinus") < name.size()) temp->addText("#mu^{-}+jets");
     else if(name.find("elPlus") < name.size()) temp->addText("e^{+}+jets");
     else if(name.find("elMinus") < name.size()) temp->addText("e^{-}+jets");
     if(name.find("leptonPlus") < name.size()) temp->addText("l^{+}+jets");
     else if(name.find("leptonMinus") < name.size()) temp->addText("l^{-}+jets");
-    temp->Draw(false, name, false, true, true, true, true, 1, true);
-//    temp->Draw(false, name, false, false, false, false, false, 1, true);
+//    temp->Draw(false, name, true, true, true, true, true, 1, true);
+    temp->Draw(false, name, false, false, false, false, false, 1, true);
     temp->Write(fout, name, true, pathPNG+"MSPlot/","png");
 //    temp->Write(fout, name, true, pathPNG+"MSPlot/","pdf");
   }
