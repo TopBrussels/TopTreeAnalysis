@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!-- add="1" means run on the sample -->
+<!-- add="0" means do not run on the sample -->
+<!-- ex with eqlumi <d name="TTJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" EqLumi="2287."/> -->
+<!-- ex with NofEvts <d name="TTJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" NofEvts="946644"/> -->
+<!-- ex with PreselEff NofPSEvts <d name="TTJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" PreselEff="0.2307" NofPSEvts="218404"/> -->
+
+<datasets>
+
+<!-- Data -->
+<!-- For electrons -->
+<!--<d name="Data_El_1" title="Data_El_1" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2205/*.root"/>
+<d name="Data_El_2" title="Data_El_2" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2280/*.root"/>
+<d name="Data_El_3" title="Data_El_3" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2228/*.root"/>
+<d name="Data_El_4" title="Data_El_4" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2507/*.root"/>
+<d name="Data_El_5" title="Data_El_5" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2424/*.root"/>
+<d name="Data_El_6" title="Data_El_6" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="18716.074" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2420/*.root"/>-->
+<!-- For muons -->
+<!--<d name="Data_Mu_1" title="Data_Mu_1" add="0" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2217/*.root"/>
+<d name="Data_Mu_2" title="Data_Mu_2" add="0" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2227/*.root"/>
+<d name="Data_Mu_3" title="Data_Mu_3" add="0" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2262/*.root"/>
+<d name="Data_Mu_4" title="Data_Mu_4" add="0" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2423/*.root"/>
+<d name="Data_Mu_5" title="Data_Mu_5" add="0" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2435/*.root"/>
+<d name="Data_Mu_6" title="Data_Mu_6" add="0" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="19125.189" filenames="/home/mmaes/samples/DATASKIM_53X_ProdV4_TopTreeID_2417/*.root"/>-->
+
+<!-- For muons: (with trigger) Run A+B = 5316.73/pb -->
+<d name="Data_Mu" title="Data_Mu" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="5316.73" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_MuonSkim_53X_v4_newDataTopTreeId2217_Run2012A-13Jul2012-v1/03042013_183529/*.root,dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_MuonSkim_53X_v4_newDataTopTreeId3069_Run2012A-recover-06Aug2012-v1/03042013_182004/*.root,dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_MuonSkim_53X_v4_newDataTopTreeId3110_Run2012B-13Jul2012-v1/03042013_184612/*.root"/>
+<!-- For electrons: (with trigger) Run A+B = 5241.444/pb -->
+<d name="Data_El" title="Data_El" add="1" color="4" ls="1" lw="2" normf="1" xsection="1" EqLumi="5241.444" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_ElectronSkim_53X_v4_newDataTopTreeId2205_Run2012A-13Jul2012-v1/03042013_185530/*.root,dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_ElectronSkim_53X_v4_newDataTopTreeId3072_Run2012A-recover-06Aug2012-v1/03042013_191013/*.root,dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_ElectronSkim_53X_v4_newDataTopTreeId3246_Run2012B-13Jul2012-v1/03042013_192113/*.root"/>
+
+
+<!-- Here are the background simulations -->
+<d name="TTbarJets" title="t#bar{t}+jets" add="1" color="8" ls="1" lw="2" normf="1" xsection="225.2" EqLumi="30330.5639" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_06012013_132556_TOPTREE/22032013_123714/*.root"/>
+<d name="ST_tW_t" title="Single t (tW)" add="1" color="7" ls="1" lw="2" normf="1" xsection="11.1" EqLumi="34473.6" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152228_TOPTREE/25032013_202835/*.root"/>
+<d name="ST_tW_tbar" title="Single #bar{t} (tW)" add="1" color="7" ls="1" lw="2" normf="1" xsection="11.1" EqLumi="28017.0" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152233_TOPTREE/25032013_205835/*.root"/>
+<d name="ST_t_t" title="Single t (t)" add="1" color="7" ls="1" lw="2" normf="1" xsection="56.4" EqLumi="45535.9" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_T_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_18122012_094617_TOPTREE/25032013_201835/*.root"/>
+<d name="ST_t_tbar" title="Single #bar{t} (t)" add="1" color="7" ls="1" lw="2" normf="1" xsection="30.7" EqLumi="39892.1" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_Tbar_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152223_TOPTREE/25032013_204835/*.root"/>
+
+<d name="WJets_4jets" title="W+4jets #rightarrow l#nu" add="1" color="4" ls="1" lw="2" normf="1" xsection="264.0436" EqLumi="50684.0007" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152239_TOPTREE/22032013_154216/*.root"/>
+<d name="WJets_3jets" title="W+3jets #rightarrow l#nu" add="1" color="53" ls="1" lw="2" normf="1" xsection="640.367" EqLumi="22350.814" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152244_TOPTREE/22032013_153216/*.root"/>
+<d name="WJets_2jets" title="W+2jets #rightarrow l#nu" add="1" color="60" ls="1" lw="2" normf="1" xsection="2159.235" EqLumi="15765.5" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_W2JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_20122012_182639_TOPTREE/22032013_152216/*.root"/>
+<d name="WJets_1jets" title="W+1jet #rightarrow l#nu" add="1" color="63" ls="1" lw="2" normf="1" xsection="6662.7829" EqLumi="3473.2583" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_W1JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_22122012_110932_TOPTREE/22032013_151216/*.root"/>
+
+<d name="ZJets_4jets" title="Z/#gamma*+4jets #rightarrow l^{+}l^{-}" add="1" color="90" ls="1" lw="2" normf="1" xsection="27.36" EqLumi="229598.3640" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_DY4JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152254_TOPTREE/22032013_162216/*.root"/>
+<d name="ZJets_3jets" title="Z/#gamma*+3jets #rightarrow l^{+}l^{-}" add="1" color="88" ls="1" lw="2" normf="1" xsection="60.69" EqLumi="180380.96" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_19122012_170710_TOPTREE/22032013_161217/*.root"/>
+<d name="ZJets_2jets" title="Z/#gamma*+2jets #rightarrow l^{+}l^{-}" add="1" color="86" ls="1" lw="2" normf="1" xsection="214.97" EqLumi="10942.4478" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_21122012_101054_TOPTREE/22032013_160216/*.root"/>
+<d name="ZJets_1jets" title="Z/#gamma*+1jet #rightarrow l^{+}l^{-}" add="1" color="84" ls="1" lw="2" normf="1" xsection="666.3" EqLumi="35877.5101" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_21122012_081930_TOPTREE/22032013_155216/*.root"/>
+
+<d name="WW" title="WW" add="1" color="9" ls="1" lw="2" normf="1" xsection="54.838" EqLumi="182362.83" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WW_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_19122012_214457_TOPTREE/11042013_111809/*.root"/>
+<d name="WZ" title="WZ" add="1" color="9" ls="1" lw="2" normf="1" xsection="33.21" EqLumi="298111.02" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WZ_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_20122012_034440_TOPTREE/11042013_112808/*.root"/>
+<d name="ZZ" title="ZZ" add="1" color="9" ls="1" lw="2" normf="1" xsection="17.654" EqLumi="555108.81" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_ZZ_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_22122012_102011_TOPTREE/11042013_113809/*.root"/>
+
+<d name="ttW" title="ttW" add="1" color="6" ls="1" lw="2" normf="1" xsection="0.2148" EqLumi="762132.2" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_TTWJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_22122012_134248_TOPTREE/25032013_215835/*.root"/>
+<d name="ttZ" title="ttZ" add="1" color="6" ls="1" lw="2" normf="1" xsection="0.172" EqLumi="1018366.3" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_TTZJets_8TeV-madgraph_v2_Summer12_DR53X-PU_S10_START53_V7A-v1_22122012_162538_TOPTREE/25032013_214835/*.root"/>
+
+<d name="WpWp" title="WpWp" add="1" color="32" ls="1" lw="2" normf="1" xsection="0.248" EqLumi="403165.3" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WpWpqq_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_18042013_225403_TOPTREE/02052013_171222/*.root"/>
+<d name="WmWm" title="WmWm" add="1" color="32" ls="1" lw="2" normf="1" xsection="0.0889" EqLumi="1084274.5" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WmWmqq_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_12042013_083059_TOPTREE/02052013_170223/*.root"/>
+
+<d name="WWW" title="WWW" add="1" color="7" ls="1" lw="2" normf="1" xsection="0.08058" EqLumi="2737006.7" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WWWJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_02052013_140146_TOPTREE/03052013_105239/*.root"/>
+<d name="WWZ" title="WWZ" add="1" color="7" ls="1" lw="2" normf="1" xsection="0.05795" EqLumi="3834926.66" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WWZNoGstarJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_02052013_170152_TOPTREE/03052013_110239/*.root"/>
+<d name="WZZ" title="WZZ" add="1" color="7" ls="1" lw="2" normf="1" xsection="0.01968" EqLumi="11170477.6" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_WZZNoGstarJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_02052013_170157_TOPTREE/03052013_111239/*.root"/>
+<d name="ZZZ" title="ZZZ" add="1" color="7" ls="1" lw="2" normf="1" xsection="0.005527" EqLumi="40691876.2" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_Skim_53X_v4_ZZZNoGstarJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_02052013_170202_TOPTREE/03052013_112239/*.root"/>
+
+<!-- approximate, signal samples to be redone  + cross sections also to be calculated without cut of 30 GeV on jet pt !!-->
+<d name="NP_overlay_QDTojZ_mass700_ktCC0_ktNC1" title="QD #rightarrow jZ (mass 700, ktCC0, ktNC1)" add="1" color="1" ls="1" lw="2" normf="1" xsection="0.7887" EqLumi="126141.75" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_MuonSkim_53X_v4_QDTojZ_mass700_ktCC0_ktNC1_Summer12MG8TeV_FS53_FIXv1_Summer12_21022013_172730/26022013_182813/*.root"/>
+<d name="NP_overlay_QDQDTojZjZ_mass700" title="QDQD #rightarrow jZjZ (mass 700)" add="1" color="1" ls="1" lw="2" normf="1" xsection="0.03793" EqLumi="1318059.58" filenames="dcap://maite.iihe.ac.be//pnfs/iihe/cms/store/user/gvonsem/Skimmed-TopTrees/VLQ_MuonSkim_53X_v4_QDQDTojZjZ_mass700_Summer12MG8TeV_FS53_Summer12_15022013_135735/26022013_181814/*.root"/>
+
+
+
+</datasets>
+
+<!-- All parameters needed for the selection and the bkg estimation methods -->
+<analysis>
+<!-- JetType: 0=TRootJet - 1=TRootCaloJet - 2=TRootPFJet -->
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patType1CorrectedPFMetPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJetsNoNu" loadGenEventCollection="1" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="1" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
+<a type="Selection" PVertexNdofCut="4" PVertexZCut="24." PVertexRhoCut="2." MuonPtCutSR="20." MuonEtaCutSR="2.1" MuonRelIsoCutSR="0.05" MuonNHitsCutSR="10" MuonD0CutSR="0.02" MuonDRJetsCut="0.3" MuonPtCutVetoSR="10." MuonEtaCutVetoSR="2.5" MuonRelIsoCutVetoSR="0.2" ElectronPtCut="15." ElectronEtaCut="2.5" ElectronRelIsoCut="0.2" JetsPtCutSR="30." JetsEtaCutSR="2.4" applyJetID="1" JetEMFCut="0.01" n90HitsCut="1" fHPDCut="0.98" NofJets="4" NofJetBins="2"/>
+
+<a type="Conditions" isMC="1" MCRound="0" Vars_ByFile="0" VarsFile="m0_100_m12_100" IntToCut="4" Verbose="2" Luminosity="5000" JES="1." nPseudoExp="0" nPseudoSession="0" runonTTrees="0" doABCD="1" doVJEstim="1" doVJEstPE="1" doTtJEstim="1" doTemplComp="0" doSystematics="0"/><!-- Luminosity in pb-1 -->
+<a type="CRForTtbarEstimation"  BtagAlgo_ttjEst="0" BtagDiscriCut_ttjEst="4.38" MuonPtCutCR="30." MuonEtaCutCR="2.1" MuonRelIsoCutCR="0.1" JetsPtCutCR="30." JetsEtaCutCR="2.4" MblCut="160." DRBBCut="2.3" HTBBCut="500." NREvtFraction="0.75"/>
+<a type="CRForABCDEstimation"   NXbinsABCD="200" NYbinsABCD="200" XbinMinABCD="0" XbinMaxABCD="20" YbinMinABCD="0" YbinMaxABCD="20" cutXmin="0" cutX0="0.1" cutX1="0.2" cutXmax="20." cutYmin="0." cutY0="3." cutY1="4." cutYmax="20." region="1"/>
+
+<!-- VJet-estimation
+Method: "Minuit" / "Minuit2", options : "Migrad", "Simplex", "Combined", "Scan", ("Fumili" option needs more inputs, therefore not available for the moment)
+Method: "GSLMultiMin", option : "ConjugateFR", "ConjugatePR", "BFGS", "BFGS2" and "SteepestDescent" (convergence prob. not optimal)
+Method: "GSLMultiFit" / "GSLSimAn", options : ""
+-->
+<!-- btagging algorithms and working points: -->
+  <!-- 0 == TrackCountingHighEff    : loose/medium/tight = 2.030/4.380/14.200-->
+  <!-- 1 == TrackCountingHighPur    : loose/medium/tight = 1.470/2.360/ 5.360-->
+  <!-- 2 == JetProbability          : loose/medium/tight = 0.241/0.490/ 0.795-->
+  <!-- 3 == JetBProbability         : loose/medium/tight = 1.100/2.370/ 3.390-->
+  <!-- 4 == simpleSecondaryVertex   : loose/medium/tight = 1.250/2.050/ 4.070-->
+  <!-- 5 == combinedSecondaryVertex : loose/medium/tight = 0.387/0.838/ 0.940-->
+<!--
+TaggEffInit:	/ separate jet multiplicity (true also for NVlikeInit and NTTlikeInit)
+		- separate btag working point
+		, separate: eb,eudsc(TTlike),euds(Vlike)
+EffEbsel        : efficiency to select 0,1,2 b-quark-jet
+	        / separate jet multiplicity
+VJEstFixParam   : 0: eb, 1: eudsc(TTlike), 2: euds(Vlike)
+-->
+
+<a type="ParamForVJetEstimation" BtagAlgo_vjEst="0" NofBtagWorkingPoint_vjEst="1" BtagWorkingPoint_vjEst="2.03,3.20" MinMethod="Minuit2" MinOption="Combined" useMJLE="0" useUnBinMLE="1" NVJetPE="500" TagEffInit="0.794,0.128,0.097-0.70,0.043,0.02-0.63,0.05,0.010/0.807,0.134,0.124-0.70,0.043,0.02-0.63,0.05,0.010" NVlikeInit="14./4." NTTlikeInit="6./8." EffEbsel="0.0515,0.4170,0.5281/0.0187,0.2604,0.7049" VJEstFixParam="0,1,2" NofIterationsVJestShapeEstim="40"/>
+<a type="Observables" runOnObsByString="0" listOfObsInts="2" listOfObsStrings="ET1oET2,ET1oET3" binning="../config/Binning.root" bins="20" eventsperbin="10" EpsilonValue="1.30" Correl_cut="0.80"/>
+<a type="CrossSection" MCExpFilename="../config/MCFile.root" LuminosityError="0.1" TriggerEff="1" TriggerEffError="0.05" SkimEff="1." SkimEffError="0" MuonSelEff="0.43" MuonSelEffError="0.003" SecondLeptonVetoEff="0.4833" SecondLeptonVetoEffError="0.01" JetSelEff="0.8206" JetSelEffError="0.04" NofSingleTopEvts="0" NofSingleTopEvtsError="0"/>
+<a type="Search" doBkgEstim="1" doDumpPseudoExpInfoInTTree="1" DumpTreeName="dumpTreeFile.root" FractionHWEvts="0.1,0.2,0.3" />
+<!-- LuminosityError has to be relative [0-1], ex: 0.1 means 10% uncertainty on luminosity -->
+<!-- other errors should be absolute -->
+</analysis>
+
