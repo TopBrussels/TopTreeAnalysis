@@ -84,6 +84,9 @@ int main(int argc, char* argv[]) {
     bool matching_plus = false; 
     bool matching_minus = false; 
     
+    bool ZSFplus = false; 
+    bool ZSFminus = false; 
+    
     
     /////////////////////////////////////////////
     ///                 B-tag SF              ///
@@ -179,8 +182,16 @@ int main(int argc, char* argv[]) {
 		cout << "--xml myxml.xml Xml file" << endl; 
 		cout << "--eleSFplus   lepton ID/trigger eff scaled up" << endl; 
 		cout << "--eleSFminus:  lepton ID/trigger eff scaled down" << endl; 
+		cout << "--ZSFplus: Z/gamma reweighing up, twice the scale factors" << endl; 
+		cout << "--ZSFminus: Z/gamma reweighing down, no scale factor" << endl; 
                 return 0;
         }
+	if (argval == "--ZSFplus"){
+		ZSFplus = true; 
+	}
+	if (argval == "--ZSFminus"){
+		ZSFminus = true; 
+	}
         if (argval=="--ee"){
                 mode = 2;
         }
@@ -523,6 +534,8 @@ int main(int argc, char* argv[]) {
         else if (!isData && PUsysUp){        sprintf(rootFileName,"outputs/PUsysUp_%d_%s.root", mode, name);}
         else if (!isData && PUsysDown){      sprintf(rootFileName,"outputs/PUsysDown_%d_%s.root", mode, name);}
         else if (!isData && !reweightPU){    sprintf(rootFileName,"outputs/out_noPU_%d_%s.root", mode, name);}
+	else if (!isData && ZSFplus){	     sprintf(rootFileName,"outputs/out_ZSFsysUp_%d_%s.root", mode, name);}
+	else if (!isData && ZSFminus){	     sprintf(rootFileName,"outputs/out_ZSFsysDown_%d_%s.root", mode, name);}
         else{                                sprintf(rootFileName,"outputs/out_%d_%s.root", mode, name);}
       
 
@@ -913,7 +926,7 @@ int main(int argc, char* argv[]) {
         cout << "[Info:] mode = " << mode << ", lumi: " <<  lumi << " pb, sample: " << name << ", base weight: " << xlweight << " , xml file: " << xmlfile << endl;
       
         if (JERPlus ||JERMinus || JESPlus || JESMinus ||  SFplus || SFminus ||SFplus_c || SFminus_c ||SFplus_l || SFminus_l || unclusteredUp || unclusteredDown 
-          || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D || topmass_plus ||topmass_minus) {
+          || !reweightPU || !scaleFactor || PUsysUp || PUsysDown || Pu3D || topmass_plus ||topmass_minus || ZSFplus || ZSFminus) {
                 cout << "[Warning:] Non-standard options, ignore if you did it conciously" << endl;
                 
                 if (JERPlus) cout << "[Warning:] JER systematics on, plus. Note that for btagging the nominal values are used" << endl;
@@ -936,6 +949,8 @@ int main(int argc, char* argv[]) {
                 if (PUsysDown) cout <<"[Warning:] PU down " << endl;
         	if (topmass_plus) cout << " Warning: topmass is 178.5 GeV " << endl; 
 		if (topmass_minus) cout << "Warning: topmass is 166.5 GeV" << endl; 
+		if (ZSFplus) cout << "Warning: Z/gamma scalefactors doubled" << endl; 
+		if (ZSFminus) cout << "Warning: no Z/gamma scalefactors applied" << endl; 
         } 
         else{
                 cout << "[Info:] Standard setup " << endl;
@@ -1173,7 +1188,7 @@ int main(int argc, char* argv[]) {
 		//---------------------------------------------
 		// Zjets sf only for MC zjets (from danny meeting single top 21/3)
 		//------------------------------------------------
-		if(isZjets){
+		if(isZjets && !ZSFminus && !ZSFplus){
 			if(mode == 0){
 				if(met_pt < 10){ ZjetsSF = 0.9028; }
 				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9497; }
@@ -1209,7 +1224,42 @@ int main(int argc, char* argv[]) {
 			weight *= ZjetsSF;
 		
 		}
+		if(isZjets && !ZSFminus && ZSFplus){
+			if(mode == 0){
+				if(met_pt < 10){ ZjetsSF = 2*0.9028; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 2*0.9497; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 2*1.0189; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 2*1.0988; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 2*1.17415; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 2*1.25145; }	
+				else{ ZjetsSF = 2*1.26325; }
+				
+			}
+			else if (mode == 1){
+				if(met_pt < 10){ ZjetsSF = 2*0.8841; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 2*0.9386; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 2*1.0131; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 2*1.1012; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 2*1.1850; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 2*1.2500; }	
+				else{ ZjetsSF = 2*1.3071; }			
+			}
+			else{
+				if(met_pt < 10){ ZjetsSF = 0.9215; }
+				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 2*0.9608; }
+				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 2*1.0247; }
+				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 2*1.0964; }
+				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 2*1.1633; }
+				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 2*1.2529; }	
+				else{ ZjetsSF = 2*1.2194; }			
+			}
 		
+		
+		
+		
+			weight *= ZjetsSF;
+		
+		}		
 		
 		
 		
