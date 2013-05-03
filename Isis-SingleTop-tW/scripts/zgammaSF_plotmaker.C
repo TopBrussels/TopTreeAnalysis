@@ -122,7 +122,7 @@ void zgammaSF_plotmaker(int mode = 0, int region = 0){
         histo_zjets->SetLineWidth(2);
 
 
-       histo_zjetsNOSF= (TH1F*) _file2->Get(cutLabel[iPlots]+ "_" + processName[0]);
+  /*     histo_zjetsNOSF= (TH1F*) _file2->Get(cutLabel[iPlots]+ "_" + processName[0]);
 	       cout << cutLabel[iPlots]+ "_" + processName[0] << endl; 
 	       
 	       
@@ -130,25 +130,25 @@ void zgammaSF_plotmaker(int mode = 0, int region = 0){
                //histo_zjetsNOSF->SetFillColor(color[1]);
         histo_zjetsNOSF->SetLineColor(color[1]);
         histo_zjetsNOSF->SetLineWidth(2); 
-	      
+*/	      
        leg ->AddEntry(histo_zjets, "Z/#gamma * events" , "l");  
-       leg ->AddEntry(histo_zjetsNOSF, "Z/#gamma * events - no reweighing" , "l"); 
+   //    leg ->AddEntry(histo_zjetsNOSF, "Z/#gamma * events - no reweighing" , "l"); 
        
-      double max = TMath::Max(histo_zjets->GetMaximum(),histo_zjetsNOSF->GetMaximum());
+//      double max = TMath::Max(histo_zjets->GetMaximum(),histo_zjetsNOSF->GetMaximum());
     
        TCanvas *c1 = new TCanvas();
        histo_zjets->Draw("h");
-      histo_zjets->SetMaximum(max * 1.2);
+   //   histo_zjets->SetMaximum(max * 1.2);
      //  histo_zjets->SetMinimum(1);
        histo_zjets->GetXaxis()->SetTitle(cutTitle[iPlots]);
      
        
-         histo_zjetsNOSF->Draw("h,sames");
+    /*     histo_zjetsNOSF->Draw("h,sames");
       histo_zjetsNOSF->SetMaximum(max * 1.2);
      //  histo_zjetsNOSF->SetMinimum(1);
        histo_zjetsNOSF->GetXaxis()->SetTitle(cutTitle[iPlots]);
 
-       
+      */ 
       leg->Draw();
       labelcms->Draw();
       labelcms2->Draw();

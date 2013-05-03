@@ -56,18 +56,23 @@ void plotmakerall(){
   
 
    const int nProcess = 7;
-   const int nPlots = 16;
+   const int nPlots = 28;
   TString processName[nProcess] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "data"};
   TString processTitle[nProcess] = { "tW", "t/s-channel", "t#bar{t}", "WW", "Z/#gamma*+jets", "W+jets",   "data"};
   Color_t color[nProcess] =        { kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3,  kBlack};
   
-
+/*
   TString cutLabel[nPlots] =     { "cuts", "met", "mll", "njets", "njetsbt", "ptsys", "ht", "pt_leading", "nvertex_2lep", "nvertex", "pt_max", "pt_min","njets_final","njetsbt_final","et_jet",  "met_zgamma"};
   int rebinHisto[nPlots] =       { 1, 4, 4, 1, 1, 4, 12, 4, 1, 1,2, 2,1,1,4,5};
   TString cutTitle[nPlots] =     { "Analysis Cut", "E_{T}^{miss}", "Inv. Mass", "# of jets", "# of jets(bt)" ,  "P_{T} system [GeV]", "H_{T} [GeV]","P_{T} of the leading jet", "# of vertex after lep sel","# of  vertex ",  "p_T of the first lepton [GeV]", "p_T  of the second lepton [GeV]", "# of jets final", "# of jets(bt) final","transverse energy jet (GeV)", "E_{T}^{miss} inside Zmass window"};
 
+*/
 
- 
+
+  TString cutLabel[nPlots] =     {"cuts","nvertex_1j1t","met_before_1j1t","met_before_2j1t","met_before_2j2t","met_after_1j1t","met_after_2j1t","met_after_2j2t","mll_before","mll_after","mll_after2","ht_before_1j1t","ht_before_2j1t","ht_before_2j2t","ptsys_before_1j1t","ptsys_before_2j1t","ptsys_before_2j2t","ptsys_1j1t","ptsys_2j1t","ptsys_2j2t","ht_1j1t","ht_2j1t","ht_2j2t","njets_final","njetsbt_final","njetsbt_final_loose", "met_zgamma", "mll_zgamma"};
+  int rebinHisto[nPlots] =       { 1,1, 4, 4,4,4 ,4,4,4,4, 4, 12, 12,12,4,4,4,4,4,4,12,12,12,1,1,1,2,2};
+  TString cutTitle[nPlots] =     { "Analysis Cut","# vertices after final", "E_{T}^{miss} before Cut 1j1t", "E_{T}^{miss} before Cut 2j1t","E_{T}^{miss} before Cut 2j2t","E_{T}^{miss} after Cut 1j1t","E_{T}^{miss} after Cut 2j1t","E_{T}^{miss} after Cut 2j2t","Inv. Mass Lept. before Cut", "Inv. Mass Lept. after Cut", "Inv. Mass Lept. after Cut 2", "H_{T} [GeV] before Cut 1j1t","H_{T} [GeV] before Cut 2j1t","H_{T} [GeV] before Cut 2j2t","P_{T} [GeV] of the system before Cut 1j1t","P_{T} [GeV] of the system before Cut 2j1t","P_{T} [GeV] of the  system before Cut 2j2t","P_{T} [GeV] of the system 1j1t","P_{T}  [GeV] of the system 2j1t","P_{T} [GeV] of the system 2j2t","H_{T} [GeV] of the system 1j1t","H_{T}  [GeV] of the  system 2j1t","H_{T} [GeV] of the system 2j2t","Number of jets after full cutflow", "number of tight bjets after full cutflow", "number of loose bjets after full cutflow", "E_{T}^{miss} in Z mass window", "Inv. Mass in Z mass window"};
+
  
  
   TH1F*  h [nPlots][nProcess];

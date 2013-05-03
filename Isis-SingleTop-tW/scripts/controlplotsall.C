@@ -54,20 +54,20 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   
   char myRootFile[300];
  
-  TString processName[8] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "qcd_mu", "data"};
-  TString processTitle[8] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",  "QCD", "data"};
-  Color_t color[8] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3, 40, kBlack};
+  TString processName[7] =  { "twdr", "st", "tt","di", "zjets", "wjets",  "data"};
+  TString processTitle[7] = { "tW", "t/s-channel", "t#bar{t}", "WW/WZ/ZZ", "Z/#gamma*+jets", "W+jets",   "data"};
+  Color_t color[7] =        {kWhite, kMagenta-10, kRed+1, kYellow-10,  kAzure-2, kGreen-3,  kBlack};
  
   TString cutLabel = "R";
   TString cutTitle = " ";
   TString nregion = "tt"; 
   
-  TH1F*  h [8];
-  TH1F*  histo[8];
-  TH1F*  h0[8];
-  TH1F*  h1[8];
-  TH1F*  h2[8];
-  TH1F*  histo2[8];
+  TH1F*  h [7];
+  TH1F*  histo[7];
+  TH1F*  h0[7];
+  TH1F*  h1[7];
+  TH1F*  h2[7];
+  TH1F*  histo2[7];
   THStack* hStack;
   THStack* hStack2;
   
@@ -78,7 +78,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   leg ->SetTextSize(0.03);
   hStack = new THStack();
   hStack2 = new THStack();
-  for (int iProcess = 0; iProcess < 8; iProcess++){
+  for (int iProcess = 0; iProcess < 7; iProcess++){
     
     sprintf(myRootFile,"results/an_11966pb_0.root");
     
@@ -169,22 +169,22 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
     }
     
   }
-  for (int iP = 0; iP < 7; iP ++){
-    int  index = 6 - iP;
+  for (int iP = 0; iP < 6; iP ++){
+    int  index = 5 - iP;
     // hStack->Add(histo[index]);
     hStack2->Add(histo2[index]);
   }
  
   histo[5]->Add(histo[1]);
   histo[5]->Add(histo[3]);
-  histo[5]->Add(histo[6]);  
+  
   
   hStack->Add(histo[5]);
   hStack->Add(histo[4]);
   hStack->Add(histo[2]);
   hStack->Add(histo[0]);
   
-  leg->AddEntry(histo[7], processTitle[7], "p");
+  leg->AddEntry(histo[6], processTitle[6], "p");
   
   leg->AddEntry(histo[0], processTitle[0], "f");
   leg->AddEntry(histo[2], processTitle[2], "f");
@@ -192,13 +192,13 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   leg->AddEntry(histo[5], "Other", "f");
      
   
-  histo[7]->SetMarkerStyle(20);
-  histo[7]->SetMarkerSize(1.2);
-  histo[7]->SetLineWidth(1);
-  histo[7]->SetMarkerColor(kBlack);
-  histo[7]->SetLineColor(kBlack);
+  histo[6]->SetMarkerStyle(20);
+  histo[6]->SetMarkerSize(1.2);
+  histo[6]->SetLineWidth(1);
+  histo[6]->SetMarkerColor(kBlack);
+  histo[6]->SetLineColor(kBlack);
   
-  double max = TMath::Max(hStack->GetMaximum(), histo[7]->GetMaximum());
+  double max = TMath::Max(hStack->GetMaximum(), histo[6]->GetMaximum());
   TCanvas *c1 = new TCanvas();
   hStack->Draw("histo");
   hStack->SetMaximum(max * 1.25);
@@ -215,7 +215,7 @@ void controlplotsall(bool dyonly = false, bool ttdy = false){
   hStack->GetXaxis()->SetBinLabel(2,"2 jet 1 tag");
   hStack->GetXaxis()->SetBinLabel(3,"2 jet 2 tag");
   
-  histo[7]->Draw("e, sames");
+  histo[6]->Draw("e, sames");
   leg->Draw();
   labelcms->Draw();
   labelcms2->Draw();

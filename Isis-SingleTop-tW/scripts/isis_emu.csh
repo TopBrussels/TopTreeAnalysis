@@ -11,6 +11,19 @@ root.exe -b -l -q isis_chain.C\(5\,0\,0\)   #wjets
 root.exe -b -l -q isis_chain.C\(7\,0\,0\)    #others
 
 
+#ZSF
+root.exe -b -l -q isis_chain.C\(19\,0\,0\)   #tt  up
+root.exe -b -l -q isis_chain.C\(-19\,0\,0\)  #tt down
+
+root.exe -b -l -q isis_chain.C\(29\,0\,0\)     #twdr up
+root.exe -b -l -q isis_chain.C\(-29\,0\,0\)    #twdr down
+
+root.exe -b -l -q isis_chain.C\(39\,0\,0\)     #others up
+root.exe -b -l -q isis_chain.C\(-39\,0\,0\)    #others down
+
+
+
+
 #JER
 root.exe -b -l -q isis_chain.C\(10\,0\,0\)   #tt  up
 root.exe -b -l -q isis_chain.C\(-10\,0\,0\)  #tt down

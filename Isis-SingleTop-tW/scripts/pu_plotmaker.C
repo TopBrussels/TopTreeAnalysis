@@ -45,7 +45,7 @@ void pu_plotmaker(){
 
     
   sprintf(myRootFile,"../pileupHistos/pileup_MC_Summer12.root"); // take output from looper
-   sprintf(myRootFile1,"../pileupHistos/pileup_tW_2012Data53X_UpToRun203002/nominal.root");
+  sprintf(myRootFile1,"../pileupHistos/pileup_tW_2012Data53X_UpToRun203002/nominal.root");
   sprintf(myRootFile2,"../pileupHistos/pileup_tW_2012Data53X_UpToRun203002/sys_down.root"); // take output from looper
   sprintf(myRootFile3,"../pileupHistos/pileup_tW_2012Data53X_UpToRun203002/sys_up.root");
   
@@ -120,23 +120,27 @@ TH1F* histo_puDown;
        leg ->AddEntry(histo_puDown, "PU data - SF down" , "l"); 
        
        
-      double max = TMath::Max(histo_puMC->GetMaximum(),histo_pu->GetMaximum());
+      double max = TMath::Max(histo_puMC->GetMaximum(),histo_puUp->GetMaximum());
     
        TCanvas *c1 = new TCanvas();
+       histo_pu->SetMaximum(max*1.2 );
+       histo_puMC->SetMaximum(max*1.2 );
+       histo_puUp->SetMaximum(max*1.2);
+       histo_puDown->SetMaximum(max*1.2 );
        histo_pu->DrawNormalized("h");
-      histo_pu->SetMaximum(max*1.2 );
+      
      //  histo_puMC->SetMinimum(1);
        histo_pu->GetXaxis()->SetTitle("Pile-up");
      
        
          histo_puMC->DrawNormalized("h,sames");
-      histo_puMC->SetMaximum(max*1.2 );
+      
       histo_puMC->GetXaxis()->SetTitle("Pile-up");
     histo_puUp->DrawNormalized("h,sames");
-      histo_puUp->SetMaximum(max*1.2);
+      
       histo_puUp->GetXaxis()->SetTitle("Pile-up");
       histo_puDown->DrawNormalized("h,sames");
-      histo_puDown->SetMaximum(max*1.2 );
+      
 histo_puDown->GetXaxis()->SetTitle("Pile-up");
        
       leg->Draw();

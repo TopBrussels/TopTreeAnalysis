@@ -8,6 +8,25 @@ hadd -f outputs/out_0_others.root outputs/out_0_di.root outputs/out_0_st.root ou
 hadd -f outputs/out_0_mc.root outputs/out_0_twdr.root outputs/out_0_tt.root outputs/out_0_others.root;
 
 
+rm outputs/out_ZSFsysUp_0_zjetsall.root;
+hadd -f outputs/out_ZSFsysUp_0_zjetsall.root outputs/out_ZSFsysUp_0_zjets*;
+hadd -f outputs/out_ZSFsysUp_0_twdr.root outputs/out_ZSFsysUp_0_tw_dr.root outputs/out_ZSFsysUp_0_atw_dr.root;
+
+hadd -f outputs/out_ZSFsysUp_0_st.root outputs/out_ZSFsysUp_0_t.root outputs/out_ZSFsysUp_0_at.root outputs/out_ZSFsysUp_0_s.root outputs/out_ZSFsysUp_0_as.root;
+hadd -f outputs/out_ZSFsysUp_0_di.root outputs/out_ZSFsysUp_0_ww.root outputs/out_ZSFsysUp_0_wz.root outputs/out_ZSFsysUp_0_zz.root ;
+hadd -f outputs/out_ZSFsysUp_0_others.root outputs/out_ZSFsysUp_0_di.root outputs/out_ZSFsysUp_0_st.root outputs/out_ZSFsysUp_0_wjets.root outputs/out_ZSFsysUp_0_zjetsall.root;
+hadd -f outputs/out_ZSFsysUp_0_mc.root outputs/out_ZSFsysUp_0_twdr.root outputs/out_ZSFsysUp_0_tt.root outputs/out_ZSFsysUp_0_others.root;
+
+
+rm outputs/out_ZSFsysDown_0_zjetsall.root;
+hadd -f outputs/out_ZSFsysDown_0_zjetsall.root outputs/out_ZSFsysDown_0_zjets*;
+hadd -f outputs/out_ZSFsysDown_0_twdr.root outputs/out_ZSFsysDown_0_tw_dr.root outputs/out_ZSFsysDown_0_atw_dr.root;
+
+hadd -f outputs/out_ZSFsysDown_0_st.root outputs/out_ZSFsysDown_0_t.root outputs/out_ZSFsysDown_0_at.root outputs/out_ZSFsysDown_0_s.root outputs/out_ZSFsysDown_0_as.root;
+hadd -f outputs/out_ZSFsysDown_0_di.root outputs/out_ZSFsysDown_0_ww.root outputs/out_ZSFsysDown_0_wz.root outputs/out_ZSFsysDown_0_zz.root ;
+hadd -f outputs/out_ZSFsysDown_0_others.root outputs/out_ZSFsysDown_0_di.root outputs/out_ZSFsysDown_0_st.root outputs/out_ZSFsysDown_0_wjets.root outputs/out_ZSFsysDown_0_zjetsall.root;
+hadd -f outputs/out_ZSFsysDown_0_mc.root outputs/out_ZSFsysDown_0_twdr.root outputs/out_ZSFsysDown_0_tt.root outputs/out_ZSFsysDown_0_others.root;
+
 rm outputs/JERsysDown_0_zjetsall.root;
 hadd -f outputs/JERsysDown_0_zjetsall.root outputs/JERsysDown_0_zjets*;
 hadd -f outputs/JERsysDown_0_twdr.root outputs/JERsysDown_0_tw_dr.root outputs/JERsysDown_0_atw_dr.root;

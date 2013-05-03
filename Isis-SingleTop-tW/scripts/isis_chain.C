@@ -97,7 +97,13 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   else if (nsel == -18)                   {sprintf(plotName,"tt");}  
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
  
-  
+  // ZSF 
+  else if (nsel == -19)                   {sprintf(plotName,"tt");}  
+  else if (nsel ==  19)                   {sprintf(plotName,"tt");}
+  else if (nsel == -29)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  29)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -39)                   {sprintf(plotName,"others");}
+  else if (nsel ==  39)                   {sprintf(plotName,"others");}
   
   if (mode != 0 &&  mode !=1 && mode !=2) mode = 0;
   if (!silent){
@@ -108,9 +114,11 @@ void isis_chain(int nsel = 0, int mode = 0, bool silent = false){
   }
   
   char myRootFile[300];
-  
-  
-  if(nsel == -10 || nsel == -20 || nsel == -30){
+   if(nsel == -19 || nsel == -29 || nsel == -39){
+  sprintf(myRootFile,"outputs/out_ZSFsysDown_%d_%s.root", mode, plotName);
+  }else if(nsel == 19 || nsel == 29 || nsel == 39){
+   sprintf(myRootFile,"outputs/out_ZSFsysUp_%d_%s.root", mode, plotName);
+  }else if(nsel == -10 || nsel == -20 || nsel == -30){
   sprintf(myRootFile,"outputs/JERsysDown_%d_%s.root", mode, plotName);
   }else if(nsel == 10 || nsel == 20 || nsel == 30){
    sprintf(myRootFile,"outputs/JERsysUp_%d_%s.root", mode, plotName);

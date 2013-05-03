@@ -111,7 +111,13 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   else if (nsel ==  18)                   {sprintf(plotName,"tt");}
 
   
-  
+  // ZSF 
+  else if (nsel == -19)                   {sprintf(plotName,"tt");}  
+  else if (nsel ==  19)                   {sprintf(plotName,"tt");}
+  else if (nsel == -29)                   {sprintf(plotName,"twdr");}
+  else if (nsel ==  29)                   {sprintf(plotName,"twdr");}
+  else if (nsel == -39)                   {sprintf(plotName,"others");}
+  else if (nsel ==  39)                   {sprintf(plotName,"others");}
   
  
   
@@ -121,9 +127,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     if      (mode == 0)	 lumi = 11966.617;  	
     else if (mode == 1) lumi = 12067.294;  	
     else if (mode == 2) lumi = 12093.792;  	
-  
-  
-  if(nsel == -10 || nsel == -20 || nsel == -30){
+ 
+   if(nsel == -19 || nsel == -29 || nsel == -39){
+  sprintf(newRootFile,"results/ZSFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  }
+  else if(nsel == 19 || nsel == 29 || nsel == 39){
+   sprintf(newRootFile,"results/ZSFsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  }
+  else if(nsel == -10 || nsel == -20 || nsel == -30){
   sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 10 || nsel == 20 || nsel == 30){

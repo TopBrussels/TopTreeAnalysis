@@ -96,6 +96,11 @@ void syst_plotmaker(int mode = 0, int region = 0){
     else if (mode == 2) lumi = 12093.792;  	
     
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode); // take output from looper
+  
+  
+  sprintf(myRootFileZSFsysDown,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+ 
+  sprintf(myRootFileZSFsysUp,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
  
   sprintf(myRootFileJERsysDown,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
@@ -135,6 +140,8 @@ void syst_plotmaker(int mode = 0, int region = 0){
   
    
   TFile *_file0 = TFile::Open(myRootFile);
+  TFile *_fileZSFsysUp = TFile::Open(myRootFileZSFsysUp);
+  TFile *_fileZSFsysDown = TFile::Open(myRootFileZSFsysDown);
   TFile *_fileJERsysUp = TFile::Open(myRootFileJERsysUp);
   TFile *_fileJERsysDown = TFile::Open(myRootFileJERsysDown);
   TFile *_fileJESsysUp = TFile::Open(myRootFileJESsysUp);
@@ -159,6 +166,8 @@ void syst_plotmaker(int mode = 0, int region = 0){
   cout << "-------------------------------------------------------" << endl; 
   cout << " ------------ USED FILES ------------------------------" << endl; 
   cout << "Normal: " << myRootFile << endl;
+  cout << "ZSFsysDown: " << myRootFileZSFsysDown << endl;
+  cout << "ZSFsysUp: " << myRootFileZSFsysUp << endl;
   cout << "JERsysDown: " << myRootFileJERsysDown << endl;
   cout << "JERsysUp: " << myRootFileJERsysUp << endl;
   cout << "JESsysDown: " << myRootFileJESsysDown << endl;
@@ -181,14 +190,14 @@ void syst_plotmaker(int mode = 0, int region = 0){
   
   const int nProcess = 4;
   const int nPlots = 10; // 16
-  const int nSys = 19;
+  const int nSys = 21;
 
 
   TString processName[nProcess] =  { "twdr", "tt","twds","others"};
   TString processTitle[nProcess] = { "tW DR","t#bar{t}","tW DS", "other"};
   Color_t color[nProcess] =        { kBlue, kRed, kGreen,kMagenta};
   
-  TString systName[nSys] = { "Normal", "JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp","TopMassDown" , "TopMassUp","Q2Down" , "Q2Up","eleSFsysDown" , "eleSFsysUp","matchingDown" , "matchingUp"}; 
+  TString systName[nSys] = { "Normal", "ZSFsysDown" , "ZSFsysUp","JERsysDown" , "JERsysUp","JESsysDown" , "JESsysUp","PUsysDown" , "PUsysUp","SFsysDown" , "SFsysUp","METsysDown" , "METsysUp","TopMassDown" , "TopMassUp","Q2Down" , "Q2Up","eleSFsysDown" , "eleSFsysUp","matchingDown" , "matchingUp"}; 
 
 /*
   TString cutLabel[nPlots] =     {  "met", "mll", "ptsys", "ht", "pt_leading", "nvertex", "met_2j1t", "mll_2j1t", "ptsys_2j1t", "ht_2j1t", "pt_leading_2j1t","met_2j2t", "mll_2j2t", "ptsys_2j2t", "ht_2j2t", "pt_leading_2j2t" };
@@ -216,6 +225,7 @@ void syst_plotmaker(int mode = 0, int region = 0){
   TString regionString[3] = {"0","1","2"};
   
   TString plotExtension = "sys_plot_"; // name of the plots
+  TString plotZSF = "ZSF_";
   TString plotJER = "JER_"; 
   TString plotJES = "JES_"; 
   TString plotPU = "PU_";
@@ -236,6 +246,8 @@ void syst_plotmaker(int mode = 0, int region = 0){
   
   //Make plots   
   TH1F* histo_tt;
+  TH1F* histo_tt_ZSFsysDown;
+  TH1F* histo_tt_ZSFsysUp;
   TH1F* histo_tt_JERsysDown;
   TH1F* histo_tt_JERsysUp;
   TH1F* histo_tt_JESsysDown;
@@ -256,6 +268,8 @@ void syst_plotmaker(int mode = 0, int region = 0){
   TH1F* histo_tt_matchingUp;
   
   TH1F* histo_other;
+  TH1F* histo_other_ZSFsysDown;
+  TH1F* histo_other_ZSFsysUp;
   TH1F* histo_other_JERsysDown;
   TH1F* histo_other_JERsysUp;
   TH1F* histo_other_JESsysDown;
@@ -272,6 +286,8 @@ void syst_plotmaker(int mode = 0, int region = 0){
   
   
   TH1F* histo_twdr;
+  TH1F* histo_twdr_ZSFsysDown; 
+  TH1F* histo_twdr_ZSFsysUp; 
   TH1F* histo_twdr_JERsysDown; 
   TH1F* histo_twdr_JERsysUp; 
   TH1F* histo_twdr_JESsysDown; 
@@ -297,6 +313,11 @@ void syst_plotmaker(int mode = 0, int region = 0){
      leg ->SetFillStyle(1001);
      leg ->SetFillColor(kWhite);
      leg ->SetBorderSize(1);
+     
+     legZSF = new TLegend(0.7,0.7,0.94,0.94);
+     legZSF ->SetFillStyle(1001);
+     legZSF ->SetFillColor(kWhite);
+     legZSF ->SetBorderSize(1);
      
      legJES = new TLegend(0.7,0.7,0.94,0.94);
      legJES ->SetFillStyle(1001);
@@ -351,6 +372,11 @@ void syst_plotmaker(int mode = 0, int region = 0){
      aleg ->SetFillColor(kWhite);
      aleg ->SetBorderSize(1);
      
+     alegZSF = new TLegend(0.7,0.7,0.94,0.94);
+     alegZSF ->SetFillStyle(1001);
+     alegZSF ->SetFillColor(kWhite);
+     alegZSF ->SetBorderSize(1);
+     
      alegJES = new TLegend(0.7,0.7,0.94,0.94);
      alegJES ->SetFillStyle(1001);
      alegJES ->SetFillColor(kWhite);
@@ -399,9 +425,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
      
 	//other
 	
-	// Get histos tt bar 
+
        histo_other= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[3]);
 	      // cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 
+	histo_other_ZSFsysDown= (TH1F*) _fileZSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[3]);
+	     //  cout << "ZSFsysDown: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 	       
+       histo_other_ZSFsysUp= (TH1F*) _fileZSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[3]);
+	    //   cout << "ZSFsysUp: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 		
        histo_other_JERsysDown= (TH1F*) _fileJERsysDown->Get(cutLabel[iPlots]+ "_" + processName[3]);
 	      // cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 	       
        histo_other_JERsysUp= (TH1F*) _fileJERsysUp->Get(cutLabel[iPlots]+ "_" + processName[3]);
@@ -432,6 +462,16 @@ void syst_plotmaker(int mode = 0, int region = 0){
        histo_other->Rebin(rebinHisto[iPlots]);
        histo_other->SetLineColor(color[3]);
        histo_other->SetLineWidth(2);
+       
+       histo_other_ZSFsysDown->Rebin(rebinHisto[iPlots]);
+       histo_other_ZSFsysDown->SetLineColor(color[3]);
+       histo_other_ZSFsysDown->SetLineStyle(3); 
+       histo_other_ZSFsysDown->SetLineWidth(2);
+       
+       histo_other_ZSFsysUp->Rebin(rebinHisto[iPlots]);
+       histo_other_ZSFsysUp->SetLineColor(color[3]);
+       histo_other_ZSFsysUp->SetLineStyle(7); 
+       histo_other_ZSFsysUp->SetLineWidth(2);
        
        histo_other_JERsysDown->Rebin(rebinHisto[iPlots]);
        histo_other_JERsysDown->SetLineColor(color[3]);
@@ -500,6 +540,10 @@ void syst_plotmaker(int mode = 0, int region = 0){
        // Get histos tt bar 
        histo_tt= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[1]);
 	      // cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
+	 histo_tt_ZSFsysDown= (TH1F*) _fileZSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	     //  cout << "ZSFsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
+       histo_tt_ZSFsysUp= (TH1F*) _fileZSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
+	    //   cout << "ZSFsysUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
        histo_tt_JERsysDown= (TH1F*) _fileJERsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
 	      // cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
        histo_tt_JERsysUp= (TH1F*) _fileJERsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
@@ -542,6 +586,16 @@ void syst_plotmaker(int mode = 0, int region = 0){
        histo_tt->Rebin(rebinHisto[iPlots]);
        histo_tt->SetLineColor(color[0]);
        histo_tt->SetLineWidth(2);
+       
+       histo_tt_ZSFsysDown->Rebin(rebinHisto[iPlots]);
+       histo_tt_ZSFsysDown->SetLineColor(color[0]);
+       histo_tt_ZSFsysDown->SetLineStyle(3); 
+       histo_tt_ZSFsysDown->SetLineWidth(2);
+       
+       histo_tt_ZSFsysUp->Rebin(rebinHisto[iPlots]);
+       histo_tt_ZSFsysUp->SetLineColor(color[0]);
+       histo_tt_ZSFsysUp->SetLineStyle(7); 
+       histo_tt_ZSFsysUp->SetLineWidth(2);
        
        histo_tt_JERsysDown->Rebin(rebinHisto[iPlots]);
        histo_tt_JERsysDown->SetLineColor(color[0]);
@@ -647,6 +701,10 @@ void syst_plotmaker(int mode = 0, int region = 0){
        // get histos twdr
        histo_twdr= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[0]);
         //cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_ZSFsysDown= (TH1F*) _fileZSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "ZSFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_twdr_ZSFsysUp= (TH1F*) _fileZSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
+        //cout << "ZSFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_JERsysDown= (TH1F*) _fileJERsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
        // cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_JERsysUp= (TH1F*) _fileJERsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
@@ -686,6 +744,16 @@ void syst_plotmaker(int mode = 0, int region = 0){
               // histo_twdr->SetFillColor(color[0]);
        histo_twdr->SetLineColor(color[1]);
        histo_twdr->SetLineWidth(2);
+       
+       histo_twdr_ZSFsysDown->Rebin(rebinHisto[iPlots]);       
+       histo_twdr_ZSFsysDown->SetLineColor(color[1]);
+       histo_twdr_ZSFsysDown->SetLineStyle(3); 
+       histo_twdr_ZSFsysDown->SetLineWidth(2);
+       
+       histo_twdr_ZSFsysUp->Rebin(rebinHisto[iPlots]);
+       histo_twdr_ZSFsysUp->SetLineColor(color[1]);
+       histo_twdr_ZSFsysUp->SetLineStyle(7); 
+       histo_twdr_ZSFsysUp->SetLineWidth(2);
        
        histo_twdr_JERsysDown->Rebin(rebinHisto[iPlots]);       
        histo_twdr_JERsysDown->SetLineColor(color[1]);
@@ -785,6 +853,18 @@ void syst_plotmaker(int mode = 0, int region = 0){
        leg ->AddEntry(histo_other_JERsysDown, "other bckgr. JERsysDown", "l"); 
        leg ->AddEntry(histo_other_JERsysUp, "other bckgr. JERsysUp", "l");
        
+       legZSF ->AddEntry(histo_tt, "tt bckgr." , "l");  
+       legZSF ->AddEntry(histo_tt_ZSFsysDown, "tt bckgr. ZSFsysDown" , "l"); 
+       legZSF ->AddEntry(histo_tt_ZSFsysUp, "tt bckgr. ZSFsysUp" , "l");   
+
+       legZSF ->AddEntry(histo_twdr, "twdr signal", "l"); 
+       legZSF ->AddEntry(histo_twdr_ZSFsysDown, "twdr signal ZSFsysDown", "l"); 
+       legZSF ->AddEntry(histo_twdr_ZSFsysUp, "twdr signal ZSFsysUp", "l");
+       
+        legZSF ->AddEntry(histo_other, "other bckgr.", "l"); 
+       legZSF ->AddEntry(histo_other_ZSFsysDown, "other bckgr. ZSFsysDown", "l"); 
+       legZSF ->AddEntry(histo_other_ZSFsysUp, "other bckgr. ZSFsysUp", "l");
+       
        legJES ->AddEntry(histo_tt, "tt bckgr." , "l");  
        legJES ->AddEntry(histo_tt_JESsysDown, "tt bckgr. JESsysDown" , "l"); 
        legJES ->AddEntry(histo_tt_JESsysUp, "tt bckgr. JESsysUp" , "l");   
@@ -878,6 +958,10 @@ void syst_plotmaker(int mode = 0, int region = 0){
        aleg ->AddEntry(histo_twdr_JERsysDown, "twdr signal JERsysDown", "l"); 
        aleg ->AddEntry(histo_twdr_JERsysUp, "twdr signal JERsysUp", "l");
        
+        alegZSF ->AddEntry(histo_other, "other bckgr." , "l");  
+       alegZSF ->AddEntry(histo_other_ZSFsysDown, "other bckgr. ZSFsysDown" , "l"); 
+       alegZSF ->AddEntry(histo_other_ZSFsysUp, "other bckgr. ZSFsysUp" , "l");   
+
       
        
        alegJES ->AddEntry(histo_tt, "tt bckgr." , "l");  
@@ -962,6 +1046,15 @@ void syst_plotmaker(int mode = 0, int region = 0){
        double max4 = TMath::Max(max11,max22);
        double max = TMath::Max(max33,max4);
        
+              double max_ZSF_1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
+       double max_ZSF_11 = TMath::Max(histo_other->GetMaximum(), max_ZSF_1);
+       double max_ZSF_2 = TMath::Max( histo_tt_ZSFsysUp->GetMaximum(), histo_twdr_ZSFsysUp->GetMaximum());
+       double max_ZSF_22 = TMath::Max( histo_other_ZSFsysUp->GetMaximum(), max_ZSF_2);
+       double max_ZSF_3 = TMath::Max(histo_tt_ZSFsysDown->GetMaximum(), histo_twdr_ZSFsysDown->GetMaximum());
+       double max_ZSF_33 = TMath::Max(histo_other_ZSFsysDown->GetMaximum(), max_ZSF_3);
+       double max_ZSF_4 = TMath::Max(max_ZSF_11,max_ZSF_22);
+       double max_ZSF = TMath::Max(max_ZSF_33,max_ZSF_4);
+       
        double max_JES_1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
        double max_JES_11 = TMath::Max(histo_other->GetMaximum(), max_JES_1);
        double max_JES_2 = TMath::Max( histo_tt_JESsysUp->GetMaximum(), histo_twdr_JESsysUp->GetMaximum());
@@ -1036,12 +1129,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
        TCanvas *c1 = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    
+       histo_tt->Draw("h");
+       
        histo_tt_JERsysUp->Draw("h, sames");
        histo_tt_JERsysUp->SetMaximum(max * 1.5);
        histo_tt_JERsysUp->SetMinimum(0);
@@ -1085,16 +1179,71 @@ void syst_plotmaker(int mode = 0, int region = 0){
     
       c1->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotJER+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + ".png");
      // c1->SaveAs("plots/pdf/" + plotExtension + plotJER+ modeString[mode]+ "_region" + region + "_" + cutLabel[iPlots] + ".pdf");
+    
+    
+        TCanvas *c1_ZSF = new TCanvas();
+       // ttbar
+       
+       histo_tt->SetMaximum(max_ZSF * 1.5);
+       histo_tt->SetMinimum(0);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+      histo_tt->Draw("h");
+      
+       
+       histo_tt_ZSFsysUp->SetMaximum(max_ZSF * 1.5);
+       histo_tt_ZSFsysUp->SetMinimum(0);
+       histo_tt_ZSFsysUp->Draw("h, sames");
+       
+       
+       histo_tt_ZSFsysDown->SetMaximum(max_ZSF * 1.5);
+       histo_tt_ZSFsysDown->SetMinimum(0);     
+       histo_tt_ZSFsysDown->Draw("h, sames");
+       
+       // twdr
+       histo_twdr->Draw("histo , sames");
+       histo_twdr->SetMaximum(max_ZSF * 1.5);
+       histo_twdr->SetMinimum(0);
+
+       histo_twdr_ZSFsysUp->Draw("histo , sames");
+       histo_twdr_ZSFsysUp->SetMaximum(max_ZSF * 1.5);
+       histo_twdr_ZSFsysUp->SetMinimum(0);
+
+       histo_twdr_ZSFsysDown->Draw("histo , sames");
+       histo_twdr_ZSFsysDown->SetMaximum(max_ZSF * 1.5);
+       histo_twdr_ZSFsysDown->SetMinimum(0);
+
+              // other
+       histo_other->Draw("histo , sames");
+       histo_other->SetMaximum(max_ZSF * 1.5);
+       histo_other->SetMinimum(0);
+
+       histo_other_ZSFsysUp->Draw("histo , sames");
+       histo_other_ZSFsysUp->SetMaximum(max_ZSF * 1.5);
+       histo_other_ZSFsysUp->SetMinimum(0);
+
+       histo_other_ZSFsysDown->Draw("histo , sames");
+       histo_other_ZSFsysDown->SetMaximum(max_ZSF * 1.5);
+       histo_other_ZSFsysDown->SetMinimum(0);
+       
+       
+      legZSF->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
+    
+      c1_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode]+ "_region" + regionString[region] + "_" + cutLabel[iPlots] + ".png");
+     // c1_ZSF->SaveAs("plots/pdf/" + plotExtension + plotZSF +modeString[mode] + "_region" + region+ "_" + cutLabel[iPlots] + ".pdf");   
       
       
         TCanvas *c1_JES = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_JES * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    
+       histo_tt->Draw("h");
+       
        histo_tt_JESsysUp->Draw("h, sames");
        histo_tt_JESsysUp->SetMaximum(max_JES * 1.5);
        histo_tt_JESsysUp->SetMinimum(0);
@@ -1140,12 +1289,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
      
      TCanvas *c1_PU = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_PU * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    
+       histo_tt->Draw("h");
+       
        histo_tt_PUsysUp->Draw("h, sames");
        histo_tt_PUsysUp->SetMaximum(max_PU * 1.5);
        histo_tt_PUsysUp->SetMinimum(0);
@@ -1191,12 +1341,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
  
         TCanvas *c1_SF = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_SF * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    
+       histo_tt->Draw("h");
+       
        histo_tt_SFsysUp->Draw("h, sames");
        histo_tt_SFsysUp->SetMaximum(max_SF * 1.5);
        histo_tt_SFsysUp->SetMinimum(0);
@@ -1242,12 +1393,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
      
      TCanvas *c1_MET = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_MET * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    
+       histo_tt->Draw("h");
+       
        histo_tt_METsysUp->Draw("h, sames");
        histo_tt_METsysUp->SetMaximum(max_MET * 1.5);
        histo_tt_METsysUp->SetMinimum(0);
@@ -1293,11 +1445,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
     TCanvas *c1_TopMass = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_TopMass * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->Draw("h");
     
        histo_tt_TopMassUp->Draw("h, sames");
        histo_tt_TopMassUp->SetMaximum(max_TopMass * 1.5);
@@ -1330,11 +1483,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
   TCanvas *c1_Q2 = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_Q2 * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->Draw("h");
     
        histo_tt_Q2Up->Draw("h, sames");
        histo_tt_Q2Up->SetMaximum(max_Q2 * 1.5);
@@ -1367,12 +1521,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
  TCanvas *c1_eleSF = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_eleSF * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-    
+      histo_tt->Draw("h");
+      
        histo_tt_eleSFsysUp->Draw("h, sames");
        histo_tt_eleSFsysUp->SetMaximum(max_eleSF * 1.5);
        histo_tt_eleSFsysUp->SetMinimum(0);
@@ -1417,11 +1572,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
  TCanvas *c1_matching = new TCanvas();
        // ttbar
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max_matching * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->Draw("h");
     
        histo_tt_matchingUp->Draw("h, sames");
        histo_tt_matchingUp->SetMaximum(max_matching * 1.5);
@@ -1443,11 +1599,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
     
      TCanvas *c1_DS = new TCanvas();
        // ttbar
-       histo_twds->Draw("h");
+       
        histo_twds->SetMaximum(max_DS * 1.5);
        histo_twds->SetMinimum(0);
        histo_twds->GetYaxis()->SetTitle("#evts");
        histo_twds->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_twds->Draw("h");
     
    
        // twdr
@@ -1472,11 +1629,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
     
            TCanvas *c2 = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_JERsysUp->DrawNormalized("h, sames,1");
       histo_tt_JERsysUp->SetMaximum(max * 1.5);
@@ -1526,16 +1684,75 @@ void syst_plotmaker(int mode = 0, int region = 0){
       c2->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotJER+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized_other.png");  
        
 
+        TCanvas *c2_ZSF = new TCanvas();
+	      
+	             // other
+       
+       histo_other->SetMaximum(max * 1.5);
+      // histo_other->SetMinimum(0);
+      histo_other->DrawNormalized("histo , sames,1");
+
+       histo_other_ZSFsysUp->DrawNormalized("histo , sames,1");
+       histo_other_ZSFsysUp->SetMaximum(max * 1.5);
+    //   histo_other_ZSFsysUp->SetMinimum(0);
+
+       histo_other_ZSFsysDown->DrawNormalized("histo , sames,1");
+       histo_other_ZSFsysDown->SetMaximum(max * 1.5);
+    //   histo_other_ZSFsysDown->SetMinimum(0);
+       
+
+      alegZSF->Draw();
+      alabelcms->Draw();
+      alabelcms2->Draw();
+    
+      c2_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized.png");    
      
-      
-      
-           TCanvas *c2_JES = new TCanvas();
-       // ttbar
+     
+// ttbar
        histo_tt->DrawNormalized("h,1");
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+    
+       histo_tt_ZSFsysUp->DrawNormalized("h, sames,1");
+      histo_tt_ZSFsysUp->SetMaximum(max * 1.5);
+     //  histo_tt_ZSFsysUp->SetMinimum(0);
+       
+       histo_tt_ZSFsysDown->DrawNormalized("h, sames,1");
+      histo_tt_ZSFsysDown->SetMaximum(max * 1.5);
+     //  histo_tt_ZSFsysDown->SetMinimum(0);     
+       
+       // twdr
+       histo_twdr->DrawNormalized("histo , sames,1");
+      histo_twdr->SetMaximum(max * 1.5);
+      // histo_twdr->SetMinimum(0);
+
+       histo_twdr_ZSFsysUp->DrawNormalized("histo , sames,1");
+      histo_twdr_ZSFsysUp->SetMaximum(max * 1.5);
+      // histo_twdr_ZSFsysUp->SetMinimum(0);
+
+       histo_twdr_ZSFsysDown->DrawNormalized("histo , sames,1");
+       histo_twdr_ZSFsysDown->SetMaximum(max * 1.5);
+     //  histo_twdr_ZSFsysDown->SetMinimum(0);
+       
+      leg->Draw();
+      labelcms->Draw();
+      labelcms2->Draw();
+    
+      c2_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized_other.png");  
+   
+    
+      
+      
+           TCanvas *c2_JES = new TCanvas();
+       // ttbar
+       
+      histo_tt->SetMaximum(max * 1.5);
+       //histo_tt->SetMinimum(0);
+       histo_tt->GetYaxis()->SetTitle("#evts");
+       histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_JESsysUp->DrawNormalized("h, sames,1");
       histo_tt_JESsysUp->SetMaximum(max * 1.5);
@@ -1552,13 +1769,13 @@ void syst_plotmaker(int mode = 0, int region = 0){
 
        histo_twdr_JESsysUp->DrawNormalized("histo , sames,1");
       histo_twdr_JESsysUp->SetMaximum(max * 1.5);
-       histo_twdr_JESsysUp->SetMinimum(0);
+      // histo_twdr_JESsysUp->SetMinimum(0);
 
        histo_twdr_JESsysDown->DrawNormalized("histo , sames,1");
        histo_twdr_JESsysDown->SetMaximum(max * 1.5);
      //  histo_twdr_JESsysDown->SetMinimum(0);
 
-      aleg->Draw();
+      alegJES->Draw();
       alabelcms->Draw();
       alabelcms2->Draw();
     
@@ -1588,11 +1805,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
      
               TCanvas *c2_PU = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_PUsysUp->DrawNormalized("h, sames,1");
       histo_tt_PUsysUp->SetMaximum(max * 1.5);
@@ -1643,11 +1861,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
   
              TCanvas *c2_SF = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_SFsysUp->DrawNormalized("h, sames,1");
       histo_tt_SFsysUp->SetMaximum(max * 1.5);
@@ -1699,11 +1918,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
      
              TCanvas *c2_MET = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_METsysUp->DrawNormalized("h, sames,1");
       histo_tt_METsysUp->SetMaximum(max * 1.5);
@@ -1755,11 +1975,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
              TCanvas *c2_TopMass = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_TopMassUp->DrawNormalized("h, sames,1");
       histo_tt_TopMassUp->SetMaximum(max * 1.5);
@@ -1793,11 +2014,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
   TCanvas *c2_Q2 = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h");
+       
        histo_tt->SetMaximum(max_Q2 * 1.5);
        histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h");
     
        histo_tt_Q2Up->DrawNormalized("h, sames");
        histo_tt_Q2Up->SetMaximum(max_Q2 * 1.5);
@@ -1830,11 +2052,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
             TCanvas *c2_eleSF = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_tt->DrawNormalized("h,1");
     
        histo_tt_eleSFsysUp->DrawNormalized("h, sames,1");
       histo_tt_eleSFsysUp->SetMaximum(max * 1.5);
@@ -1886,11 +2109,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
       
             TCanvas *c2_matching = new TCanvas();
        // ttbar
-       histo_tt->DrawNormalized("h,1");
+       
       histo_tt->SetMaximum(max * 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       
     
        histo_tt_matchingUp->DrawNormalized("h, sames,1");
       histo_tt_matchingUp->SetMaximum(max * 1.5);
@@ -1912,11 +2136,12 @@ void syst_plotmaker(int mode = 0, int region = 0){
     
      TCanvas *c2_DS = new TCanvas();
        // ttbar
-       histo_twds->DrawNormalized("h");
+       
        histo_twds->SetMaximum(max_DS * 1.5);
        histo_twds->SetMinimum(0);
        histo_twds->GetYaxis()->SetTitle("#evts");
        histo_twds->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_twds->DrawNormalized("h");
     
    
        // twdr

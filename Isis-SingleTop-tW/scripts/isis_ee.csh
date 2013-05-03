@@ -12,6 +12,17 @@ root.exe -b -l -q isis_chain.C\(7\,2\,0\)
 
 
 
+#ZSF
+root.exe -b -l -q isis_chain.C\(19\,2\,0\)   #tt  up
+root.exe -b -l -q isis_chain.C\(-19\,2\,0\)  #tt down
+
+root.exe -b -l -q isis_chain.C\(29\,2\,0\)     #twdr up
+root.exe -b -l -q isis_chain.C\(-29\,2\,0\)    #twdr down
+
+root.exe -b -l -q isis_chain.C\(39\,2\,0\)     #others up
+root.exe -b -l -q isis_chain.C\(-39\,2\,0\)    #others down
+
+
 root.exe -b -l -q isis_chain.C\(10\,2\,0\)
 root.exe -b -l -q isis_chain.C\(-10\,2\,0\)
 
