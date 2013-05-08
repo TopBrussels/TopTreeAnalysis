@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////
     ///               SYSTEMATICS             ///
     /////////////////////////////////////////////
-    bool pdf = false;
+    bool pdf = true;
     
     bool JESPlus = false; 
     bool JESMinus = false; 
@@ -188,9 +188,11 @@ int main(int argc, char* argv[]) {
         }
 	if (argval == "--ZSFplus"){
 		ZSFplus = true; 
+		pdf = false; 
 	}
 	if (argval == "--ZSFminus"){
 		ZSFminus = true; 
+		pdf = false; 
 	}
         if (argval=="--ee"){
                 mode = 2;
@@ -203,21 +205,27 @@ int main(int argc, char* argv[]) {
         }
         if (argval=="--uncMETup"){
                 unclusteredUp = true;
+		pdf = false; 
         }
         if (argval=="--uncMETdown"){
                 unclusteredDown = true;
+		pdf = false; 
         }
         if (argval=="--PUup" ){
                 PUsysUp = true;
+		pdf = false; 
         }
         if (argval=="--PUdown" ){
                 PUsysDown = true;
+		pdf = false; 
         }
         if (argval=="--JESplus") {
                 JESPlus = true;
+		pdf = false; 
         }
         if (argval=="--JESminus") {
                 JESMinus = true;
+		pdf = false; 
         }
         if (argval=="--JERplus") {
                 JERPlus = true;
@@ -227,41 +235,53 @@ int main(int argc, char* argv[]) {
         }
         if (argval=="--SFplus") {
                 SFplus = true;
+		pdf = false; 
         }
         if (argval=="--SFminus"){
                 SFminus = true;
+		pdf = false; 
         }
         if (argval=="--eleSFplus") {
                 eleSFsysUp = true;
+		pdf = false; 
         }
         if (argval=="--eleSFminus"){
                 eleSFsysDown = true;
+		pdf = false; 
         }	
 	if (argval=="--SFplus_c") {
                 SFplus_c = true;
+		pdf = false; 
         }
         if (argval=="--SFminus_c"){
                 SFminus_c = true;
+		pdf = false; 
         }
 	if (argval=="--SFplus_l") {
                 SFplus_l = true;
+		pdf = false; 
         }
         if (argval=="--SFminus_l"){
                 SFminus_l = true;
+		pdf = false; 
         }
         if (argval=="--NoPU") {
                 reweightPU = false;
+		pdf = false; 
         }
         if (argval=="--NoSF") {
                 scaleFactor = false;
+		pdf = false; 
         }
         if (argval=="--RAW") {
                 reweightPU = false; 
                 scaleFactor = false; 
                 isRAW = true;
+		pdf = false; 
         }
         if (argval=="--3D") {
                 Pu3D = true;
+		pdf = false; 
         }
        if (argval=="--xml") {
                 iarg++;
@@ -478,16 +498,16 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "ww"){          sprintf(name, "ww");            xlweight = lumi*54.838/10000413;          } 
         else if (dataSetName == "wz"){          sprintf(name, "wz");            xlweight = lumi*22.44/9900267;          } 
         else if (dataSetName == "zz"){          sprintf(name, "zz");            xlweight = lumi*9.03/9799891 ;           } 
-        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;    isZjets =true;    } 
+        else if (dataSetName == "zjets"){       sprintf(name, "zjets");         xlweight = lumi*3532.8/30364599;    isZjets = true;    } 
         else if (dataSetName == "zjets_lowmll"){sprintf(name, "zjets_lowmll");  xlweight = lumi*860.5/7059426;       isZjets = true;   } 
         else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411352;         }  
 	
 	// systematics
 	else if (dataSetName == "tt_Q2_up"){          sprintf(name, "tt");       xlweight = lumi*225.197/4703202;        isTop = true;       isQ2up = true;} 
         else if (dataSetName == "twdr_Q2_up"){        sprintf(name, "tw_dr");        xlweight =lumi*11.1*0.1/1493129;             isSingleTop = true;  isQ2up = true;} //10% BR, onlydilepton
-        else if (dataSetName == "atwdr_Q2_up"){       sprintf(name, "atw_dr");  	     xlweight = lumi*11.1*0.1/1492532;            isSingleTop = true;   isQ2up = true;} 
+        else if (dataSetName == "atwdr_Q2_up"){       sprintf(name, "atw_dr");  	xlweight = lumi*11.1*0.1/1492532;            isSingleTop = true;   isQ2up = true;} 
 	else if (dataSetName == "tt_Q2_down"){          sprintf(name, "tt");           xlweight = lumi*225.197/5346767;       isTop = true;       isQ2down = true;} 
-        else if (dataSetName == "twdr_Q2_down"){        sprintf(name,	"tw_dr");         xlweight =lumi*11.1*0.1/14923129;             isSingleTop = true;  isQ2down = true;} 
+        else if (dataSetName == "twdr_Q2_down"){        sprintf(name,	"tw_dr");         xlweight =lumi*11.1*0.1/1493129;             isSingleTop = true;  isQ2down = true;} 
         else if (dataSetName == "atwdr_Q2_down"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1*0.1/1493099;            isSingleTop = true;   isQ2down = true;}
 	
 	else if (dataSetName == "tt_Topmass_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/4733472;        isTop = true;       isTopmassup = true;} 
@@ -562,6 +582,7 @@ int main(int argc, char* argv[]) {
 	
 	
 	char myFile[300];
+	
         sprintf(myFile,"pdf_unc/forPDF/pdf_signal_%d_%s.txt", mode, name);
         ofstream salida(myFile); 
 	
@@ -1188,6 +1209,8 @@ int main(int argc, char* argv[]) {
 		//---------------------------------------------
 		// Zjets sf only for MC zjets (from danny meeting single top 21/3)
 		//------------------------------------------------
+		
+		ZjetsSF = 1;
 		if(isZjets && !ZSFminus && !ZSFplus){
 			if(mode == 0){
 				if(met_pt < 10){ ZjetsSF = 0.9028; }
@@ -1224,6 +1247,8 @@ int main(int argc, char* argv[]) {
 			weight *= ZjetsSF;
 		
 		}
+		
+		ZjetsSF = 1;
 		if(isZjets && !ZSFminus && ZSFplus){
 			if(mode == 0){
 				if(met_pt < 10){ ZjetsSF = 2*0.9028; }
@@ -2018,7 +2043,7 @@ int main(int argc, char* argv[]) {
 													float ptsys = ptsystem;
 													float ht = Ht;
 				
-													if (pdf) salida << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													if (pdf) {salida << weight << " " << x1 << " " << x2 << " " << q << " " <<id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;}
 				
 												}
 												if (nJets == 2 && nTightJetsBT == 1 && nJetsBT == 1){
@@ -2032,7 +2057,7 @@ int main(int argc, char* argv[]) {
 													float ptsys = ptsystem;
 													float ht = Ht;
 				
-													if (pdf) salida2j1t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													if (pdf) {salida2j1t << weight << " " << x1 << " " << x2 << " " << q << " "<< id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;}
 				
 												}
 												if (nJets == 2 && nTightJetsBT == 2 && nJetsBT == 2){
@@ -2046,7 +2071,7 @@ int main(int argc, char* argv[]) {
 													float ptsys = ptsystem;
 													float ht = Ht;
 				
-													if (pdf) salida2j2t << weight << " " << x1 << " " << x2 << " " << q << " " << id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;
+													if (pdf){ salida2j2t << weight << " " << x1 << " " << x2 << " " << q << " "<< id1 << " " << id2 << " " << ptsys << " " << ht << " " << name << " " << mode << endl;}
 				
 												}
 												histo_jets->Fill(nJets,weight); 

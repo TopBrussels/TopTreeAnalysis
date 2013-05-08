@@ -5,8 +5,8 @@
 
   
   <d name="tt_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/TTbar_topmass_166_5/*.root"/> 
-  <d name="twdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tW_topmass_166_5/*.root"/> 
-  <d name="atwdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tbarW_topmass_166_5/*.root"/> 
+  <d name="twdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tW_topmass_166_5_new/*.root"/> 
+  <d name="atwdr_Topmass_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/emu/tbarW_topmass_166_5_new/*.root"/> 
   
  
   

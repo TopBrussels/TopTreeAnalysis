@@ -2,8 +2,8 @@
 <datasets>
 
 
-  <d name="twdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_Q2_down/*.root"/> 
-  <d name="atwdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_Q2_down/*.root"/> 
+  <d name="twdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tW_Q2_down_new/*.root"/> 
+  <d name="atwdr_Q2_down" title="mc" add="1" filenames="/user/ivanpari/Files/new_MC/Systematic_samples/ee/tbarW_Q2_down_new/*.root"/> 
 
  
 </datasets>
