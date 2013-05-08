@@ -70,6 +70,8 @@ void syst_plotmaker(int mode = 0, int region = 0){
   gStyle->SetTitleYOffset(1.7);//1.7
   
   char myRootFile[300];
+  char myRootFileZSFsysDown[300];
+  char myRootFileZSFsysUp[300];
   char myRootFileJERsysDown[300];
   char myRootFileJERsysUp[300];
   char myRootFileJESsysDown[300];
@@ -98,9 +100,9 @@ void syst_plotmaker(int mode = 0, int region = 0){
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode); // take output from looper
   
   
-  sprintf(myRootFileZSFsysDown,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileZSFsysDown,"results/ZSFsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
-  sprintf(myRootFileZSFsysUp,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFileZSFsysUp,"results/ZSFsysUp_an_%dpb_%d.root", (int)lumi, mode);
  
   sprintf(myRootFileJERsysDown,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
@@ -1684,20 +1686,21 @@ void syst_plotmaker(int mode = 0, int region = 0){
       c2->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotJER+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized_other.png");  
        
 
-        TCanvas *c2_ZSF = new TCanvas();
+      TCanvas *c2_ZSF = new TCanvas();
 	      
 	             // other
-       
-       histo_other->SetMaximum(max * 1.5);
+       histo_other->GetYaxis()->SetTitle("#evts");
+       histo_other->GetXaxis()->SetTitle(cutTitle[iPlots]);
+       histo_other->SetMaximum(max_ZSF*1.5);
       // histo_other->SetMinimum(0);
-      histo_other->DrawNormalized("histo , sames,1");
+      histo_other->DrawNormalized("histo , 1");
 
        histo_other_ZSFsysUp->DrawNormalized("histo , sames,1");
-       histo_other_ZSFsysUp->SetMaximum(max * 1.5);
+       histo_other_ZSFsysUp->SetMaximum(max_ZSF * 1.5);
     //   histo_other_ZSFsysUp->SetMinimum(0);
 
        histo_other_ZSFsysDown->DrawNormalized("histo , sames,1");
-       histo_other_ZSFsysDown->SetMaximum(max * 1.5);
+       histo_other_ZSFsysDown->SetMaximum(max_ZSF * 1.5);
     //   histo_other_ZSFsysDown->SetMinimum(0);
        
 
@@ -1705,42 +1708,42 @@ void syst_plotmaker(int mode = 0, int region = 0){
       alabelcms->Draw();
       alabelcms2->Draw();
     
-      c2_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized.png");    
+      c2_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized_other.png");    
      
      
 // ttbar
-       histo_tt->DrawNormalized("h,1");
-      histo_tt->SetMaximum(max * 1.5);
+       histo_tt->DrawNormalized("h,sames,1");
+      histo_tt->SetMaximum(max_ZSF* 1.5);
        //histo_tt->SetMinimum(0);
        histo_tt->GetYaxis()->SetTitle("#evts");
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
     
        histo_tt_ZSFsysUp->DrawNormalized("h, sames,1");
-      histo_tt_ZSFsysUp->SetMaximum(max * 1.5);
+      histo_tt_ZSFsysUp->SetMaximum(max_ZSF * 1.5);
      //  histo_tt_ZSFsysUp->SetMinimum(0);
        
        histo_tt_ZSFsysDown->DrawNormalized("h, sames,1");
-      histo_tt_ZSFsysDown->SetMaximum(max * 1.5);
+      histo_tt_ZSFsysDown->SetMaximum(max_ZSF * 1.5);
      //  histo_tt_ZSFsysDown->SetMinimum(0);     
        
        // twdr
        histo_twdr->DrawNormalized("histo , sames,1");
-      histo_twdr->SetMaximum(max * 1.5);
+      histo_twdr->SetMaximum(max_ZSF * 1.5);
       // histo_twdr->SetMinimum(0);
 
        histo_twdr_ZSFsysUp->DrawNormalized("histo , sames,1");
-      histo_twdr_ZSFsysUp->SetMaximum(max * 1.5);
+      histo_twdr_ZSFsysUp->SetMaximum(max_ZSF * 1.5);
       // histo_twdr_ZSFsysUp->SetMinimum(0);
 
        histo_twdr_ZSFsysDown->DrawNormalized("histo , sames,1");
-       histo_twdr_ZSFsysDown->SetMaximum(max * 1.5);
+       histo_twdr_ZSFsysDown->SetMaximum(max_ZSF * 1.5);
      //  histo_twdr_ZSFsysDown->SetMinimum(0);
        
-      leg->Draw();
+      legZSF->Draw();
       labelcms->Draw();
       labelcms2->Draw();
     
-      c2_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized_other.png");  
+      c2_ZSF->SaveAs("plots/" + plotAnalysis +"/" + plotExtension + plotZSF+ modeString[mode] + "_region" +  regionString[region]+ "_" + cutLabel[iPlots] + "normalized.png");  
    
     
       
@@ -1795,7 +1798,7 @@ void syst_plotmaker(int mode = 0, int region = 0){
        histo_other_JESsysDown->SetMaximum(max * 1.5);
     //   histo_other_JESsysDown->SetMinimum(0);
        
-      leg->Draw();
+      legJES->Draw();
       labelcms->Draw();
       labelcms2->Draw();
     

@@ -144,11 +144,11 @@ void dis_plotmaker(int mode = 0, int region = 0){
        double max = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
     
        TCanvas *c1 = new TCanvas();
-       histo_tt->Draw("h");
+       
        histo_tt->SetMaximum(max * 1.2);
        histo_tt->SetMinimum(1);
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
-     
+       histo_tt->Draw("h");
        
        histo_twdr->Draw("histo , sames");
        histo_twdr->SetMaximum(max * 1.2);
@@ -166,16 +166,16 @@ void dis_plotmaker(int mode = 0, int region = 0){
       
       
       TCanvas *c2 = new TCanvas();
-       histo_tt->DrawNormalized("h",1);
-       histo_tt->SetMaximum(max * 2);
+       
+       histo_tt->SetMaximum(max * 1.7);
        //histo_tt->SetMinimum(1);
        histo_tt->GetXaxis()->SetTitle(cutTitle[iPlots]);
        histo_tt->GetYaxis()->SetTitle("events / 12 fb^{-1}");
-    
+    histo_tt->DrawNormalized("h",1);
        
        
        histo_twdr->DrawNormalized("h,sames",1);
-      histo_twdr->SetMaximum(max * 2);
+      histo_twdr->SetMaximum(max * 1.7);
      //  histo_twdr->SetMinimum(1);
 
        

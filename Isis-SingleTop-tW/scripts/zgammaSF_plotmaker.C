@@ -14,7 +14,7 @@
 //#include "../Tools/interface/PlottingTools.h"
 using namespace std;
 
-void zgammaSF_plotmaker(int mode = 0, int region = 0){
+void zgammaSF_plotmaker(int mode = 0){
   
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
@@ -62,7 +62,7 @@ void zgammaSF_plotmaker(int mode = 0, int region = 0){
 
     
   sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode); // take output from looper
-  sprintf(myRootFile2,"results/noZjetsSF_%dpb_%d.root", lumi, mode); // take output from looper
+  sprintf(myRootFile2,"results/ZSFsysDown_an_%dpb_%d.root", lumi, mode); // take output from looper
  
   
   TFile *_file0 = TFile::Open(myRootFile);
@@ -72,15 +72,15 @@ void zgammaSF_plotmaker(int mode = 0, int region = 0){
   
   
   const int nProcess = 1;
-  const int nPlots = 4;
+  const int nPlots = 3;
   TString processName[nProcess] =  { "zjets"};
   TString processTitle[nProcess] = { "Z+jets"};
   Color_t color[2] =        { kBlue,kRed};
   
   
-  TString cutLabel[nPlots] =     {  "met_outside", "mll_outside", "met_zgamma", "mll_zgamma"};
-  int rebinHisto[nPlots] =       {  2,2,2,2};
-  TString cutTitle[nPlots] =     { "E_{T}^{miss} outside Z mass window", "Inv. Mass outside Z mass window", "E_{T}^{miss} in Z mass window", "Inv. Mass in Z mass window"};
+  TString cutLabel[nPlots] =     {  "met_outside", "met_zgamma", "mll_zgamma"};
+  int rebinHisto[nPlots] =       {  2,2,2};
+  TString cutTitle[nPlots] =     { "E_{T}^{miss} outside Z mass window",  "E_{T}^{miss} in Z mass window", "Inv. Mass in Z mass window"};
  
 
   TString modeString[3] = {"0","1","2"};
@@ -122,33 +122,34 @@ void zgammaSF_plotmaker(int mode = 0, int region = 0){
         histo_zjets->SetLineWidth(2);
 
 
-  /*     histo_zjetsNOSF= (TH1F*) _file2->Get(cutLabel[iPlots]+ "_" + processName[0]);
-	       cout << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+       histo_zjetsNOSF= (TH1F*) _file2->Get(cutLabel[iPlots]+ "_" + processName[0]);
+	   //    cout << cutLabel[iPlots]+ "_" + processName[0] << endl; 
 	       
 	       
        histo_zjetsNOSF->Rebin(rebinHisto[iPlots]);
                //histo_zjetsNOSF->SetFillColor(color[1]);
         histo_zjetsNOSF->SetLineColor(color[1]);
         histo_zjetsNOSF->SetLineWidth(2); 
-*/	      
-       leg ->AddEntry(histo_zjets, "Z/#gamma * events" , "l");  
-   //    leg ->AddEntry(histo_zjetsNOSF, "Z/#gamma * events - no reweighing" , "l"); 
+	      
+    //   leg ->AddEntry(histo_zjets, "Z/#gamma * events" , "l");  
+      leg ->AddEntry(histo_zjetsNOSF, "Z/#gamma * events - no reweighing" , "l"); 
        
-//      double max = TMath::Max(histo_zjets->GetMaximum(),histo_zjetsNOSF->GetMaximum());
+      double max = TMath::Max(histo_zjets->GetMaximum(),histo_zjetsNOSF->GetMaximum());
     
        TCanvas *c1 = new TCanvas();
-       histo_zjets->Draw("h");
-   //   histo_zjets->SetMaximum(max * 1.2);
+    //   histo_zjets->SetMaximum(max * 1.2);
+    //   histo_zjets->Draw("h");
+   
      //  histo_zjets->SetMinimum(1);
-       histo_zjets->GetXaxis()->SetTitle(cutTitle[iPlots]);
+     //  histo_zjets->GetXaxis()->SetTitle(cutTitle[iPlots]);
      
-       
-    /*     histo_zjetsNOSF->Draw("h,sames");
-      histo_zjetsNOSF->SetMaximum(max * 1.2);
+       histo_zjetsNOSF->SetMaximum(max * 1.2);
+        histo_zjetsNOSF->Draw("h,sames");
+      
      //  histo_zjetsNOSF->SetMinimum(1);
        histo_zjetsNOSF->GetXaxis()->SetTitle(cutTitle[iPlots]);
 
-      */ 
+       
       leg->Draw();
       labelcms->Draw();
       labelcms2->Draw();
