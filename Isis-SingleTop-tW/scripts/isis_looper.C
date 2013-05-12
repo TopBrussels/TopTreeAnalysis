@@ -129,59 +129,61 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
     else if (mode == 2) lumi = 12093.792;  	
  
    if(nsel == -19 || nsel == -29 || nsel == -39){
-  sprintf(newRootFile,"results/ZSFsysDown_an2_%dpb_%d.root", (int)lumi, mode);
+  sprintf(newRootFile,"results/ZSFsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 19 || nsel == 29 || nsel == 39){
-   sprintf(newRootFile,"results/ZSFsysUp_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/ZSFsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == -10 || nsel == -20 || nsel == -30){
-  sprintf(newRootFile,"results/JERsysDown_an2_%dpb_%d.root", (int)lumi, mode);
+  sprintf(newRootFile,"results/JERsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 10 || nsel == 20 || nsel == 30){
-   sprintf(newRootFile,"results/JERsysUp_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/JERsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == -11 || nsel == -21 || nsel == -31 ){
-   sprintf(newRootFile,"results/JESsysDown_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/JESsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 11 || nsel == 21 || nsel == 31 ){
-   sprintf(newRootFile,"results/JESsysUp_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/JESsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == -12 || nsel == -22 || nsel == -32){
-   sprintf(newRootFile,"results/PUsysDown_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/PUsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 12 || nsel == 22 || nsel == 32){
-   sprintf(newRootFile,"results/PUsysUp_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/PUsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == -13 || nsel == -23 || nsel == -33){
-   sprintf(newRootFile,"results/SFsysDown_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/SFsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 13 || nsel == 23 || nsel == 33){
-   sprintf(newRootFile,"results/SFsysUp_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/SFsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == -14 || nsel == -24 || nsel == -34){
-   sprintf(newRootFile,"results/METsysDown_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/METsysDown_an_%dpb_%d.root", (int)lumi, mode);
   }
   else if(nsel == 14 || nsel == 24 || nsel == 34){
-   sprintf(newRootFile,"results/METsysUp_an2_%dpb_%d.root", (int)lumi, mode);
+   sprintf(newRootFile,"results/METsysUp_an_%dpb_%d.root", (int)lumi, mode);
   }else if(nsel == -15 || nsel == -25){
-   sprintf(newRootFile,"results/TopMassDown2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/TopMassDown_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 15 || nsel == 25 ){
-   sprintf(newRootFile,"results/TopMassUp2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/TopMassUp_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == -16 || nsel == -26 ){
-   sprintf(newRootFile,"results/Q2Down2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/Q2Down_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 16 || nsel == 26 ){
-   sprintf(newRootFile,"results/Q2Up2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/Q2Up_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == -17 || nsel == -27 || nsel == -37){
-   sprintf(newRootFile,"results/eleSFsysDown2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/eleSFsysDown_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 17 || nsel == 27 || nsel == 37){
-   sprintf(newRootFile,"results/eleSFsysUp2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/eleSFsysUp_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == -18  ){
-   sprintf(newRootFile,"results/matchingDown2_%dpb_%d.root", (int) lumi, mode);
+   sprintf(newRootFile,"results/matchingDown_%dpb_%d.root", (int) lumi, mode);
   }else if(nsel == 18 ){
-   sprintf(newRootFile,"results/matchingUp2_%dpb_%d.root", (int) lumi, mode);
-  }
+   sprintf(newRootFile,"results/matchingUp_%dpb_%d.root", (int) lumi, mode);
+  }else if(isZjets){
+     sprintf(newRootFile,"results/noZjetsSF_%dpb_%d.root", (int) lumi, mode);
+  } 
   else{
-    sprintf(newRootFile,"results/an2_%dpb_%d.root", (int)lumi, mode);
+    sprintf(newRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   }
  
  

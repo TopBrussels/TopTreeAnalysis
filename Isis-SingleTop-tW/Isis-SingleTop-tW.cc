@@ -1210,80 +1210,48 @@ int main(int argc, char* argv[]) {
 		// Zjets sf only for MC zjets (from danny meeting single top 21/3)
 		//------------------------------------------------
 		
-		ZjetsSF = 1;
-		if(isZjets && !ZSFminus && !ZSFplus){
-			if(mode == 0){
-				if(met_pt < 10){ ZjetsSF = 0.9028; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9497; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0189; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0988; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.17415; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.25145; }	
-				else{ ZjetsSF = 1.26325; }
-				
-			}
-			else if (mode == 1){
-				if(met_pt < 10){ ZjetsSF = 0.8841; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9386; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0131; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.1012; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1850; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2500; }	
-				else{ ZjetsSF = 1.3071; }			
-			}
-			else{
-				if(met_pt < 10){ ZjetsSF = 0.9215; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9608; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0247; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0964; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1633; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2529; }	
-				else{ ZjetsSF = 1.2194; }			
-			}
+		ZjetsSF = 0;
 		
-		
-		
-		
-			weight *= ZjetsSF;
-		
+		if(mode == 0){
+			if(met_pt < 10){ ZjetsSF = 0.9028; }
+			else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9497; }
+			else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0189; }
+			else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0988; }
+			else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.17415; }
+			else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.25145; }	
+			else{ ZjetsSF = 1.26325; }
+			
+		}
+		else if (mode == 1){
+			if(met_pt < 10){ ZjetsSF = 0.8841; }
+			else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9386; }
+			else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0131; }
+			else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.1012; }
+			else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1850; }
+			else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2500; }	
+			else{ ZjetsSF = 1.3071; }			
+		}
+		else{
+			if(met_pt < 10){ ZjetsSF = 0.9215; }
+			else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 0.9608; }
+			else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 1.0247; }
+			else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 1.0964; }
+			else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 1.1633; }
+			else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 1.2529; }	
+			else{ ZjetsSF = 1.2194; }			
 		}
 		
-		ZjetsSF = 1;
-		if(isZjets && !ZSFminus && ZSFplus){
-			if(mode == 0){
-				if(met_pt < 10){ ZjetsSF = 2*0.9028; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 2*0.9497; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 2*1.0189; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 2*1.0988; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 2*1.17415; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 2*1.25145; }	
-				else{ ZjetsSF = 2*1.26325; }
-				
-			}
-			else if (mode == 1){
-				if(met_pt < 10){ ZjetsSF = 2*0.8841; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 2*0.9386; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 2*1.0131; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 2*1.1012; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 2*1.1850; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 2*1.2500; }	
-				else{ ZjetsSF = 2*1.3071; }			
-			}
-			else{
-				if(met_pt < 10){ ZjetsSF = 0.9215; }
-				else if(met_pt > 10 && met_pt < 20){ ZjetsSF = 2*0.9608; }
-				else if(met_pt >= 20 && met_pt < 30){ ZjetsSF = 2*1.0247; }
-				else if(met_pt >= 30 && met_pt < 40){ ZjetsSF = 2*1.0964; }
-				else if(met_pt >= 40 && met_pt < 50){ ZjetsSF = 2*1.1633; }
-				else if(met_pt >= 50 && met_pt < 60){ ZjetsSF = 2*1.2529; }	
-				else{ ZjetsSF = 2*1.2194; }			
-			}
 		
 		
+		if(isZjets && !ZSFminus && !ZSFplus){
+			weight *= 1+ ZjetsSF;
 		
+		} else if(isZjets && !ZSFminus && ZSFplus){
+			
+			weight *= 1+ (2*ZjetsSF);
 		
-			weight *= ZjetsSF;
-		
+		} else if(isZjets && ZSFminus && !ZSFplus){
+		       weight *= 1;
 		}		
 		
 		
