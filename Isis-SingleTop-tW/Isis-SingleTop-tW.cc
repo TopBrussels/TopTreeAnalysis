@@ -1241,6 +1241,7 @@ int main(int argc, char* argv[]) {
 			else{ ZjetsSF = 1.2194; }			
 		}
 		
+		ZjetsSF = ZjetsSF - 1; 
 		
 		
 		if(isZjets && !ZSFminus && !ZSFplus){
