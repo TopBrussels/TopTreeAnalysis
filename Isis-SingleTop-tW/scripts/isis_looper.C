@@ -236,10 +236,14 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ptsys_before_met = new TH1F( title, " ", 100,  0, 200 );
   histo_ptsys_before_met->Sumw2();
   
-   sprintf(title,"ht_before_1j1t_%s",plotName);
+  
+    sprintf(title,"ht_before_1j1t_%s",plotName);
   TH1F* histo_ht_before_1j1t = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_before_1j1t->Sumw2();
   
+  sprintf(title,"ht_before_loose_1j1t_%s",plotName);
+  TH1F* histo_ht_before_loose_1j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_before_loose_1j1t->Sumw2();
   
     sprintf(title,"met_before_2j1t_%s",plotName);
   TH1F* histo_met_before_2j1t = new TH1F( title, " ", 100,  0, 200 );
@@ -254,6 +258,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ht_before_2j1t = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_before_2j1t->Sumw2();
   
+   sprintf(title,"ht_before_loose_2j1t_%s",plotName);
+  TH1F* histo_ht_before_loose_2j1t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_before_loose_2j1t->Sumw2();
+  
       sprintf(title,"met_before_2j2t_%s",plotName);
   TH1F* histo_met_before_2j2t = new TH1F( title, " ", 100,  0, 200 );
   histo_met_before_2j2t->Sumw2();
@@ -266,6 +274,11 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
    sprintf(title,"ht_before_2j2t_%s",plotName);
   TH1F* histo_ht_before_2j2t = new TH1F( title, " ", 300,  0, 600 );
   histo_ht_before_2j2t->Sumw2();
+  
+  sprintf(title,"ht_before_loose_2j2t_%s",plotName);
+  TH1F* histo_ht_before_loose_2j2t = new TH1F( title, " ", 300,  0, 600 );
+  histo_ht_before_loose_2j2t->Sumw2();
+  
   
   
     sprintf(title,"ptsys_before_1j1t_%s",plotName);
@@ -280,6 +293,17 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
   TH1F* histo_ptsys_before_2j2t = new TH1F( title, " ", 100,  0, 200 );
   histo_ptsys_before_2j2t->Sumw2();
   
+  sprintf(title,"ptsys_before_loose_1j1t_%s",plotName);
+  TH1F* histo_ptsys_before_loose_1j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_loose_1j1t->Sumw2();
+  
+      sprintf(title,"ptsys_before_loose_2j1t_%s",plotName);
+  TH1F* histo_ptsys_before_loose_2j1t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_loose_2j1t->Sumw2();
+  
+      sprintf(title,"ptsys_before_loose_2j2t_%s",plotName);
+  TH1F* histo_ptsys_before_loose_2j2t = new TH1F( title, " ", 100,  0, 200 );
+  histo_ptsys_before_loose_2j2t->Sumw2();
   
   sprintf(title,"met_high_%s",plotName);
   TH1F* histo_met_high = new TH1F( title, " ", 100,  0, 200 );
@@ -873,7 +897,10 @@ void isis_looper::myLoop(int nsel, int mode, bool silent)
 	    histo_njetsbt_noHT->Fill(nTightJetsBT, xlWeight);
 	    histo_njetsbt_noHT_loose->Fill(nJetsBT, xlWeight);
 	   
- 
+            if(nJets==1 && nTightJetsBT == 1 ) histo_ptsys_before_loose_1j1t->Fill(ptSystem, xlWeight);   histo_ht_before_loose_1j1t->Fill(ht, xlWeight);
+            if(nJets==2 && nTightJetsBT == 1 ) histo_ptsys_before_loose_2j1t->Fill(ptSystem, xlWeight);   histo_ht_before_loose_2j1t->Fill(ht, xlWeight);
+            if(nJets==2 && nTightJetsBT == 2 ) histo_ptsys_before_loose_2j2t->Fill(ptSystem, xlWeight);   histo_ht_before_loose_2j2t->Fill(ht, xlWeight);
+
 	    
 	    
 	    if(nJets==1 && nTightJetsBT == 1 && nJetsBT == 1) histo_ptsys_before_1j1t->Fill(ptSystem, xlWeight);   histo_ht_before_1j1t->Fill(ht, xlWeight);
