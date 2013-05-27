@@ -43,7 +43,7 @@ template <typename T> string tostr(const T& t) { ostringstream os; os<<t; return
 
 int main (int argc, char *argv[])
 {
-  string rootFileName = "LightStopSearchM_output.root";
+  string rootFileName = "LightStopSearch_output.root";
 	
   clock_t start = clock();
 	
@@ -60,11 +60,15 @@ int main (int argc, char *argv[])
   // Configuration
   /////////////////////
 	
-  bool useMassesAndResolutions = false;
+  bool useMassesAndResolutions = true;
   bool calculateTransferFunctions = true; // true will have only an effect if useMassesAndResolutions = false
   int isCorrectlyMatched = 0;
   int isNotCorrectlyMatched = 0;
   int NofSelectedEvents = 0;
+	int NofSelectedTTbarEvents = 0;
+	int NofSelectedSignalEvents = 0;
+	int NofTrueSemiMuTTbar = 0;
+	int NofTrueSemiMuSignal = 0;
   int Nof2Btags = 0;
   int unconditionalLoop = 0;
   int inChi2Loop = 0;
@@ -194,6 +198,7 @@ int main (int argc, char *argv[])
   cout << " - Recreate output file ..." << endl;
   TFile *fout = new TFile (rootFileName.c_str(), "RECREATE");
 	
+	
   //Global variable
   //TRootEvent* event = 0;
 	
@@ -207,56 +212,80 @@ int main (int argc, char *argv[])
   /// Normal Plots (TH1F* and TH2F*)
   ////////////////////////////////////
 	
-  map<string,TH1F*> histo1D;
+	map<string,TH1F*> histo1D;
   map<string,TH2F*> histo2D;
-	
-  histo1D["hadronicGenTopMass"] = new TH1F("hadronicGenTopMass","Hadronic Top Mass, using the quarks", 100, 100, 300);
-  histo1D["hadronicGenWMass"] = new TH1F("hadronicGenWMass","Hadronic W Mass, using the quarks",100,0,200);
-  histo1D["hadronicRecoTopMass"] = new TH1F("hadronicRecoTopMass","Hadronic Top Mass, using the RecoJets", 100, 100, 300);
-  histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
-	
-  histo2D["Eparton_vs_Enonbjet"] = new TH2F("Eparton_vs_Enonbjet","Eparton_vs_Enonbjet", 50, 0, 400, 50, 0, 400);
-  histo2D["Eparton_vs_Eparton-Enonbjet"] = new TH2F("Eparton_vs_Eparton-Enonbjet","Eparton_vs_Eparton-Enonbjet", 4, 0, 250, 50, -100, 100);
-  histo2D["Eparton_vs_Ebjet"] = new TH2F("Eparton_vs_Ebjet","Eparton_vs_Ebjet", 50, 0, 400, 50, 0, 400);
-  histo2D["Eparton_vs_Eparton-Ebjet"] = new TH2F("Eparton_vs_Eparton-Ebjet","Eparton_vs_Eparton-Ebjet", 4, 0, 300, 50, -100, 100);
-  histo2D["EgenEl_vs_ErecEl"] = new TH2F("EgenEl_vs_ErecEl","EgenEl_vs_ErecEl", 50, 0, 400, 50, 0, 400);
-  histo2D["EgenEl_vs_EgenEl-ErecEl"] = new TH2F("EgenEl_vs_EgenEl-ErecEl","EgenEl_vs_EgenEl-ErecEl", 50, 0, 400, 50, -50, 50);
-  histo2D["InvPtgenMu_vs_InvPtrecMu"] = new TH2F("InvPtgenMu_vs_InvPtrecMu","InvPtgenMu_vs_InvPtrecMu", 50, 0, 0.05, 50, 0, 0.05);
-  histo2D["InvPtgenMu_vs_InvPtgenMu-InvPtrecMu"] = new TH2F("InvPtgenMu_vs_InvPtgenMu-InvPtrecMu","InvPtgenMu_vs_InvPtgenMu-InvPtrecMu", 5, 0.002, 0.04, 50, -0.005, 0.005);
-	
-  histo2D["Thparton_vs_Thnonbjet"] = new TH2F("Thparton_vs_Thnonbjet","Thparton_vs_Thnonbjet", 60, 0, 3.15, 60, 0, 3.15);
-  histo2D["Thparton_vs_Thparton-Thnonbjet"] = new TH2F("Thparton_vs_Thparton-Thnonbjet","Thparton_vs_Thparton-Thnonbjet", 5, 0.1, 3.0, 60, -0.15, 0.15);
-  histo2D["Thparton_vs_Thbjet"] = new TH2F("Thparton_vs_Thbjet","Thparton_vs_Thbjet", 60, 0, 3.15, 60, 0, 3.15);
-  histo2D["Thparton_vs_Thparton-Thbjet"] = new TH2F("Thparton_vs_Thparton-Thbjet","Thparton_vs_Thparton-Thbjet", 5, 0.1, 3.0, 60, -0.15, 0.15);
-  histo2D["ThgenEl_vs_ThrecEl"] = new TH2F("ThgenEl_vs_ThrecEl","ThgenEl_vs_ThrecEl", 60, 0, 3.15, 60, 0, 3.15);
-  histo2D["ThgenEl_vs_ThgenEl-ThrecEl"] = new TH2F("ThgenEl_vs_ThgenEl-ThrecEl","ThgenEl_vs_ThgenEl-ThrecEl", 5, 0.2, 3.0, 60, -0.05, 0.05);
-  histo2D["ThgenMu_vs_ThrecMu"] = new TH2F("ThgenMu_vs_ThrecMu","ThgenMu_vs_ThrecMu", 60, 0, 3.15, 60, 0, 3.15);
-  histo2D["ThgenMu_vs_ThgenMu-ThrecMu"] = new TH2F("ThgenMu_vs_ThgenMu-ThrecMu","ThgenMu_vs_ThgenMu-ThrecMu", 5, 0.2, 3.0, 60, -0.05, 0.05);
-  histo2D["Eparton_vs_Thnonbjet"] = new TH2F("Eparton_vs_Thnonbjet","Eparton_vs_Thnonbjet", 50, 0, 400, 60, 0, 3.15);
-  histo2D["Eparton_vs_Thparton-Thnonbjet"] = new TH2F("Eparton_vs_Thparton-Thnonbjet","Eparton_vs_Thparton-Thnonbjet", 4, 0, 250, 60, -0.15, 0.15);
-  histo2D["Eparton_vs_Thbjet"] = new TH2F("Eparton_vs_Thbjet","Eparton_vs_Thbjet", 50, 0, 400, 60, 0, 3.15);
-  histo2D["Eparton_vs_Thparton-Thbjet"] = new TH2F("Eparton_vs_Thparton-Thbjet","Eparton_vs_Thparton-Thbjet", 4, 0, 300, 60, -0.15, 0.15);
-  histo2D["EgenEl_vs_ThrecEl"] = new TH2F("EgenEl_vs_ThrecEl","EgenEl_vs_ThrecEl", 50, 0, 400, 60, 0, 3.15);
-  histo2D["EgenEl_vs_ThgenEl-ThrecEl"] = new TH2F("EgenEl_vs_ThgenEl-ThrecEl","EgenEl_vs_ThgenEl-ThrecEl", 5, 0, 400, 60, -0.05, 0.05);
-  histo2D["InvPtgenMu_vs_ThrecMu"] = new TH2F("InvPtgenMu_vs_ThrecMu","InvPtgenMu_vs_ThrecMu", 50, 0, 0.05, 60, 0, 3.15);
-  histo2D["InvPtgenMu_vs_ThgenMu-ThrecMu"] = new TH2F("InvPtgenMu_vs_ThgenMu-ThrecMu","InvPtgenMu_vs_ThgenMu-ThrecMu", 5, 0.002, 0.04, 60, -0.05, 0.05);
-	
-  histo2D["Phiparton_vs_Phinonbjet"] = new TH2F("Phiparton_vs_Phinonbjet","Phiparton_vs_Phinonbjet", 120, -3.2, 3.2, 120, -3.2, 3.2);
-  histo2D["Phiparton_vs_Phiparton-Phinonbjet"] = new TH2F("Phiparton_vs_Phiparton-Phinonbjet","Phiparton_vs_Phiparton-Phinonbjet", 5, -3.2, 3.2, 120, -0.3, 0.3);
-  histo2D["Phiparton_vs_Phibjet"] = new TH2F("Phiparton_vs_Phibjet","Phiparton_vs_Phibjet", 120, -3.2, 3.2, 120, -3.2, 3.2);
-  histo2D["Phiparton_vs_Phiparton-Phibjet"] = new TH2F("Phiparton_vs_Phiparton-Phibjet","Phiparton_vs_Phiparton-Phibjet", 5, -3.2, 3.2, 120, -0.3, 0.3);
-  histo2D["PhigenEl_vs_PhirecEl"] = new TH2F("PhigenEl_vs_PhirecEl","PhigenEl_vs_PhirecEl", 120, -3.2, 3.2, 120, -3.2, 3.2);
-  histo2D["PhigenEl_vs_PhigenEl-PhirecEl"] = new TH2F("PhigenEl_vs_PhigenEl-PhirecEl","PhigenEl_vs_PhigenEl-PhirecEl", 5, -3.2, 3.2, 120, -0.05, 0.05);
-  histo2D["PhigenMu_vs_PhirecMu"] = new TH2F("PhigenMu_vs_PhirecMu","PhigenMu_vs_PhirecMu", 120, -3.2, 3.2, 120, -3.2, 3.2);
-  histo2D["PhigenMu_vs_PhigenMu-PhirecMu"] = new TH2F("PhigenMu_vs_PhigenMu-PhirecMu","PhigenMu_vs_PhigenMu-PhirecMu", 5, -3.2, 3.2, 120, -0.05, 0.05);
-  histo2D["Eparton_vs_Phinonbjet"] = new TH2F("Eparton_vs_Phinonbjet","Eparton_vs_Phinonbjet", 50, 0, 400, 120, -3.2, 3.2);
-  histo2D["Eparton_vs_Phiparton-Phinonbjet"] = new TH2F("Eparton_vs_Phiparton-Phinonbjet","Eparton_vs_Phiparton-Phinonbjet", 5, 0, 250, 120, -0.3, 0.3);
-  histo2D["Eparton_vs_Phibjet"] = new TH2F("Eparton_vs_Phibjet","Eparton_vs_Phibjet", 50, 0, 400, 120, -3.2, 3.2);
-  histo2D["Eparton_vs_Phiparton-Phibjet"] = new TH2F("Eparton_vs_Phiparton-Phibjet","Eparton_vs_Phiparton-Phibjet", 5, 0, 300, 120, -0.3, 0.3);
-  histo2D["EgenEl_vs_PhirecEl"] = new TH2F("EgenEl_vs_PhirecEl","EgenEl_vs_PhirecEl", 50, 0, 400, 120, -3.2, 3.2);
-  histo2D["EgenEl_vs_PhigenEl-PhirecEl"] = new TH2F("EgenEl_vs_PhigenEl-PhirecEl","EgenEl_vs_PhigenEl-PhirecEl", 5, 0, 400, 120, -0.05, 0.05);
-  histo2D["InvPtgenMu_vs_PhirecMu"] = new TH2F("InvPtgenMu_vs_PhirecMu","InvPtgenMu_vs_PhirecMu", 50, 0, 0.05, 120, -3.2, 3.2);
-  histo2D["InvPtgenMu_vs_PhigenMu-PhirecMu"] = new TH2F("InvPtgenMu_vs_PhigenMu-PhirecMu","InvPtgenMu_vs_PhigenMu-PhirecMu", 5, 0.002, 0.04, 120, -0.05, 0.05);
+		
+	if (! useMassesAndResolutions){
+  	histo1D["hadronicGenTopMass"] = new TH1F("hadronicGenTopMass","Hadronic Top Mass, using the quarks", 100, 100, 300);
+  	histo1D["hadronicGenWMass"] = new TH1F("hadronicGenWMass","Hadronic W Mass, using the quarks",100,0,200);
+  	histo1D["hadronicRecoTopMass"] = new TH1F("hadronicRecoTopMass","Hadronic Top Mass, using the RecoJets", 100, 100, 300);
+  	histo1D["hadronicRecoWMass"] = new TH1F("hadronicRecoWMass","Hadronic W Mass, using the RecoJets",100,0,200);
+
+  	histo2D["Eparton_vs_Enonbjet"] = new TH2F("Eparton_vs_Enonbjet","Eparton_vs_Enonbjet", 50, 0, 400, 50, 0, 400);
+  	histo2D["Eparton_vs_Eparton-Enonbjet"] = new TH2F("Eparton_vs_Eparton-Enonbjet","Eparton_vs_Eparton-Enonbjet", 4, 0, 250, 50, -100, 100);
+  	histo2D["Eparton_vs_Ebjet"] = new TH2F("Eparton_vs_Ebjet","Eparton_vs_Ebjet", 50, 0, 400, 50, 0, 400);
+  	histo2D["Eparton_vs_Eparton-Ebjet"] = new TH2F("Eparton_vs_Eparton-Ebjet","Eparton_vs_Eparton-Ebjet", 4, 0, 300, 50, -100, 100);
+  	histo2D["EgenEl_vs_ErecEl"] = new TH2F("EgenEl_vs_ErecEl","EgenEl_vs_ErecEl", 50, 0, 400, 50, 0, 400);
+  	histo2D["EgenEl_vs_EgenEl-ErecEl"] = new TH2F("EgenEl_vs_EgenEl-ErecEl","EgenEl_vs_EgenEl-ErecEl", 50, 0, 400, 50, -50, 50);
+  	histo2D["InvPtgenMu_vs_InvPtrecMu"] = new TH2F("InvPtgenMu_vs_InvPtrecMu","InvPtgenMu_vs_InvPtrecMu", 50, 0, 0.05, 50, 0, 0.05);
+  	histo2D["InvPtgenMu_vs_InvPtgenMu-InvPtrecMu"] = new TH2F("InvPtgenMu_vs_InvPtgenMu-InvPtrecMu","InvPtgenMu_vs_InvPtgenMu-InvPtrecMu", 5, 0.002, 0.04, 50, -0.005, 0.005);
+
+  	histo2D["Thparton_vs_Thnonbjet"] = new TH2F("Thparton_vs_Thnonbjet","Thparton_vs_Thnonbjet", 60, 0, 3.15, 60, 0, 3.15);
+  	histo2D["Thparton_vs_Thparton-Thnonbjet"] = new TH2F("Thparton_vs_Thparton-Thnonbjet","Thparton_vs_Thparton-Thnonbjet", 5, 0.1, 3.0, 60, -0.15, 0.15);
+  	histo2D["Thparton_vs_Thbjet"] = new TH2F("Thparton_vs_Thbjet","Thparton_vs_Thbjet", 60, 0, 3.15, 60, 0, 3.15);
+  	histo2D["Thparton_vs_Thparton-Thbjet"] = new TH2F("Thparton_vs_Thparton-Thbjet","Thparton_vs_Thparton-Thbjet", 5, 0.1, 3.0, 60, -0.15, 0.15);
+  	histo2D["ThgenEl_vs_ThrecEl"] = new TH2F("ThgenEl_vs_ThrecEl","ThgenEl_vs_ThrecEl", 60, 0, 3.15, 60, 0, 3.15);
+  	histo2D["ThgenEl_vs_ThgenEl-ThrecEl"] = new TH2F("ThgenEl_vs_ThgenEl-ThrecEl","ThgenEl_vs_ThgenEl-ThrecEl", 5, 0.2, 3.0, 60, -0.05, 0.05);
+  	histo2D["ThgenMu_vs_ThrecMu"] = new TH2F("ThgenMu_vs_ThrecMu","ThgenMu_vs_ThrecMu", 60, 0, 3.15, 60, 0, 3.15);
+  	histo2D["ThgenMu_vs_ThgenMu-ThrecMu"] = new TH2F("ThgenMu_vs_ThgenMu-ThrecMu","ThgenMu_vs_ThgenMu-ThrecMu", 5, 0.2, 3.0, 60, -0.05, 0.05);
+  	histo2D["Eparton_vs_Thnonbjet"] = new TH2F("Eparton_vs_Thnonbjet","Eparton_vs_Thnonbjet", 50, 0, 400, 60, 0, 3.15);
+  	histo2D["Eparton_vs_Thparton-Thnonbjet"] = new TH2F("Eparton_vs_Thparton-Thnonbjet","Eparton_vs_Thparton-Thnonbjet", 4, 0, 250, 60, -0.15, 0.15);
+  	histo2D["Eparton_vs_Thbjet"] = new TH2F("Eparton_vs_Thbjet","Eparton_vs_Thbjet", 50, 0, 400, 60, 0, 3.15);
+  	histo2D["Eparton_vs_Thparton-Thbjet"] = new TH2F("Eparton_vs_Thparton-Thbjet","Eparton_vs_Thparton-Thbjet", 4, 0, 300, 60, -0.15, 0.15);
+  	histo2D["EgenEl_vs_ThrecEl"] = new TH2F("EgenEl_vs_ThrecEl","EgenEl_vs_ThrecEl", 50, 0, 400, 60, 0, 3.15);
+  	histo2D["EgenEl_vs_ThgenEl-ThrecEl"] = new TH2F("EgenEl_vs_ThgenEl-ThrecEl","EgenEl_vs_ThgenEl-ThrecEl", 5, 0, 400, 60, -0.05, 0.05);
+  	histo2D["InvPtgenMu_vs_ThrecMu"] = new TH2F("InvPtgenMu_vs_ThrecMu","InvPtgenMu_vs_ThrecMu", 50, 0, 0.05, 60, 0, 3.15);
+  	histo2D["InvPtgenMu_vs_ThgenMu-ThrecMu"] = new TH2F("InvPtgenMu_vs_ThgenMu-ThrecMu","InvPtgenMu_vs_ThgenMu-ThrecMu", 5, 0.002, 0.04, 60, -0.05, 0.05);
+
+  	histo2D["Phiparton_vs_Phinonbjet"] = new TH2F("Phiparton_vs_Phinonbjet","Phiparton_vs_Phinonbjet", 120, -3.2, 3.2, 120, -3.2, 3.2);
+  	histo2D["Phiparton_vs_Phiparton-Phinonbjet"] = new TH2F("Phiparton_vs_Phiparton-Phinonbjet","Phiparton_vs_Phiparton-Phinonbjet", 5, -3.2, 3.2, 120, -0.3, 0.3);
+  	histo2D["Phiparton_vs_Phibjet"] = new TH2F("Phiparton_vs_Phibjet","Phiparton_vs_Phibjet", 120, -3.2, 3.2, 120, -3.2, 3.2);
+  	histo2D["Phiparton_vs_Phiparton-Phibjet"] = new TH2F("Phiparton_vs_Phiparton-Phibjet","Phiparton_vs_Phiparton-Phibjet", 5, -3.2, 3.2, 120, -0.3, 0.3);
+  	histo2D["PhigenEl_vs_PhirecEl"] = new TH2F("PhigenEl_vs_PhirecEl","PhigenEl_vs_PhirecEl", 120, -3.2, 3.2, 120, -3.2, 3.2);
+  	histo2D["PhigenEl_vs_PhigenEl-PhirecEl"] = new TH2F("PhigenEl_vs_PhigenEl-PhirecEl","PhigenEl_vs_PhigenEl-PhirecEl", 5, -3.2, 3.2, 120, -0.05, 0.05);
+  	histo2D["PhigenMu_vs_PhirecMu"] = new TH2F("PhigenMu_vs_PhirecMu","PhigenMu_vs_PhirecMu", 120, -3.2, 3.2, 120, -3.2, 3.2);
+  	histo2D["PhigenMu_vs_PhigenMu-PhirecMu"] = new TH2F("PhigenMu_vs_PhigenMu-PhirecMu","PhigenMu_vs_PhigenMu-PhirecMu", 5, -3.2, 3.2, 120, -0.05, 0.05);
+  	histo2D["Eparton_vs_Phinonbjet"] = new TH2F("Eparton_vs_Phinonbjet","Eparton_vs_Phinonbjet", 50, 0, 400, 120, -3.2, 3.2);
+  	histo2D["Eparton_vs_Phiparton-Phinonbjet"] = new TH2F("Eparton_vs_Phiparton-Phinonbjet","Eparton_vs_Phiparton-Phinonbjet", 5, 0, 250, 120, -0.3, 0.3);
+  	histo2D["Eparton_vs_Phibjet"] = new TH2F("Eparton_vs_Phibjet","Eparton_vs_Phibjet", 50, 0, 400, 120, -3.2, 3.2);
+  	histo2D["Eparton_vs_Phiparton-Phibjet"] = new TH2F("Eparton_vs_Phiparton-Phibjet","Eparton_vs_Phiparton-Phibjet", 5, 0, 300, 120, -0.3, 0.3);
+  	histo2D["EgenEl_vs_PhirecEl"] = new TH2F("EgenEl_vs_PhirecEl","EgenEl_vs_PhirecEl", 50, 0, 400, 120, -3.2, 3.2);
+  	histo2D["EgenEl_vs_PhigenEl-PhirecEl"] = new TH2F("EgenEl_vs_PhigenEl-PhirecEl","EgenEl_vs_PhigenEl-PhirecEl", 5, 0, 400, 120, -0.05, 0.05);
+  	histo2D["InvPtgenMu_vs_PhirecMu"] = new TH2F("InvPtgenMu_vs_PhirecMu","InvPtgenMu_vs_PhirecMu", 50, 0, 0.05, 120, -3.2, 3.2);
+  	histo2D["InvPtgenMu_vs_PhigenMu-PhirecMu"] = new TH2F("InvPtgenMu_vs_PhigenMu-PhirecMu","InvPtgenMu_vs_PhigenMu-PhirecMu", 5, 0.002, 0.04, 120, -0.05, 0.05);
+	}
+/*	if (useMassesAndResolutions) {
+		TFile *fileIn = new TFile("PlotsForTransferFunctions.root","read");
+		fileIn->cd();
+		histo2D[""] = (TH2F*) fileIn->Get(("").c_str());
+		histo2D[""] = (TH2F*) fileIn->Get(("").c_str());
+		histo2D[""] = (TH2F*) fileIn->Get(("").c_str());
+		histo2D[""] = (TH2F*) fileIn->Get(("").c_str());
+	}
+*/
+		
+	//Btag Scalefactor
+	int NofPtBins = 15;
+	int PtMin = 40;
+	int PtMax = 340;
+	int NofEtaBins = 2;
+	histo2D["BtaggedJets"] = new TH2F("BtaggedJets", "Total number of btagged jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
+	histo2D["BtaggedBJets"] = new TH2F("BtaggedBJets", "Total number of btagged b-jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
+	histo2D["BtaggedCJets"] = new TH2F("BtaggedCJets", "Total number of btagged c-jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
+	histo2D["BtaggedLightJets"] = new TH2F("BtaggedLightJets", "Total number of btagged light jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
+	histo2D["TotalNofBJets"] = new TH2F("TotalNofBJets", "Total number of b-jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
+	histo2D["TotalNofCJets"] = new TH2F("TotalNofCJets", "Total number of c-jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
+	histo2D["TotalNofLightJets"] = new TH2F("TotalNofLightJets", "Total number of light jets", NofPtBins, PtMin, PtMax, NofEtaBins, 0, 2.4);
 	
 	
 	
@@ -361,6 +390,9 @@ int main (int argc, char *argv[])
 	ofstream muPlusLHCOextended;
 	ofstream muMinusLHCOextended;
 	
+	ofstream muPlusScaleFactor;
+	ofstream muMinusScaleFactor;
+	
 	
 	string thisDataSet = "";
 	
@@ -388,7 +420,11 @@ int main (int argc, char *argv[])
     treeLoader.LoadDataset (datasets[d], anaEnv);
     cout<<"LoadEvent"<<endl;
 		
-    
+    /*if ( (d == 0 && useMassesAndResolutions) || d == 1 || d > 5) {
+			cout << "Skip dataset (for now)" << endl;
+			continue;
+		}*/
+		
 		
 		////////////////////////////
 		//	Initialise LHCO files	//
@@ -431,6 +467,7 @@ int main (int argc, char *argv[])
 		
 		
 		string pathLHCO = "LHCO_CSVM/";
+		mkdir(pathLHCO.c_str(),0777);
 		
 		string strMuPlus = pathLHCO+"input_muPlus_"+thisDataSet+".lhco";
 		muPlusLHCO.open(strMuPlus.c_str());
@@ -446,7 +483,8 @@ int main (int argc, char *argv[])
 		muMinusLHCO << "  #  typ      eta      phi       pt   jmas  ntrk  btag   had/em  dum1  dum2 " << endl;
 				
 		
-		string pathLHCOextended = "LHCO_Extended_CSVM/";		
+		string pathLHCOextended = "LHCO_Extended_CSVM/";
+		mkdir(pathLHCOextended.c_str(),0777);		
 				
 		string strMuPlusExt = pathLHCOextended+"input_muPlus_"+thisDataSet+".lhco";
 		muPlusLHCOextended.open(strMuPlusExt.c_str());
@@ -460,6 +498,14 @@ int main (int argc, char *argv[])
 		muMinusLHCOextended << "#</MGPGSCard> " << endl;
 		muMinusLHCOextended << "#" << thisDataSet << endl;
 		muMinusLHCOextended << "  #  typ      eta      phi       pt   jmas  ntrk  btag   had/em  dum1  dum2 " << endl;
+		
+		
+		string strScaleFactor = pathLHCOextended+"scaleFactor_muPlus_"+thisDataSet+".lhco";
+		muPlusScaleFactor.open(strScaleFactor.c_str());
+		muPlusScaleFactor << "#" << thisDataSet << endl;
+		strScaleFactor = pathLHCOextended+"scaleFactor_muMinus_"+thisDataSet+".lhco";
+		muMinusScaleFactor.open(strScaleFactor.c_str());
+		muMinusScaleFactor << "#" << thisDataSet << endl;
 		
 		
 		int ProcessedLHCOEventsMuPlus = 0;  // Counts the number of events for the LHCO file
@@ -506,6 +552,9 @@ int main (int argc, char *argv[])
     float Chi2Topmass = -9999;
     float SigmaChi2Topmass = -9999;
 		
+		// initialise histos for btag scaleFactors
+		TH2F *inBtaggedJets, *inBtaggedBJets, *inBtaggedCJets, *inBtaggedLightJets, *inTotalNofBJets, *inTotalNofCJets, *inTotalNofLightJets;
+		
     if (useMassesAndResolutions) {
 			
       //cout << "Test" << endl;
@@ -531,6 +580,19 @@ int main (int argc, char *argv[])
       }
       res->Close();
       delete res;
+			
+			
+			// Btag histos
+			string fileNameBtag = "PlotsForBtagWeights.root";
+			TFile *fileIn = new TFile(fileNameBtag.c_str(),"READ");
+			fileIn->cd();
+			inBtaggedJets  = (TH2F*) fileIn->Get("BtaggedJets");
+			inBtaggedBJets = (TH2F*) fileIn->Get("BtaggedBJets");
+			inBtaggedCJets = (TH2F*) fileIn->Get("BtaggedCJets");
+			inBtaggedLightJets = (TH2F*) fileIn->Get("BtaggedLightJets");
+			inTotalNofBJets = (TH2F*) fileIn->Get("TotalNofBJets");
+			inTotalNofCJets = (TH2F*) fileIn->Get("TotalNofCJets");
+			inTotalNofLightJets = (TH2F*) fileIn->Get("TotalNofLightJets");
 			
     }
 		
@@ -784,19 +846,19 @@ int main (int argc, char *argv[])
 			//cout<<"blabla "<<endl;
 			vector<TRootMCParticle*> mcParticles;
 
-			if(dataSetName.find("TTbarJets") == 0)
-	  		{
+			if(dataSetName.find("TTbarJets") == 0 || dataSetName.find("NP")==0) {
 	    		treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
 	    		sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
-	  		}
+	  	}
 			//cout<<"blabli "<<endl;
-
+			
+			
 			bool eventselectedSemiMu = false; //2 CSVM btags
 			bool eventselectedSemiEl = false; //2 CSVM btags
 			bool eventselectedSemiMu_onebtag = false;
 			bool eventselectedSemiEl_onebtag = false;
 			int nb_btags = 0;
-
+			
 			if (useMassesAndResolutions) selecTableSemiMu.Fill(d,0,scaleFactor);
 			// semi-mu selection
 			if (triggedSemiMu){
@@ -816,16 +878,16 @@ int main (int argc, char *argv[])
 										float Ht = selectedJets[0]->Pt()+selectedJets[1]->Pt()+selectedJets[2]->Pt()+selectedJets[3]->Pt();
 										if (Ht > 250) {
 											if (useMassesAndResolutions) selecTableSemiMu.Fill(d,8,scaleFactor);
-
+											
 		    		 			 		for (unsigned int i=0; i < selectedJets.size(); i++) {
 		      		 			 		if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.679) nb_btags++;
 		    		 			 		}
-
+											
 		    		 			 		if( nb_btags>=1 ) {
 		      		 			 		if (useMassesAndResolutions) selecTableSemiMu.Fill(d,9,scaleFactor);
-
+												
 		      		 			 		eventselectedSemiMu_onebtag = true;
-
+												
 		      		 			 		if( nb_btags>=2 ) {
 					 						 		if (useMassesAndResolutions) selecTableSemiMu.Fill(d,10,scaleFactor);
 					 						 		eventselectedSemiMu = true;
@@ -843,130 +905,223 @@ int main (int argc, char *argv[])
 			//cout<<"nb_btags: "<<nb_btags<<endl;
 			//cout<<"eventselectedSemiMu_onebtag: "<<eventselectedSemiMu_onebtag<<endl;
 			//cout<<"eventselectedSemiMu: "<<eventselectedSemiMu<<endl;
-
-
-			/*     selecTableSemiEl.Fill(d,0,scaleFactor);
-
-			if( triggedSemiEl) {
-			selecTableSemiEl.Fill(d,1,scaleFactor);
-			if (isGoodPV ) {
-			selecTableSemiEl.Fill(d,2,scaleFactor);
-			if( selectedElectrons.size() == 1 ) {
-			selecTableSemiEl.Fill(d,3,scaleFactor);
-			if( vetoMuons.size() == 0 ) {
-			selecTableSemiEl.Fill(d,4,scaleFactor);
-			if (vetoElectronsSemiEl.size() == 1) {
-			//if( !selection.foundZCandidate(selectedElectrons[0], vetoElectronsSemiEl) ) {
-			selecTableSemiEl.Fill(d,5,scaleFactor);
-			if( selection.passConversionRejection(selectedElectrons[0]) ) {
-			selecTableSemiEl.Fill(d,6,scaleFactor);
-			if( selectedJets.size()>=1 ) {
-			selecTableSemiEl.Fill(d,7,scaleFactor);
-			if( selectedJets.size()>=2 ) {
-			selecTableSemiEl.Fill(d,8,scaleFactor);
-			if( selectedJets.size()>=3 ) {
-			selecTableSemiEl.Fill(d,9,scaleFactor);
-			if( selectedJets.size()>=4 ) {
-			selecTableSemiEl.Fill(d,10,scaleFactor);
-
-			//if (selectedJets[0]->Pt() > 45 && selectedJets[1]->Pt() > 45 && selectedJets[2]->Pt() > 45 && selectedJets[3]->Pt() > 45) {
-			eventselectedSemiEl=true;
-			//}
-			}
-			}
-			}
-			}
-			}
-			}
-			}
-			}
-			}
-			}
-			*/
-
-
+			
+			
 			//if (!eventselectedSemiMu_onebtag && !eventselectedSemiEl_onebtag) continue;
 			if (!eventselectedSemiMu && !eventselectedSemiEl) continue;
 			//cout << "check - event is selected!" << endl;
 			
 			
 			
-			//--------------------------------------------//
-			// find the b-tagged jets with the highest pt //					
-			//--------------------------------------------//
-
-			//cout << "find the b-tagged jets with the highest pt" << endl;
-			int labelBtag1 = -9999;
-			int labelBtag2 = -9999;
-			float PtBtag1 = -9999.;
-			float PtBtag2 = -9999.;
-			for (unsigned int i=0; i < selectedJets.size(); i++) {
-	  		//cout << "working with jet[" << i << "] with pt=" << selectedJets[i]->Pt() << " and btag value = " << selectedJets[i]->btag_combinedSecondaryVertexBJetTags() << endl;
-	  		if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.679) {		// CSVM
-	    		//cout << "jet[" << i << "] is btagged (CSVM)" << endl;
-	    		//cout << "labelBtag1:" << labelBtag1 << " and PtBtag1:"<<PtBtag1 << endl;
-	    		//cout << "labelBtag2:" << labelBtag2 << " and PtBtag2:"<<PtBtag2 << endl;
-	    		if (selectedJets[i]->Pt() > PtBtag1) {
-	      		// Save previous as second best
-	      		if(labelBtag1 >= 0){
-							labelBtag2 = labelBtag1;
-							PtBtag2 = selectedJets[labelBtag2]->Pt();
-	      		}
-	      		// Keep new one
-	      		labelBtag1 = i;
-	      		PtBtag1 = selectedJets[i]->Pt();
-	    		}
-	    		else if (selectedJets[i]->Pt() > PtBtag2) {
-	      		labelBtag2 = i;
-	      		PtBtag2 = selectedJets[i]->Pt();
-	    		}
-	  		}
-			}
-			//if(labelBtag1>=0) cout << "first b-tagged jet is jet[" << labelBtag1 << "] with pt " << selectedJets[labelBtag1]->Pt() << endl;
-			//if(labelBtag2>=0) cout << "second b-tagged jet is jet[" << labelBtag2 << "] with pt " << selectedJets[labelBtag2]->Pt() <<endl;
-			
-			
-			
-			///////////////////////
-			// Btag Scalefactors //
-			///////////////////////
-			
-			double BtagSF = 1;
-			if ( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
-				if (labelBtag1 != -9999) {
-					if ( fabs(selectedJets[labelBtag1]->partonFlavour()) == 5 ) {
-						BtagSF = bTool_M->getWeight(selectedJets[labelBtag1]->Pt(), selectedJets[labelBtag1]->Eta(), 5, "CSVM", 0);
-					}
-					else if ( fabs(selectedJets[labelBtag1]->partonFlavour()) == 4 ) {
-						BtagSF = bTool_M->getWeight(selectedJets[labelBtag1]->Pt(), selectedJets[labelBtag1]->Eta(), 4, "CSVM", 0);
-					}
-					else {
-						BtagSF = bTool_M->getWeight(selectedJets[labelBtag1]->Pt(), selectedJets[labelBtag1]->Eta(), 1, "CSVM", 0);
-					}
-				}
-				if (labelBtag2 != -9999) {
-					if ( fabs(selectedJets[labelBtag2]->partonFlavour()) == 5 ) {
-						BtagSF = bTool_M->getWeight(selectedJets[labelBtag2]->Pt(), selectedJets[labelBtag2]->Eta(), 5, "CSVM", 0);
-					}
-					else if ( fabs(selectedJets[labelBtag2]->partonFlavour()) == 4 ) {
-						BtagSF = bTool_M->getWeight(selectedJets[labelBtag2]->Pt(), selectedJets[labelBtag2]->Eta(), 4, "CSVM", 0);
-					}
-					else {
-						BtagSF = bTool_M->getWeight(selectedJets[labelBtag2]->Pt(), selectedJets[labelBtag2]->Eta(), 1, "CSVM", 0);
-					}
-				}
-				//scaleFactor = scaleFactor*BtagSF;
-			}
-			
-			
-			
-			/////////////////////////////////
+			//-----------------------------//
 			//  Muon Trigger Scalefactors  //
-			/////////////////////////////////
+			//-----------------------------//
 			
-			double muonTrigSF = leptonTools->getMuonSF(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());
 			if ( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
+				double muonTrigSF = leptonTools->getMuonSF(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());
 				scaleFactor = scaleFactor*muonTrigSF;
+			}
+			
+			
+			
+			//-------------------//
+			// Btag Scalefactors //
+			//-------------------//
+			
+			bool correctEta = true;
+			for (unsigned int i=0; i < selectedJets.size(); i++) {
+				if (fabs(selectedJets[i]->Eta()) > 2.4) {
+					correctEta = false;
+					cout << "WARNING: Jet has eta larger than 2.4. Event " << ievt << " will not be processed!" << endl;
+					break;
+				}
+			}
+			
+			// Fill histos	
+			if (!useMassesAndResolutions && correctEta) {
+				for (unsigned int i=0; i < selectedJets.size(); i++) {
+					double localPt = selectedJets[i]->Pt();
+					double localEta = fabs(selectedJets[i]->Eta()); 
+					if (localPt >= PtMax) localPt = PtMax-1;
+					if (localEta == 2.4) localEta = 2.4-0.01;
+
+					if (fabs(selectedJets[i]->partonFlavour()) == 5.) {	//b-jet
+						histo2D["TotalNofBJets"]->Fill(localPt,localEta);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) == 4.) {	//c-jet
+						histo2D["TotalNofCJets"]->Fill(localPt,localEta);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) == 1. || fabs(selectedJets[i]->partonFlavour()) == 2. || fabs(selectedJets[i]->partonFlavour()) == 3. || fabs(selectedJets[i]->partonFlavour()) == 21.) {	//udsg-jet
+						histo2D["TotalNofLightJets"]->Fill(localPt,localEta);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) == 0.) {
+						cout << "Eventnr.: " << ievt << ", Jetnr.: " << i << ", pdgId: " << selectedJets[i]->partonFlavour() << ". Is pileup jet -> consider as light jet." << endl;
+						histo2D["TotalNofLightJets"]->Fill(localPt,localEta);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) > 100.) {
+						cout << "Eventnr.: " << ievt << ", Jetnr.: " << i << ", pdgId: " << selectedJets[i]->partonFlavour() << ". Is hadron -> consider as light jet." << endl;
+						histo2D["TotalNofLightJets"]->Fill(localPt,localEta);
+					}
+					
+					
+					if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.679) {	//CSVM
+						histo2D["BtaggedJets"]->Fill(localPt,localEta);
+						
+						if (fabs(selectedJets[i]->partonFlavour()) == 5.) {	//b-jet
+							histo2D["BtaggedBJets"]->Fill(localPt,localEta);
+						}
+						else if (fabs(selectedJets[i]->partonFlavour()) == 4.) {	//c-jet
+							histo2D["BtaggedCJets"]->Fill(localPt,localEta);
+						}
+						else if (fabs(selectedJets[i]->partonFlavour()) == 1. || fabs(selectedJets[i]->partonFlavour()) == 2. || fabs(selectedJets[i]->partonFlavour()) == 3. || fabs(selectedJets[i]->partonFlavour()) == 21.) {	//udsg-jet
+							histo2D["BtaggedLightJets"]->Fill(localPt,localEta);
+						}
+						else if (fabs(selectedJets[i]->partonFlavour()) == 0.) {
+							cout << "Eventnr.: " << ievt << ", Jetnr.: " << i << ", pdgId: " << selectedJets[i]->partonFlavour() << ". Is pileup jet -> consider as light jet." << endl;
+							histo2D["BtaggedLightJets"]->Fill(localPt,localEta);
+						}
+						else if (fabs(selectedJets[i]->partonFlavour()) > 100.) {
+							cout << "Eventnr.: " << ievt << ", Jetnr.: " << i << ", pdgId: " << selectedJets[i]->partonFlavour() << ". Is hadron -> consider as light jet." << endl;
+							histo2D["BtaggedLightJets"]->Fill(localPt,localEta);
+						}
+					}
+				}
+				
+			}
+
+				
+			if ( useMassesAndResolutions && correctEta && ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) ) {
+				if (MSPlot.find("BtagWeights") == MSPlot.end()){
+	  			MSPlot["BtagWeights"] = new MultiSamplePlot(datasets, "BtagWeights", 50, 0.5, 1.5, "Weight");
+					MSPlot["BtagWeightsOverkill"] = new MultiSamplePlot(datasets, "BtagWeightsOverkill", 75, 0.5, 2, "Weight");
+				}
+				
+				double probMC = 1.;
+				double probData = 1.;
+				double tagEff = 1.;
+				double btagSF = 1.;
+				for (unsigned int i=0; i < selectedJets.size(); i++) {					
+					int xBin = 0;
+					if (selectedJets[i]->Pt() < PtMax) {
+						xBin = inTotalNofBJets->GetXaxis()->FindBin(selectedJets[i]->Pt());		//Histograms have same binning.
+					}
+					else if (selectedJets[i]->Pt() >= PtMax) {
+						xBin = inTotalNofBJets->GetXaxis()->FindBin(PtMax-1);
+					}
+					int yBin = 0;
+					if (fabs(selectedJets[i]->Eta()) < 2.4) {
+						yBin = inTotalNofBJets->GetYaxis()->FindBin(fabs(selectedJets[i]->Eta()));
+					}
+					else if (fabs(selectedJets[i]->Eta()) == 2.4) {
+						yBin = inTotalNofBJets->GetYaxis()->FindBin(2.4-0.01);
+					}
+					
+					
+					if (fabs(selectedJets[i]->partonFlavour()) == 5.) {
+						double NofBJets = inTotalNofBJets->GetBinContent(xBin,yBin);
+						if (NofBJets == 0.) {
+							cout << "WARNING: No b jets for bin (" << xBin << "," << yBin << ")." << endl;
+							continue;
+						}
+						double NofTaggedBJets = inBtaggedBJets->GetBinContent(xBin,yBin);
+						tagEff = NofTaggedBJets/NofBJets;
+						btagSF = bTool_M->getWeight(selectedJets[i]->Pt(), selectedJets[i]->Eta(), 5, "CSVM", 0);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) == 4.) {
+						double NofCJets = inTotalNofCJets->GetBinContent(xBin,yBin);
+						if (NofCJets == 0.) {
+							cout << "WARNING: No c jets for bin (" << xBin << "," << yBin << ")." << endl;
+							continue;
+						}
+						double NofTaggedCJets = inBtaggedCJets->GetBinContent(xBin,yBin);
+						tagEff = NofTaggedCJets/NofCJets;
+						btagSF = bTool_M->getWeight(selectedJets[i]->Pt(), selectedJets[i]->Eta(), 4, "CSVM", 0);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) == 1. || fabs(selectedJets[i]->partonFlavour()) == 2. || fabs(selectedJets[i]->partonFlavour()) == 3. || fabs(selectedJets[i]->partonFlavour()) == 21.) {
+						double NofLightJets = inTotalNofLightJets->GetBinContent(xBin,yBin);
+						if (NofLightJets == 0.) {
+							cout << "WARNING: No light jets for bin (" << xBin << "," << yBin << ")." << endl;
+							continue;
+						}
+						double NofTaggedLightJets = inBtaggedLightJets->GetBinContent(xBin,yBin);
+						tagEff = NofTaggedLightJets/NofLightJets;
+						btagSF = bTool_M->getWeight(selectedJets[i]->Pt(), selectedJets[i]->Eta(), 1, "CSVM", 0);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) == 0.) {
+						cout << "Eventnr.: " << ievt << ", Jetnr.: " << i << ", pdgId: " << selectedJets[i]->partonFlavour() << ". Is pileup jet -> consider as light jet." << endl;
+						double NofLightJets = inTotalNofLightJets->GetBinContent(xBin,yBin);
+						if (NofLightJets == 0.) {
+							cout << "WARNING: No light jets for bin (" << xBin << "," << yBin << ")." << endl;
+							continue;
+						}
+						double NofTaggedLightJets = inBtaggedLightJets->GetBinContent(xBin,yBin);
+						tagEff = NofTaggedLightJets/NofLightJets;
+						btagSF = bTool_M->getWeight(selectedJets[i]->Pt(), selectedJets[i]->Eta(), 1, "CSVM", 0);
+					}
+					else if (fabs(selectedJets[i]->partonFlavour()) > 100.) {
+						cout << "Eventnr.: " << ievt << ", Jetnr.: " << i << ", pdgId: " << selectedJets[i]->partonFlavour() << ". Is hadron -> consider as light jet." << endl;
+						double NofLightJets = inTotalNofLightJets->GetBinContent(xBin,yBin);
+						if (NofLightJets == 0.) {
+							cout << "WARNING: No light jets for bin (" << xBin << "," << yBin << ")." << endl;
+							continue;
+						}
+						double NofTaggedLightJets = inBtaggedLightJets->GetBinContent(xBin,yBin);
+						tagEff = NofTaggedLightJets/NofLightJets;
+						btagSF = bTool_M->getWeight(selectedJets[i]->Pt(), selectedJets[i]->Eta(), 1, "CSVM", 0);
+					}
+					else {
+						cout << endl;
+						cout << "WARNING: Jet not identified! PdgId: " << selectedJets[i]->partonFlavour() << endl;
+						continue;
+					}
+					
+					
+					if (selectedJets[i]->Pt() > 800.000) {
+						cout << "Dataset: " << dataSetName << "; Eventnr. " << ievt << "; jet Pt = " << selectedJets[i]->Pt() << "; jet Eta = " << selectedJets[i]->Eta();
+						if (fabs(selectedJets[i]->partonFlavour()) == 5.) cout << "; Bincontent = " << inBtaggedBJets->GetBinContent(xBin,yBin) << "/" << inTotalNofBJets->GetBinContent(xBin,yBin) << endl;
+						else if (fabs(selectedJets[i]->partonFlavour()) == 4.) cout << "; Bincontent = " << inBtaggedCJets->GetBinContent(xBin,yBin) << "/" << inTotalNofCJets->GetBinContent(xBin,yBin) << endl;
+						else cout << "; Bincontent = " << inBtaggedLightJets->GetBinContent(xBin,yBin) << "/" << inTotalNofLightJets->GetBinContent(xBin,yBin) << endl;
+					}
+					
+					
+					if (tagEff == 0.) {
+						cout << endl;
+						cout << "WARNING: Tag efficiency is zero!" << endl;
+						cout << "Dataset: " << dataSetName << "; Eventnr. " << ievt << "; jet Pt = " << selectedJets[i]->Pt() << "; jet Eta = " << selectedJets[i]->Eta();
+						if (fabs(selectedJets[i]->partonFlavour()) == 5.) cout << "; Bincontent = " << inBtaggedBJets->GetBinContent(xBin,yBin) << "/" << inTotalNofBJets->GetBinContent(xBin,yBin) << endl;
+						else if (fabs(selectedJets[i]->partonFlavour()) == 4.) cout << "; Bincontent = " << inBtaggedCJets->GetBinContent(xBin,yBin) << "/" << inTotalNofCJets->GetBinContent(xBin,yBin) << endl;
+						else cout << "; Bincontent = " << inBtaggedLightJets->GetBinContent(xBin,yBin) << "/" << inTotalNofLightJets->GetBinContent(xBin,yBin) << endl;
+						continue;
+					}
+					if (btagSF == 0.) {
+						cout << endl;
+						cout << "WARNING: Btag scalefactor is zero!" << endl;
+						continue;
+					}
+					else if (btagSF*tagEff >= 1.) {
+						cout << endl;
+						cout << "WARNING:	BtagSF*tagEff is larger than 1!" << endl;
+					}
+					
+
+					if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.679) {	//CSVM
+						probMC = probMC*tagEff;
+						probData = probData*btagSF*tagEff;
+					}
+					else {	//not tagged
+						probMC = probMC*(1.-tagEff);
+						probData = probData*(1.-btagSF*tagEff);
+					}
+					
+					if (probMC == 0) {
+						cout << "WARNING: probMC = 0!!" << "	Dataset: " << dataSetName << "; Eventnr. " << ievt << "; pdgId = " << selectedJets[i]->partonFlavour() << "; jet Pt = " << selectedJets[i]->Pt() << "; jet Eta = " << selectedJets[i]->Eta() << "; Tag efficiency = " << tagEff << "; Btag scaleFactor = " << btagSF << endl;
+					}
+				}
+
+				double BtagWeight = probData/probMC;
+				MSPlot["BtagWeights"]->Fill(BtagWeight, datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["BtagWeightsOverkill"]->Fill(BtagWeight, datasets[d], true, Luminosity*scaleFactor);
+				scaleFactor = scaleFactor*BtagWeight;
 			}
 			
 			
@@ -997,7 +1152,7 @@ int main (int argc, char *argv[])
 			vector<TRootMCParticle*> mcParticlesMatching_;
 			int genmuon = -9999; int genelectron = -9999;
 			bool muonmatched = false; bool electronmatched = false;
-			if (/*!useMassesAndResolutions &&*/ dataSetName.find("TTbarJets") == 0 && (isSemiMu || isSemiEl) ) {
+			if (/*!useMassesAndResolutions &&*/ dataSetName.find("TTbarJets") == 0 && (isSemiMu || isSemiEl) && correctEta) {
 
 	  		sort(selectedJets.begin(),selectedJets.end(),HighestPt()); // HighestPt() is included from the Selection class)     
 
@@ -1125,7 +1280,7 @@ int main (int argc, char *argv[])
 			//if (eventselectedSemiEl) 
 			//	exit(0);
 
-			if (all4JetsMatched_MCdef_ && !useMassesAndResolutions && dataSetName.find("TTbarJets") == 0) {
+			if (all4JetsMatched_MCdef_ && !useMassesAndResolutions && dataSetName.find("TTbarJets") == 0 && correctEta) {
 	  		//cout << "Size vector: " << mcParticlesMatching_.size() << endl;
 	  		float genWMass = (*mcParticlesMatching_[hadronicWJet1_.second]+*mcParticlesMatching_[hadronicWJet2_.second]).M();
 	  		float genTopMass = (*mcParticlesMatching_[hadronicWJet1_.second]+*mcParticlesMatching_[hadronicWJet2_.second]+*mcParticlesMatching_[hadronicBJet_.second]).M();
@@ -1246,6 +1401,28 @@ int main (int argc, char *argv[])
 			
 			
 			
+			//----------------------//
+			// Selection efficiency //
+			//----------------------//
+			
+			bool isSemiMuSignal = false;
+			
+			if (useMassesAndResolutions && correctEta) {
+				if (dataSetName.find("TTbar") == 0) {
+					NofSelectedTTbarEvents++;
+					if (isSemiMu) NofTrueSemiMuTTbar++;
+				}
+				if (dataSetName.find("NP") == 0) {
+					for (unsigned int i=0; i<mcParticles.size(); i++) {
+						if ( mcParticles[i]->status() != 3) continue;
+							if ( (mcParticles[i]->type() == 13 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -6) || (mcParticles[i]->type() == -13 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == 6) ) {
+								isSemiMuSignal = true;
+						}
+					}
+					NofSelectedSignalEvents++;
+					if (isSemiMuSignal) NofTrueSemiMuSignal++;
+				}
+			}
 			
 			//-----------------//
 			// do some data-mc //
@@ -1280,15 +1457,19 @@ int main (int argc, char *argv[])
 	  		MSPlot["Selected_Events_pT_jet4"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet4"+Flav, 30, 0, 600, "p_{T} (GeV)");
 	  		MSPlot["Selected_Events_pT_4leadingjets"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_4leadingjets"+Flav, 30, 0, 600, "p_{T} (GeV)");
 	  		MSPlot["Selected_Events_pT_alljets"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_alljets"+Flav, 30, 0, 600, "p_{T} (GeV)");
-	  		MSPlot["NofSelectedJets"+Flav] = new MultiSamplePlot(datasetsPlot, "NofSelectedJets"+Flav, 12, 2, 14, "Number of Jets");
-	  		MSPlot["Selected_Events_Btag_Values"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Values"+Flav, 30, -1, 1.1, "BTag value");
-	  		MSPlot["Selected_Events_nb_Btags"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_nb_Btags"+Flav, 5, 0, 5, "Nb. BTags");
-	  		MSPlot["NofPV"] = new MultiSamplePlot(datasetsPlot, "NofPV", 31, -0.5, 30.5, "Nb. of primary vertices");
-	  		MSPlot["NofPV_after_lumiWeight"] = new MultiSamplePlot(datasetsPlot, "NofPV_after_lumiWeight", 31, -0.5, 30.5, "Nb. of primary vertices");
-	  		MSPlot["Pileup_Reweighting"+Flav] = new MultiSamplePlot(datasetsPlot,"Pileup_Reweighting"+Flav, 40, 0, 20, "lumiWeight");
-	  		MSPlot["MET_Pt"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Pt"+Flav, 200, 0, 600, "p_{T} (GeV)");
-	  		MSPlot["MET_Et"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Et"+Flav, 200, 0, 600, "E_{T} (GeV)");
-	  		MSPlot["Ht_4leadingjets"+Flav] = new MultiSamplePlot(datasetsPlot,"Ht_4leadingjets"+Flav, 100, 0, 1000, "H_{T} (GeV)");
+	  		MSPlot["NofSelectedJets"+Flav] = new MultiSamplePlot(datasetsPlot, "NofSelectedJets"+Flav, 10, 3.5, 13.5, "Number of Jets");
+	  		MSPlot["Selected_Events_Btag_Values"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Btag_Values"+Flav, 30, -1, 1.1, "btag value");
+	  		MSPlot["Selected_Events_nb_Btags"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_nb_Btags"+Flav, 5, 1.5, 6.5, "Nb. btags");
+	  		MSPlot["NofPV"] = new MultiSamplePlot(datasetsPlot, "NofPV", 41, -0.5, 40.5, "Nb. of primary vertices");
+	  		MSPlot["NofPV_after_lumiWeight"] = new MultiSamplePlot(datasetsPlot, "NofPV_after_lumiWeight", 41, -0.5, 40.5, "Nb. of primary vertices");
+	  		MSPlot["Pileup_Reweighting"+Flav] = new MultiSamplePlot(datasetsPlot,"Pileup_Reweighting"+Flav, 40, 0, 2, "lumiWeight");
+	  		MSPlot["MET_Pt"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Pt"+Flav, 80,60, 460, "p_{T} (GeV)");
+	  		MSPlot["MET_Et"+Flav] = new MultiSamplePlot(datasetsPlot,"MET_Et"+Flav, 80, 60, 460, "E_{T} (GeV)");
+	  		MSPlot["Ht_4leadingjets"+Flav] = new MultiSamplePlot(datasetsPlot,"Ht_4leadingjets"+Flav, 80, 250, 1050, "H_{T} (GeV)");
+				MSPlot["Ht+MEt"+Flav] = new MultiSamplePlot(datasetsPlot,"Ht+MEt"+Flav, 100, 320, 1120, "H_{T}+E_{T}^{miss} (GeV)");
+				MSPlot["Ht+MEt"+Flav+"_1000"] = new MultiSamplePlot(datasetsPlot,"Ht+MEt"+Flav+"_1000", 1000, 320, 1120, "H_{T}+E_{T}^{miss} (GeV)");
+				MSPlot["Ht+MEt+Pt"+Flav] = new MultiSamplePlot(datasetsPlot,"Ht+MEt+Pt"+Flav, 100, 340, 1140, "H_{T}+E_{T}^{miss}+P_{T,#mu} (GeV)");
+				MSPlot["Ht+MEt+Pt"+Flav+"_1000"] = new MultiSamplePlot(datasetsPlot,"Ht+MEt+Pt"+Flav+"_1000", 1000, 340, 1140, "H_{T}+E_{T}^{miss}+P_{T,#mu} (GeV)");
 	  		MSPlot["Selected_Events_pT_lepton"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_lepton"+Flav, 22, 0, 440, "p_{T} (GeV)");
 	  		MSPlot["Selected_Events_Eta_lepton"+Flav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_Eta_lepton"+Flav, 22, 0, 2.2, "Eta");
 
@@ -1299,29 +1480,30 @@ int main (int argc, char *argv[])
 	  		//MSPlot["TTbar_Mass_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Mass_1btag"+Flav, 300, 0, 600, "Mass (GeV)");
 	  		//MSPlot["TTbar_Angle_1btag"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Angle_1btag"+Flav, 300, 0, 600, "Phi");
 
-	  		MSPlot["Chi2_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"Chi2_2btags"+Flav, 100, 0, 50, "{#chi}^2");
-	  		MSPlot["hadTop_Ht_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTopHt_2btags"+Flav, 100, 0, 1000, "H_{T} (GeV)");
-	  		MSPlot["hadTop_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Mass_2btags"+Flav, 100, 0, 600, "Mass (GeV)");
+	  		MSPlot["Chi2_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"Chi2_2btags"+Flav, 150, 0, 75, "{#chi}^2");
+				MSPlot["W_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot, "W_Mass_2btags"+Flav, 100, 50, 450, "Mass (GeV)");
+	  		MSPlot["hadTop_Ht_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTopHt_2btags"+Flav, 90, 60, 960, "H_{T} (GeV)");
+	  		MSPlot["hadTop_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Mass_2btags"+Flav, 90, 60, 960, "Mass (GeV)");
 	  		MSPlot["hadTop_Pt_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"hadTop_Pt_2btags"+Flav, 100, 0, 600, "Mass (GeV)");
-	  		MSPlot["TTbar_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Mass_2btags"+Flav, 100, 200, 800, "Mass (GeV)");
+	  		MSPlot["TTbar_Mass_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Mass_2btags"+Flav, 100, 200, 1200, "Mass (GeV)");
 	  		MSPlot["TTbar_Angle_2btags"+Flav] = new MultiSamplePlot(datasetsPlot,"TTbar_Angle_2btags"+Flav, 70, 0, 7, "Phi");
 
 	  		if (eventselectedSemiMu_onebtag) {
-	    		MSPlot["Selected_Events_d0_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_d0_Muon", 20, 0, 0.1, "d0");
-	    		MSPlot["Selected_Events_relIso_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon", 20, 0, 0.2, "relIso");
+	    		MSPlot["Selected_Events_d0_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_d0_Muon", 28, 0, 0.07, "d0");
+	    		MSPlot["Selected_Events_relIso_Muon"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Muon", 26, 0, 0.13, "relIso");
 	  		}
 	  		if (eventselectedSemiEl_onebtag) {
 	    		MSPlot["Selected_Events_relIso_Electron"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_relIso_Electron", 20, 0, 0.2, "relIso");
 	  		}
 
 	  		MSPlot["Check_Correct_Match"] = new MultiSamplePlot(datasetsPlot, "Check_Correct_Match", 4, -1.5, 2.5, "is correct match");
-	  		MSPlot["Cos_Theta*"] = new MultiSamplePlot(datasetsPlot, "Cos_Theta*", 40, -2, 2, "Cos Theta*");
+	  		MSPlot["Cos_Theta*"] = new MultiSamplePlot(datasetsPlot, "Cos_Theta*", 30, -1.5, 1.5, "Cos Theta*");
 	  		//cout << "all plots declared" << endl;
 			}
 
 			//filling plots
 			//cout << "filling the plots..." << endl;
-			if (useMassesAndResolutions) {
+			if (useMassesAndResolutions && correctEta) {
 	  		MSPlot["Selected_Events_pT_jet1"+Flav]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 	  		MSPlot["Selected_Events_pT_jet2"+Flav]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
 	  		MSPlot["Selected_Events_pT_jet3"+Flav]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
@@ -1346,6 +1528,13 @@ int main (int argc, char *argv[])
 
 	  		float HT = selectedJets[0]->Pt()+selectedJets[1]->Pt()+selectedJets[2]->Pt()+selectedJets[3]->Pt();
 	  		MSPlot["Ht_4leadingjets"+Flav]->Fill(HT, datasets[d], true, Luminosity*scaleFactor);
+				float jetAndMEt = HT + mets[0]->Et();
+				MSPlot["Ht+MEt"+Flav]->Fill(jetAndMEt, datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["Ht+MEt"+Flav+"_1000"]->Fill(jetAndMEt, datasets[d], true, Luminosity*scaleFactor);
+				float jetAndMEtAndPtMu = jetAndMEt + selectedMuons[0]->Pt();
+				MSPlot["Ht+MEt+Pt"+Flav]->Fill(jetAndMEtAndPtMu, datasets[d], true, Luminosity*scaleFactor);
+				MSPlot["Ht+MEt+Pt"+Flav+"_1000"]->Fill(jetAndMEtAndPtMu, datasets[d], true, Luminosity*scaleFactor);
+				
 
 	  		MSPlot["Selected_Events_pT_lepton"+Flav]->Fill(selectedLepton->Pt(), datasets[d], true, Luminosity*scaleFactor);
 	  		MSPlot["Selected_Events_Eta_lepton"+Flav]->Fill(selectedLepton->Eta(), datasets[d], true, Luminosity*scaleFactor);
@@ -1362,6 +1551,42 @@ int main (int argc, char *argv[])
 	  		}
 
 			}
+			
+			
+			
+			//--------------------------------------------//
+			// find the b-tagged jets with the highest pt //					
+			//--------------------------------------------//
+
+			//cout << "find the b-tagged jets with the highest pt" << endl;
+			int labelBtag1 = -9999;
+			int labelBtag2 = -9999;
+			float PtBtag1 = -9999.;
+			float PtBtag2 = -9999.;
+			for (unsigned int i=0; i < selectedJets.size(); i++) {
+	  		//cout << "working with jet[" << i << "] with pt=" << selectedJets[i]->Pt() << " and btag value = " << selectedJets[i]->btag_combinedSecondaryVertexBJetTags() << endl;
+	  		if (selectedJets[i]->btag_combinedSecondaryVertexBJetTags() > 0.679) {		// CSVM
+	    		//cout << "jet[" << i << "] is btagged (CSVM)" << endl;
+	    		//cout << "labelBtag1:" << labelBtag1 << " and PtBtag1:"<<PtBtag1 << endl;
+	    		//cout << "labelBtag2:" << labelBtag2 << " and PtBtag2:"<<PtBtag2 << endl;
+	    		if (selectedJets[i]->Pt() > PtBtag1) {
+	      		// Save previous as second best
+	      		if(labelBtag1 >= 0){
+							labelBtag2 = labelBtag1;
+							PtBtag2 = selectedJets[labelBtag2]->Pt();
+	      		}
+	      		// Keep new one
+	      		labelBtag1 = i;
+	      		PtBtag1 = selectedJets[i]->Pt();
+	    		}
+	    		else if (selectedJets[i]->Pt() > PtBtag2) {
+	      		labelBtag2 = i;
+	      		PtBtag2 = selectedJets[i]->Pt();
+	    		}
+	  		}
+			}
+			//if(labelBtag1>=0) cout << "first b-tagged jet is jet[" << labelBtag1 << "] with pt " << selectedJets[labelBtag1]->Pt() << endl;
+			//if(labelBtag2>=0) cout << "second b-tagged jet is jet[" << labelBtag2 << "] with pt " << selectedJets[labelBtag2]->Pt() <<endl;
 			
 			
 			
@@ -1487,63 +1712,67 @@ int main (int argc, char *argv[])
 	    		}
 	  		}
 				
-	  		//Cos Theta*
-	  		TLorentzVector lepton = *selectedMuons[0];
-	  		vector<TLorentzVector> jets;
-	  		jets.clear();
-	  		for(int i=0; i< selectedJets.size(); i++) jets.push_back(*selectedJets[i]);
-				
-	  		TLorentzVector Neutrino(999,999,999,999);
+				if (correctEta) {
+	  			//Cos Theta*
+	  			TLorentzVector lepton = *selectedMuons[0];
+	  			vector<TLorentzVector> jets;
+	  			jets.clear();
+	  			for(int i=0; i< selectedJets.size(); i++) jets.push_back(*selectedJets[i]);
 
-	  		CosThetaCalculation = bTagCosThetaCalculation->CalcOrigKins(labelsReco[0],labelsReco[1],lepton,jets,80.4,172.5);
-	  		if(CosThetaCalculation != 999) {
-	    		MSPlot["Cos_Theta*"]->Fill(CosThetaCalculation, datasets[d], true, Luminosity*scaleFactor);
-	    		if (CosThetaCalculation > 1) {
-	      		cout << "Eventnr: " << ievt << "; Cos Theta: " << CosThetaCalculation << endl;
-	    		}
+	  			TLorentzVector Neutrino(999,999,999,999);
 
-	    		Neutrino =  bTagCosThetaCalculation->GetNeutrino();
-	  		}
+	  			CosThetaCalculation = bTagCosThetaCalculation->CalcOrigKins(labelsReco[0],labelsReco[1],lepton,jets,80.4,172.5);
+	  			if(CosThetaCalculation != 999) {
+	    			MSPlot["Cos_Theta*"]->Fill(CosThetaCalculation, datasets[d], true, Luminosity*scaleFactor);
+	    			if (CosThetaCalculation > 1) {
+	      			cout << "Eventnr: " << ievt << "; Cos Theta: " << CosThetaCalculation << endl;
+	    			}
 
-
-
+	    			Neutrino =  bTagCosThetaCalculation->GetNeutrino();
+	  			}
 
 
-	  		//Fill histos
-	  		if (labelsReco[0] != -9999 && labelsReco[1] != -9999 && labelsReco[2] != -9999 && labelsReco[3] != -9999) {
-	    		labelsChanged++;
-	    		if (useMassesAndResolutions && eventselectedSemiMu) selecTableSemiMu.Fill(d,11,scaleFactor);
-	    		//if (useMassesAndResolutions && eventselectedSemiEl) selecTableSemiEl.Fill(d,12,scaleFactor);
-
-	    		MSPlot["Chi2_2btags"+Flav]->Fill(smallestChi2, datasets[d], true, Luminosity*scaleFactor);
-
-	    		float HtTop_2btags = selectedJets[labelsReco[1]]->Pt() + selectedJets[labelsReco[2]]->Pt() + selectedJets[labelsReco[3]]->Pt();
-	    		MSPlot["hadTop_Ht_2btags"+Flav]->Fill(HtTop_2btags, datasets[d], true, Luminosity*scaleFactor);
-	    		float hadtopmass_2btags = ( *selectedJets[labelsReco[1]] + *selectedJets[labelsReco[2]] +  *selectedJets[labelsReco[3]]).M();
-	    		float hadtoppt_2btags = ( *selectedJets[labelsReco[1]] + *selectedJets[labelsReco[2]] +  *selectedJets[labelsReco[3]]).Pt();
-	    		MSPlot["hadTop_Mass_2btags"+Flav]->Fill(hadtopmass_2btags, datasets[d], true, Luminosity*scaleFactor);
-	    		MSPlot["hadTop_Pt_2btags"+Flav]->Fill(hadtoppt_2btags, datasets[d], true, Luminosity*scaleFactor);
 
 
-	    		if(CosThetaCalculation != 999) {
-	      		float leptonicTopMass_2btags = (lepton + Neutrino + jets[labelsReco[0]]).M();
-	      		float TTbarMass_2btags = leptonicTopMass_2btags + hadtopmass_2btags;
-	      		MSPlot["TTbar_Mass_2btags"+Flav]->Fill(TTbarMass_2btags, datasets[d], true, Luminosity*scaleFactor);
 
-	      		float leptonicTopAngle_2btags = (lepton + Neutrino + jets[labelsReco[0]]).Phi();
-	      		float hadronicTopAngle_2btags = (jets[labelsReco[1]] + jets[labelsReco[2]] + jets[labelsReco[3]]).Phi();
-	      		float TTbarAngle_2btags = leptonicTopAngle_2btags - hadronicTopAngle_2btags;
-	      		if (TTbarAngle_2btags < 0) {
-							TTbarAngle_2btags = - TTbarAngle_2btags;
-	      		}
-	      		MSPlot["TTbar_Angle_2btags"+Flav]->Fill(TTbarAngle_2btags, datasets[d], true, Luminosity*scaleFactor);
+	  			//Fill histos
+	  			if (labelsReco[0] != -9999 && labelsReco[1] != -9999 && labelsReco[2] != -9999 && labelsReco[3] != -9999) {
+	    			labelsChanged++;
+	    			if (useMassesAndResolutions && eventselectedSemiMu) selecTableSemiMu.Fill(d,11,scaleFactor);
+	    			//if (useMassesAndResolutions && eventselectedSemiEl) selecTableSemiEl.Fill(d,12,scaleFactor);
 
-	    		}
-	  		}
-	  		else {
-	    		//When no Chi2 combination is found:
-	    		cout << "Eventnr. " << ievt << ": no Chi2 found." << endl;
-	  		}
+	    			MSPlot["Chi2_2btags"+Flav]->Fill(smallestChi2, datasets[d], true, Luminosity*scaleFactor);
+						
+						float Wmass_2btags = (*selectedJets[labelsReco[2]] + *selectedJets[labelsReco[3]]).M();
+						MSPlot["W_Mass_2btags"+Flav]->Fill(Wmass_2btags, datasets[d], true, Luminosity*scaleFactor);
+	    			float HtTop_2btags = selectedJets[labelsReco[1]]->Pt() + selectedJets[labelsReco[2]]->Pt() + selectedJets[labelsReco[3]]->Pt();
+	    			MSPlot["hadTop_Ht_2btags"+Flav]->Fill(HtTop_2btags, datasets[d], true, Luminosity*scaleFactor);
+	    			float hadtopmass_2btags = ( *selectedJets[labelsReco[1]] + *selectedJets[labelsReco[2]] +  *selectedJets[labelsReco[3]]).M();
+	    			float hadtoppt_2btags = ( *selectedJets[labelsReco[1]] + *selectedJets[labelsReco[2]] +  *selectedJets[labelsReco[3]]).Pt();
+	    			MSPlot["hadTop_Mass_2btags"+Flav]->Fill(hadtopmass_2btags, datasets[d], true, Luminosity*scaleFactor);
+	    			MSPlot["hadTop_Pt_2btags"+Flav]->Fill(hadtoppt_2btags, datasets[d], true, Luminosity*scaleFactor);
+
+
+	    			if(CosThetaCalculation != 999) {
+	      			float leptonicTopMass_2btags = (lepton + Neutrino + jets[labelsReco[0]]).M();
+	      			float TTbarMass_2btags = leptonicTopMass_2btags + hadtopmass_2btags;
+	      			MSPlot["TTbar_Mass_2btags"+Flav]->Fill(TTbarMass_2btags, datasets[d], true, Luminosity*scaleFactor);
+
+	      			float leptonicTopAngle_2btags = (lepton + Neutrino + jets[labelsReco[0]]).Phi();
+	      			float hadronicTopAngle_2btags = (jets[labelsReco[1]] + jets[labelsReco[2]] + jets[labelsReco[3]]).Phi();
+	      			float TTbarAngle_2btags = leptonicTopAngle_2btags - hadronicTopAngle_2btags;
+	      			if (TTbarAngle_2btags < 0) {
+								TTbarAngle_2btags = - TTbarAngle_2btags;
+	      			}
+	      			MSPlot["TTbar_Angle_2btags"+Flav]->Fill(TTbarAngle_2btags, datasets[d], true, Luminosity*scaleFactor);
+
+	    			}
+	  			}
+	  			else {
+	    			//When no Chi2 combination is found:
+	    			cout << "Eventnr. " << ievt << ": no Chi2 found." << endl;
+	  			}
+				}
 
 			}									
 
@@ -1580,7 +1809,7 @@ int main (int argc, char *argv[])
 			// Create .lhco file for MadWeight testing //
 			//-----------------------------------------//
 			
-			if (useMassesAndResolutions) {
+			if (useMassesAndResolutions) {		//Events with jet->Eta() > 2.4 need to be in here!! (Otherwise weights of already processed lhco files won't match.)
 					
 				cout.setf(ios::fixed,ios::floatfield);  //Add zero to obtain the asked number of digits
 					
@@ -1695,6 +1924,23 @@ int main (int argc, char *argv[])
 						
 						MWSameDataSetNumberMuPlus++;
 					}
+					
+					//scaleFactor file
+					muPlusScaleFactor << event->eventId() << "    ";
+					if (correctEta) {
+						cout.setf(ios::fixed,ios::floatfield);
+						cout.precision(3);
+						muPlusScaleFactor << fixed << setprecision(3) << scaleFactor;
+					}
+					else {
+						muPlusScaleFactor << "0.000";
+					}
+					if (isCorrectMatch) {
+						muPlusScaleFactor << "    " << "1.00" << endl;
+					}
+					else {
+						muPlusScaleFactor << "    " << "0.00" << endl;
+					}
 				}
 				
 				if(leptonCharge < 0. && eventselectedSemiMu){	//Currently looking at muMinus
@@ -1801,6 +2047,23 @@ int main (int argc, char *argv[])
 						
 						MWSameDataSetNumberMuMinus++;
 					}
+					
+					//scaleFactor file
+					muMinusScaleFactor << event->eventId() << "    ";
+					if (correctEta) {
+						cout.setf(ios::fixed,ios::floatfield);
+						cout.precision(3);
+						muMinusScaleFactor << fixed << setprecision(3) << scaleFactor;
+					}
+					else {
+						muMinusScaleFactor << "0.000";
+					}
+					if (isCorrectMatch) {
+						muMinusScaleFactor << "    " << "1.00" << endl;
+					}
+					else {
+						muMinusScaleFactor << "    " << "0.00" << endl;
+					}
 				}
 			}
 			
@@ -1852,7 +2115,28 @@ int main (int argc, char *argv[])
 				
       }
             
-      outfile->Close(); 			
+      outfile->Close();			
+			
+			
+			// Btag weights
+			string filenameB = "PlotsForBtagWeights.root";
+			
+			cout << "INFO: Creating output file to store the plots for the btag weights " << filename << endl;
+			
+			TFile *outfileB = new TFile (filenameB.c_str(), "RECREATE");
+			
+			outfileB->cd();
+			
+			histo2D["BtaggedJets"]->Write();
+			histo2D["BtaggedBJets"]->Write();
+			histo2D["BtaggedCJets"]->Write();
+			histo2D["BtaggedLightJets"]->Write();
+			histo2D["TotalNofBJets"]->Write();
+			histo2D["TotalNofCJets"]->Write();
+			histo2D["TotalNofLightJets"]->Write();
+			
+			outfileB->Close();
+			
 			
       if(calculateTransferFunctions) {
 				
@@ -2157,6 +2441,8 @@ int main (int argc, char *argv[])
 		muMinusLHCO.close();
 		muPlusLHCOextended.close();
 		muMinusLHCOextended.close();
+		muPlusScaleFactor.close();
+		muMinusScaleFactor.close();
 		
     //important: free memory
     treeLoader.UnLoadDataset();
@@ -2184,12 +2470,18 @@ int main (int argc, char *argv[])
   cout << "Leptonic b matched: " << leptBMatched << endl;
   cout << "Hadronic b matched: " << hadrBMatched << endl;
   cout << "Jets from W matched: " << WjetsMatched << endl;
+	cout << endl;
+	cout << "Number of selected TTbar events: " << NofSelectedTTbarEvents << " of which " << NofTrueSemiMuTTbar << " are truly semi-mu at generator level." << endl;
+	cout << "Number of selected Signal events: " << NofSelectedSignalEvents << " of which " << NofTrueSemiMuSignal << " are truly semi-mu at generator level." << endl;
+	cout << endl;
+	
+	
 	
   /////////////////////////
   // Write out the plots //
   /////////////////////////
     
-  string pathPNG = "PlotsLightStopM/";    
+  string pathPNG = "PlotsLightStop/";    
   mkdir(pathPNG.c_str(),0777);
   mkdir((pathPNG+"MSPlot/").c_str(),0777);
     
@@ -2203,8 +2495,8 @@ int main (int argc, char *argv[])
       temp->Draw(false, name, true, true, true, true, true, 1, false);
       temp->Write(fout, name, true, pathPNG+"MSPlot/");
     }
-    
-  // 1D 
+		
+	// 1D 
   TDirectory* th1dir = fout->mkdir("1D_histograms");
   th1dir->cd();
   for(std::map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
@@ -2218,7 +2510,7 @@ int main (int argc, char *argv[])
       TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
       tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
     }
-    
+
   // 2D
   TDirectory* th2dir = fout->mkdir("2D_histograms_graphs");
   th2dir->cd();
@@ -2229,11 +2521,11 @@ int main (int argc, char *argv[])
       TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
       tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
     }
-	
+  
 	
   //Selection tables
   selecTableSemiMu.TableCalculator(false, true, true, true, true);
-  string selectiontableMu = "SelectionTable_LightStopM_SemiMu.tex";
+  string selectiontableMu = "SelectionTable_LightStop_SemiMu.tex";
   selecTableSemiMu.Write(selectiontableMu.c_str());
 	
   // Do some special things with certain plots (normalise, BayesDivide, ... )
@@ -2248,10 +2540,10 @@ int main (int argc, char *argv[])
 	
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
     
-  cout << "********************************************" << endl;
-  cout << "           End of the program !!            " << endl;
-  cout << "           hasn't crashed yet ;-)           " << endl;
-  cout << "********************************************" << endl;
+  cout << "**********************************************" << endl;
+  cout << "           End of the programme !!            " << endl;
+  cout << "           hasn't crashed yet ;-)             " << endl;
+  cout << "**********************************************" << endl;
     
   return 0;
 }
