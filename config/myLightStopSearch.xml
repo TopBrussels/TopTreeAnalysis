@@ -10,7 +10,7 @@
 <!-- A couple of files for quick tests -->
 <!--<d name="TTbarJets" title="t#bar{t}+jets" add="1" color="4" ls="1" lw="2" normf="1" xsection="225.2" EqLumi="30330.5639" filenames="/user/pvmulder/NewEraOfDataAnalysis/AnomalousCouplings/TopTreeAnalysis/macros/TopTree_Skimmed_*.root"/>-->
 
-<d name="TTbarJets" title="t#bar{t}+jets" add="1" color="4" ls="1" lw="2" normf="1" xsection="225.2" EqLumi="30330.5639" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_06012013_132556_TOPTREE/*.root"/>
+<d name="TTbarJets" title="t\bar{t}+jets" add="1" color="4" ls="1" lw="2" normf="1" xsection="225.2" EqLumi="30330.5639" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_06012013_132556_TOPTREE/*.root"/>
 
 <!--
 <d name="TTbarJets_SemiLep" title="t#bar{t}+jets lv" add="1" color="4" ls="1" lw="2" normf="1" xsection="98.6484" EqLumi="252009.389" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_TTJets_SemiLeptMGDecays_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A_ext-v1_13122012_152213_TOPTREE-new/*.root"/>
@@ -34,11 +34,15 @@
 
 <d name="W_Jets_3jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="640.3675" EqLumi="22350.7970" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152244_TOPTREE/*.root"/>
 
-<d name="W_Jets_4jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="264.0436" EqLumi="50684.0007" filenames="home/mmaes/samples/Summer12_DR53X_ProdV4_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152239_TOPTREE/*.root"/>
+<d name="W_Jets_4jets" title="W+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="264.0436" 
+EqLumi="50684.0007" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152239_TOPTREE/*.root"/>
 
 <d name="Z_Jets_3jets" title="Z+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="60.69" EqLumi="97792.9313" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_19122012_170710_TOPTREE/*.root"/>
 
 <d name="Z_Jets_4jets" title="Z+Jets" add="1" color="2" ls="1" lw="2" normf="1" xsection="27.36" EqLumi="229598.3640" filenames="/home/mmaes/samples/Summer12_DR53X_ProdV4_DY4JetsToLL_M-50_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_13122012_152254_TOPTREE/*.root"/>
+
+
+<d name="NP_overlay_350_100" title="mstop=350+mchi0=100" add="1" color="4" ls="1" lw="2" normf="1" xsection="0.3617" EqLumi="500698.26" filenames="/user/pvmulder/NewEraOfDataAnalysis/StopAnalysis/53X_v4/TopSkim/Skimmed/15032013_110449-8TeV_T2tt_2j_semilepts_350_100_FSim526_Summer12_minus_v215032013_110449-alkaloge-MG154_START52_V9_v2/*.root,/user/pvmulder/NewEraOfDataAnalysis/StopAnalysis/53X_v4/TopSkim/Skimmed/15032013_111718-8TeV_T2tt_2j_semilepts_350_100_FSim526_Summer12_plus_v215032013_111718-alkaloge-MG154_START52_V9_v2/*.root"/>
 
 
 
@@ -51,7 +55,7 @@
 <a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patType1CorrectedPFMetPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJetsNoNu" loadGenEventCollection="1" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="1" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
 <a type="Selection" PVertexNdofCut="4" PVertexZCut="24." PVertexRhoCut="2." MuonPtCutSR="20." MuonEtaCutSR="2.1" MuonRelIsoCutSR="0.05" MuonNHitsCutSR="10" MuonD0CutSR="0.02" MuonDRJetsCut="0.3" MuonPtCutVetoSR="10." MuonEtaCutVetoSR="2.5" MuonRelIsoCutVetoSR="0.2" ElectronPtCut="15." ElectronEtaCut="2.5" ElectronRelIsoCut="0.2" JetsPtCutSR="30." JetsEtaCutSR="2.4" applyJetID="1" JetEMFCut="0.01" n90HitsCut="1" fHPDCut="0.98" NofJets="4" NofJetBins="2"/>
 
-<a type="Conditions" isMC="1" MCRound="0" Vars_ByFile="0" VarsFile="m0_100_m12_100" IntToCut="4" Verbose="2" Luminosity="99999" JES="1." nPseudoExp="0" nPseudoSession="0" runonTTrees="0" doABCD="1" doVJEstim="1" doVJEstPE="1" doTtJEstim="1" doTemplComp="0" doSystematics="0"/><!-- Luminosity in pb-1 -->
+<a type="Conditions" isMC="1" MCRound="0" Vars_ByFile="0" VarsFile="m0_100_m12_100" IntToCut="4" Verbose="2" Luminosity="999999" JES="1." nPseudoExp="0" nPseudoSession="0" runonTTrees="0" doABCD="1" doVJEstim="1" doVJEstPE="1" doTtJEstim="1" doTemplComp="0" doSystematics="0"/><!-- Luminosity in pb-1 -->
 <a type="CRForTtbarEstimation"  BtagAlgo_ttjEst="0" BtagDiscriCut_ttjEst="4.38" MuonPtCutCR="30." MuonEtaCutCR="2.1" MuonRelIsoCutCR="0.1" JetsPtCutCR="30." JetsEtaCutCR="2.4" MblCut="160." DRBBCut="2.3" HTBBCut="500." NREvtFraction="0.75"/>
 <a type="CRForABCDEstimation"   NXbinsABCD="200" NYbinsABCD="200" XbinMinABCD="0" XbinMaxABCD="20" YbinMinABCD="0" YbinMaxABCD="20" cutXmin="0" cutX0="0.1" cutX1="0.2" cutXmax="20." cutYmin="0." cutY0="3." cutY1="4." cutYmax="20." region="1"/>
 
