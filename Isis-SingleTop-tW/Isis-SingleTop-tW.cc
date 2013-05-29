@@ -486,7 +486,7 @@ int main(int argc, char* argv[]) {
         char name[100];
 	
         if (dataSetName == "data"){             sprintf(name, "data");          xlweight = 1;                           isData = true;}
-        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*225.197/6830443;        isTop = true;} 
+        else if (dataSetName == "tt"){          sprintf(name, "tt");            xlweight = lumi*245.8/6830443;        isTop = true;} 
         else if (dataSetName == "twdr"){        sprintf(name, "tw_dr");         xlweight =lumi*11.1/497657;             isSingleTop = true;} 
         else if (dataSetName == "atwdr"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1/481071;            isSingleTop = true;} 
 	else if (dataSetName == "twds"){        sprintf(name, "tw_ds"); 	xlweight =lumi*11.1*0.1/2970009;             isSingleTop = true;} 
@@ -503,22 +503,22 @@ int main(int argc, char* argv[]) {
         else if (dataSetName == "wjets"){       sprintf(name, "wjets");         xlweight = lumi*36257.2/57411352;         }  
 	
 	// systematics
-	else if (dataSetName == "tt_Q2_up"){          sprintf(name, "tt");       xlweight = lumi*225.197/4703202;        isTop = true;       isQ2up = true;} 
+	else if (dataSetName == "tt_Q2_up"){          sprintf(name, "tt");       xlweight = lumi*245.8/4703202;        isTop = true;       isQ2up = true;} 
         else if (dataSetName == "twdr_Q2_up"){        sprintf(name, "tw_dr");        xlweight =lumi*11.1*0.1/1493129;             isSingleTop = true;  isQ2up = true;} //10% BR, onlydilepton
         else if (dataSetName == "atwdr_Q2_up"){       sprintf(name, "atw_dr");  	xlweight = lumi*11.1*0.1/1492532;            isSingleTop = true;   isQ2up = true;} 
-	else if (dataSetName == "tt_Q2_down"){          sprintf(name, "tt");           xlweight = lumi*225.197/5346767;       isTop = true;       isQ2down = true;} 
+	else if (dataSetName == "tt_Q2_down"){          sprintf(name, "tt");           xlweight = lumi*245.8/5346767;       isTop = true;       isQ2down = true;} 
         else if (dataSetName == "twdr_Q2_down"){        sprintf(name,	"tw_dr");         xlweight =lumi*11.1*0.1/1493129;             isSingleTop = true;  isQ2down = true;} 
         else if (dataSetName == "atwdr_Q2_down"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1*0.1/1493099;            isSingleTop = true;   isQ2down = true;}
 	
-	else if (dataSetName == "tt_Topmass_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/4733472;        isTop = true;       isTopmassup = true;} 
+	else if (dataSetName == "tt_Topmass_up"){          sprintf(name,"tt");            xlweight = lumi*245.8/4733472;        isTop = true;       isTopmassup = true;} 
         else if (dataSetName == "twdr_Topmass_up"){ sprintf(name,"tw_dr");                xlweight =lumi*11.1*0.1/1493427;             isSingleTop = true;  isTopmassup = true;} 
         else if (dataSetName == "atwdr_Topmass_up"){       sprintf(name,	"atw_dr");        xlweight = lumi*11.1*0.1/1493387;            isSingleTop = true;   isTopmassup = true;} 
-	else if (dataSetName == "tt_Topmass_down"){          sprintf(name,"tt");            xlweight = lumi*225.197/4358130;        isTop = true;       isTopmassdown = true;} 
+	else if (dataSetName == "tt_Topmass_down"){          sprintf(name,"tt");            xlweight = lumi*245.8/4358130;        isTop = true;       isTopmassdown = true;} 
         else if (dataSetName == "twdr_Topmass_down"){        sprintf(name,"tw_dr");         xlweight =lumi*11.1*0.1/1489878;             isSingleTop = true;  isTopmassdown = true;} 
         else if (dataSetName == "atwdr_Topmass_down"){       sprintf(name, "atw_dr");        xlweight = lumi*11.1*0.1/1478196;            isSingleTop = true;   isTopmassdown = true;}
 	
-	else if (dataSetName == "tt_Matching_up"){          sprintf(name,"tt");            xlweight = lumi*225.197/5415003;        isTop = true;       isMatchingup = true;} 
-	else if (dataSetName == "tt_Matching_down"){          sprintf(name,"tt");            xlweight = lumi*225.197/5456715;        isTop = true;       isMatchingdown = true;} 
+	else if (dataSetName == "tt_Matching_up"){          sprintf(name,"tt");            xlweight = lumi*245.8/5415003;        isTop = true;       isMatchingup = true;} 
+	else if (dataSetName == "tt_Matching_down"){          sprintf(name,"tt");            xlweight = lumi*245.8/5456715;        isTop = true;       isMatchingdown = true;} 
         
 	
 	
@@ -878,7 +878,14 @@ int main(int argc, char* argv[]) {
         double metPt; 
         double metPx; 
         double metPy; 
-        
+      	
+	int idParton_1; 
+        int idParton_2; 
+        double xParton_1; 
+        double xParton_2;
+	double Q2_event;
+	
+				
         std::vector<double> *ptLepton; 
         std::vector<double> *pxLepton; 
         std::vector<double> *pyLepton; 
@@ -911,7 +918,7 @@ int main(int argc, char* argv[]) {
         
         myTree -> Branch("lum", &lum, "lum/D");
         
-        myTree -> Branch("npu", &npu, "npu/D");
+        myTree -> Branch("npu", &npu, "npu/I");
         myTree -> Branch("nvertex", &nvertex, "nvertex/D");
         
         myTree -> Branch("metPt", &metPt, "metPt/D");
@@ -919,6 +926,13 @@ int main(int argc, char* argv[]) {
         myTree -> Branch("metPy", &metPy, "metPy/D");
         
         // Set the branches for the vectors 
+	myTree->Branch("idParton_1", &idParton_1,"idParton_1/I");   
+        myTree->Branch("idParton_2", &idParton_2,"idParton_2/I"); 
+	myTree->Branch("xParton_1", &xParton_1,"xParton_1/D");   
+        myTree->Branch("xParton_2", &xParton_2,"xParton_2/D"); 
+	myTree->Branch("Q2_event", &Q2_event,"Q2_event/D"); 
+	
+	
         myTree->Branch("ptLepton","std::vector<double>",&ptLepton);   // Make a branch with name ptLepton, from type vector(double), on loaction ptLepton
         myTree->Branch("pxLepton","std::vector<double>",&pxLepton);
         myTree->Branch("pyLepton","std::vector<double>",&pyLepton);
@@ -958,6 +972,14 @@ int main(int argc, char* argv[]) {
                 if (eleSFsysDown) cout <<"[Warning:]  SF down with one sigma for leptons " << endl;
                 if (SFplus) cout <<"[Warning:] SF up 10% for b quarks " << endl;
                 if (SFminus) cout <<"[Warning:]  SF down 10% for b quarks " << endl;
+
+
+
+
+
+
+
+
 		if (SFplus_c) cout <<"[Warning:] SF up 10% for c quarks" << endl;
                 if (SFminus_c) cout <<"[Warning:]  SF down 10% for c quarks " << endl;
 		if (SFplus_l) cout <<"[Warning:] SF up 10% for light quarks " << endl;
@@ -1003,6 +1025,14 @@ int main(int argc, char* argv[]) {
 	        std::vector<double> btag_booleans;
 		
 		// for zjets sf 
+
+
+
+
+
+
+
+
 		double ZjetsSF = 1.0;
 		
 		 
@@ -1098,6 +1128,14 @@ int main(int argc, char* argv[]) {
                                         itrigger = treeLoader.iTrigger("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*", currentRun);
                                         isecondtrigger = treeLoader.iTrigger("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*", currentRun);
                                 } 
+
+
+
+
+
+
+
+
                                 else if (mode == 1){
                                         itrigger = treeLoader.iTrigger("HLT_Mu17_Mu8_v*", currentRun);
                                         isecondtrigger = treeLoader.iTrigger("HLT_Mu17_TkMu8_v*", currentRun);
@@ -1323,6 +1361,14 @@ int main(int argc, char* argv[]) {
 
 				// With this tight lepton selection, define the lepton charges and leptons
 	      			if (leptonSelection) {
+
+
+
+
+
+
+
+
 		  
 					bool charge = false;
 					double q0, q1;
@@ -1704,7 +1750,6 @@ int main(int argc, char* argv[]) {
 										if (tempJet->btag_combinedSecondaryVertexBJetTags()> 0.679){ 
 											bTagged = true; 
 										}
-										
 									
 																	
 										// Getting efficiencies out of histograms 
@@ -1763,7 +1808,7 @@ int main(int argc, char* argv[]) {
 										
 											// warnings	
 											if(BTagSF < 0){
-												cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
+				                                                               cout << "WARNING: negative SF" << "Jetpt: " << tempJet->Pt() << " Eta: " << TempEta << endl; 
 												cout << "BtagSF: " << BTagSF << " LightJetSF: " << LightJetSF << endl; 
 												
 												BTagSF = 1;  // temporarly fix
@@ -1784,7 +1829,6 @@ int main(int argc, char* argv[]) {
 										//set a unique seed 
 										jet_flavorSF = tempJet->partonFlavour();  
 										jet_phiSF = tempJet->Phi(); 
-										
 										
 										double phi = jet_phiSF; 
 										double sin_phi = sin(phi*1000000);
@@ -1885,6 +1929,14 @@ int main(int argc, char* argv[]) {
 		      						metPt = met_pt; //mets[0]->Pt();
 		      						metPx = met_px; // mets[0]->Px();
 		      						metPy = met_py; //mets[0]->Py();
+								
+								idParton_1 = event->idParton1();
+								idParton_2 = event->idParton2();
+								xParton_1 =  event->xParton1();
+								xParton_2 =  event->xParton2();
+								Q2_event = event->factorizationScale();
+								
+//								std::cout << "test:  " << idParton_1 << " " << idParton_2 << " " << xParton_1 << " " << xParton_2 << " " << Q2_event << std::endl;
 		      
 		      						ptLepton = new std::vector<double>; 
 		      						pxLepton = new std::vector<double>; 
@@ -1978,7 +2030,7 @@ int main(int argc, char* argv[]) {
 			  							cutflow_raw->Fill(7);
 			  							OutPut3 << event->runId() << "\t" << event->lumiBlockId() << "\t" << event->eventId() << endl;
 										
-										// Filling all the regions, so just regions with jets
+										// FiidParton_lling all the regions, so just regions with jets
 			  							if (nJets !=0){
 			    								TRootJet* jet = (TRootJet*) selectedJets[iJet];
 			    								double Ht = lepton0.Pt() + lepton1.Pt() + Ht_temp + met_pt; 
