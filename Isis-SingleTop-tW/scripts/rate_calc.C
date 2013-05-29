@@ -14,7 +14,7 @@
 //#include "../Tools/interface/PlottingTools.h"
 using namespace std;
 
-void rate_calc(int mode = 2, int region = 0){
+void rate_calc(int mode = 1, int region = 0){
  
 
 
@@ -93,24 +93,11 @@ void rate_calc(int mode = 2, int region = 0){
  
   sprintf(myRootFilematchingUp,"results/matchingUp_%dpb_%d.root", (int)lumi, mode);
   
-   if(region == 0){
- 	  sprintf(myRootFilePDFtt,"renamingROOT/PDF_unc_results/pdf_1j1t_%d_tt_outputfile_rebinned.root", mode);
- 	 sprintf(myRootFilePDFtwdr,"renamingROOT/PDF_unc_results/pdf_1j1t_%d_twdr_outputfile_rebinned.root", mode);
-	  sprintf(myRootFilePDFother,"renamingROOT/PDF_unc_results/pdf_1j1t_%d_others_outputfile_rebinned.root", mode);
-	  
-   }else if(region == 1){
-      sprintf(myRootFilePDFtt,"renamingROOT/PDF_unc_results/pdf_2j1t_%d_tt_outputfile_rebinned.root", mode);
-	  sprintf(myRootFilePDFtwdr,"renamingROOT/PDF_unc_results/pdf_2j1t_%d_twdr_outputfile_rebinned.root", mode);
-	  sprintf(myRootFilePDFother,"renamingROOT/PDF_unc_results/pdf_2j1t_%d_others_outputfile_rebinned.root", mode);
-	  
-   
-   } else if (region == 2){http://mon.iihe.ac.be/~ivanpari/23may_rates/analysisJochenSyst8TeVRunTheta/
-     sprintf(myRootFilePDFtt,"renamingROOT/PDF_unc_results/pdf_2j2t_%d_tt_outputfile_rebinned.root", mode);
-	  sprintf(myRootFilePDFtwdr,"renamingROOT/PDF_unc_results/pdf_2j2t_%d_twdr_outputfile_rebinned.root", mode);
-	  sprintf(myRootFilePDFother,"renamingROOT/PDF_unc_results/pdf_2j2t_%d_others_outputfile_rebinned.root", mode);
+  
+   sprintf(myRootFilePDFtt,"renamingROOT/PDF_unc_results/PDF_rescaled/PDF_%dpb_%d.root",(int)lumi, mode);
+  
    
    
-   }
   TFile *_file0 = TFile::Open(myRootFile);
   TFile *_fileZSFsysUp = TFile::Open(myRootFileZSFsysUp);
   TFile *_fileZSFsysDown = TFile::Open(myRootFileZSFsysDown);
@@ -133,8 +120,7 @@ void rate_calc(int mode = 2, int region = 0){
   TFile *_filematchingUp = TFile::Open(myRootFilematchingUp);
   TFile *_filematchingDown = TFile::Open(myRootFilematchingDown);
   TFile *_filePDFtt = TFile::Open(myRootFilePDFtt);
-  TFile *_filePDFtwdr = TFile::Open(myRootFilePDFtwdr);
-  TFile *_filePDFother = TFile::Open(myRootFilePDFother);
+  
  
   
   
@@ -201,7 +187,7 @@ void rate_calc(int mode = 2, int region = 0){
    
   
   
-  //Make plots   
+  //Make plots   d/PDF_12093pb_2.root.ro
   TH1F* histo_tt;
   
   TH1F* histo_tt_ZSFsysUp;
@@ -264,7 +250,7 @@ void rate_calc(int mode = 2, int region = 0){
   TH1F* histo_twdr_eleSFsysDown; 
   TH1F* histo_twdr_eleSFsysUp;
   TH1F* histo_twdr_PDFDown; 
-TH1F* histo_twdr_PDFUp;
+  TH1F* histo_twdr_PDFUp;
   TH1F* histo_twds; 
   
   
@@ -374,18 +360,33 @@ TH1F* histo_twdr_PDFUp;
 	    //   cout << "eleSFsysDown: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 	       
        histo_other_eleSFsysUp= (TH1F*) _fileeleSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[3]);
 	    //   cout << "eleSFsysUp: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 
-	histo_other_PDFDown= (TH1F*) _filePDFother->Get("histo1a");
-	histo_other_PDFUp= (TH1F*) _filePDFother->Get("histo1b");       
-	       
+       if(region == 0){
+	histo_other_PDFDown= (TH1F*) _filePDFtt->Get("histo_other_PDFdown");
+	histo_other_PDFUp= (TH1F*) _filePDFtt->Get("histo_other_PDFup");       
+        }  else if (region == 1){     
+	histo_other_PDFDown= (TH1F*) _filePDFtt->Get("histo_2j1t_other_PDFdown");
+	histo_other_PDFUp= (TH1F*) _filePDFtt->Get("histo_2j1t_other_PDFup");  
+	} else if (region == 2){
+	histo_other_PDFDown= (TH1F*) _filePDFtt->Get("histo_2j1t_other_PDFdown");d/PDF_12093pb_2.root.ro
+	histo_other_PDFUp= (TH1F*) _filePDFtt->Get("histo_2j1t_other_PDFup"); 
+	
+	}
 	
 	
        // Get histos tt bar 
        histo_tt= (TH1F*) _file0->Get(cutLabel[iPlots]+ "_" + processName[1]);
 	      // cout << "Normal: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-	histo_tt_PDFDown= (TH1F*) _filePDFtt->Get("histo1a");
-	histo_tt_PDFUp= (TH1F*) _filePDFtt->Get("histo1b");
-	  
-       
+	if(region == 0){
+	histo_tt_PDFDown= (TH1F*) _filePDFtt->Get("histo_tt_PDFdown");
+	histo_tt_PDFUp= (TH1F*) _filePDFtt->Get("histo_tt_PDFup");       
+        }  else if (region == 1){     
+	histo_tt_PDFDown= (TH1F*) _filePDFtt->Get("histo_2j1t_tt_PDFdown");
+	histo_tt_PDFUp= (TH1F*) _filePDFtt->Get("histo_2j1t_tt_PDFup");  
+	} else if (region == 2){
+	histo_tt_PDFDown= (TH1F*) _filePDFtt->Get("histo_2j1t_tt_PDFdown");
+	histo_tt_PDFUp= (TH1F*) _filePDFtt->Get("histo_2j1t_tt_PDFup"); 
+	
+	}
        histo_tt_JERsysDown= (TH1F*) _fileJERsysDown->Get(cutLabel[iPlots]+ "_" + processName[1]);
 	      // cout << "JERsysDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
        histo_tt_JERsysUp= (TH1F*) _fileJERsysUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
@@ -469,9 +470,17 @@ TH1F* histo_twdr_PDFUp;
        // cout << "eleSFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_eleSFsysUp= (TH1F*) _fileeleSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
        // cout << "eleSFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-       histo_twdr_PDFDown= (TH1F*) _filePDFtwdr->Get("histo1a");
-	histo_twdr_PDFUp= (TH1F*) _filePDFtwdr->Get("histo1b");
+       	if(region == 0){
+	histo_twdr_PDFDown= (TH1F*) _filePDFtt->Get("histo_twdr_PDFdown");
+	histo_twdr_PDFUp= (TH1F*) _filePDFtt->Get("histo_twdr_PDFup");       
+        }  else if (region == 1){     
+	histo_twdr_PDFDown= (TH1F*) _filePDFtt->Get("histo_2j1t_twdr_PDFdown");
+	histo_twdr_PDFUp= (TH1F*) _filePDFtt->Get("histo_2j1t_twdr_PDFup");  
+	} else if (region == 2){
+	histo_twdr_PDFDown= (TH1F*) _filePDFtt->Get("histo_2j1t_twdr_PDFdown");
+	histo_twdr_PDFUp= (TH1F*) _filePDFtt->Get("histo_2j1t_twdr_PDFup"); 
 	
+	}
 
 
 
@@ -545,121 +554,121 @@ TH1F* histo_twdr_PDFUp;
 	 cout << "--------------------------------------------------"<< endl; 
 	 cout << " Rate influences for ttbar " << endl; 
 	 cout << "--------------------------------------------------"<< endl; 
-	 double rate_tt_JERsysUp = (double_tt_JERsysUp - double_tt)/double_tt;
+	 double rate_tt_JERsysUp = TMath::Log10((double_tt_JERsysUp )/double_tt);
 	 cout << "JERsysUp: " << rate_tt_JERsysUp << endl;  
-	 double rate_tt_JERsysDown = (double_tt_JERsysDown - double_tt)/double_tt; 
+	 double rate_tt_JERsysDown = TMath::Log10((double_tt_JERsysDown )/double_tt); 
 	 cout << "JERsysDown: " << rate_tt_JERsysDown << endl;
-	 double rate_tt_JESsysUp = (double_tt_JESsysUp - double_tt)/double_tt;
+	 double rate_tt_JESsysUp = TMath::Log10((double_tt_JESsysUp )/double_tt);
 	 cout << "JESsysUp: " << rate_tt_JESsysUp << endl;  
-	 double rate_tt_JESsysDown = (double_tt_JESsysDown - double_tt)/double_tt; 
+	 double rate_tt_JESsysDown = TMath::Log10((double_tt_JESsysDown )/double_tt); 
 	 cout << "JESsysDown: " << rate_tt_JESsysDown << endl;  
-	 double rate_tt_PUsysUp = (double_tt_PUsysUp - double_tt)/double_tt;
+	 double rate_tt_PUsysUp = TMath::Log10((double_tt_PUsysUp )/double_tt);
 	 cout << "PUsysUp: " << rate_tt_PUsysUp << endl;  
-	 double rate_tt_PUsysDown = (double_tt_PUsysDown - double_tt)/double_tt; 
+	 double rate_tt_PUsysDown = TMath::Log10((double_tt_PUsysDown )/double_tt); 
 	 cout << "PUsysDown: " << rate_tt_PUsysDown << endl; 
-	 double rate_tt_METsysUp = (double_tt_METsysUp - double_tt)/double_tt;
+	 double rate_tt_METsysUp = TMath::Log10((double_tt_METsysUp )/double_tt);
 	 cout << "METsysUp: " << rate_tt_METsysUp << endl;  
-	 double rate_tt_METsysDown = (double_tt_METsysDown - double_tt)/double_tt; 
+	 double rate_tt_METsysDown = TMath::Log10((double_tt_METsysDown )/double_tt); 
 	 cout << "METsysDown: " << rate_tt_METsysDown << endl; 
-	 double rate_tt_SFsysUp = (double_tt_SFsysUp - double_tt)/double_tt;
+	 double rate_tt_SFsysUp = TMath::Log10((double_tt_SFsysUp )/double_tt);
 	 cout << "SFsysUp: " << rate_tt_SFsysUp << endl;  
-	 double rate_tt_SFsysDown = (double_tt_SFsysDown - double_tt)/double_tt; 
+	 double rate_tt_SFsysDown = TMath::Log10((double_tt_SFsysDown )/double_tt); 
 	 cout << "SFsysDown: " << rate_tt_SFsysDown << endl; 
-	 double rate_tt_eleSFsysUp = (double_tt_eleSFsysUp - double_tt)/double_tt;
+	 double rate_tt_eleSFsysUp = TMath::Log10((double_tt_eleSFsysUp )/double_tt);
 	 cout << "eleSFsysUp: " << rate_tt_eleSFsysUp << endl;  
-	 double rate_tt_eleSFsysDown = (double_tt_eleSFsysDown - double_tt)/double_tt; 
+	 double rate_tt_eleSFsysDown = TMath::Log10((double_tt_eleSFsysDown )/double_tt); 
 	 cout << "eleSFsysDown: " << rate_tt_eleSFsysDown << endl; 
-	 double rate_tt_Q2Up = (double_tt_Q2Up - double_tt)/double_tt;
+	 double rate_tt_Q2Up = TMath::Log10((double_tt_Q2Up )/double_tt);
 	 cout << "Q2Up: " << rate_tt_Q2Up << endl;  
-	 double rate_tt_Q2Down = (double_tt_Q2Down - double_tt)/double_tt; 
+	 double rate_tt_Q2Down = TMath::Log10((double_tt_Q2Down )/double_tt); 
 	 cout << "Q2Down: " << rate_tt_Q2Down << endl; 
-	 double rate_tt_matchingUp = (double_tt_matchingUp - double_tt)/double_tt;
+	 double rate_tt_matchingUp = TMath::Log10((double_tt_matchingUp )/double_tt);
 	 cout << "matchingUp: " << rate_tt_matchingUp << endl;  
-	 double rate_tt_matchingDown = (double_tt_matchingDown - double_tt)/double_tt; 
+	 double rate_tt_matchingDown = TMath::Log10((double_tt_matchingDown )/double_tt); 
 	 cout << "matchingDown: " << rate_tt_matchingDown << endl; 
-        double rate_tt_TopMassUp = (double_tt_TopMassUp - double_tt)/double_tt;
+        double rate_tt_TopMassUp = TMath::Log10((double_tt_TopMassUp )/double_tt);
 	 cout << "TopMassUp: " << rate_tt_TopMassUp << endl;  
-	 double rate_tt_TopMassDown = (double_tt_TopMassDown - double_tt)/double_tt; 
+	 double rate_tt_TopMassDown = TMath::Log10((double_tt_TopMassDown )/double_tt); 
 	 cout << "TopMassDown: " << rate_tt_TopMassDown << endl; 
-	 double rate_tt_PDFUp = (double_tt_PDFUp - double_tt)/double_tt;
+	 double rate_tt_PDFUp = TMath::Log10((double_tt_PDFUp )/double_tt);
 	 cout << "PDFUp: " << rate_tt_PDFUp << endl;  
-	 double rate_tt_PDFDown = (double_tt_PDFDown - double_tt)/double_tt; 
+	 double rate_tt_PDFDown = TMath::Log10((double_tt_PDFDown )/double_tt); 
 	 cout << "PDFDown: " << rate_tt_PDFDown << endl; 
 	 
 	 cout << "--------------------------------------------------"<< endl; 
 	 cout << " Rate influences for twdr " << endl; 
 	 cout << "--------------------------------------------------"<< endl; 
-	 double rate_twdr_JERsysUp = (double_twdr_JERsysUp - double_twdr)/double_twdr;
+	 double rate_twdr_JERsysUp = TMath::Log10((double_twdr_JERsysUp )/double_twdr);
 	 cout << "JERsysUp: " << rate_twdr_JERsysUp << endl;  
-	 double rate_twdr_JERsysDown = (double_twdr_JERsysDown - double_twdr)/double_twdr; 
+	 double rate_twdr_JERsysDown = TMath::Log10((double_twdr_JERsysDown )/double_twdr); 
 	 cout << "JERsysDown: " << rate_twdr_JERsysDown << endl;
-	 double rate_twdr_JESsysUp = (double_twdr_JESsysUp - double_twdr)/double_twdr;
+	 double rate_twdr_JESsysUp = TMath::Log10((double_twdr_JESsysUp )/double_twdr);
 	 cout << "JESsysUp: " << rate_twdr_JESsysUp << endl;  
-	 double rate_twdr_JESsysDown = (double_twdr_JESsysDown - double_twdr)/double_twdr; 
+	 double rate_twdr_JESsysDown = TMath::Log10((double_twdr_JESsysDown )/double_twdr); 
 	 cout << "JESsysDown: " << rate_twdr_JESsysDown << endl;  
-	 double rate_twdr_PUsysUp = (double_twdr_PUsysUp - double_twdr)/double_twdr;
+	 double rate_twdr_PUsysUp = TMath::Log10((double_twdr_PUsysUp )/double_twdr);
 	 cout << "PUsysUp: " << rate_twdr_PUsysUp << endl;  
-	 double rate_twdr_PUsysDown = (double_twdr_PUsysDown - double_twdr)/double_twdr; 
+	 double rate_twdr_PUsysDown = TMath::Log10((double_twdr_PUsysDown )/double_twdr); 
 	 cout << "PUsysDown: " << rate_twdr_PUsysDown << endl; 
-	 double rate_twdr_METsysUp = (double_twdr_METsysUp - double_twdr)/double_twdr;
+	 double rate_twdr_METsysUp = TMath::Log10((double_twdr_METsysUp )/double_twdr);
 	 cout << "METsysUp: " << rate_twdr_METsysUp << endl;  
-	 double rate_twdr_METsysDown = (double_twdr_METsysDown - double_twdr)/double_twdr; 
+	 double rate_twdr_METsysDown = TMath::Log10((double_twdr_METsysDown )/double_twdr); 
 	 cout << "METsysDown: " << rate_twdr_METsysDown << endl; 
-	 double rate_twdr_SFsysUp = (double_twdr_SFsysUp - double_twdr)/double_twdr;
+	 double rate_twdr_SFsysUp = TMath::Log10((double_twdr_SFsysUp )/double_twdr);
 	 cout << "SFsysUp: " << rate_twdr_SFsysUp << endl;  
-	 double rate_twdr_SFsysDown = (double_twdr_SFsysDown - double_twdr)/double_twdr; 
+	 double rate_twdr_SFsysDown = TMath::Log10((double_twdr_SFsysDown )/double_twdr); 
 	 cout << "SFsysDown: " << rate_twdr_SFsysDown << endl; 
-	 double rate_twdr_eleSFsysUp = (double_twdr_eleSFsysUp - double_twdr)/double_twdr;
+	 double rate_twdr_eleSFsysUp = TMath::Log10((double_twdr_eleSFsysUp )/double_twdr);
 	 cout << "eleSFsysUp: " << rate_twdr_eleSFsysUp << endl;  
-	 double rate_twdr_eleSFsysDown = (double_twdr_eleSFsysDown - double_twdr)/double_twdr; 
+	 double rate_twdr_eleSFsysDown = TMath::Log10((double_twdr_eleSFsysDown )/double_twdr); 
 	 cout << "eleSFsysDown: " << rate_twdr_eleSFsysDown << endl; 
-	 double rate_twdr_Q2Up = (double_twdr_Q2Up - double_twdr)/double_twdr;
+	 double rate_twdr_Q2Up = TMath::Log10((double_twdr_Q2Up )/double_twdr);
 	 cout << "Q2Up: " << rate_twdr_Q2Up << endl;  
-	 double rate_twdr_Q2Down = (double_twdr_Q2Down - double_twdr)/double_twdr; 
+	 double rate_twdr_Q2Down = TMath::Log10((double_twdr_Q2Down )/double_twdr); 
 	 cout << "Q2Down: " << rate_twdr_Q2Down << endl; 
-        double rate_twdr_TopMassUp = (double_twdr_TopMassUp - double_twdr)/double_twdr;
+        double rate_twdr_TopMassUp = TMath::Log10((double_twdr_TopMassUp )/double_twdr);
 	 cout << "TopMassUp: " << rate_twdr_TopMassUp << endl;  
-	 double rate_twdr_TopMassDown = (double_twdr_TopMassDown - double_twdr)/double_twdr; 
+	 double rate_twdr_TopMassDown = TMath::Log10((double_twdr_TopMassDown )/double_twdr); 
 	 cout << "TopMassDown: " << rate_twdr_TopMassDown << endl; 
-	 double rate_twdr_PDFUp = (double_twdr_PDFUp - double_twdr)/double_twdr;
+	 double rate_twdr_PDFUp = TMath::Log10((double_twdr_PDFUp )/double_twdr);
 	 cout << "PDFUp: " << rate_twdr_PDFUp << endl;  
-	 double rate_twdr_PDFDown = (double_twdr_PDFDown - double_twdr)/double_twdr; 
+	 double rate_twdr_PDFDown = TMath::Log10((double_twdr_PDFDown )/double_twdr); 
 	 cout << "PDFDown: " << rate_twdr_PDFDown << endl; 
        
 	 cout << "--------------------------------------------------"<< endl; 
 	 cout << " Rate influences for other " << endl; 
 	 cout << "--------------------------------------------------"<< endl; 
-	 double rate_other_JERsysUp = (double_other_JERsysUp - double_other)/double_other;
+	 double rate_other_JERsysUp = TMath::Log10((double_other_JERsysUp )/double_other);
 	 cout << "JERsysUp: " << rate_other_JERsysUp << endl;  
-	 double rate_other_JERsysDown = (double_other_JERsysDown - double_other)/double_other; 
+	 double rate_other_JERsysDown = TMath::Log10((double_other_JERsysDown )/double_other); 
 	 cout << "JERsysDown: " << rate_other_JERsysDown << endl;
-	 double rate_other_JESsysUp = (double_other_JESsysUp - double_other)/double_other;
+	 double rate_other_JESsysUp = TMath::Log10((double_other_JESsysUp )/double_other);
 	 cout << "JESsysUp: " << rate_other_JESsysUp << endl;  
-	 double rate_other_JESsysDown = (double_other_JESsysDown - double_other)/double_other; 
+	 double rate_other_JESsysDown = TMath::Log10((double_other_JESsysDown )/double_other); 
 	 cout << "JESsysDown: " << rate_other_JESsysDown << endl;  
-	 double rate_other_PUsysUp = (double_other_PUsysUp - double_other)/double_other;
+	 double rate_other_PUsysUp = TMath::Log10((double_other_PUsysUp )/double_other);
 	 cout << "PUsysUp: " << rate_other_PUsysUp << endl;  
-	 double rate_other_PUsysDown = (double_other_PUsysDown - double_other)/double_other; 
+	 double rate_other_PUsysDown = TMath::Log10((double_other_PUsysDown )/double_other); 
 	 cout << "PUsysDown: " << rate_other_PUsysDown << endl; 
-	 double rate_other_METsysUp = (double_other_METsysUp - double_other)/double_other;
+	 double rate_other_METsysUp = TMath::Log10((double_other_METsysUp )/double_other);
 	 cout << "METsysUp: " << rate_other_METsysUp << endl;  
-	 double rate_other_METsysDown = (double_other_METsysDown - double_other)/double_other; 
+	 double rate_other_METsysDown = TMath::Log10((double_other_METsysDown )/double_other); 
 	 cout << "METsysDown: " << rate_other_METsysDown << endl; 
-	 double rate_other_SFsysUp = (double_other_SFsysUp - double_other)/double_other;
+	 double rate_other_SFsysUp = TMath::Log10((double_other_SFsysUp )/double_other);
 	 cout << "SFsysUp: " << rate_other_SFsysUp << endl;  
-	 double rate_other_SFsysDown = (double_other_SFsysDown - double_other)/double_other; 
+	 double rate_other_SFsysDown = TMath::Log10((double_other_SFsysDown )/double_other); 
 	 cout << "SFsysDown: " << rate_other_SFsysDown << endl; 
-	 double rate_other_eleSFsysUp = (double_other_eleSFsysUp - double_other)/double_other;
+	 double rate_other_eleSFsysUp = TMath::Log10((double_other_eleSFsysUp )/double_other);
 	 cout << "eleSFsysUp: " << rate_other_eleSFsysUp << endl;  
-	 double rate_other_eleSFsysDown = (double_other_eleSFsysDown - double_other)/double_other; 
+	 double rate_other_eleSFsysDown = TMath::Log10((double_other_eleSFsysDown )/double_other); 
 	 cout << "eleSFsysDown: " << rate_other_eleSFsysDown << endl; 
-	 double rate_other_ZSFsysUp = (double_other_ZSFsysUp - double_other)/double_other;
+	 double rate_other_ZSFsysUp = TMath::Log10((double_other_ZSFsysUp )/double_other);
 	 cout << "ZSFsysUp: " << rate_other_ZSFsysUp << endl;  
-	 double rate_other_ZSFsysDown = (double_other_ZSFsysDown - double_other)/double_other; 
+	 double rate_other_ZSFsysDown = TMath::Log10((double_other_ZSFsysDown )/double_other); 
 	 cout << "ZSFsysDown: " << rate_other_ZSFsysDown << endl; 
-	 double rate_other_PDFUp = (double_other_PDFUp - double_other)/double_other;
+	 double rate_other_PDFUp = TMath::Log10((double_other_PDFUp )/double_other);
 	 cout << "PDFUp: " << rate_other_PDFUp << endl;  
-	 double rate_other_PDFDown = (double_other_PDFDown - double_other)/double_other; 
+	 double rate_other_PDFDown = TMath::Log10((double_other_PDFDown )/double_other); 
 	 cout << "PDFDown: " << rate_other_PDFDown << endl; 
 	 
 
