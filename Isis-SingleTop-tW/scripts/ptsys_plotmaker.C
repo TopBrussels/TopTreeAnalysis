@@ -42,21 +42,6 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   labelcms2->SetBorderSize(0);
   
   
-    alabelcms  = new TPaveText(0.12,0.88,0.5,0.94,"NDCBR");
-  alabelcms->SetTextAlign(12);
-  alabelcms->SetTextSize(0.045);
-  alabelcms->SetFillColor(kWhite);
-  alabelcms->AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
-  alabelcms->SetBorderSize(0);
-
-  alabelcms2  = new TPaveText(0.12,0.85,0.5,0.88,"NDCBR");
-  alabelcms2->SetTextAlign(12);
-  alabelcms2->SetTextSize(0.045);
-  alabelcms2->SetFillColor(kWhite);
-  if (mode == 0) alabelcms2->AddText("12 fb^{-1}, e#mu channel  ");
-  if (mode == 1) alabelcms2->AddText("12 fb^{-1}, #mu#mu channel  ");
-  if (mode == 2) alabelcms2->AddText("12 fb^{-1}, ee channel  ");
-  alabelcms2->SetBorderSize(0);
   
   
   gStyle->SetOptStat(0);
@@ -69,7 +54,7 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   gStyle->SetLabelFont(18,"");
   
   gStyle->SetTitleXOffset(1.5);//1.5
-  gStyle->SetTitleYOffset(1.7);//1.7
+  gStyle->SetTitleYOffset(1.2);//1.7
   
   char myRootFile[300];
   char myRootFileZSFsysDown[300];
@@ -92,16 +77,33 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   char myRootFileeleSFsysUp[300];
   char myRootFilematchingDown[300];
   char myRootFilematchingUp[300];
-  
-  
+  char myRootFilePDF_tt_1j1t[300];
+  char myRootFilePDF_tt_1j1t_Up[300];
+  char myRootFilePDF_other_1j1t[300];
+  char myRootFilePDF_other_1j1t_Up[300];
+  char myRootFilePDF_twdr_1j1t[300];
+  char myRootFilePDF_twdr_1j1t_Up[300];
+  char myRootFilePDF_tt_2j1t[300];
+  char myRootFilePDF_tt_2j1t_Up[300];
+  char myRootFilePDF_other_2j1t[300];
+  char myRootFilePDF_other_2j1t_Up[300];
+  char myRootFilePDF_twdr_2j1t[300];
+  char myRootFilePDF_twdr_2j1t_Up[300];
+  char myRootFilePDF_tt_2j2t[300];
+  char myRootFilePDF_tt_2j2t_Up[300];
+  char myRootFilePDF_other_2j2t[300];
+  char myRootFilePDF_other_2j2t_Up[300];
+  char myRootFilePDF_twdr_2j2t[300];
+  char myRootFilePDF_twdr_2j2t_Up[300];
   double lumi = 1000;
-   if      (mode == 0)	 lumi = 11966.617;  	
+  
+    if      (mode == 0)	 lumi = 11966.617;  	
     else if (mode == 1) lumi = 12067.294;  	
     else if (mode == 2) lumi = 12093.792;  	
-    
-  sprintf(myRootFile,"results/an_%dpb_%d.root", lumi, mode); // take output from looper
   
   
+  
+  sprintf(myRootFile,"results/an_%dpb_%d.root", (int)lumi, mode);
   sprintf(myRootFileZSFsysDown,"results/ZSFsysDown_an_%dpb_%d.root", (int)lumi, mode);
  
   sprintf(myRootFileZSFsysUp,"results/ZSFsysUp_an_%dpb_%d.root", (int)lumi, mode);
@@ -138,11 +140,32 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
  
   sprintf(myRootFileeleSFsysUp,"results/eleSFsysUp_%dpb_%d.root", (int)lumi, mode);
   
-   sprintf(myRootFilematchingDown,"results/matchingDown_%dpb_%d.root", (int)lumi, mode);
+  sprintf(myRootFilematchingDown,"results/matchingDown_%dpb_%d.root", (int)lumi, mode);
  
   sprintf(myRootFilematchingUp,"results/matchingUp_%dpb_%d.root", (int)lumi, mode);
   
-   
+  sprintf(myRootFilePDF_tt_1j1t,"PDF_unc_output_new/pdf_signal_%d_tt_outputfile_rebinned.root", mode);
+  
+  sprintf(myRootFilePDF_other_1j1t,"PDF_unc_output_new/pdf_signal_%d_others_outputfile_rebinned.root", mode);
+ 
+  sprintf(myRootFilePDF_twdr_1j1t,"PDF_unc_output_new/pdf_signal_%d_twdr_outputfile_rebinned.root", mode);
+  
+  sprintf(myRootFilePDF_tt_2j1t,"PDF_unc_output_new/pdf_2j1t_%d_tt_outputfile_rebinned.root", mode);
+  
+  sprintf(myRootFilePDF_other_2j1t,"PDF_unc_output_new/pdf_2j1t_%d_others_outputfile_rebinned.root", mode);
+ 
+  sprintf(myRootFilePDF_twdr_2j1t,"PDF_unc_output_new/pdf_2j1t_%d_twdr_outputfile_rebinned.root", mode);
+  
+  sprintf(myRootFilePDF_tt_2j2t,"PDF_unc_output_new/pdf_2j2t_%d_tt_outputfile_rebinned.root", mode);
+  
+  sprintf(myRootFilePDF_other_2j2t,"PDF_unc_output_new/pdf_2j2t_%d_others_outputfile_rebinned.root", mode);
+ 
+  sprintf(myRootFilePDF_twdr_2j2t,"PDF_unc_output_new/pdf_2j2t_%d_twdr_outputfile_rebinned.root", mode);
+ 
+  
+  
+
+  
   TFile *_file0 = TFile::Open(myRootFile);
   TFile *_fileZSFsysUp = TFile::Open(myRootFileZSFsysUp);
   TFile *_fileZSFsysDown = TFile::Open(myRootFileZSFsysDown);
@@ -164,8 +187,17 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   TFile *_fileeleSFsysDown = TFile::Open(myRootFileeleSFsysDown);
   TFile *_filematchingUp = TFile::Open(myRootFilematchingUp);
   TFile *_filematchingDown = TFile::Open(myRootFilematchingDown);
+  TFile *_filePDF_tt_1j1t = TFile::Open(myRootFilePDF_tt_1j1t);
+  TFile *_filePDF_other_1j1t = TFile::Open(myRootFilePDF_other_1j1t);
+  TFile *_filePDF_twdr_1j1t = TFile::Open(myRootFilePDF_twdr_1j1t);
+  TFile *_filePDF_tt_2j1t = TFile::Open(myRootFilePDF_tt_2j1t);
+  TFile *_filePDF_other_2j1t = TFile::Open(myRootFilePDF_other_2j1t);
+  TFile *_filePDF_twdr_2j1t = TFile::Open(myRootFilePDF_twdr_2j1t);
+  TFile *_filePDF_tt_2j2t = TFile::Open(myRootFilePDF_tt_2j2t);
+  TFile *_filePDF_other_2j2t = TFile::Open(myRootFilePDF_other_2j2t);
+  TFile *_filePDF_twdr_2j2t = TFile::Open(myRootFilePDF_twdr_2j2t);
 
-  
+  /*
   
   cout << "-------------------------------------------------------" << endl; 
   cout << " ------------ USED FILES ------------------------------" << endl; 
@@ -191,7 +223,7 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   cout << "matchingDown: " << myRootFilematchingDown << endl;
   cout << "matchingUp: " << myRootFilematchingUp << endl;
   cout << "-------------------------------------------------------" << endl; 
-  
+  */
   const int nProcess = 4;
   const int nPlots = 10; // 16
   const int nSys = 21;
@@ -260,6 +292,12 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   TH1F* histo_tt_eleSFsysUp;
   TH1F* histo_tt_matchingDown;
   TH1F* histo_tt_matchingUp;
+  TH1F* histo_tt_PDFDown_1j1t;
+  TH1F* histo_tt_PDFUp_1j1t;
+  TH1F* histo_tt_PDFDown_2j1t;
+  TH1F* histo_tt_PDFUp_2j1t;
+  TH1F* histo_tt_PDFDown_2j2t;
+  TH1F* histo_tt_PDFUp_2j2t;
   
   TH1F* histo_other;
   TH1F* histo_other_ZSFsysDown;
@@ -276,7 +314,12 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   TH1F* histo_other_METsysUp;
   TH1F* histo_other_eleSFsysDown;
   TH1F* histo_other_eleSFsysUp;
-
+  TH1F* histo_other_PDFDown_1j1t;
+  TH1F* histo_other_PDFUp_1j1t;
+  TH1F* histo_other_PDFDown_2j1t;
+  TH1F* histo_other_PDFUp_2j1t;
+  TH1F* histo_other_PDFDown_2j2t;
+  TH1F* histo_other_PDFUp_2j2t;
   
   
   TH1F* histo_twdr;
@@ -299,6 +342,13 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   TH1F* histo_twdr_eleSFsysDown; 
   TH1F* histo_twdr_eleSFsysUp;
   TH1F* histo_twds; 
+  TH1F* histo_twdr_PDFDown_1j1t;
+  TH1F* histo_twdr_PDFUp_1j1t;
+  TH1F* histo_twdr_PDFDown_2j1t;
+  TH1F* histo_twdr_PDFUp_2j1t;
+  TH1F* histo_twdr_PDFDown_2j2t;
+  TH1F* histo_twdr_PDFUp_2j2t;
+   
   
   
   
@@ -308,7 +358,7 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
   TGraphAsymmErrors* graph_sign;
 
   
-   for(int iPlots = 0; iPlots<nPlots ; iPlots++) 
+   for(int iPlots = 2; iPlots<3 ; iPlots++) 
    {
       
      leg = new TLegend(0.7,0.7,0.94,0.94); 
@@ -355,7 +405,38 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
 	    //   cout << "eleSFsysDown: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 	       
        histo_other_eleSFsysUp= (TH1F*) _fileeleSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[3]);
 	    //   cout << "eleSFsysUp: " << cutLabel[iPlots]+ "_" + processName[3] << endl; 
-	       
+	histo_other_PDFDown_1j1t = (TH1F*) _filePDF_other_1j1t->Get("histo1a");
+	histo_other_PDFUp_1j1t = (TH1F*) _filePDF_other_1j1t->Get("histo1b");
+	histo_other_PDFDown_2j1t = (TH1F*) _filePDF_other_2j1t->Get("histo1a");
+	histo_other_PDFUp_2j1t = (TH1F*) _filePDF_other_2j1t->Get("histo1b");
+	histo_other_PDFDown_2j2t = (TH1F*) _filePDF_other_2j2t->Get("histo1a");
+	histo_other_PDFUp_2j2t = (TH1F*) _filePDF_other_2j2t->Get("histo1b");	     
+              
+	histo_other_PDFDown_1j1t->Rebin(rebinHisto[iPlots]);
+       histo_other_PDFDown_1j1t->SetLineColor(color[3]);
+       histo_other_PDFDown_1j1t->SetLineWidth(2);
+       
+       histo_other_PDFUp_1j1t->Rebin(rebinHisto[iPlots]);
+       histo_other_PDFUp_1j1t->SetLineColor(color[3]);
+       histo_other_PDFUp_1j1t->SetLineWidth(2);
+       
+              
+	histo_other_PDFDown_2j1t->Rebin(rebinHisto[iPlots]);
+       histo_other_PDFDown_2j1t->SetLineColor(color[3]);
+       histo_other_PDFDown_2j1t->SetLineWidth(2);
+       
+       histo_other_PDFUp_2j1t->Rebin(rebinHisto[iPlots]);
+       histo_other_PDFUp_2j1t->SetLineColor(color[3]);
+       histo_other_PDFUp_2j1t->SetLineWidth(2);
+       
+       histo_other_PDFDown_2j2t->Rebin(rebinHisto[iPlots]);
+       histo_other_PDFDown_2j2t->SetLineColor(color[3]);
+       histo_other_PDFDown_2j2t->SetLineWidth(2);
+       
+       histo_other_PDFUp_2j2t->Rebin(rebinHisto[iPlots]);
+       histo_other_PDFUp_2j2t->SetLineColor(color[3]);
+       histo_other_PDFUp_2j2t->SetLineWidth(2);
+	
 	       
 	       	       
        histo_other->Rebin(rebinHisto[iPlots]);
@@ -467,6 +548,18 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
         double graph_other_errorPU_y_down; 
 	double graph_other_error_up ;
         double graph_other_error_down; 
+	double graph_other_errorPDFDown_1j1t=0.0;
+  double graph_other_errorPDFUp_1j1t=0.0;
+  double graph_other_errorPDFDown_2j1t=0.0;
+  double graph_other_errorPDFUp_2j1t=0.0;
+  double graph_other_errorPDFDown_2j2t=0.0;
+  double graph_other_errorPDFUp_2j2t=0.0;
+  double graph_other_PDFDown_1j1t=0.0;
+  double graph_other_PDFUp_1j1t=0.0;
+  double graph_other_PDFDown_2j1t=0.0;
+  double graph_other_PDFUp_2j1t=0.0;
+  double graph_other_PDFDown_2j2t=0.0;
+  double graph_other_PDFUp_2j2t=0.0;
        
        for(int i_bin = 0; i_bin < (histo_other->GetNbinsX()) ; i_bin++){
               
@@ -484,61 +577,123 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
 	      graph_other_METsysDown_y = histo_other_METsysDown->GetBinContent(i_bin);
               graph_other_METsysUp_y = histo_other_METsysUp->GetBinContent(i_bin); 
 	      graph_other_eleSFsysDown_y = histo_other_eleSFsysDown->GetBinContent(i_bin);
-              graph_other_eleSFsysUp_y = histo_other_eleSFsysUp->GetBinContent(i_bin); 
+              graph_other_eleSFsysUp_y = histo_other_eleSFsysUp->GetBinContent(i_bin);
+	      graph_other_PDFDown_1j1t = histo_other_PDFDown_1j1t->GetBinContent(i_bin);
+              graph_other_PDFUp_1j1t = histo_other_PDFUp_1j1t->GetBinContent(i_bin); 
+	      graph_other_PDFDown_2j1t = histo_other_PDFDown_2j1t->GetBinContent(i_bin);
+              graph_other_PDFUp_2j1t = histo_other_PDFUp_2j1t->GetBinContent(i_bin); 
+	      graph_other_PDFDown_2j2t = histo_other_PDFDown_2j2t->GetBinContent(i_bin);
+              graph_other_PDFUp_2j2t = histo_other_PDFUp_2j2t->GetBinContent(i_bin); 
+	      
+	      if( region == 0){
+	      	if(graph_other_PDFDown_1j1t < graph_other_PDFUp_1j1t){
+	           	graph_other_errorPDFUp_1j1t = fabs(graph_other_PDFUp_1j1t - graph_other_y);
+		   	graph_other_errorPDFDown_1j1t = fabs(graph_other_PDFDown_1j1t - graph_other_y);
+              	}else if (graph_other_PDFDown_1j1t < graph_other_PDFUp_1j1t){
+	           	graph_other_errorPDFUp_1j1t = fabs(graph_other_PDFDown_1j1t - graph_other_y);
+		   	graph_other_errorPDFDown_1j1t = fabs(graph_other_PDFUp_1j1t - graph_other_y);
+	      	}
+	      	//cout << "graph_other_errorPDFUp_1j1t: " << graph_other_errorPDFUp_1j1t<< endl; 
+	      	//cout << "graph_other_errorPDFDown_1j1t: " << graph_other_errorPDFDown_1j1t << endl;
+	           
+	      } else if (region == 1){
+	      	if(graph_other_PDFDown_2j1t < graph_other_PDFUp_2j1t){
+	           	graph_other_errorPDFUp_2j1t = fabs(graph_other_PDFUp_2j1t - graph_other_y);
+		   	graph_other_errorPDFDown_2j1t = fabs(graph_other_PDFDown_2j1t - graph_other_y);
+              	}else if (graph_other_PDFDown_2j1t < graph_other_PDFUp_2j1t){
+	           	graph_other_errorPDFUp_2j1t = fabs(graph_other_PDFDown_2j1t - graph_other_y);
+		   	graph_other_errorPDFDown_2j1t = fabs(graph_other_PDFUp_2j1t - graph_other_y);
+	      	}
+	      //	cout << "graph_other_errorPDFUp_2j1t: " << graph_other_errorPDFUp_2j1t<< endl; 
+	      //	cout << "graph_other_errorPDFDown_2j1t: " << graph_other_errorPDFDown_2j1t << endl;
+	      
+	      
+	      
+	      } else if (region == 2){
+	      	if(graph_other_PDFDown_2j2t < graph_other_PDFUp_2j2t){
+	           	graph_other_errorPDFUp_2j2t = fabs(graph_other_PDFUp_2j2t - graph_other_y);
+		   	graph_other_errorPDFDown_2j2t = fabs(graph_other_PDFDown_2j2t - graph_other_y);
+              	}else if (graph_other_PDFDown_2j2t < graph_other_PDFUp_2j2t){
+	           	graph_other_errorPDFUp_2j2t = fabs(graph_other_PDFDown_2j2t - graph_other_y);
+		   	graph_other_errorPDFDown_2j2t = fabs(graph_other_PDFUp_2j2t - graph_other_y);
+	      	}
+	      	//cout << "graph_other_errorPDFUp_2j2t: " << graph_other_errorPDFUp_2j2t<< endl; 
+	      	//cout << "graph_other_errorPDFDown_2j2t: " << graph_other_errorPDFDown_2j2t << endl;
+	      
+	      
+	      
+	      }
+	      
+	      
+	      
+	      
 	      
 	      if(graph_other_METsysDown_y < graph_other_METsysUp_y){
 	           graph_other_errorMET_y_up = fabs(graph_other_METsysUp_y - graph_other_y);
-		   graph_other_errorMET_y_down = fabs(graph_other_METsysDown_y - graph_other_y));
+		   graph_other_errorMET_y_down = fabs(graph_other_METsysDown_y - graph_other_y);
               }else if (graph_other_METsysDown_y < graph_other_METsysUp_y){
 	           graph_other_errorMET_y_up = fabs(graph_other_METsysDown_y - graph_other_y);
-		   graph_other_errorMET_y_down = fabs(graph_other_METsysUp_y - graph_other_y));
+		   graph_other_errorMET_y_down = fabs(graph_other_METsysUp_y - graph_other_y);
 	      }
 	      if(graph_other_ZSFsysDown_y < graph_other_ZSFsysUp_y){
 	           graph_other_errorZSF_y_up = fabs(graph_other_ZSFsysUp_y - graph_other_y);
-		   graph_other_errorZSF_y_down = fabs(graph_other_ZSFsysDown_y - graph_other_y));
+		   graph_other_errorZSF_y_down = fabs(graph_other_ZSFsysDown_y - graph_other_y);
               }else if (graph_other_ZSFsysDown_y < graph_other_ZSFsysUp_y){
 	           graph_other_errorZSF_y_up = fabs(graph_other_ZSFsysDown_y - graph_other_y);
-		   graph_other_errorZSF_y_down = fabs(graph_other_ZSFsysUp_y - graph_other_y));
+		   graph_other_errorZSF_y_down = fabs(graph_other_ZSFsysUp_y - graph_other_y);
 	      }
 	      if(graph_other_JERsysDown_y < graph_other_JERsysUp_y){
 	           graph_other_errorJER_y_up = fabs(graph_other_JERsysUp_y - graph_other_y);
-		   graph_other_errorJER_y_down = fabs(graph_other_JERsysDown_y - graph_other_y));
+		   graph_other_errorJER_y_down = fabs(graph_other_JERsysDown_y - graph_other_y);
               }else if (graph_other_JERsysDown_y < graph_other_JERsysUp_y){
 	           graph_other_errorJER_y_up = fabs(graph_other_JERsysDown_y - graph_other_y);
-		   graph_other_errorJER_y_down = fabs(graph_other_JERsysUp_y - graph_other_y));
+		   graph_other_errorJER_y_down = fabs(graph_other_JERsysUp_y - graph_other_y);
 	      }
 	      if(graph_other_JESsysDown_y < graph_other_JESsysUp_y){
 	           graph_other_errorJES_y_up = fabs(graph_other_JESsysUp_y - graph_other_y);
-		   graph_other_errorJES_y_down = fabs(graph_other_JESsysDown_y - graph_other_y));
+		   graph_other_errorJES_y_down = fabs(graph_other_JESsysDown_y - graph_other_y);
               }else if (graph_other_JESsysDown_y < graph_other_JESsysUp_y){
 	           graph_other_errorJES_y_up = fabs(graph_other_JESsysDown_y - graph_other_y);
-		   graph_other_errorJES_y_down = fabs(graph_other_JESsysUp_y - graph_other_y));
+		   graph_other_errorJES_y_down = fabs(graph_other_JESsysUp_y - graph_other_y);
 	      }
 	      if(graph_other_PUsysDown_y < graph_other_PUsysUp_y){
 	           graph_other_errorPU_y_up = fabs(graph_other_PUsysUp_y - graph_other_y);
-		   graph_other_errorPU_y_down = fabs(graph_other_PUsysDown_y - graph_other_y));
+		   graph_other_errorPU_y_down = fabs(graph_other_PUsysDown_y - graph_other_y);
               }else if (graph_other_PUsysDown_y < graph_other_PUsysUp_y){
 	           graph_other_errorPU_y_up = fabs(graph_other_PUsysDown_y - graph_other_y);
-		   graph_other_errorPU_y_down = fabs(graph_other_PUsysUp_y - graph_other_y));
+		   graph_other_errorPU_y_down = fabs(graph_other_PUsysUp_y - graph_other_y);
 	      }
 	      if(graph_other_SFsysDown_y < graph_other_SFsysUp_y){
 	           graph_other_errorSF_y_up = fabs(graph_other_SFsysUp_y - graph_other_y);
-		   graph_other_errorSF_y_down = fabs(graph_other_SFsysDown_y - graph_other_y));
+		   graph_other_errorSF_y_down = fabs(graph_other_SFsysDown_y - graph_other_y);
               }else if (graph_other_SFsysDown_y < graph_other_SFsysUp_y){
 	           graph_other_errorSF_y_up = fabs(graph_other_SFsysDown_y - graph_other_y);
-		   graph_other_errorSF_y_down = fabs(graph_other_SFsysUp_y - graph_other_y));
+		   graph_other_errorSF_y_down = fabs(graph_other_SFsysUp_y - graph_other_y);
 	      }
 	      if(graph_other_eleSFsysDown_y < graph_other_eleSFsysUp_y){
 	           graph_other_erroreleSF_y_up = fabs(graph_other_eleSFsysUp_y - graph_other_y);
-		   graph_other_erroreleSF_y_down = fabs(graph_other_eleSFsysDown_y - graph_other_y));
+		   graph_other_erroreleSF_y_down = fabs(graph_other_eleSFsysDown_y - graph_other_y);
               }else if (graph_other_eleSFsysDown_y < graph_other_eleSFsysUp_y){
 	           graph_other_erroreleSF_y_up = fabs(graph_other_eleSFsysDown_y - graph_other_y);
-		   graph_other_erroreleSF_y_down = fabs(graph_other_eleSFsysUp_y - graph_other_y));
+		   graph_other_erroreleSF_y_down = fabs(graph_other_eleSFsysUp_y - graph_other_y);
 	      }
 	      
-	      graph_other_error_up = sqrt(graph_other_erroreleSF_y_up*graph_other_erroreleSF_y_up+graph_other_errorSF_y_up*graph_other_errorSF_y_up+graph_other_errorJER_y_up*graph_other_errorJER_y_up+graph_other_errorJES_y_up*graph_other_errorJES_y_up+graph_other_errorZSF_y_up*graph_other_errorZSF_y_up+graph_other_errorPU_y_up*graph_other_errorPU_y_up+graph_other_errorMET_y_up*graph_other_errorMET_y_up);
-              graph_other_error_down = sqrt(graph_other_erroreleSF_y_down*graph_other_erroreleSF_y_down+graph_other_errorSF_y_down*graph_other_errorSF_y_down+graph_other_errorJER_y_down*graph_other_errorJER_y_down+graph_other_errorJES_y_down*graph_other_errorJES_y_down+graph_other_errorZSF_y_down*graph_other_errorZSF_y_down+graph_other_errorPU_y_down*graph_other_errorPU_y_down+graph_other_errorMET_y_down*graph_other_errorMET_y_down);
+	      
+	      if (region == 0){
+	      	graph_other_error_up = sqrt(graph_other_errorPDFUp_1j1t*graph_other_errorPDFUp_1j1t+graph_other_erroreleSF_y_up*graph_other_erroreleSF_y_up+graph_other_errorSF_y_up*graph_other_errorSF_y_up+graph_other_errorJER_y_up*graph_other_errorJER_y_up+graph_other_errorJES_y_up*graph_other_errorJES_y_up+graph_other_errorZSF_y_up*graph_other_errorZSF_y_up+graph_other_errorPU_y_up*graph_other_errorPU_y_up+graph_other_errorMET_y_up*graph_other_errorMET_y_up);
+	      	graph_other_error_down = sqrt(graph_other_errorPDFDown_1j1t*graph_other_errorPDFDown_1j1t+graph_other_erroreleSF_y_down*graph_other_erroreleSF_y_down+graph_other_errorSF_y_down*graph_other_errorSF_y_down+graph_other_errorJER_y_down*graph_other_errorJER_y_down+graph_other_errorJES_y_down*graph_other_errorJES_y_down+graph_other_errorZSF_y_down*graph_other_errorZSF_y_down+graph_other_errorPU_y_down*graph_other_errorPU_y_down+graph_other_errorMET_y_down*graph_other_errorMET_y_down);
+	      } else if (region == 1){
+	      	graph_other_error_up = sqrt(graph_other_errorPDFUp_2j1t*graph_other_errorPDFUp_2j1t+graph_other_erroreleSF_y_up*graph_other_erroreleSF_y_up+graph_other_errorSF_y_up*graph_other_errorSF_y_up+graph_other_errorJER_y_up*graph_other_errorJER_y_up+graph_other_errorJES_y_up*graph_other_errorJES_y_up+graph_other_errorZSF_y_up*graph_other_errorZSF_y_up+graph_other_errorPU_y_up*graph_other_errorPU_y_up+graph_other_errorMET_y_up*graph_other_errorMET_y_up);
+	      	graph_other_error_down = sqrt(graph_other_errorPDFDown_2j1t*graph_other_errorPDFDown_2j1t+graph_other_erroreleSF_y_down*graph_other_erroreleSF_y_down+graph_other_errorSF_y_down*graph_other_errorSF_y_down+graph_other_errorJER_y_down*graph_other_errorJER_y_down+graph_other_errorJES_y_down*graph_other_errorJES_y_down+graph_other_errorZSF_y_down*graph_other_errorZSF_y_down+graph_other_errorPU_y_down*graph_other_errorPU_y_down+graph_other_errorMET_y_down*graph_other_errorMET_y_down);
+	      
+	      
+	      
+	      } else if (region == 2){
+	      	graph_other_error_up = sqrt(graph_other_errorPDFUp_2j2t*graph_other_errorPDFUp_2j2t+graph_other_erroreleSF_y_up*graph_other_erroreleSF_y_up+graph_other_errorSF_y_up*graph_other_errorSF_y_up+graph_other_errorJER_y_up*graph_other_errorJER_y_up+graph_other_errorJES_y_up*graph_other_errorJES_y_up+graph_other_errorZSF_y_up*graph_other_errorZSF_y_up+graph_other_errorPU_y_up*graph_other_errorPU_y_up+graph_other_errorMET_y_up*graph_other_errorMET_y_up);
+	      	graph_other_error_down = sqrt(graph_other_errorPDFDown_2j2t*graph_other_errorPDFDown_2j2t+graph_other_erroreleSF_y_down*graph_other_erroreleSF_y_down+graph_other_errorSF_y_down*graph_other_errorSF_y_down+graph_other_errorJER_y_down*graph_other_errorJER_y_down+graph_other_errorJES_y_down*graph_other_errorJES_y_down+graph_other_errorZSF_y_down*graph_other_errorZSF_y_down+graph_other_errorPU_y_down*graph_other_errorPU_y_down+graph_other_errorMET_y_down*graph_other_errorMET_y_down);
 	     
+	      
+	      }
 	      graph_other->SetPointEYhigh(i_bin, graph_other_error_up);
 	      graph_other->SetPointEYlow(i_bin, graph_other_error_down);
 
@@ -592,7 +747,37 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
 	    //   cout << "matchingDown: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 	       
        histo_tt_matchingUp= (TH1F*) _filematchingUp->Get(cutLabel[iPlots]+ "_" + processName[1]);
 	    //   cout << "matchingUp: " << cutLabel[iPlots]+ "_" + processName[1] << endl; 
-		       
+	histo_tt_PDFDown_1j1t = (TH1F*) _filePDF_tt_1j1t->Get("histo1a");
+	histo_tt_PDFUp_1j1t = (TH1F*) _filePDF_tt_1j1t->Get("histo1b");
+	histo_tt_PDFDown_2j1t = (TH1F*) _filePDF_tt_2j1t->Get("histo1a");
+	histo_tt_PDFUp_2j1t = (TH1F*) _filePDF_tt_2j1t->Get("histo1b");
+	histo_tt_PDFDown_2j2t = (TH1F*) _filePDF_tt_2j2t->Get("histo1a");
+	histo_tt_PDFUp_2j2t = (TH1F*) _filePDF_tt_2j2t->Get("histo1b");	     
+              
+	histo_tt_PDFDown_1j1t->Rebin(rebinHisto[iPlots]);
+       histo_tt_PDFDown_1j1t->SetLineColor(color[0]);
+       histo_tt_PDFDown_1j1t->SetLineWidth(2);
+       
+       histo_tt_PDFUp_1j1t->Rebin(rebinHisto[iPlots]);
+       histo_tt_PDFUp_1j1t->SetLineColor(color[0]);
+       histo_tt_PDFUp_1j1t->SetLineWidth(2);
+       
+              
+	histo_tt_PDFDown_2j1t->Rebin(rebinHisto[iPlots]);
+       histo_tt_PDFDown_2j1t->SetLineColor(color[0]);
+       histo_tt_PDFDown_2j1t->SetLineWidth(2);
+       
+       histo_tt_PDFUp_2j1t->Rebin(rebinHisto[iPlots]);
+       histo_tt_PDFUp_2j1t->SetLineColor(color[0]);
+       histo_tt_PDFUp_2j1t->SetLineWidth(2);
+       
+       histo_tt_PDFDown_2j2t->Rebin(rebinHisto[iPlots]);
+       histo_tt_PDFDown_2j2t->SetLineColor(color[0]);
+       histo_tt_PDFDown_2j2t->SetLineWidth(2);
+       
+       histo_tt_PDFUp_2j2t->Rebin(rebinHisto[iPlots]);
+       histo_tt_PDFUp_2j2t->SetLineColor(color[0]);
+       histo_tt_PDFUp_2j2t->SetLineWidth(2);	       
 	       
 	       	       
        histo_tt->Rebin(rebinHisto[iPlots]);
@@ -745,6 +930,18 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
         double graph_tt_errorPU_y_down; 
 	double graph_tt_error_up ;
         double graph_tt_error_down; 
+	double graph_tt_errorPDFDown_1j1t=0.0;
+  double graph_tt_errorPDFUp_1j1t=0.0;
+  double graph_tt_errorPDFDown_2j1t=0.0;
+  double graph_tt_errorPDFUp_2j1t=0.0;
+  double graph_tt_errorPDFDown_2j2t=0.0;
+  double graph_tt_errorPDFUp_2j2t=0.0;
+  double graph_tt_PDFDown_1j1t=0.0;
+  double graph_tt_PDFUp_1j1t=0.0;
+  double graph_tt_PDFDown_2j1t=0.0;
+  double graph_tt_PDFUp_2j1t=0.0;
+  double graph_tt_PDFDown_2j2t=0.0;
+  double graph_tt_PDFUp_2j2t=0.0;
        
        for(int i_bin = 0; i_bin < (histo_tt->GetNbinsX()) ; i_bin++){
               
@@ -769,83 +966,161 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
               graph_tt_TopMassUp_y = histo_tt_TopMassUp->GetBinContent(i_bin);
 	      graph_tt_matchingDown_y = histo_tt_matchingDown->GetBinContent(i_bin);
               graph_tt_matchingUp_y = histo_tt_matchingUp->GetBinContent(i_bin);
+	      graph_tt_PDFDown_1j1t = histo_tt_PDFDown_1j1t->GetBinContent(i_bin);
+              graph_tt_PDFUp_1j1t = histo_tt_PDFUp_1j1t->GetBinContent(i_bin);
+	      graph_tt_PDFDown_2j1t = histo_tt_PDFDown_2j1t->GetBinContent(i_bin);
+              graph_tt_PDFUp_2j1t = histo_tt_PDFUp_2j1t->GetBinContent(i_bin); 
+	      graph_tt_PDFDown_2j2t = histo_tt_PDFDown_2j2t->GetBinContent(i_bin);
+              graph_tt_PDFUp_2j2t = histo_tt_PDFUp_2j2t->GetBinContent(i_bin); 
+	      
+	      if( region == 0){
+	      	if(graph_tt_PDFDown_1j1t < graph_tt_PDFUp_1j1t){
+	           	graph_tt_errorPDFUp_1j1t = fabs(graph_tt_PDFUp_1j1t - graph_tt_y);
+		   	graph_tt_errorPDFDown_1j1t = fabs(graph_tt_PDFDown_1j1t - graph_tt_y);
+              	}else if (graph_tt_PDFDown_1j1t < graph_tt_PDFUp_1j1t){
+	           	graph_tt_errorPDFUp_1j1t = fabs(graph_tt_PDFDown_1j1t - graph_tt_y);
+		   	graph_tt_errorPDFDown_1j1t = fabs(graph_tt_PDFUp_1j1t - graph_tt_y);
+	      	}
+	      	//cout << "graph_tt_errorPDFUp_1j1t: " << graph_tt_errorPDFUp_1j1t<< endl; 
+	      	//cout << "graph_tt_errorPDFDown_1j1t: " << graph_tt_errorPDFDown_1j1t << endl;
+	           
+	      } else if (region == 1){
+	      	if(graph_tt_PDFDown_2j1t < graph_tt_PDFUp_2j1t){
+	           	graph_tt_errorPDFUp_2j1t = fabs(graph_tt_PDFUp_2j1t - graph_tt_y);
+		   	graph_tt_errorPDFDown_2j1t = fabs(graph_tt_PDFDown_2j1t - graph_tt_y);
+              	}else if (graph_tt_PDFDown_2j1t < graph_tt_PDFUp_2j1t){
+	           	graph_tt_errorPDFUp_2j1t = fabs(graph_tt_PDFDown_2j1t - graph_tt_y);
+		   	graph_tt_errorPDFDown_2j1t = fabs(graph_tt_PDFUp_2j1t - graph_tt_y);
+	      	}
+	      //	cout << "graph_tt_errorPDFUp_2j1t: " << graph_tt_errorPDFUp_2j1t<< endl; 
+	      //	cout << "graph_tt_errorPDFDown_2j1t: " << graph_tt_errorPDFDown_2j1t << endl;
+	      
+	      
+	      
+	      } else if (region == 2){
+	      	if(graph_tt_PDFDown_2j2t < graph_tt_PDFUp_2j2t){
+	           	graph_tt_errorPDFUp_2j2t = fabs(graph_tt_PDFUp_2j2t - graph_tt_y);
+		   	graph_tt_errorPDFDown_2j2t = fabs(graph_tt_PDFDown_2j2t - graph_tt_y);
+              	}else if (graph_tt_PDFDown_2j2t < graph_tt_PDFUp_2j2t){
+	           	graph_tt_errorPDFUp_2j2t = fabs(graph_tt_PDFDown_2j2t - graph_tt_y);
+		   	graph_tt_errorPDFDown_2j2t = fabs(graph_tt_PDFUp_2j2t - graph_tt_y);
+	      	}
+	      	//cout << "graph_tt_errorPDFUp_2j2t: " << graph_tt_errorPDFUp_2j2t<< endl; 
+	      	//cout << "graph_tt_errorPDFDown_2j2t: " << graph_tt_errorPDFDown_2j2t << endl;
+	      
+	      
+	      
+	      }	      
 	      
 	      if(graph_tt_METsysDown_y < graph_tt_METsysUp_y){
 	           graph_tt_errorMET_y_up = fabs(graph_tt_METsysUp_y - graph_tt_y);
-		   graph_tt_errorMET_y_down = fabs(graph_tt_METsysDown_y - graph_tt_y));
+		   graph_tt_errorMET_y_down = fabs(graph_tt_METsysDown_y - graph_tt_y);
               }else if (graph_tt_METsysDown_y < graph_tt_METsysUp_y){
 	           graph_tt_errorMET_y_up = fabs(graph_tt_METsysDown_y - graph_tt_y);
-		   graph_tt_errorMET_y_down = fabs(graph_tt_METsysUp_y - graph_tt_y));
+		   graph_tt_errorMET_y_down = fabs(graph_tt_METsysUp_y - graph_tt_y);
 	      }
+	     // cout << "graph_tt_errorMET_y_up: " << graph_tt_errorMET_y_up << endl; 
+	     // cout << "graph_tt_errorMET_y_down: " << graph_tt_errorMET_y_down << endl;
 	      if(graph_tt_ZSFsysDown_y < graph_tt_ZSFsysUp_y){
 	           graph_tt_errorZSF_y_up = fabs(graph_tt_ZSFsysUp_y - graph_tt_y);
-		   graph_tt_errorZSF_y_down = fabs(graph_tt_ZSFsysDown_y - graph_tt_y));
+		   graph_tt_errorZSF_y_down = fabs(graph_tt_ZSFsysDown_y - graph_tt_y);
               }else if (graph_tt_ZSFsysDown_y < graph_tt_ZSFsysUp_y){
 	           graph_tt_errorZSF_y_up = fabs(graph_tt_ZSFsysDown_y - graph_tt_y);
-		   graph_tt_errorZSF_y_down = fabs(graph_tt_ZSFsysUp_y - graph_tt_y));
+		   graph_tt_errorZSF_y_down = fabs(graph_tt_ZSFsysUp_y - graph_tt_y);
 	      }
+	     // cout << "graph_tt_errorZSF_y_up: " << graph_tt_errorZSF_y_up << endl; 
+	      //cout << "graph_tt_errorZSF_y_down: " << graph_tt_errorZSF_y_down << endl;
 	      if(graph_tt_JERsysDown_y < graph_tt_JERsysUp_y){
 	           graph_tt_errorJER_y_up = fabs(graph_tt_JERsysUp_y - graph_tt_y);
-		   graph_tt_errorJER_y_down = fabs(graph_tt_JERsysDown_y - graph_tt_y));
+		   graph_tt_errorJER_y_down = fabs(graph_tt_JERsysDown_y - graph_tt_y);
               }else if (graph_tt_JERsysDown_y < graph_tt_JERsysUp_y){
 	           graph_tt_errorJER_y_up = fabs(graph_tt_JERsysDown_y - graph_tt_y);
-		   graph_tt_errorJER_y_down = fabs(graph_tt_JERsysUp_y - graph_tt_y));
+		   graph_tt_errorJER_y_down = fabs(graph_tt_JERsysUp_y - graph_tt_y);
 	      }
+	    //  cout << "graph_tt_errorJER_y_up: " << graph_tt_errorJER_y_up << endl; 
+	     // cout << "graph_tt_errorJER_y_down: " << graph_tt_errorJER_y_down << endl;
 	      if(graph_tt_JESsysDown_y < graph_tt_JESsysUp_y){
 	           graph_tt_errorJES_y_up = fabs(graph_tt_JESsysUp_y - graph_tt_y);
-		   graph_tt_errorJES_y_down = fabs(graph_tt_JESsysDown_y - graph_tt_y));
+		   graph_tt_errorJES_y_down = fabs(graph_tt_JESsysDown_y - graph_tt_y);
               }else if (graph_tt_JESsysDown_y < graph_tt_JESsysUp_y){
 	           graph_tt_errorJES_y_up = fabs(graph_tt_JESsysDown_y - graph_tt_y);
-		   graph_tt_errorJES_y_down = fabs(graph_tt_JESsysUp_y - graph_tt_y));
+		   graph_tt_errorJES_y_down = fabs(graph_tt_JESsysUp_y - graph_tt_y);
 	      }
+	    //  cout << "graph_tt_errorJES_y_up: " << graph_tt_errorJES_y_up << endl; 
+	     // cout << "graph_tt_errorJES_y_down: " << graph_tt_errorJES_y_down << endl;
 	      if(graph_tt_PUsysDown_y < graph_tt_PUsysUp_y){
 	           graph_tt_errorPU_y_up = fabs(graph_tt_PUsysUp_y - graph_tt_y);
-		   graph_tt_errorPU_y_down = fabs(graph_tt_PUsysDown_y - graph_tt_y));
+		   graph_tt_errorPU_y_down = fabs(graph_tt_PUsysDown_y - graph_tt_y);
               }else if (graph_tt_PUsysDown_y < graph_tt_PUsysUp_y){
 	           graph_tt_errorPU_y_up = fabs(graph_tt_PUsysDown_y - graph_tt_y);
-		   graph_tt_errorPU_y_down = fabs(graph_tt_PUsysUp_y - graph_tt_y));
+		   graph_tt_errorPU_y_down = fabs(graph_tt_PUsysUp_y - graph_tt_y);
 	      }
+	     // cout << "graph_tt_errorPU_y_up: " << graph_tt_errorPU_y_up << endl; 
+	    //  cout << "graph_tt_errorPU_y_down: " << graph_tt_errorPU_y_down << endl;
 	      if(graph_tt_SFsysDown_y < graph_tt_SFsysUp_y){
 	           graph_tt_errorSF_y_up = fabs(graph_tt_SFsysUp_y - graph_tt_y);
-		   graph_tt_errorSF_y_down = fabs(graph_tt_SFsysDown_y - graph_tt_y));
+		   graph_tt_errorSF_y_down = fabs(graph_tt_SFsysDown_y - graph_tt_y);
               }else if (graph_tt_SFsysDown_y < graph_tt_SFsysUp_y){
 	           graph_tt_errorSF_y_up = fabs(graph_tt_SFsysDown_y - graph_tt_y);
-		   graph_tt_errorSF_y_down = fabs(graph_tt_SFsysUp_y - graph_tt_y));
+		   graph_tt_errorSF_y_down = fabs(graph_tt_SFsysUp_y - graph_tt_y);
 	      }
+	//      cout << "graph_tt_errorSF_y_up: " << graph_tt_errorSF_y_up << endl; 
+	//      cout << "graph_tt_errorSF_y_down: " << graph_tt_errorSF_y_down << endl;
 	      if(graph_tt_eleSFsysDown_y < graph_tt_eleSFsysUp_y){
 	           graph_tt_erroreleSF_y_up = fabs(graph_tt_eleSFsysUp_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_eleSFsysDown_y - graph_tt_y));
+		   graph_tt_erroreleSF_y_down = fabs(graph_tt_eleSFsysDown_y - graph_tt_y);
               }else if (graph_tt_eleSFsysDown_y < graph_tt_eleSFsysUp_y){
 	           graph_tt_erroreleSF_y_up = fabs(graph_tt_eleSFsysDown_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_eleSFsysUp_y - graph_tt_y));
+		   graph_tt_erroreleSF_y_down = fabs(graph_tt_eleSFsysUp_y - graph_tt_y);
 	      }
+	      //cout << "graph_tt_erroreleSF_y_up: " << graph_tt_erroreleSF_y_up << endl; 
+	      //cout << "graph_tt_erroreleSF_y_down: " << graph_tt_erroreleSF_y_down << endl;
 	      if(graph_tt_Q2Down_y < graph_tt_Q2Up_y){
-	           graph_tt_erroreleSF_y_up = fabs(graph_tt_Q2Up_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_Q2Down_y - graph_tt_y));
+	           graph_tt_errorQ2_y_up = fabs(graph_tt_Q2Up_y - graph_tt_y);
+		   graph_tt_errorQ2_y_down = fabs(graph_tt_Q2Down_y - graph_tt_y);
               }else if (graph_tt_Q2Down_y < graph_tt_Q2Up_y){
-	           graph_tt_erroreleSF_y_up = fabs(graph_tt_Q2Down_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_Q2Up_y - graph_tt_y));
+	           graph_tt_errorQ2_y_up = fabs(graph_tt_Q2Down_y - graph_tt_y);
+		   graph_tt_errorQ2_y_down = fabs(graph_tt_Q2Up_y - graph_tt_y);
 	      }
+	     // cout << "graph_tt_errorQ2_y_up: " << graph_tt_errorQ2_y_up << endl; 
+	     // cout << "graph_tt_errorQ2_y_down: " << graph_tt_errorQ2_y_down << endl;
 	       if(graph_tt_matchingDown_y < graph_tt_matchingUp_y){
-	           graph_tt_erroreleSF_y_up = fabs(graph_tt_matchingUp_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_matchingDown_y - graph_tt_y));
+	           graph_tt_errormatching_y_up = fabs(graph_tt_matchingUp_y - graph_tt_y);
+		   graph_tt_errormatching_y_down = fabs(graph_tt_matchingDown_y - graph_tt_y);
               }else if (graph_tt_matchingDown_y < graph_tt_matchingUp_y){
-	           graph_tt_erroreleSF_y_up = fabs(graph_tt_matchingDown_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_matchingUp_y - graph_tt_y));
+	           graph_tt_errormatching_y_up = fabs(graph_tt_matchingDown_y - graph_tt_y);
+		   graph_tt_errormatching_y_down = fabs(graph_tt_matchingUp_y - graph_tt_y);
 	      }
+	     // cout << "graph_tt_errormatching_y_up: " << graph_tt_errormatching_y_up << endl; 
+	     // cout << "graph_tt_errormatching_y_down: " << graph_tt_errormatching_y_down << endl;
 	       if(graph_tt_TopMassDown_y < graph_tt_TopMassUp_y){
-	           graph_tt_erroreleSF_y_up = fabs(graph_tt_TopMassUp_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_TopMassDown_y - graph_tt_y));
+	           graph_tt_errorTopMass_y_up = fabs(graph_tt_TopMassUp_y - graph_tt_y);
+		   graph_tt_errorTopMass_y_down = fabs(graph_tt_TopMassDown_y - graph_tt_y);
               }else if (graph_tt_TopMassDown_y < graph_tt_TopMassUp_y){
-	           graph_tt_erroreleSF_y_up = fabs(graph_tt_TopMassDown_y - graph_tt_y);
-		   graph_tt_erroreleSF_y_down = fabs(graph_tt_TopMassUp_y - graph_tt_y));
+	           graph_tt_errorTopMass_y_up = fabs(graph_tt_TopMassDown_y - graph_tt_y);
+		   graph_tt_errorTopMass_y_down = fabs(graph_tt_TopMassUp_y - graph_tt_y);
 	      }
+	     // cout << "graph_tt_errorTopMass_y_up: " << graph_tt_errorTopMass_y_up << endl; 
+	    //  cout << "graph_tt_errorTopMass_y_down: " << graph_tt_errorTopMass_y_down << endl;
 	      
-	      graph_tt_error_up = sqrt(graph_tt_errorQ2_y_up*graph_tt_errorQ2_y_up+graph_tt_errorTopMass_y_up*graph_tt_errorTopMass_y_up+graph_tt_errormatching_y_up*graph_tt_errormatching_y_up+graph_tt_erroreleSF_y_up*graph_tt_erroreleSF_y_up+graph_tt_errorSF_y_up*graph_tt_errorSF_y_up+graph_tt_errorJER_y_up*graph_tt_errorJER_y_up+graph_tt_errorJES_y_up*graph_tt_errorJES_y_up+graph_tt_errorZSF_y_up*graph_tt_errorZSF_y_up+graph_tt_errorPU_y_up*graph_tt_errorPU_y_up+graph_tt_errorMET_y_up*graph_tt_errorMET_y_up);
-              graph_tt_error_down = sqrt(graph_tt_errorQ2_y_down*graph_tt_errorQ2_y_down+graph_tt_errorTopMass_y_down*graph_tt_errorTopMass_y_down+graph_tt_errormatching_y_down*graph_tt_errormatching_y_down+graph_tt_erroreleSF_y_down*graph_tt_erroreleSF_y_down+graph_tt_errorSF_y_down*graph_tt_errorSF_y_down+graph_tt_errorJER_y_down*graph_tt_errorJER_y_down+graph_tt_errorJES_y_down*graph_tt_errorJES_y_down+graph_tt_errorZSF_y_down*graph_tt_errorZSF_y_down+graph_tt_errorPU_y_down*graph_tt_errorPU_y_down+graph_tt_errorMET_y_down*graph_tt_errorMET_y_down);
-	     
+	      
+	      if(region == 0){
+	      	graph_tt_error_up = sqrt(graph_tt_errorPDFUp_1j1t*graph_tt_errorPDFUp_1j1t+graph_tt_errorQ2_y_up*graph_tt_errorQ2_y_up+graph_tt_errorTopMass_y_up*graph_tt_errorTopMass_y_up+graph_tt_errormatching_y_up*graph_tt_errormatching_y_up+graph_tt_erroreleSF_y_up*graph_tt_erroreleSF_y_up+graph_tt_errorSF_y_up*graph_tt_errorSF_y_up+graph_tt_errorJER_y_up*graph_tt_errorJER_y_up+graph_tt_errorJES_y_up*graph_tt_errorJES_y_up+graph_tt_errorZSF_y_up*graph_tt_errorZSF_y_up+graph_tt_errorPU_y_up*graph_tt_errorPU_y_up+graph_tt_errorMET_y_up*graph_tt_errorMET_y_up);
+              	graph_tt_error_down =sqrt(graph_tt_errorPDFDown_1j1t*graph_tt_errorPDFDown_1j1t+graph_tt_errorQ2_y_down*graph_tt_errorQ2_y_down+graph_tt_errorTopMass_y_down*graph_tt_errorTopMass_y_down+graph_tt_errormatching_y_down*graph_tt_errormatching_y_down+graph_tt_erroreleSF_y_down*graph_tt_erroreleSF_y_down+graph_tt_errorSF_y_down*graph_tt_errorSF_y_down+graph_tt_errorJER_y_down*graph_tt_errorJER_y_down+graph_tt_errorJES_y_down*graph_tt_errorJES_y_down+graph_tt_errorZSF_y_down*graph_tt_errorZSF_y_down+graph_tt_errorPU_y_down*graph_tt_errorPU_y_down+graph_tt_errorMET_y_down*graph_tt_errorMET_y_down);
+	     } else if (region == 1){
+	      	graph_tt_error_up = sqrt(graph_tt_errorPDFUp_2j1t*graph_tt_errorPDFUp_2j1t+graph_tt_errorQ2_y_up*graph_tt_errorQ2_y_up+graph_tt_errorTopMass_y_up*graph_tt_errorTopMass_y_up+graph_tt_errormatching_y_up*graph_tt_errormatching_y_up+graph_tt_erroreleSF_y_up*graph_tt_erroreleSF_y_up+graph_tt_errorSF_y_up*graph_tt_errorSF_y_up+graph_tt_errorJER_y_up*graph_tt_errorJER_y_up+graph_tt_errorJES_y_up*graph_tt_errorJES_y_up+graph_tt_errorZSF_y_up*graph_tt_errorZSF_y_up+graph_tt_errorPU_y_up*graph_tt_errorPU_y_up+graph_tt_errorMET_y_up*graph_tt_errorMET_y_up);
+              	graph_tt_error_down =sqrt(graph_tt_errorPDFDown_2j1t*graph_tt_errorPDFDown_2j1t+graph_tt_errorQ2_y_down*graph_tt_errorQ2_y_down+graph_tt_errorTopMass_y_down*graph_tt_errorTopMass_y_down+graph_tt_errormatching_y_down*graph_tt_errormatching_y_down+graph_tt_erroreleSF_y_down*graph_tt_erroreleSF_y_down+graph_tt_errorSF_y_down*graph_tt_errorSF_y_down+graph_tt_errorJER_y_down*graph_tt_errorJER_y_down+graph_tt_errorJES_y_down*graph_tt_errorJES_y_down+graph_tt_errorZSF_y_down*graph_tt_errorZSF_y_down+graph_tt_errorPU_y_down*graph_tt_errorPU_y_down+graph_tt_errorMET_y_down*graph_tt_errorMET_y_down);
+	       
+	      
+	      } else if(region == 2){
+	      	graph_tt_error_up = sqrt(graph_tt_errorPDFUp_2j2t*graph_tt_errorPDFUp_2j2t+graph_tt_errorQ2_y_up*graph_tt_errorQ2_y_up+graph_tt_errorTopMass_y_up*graph_tt_errorTopMass_y_up+graph_tt_errormatching_y_up*graph_tt_errormatching_y_up+graph_tt_erroreleSF_y_up*graph_tt_erroreleSF_y_up+graph_tt_errorSF_y_up*graph_tt_errorSF_y_up+graph_tt_errorJER_y_up*graph_tt_errorJER_y_up+graph_tt_errorJES_y_up*graph_tt_errorJES_y_up+graph_tt_errorZSF_y_up*graph_tt_errorZSF_y_up+graph_tt_errorPU_y_up*graph_tt_errorPU_y_up+graph_tt_errorMET_y_up*graph_tt_errorMET_y_up);
+              	graph_tt_error_down =sqrt(graph_tt_errorPDFDown_2j2t*graph_tt_errorPDFDown_2j2t+graph_tt_errorQ2_y_down*graph_tt_errorQ2_y_down+graph_tt_errorTopMass_y_down*graph_tt_errorTopMass_y_down+graph_tt_errormatching_y_down*graph_tt_errormatching_y_down+graph_tt_erroreleSF_y_down*graph_tt_erroreleSF_y_down+graph_tt_errorSF_y_down*graph_tt_errorSF_y_down+graph_tt_errorJER_y_down*graph_tt_errorJER_y_down+graph_tt_errorJES_y_down*graph_tt_errorJES_y_down+graph_tt_errorZSF_y_down*graph_tt_errorZSF_y_down+graph_tt_errorPU_y_down*graph_tt_errorPU_y_down+graph_tt_errorMET_y_down*graph_tt_errorMET_y_down);
+	      
+	      
+	      }
 	      graph_tt->SetPointEYhigh(i_bin, graph_tt_error_up);
-	      graph_tt->SetPointEYlow(i_bin, graph_tt_error_down);
+	       graph_tt->SetPointEYlow(i_bin, graph_tt_error_down);
+	    //  cout << "ylow " << graph_tt_error_down << endl; 
 
 
        }
@@ -884,7 +1159,7 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
        histo_twdr_PUsysUp= (TH1F*) _filePUsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
         //cout << "PUsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_SFsysDown= (TH1F*) _fileSFsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
-        //cout << "SFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
+        //cout << "SFsysDown: " << cutLabel[iPlots]+"_" + processName[0] << endl; 
        histo_twdr_SFsysUp= (TH1F*) _fileSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
         //cout << "SFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_METsysDown= (TH1F*) _fileMETsysDown->Get(cutLabel[iPlots]+ "_" + processName[0]);
@@ -903,7 +1178,37 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
        // cout << "eleSFsysDown: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
        histo_twdr_eleSFsysUp= (TH1F*) _fileeleSFsysUp->Get(cutLabel[iPlots]+ "_" + processName[0]);
        // cout << "eleSFsysUp: " << cutLabel[iPlots]+ "_" + processName[0] << endl; 
-
+       histo_twdr_PDFDown_1j1t = (TH1F*) _filePDF_twdr_1j1t->Get("histo1a");
+	histo_twdr_PDFUp_1j1t = (TH1F*) _filePDF_twdr_1j1t->Get("histo1b");
+	histo_twdr_PDFDown_2j1t = (TH1F*) _filePDF_twdr_2j1t->Get("histo1a");
+	histo_twdr_PDFUp_2j1t = (TH1F*) _filePDF_twdr_2j1t->Get("histo1b");
+	histo_twdr_PDFDown_2j2t = (TH1F*) _filePDF_twdr_2j2t->Get("histo1a");
+	histo_twdr_PDFUp_2j2t = (TH1F*) _filePDF_twdr_2j2t->Get("histo1b");	     
+              
+	histo_twdr_PDFDown_1j1t->Rebin(rebinHisto[iPlots]);
+       histo_twdr_PDFDown_1j1t->SetLineColor(color[1]);
+       histo_twdr_PDFDown_1j1t->SetLineWidth(2);
+       
+       histo_twdr_PDFUp_1j1t->Rebin(rebinHisto[iPlots]);
+       histo_twdr_PDFUp_1j1t->SetLineColor(color[1]);
+       histo_twdr_PDFUp_1j1t->SetLineWidth(2);
+       
+              
+	histo_twdr_PDFDown_2j1t->Rebin(rebinHisto[iPlots]);
+       histo_twdr_PDFDown_2j1t->SetLineColor(color[1]);
+       histo_twdr_PDFDown_2j1t->SetLineWidth(2);
+       
+       histo_twdr_PDFUp_2j1t->Rebin(rebinHisto[iPlots]);
+       histo_twdr_PDFUp_2j1t->SetLineColor(color[1]);
+       histo_twdr_PDFUp_2j1t->SetLineWidth(2);
+       
+       histo_twdr_PDFDown_2j2t->Rebin(rebinHisto[iPlots]);
+       histo_twdr_PDFDown_2j2t->SetLineColor(color[1]);
+       histo_twdr_PDFDown_2j2t->SetLineWidth(2);
+       
+       histo_twdr_PDFUp_2j2t->Rebin(rebinHisto[iPlots]);
+       histo_twdr_PDFUp_2j2t->SetLineColor(color[1]);
+       histo_twdr_PDFUp_2j2t->SetLineWidth(2);
 	
 	
        histo_twdr->Rebin(rebinHisto[iPlots]);
@@ -1001,8 +1306,9 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
        histo_twdr_eleSFsysUp->SetLineStyle(7); 
        histo_twdr_eleSFsysUp->SetLineWidth(2); 
 
- 
-            graph_twdr = new TGraphAsymmErrors(histo_twdr);
+       TH1F* histo_twdr_clone = (TH1F*) histo_twdr->Clone("histo_twdr_clone"); 
+       histo_twdr_clone->Add(histo_tt);
+           graph_twdr = new TGraphAsymmErrors(histo_twdr_clone);
 	double graph_twdr_y = 0.; 
 	double graph_twdr_ZSFsysDown_y; 
 	double graph_twdr_ZSFsysUp_y  ;
@@ -1046,6 +1352,18 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
         double graph_twdr_errorPU_y_down; 
 	double graph_twdr_error_up ;
         double graph_twdr_error_down; 
+	double graph_twdr_errorPDFDown_1j1t=0.0;
+  double graph_twdr_errorPDFUp_1j1t=0.0;
+  double graph_twdr_errorPDFDown_2j1t=0.0;
+  double graph_twdr_errorPDFUp_2j1t=0.0;
+  double graph_twdr_errorPDFDown_2j2t=0.0;
+  double graph_twdr_errorPDFUp_2j2t=0.0;
+  double graph_twdr_PDFDown_1j1t=0.0;
+  double graph_twdr_PDFUp_1j1t=0.0;
+  double graph_twdr_PDFDown_2j1t=0.0;
+  double graph_twdr_PDFUp_2j1t=0.0;
+  double graph_twdr_PDFDown_2j2t=0.0;
+  double graph_twdr_PDFUp_2j2t=0.0;
        
        for(int i_bin = 0; i_bin < (histo_twdr->GetNbinsX()) ; i_bin++){
               
@@ -1070,95 +1388,156 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
               graph_twdr_TopMassUp_y = histo_twdr_TopMassUp->GetBinContent(i_bin);
 	      graph_twdr_twdsDown_y = histo_twdr->GetBinContent(i_bin);
               graph_twdr_twdsUp_y = histo_twds->GetBinContent(i_bin);
+	      graph_twdr_PDFDown_1j1t = histo_twdr_PDFDown_1j1t->GetBinContent(i_bin);
+              graph_twdr_PDFUp_1j1t = histo_twdr_PDFUp_1j1t->GetBinContent(i_bin);
+	      graph_twdr_PDFDown_2j1t = histo_twdr_PDFDown_2j1t->GetBinContent(i_bin);
+              graph_twdr_PDFUp_2j1t = histo_twdr_PDFUp_2j1t->GetBinContent(i_bin); 
+	      graph_twdr_PDFDown_2j2t = histo_twdr_PDFDown_2j2t->GetBinContent(i_bin);
+              graph_twdr_PDFUp_2j2t = histo_twdr_PDFUp_2j2t->GetBinContent(i_bin); 
+	      
+	      if( region == 0){
+	      	if(graph_twdr_PDFDown_1j1t < graph_twdr_PDFUp_1j1t){
+	           	graph_twdr_errorPDFUp_1j1t = fabs(graph_twdr_PDFUp_1j1t - graph_twdr_y);
+		   	graph_twdr_errorPDFDown_1j1t = fabs(graph_twdr_PDFDown_1j1t - graph_twdr_y);
+              	}else if (graph_twdr_PDFDown_1j1t < graph_twdr_PDFUp_1j1t){
+	           	graph_twdr_errorPDFUp_1j1t = fabs(graph_twdr_PDFDown_1j1t - graph_twdr_y);
+		   	graph_twdr_errorPDFDown_1j1t = fabs(graph_twdr_PDFUp_1j1t - graph_twdr_y);
+	      	}
+	      	//cout << "graph_twdr_errorPDFUp_1j1t: " << graph_twdr_errorPDFUp_1j1t<< endl; 
+	      	//cout << "graph_twdr_errorPDFDown_1j1t: " << graph_twdr_errorPDFDown_1j1t << endl;
+	           
+	      } else if (region == 1){
+	      	if(graph_twdr_PDFDown_2j1t < graph_twdr_PDFUp_2j1t){
+	           	graph_twdr_errorPDFUp_2j1t = fabs(graph_twdr_PDFUp_2j1t - graph_twdr_y);
+		   	graph_twdr_errorPDFDown_2j1t = fabs(graph_twdr_PDFDown_2j1t - graph_twdr_y);
+              	}else if (graph_twdr_PDFDown_2j1t < graph_twdr_PDFUp_2j1t){
+	           	graph_twdr_errorPDFUp_2j1t = fabs(graph_twdr_PDFDown_2j1t - graph_twdr_y);
+		   	graph_twdr_errorPDFDown_2j1t = fabs(graph_twdr_PDFUp_2j1t - graph_twdr_y);
+	      	}
+	      //	cout << "graph_twdr_errorPDFUp_2j1t: " << graph_twdr_errorPDFUp_2j1t<< endl; 
+	      //	cout << "graph_twdr_errorPDFDown_2j1t: " << graph_twdr_errorPDFDown_2j1t << endl;
+	      
+	      
+	      
+	      } else if (region == 2){
+	      	if(graph_twdr_PDFDown_2j2t < graph_twdr_PDFUp_2j2t){
+	           	graph_twdr_errorPDFUp_2j2t = fabs(graph_twdr_PDFUp_2j2t - graph_twdr_y);
+		   	graph_twdr_errorPDFDown_2j2t = fabs(graph_twdr_PDFDown_2j2t - graph_twdr_y);
+              	}else if (graph_twdr_PDFDown_2j2t < graph_twdr_PDFUp_2j2t){
+	           	graph_twdr_errorPDFUp_2j2t = fabs(graph_twdr_PDFDown_2j2t - graph_twdr_y);
+		   	graph_twdr_errorPDFDown_2j2t = fabs(graph_twdr_PDFUp_2j2t - graph_twdr_y);
+	      	}
+	      	//cout << "graph_twdr_errorPDFUp_2j2t: " << graph_twdr_errorPDFUp_2j2t<< endl; 
+	      	//cout << "graph_twdr_errorPDFDown_2j2t: " << graph_twdr_errorPDFDown_2j2t << endl;
+	      
+	      
+	      
+	      }	    
 	      
 	      if(graph_twdr_METsysDown_y < graph_twdr_METsysUp_y){
 	           graph_twdr_errorMET_y_up = fabs(graph_twdr_METsysUp_y - graph_twdr_y);
-		   graph_twdr_errorMET_y_down = fabs(graph_twdr_METsysDown_y - graph_twdr_y));
+		   graph_twdr_errorMET_y_down = fabs(graph_twdr_METsysDown_y - graph_twdr_y);
               }else if (graph_twdr_METsysDown_y < graph_twdr_METsysUp_y){
 	           graph_twdr_errorMET_y_up = fabs(graph_twdr_METsysDown_y - graph_twdr_y);
-		   graph_twdr_errorMET_y_down = fabs(graph_twdr_METsysUp_y - graph_twdr_y));
+		   graph_twdr_errorMET_y_down = fabs(graph_twdr_METsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_ZSFsysDown_y < graph_twdr_ZSFsysUp_y){
 	           graph_twdr_errorZSF_y_up = fabs(graph_twdr_ZSFsysUp_y - graph_twdr_y);
-		   graph_twdr_errorZSF_y_down = fabs(graph_twdr_ZSFsysDown_y - graph_twdr_y));
+		   graph_twdr_errorZSF_y_down = fabs(graph_twdr_ZSFsysDown_y - graph_twdr_y);
               }else if (graph_twdr_ZSFsysDown_y < graph_twdr_ZSFsysUp_y){
 	           graph_twdr_errorZSF_y_up = fabs(graph_twdr_ZSFsysDown_y - graph_twdr_y);
-		   graph_twdr_errorZSF_y_down = fabs(graph_twdr_ZSFsysUp_y - graph_twdr_y));
+		   graph_twdr_errorZSF_y_down = fabs(graph_twdr_ZSFsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_JERsysDown_y < graph_twdr_JERsysUp_y){
 	           graph_twdr_errorJER_y_up = fabs(graph_twdr_JERsysUp_y - graph_twdr_y);
-		   graph_twdr_errorJER_y_down = fabs(graph_twdr_JERsysDown_y - graph_twdr_y));
+		   graph_twdr_errorJER_y_down = fabs(graph_twdr_JERsysDown_y - graph_twdr_y);
               }else if (graph_twdr_JERsysDown_y < graph_twdr_JERsysUp_y){
 	           graph_twdr_errorJER_y_up = fabs(graph_twdr_JERsysDown_y - graph_twdr_y);
-		   graph_twdr_errorJER_y_down = fabs(graph_twdr_JERsysUp_y - graph_twdr_y));
+		   graph_twdr_errorJER_y_down = fabs(graph_twdr_JERsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_JESsysDown_y < graph_twdr_JESsysUp_y){
 	           graph_twdr_errorJES_y_up = fabs(graph_twdr_JESsysUp_y - graph_twdr_y);
-		   graph_twdr_errorJES_y_down = fabs(graph_twdr_JESsysDown_y - graph_twdr_y));
+		   graph_twdr_errorJES_y_down = fabs(graph_twdr_JESsysDown_y - graph_twdr_y);
               }else if (graph_twdr_JESsysDown_y < graph_twdr_JESsysUp_y){
 	           graph_twdr_errorJES_y_up = fabs(graph_twdr_JESsysDown_y - graph_twdr_y);
-		   graph_twdr_errorJES_y_down = fabs(graph_twdr_JESsysUp_y - graph_twdr_y));
+		   graph_twdr_errorJES_y_down = fabs(graph_twdr_JESsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_PUsysDown_y < graph_twdr_PUsysUp_y){
 	           graph_twdr_errorPU_y_up = fabs(graph_twdr_PUsysUp_y - graph_twdr_y);
-		   graph_twdr_errorPU_y_down = fabs(graph_twdr_PUsysDown_y - graph_twdr_y));
+		   graph_twdr_errorPU_y_down = fabs(graph_twdr_PUsysDown_y - graph_twdr_y);
               }else if (graph_twdr_PUsysDown_y < graph_twdr_PUsysUp_y){
 	           graph_twdr_errorPU_y_up = fabs(graph_twdr_PUsysDown_y - graph_twdr_y);
-		   graph_twdr_errorPU_y_down = fabs(graph_twdr_PUsysUp_y - graph_twdr_y));
+		   graph_twdr_errorPU_y_down = fabs(graph_twdr_PUsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_SFsysDown_y < graph_twdr_SFsysUp_y){
 	           graph_twdr_errorSF_y_up = fabs(graph_twdr_SFsysUp_y - graph_twdr_y);
-		   graph_twdr_errorSF_y_down = fabs(graph_twdr_SFsysDown_y - graph_twdr_y));
+		   graph_twdr_errorSF_y_down = fabs(graph_twdr_SFsysDown_y - graph_twdr_y);
               }else if (graph_twdr_SFsysDown_y < graph_twdr_SFsysUp_y){
 	           graph_twdr_errorSF_y_up = fabs(graph_twdr_SFsysDown_y - graph_twdr_y);
-		   graph_twdr_errorSF_y_down = fabs(graph_twdr_SFsysUp_y - graph_twdr_y));
+		   graph_twdr_errorSF_y_down = fabs(graph_twdr_SFsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_eleSFsysDown_y < graph_twdr_eleSFsysUp_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_eleSFsysUp_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_eleSFsysDown_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_eleSFsysDown_y - graph_twdr_y);
               }else if (graph_twdr_eleSFsysDown_y < graph_twdr_eleSFsysUp_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_eleSFsysDown_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_eleSFsysUp_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_eleSFsysUp_y - graph_twdr_y);
 	      }
 	      if(graph_twdr_Q2Down_y < graph_twdr_Q2Up_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_Q2Up_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_Q2Down_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_Q2Down_y - graph_twdr_y);
               }else if (graph_twdr_Q2Down_y < graph_twdr_Q2Up_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_Q2Down_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_Q2Up_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_Q2Up_y - graph_twdr_y);
 	      }
 	       if(graph_twdr_twdsDown_y < graph_twdr_twdsUp_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_twdsUp_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_twdsDown_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_twdsDown_y - graph_twdr_y);
               }else if (graph_twdr_twdsDown_y < graph_twdr_twdsUp_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_twdsDown_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_twdsUp_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_twdsUp_y - graph_twdr_y);
 	      }
 	       if(graph_twdr_TopMassDown_y < graph_twdr_TopMassUp_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_TopMassUp_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_TopMassDown_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_TopMassDown_y - graph_twdr_y);
               }else if (graph_twdr_TopMassDown_y < graph_twdr_TopMassUp_y){
 	           graph_twdr_erroreleSF_y_up = fabs(graph_twdr_TopMassDown_y - graph_twdr_y);
-		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_TopMassUp_y - graph_twdr_y));
+		   graph_twdr_erroreleSF_y_down = fabs(graph_twdr_TopMassUp_y - graph_twdr_y);
 	      }
 	      
-	      graph_twdr_error_up = sqrt(graph_twdr_errorQ2_y_up*graph_twdr_errorQ2_y_up+graph_twdr_errorTopMass_y_up*graph_twdr_errorTopMass_y_up+graph_twdr_errortwds_y_up*graph_twdr_errortwds_y_up+graph_twdr_erroreleSF_y_up*graph_twdr_erroreleSF_y_up+graph_twdr_errorSF_y_up*graph_twdr_errorSF_y_up+graph_twdr_errorJER_y_up*graph_twdr_errorJER_y_up+graph_twdr_errorJES_y_up*graph_twdr_errorJES_y_up+graph_twdr_errorZSF_y_up*graph_twdr_errorZSF_y_up+graph_twdr_errorPU_y_up*graph_twdr_errorPU_y_up+graph_twdr_errorMET_y_up*graph_twdr_errorMET_y_up);
-              graph_twdr_error_down = sqrt(graph_twdr_errorQ2_y_down*graph_twdr_errorQ2_y_down+graph_twdr_errorTopMass_y_down*graph_twdr_errorTopMass_y_down+graph_twdr_errortwds_y_down*graph_twdr_errortwds_y_down+graph_twdr_erroreleSF_y_down*graph_twdr_erroreleSF_y_down+graph_twdr_errorSF_y_down*graph_twdr_errorSF_y_down+graph_twdr_errorJER_y_down*graph_twdr_errorJER_y_down+graph_twdr_errorJES_y_down*graph_twdr_errorJES_y_down+graph_twdr_errorZSF_y_down*graph_twdr_errorZSF_y_down+graph_twdr_errorPU_y_down*graph_twdr_errorPU_y_down+graph_twdr_errorMET_y_down*graph_twdr_errorMET_y_down);
+	      
+	      if(region == 0){
+	      graph_twdr_error_up = sqrt(graph_twdr_errorPDFUp_1j1t*graph_twdr_errorPDFUp_1j1t+graph_twdr_errorQ2_y_up*graph_twdr_errorQ2_y_up+graph_twdr_errorTopMass_y_up*graph_twdr_errorTopMass_y_up+graph_twdr_errortwds_y_up*graph_twdr_errortwds_y_up+graph_twdr_erroreleSF_y_up*graph_twdr_erroreleSF_y_up+graph_twdr_errorSF_y_up*graph_twdr_errorSF_y_up+graph_twdr_errorJER_y_up*graph_twdr_errorJER_y_up+graph_twdr_errorJES_y_up*graph_twdr_errorJES_y_up+graph_twdr_errorZSF_y_up*graph_twdr_errorZSF_y_up+graph_twdr_errorPU_y_up*graph_twdr_errorPU_y_up+graph_twdr_errorMET_y_up*graph_twdr_errorMET_y_up);
+              graph_twdr_error_down = sqrt(graph_twdr_errorPDFDown_1j1t*graph_twdr_errorPDFDown_1j1t+graph_twdr_errorQ2_y_down*graph_twdr_errorQ2_y_down+graph_twdr_errorTopMass_y_down*graph_twdr_errorTopMass_y_down+graph_twdr_errortwds_y_down*graph_twdr_errortwds_y_down+graph_twdr_erroreleSF_y_down*graph_twdr_erroreleSF_y_down+graph_twdr_errorSF_y_down*graph_twdr_errorSF_y_down+graph_twdr_errorJER_y_down*graph_twdr_errorJER_y_down+graph_twdr_errorJES_y_down*graph_twdr_errorJES_y_down+graph_twdr_errorZSF_y_down*graph_twdr_errorZSF_y_down+graph_twdr_errorPU_y_down*graph_twdr_errorPU_y_down+graph_twdr_errorMET_y_down*graph_twdr_errorMET_y_down);
+	     } else if (region == 1){
+	      graph_twdr_error_up = sqrt(graph_twdr_errorPDFUp_2j1t*graph_twdr_errorPDFUp_2j1t+graph_twdr_errorQ2_y_up*graph_twdr_errorQ2_y_up+graph_twdr_errorTopMass_y_up*graph_twdr_errorTopMass_y_up+graph_twdr_errortwds_y_up*graph_twdr_errortwds_y_up+graph_twdr_erroreleSF_y_up*graph_twdr_erroreleSF_y_up+graph_twdr_errorSF_y_up*graph_twdr_errorSF_y_up+graph_twdr_errorJER_y_up*graph_twdr_errorJER_y_up+graph_twdr_errorJES_y_up*graph_twdr_errorJES_y_up+graph_twdr_errorZSF_y_up*graph_twdr_errorZSF_y_up+graph_twdr_errorPU_y_up*graph_twdr_errorPU_y_up+graph_twdr_errorMET_y_up*graph_twdr_errorMET_y_up);
+              graph_twdr_error_down = sqrt(graph_twdr_errorPDFDown_2j1t*graph_twdr_errorPDFDown_2j1t+graph_twdr_errorQ2_y_down*graph_twdr_errorQ2_y_down+graph_twdr_errorTopMass_y_down*graph_twdr_errorTopMass_y_down+graph_twdr_errortwds_y_down*graph_twdr_errortwds_y_down+graph_twdr_erroreleSF_y_down*graph_twdr_erroreleSF_y_down+graph_twdr_errorSF_y_down*graph_twdr_errorSF_y_down+graph_twdr_errorJER_y_down*graph_twdr_errorJER_y_down+graph_twdr_errorJES_y_down*graph_twdr_errorJES_y_down+graph_twdr_errorZSF_y_down*graph_twdr_errorZSF_y_down+graph_twdr_errorPU_y_down*graph_twdr_errorPU_y_down+graph_twdr_errorMET_y_down*graph_twdr_errorMET_y_down);
 	     
+	     
+	     } else if (region == 2){
+	      graph_twdr_error_up = sqrt(graph_twdr_errorPDFUp_2j2t*graph_twdr_errorPDFUp_2j2t+graph_twdr_errorQ2_y_up*graph_twdr_errorQ2_y_up+graph_twdr_errorTopMass_y_up*graph_twdr_errorTopMass_y_up+graph_twdr_errortwds_y_up*graph_twdr_errortwds_y_up+graph_twdr_erroreleSF_y_up*graph_twdr_erroreleSF_y_up+graph_twdr_errorSF_y_up*graph_twdr_errorSF_y_up+graph_twdr_errorJER_y_up*graph_twdr_errorJER_y_up+graph_twdr_errorJES_y_up*graph_twdr_errorJES_y_up+graph_twdr_errorZSF_y_up*graph_twdr_errorZSF_y_up+graph_twdr_errorPU_y_up*graph_twdr_errorPU_y_up+graph_twdr_errorMET_y_up*graph_twdr_errorMET_y_up);
+              graph_twdr_error_down = sqrt(graph_twdr_errorPDFDown_2j2t*graph_twdr_errorPDFDown_2j2t+graph_twdr_errorQ2_y_down*graph_twdr_errorQ2_y_down+graph_twdr_errorTopMass_y_down*graph_twdr_errorTopMass_y_down+graph_twdr_errortwds_y_down*graph_twdr_errortwds_y_down+graph_twdr_erroreleSF_y_down*graph_twdr_erroreleSF_y_down+graph_twdr_errorSF_y_down*graph_twdr_errorSF_y_down+graph_twdr_errorJER_y_down*graph_twdr_errorJER_y_down+graph_twdr_errorJES_y_down*graph_twdr_errorJES_y_down+graph_twdr_errorZSF_y_down*graph_twdr_errorZSF_y_down+graph_twdr_errorPU_y_down*graph_twdr_errorPU_y_down+graph_twdr_errorMET_y_down*graph_twdr_errorMET_y_down);
+	     
+	     
+	     
+	     }
 	      graph_twdr->SetPointEYhigh(i_bin, graph_twdr_error_up);
 	      graph_twdr->SetPointEYlow(i_bin, graph_twdr_error_down);
+	      
 
 
        }
        
-       double max1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr->GetMaximum());
+       double max1 = TMath::Max(histo_tt->GetMaximum(), histo_twdr_clone->GetMaximum());
        double max = TMath::Max(histo_other->GetMaximum(), max1);
+       
+       
        
        
 	// Make legends      
        leg ->AddEntry(histo_tt, "tt bckgr." , "l");  
-       leg ->AddEntry(histo_twdr, "twdr signal", "l"); 
-       leg ->AddEntry(histo_other, "other bckgr.", "l"); 
+       leg ->AddEntry(histo_twdr, "tt bckgr. + twdr signal", "l"); 
+     //  leg ->AddEntry(histo_other, "other bckgr.", "l"); 
        
       graph_tt->SetFillColor(kBlue);
       graph_tt->SetFillStyle(3005);
@@ -1167,20 +1546,24 @@ void ptsys_plotmaker(int mode = 0, int region = 0){
       graph_twdr->SetFillStyle(3005);
       
       graph_other->SetFillColor(kMagenta);
-     graph_other->SetFillStyle(3005);
+      graph_other->SetFillStyle(3005);
 	
 	
 	TMultiGraph *mg = new TMultiGraph();
 	mg->Add(graph_tt);
         mg->Add(graph_twdr);
-       mg->Add(graph_other);
+       // mg->Add(graph_other);
 
 	
       TCanvas *c1 = new TCanvas();
-	mg->SetMaximum(max*1.3);
-        mg->Draw("AL,3");
-     
+	mg->SetMaximum(max*1.5);
+       mg->Draw("ALP,3");
+       mg->GetXaxis()->SetTitle( cutTitle[iPlots]);
+       mg->GetYaxis()->SetTitle("events / 12 fb^{-1}");
       
+       
+      // graph_tt->Draw("AP3");
+      //  histo_tt->Draw("same");
        
       leg->Draw();
       labelcms->Draw();
