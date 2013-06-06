@@ -405,18 +405,33 @@ int main (int argc, char *argv[])
    	/////////////////////////////////////
    	
     vector<JetCorrectorParameters> vCorrParam;
-//    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) // Data!
-//    {
-//      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
-//      vCorrParam.push_back(*ResJetCorPar);
-//    }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
-    JetCorrectionUncertainty *jecUncTotal = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) // Data!
+    {
+      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt");
+      vCorrParam.push_back(*L1JetCorPar);
+      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt");
+      vCorrParam.push_back(*L2JetCorPar);
+      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt");
+      vCorrParam.push_back(*L3JetCorPar);
+      JetCorrectorParameters *L2L3ResJetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L2L3Residual_AK5PFchs.txt");
+      vCorrParam.push_back(*L2L3ResJetCorPar);
+    }
+    else
+    {
+      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
+      vCorrParam.push_back(*L1JetCorPar);
+      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L2Relative_AK5PFchs.txt");
+      vCorrParam.push_back(*L2JetCorPar);
+      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
+      vCorrParam.push_back(*L3JetCorPar);
+    }
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");
+//    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
+//    JetCorrectionUncertainty *jecUncTotal = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
     
-    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false);
+    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
     
     histo2D["jesUnc"] = new TH2F("jesUnc", "jesUnc", 101, 29.5, 130.5, 25, -0.05, 2.45);
-    histo2D["jesUncDiff"] = new TH2F("jesUncDiff", "jesUncDiff", 101, 29.5, 130.5, 25, -0.05, 2.45);
     graph2D["jesUnc_graph2D"] = new TGraph2D(101*25);
     
     histo1D["jesUncPt30"] = new TH1F("jesUncPt30", "jesUncPt30", 25, -0.05, 2.45);
@@ -435,7 +450,7 @@ int main (int argc, char *argv[])
         float uncPos = jecUnc->getUncertainty(true);
         jecUnc->setJetEta(jetEta);
         jecUnc->setJetPt(jetPt);
-        float uncNeg = jecUnc->getUncertainty(true);
+        float uncNeg = jecUnc->getUncertainty(false);
         histo2D["jesUnc"]->Fill(jetPt, jetEta, 0.5*(uncPos+uncNeg));
         graph2D["jesUnc_graph2D"]->SetPoint(iP, jetPt, jetEta, 0.5*(uncPos+uncNeg));
         if(jetPt == 30) histo1D["jesUncPt30"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
@@ -443,13 +458,6 @@ int main (int argc, char *argv[])
         else if(jetPt == 50) histo1D["jesUncPt50"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
         else if(jetPt == 60) histo1D["jesUncPt60"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
         else if(jetPt == 70) histo1D["jesUncPt70"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
-        jecUncTotal->setJetEta(jetEta);
-        jecUncTotal->setJetPt(jetPt);
-        float uncPosTotal = jecUncTotal->getUncertainty(false);
-        jecUncTotal->setJetEta(jetEta);
-        jecUncTotal->setJetPt(jetPt);
-        float uncNegTotal = jecUncTotal->getUncertainty(false);
-        histo2D["jesUncDiff"]->Fill(jetPt, jetEta, 0.5*(uncPosTotal+uncNegTotal) - 0.5*(uncPos+uncNeg));
         iP++;
       }
     }
@@ -598,8 +606,10 @@ int main (int argc, char *argv[])
         else itriggerSemiEl = treeLoader.iTrigger (string ("HLT_Ele27_WP80_v10"), currentRun);
       }
       // Apply Jet Corrections on-the-fly
-//      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
-//        jetTools->correctJets(init_jets_corrected, vertex);
+      if( dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
+        jetTools->correctJets(init_jets_corrected, event->kt6PFJets_rho(), true);
+      else
+        jetTools->correctJets(init_jets_corrected, event->kt6PFJets_rho(), false);
       
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) )
       {
@@ -615,9 +625,6 @@ int main (int argc, char *argv[])
           jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus");
         else if(systematic == "JESMinus")
           jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus");
-        
-        //Scale jets with a certain factor
-//        jetTools->scaleJets(init_jets_corrected, 1.);
       }
       
       for(unsigned i=0; i<init_muons.size(); i++)
