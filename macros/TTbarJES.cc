@@ -324,31 +324,35 @@ int main (int argc, char *argv[])
   bool CalculateResolutions = false; // If false, the resolutions will be loaded from a previous calculation
   bool ResolutionsClosure = false;
   
-  ResolutionFit *resFitLightJets = 0, *resFitBJets = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
+  ResolutionFit *resFitLightJets = 0, *resFitLightJets_PtTopRew = 0, *resFitBJets = 0, *resFitBJets_PtTopRew = 0, *resFitLightJetsL7 = 0, *resFitBJetsL7 = 0, *resFitBJets_B = 0, *resFitBJets_Bbar = 0;
   if(CalculateResolutions)
   {
     resFitLightJets = new ResolutionFit("LightJet");
+    resFitLightJets_PtTopRew = new ResolutionFit("LightJet_PtTopRew");
     resFitBJets = new ResolutionFit("BJet");
+    resFitBJets_PtTopRew = new ResolutionFit("BJet_PtTopRew");
     resFitBJets_B = new ResolutionFit("BJet_B");
     resFitBJets_Bbar = new ResolutionFit("BJet_Bbar");
     if(ResolutionsClosure)
     {
       resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
+      resFitLightJets_PtTopRew->LoadResolutions("resolutions/lightJetReso_PtTopRew.root");
       resFitBJets->LoadResolutions("resolutions/bJetReso.root");
-      resFitBJets_B->LoadResolutions("resolutions/bJetReso.root");
-      resFitBJets_Bbar->LoadResolutions("resolutions/bJetReso.root");
+      resFitBJets_PtTopRew->LoadResolutions("resolutions/bJetReso_PtTopRew.root");
+      resFitBJets_B->LoadResolutions("resolutions/bJetReso_PtTopRew.root");
+      resFitBJets_Bbar->LoadResolutions("resolutions/bJetReso_PtTopRew.root");
     }
   }
   else
   {
     resFitLightJets = new ResolutionFit("LightJet");
-    resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
+    resFitLightJets->LoadResolutions("resolutions/lightJetReso_PtTopRew.root");
     resFitLightJetsL7 = new ResolutionFit("LightJetL7");
-    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_AfterL7.root");
+    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_PtTopRew_AfterL7.root");
     resFitBJets = new ResolutionFit("BJet");
-    resFitBJets->LoadResolutions("resolutions/bJetReso.root");
+    resFitBJets->LoadResolutions("resolutions/bJetReso_PtTopRew.root");
     resFitBJetsL7 = new ResolutionFit("BJetL7");
-    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_AfterL7.root");
+    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_PtTopRew_AfterL7.root");
   }
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
@@ -500,8 +504,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-    for (unsigned int ievt = 0; ievt < 10; ievt++)
+    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+//    for (unsigned int ievt = 0; ievt < 10; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -658,7 +662,7 @@ int main (int argc, char *argv[])
       
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
-      selection.setJetCuts(30,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.setJetCuts(30,2.4,0.01,1.,0.98,0.3,0.1);
       selection.setMuonCuts(25,2.1,0.12,0.2,0.3,1,0.5,5,0); // DR mu-jets cleaning still needed?
       selection.setElectronCuts(32,2.5,0.1,0.02,0.5,0.3,0); // 32 GeV too low? DR el-jets cleaning still needed?
       selection.setLooseMuonCuts(10,2.5,0.2);
@@ -834,7 +838,24 @@ int main (int argc, char *argv[])
         jetCombiner->ProcessEvent(datasets[d], mcParticles, selectedJets, selectedElectrons[0], init_electrons, init_muons, genEvt, scaleFactor, false);
       
       if(CalculateResolutions && dataSetName.find("TTbarJets") == 0)
+      {
         jetCombiner->FillResolutions(resFitLightJets, resFitBJets, resFitBJets_B, resFitBJets_Bbar, scaleFactor*lumiWeight);
+        float pTtop = 0, pTantiTop = 0;
+        for(unsigned int iPart=0; iPart<mcParticles.size(); iPart++)
+        {
+          if( mcParticles[iPart]->status() != 3) continue;
+          if( mcParticles[iPart]->type() == 6 )
+          {
+            pTtop = mcParticles[iPart]->Pt();
+          }
+          else if( mcParticles[iPart]->type() == -6 )
+          {
+            pTantiTop = mcParticles[iPart]->Pt();
+          }
+        }
+        float pTtopWeight = sqrt( exp(0.156 - 0.00137*pTtop) * exp(0.156 - 0.00137*pTantiTop) );
+        jetCombiner->FillResolutions(resFitLightJets_PtTopRew, resFitBJets_PtTopRew, 0, 0, scaleFactor*lumiWeight*pTtopWeight);
+      }
       
       if ( !TrainMVA && !CalculateResolutions )
       {
@@ -1371,14 +1392,20 @@ int main (int argc, char *argv[])
   {
     cout << "Fit the resolution stuff..." << endl;
     mkdir((pathPNG+"resFit_LightJet/").c_str(),0777);
+    mkdir((pathPNG+"resFit_LightJet_PtTopRew/").c_str(),0777);
     mkdir((pathPNG+"resFit_BJet/").c_str(),0777);
+    mkdir((pathPNG+"resFit_BJet_PtTopRew/").c_str(),0777);
     mkdir((pathPNG+"resFit_BJet_B/").c_str(),0777);
     mkdir((pathPNG+"resFit_BJet_Bbar/").c_str(),0777);
-  
+    
     resFitLightJets->WritePlots(fout, true, pathPNG+"resFit_LightJet/");
     resFitLightJets->WriteResolutions("lightJetReso.root");
+    resFitLightJets_PtTopRew->WritePlots(fout, true, pathPNG+"resFit_LightJet_PtTopRew/");
+    resFitLightJets_PtTopRew->WriteResolutions("lightJetReso_PtTopRew.root");
     resFitBJets->WritePlots(fout, true, pathPNG+"resFit_BJet/");
     resFitBJets->WriteResolutions("bJetReso.root");
+    resFitBJets_PtTopRew->WritePlots(fout, true, pathPNG+"resFit_BJet_PtTopRew/");
+    resFitBJets_PtTopRew->WriteResolutions("bJetReso_PtTopRew.root");
     resFitBJets_B->WritePlots(fout, true, pathPNG+"resFit_BJet_B/");
     resFitBJets_B->WriteResolutions("bJetReso_B.root");
     resFitBJets_Bbar->WritePlots(fout, true, pathPNG+"resFit_BJet_Bbar/");
