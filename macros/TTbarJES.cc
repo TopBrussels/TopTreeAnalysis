@@ -607,9 +607,17 @@ int main (int argc, char *argv[])
       }
       // Apply Jet Corrections on-the-fly
       if( dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
+      {
+        jetTools->unCorrectMETTypeOne(init_jets_corrected, mets[0], true);
         jetTools->correctJets(init_jets_corrected, event->kt6PFJets_rho(), true);
+        jetTools->correctMETTypeOne(init_jets_corrected, mets[0], true);
+      }
       else
+      {
+        jetTools->unCorrectMETTypeOne(init_jets_corrected, mets[0], false);
         jetTools->correctJets(init_jets_corrected, event->kt6PFJets_rho(), false);
+        jetTools->correctMETTypeOne(init_jets_corrected, mets[0], false);
+      }
       
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) )
       {
@@ -695,7 +703,7 @@ int main (int argc, char *argv[])
         selectedJetsNoMu = selection.GetSelectedJets(overlapMuons,true);
         selectedJetsNoEl = selection.GetSelectedJets(overlapElectrons,true);
         selectedMuons = selection.GetSelectedMuonsInvIso(0.2, vertex[0], selectedJetsNoMu);
-        selectedElectrons = selection.GetSelectedElectronsInvIso(0.2, selectedJetsNoEl);
+        selectedElectrons = selection.GetSelectedElectronsInvIso(0.2, selectedJetsNoEl); // Also mvaId < 0.5
       }
       else // Normal selection
       {
