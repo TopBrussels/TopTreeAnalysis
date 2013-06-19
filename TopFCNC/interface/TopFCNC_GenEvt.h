@@ -10,10 +10,10 @@
 #include "TopTreeProducer/interface/TRootMET.h"
 #include "TopTreeProducer/interface/TRootMCParticle.h"
 #include "TopTreeProducer/interface/TRootParticle.h"
-#include "TopTreeAnalysis/MCInformation/interface/JetPartonMatching.h"
-#include "TopTreeAnalysis/MCInformation/interface/ResolutionFit.h"
-#include "TopTreeAnalysis/Reconstruction/interface/MEzCalculator.h"
-#include "TopTreeAnalysis/Selection/interface/Selection.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/JetPartonMatching.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/MEzCalculator.h"
+#include "TopTreeAnalysisBase/Selection/interface/Selection.h"
 
 using namespace std;
 

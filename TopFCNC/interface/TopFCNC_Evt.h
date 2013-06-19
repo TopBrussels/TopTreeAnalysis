@@ -8,9 +8,9 @@
 #include "TLorentzVector.h"
 #include "TopTreeProducer/interface/TRootJet.h"
 #include "TopTreeProducer/interface/TRootMET.h"
-#include "TopTreeAnalysis/Reconstruction/interface/Combination.h"
-#include "TopTreeAnalysis/Reconstruction/interface/MEzCalculator.h"
-#include "TopTreeAnalysis/Selection/interface/Selection.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/Combination.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/MEzCalculator.h"
+#include "TopTreeAnalysisBase/Selection/interface/Selection.h"
 
 using namespace std;
 using namespace stdcomb;
