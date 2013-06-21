@@ -181,7 +181,7 @@ int main (int argc, char *argv[])
     postfix= postfix+"_misTagPlus";
   
   string channelpostfix = "";
-  string comments = "_Run2012A";
+  string comments = "_Run2012ABCD_test";
   string xmlFileName = "";
   
   if(diElectron && diMuon){
@@ -659,6 +659,14 @@ int main (int argc, char *argv[])
     unsigned int end = datasets[d]->NofEvtsToRunOver();
     
     if (verbose > 1) cout << " - Loop over events " << endl;
+    
+    // Set cache size.
+    Int_t cachesize=20000000; // 10 MB = 10000000
+    datasets[d]->eventTree()->SetCacheSize(cachesize);
+    datasets[d]->eventTree()->SetCacheEntryRange(start,end);
+    datasets[d]->eventTree()->AddBranchToCache("*",kTRUE);
+    //  datasets[d]->eventTree()->SetBranchStatus("*",0);
+    datasets[d]->eventTree()->StopCacheLearningPhase();
     
     for (unsigned int ievt = start; ievt < end; ievt++)
     {
@@ -1437,6 +1445,8 @@ int main (int argc, char *argv[])
     
     cout<<endl;
     cout<<"FYI ; nb of events with at least four isolated leptons = "<<fourIsoLeptCounter<<endl;
+
+    datasets[d]->eventTree()->PrintCacheStats();
     
     TTreeFile->cd();
     
@@ -1497,8 +1507,8 @@ int main (int argc, char *argv[])
 	  //temp->addText("CMS preliminary");
 	  string name = it->first;
 	  name += comments;
-	  temp->Draw(false, name, true, true, true, true, true,1,true,true); // merge TT/QCD/W/Z/ST/
-	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+	  temp->Draw(false, name, true, true, true, true, true, 1, true, true, true, true); // merge TT/QCD/W/Z/ST/
+	  //Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false, bool mergeVVV = false, bool mergeSameSignWW = false);
 	  temp->Write(fout, name, false, pathPNG, "pdf");
     //Write(TFile* file, string label = string(""), bool savePNG = false, string pathPNG = string(""), string ext = string("png"));
   }
