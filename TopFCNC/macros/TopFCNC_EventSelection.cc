@@ -148,7 +148,7 @@ int main (int argc, char *argv[])
   cout << " --- lower pt cut : " << JetPtCut << endl;
   cout << " --- eta: " << JetEtaCut << endl;
   cout << " --- asymmetric pt cuts ? " << (applyAsymmJetPtCut ? "TRUE" : "FALSE" ) << endl;
-  cout << " --- pt: " << JetPtCuts[0] << JetPtCuts[1] << JetPtCuts[2] << JetPtCuts[3] << endl;
+  cout << " --- pt: " << JetPtCuts[0] << " / " << JetPtCuts[1] << " / " << JetPtCuts[2] << " / " << JetPtCuts[3] << endl;
   cout << " -- B-tagging: " << endl;
   cout << " --- algorithm: " << btagName[btagAlgo] << endl;
   cout << " --- threshold: " << btagCut << endl;
@@ -615,9 +615,9 @@ int main (int argc, char *argv[])
     
     // Create the JetCorrectorParameter objects, the order does not matter.
     // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L1FastJet.txt");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L2Relative.txt");
-    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L3Absolute.txt");
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L1FastJet.txt");
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L2Relative.txt");
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L3Absolute.txt");
     
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vCorrParam.push_back(*L1JetPar);
@@ -625,11 +625,11 @@ int main (int argc, char *argv[])
     vCorrParam.push_back(*L3JetPar);
     if(isData) // Data!
     {
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
+      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
       vCorrParam.push_back(*ResJetCorPar);
     }
     
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -962,9 +962,6 @@ int main (int argc, char *argv[])
       selecTableTriEl.Fill(d,3,scaleFactor);
       selecTableDiElMu.Fill(d,3,scaleFactor);
       
-      //__Lepton selection________________________________________________________________________
-      if( (diMuon&&selectedMuons_NoIso.size()<2) || (diElectron&&selectedElectrons_NoIso.size()<2) ) continue;
-
       //__Lepton trigger SF_______________________________________________________________________
       if(!isData && diMuon){
         if(comments.find("2012ABCD") != string::npos){
@@ -987,24 +984,9 @@ int main (int argc, char *argv[])
         }
       }
       
-      //__Lepton ID SF_____________________________________________________________________________
-      if(!isData && diMuon){
-        scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-        scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
-        
-        scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
-        scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
-      }
-      else if(!isData && diElectron){
-        scaleFactor *= ElEffSF_Id_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-        scaleFactor *= ElEffSF_Id_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
-        
-        scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
-        scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
-      }
-      
-      MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-      
+      //__Lepton selection________________________________________________________________________
+      if( (diMuon&&selectedMuons_NoIso.size()<2) || (diElectron&&selectedElectrons_NoIso.size()<2) ) continue;
+
       if(diMuon){
         histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
         histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->d0(),selectedMuons_NoIso[1]->Phi());
@@ -1036,15 +1018,28 @@ int main (int argc, char *argv[])
         MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
       }
       
+      MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+            
       MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       
       //__Dilepton selection_________________________________________________________________
-      if(diMuon){
-        if(selectedMuons.size()<2) continue;
+      if( (diMuon && selectedMuons.size()<2) || (diElectron && selectedElectrons.size()<2) ) continue;
+
+      //__Lepton ID SF_____________________________________________________________________________
+      if(!isData && diMuon){
+        scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
+        scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
+        
+        scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
+        scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
       }
-      else if(diElectron){
-        if(selectedElectrons.size()<2) continue;
+      else if(!isData && diElectron){
+        scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Id SF
+        scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[1]->Eta(), selectedElectrons[1]->Pt());// Id SF
+        
+        scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Iso SF
+        scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[1]->Eta(), selectedElectrons[1]->Pt());// Iso SF
       }
       
       selecTableDiMu.Fill(d,4,scaleFactor);
