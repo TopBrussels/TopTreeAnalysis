@@ -193,7 +193,7 @@ int main (int argc, char *argv[])
     cout << " --> Using the diMuon channel..." << endl;
     channelpostfix = "_DiMuTrigger";
     xmlFileName = "../config/myTopFCNCconfig_Muon.xml";
-    //xmlFileName = "../config/TopFCNCconfig_EventSelection_Muon.xml";
+    //xmlFileName = "../config/TopFCNCconfig_EventSelection_Muon_New.xml";
   }
   else if(diElectron){
     cout << " --> Using the diElectron channel..." << endl;
@@ -746,14 +746,8 @@ int main (int argc, char *argv[])
 				    //trigged = treeLoader.EventTrigged (itrigger);
 	   		  }
 	   		  else{
-				    if(dataSetName != "ttbar_fcnc"){
-				      itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
-				      itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
-				    }
-				    else{
-				      itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
-				      itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v11"), currentRun, iFile);
-            }
+            itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
+            itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
   				  if(itrigger1 == 9999 || itrigger2 == 9999)
 				    {
     			    cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
@@ -797,8 +791,7 @@ int main (int argc, char *argv[])
             
 			    }
           else{
-				    if(dataSetName != "ttbar_fcnc") itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v17"), currentRun, iFile);
-				    else itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v18"), currentRun, iFile);
+            itrigger1 = treeLoader.iTrigger (string ("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v18"), currentRun, iFile);
             
             if(itrigger1 == 9999)
 				    {
@@ -918,12 +911,17 @@ int main (int argc, char *argv[])
       //__Selection instances_________________________________________________________________
       Selection selection(init_jets, init_muons, init_electrons, mets, event->kt6PFJets_rho()); //mets can also be corrected...
       //Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-      
+/*
+      cout << "Nb of jets/muons/electrons : " << init_jets.size() << " / " << init_muons.size() << " / " << init_electrons.size() << endl;
+      for(UInt_t i=0;i<init_jets.size();i++) cout << init_jets[i]->Pt() << " / " ;
+      cout << endl;
+      cout << "MET : " << mets[0]->Et() << endl;
       // Specify the correction to be applied to the electron isolation
+*/
       selection.setElectronIsoCorrType(1); // 0: no corr, 1: EA corr, 2: dB corr
       /*
        vector<TRootMCParticle*> mcParticles;
-       if(dataSetName.find("ttbar_fcnc") == 0)
+       if(dataSetName.find("FCNC") == 0)
        {
        treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);
        sort(mcParticles.begin(),mcParticles.end(),HighestPt());
