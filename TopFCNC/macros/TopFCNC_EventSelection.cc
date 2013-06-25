@@ -400,10 +400,11 @@ int main (int argc, char *argv[])
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",50,0,4);
   for (unsigned int d = 0; d < datasets.size(); d++){
-  	histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
-  	histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
-  	histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),"d_{z}:#phi",500,-25,25,500,0,4);
-  	histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),"d_{z}:#phi",500,-25,25,500,0,4);
+    histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()] = new TH1F(("ScaleFactors_"+datasets[d]->Name()).c_str(),";Total SF;#events",500,0,10);
+  	histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),";d_{0};#phi",500,-0.02,0.02,500,0,4);
+  	histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),";d_{0};#phi",500,-0.02,0.02,500,0,4);
+  	histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),";d_{z};#phi",500,-1,1,500,0,4);
+  	histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),";d_{z};#phi",500,-1,1,500,0,4);
   }
   cout << " - Declared histograms ..." <<  endl;
 	
@@ -981,7 +982,8 @@ int main (int argc, char *argv[])
           scaleFactor *= 0.974; // Cf. ttbar dilepton analysis 8 TeV
         }
       }
-      
+      histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
+
       //__Lepton selection________________________________________________________________________
       if( (diMuon&&selectedMuons_NoIso.size()<2) || (diElectron&&selectedElectrons_NoIso.size()<2) ) continue;
 
@@ -1178,10 +1180,10 @@ int main (int argc, char *argv[])
                 highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
                 sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
                 MSPlot["HighestBdisc_mm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-                MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CSV"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["MET_AtLeastFourJets_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
                 
                 NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
+                MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CSV"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
                 if(NbOfBtagged>=1)
                   selecTableDiMu.Fill(d,11,scaleFactor);
                 
@@ -1312,10 +1314,10 @@ int main (int argc, char *argv[])
                 highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
                 sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
                 MSPlot["HighestBdisc_ee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
-                MSPlot["NbOfSelectedBJets_AtLeastFourJets_ee_ch_CSV"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["MET_AtLeastFourJets_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
                 
                 NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
+                MSPlot["NbOfSelectedBJets_AtLeastFourJets_ee_ch_CSV"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
                 if(NbOfBtagged>=1)
                   selecTableDiEl.Fill(d,11,scaleFactor);
                 
