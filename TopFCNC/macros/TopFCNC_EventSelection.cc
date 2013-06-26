@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 //#include "TKey.h"
 //#include "TRandom3.h"
+#include "TTreePerfStats.h"
 
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
@@ -616,9 +617,18 @@ int main (int argc, char *argv[])
     
     // Create the JetCorrectorParameter objects, the order does not matter.
     // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L1FastJet.txt");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L2Relative.txt");
-    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L3Absolute.txt");
+
+    string CalibPath = "../../../TopTreeAnalysisBase/Calibrations/JECFiles/";
+
+    string L1Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt":"START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
+    string L2Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt":"START53_V23_Summer13_L2Relative_AK5PFchs.txt");
+    string L3Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt":"START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
+    string L2L3Rs = (isData?"FT_53_V21_AN4_Summer13_Data_L2L3Residual_AK5PFchs.txt":"START53_V23_Summer13_L2L3Residual_AK5PFchs.txt");
+    string JECUnc = (isData?"FT_53_V21_AN4_Summer13_Data_Uncertainty_AK5PFchs.txt":"START53_V23_Summer13_Uncertainty_AK5PFchs.txt");
+    
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters(CalibPath+L1Corr);
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters(CalibPath+L2Corr);
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters(CalibPath+L3Corr);
     
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vCorrParam.push_back(*L1JetPar);
@@ -626,11 +636,12 @@ int main (int argc, char *argv[])
     vCorrParam.push_back(*L3JetPar);
     if(isData) // Data!
     {
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
+      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters(CalibPath+L2L3Rs);
       vCorrParam.push_back(*ResJetCorPar);
     }
     
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../../../TopTreeAnalysisBase/Calibrations/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(CalibPath+JECUnc);
+
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -663,11 +674,20 @@ int main (int argc, char *argv[])
     
     // Set cache size.
     Int_t cachesize=20000000; // 10 MB = 10000000
+
     datasets[d]->eventTree()->SetCacheSize(cachesize);
     datasets[d]->eventTree()->SetCacheEntryRange(start,end);
     datasets[d]->eventTree()->AddBranchToCache("*",kTRUE);
     //  datasets[d]->eventTree()->SetBranchStatus("*",0);
     datasets[d]->eventTree()->StopCacheLearningPhase();
+
+    datasets[d]->runTree()->SetCacheSize(cachesize);
+    datasets[d]->runTree()->SetCacheEntryRange(start,end);
+    datasets[d]->runTree()->AddBranchToCache("*",kTRUE);
+    //  datasets[d]->runTree()->SetBranchStatus("*",0);
+    datasets[d]->runTree()->StopCacheLearningPhase();
+    
+    TTreePerfStats ps(("ioperf_"+dataSetName).c_str(),datasets[d]->eventTree());
     
     for (unsigned int ievt = start; ievt < end; ievt++)
     {
@@ -706,39 +726,69 @@ int main (int argc, char *argv[])
           if(isData)
           {
 				    /*------------------------------------------------------------------
-             Dataset : DoubleMu/Run2012A-13Jul2012-v1
+             Dataset : DoubleMuParked/Run2012A-22Jan2013-v1
              --------------------------------------------------------------------
-             Trigger HLT_Mu13_Mu8_v16 available for runs 190645-193621
-             Trigger HLT_Mu17_Mu8_v16 available for runs 190645-193621
              ------------------------------------------------------------------*/
 				    if(currentRun >= 190645 && currentRun <= 193621){
 					    itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v16"), currentRun, iFile);
 					    itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v9"), currentRun, iFile);
 					  }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 778,2(/pb)
-             Total integrated luminosity = 778,2(/pb)
+             Sub-Total integrated luminosity = 884,2(/pb)
+             Total integrated luminosity = 884,2(/pb)
              ------------------------------------------------------------------*/
             
 				    /*------------------------------------------------------------------
-             Dataset : DoubleMu/Run2012B-13Jul2012-v4
+             Dataset : DoubleMuParked/Run2012B-22Jan2013-v1
              --------------------------------------------------------------------
              ------------------------------------------------------------------*/
             else if (currentRun >= 193806 && currentRun <= 196027){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
-              // int. lumi = 3401/pb
             }
             else if (currentRun >= 196046 && currentRun <= 196531){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v11"), currentRun, iFile);
-              // int. lumi = 939.288/pb
             }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 4340.3(/pb)
-             Total integrated luminosity = 5118.5(/pb)
+             Sub-Total integrated luminosity = 4444(/pb)
+             Total integrated luminosity = 5338.2(/pb)
+             ------------------------------------------------------------------*/
+
+				    /*------------------------------------------------------------------
+             Dataset : DoubleMuParked/Run2012C-22Jan2013-v1
+             --------------------------------------------------------------------
+             ------------------------------------------------------------------*/
+            else if (currentRun >= 198049 && currentRun <= 199608){
+              itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v19"), currentRun, iFile);
+              itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v12"), currentRun, iFile);
+            }
+            else if (currentRun >= 199698 && currentRun <= 203742){
+              itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v21"), currentRun, iFile);
+              itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v13"), currentRun, iFile);
+            }
+				    /*--------------------------------------------------------------------
+             Sub-Total integrated luminosity = 7102(/pb)
+             Total integrated luminosity = 12540.2(/pb)
              ------------------------------------------------------------------*/
             
+				    /*------------------------------------------------------------------
+             Dataset : DoubleMuParked/Run2012D-22Jan2013-v1
+             --------------------------------------------------------------------
+             ------------------------------------------------------------------*/
+            else if (currentRun >= 203777 && currentRun <= 205238){
+              itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v21"), currentRun, iFile);
+              itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v13"), currentRun, iFile);
+            }
+            else if (currentRun >= 205303 && currentRun <= 208686){
+              itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v22"), currentRun, iFile);
+              itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v14"), currentRun, iFile);
+            }
+				    /*--------------------------------------------------------------------
+             Sub-Total integrated luminosity = XXXX(/pb)
+             Total integrated luminosity = XXXX(/pb)
+             ------------------------------------------------------------------*/
+
   		      if(itrigger1 == 9999 && itrigger2 == 9999)
 				    {
     		      cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
@@ -1442,6 +1492,9 @@ int main (int argc, char *argv[])
     cout<<"FYI ; nb of events with at least four isolated leptons = "<<fourIsoLeptCounter<<endl;
 
     datasets[d]->eventTree()->PrintCacheStats();
+    datasets[d]->runTree()->PrintCacheStats();
+    
+    ps.SaveAs(("aodperf_"+dataSetName+".root").c_str());
     
     TTreeFile->cd();
     
