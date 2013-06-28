@@ -585,8 +585,8 @@ int main (int argc, char *argv[])
   /////////////////////////////////////////////////////////// Loop on datasets ///////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  cout << " - Loop over datasets ... " << datasets.size () << " datasets !" << endl;
+  TTreePerfStats *ps[datasets.size()];
+  cout << " - Loop over datasets ... " << datasets.size() << " datasets !" << endl;
   
   for (unsigned int d = 0; d < datasets.size(); d++) //d < datasets.size()
   {
@@ -687,7 +687,7 @@ int main (int argc, char *argv[])
     //  datasets[d]->runTree()->SetBranchStatus("*",0);
     datasets[d]->runTree()->StopCacheLearningPhase();
     
-    TTreePerfStats ps(("ioperf_"+dataSetName).c_str(),datasets[d]->eventTree());
+    ps[d] = new TTreePerfStats(("ioperf_"+dataSetName).c_str(),datasets[d]->eventTree());
     
     for (unsigned int ievt = start; ievt < end; ievt++)
     {
@@ -1494,8 +1494,9 @@ int main (int argc, char *argv[])
     datasets[d]->eventTree()->PrintCacheStats();
     datasets[d]->runTree()->PrintCacheStats();
     
-    ps.SaveAs(("aodperf_"+dataSetName+".root").c_str());
-    
+    ps[d]->SaveAs(("aodperf_"+dataSetName+".root").c_str());
+    delete ps[d];
+
     TTreeFile->cd();
     
     TTree *configTree = new TTree("configTree","configuration Tree");
