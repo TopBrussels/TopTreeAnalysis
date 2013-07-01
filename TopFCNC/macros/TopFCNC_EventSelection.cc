@@ -182,7 +182,7 @@ int main (int argc, char *argv[])
     postfix= postfix+"_misTagPlus";
   
   string channelpostfix = "";
-  string comments = "_Run2012ABCD_test";
+  string comments = "_Run2012ABCD_Skim2Mu";
   string xmlFileName = "";
   
   if(diElectron && diMuon){
@@ -194,7 +194,8 @@ int main (int argc, char *argv[])
     cout << " --> Using the diMuon channel..." << endl;
     channelpostfix = "_DiMuTrigger";
     xmlFileName = "../config/myTopFCNCconfig_Muon.xml";
-    //xmlFileName = "../config/TopFCNCconfig_EventSelection_Muon_New.xml";
+    //xmlFileName = "../config/TopFCNCconfig_EventSelection_Muon.xml";
+    //xmlFileName = "../config/TopFCNCconfig_EventSelection_Muon_Skim2Mu3Jets.xml";
   }
   else if(diElectron){
     cout << " --> Using the diElectron channel..." << endl;
@@ -586,7 +587,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
-  TTreePerfStats** ps = new TTreePerfStats*[datasets.size()];
+  //TTreePerfStats** ps = new TTreePerfStats*[datasets.size()];
   
   cout << " - Loop over datasets ... " << datasets.size() << " datasets !" << endl;
   
@@ -675,7 +676,7 @@ int main (int argc, char *argv[])
     if (verbose > 1) cout << " - Loop over events " << endl;
     
     // Set cache size.
-    Int_t cachesize=20000000; // 10 MB = 10000000
+    Int_t cachesize=100000000; // 10 MB = 10000000
 
     datasets[d]->eventTree()->SetCacheSize(cachesize);
     datasets[d]->eventTree()->SetCacheEntryRange(start,end);
@@ -689,7 +690,7 @@ int main (int argc, char *argv[])
     //  datasets[d]->runTree()->SetBranchStatus("*",0);
     datasets[d]->runTree()->StopCacheLearningPhase();
     
-    ps[d] = new TTreePerfStats(("ioperf_"+dataSetName).c_str(),datasets[d]->eventTree());
+    //ps[d] = new TTreePerfStats(("ioperf_"+dataSetName).c_str(),datasets[d]->eventTree());
     
     for (unsigned int ievt = start; ievt < end; ievt++)
     {
@@ -1215,10 +1216,10 @@ int main (int argc, char *argv[])
               if(applyAsymmJetPtCut && selectedJets[2]->Pt()<JetPtCuts[2]) continue;
               selecTableDiMu.Fill(d,9,scaleFactor);
               if(selectedJets.size()>3){ //at least 4 jets
-                selecTableDiMu.Fill(d,10,scaleFactor);
-                
                 MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
                 if(applyAsymmJetPtCut && selectedJets[3]->Pt()<JetPtCuts[3]) continue;
+                selecTableDiMu.Fill(d,10,scaleFactor);
+
                 MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDPhi_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
@@ -1496,8 +1497,8 @@ int main (int argc, char *argv[])
     datasets[d]->eventTree()->PrintCacheStats();
     datasets[d]->runTree()->PrintCacheStats();
     
-    ps[d]->SaveAs(("aodperf_"+dataSetName+".root").c_str());
-    delete ps[d];
+    //ps[d]->SaveAs(("aodperf_"+dataSetName+".root").c_str());
+    //delete ps[d];
 
     TTreeFile->cd();
     
