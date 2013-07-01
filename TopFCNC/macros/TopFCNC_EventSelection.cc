@@ -227,7 +227,7 @@ int main (int argc, char *argv[])
   vector < Dataset* > datasets;
   cout << " - Loading datasets ..." << endl;
   treeLoader.LoadDatasets (datasets, xmlfile);
-  float Luminosity = 5000;
+  float Luminosity = 19707;
   
   for (unsigned int d = 0; d < datasets.size (); d++)
   {
@@ -569,8 +569,8 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   string PileUpFile = "";
-       if( comments.find("2012ABCD") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012ABCD_TopTreeID_2219_2204_2235_2203_2226_2218_PileupHistogram.root" : "../pileup/XXX.root");
-  else if( comments.find("2012AB")   != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012AB_TopTreeID_2219_2204_2235_PileupHistogram.root" : "../pileup/XXX.root");
+  if( comments.find("2012ABCD") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012ABCD_22Jan2013_TopTreeID_3490_3495_PileupHistogram.root" : "../pileup/XXX.root");
+  else if( comments.find("2012AB")   != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012AB_22Jan2013_TopTreeID_3494_3495_PileupHistogram.root" : "../pileup/XXX.root");
   else if( comments.find("2012C")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012C_Promptv2_TopTreeID_2226_PileupHistogram.root" : "../pileup/XXX.root");
   else if( comments.find("2012D")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012D_Promptv1_TopTreeID_2218_PileupHistogram.root" : "../pileup/XXX.root");
   else{
@@ -749,13 +749,17 @@ int main (int argc, char *argv[])
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v17"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
             }
+				    /*--------------------------------------------------------------------
+             Sub-Total integrated luminosity = 3493(/pb)
+             Total integrated luminosity = 4377,2(/pb)
+             ------------------------------------------------------------------*/
             else if (currentRun >= 196046 && currentRun <= 196531){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v11"), currentRun, iFile);
             }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 4444(/pb)
-             Total integrated luminosity = 5338.2(/pb)
+             Sub-Total integrated luminosity = 951.1(/pb)
+             Total integrated luminosity = 5328.2(/pb)
              ------------------------------------------------------------------*/
 
 				    /*------------------------------------------------------------------
