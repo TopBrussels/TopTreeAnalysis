@@ -676,7 +676,7 @@ int main (int argc, char *argv[])
     if (verbose > 1) cout << " - Loop over events " << endl;
     
     // Set cache size.
-    Int_t cachesize=100000000; // 10 MB = 10000000
+    Int_t cachesize=20000000; // 10 MB = 10000000
 
     datasets[d]->eventTree()->SetCacheSize(cachesize);
     datasets[d]->eventTree()->SetCacheEntryRange(start,end);
@@ -770,6 +770,10 @@ int main (int argc, char *argv[])
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v19"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v12"), currentRun, iFile);
             }
+				    /*--------------------------------------------------------------------
+             Sub-Total integrated luminosity = 1773(/pb)
+             Total integrated luminosity = 7001.2(/pb)
+             ------------------------------------------------------------------*/
             else if (currentRun >= 199698 && currentRun <= 203742){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v21"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v13"), currentRun, iFile);
@@ -867,7 +871,7 @@ int main (int argc, char *argv[])
       
 	    // Apply Jet Corrections on-the-fly
 	    //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
-      //jetTools->correctJets(init_jets,event->kt6PFJets_rho(),isData); //last boolean: isData (needed for L2L3Residual...)
+      jetTools->correctJets(init_jets,event->kt6PFJets_rho(),isData); //last boolean: isData (needed for L2L3Residual...)
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
       
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -875,7 +879,7 @@ int main (int argc, char *argv[])
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
-      //jetTools->correctMETTypeOne(init_jets,mets[0],isData);
+      jetTools->correctMETTypeOne(init_jets,mets[0],isData);
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -953,12 +957,12 @@ int main (int argc, char *argv[])
       selecTableDiElMu.Fill(d,1,scaleFactor);
       
       //__Trigger selection_________________________________________________________________
-      if (itrigger1 == -1 && itrigger2 == -1)
-        trigged = true;
-      else
-        trigged = (treeLoader.EventTrigged (itrigger1) || treeLoader.EventTrigged (itrigger2));
-      
+//      if (itrigger1 == -1 && itrigger2 == -1)
+//        trigged = true;
+//      else
+      trigged = (treeLoader.EventTrigged (itrigger1) || treeLoader.EventTrigged (itrigger2));
       if(!trigged) continue;
+
       selecTableDiMu.Fill(d,2,scaleFactor);
       selecTableTriMu.Fill(d,2,scaleFactor);
       selecTableDiMuEl.Fill(d,2,scaleFactor);
@@ -1021,7 +1025,7 @@ int main (int argc, char *argv[])
       //__Lepton trigger SF_______________________________________________________________________
       if(!isData && diMuon){
         if(comments.find("2012ABCD") != string::npos){
-          scaleFactor *= 0.9657; //Cf. Piet's number. // Cf. ttbar dilepton analysis 8 TeV AN-2012-389
+          scaleFactor *= 0.9773; //Cf. Piet's number. // Cf. ttbar dilepton analysis 8 TeV AN-2012-389
         }
         else if(comments.find("2012AB") != string::npos){
           scaleFactor *= 0.9725; //Cf. Piet's number. // Cf. ttbar dilepton analysis 8 TeV AN-2012-389
