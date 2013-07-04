@@ -59,6 +59,17 @@ double MuEffSF_Iso04_Run2012AB(double eta, double pt);
 double MuEffSF_Iso04_Run2012C(double eta, double pt);
 double MuEffSF_Iso04_Run2012ABCD(double eta, double pt);
 
+double MuEff_Id_MC_Run2012(string period, double eta, double pt);
+double MuEff_Iso04_MC_Run2012(string period, double eta, double pt);
+
+double MuEff_Id_MC_Run2012AB(double eta, double pt);
+double MuEff_Id_MC_Run2012C(double eta, double pt);
+double MuEff_Id_MC_Run2012ABCD(double eta, double pt);
+
+double MuEff_Iso04_MC_Run2012AB(double eta, double pt);
+double MuEff_Iso04_MC_Run2012C(double eta, double pt);
+double MuEff_Iso04_MC_Run2012ABCD(double eta, double pt);
+
 double ElEffSF_Id_Run2012(string period, double eta, double pt);
 double ElEffSF_Iso04_Run2012(string period, double eta, double pt);
 
@@ -69,6 +80,10 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt);
 double ElEffSF_Iso04_Run2012AB(double eta, double pt);
 double ElEffSF_Iso04_Run2012C(double eta, double pt);
 double ElEffSF_Iso04_Run2012ABCD(double eta, double pt);
+
+double ElEff_MC_Id_Run2012AB(double eta, double pt);
+double ElEff_MC_Id_Run2012C(double eta, double pt);
+double ElEff_MC_Id_Run2012ABCD(double eta, double pt);
 
 //double MuEffSF_TrgMu8_Run2012(double eta, double pt);
 //double MuEffSF_TrgMu17_Run2012(double eta, double pt);
@@ -82,7 +97,7 @@ bool ZCandInvMass(vector<TRootElectron*>& electrons, int& idx_Z_1, int& idx_Z_2,
 int main (int argc, char *argv[])
 {
   clock_t start = clock();
-
+  
   int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
   
@@ -106,7 +121,7 @@ int main (int argc, char *argv[])
   
   bool diElectron = false; // use diElectron channel?
   bool diMuon = true; // use diMuon channel?
-
+  
   /*https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
    Tagger name  	            WP name WP Discr cut
    TrackCountingHighPur 	    TCHPT 	3.41
@@ -132,7 +147,7 @@ int main (int argc, char *argv[])
   const double JetEtaCut    = 2.4;
 	bool applyAsymmJetPtCut   = true;
 	const double JetPtCuts[4] = {50.,30.,20.,20.};
-    
+  
   cout << "*************************************************************" << endl;
   cout << " Beginning of the program for the FCNC search ! " << endl;
   cout << "*************************************************************" << endl;
@@ -274,17 +289,31 @@ int main (int argc, char *argv[])
   MSPlot["1stLeadingLeptonPt"]                = new MultiSamplePlot(datasets, "1stLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
   MSPlot["2ndLeadingLeptonPt"]                = new MultiSamplePlot(datasets, "2ndLeadingLeptonPt", 300, 0, 150, "p_{T} [GeV/c]");
   
+  MSPlot["1stLeadingMuonPt"]                  = new MultiSamplePlot(datasets, "1stLeadingMuonPt", 50, 0, 150, "p_{T} [GeV/c]");
   MSPlot["3rdLeadingMuonPt"]                  = new MultiSamplePlot(datasets, "3rdLeadingMuonPt", 50, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["1stLeadingElectronPt"]              = new MultiSamplePlot(datasets, "1stLeadingElectronPt", 50, 0, 150, "p_{T} [GeV/c]");
   MSPlot["3rdLeadingElectronPt"]              = new MultiSamplePlot(datasets, "3rdLeadingElectronPt", 50, 0, 150, "p_{T} [GeV/c]");
   
-  MSPlot["1stLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
-  MSPlot["2ndLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 100, 0, 0.5, "RelIso");
+  MSPlot["1stLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "1stLeadingLeptonRelIsolation", 100, 0, 0.25, "RelIso");
+  MSPlot["2ndLeadingLeptonRelIsolation"]      = new MultiSamplePlot(datasets, "2ndLeadingLeptonRelIsolation", 100, 0, 0.25, "RelIso");
   
+  MSPlot["1stLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "1stLeadingMuonRelIsolation", 30, 0, 0.3, "RelIso");
   MSPlot["3rdLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 30, 0, 0.3, "RelIso");
+  MSPlot["1stLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "1stLeadingElectronRelIsolation", 30, 0, 0.3, "RelIso");
   MSPlot["3rdLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 30, 0, 0.3, "RelIso");
   
   MSPlot["NbOfIsolatedMuons"]                 = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]             = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
+  MSPlot["NbOfExtraIsolatedMuons"]            = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
+  MSPlot["NbOfExtraIsolatedElectrons"]        = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
+  
+  MSPlot["NbOfSelectedJets_Before3rdLeptCut"] = new MultiSamplePlot(datasets, "NbOfSelectedJets_Before3rdLeptCut", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_mm_ch"]            = new MultiSamplePlot(datasets, "NbOfSelectedJets_mm_ch",  15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_mme_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_mme_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_mmm_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_mmm_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_ee_ch"]            = new MultiSamplePlot(datasets, "NbOfSelectedJets_ee_ch",  15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_eee_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_eee_ch", 15, 0, 15, "Nb. of jets");
+  MSPlot["NbOfSelectedJets_eem_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_eem_ch", 15, 0, 15, "Nb. of jets");
   
   MSPlot["DiLeptonInvMass"]                   = new MultiSamplePlot(datasets, "DiLeptonInvMass", 400, 50, 130, "m_{ll}");
   MSPlot["DiLeptonSystPt"]                    = new MultiSamplePlot(datasets, "DiLeptonSystPt", 400, 0, 400, "p_{T}^{ll} [GeV/c]");
@@ -293,7 +322,21 @@ int main (int argc, char *argv[])
   MSPlot["DiLeptonSystDPhi_JetSyst"]          = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_JetSyst", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jets)");
   MSPlot["DiLeptonSystDPhi_LeadingJet"]       = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},jet)");
   MSPlot["DiLeptonSystPt_Over_JetSystPt"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
+  
+  MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_mm_ch", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_mmm_ch", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_mme_ch", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_ee_ch", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eem_ch", 30, 0, 30, "Nb. of vertices");
+  MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eee_ch", 30, 0, 30, "Nb. of vertices");
 
+  MSPlot["DiLeptonInvMass_AtLeastFourJets_mm_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastFourJets_mm_ch", 400, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonInvMass_AtLeastTwoJets_mmm_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastTwoJets_mmm_ch", 400, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonInvMass_AtLeastTwoJets_mme_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastTwoJets_mme_ch", 400, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonInvMass_AtLeastFourJets_ee_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastFourJets_ee_ch", 400, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonInvMass_AtLeastTwoJets_eee_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastTwoJets_eee_ch", 400, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonInvMass_AtLeastTwoJets_eem_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastTwoJets_eem_ch", 400, 50, 130, "m_{ll}");
+  
   MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_mm_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystPt_AtLeastTwoJets_mmm_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_mmm_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystPt_AtLeastTwoJets_mme_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastTwoJets_mme_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
@@ -328,25 +371,14 @@ int main (int argc, char *argv[])
   MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_ee_ch"]   = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_ee_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
   MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_eee_ch"]   = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_eee_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
   MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_eem_ch"]   = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_eem_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
-
+  
   MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_mm_ch"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_mm_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_mmm_ch"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_mmm_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_mme_ch"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_mme_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_ee_ch"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_ee_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_eee_ch"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_eee_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_eem_ch"]     = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_eem_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
-
-  MSPlot["NbOfExtraIsolatedMuons"]            = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
-  MSPlot["NbOfExtraIsolatedElectrons"]        = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
-  
-  MSPlot["NbOfSelectedJets_Before3rdLeptCut"] = new MultiSamplePlot(datasets, "NbOfSelectedJets_Before3rdLeptCut", 15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedJets_mm_ch"]            = new MultiSamplePlot(datasets, "NbOfSelectedJets_mm_ch",  15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedJets_mme_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_mme_ch", 15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedJets_mmm_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_mmm_ch", 15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedJets_ee_ch"]            = new MultiSamplePlot(datasets, "NbOfSelectedJets_ee_ch",  15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedJets_eee_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_eee_ch", 15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedJets_eem_ch"]           = new MultiSamplePlot(datasets, "NbOfSelectedJets_eem_ch", 15, 0, 15, "Nb. of jets");
-
+    
   MSPlot["NbOfSelectedBJets_AtLeastFourJets_mm_ch_CSV"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastFourJets_mm_ch_CSV", 7, 0, 7, "Nb. of b-tagged jets");
   MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mme_ch_CSV"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastTwoJets_mme_ch_CSV", 7, 0, 7, "Nb. of b-tagged jets");
   MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mmm_ch_CSV"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastTwoJets_mmm_ch_CSV", 7, 0, 7, "Nb. of b-tagged jets");
@@ -361,27 +393,20 @@ int main (int argc, char *argv[])
   MSPlot["FourthLeadingJetPt_mm_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_mm_ch", 50, 0, 150, "Jet p_{T} [GeV/c]");
   MSPlot["FourthLeadingJetPt_ee_ch"]          = new MultiSamplePlot(datasets, "FourthLeadingJetPt_ee_ch", 50, 0, 150, "Jet p_{T} [GeV/c]");
   
-  MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_mm_ch", 30, 0, 30, "Nb. of vertices");
-  MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_mmm_ch", 30, 0, 30, "Nb. of vertices");
-  MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_mme_ch", 30, 0, 30, "Nb. of vertices");
-  MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_ee_ch", 30, 0, 30, "Nb. of vertices");
-  MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eem_ch", 30, 0, 30, "Nb. of vertices");
-  MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastTwoJets_eee_ch", 30, 0, 30, "Nb. of vertices");
+  MSPlot["HighestBdisc_CSV_AtLeastFourJets_mm_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastFourJets_mm_ch", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_CSV_AtLeastFourJets_ee_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastFourJets_ee_ch", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastFourJets_mm_ch"]             = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastFourJets_mm_ch",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastFourJets_ee_ch"]             = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastFourJets_ee_ch",  50, 0, 1, "JP b-disc.");
   
-  MSPlot["HighestBdisc_mm_ch_CSV"]            = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_CSV", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_ee_ch_CSV"]            = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_CSV", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_mm_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_mm_ch_JP",  50, 0, 1, "JP b-disc.");
-  MSPlot["HighestBdisc_ee_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_ee_ch_JP",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_CSV_AtLeastTwoJets_mmm_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_mmm_ch", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_CSV_AtLeastTwoJets_eem_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_eem_ch", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_mmm_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_mmm_ch",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_eem_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_eem_ch",  50, 0, 1, "JP b-disc.");
   
-  MSPlot["HighestBdisc_mmm_ch_CSV"]           = new MultiSamplePlot(datasets, "HighestBdisc_mmm_ch_CSV", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_eem_ch_CSV"]           = new MultiSamplePlot(datasets, "HighestBdisc_eem_ch_CSV", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_mmm_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_mmm_ch_JP",  50, 0, 1, "JP b-disc.");
-  MSPlot["HighestBdisc_eem_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_eem_ch_JP",  50, 0, 1, "JP b-disc.");
-  
-  MSPlot["HighestBdisc_mme_ch_CSV"]           = new MultiSamplePlot(datasets, "HighestBdisc_mme_ch_CSV", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_eee_ch_CSV"]           = new MultiSamplePlot(datasets, "HighestBdisc_eee_ch_CSV", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_mme_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_mme_ch_JP",  50, 0, 1, "JP b-disc.");
-  MSPlot["HighestBdisc_eee_ch_JP"]            = new MultiSamplePlot(datasets, "HighestBdisc_eee_ch_JP",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_CSV_AtLeastTwoJets_mme_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_mme_ch", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_CSV_AtLeastTwoJets_eee_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_eee_ch", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_mme_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_mme_ch",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_eee_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_eee_ch",  50, 0, 1, "JP b-disc.");
   
   MSPlot["MET_AtLeastFourJets_mm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_mm_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_AtLeastFourJets_ee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_ee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
@@ -611,7 +636,7 @@ int main (int argc, char *argv[])
     string dataSetName = datasets[d]->Name();
     if(dataSetName.find("Data")!=string::npos || dataSetName.find("data")!=string::npos || dataSetName.find("DATA")!=string::npos)
       isData = true;
-
+    
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////// Initialize JEC factors /////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -620,9 +645,9 @@ int main (int argc, char *argv[])
     
     // Create the JetCorrectorParameter objects, the order does not matter.
     // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
-
+    
     string CalibPath = "../../../TopTreeAnalysisBase/Calibrations/JECFiles/";
-
+    
     string L1Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt":"START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
     string L2Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt":"START53_V23_Summer13_L2Relative_AK5PFchs.txt");
     string L3Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt":"START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
@@ -644,7 +669,7 @@ int main (int argc, char *argv[])
     }
     
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(CalibPath+JECUnc);
-
+    
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -676,14 +701,14 @@ int main (int argc, char *argv[])
     if (verbose > 1) cout << " - Loop over events " << endl;
     
     // Set cache size.
-    Int_t cachesize=20000000; // 10 MB = 10000000
-
+    Int_t cachesize=10000000; // 10 MB = 10000000
+    
     datasets[d]->eventTree()->SetCacheSize(cachesize);
     datasets[d]->eventTree()->SetCacheEntryRange(start,end);
     datasets[d]->eventTree()->AddBranchToCache("*",kTRUE);
     //  datasets[d]->eventTree()->SetBranchStatus("*",0);
     datasets[d]->eventTree()->StopCacheLearningPhase();
-
+    
     datasets[d]->runTree()->SetCacheSize(cachesize);
     datasets[d]->runTree()->SetCacheEntryRange(start,end);
     datasets[d]->runTree()->AddBranchToCache("*",kTRUE);
@@ -704,7 +729,7 @@ int main (int argc, char *argv[])
       vector<TRootGenJet*> genjets;
       if(!isData)
 		    genjets = treeLoader.LoadGenJet(ievt,false);
-
+      
       //cout << "run: " << event->runId() << "  lumi: " << event->lumiBlockId() << "  event: " << event->eventId() << endl;
       
       // check which file in the dataset it is to have the HLTInfo right
@@ -761,7 +786,7 @@ int main (int argc, char *argv[])
              Sub-Total integrated luminosity = 951.1(/pb)
              Total integrated luminosity = 5328.2(/pb)
              ------------------------------------------------------------------*/
-
+            
 				    /*------------------------------------------------------------------
              Dataset : DoubleMuParked/Run2012C-22Jan2013-v1
              --------------------------------------------------------------------
@@ -799,7 +824,7 @@ int main (int argc, char *argv[])
              Sub-Total integrated luminosity = XXXX(/pb)
              Total integrated luminosity = XXXX(/pb)
              ------------------------------------------------------------------*/
-
+            
   		      if(itrigger1 == 9999 && itrigger2 == 9999)
 				    {
     		      cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
@@ -866,7 +891,7 @@ int main (int argc, char *argv[])
 	    } //end previousRun != currentRun
       
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	    //////////////////////////////////////////// Jet energy scale corrections     /////////////////////////////////////////////////////////////
+	    //////////////////////////////////////////// Jet energy scale corrections /////////////////////////////////////////////////////////////////
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
 	    // Apply Jet Corrections on-the-fly
@@ -877,11 +902,11 @@ int main (int argc, char *argv[])
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    //////////////////////////////////////////// Type I MET corrections: (Only for |eta| <=4.7 ) //////////////////////////////////////////////
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+      
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
       jetTools->correctMETTypeOne(init_jets,mets[0],isData);
       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-
+      
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////////////////// Jet energy smearing and systematic uncertainty ///////////////////////////////////////////////
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -914,8 +939,8 @@ int main (int argc, char *argv[])
       
       // scale factor for the event
       float scaleFactor = 1.;
-/*
-      if(isData)
+      /*
+       if(isData)
        {
        // Apply the scraping veto. (Is it still needed?)
        bool isBeamBG = true;
@@ -927,7 +952,7 @@ int main (int argc, char *argv[])
        if(isBeamBG) continue;
        }
        else{
-*/
+       */
       if(!isData)
       {
         // Apply pile-up reweighting
@@ -957,72 +982,13 @@ int main (int argc, char *argv[])
       selecTableDiElMu.Fill(d,1,scaleFactor);
       
       //__Trigger selection_________________________________________________________________
-//      if (itrigger1 == -1 && itrigger2 == -1)
-//        trigged = true;
-//      else
+      //      if (itrigger1 == -1 && itrigger2 == -1)
+      //        trigged = true;
+      //      else
       trigged = (treeLoader.EventTrigged (itrigger1) || treeLoader.EventTrigged (itrigger2));
       if(!trigged) continue;
-
-      selecTableDiMu.Fill(d,2,scaleFactor);
-      selecTableTriMu.Fill(d,2,scaleFactor);
-      selecTableDiMuEl.Fill(d,2,scaleFactor);
-      selecTableDiEl.Fill(d,2,scaleFactor);
-      selecTableTriEl.Fill(d,2,scaleFactor);
-      selecTableDiElMu.Fill(d,2,scaleFactor);
       
-      //__Selection instances_________________________________________________________________
-      Selection selection(init_jets, init_muons, init_electrons, mets, event->kt6PFJets_rho()); //mets can also be corrected...
-      //Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-/*
-      cout << "Nb of jets/muons/electrons : " << init_jets.size() << " / " << init_muons.size() << " / " << init_electrons.size() << endl;
-      for(UInt_t i=0;i<init_jets.size();i++) cout << init_jets[i]->Pt() << " / " ;
-      cout << endl;
-      cout << "MET : " << mets[0]->Et() << endl;
-      // Specify the correction to be applied to the electron isolation
-*/
-      selection.setElectronIsoCorrType(1); // 0: no corr, 1: EA corr, 2: dB corr
-      /*
-       vector<TRootMCParticle*> mcParticles;
-       if(dataSetName.find("FCNC") == 0)
-       {
-       treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);
-       sort(mcParticles.begin(),mcParticles.end(),HighestPt());
-       }
-      */
-      //__Object election cuts_________________________________________________________________
-      selection.setJetCuts(JetPtCut,JetEtaCut,0.01,1.,0.98,0.3,0.1);
-      
-      selection.setDiElectronCuts(ElPtCut,ElEtaCut,ElRelIsoCut,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
-      //selection.setLooseElectronCuts(15,2.5,0.2);
-      
-      selection.setDiMuonCuts(MuPtCut,MuEtaCut,MuRelIsoCut,999.); //Et,Eta,RelIso,d0
-      //selection.setLooseMuonCuts(15,2.4,0.2);
-      
-      //__Object selection_________________________________________________________________
-      vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedDiElectrons(ElPtCut,ElEtaCut,999.); //Et,Eta,RelIso
-      vector<TRootElectron*> selectedElectrons       = selection.GetSelectedDiElectrons();
-      vector<TRootElectron*> selectedExtraElectrons;
-      
-      vector<TRootMuon*>     selectedMuons_NoIso = selection.GetSelectedDiMuons(MuPtCut,MuEtaCut,999.); //Et,Eta,RelIso
-      vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
-      vector<TRootMuon*>     selectedExtraMuons;
-      
-      vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
-      
-      //vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
-      //vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
-      
-      //__Primary vertex selection_________________________________________________________________
-      bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
-      if(!isGoodPV) continue;
-      selecTableDiMu.Fill(d,3,scaleFactor);
-      selecTableTriMu.Fill(d,3,scaleFactor);
-      selecTableDiMuEl.Fill(d,3,scaleFactor);
-      selecTableDiEl.Fill(d,3,scaleFactor);
-      selecTableTriEl.Fill(d,3,scaleFactor);
-      selecTableDiElMu.Fill(d,3,scaleFactor);
-      
-      //__Lepton trigger SF_______________________________________________________________________
+      //__Trigger SF_______________________________________________________________________
       if(!isData && diMuon){
         if(comments.find("2012ABCD") != string::npos){
           scaleFactor *= 0.9773; //Cf. Piet's number. // Cf. ttbar dilepton analysis 8 TeV AN-2012-389
@@ -1043,11 +1009,60 @@ int main (int argc, char *argv[])
           scaleFactor *= 0.974; // Cf. ttbar dilepton analysis 8 TeV
         }
       }
-      histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
+      
+      selecTableDiMu.Fill(d,2,scaleFactor);
+      selecTableTriMu.Fill(d,2,scaleFactor);
+      selecTableDiMuEl.Fill(d,2,scaleFactor);
+      selecTableDiEl.Fill(d,2,scaleFactor);
+      selecTableTriEl.Fill(d,2,scaleFactor);
+      selecTableDiElMu.Fill(d,2,scaleFactor);
+      
+      //__Selection instances_________________________________________________________________
+      Selection selection(init_jets, init_muons, init_electrons, mets, event->kt6PFJets_rho()); //mets can also be corrected...
+      //Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
 
+      // Specify the correction to be applied to the electron isolation
+      selection.setElectronIsoCorrType(1); // 0: no corr, 1: EA corr, 2: dB corr
+
+      //__Object election cuts_________________________________________________________________
+      selection.setJetCuts(JetPtCut,JetEtaCut,0.01,1.,0.98,0.3,0.1);
+      
+      selection.setDiElectronCuts(ElPtCut,ElEtaCut,ElRelIsoCut,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
+      //selection.setLooseElectronCuts(15,2.5,0.2);
+      
+      selection.setDiMuonCuts(MuPtCut,MuEtaCut,MuRelIsoCut,999.); //Et,Eta,RelIso,d0
+      //selection.setLooseMuonCuts(15,2.4,0.2);
+      
+      //__Object selection_________________________________________________________________
+      //vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedDiElectrons(ElPtCut,ElEtaCut,999.); //Et,Eta,RelIso
+      vector<TRootElectron*> selectedElectrons       = selection.GetSelectedDiElectrons();
+      vector<TRootElectron*> selectedExtraElectrons;
+      
+      //vector<TRootMuon*>     selectedMuons_NoIso = selection.GetSelectedDiMuons(MuPtCut,MuEtaCut,999.); //Et,Eta,RelIso
+      vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
+      vector<TRootMuon*>     selectedExtraMuons;
+      
+      vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
+      
+      //vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
+      //vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
+      
+      //__Primary vertex selection_________________________________________________________________
+      bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
+      if(!isGoodPV) continue;
+      selecTableDiMu.Fill(d,3,scaleFactor);
+      selecTableTriMu.Fill(d,3,scaleFactor);
+      selecTableDiMuEl.Fill(d,3,scaleFactor);
+      selecTableDiEl.Fill(d,3,scaleFactor);
+      selecTableTriEl.Fill(d,3,scaleFactor);
+      selecTableDiElMu.Fill(d,3,scaleFactor);
+
+      MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+      
       //__Lepton selection________________________________________________________________________
+/*
       if( (diMuon&&selectedMuons_NoIso.size()<2) || (diElectron&&selectedElectrons_NoIso.size()<2) ) continue;
-
+      
       if(diMuon){
         histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
         histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->d0(),selectedMuons_NoIso[1]->Phi());
@@ -1078,16 +1093,34 @@ int main (int argc, char *argv[])
         MSPlot["1stLeadingLeptonRelIsolation"]->Fill(reliso1, datasets[d], true, Luminosity*scaleFactor);
         MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
       }
+*/
       
-      MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-            
-      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
-      
+      //__Lepton ID&&ISO SF_____________________________________________________________________________
+      if(!isData){
+        //double addScaleFactor = 1.;
+        for(unsigned int i=0;i<selectedMuons.size();i++){
+          //addScaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Id SF
+          //addScaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Iso SF
+          scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Id SF
+          scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Iso SF
+        }
+        for(unsigned int i=0;i<selectedElectrons.size();i++){
+          //addScaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Id SF
+          //addScaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
+          scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Id SF
+          scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
+        }
+        MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+        MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+        //addScaleFactor = 1.;
+      }
+      histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
+
       //__Dilepton selection_________________________________________________________________
       if( (diMuon && selectedMuons.size()<2) || (diElectron && selectedElectrons.size()<2) ) continue;
+/*
+      //__Lepton ID&&ISO SF_____________________________________________________________________________
 
-      //__Lepton ID SF_____________________________________________________________________________
       if(!isData && diMuon){
         scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
         scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
@@ -1102,6 +1135,37 @@ int main (int argc, char *argv[])
         scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Iso SF
         scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[1]->Eta(), selectedElectrons[1]->Pt());// Iso SF
       }
+*/
+      if(diMuon){
+        histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[0]->d0(),selectedMuons[0]->Phi());
+        histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[1]->d0(),selectedMuons[1]->Phi());
+        histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[0]->dz(),selectedMuons[0]->Phi());
+        histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[1]->dz(),selectedMuons[1]->Phi());
+        for(unsigned int i=0;i<selectedMuons.size();i++)
+          MSPlot["LeptonDzero"]->Fill(selectedMuons[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["1stLeadingLeptonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["2ndLeadingLeptonPt"]->Fill(selectedMuons[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+        
+        float reliso1 = MuonRelIso(selectedMuons[0]);
+        float reliso2 = MuonRelIso(selectedMuons[1]);
+        
+        MSPlot["1stLeadingLeptonRelIsolation"]->Fill(reliso1, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
+      }
+      else if(diElectron){
+        histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[0]->d0(),selectedElectrons[0]->Phi());
+        histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[1]->d0(),selectedElectrons[1]->Phi());
+        histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[0]->dz(),selectedElectrons[0]->Phi());
+        histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[1]->dz(),selectedElectrons[1]->Phi());
+        MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+        
+        float reliso1 = ElectronRelIso(selectedElectrons[0], event);
+        float reliso2 = ElectronRelIso(selectedElectrons[1], event);
+        
+        MSPlot["1stLeadingLeptonRelIsolation"]->Fill(reliso1, datasets[d], true, Luminosity*scaleFactor);
+        MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
+      }
       
       selecTableDiMu.Fill(d,4,scaleFactor);
       selecTableTriMu.Fill(d,4, scaleFactor);
@@ -1110,6 +1174,7 @@ int main (int argc, char *argv[])
       selecTableTriEl.Fill(d,4,scaleFactor);
       selecTableDiElMu.Fill(d,4,scaleFactor);
       
+      //__Z candidate selection_________________________________________________________________
       bool foundZ = false;
       int idx_Z_1 = -1, idx_Z_2 = -1;
       double invMass = 0;
@@ -1118,12 +1183,11 @@ int main (int argc, char *argv[])
       // - return the indices of the lepton candidates
       if(diMuon){
         foundZ = ZCandInvMass(selectedMuons, idx_Z_1, idx_Z_2, invMass, Zmass, Zwindowsize);
-        MSPlot["DiLeptonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
       }
       else if(diElectron){
         foundZ = ZCandInvMass(selectedElectrons, idx_Z_1, idx_Z_2, invMass, Zmass, Zwindowsize);
-        MSPlot["DiLeptonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
       }
+      MSPlot["DiLeptonInvMass"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
       // Select events with at least one pair of opposite charge leptons with |mll-mz|<windowsize
       if(!foundZ)
         continue;
@@ -1153,13 +1217,13 @@ int main (int argc, char *argv[])
         DiLeptonSystDPhi_JetSyst = (*selectedElectrons[idx_Z_1] + *selectedElectrons[idx_Z_2]).DeltaPhi(JetSyst);
         if(selectedJets.size()>0) DiLeptonSystDPhi_LeadingJet = (*selectedElectrons[idx_Z_1] + *selectedElectrons[idx_Z_2]).DeltaPhi(*selectedJets[0]);
       }
-
+      
       MSPlot["DiLeptonSystPt"]          ->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonDR"]              ->Fill(DiLeptonDR,     datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonDPhi"]            ->Fill(DiLeptonDPhi,   datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonSystDPhi_JetSyst"]->Fill(DiLeptonSystDPhi_JetSyst,   datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonSystPt_Over_JetSystPt"]->Fill(DiLeptonSystPt/JetSystPt, datasets[d], true, Luminosity*scaleFactor);
-
+      
       selecTableDiMu.Fill(d,5,scaleFactor);
       selecTableTriMu.Fill(d,5, scaleFactor);
       selecTableDiMuEl.Fill(d,5, scaleFactor);
@@ -1171,38 +1235,56 @@ int main (int argc, char *argv[])
       selectedExtraElectrons = selectedElectrons;
       // Erase Z boson lepton candidates
       if(diMuon){
-        if(selectedMuons_NoIso.size()>2){
-          MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons_NoIso[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-          MSPlot["3rdLeadingMuonRelIsolation"]->Fill(MuonRelIso(selectedMuons_NoIso[2]), datasets[d], true, Luminosity*scaleFactor);
+        if(selectedMuons.size()>2){
+          //addScaleFactor  = MuEffSF_Id_Run2012(comments, selectedMuons[2]->Eta(), selectedMuons[2]->Pt());// Id SF
+          //addScaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[2]->Eta(), selectedMuons[2]->Pt());// Iso SF
+          MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+          MSPlot["3rdLeadingMuonRelIsolation"]->Fill(MuonRelIso(selectedMuons[2]), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
         }
-        if(selectedElectrons_NoIso.size()>0){
-          MSPlot["3rdLeadingElectronPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-          MSPlot["3rdLeadingElectronRelIsolation"]->Fill(ElectronRelIso(selectedElectrons_NoIso[0], event), datasets[d], true, Luminosity*scaleFactor);
+        if(selectedElectrons.size()>0){
+          //addScaleFactor  = ElEffSF_Id_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Id SF
+          //addScaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Iso SF
+          MSPlot["1stLeadingElectronPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+          MSPlot["1stLeadingElectronRelIsolation"]->Fill(ElectronRelIso(selectedElectrons[0], event), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
         }
         selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
         selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
       }
       else if(diElectron){
-        if(selectedMuons_NoIso.size()>0){
-          MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-          MSPlot["3rdLeadingMuonRelIsolation"]->Fill(MuonRelIso(selectedMuons_NoIso[0]), datasets[d], true, Luminosity*scaleFactor);
+        if(selectedMuons.size()>0){
+          MSPlot["1stLeadingMuonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+          MSPlot["1stLeadingMuonRelIsolation"]->Fill(MuonRelIso(selectedMuons[0]), datasets[d], true, Luminosity*scaleFactor);
         }
-        if(selectedElectrons_NoIso.size()>2){
-          MSPlot["3rdLeadingElectronPt"]->Fill(selectedElectrons_NoIso[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-          MSPlot["3rdLeadingElectronRelIsolation"]->Fill(ElectronRelIso(selectedElectrons_NoIso[2], event), datasets[d], true, Luminosity*scaleFactor);
+        if(selectedElectrons.size()>2){
+          MSPlot["3rdLeadingElectronPt"]->Fill(selectedElectrons[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+          MSPlot["3rdLeadingElectronRelIsolation"]->Fill(ElectronRelIso(selectedElectrons[2], event), datasets[d], true, Luminosity*scaleFactor);
         }
         selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_2);
         selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_1);
         
       }
-      
-      MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedExtraMuons.size(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedExtraElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
+/*
+      addScaleFactor = 1.;
+      for(unsigned int i=0;i<selectedExtraMuons.size();i++){
+        addScaleFactor *= MuEffSF_Id_Run2012(comments, selectedExtraMuons[i]->Eta(), selectedExtraMuons[i]->Pt());// Id SF
+        addScaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedExtraMuons[i]->Eta(), selectedExtraMuons[i]->Pt());// Iso SF
+      }
+*/
+      MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedExtraMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+/*
+      addScaleFactor = 1.;
+      for(unsigned int i=0;i<selectedExtraElectrons.size();i++){
+        addScaleFactor *= ElEffSF_Id_Run2012(comments, selectedExtraElectrons[i]->Eta(), selectedExtraElectrons[i]->Pt());// Id SF
+        addScaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedExtraElectrons[i]->Eta(), selectedExtraElectrons[i]->Pt());// Iso SF
+      }
+*/
+      MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedExtraElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+//    addScaleFactor = 1.;
       
       MSPlot["NbOfSelectedJets_Before3rdLeptCut"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
       
       MyTopFCNC_EvtCand = 0;
-//      double invMass = 0;
+      //double invMass = 0;
       double highestbtagdisc = 0;
       int NbOfBtagged = 0;
       
@@ -1227,8 +1309,9 @@ int main (int argc, char *argv[])
                 MSPlot["FourthLeadingJetPt_mm_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
                 if(applyAsymmJetPtCut && selectedJets[3]->Pt()<JetPtCuts[3]) continue;
                 selecTableDiMu.Fill(d,10,scaleFactor);
-
+                
                 MSPlot["NbOfVertices_AtLeastFourJets_mm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["DiLeptonInvMass_AtLeastFourJets_mm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDR_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDPhi_AtLeastFourJets_mm_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonSystPt_AtLeastFourJets_mm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
@@ -1237,10 +1320,10 @@ int main (int argc, char *argv[])
                 MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_mm_ch"]->Fill(DiLeptonSystPt/JetSystPt, datasets[d], true, Luminosity*scaleFactor);
                 
                 sort(selectedJets.begin(),selectedJets.end(),HighestCSVBtag());
-                MSPlot["HighestBdisc_mm_ch_CSV"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["HighestBdisc_CSV_AtLeastFourJets_mm_ch"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
                 highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
                 sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
-                MSPlot["HighestBdisc_mm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["HighestBdisc_JP_AtLeastFourJets_mm_ch"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["MET_AtLeastFourJets_mm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
                 
                 NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
@@ -1273,23 +1356,25 @@ int main (int argc, char *argv[])
             selecTableDiMuEl.Fill(d,8,scaleFactor);
             
             MSPlot["NbOfVertices_AtLeastTwoJets_mme_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["DiLeptonInvMass_AtLeastTwoJets_mme_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDR_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDPhi_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystPt_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonSystDPhi_LeadingJet, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastTwoJets_mme_ch"]->Fill(DiLeptonSystPt/JetSystPt, datasets[d], true, Luminosity*scaleFactor);
-            if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor);//at least 3 jets
             
             sort(selectedJets.begin(),selectedJets.end(),HighestCSVBtag());
-            MSPlot["HighestBdisc_mme_ch_CSV"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_CSV_AtLeastTwoJets_mme_ch"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
-            MSPlot["HighestBdisc_mme_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_JP_AtLeastTwoJets_mme_ch"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mme_ch_CSV"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["MET_AtLeastTwoJets_mme_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
             invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedElectrons[0]).M();
             MSPlot["TriLeptonInvMass_mme_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             
+            if(selectedJets.size()>2) selecTableDiMuEl.Fill(d,9,scaleFactor);//at least 3 jets
+
             // Create TopFCNC_Evt object
             MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kElec);
             MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]);
@@ -1315,22 +1400,24 @@ int main (int argc, char *argv[])
             selecTableTriMu.Fill(d,8,scaleFactor);
             
             MSPlot["NbOfVertices_AtLeastTwoJets_mmm_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["DiLeptonInvMass_AtLeastTwoJets_mmm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDR_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDPhi_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystPt_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonSystDPhi_LeadingJet, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastTwoJets_mmm_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
-            if(selectedJets.size()>2) selecTableTriMu.Fill(d,9,scaleFactor); //at least 3 jets
             
             sort(selectedJets.begin(),selectedJets.end(),HighestCSVBtag());
-            MSPlot["HighestBdisc_mmm_ch_CSV"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_CSV_AtLeastTwoJets_mmm_ch"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
-            MSPlot["HighestBdisc_mmm_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_JP_AtLeastTwoJets_mmm_ch"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["NbOfSelectedBJets_AtLeastTwoJets_mmm_ch_CSV"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["MET_AtLeastTwoJets_mmm_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
             invMass = (*selectedMuons[idx_Z_1]+*selectedMuons[idx_Z_2]+*selectedExtraMuons[0]).M();
             MSPlot["TriLeptonInvMass_mmm_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             
+            if(selectedJets.size()>2) selecTableTriMu.Fill(d,9,scaleFactor); //at least 3 jets
+
             // Create TopFCNC_Evt object
             MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon,TopFCNC_Evt::kMuon);
             MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedMuons[idx_Z_1]);
@@ -1359,11 +1446,12 @@ int main (int argc, char *argv[])
               if(applyAsymmJetPtCut && selectedJets[2]->Pt()<JetPtCuts[2]) continue;
               selecTableDiEl.Fill(d,9,scaleFactor);
               if(selectedJets.size()>3){ //at least 4 jets
-                selecTableDiEl.Fill(d,10,scaleFactor);
-                
                 MSPlot["FourthLeadingJetPt_ee_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
                 if(applyAsymmJetPtCut && selectedJets[3]->Pt()<JetPtCuts[3]) continue;
+                selecTableDiEl.Fill(d,10,scaleFactor);
+                
                 MSPlot["NbOfVertices_AtLeastFourJets_ee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["DiLeptonInvMass_AtLeastFourJets_ee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDR_AtLeastFourJets_ee_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDPhi_AtLeastFourJets_ee_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonSystPt_AtLeastFourJets_ee_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
@@ -1371,10 +1459,10 @@ int main (int argc, char *argv[])
                 MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastFourJets_ee_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
                 
                 sort(selectedJets.begin(),selectedJets.end(),HighestCSVBtag());
-                MSPlot["HighestBdisc_ee_ch_CSV"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["HighestBdisc_CSV_AtLeastFourJets_ee_ch"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
                 highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
                 sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
-                MSPlot["HighestBdisc_ee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["HighestBdisc_JP_AtLeastFourJets_ee_ch"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["MET_AtLeastFourJets_ee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
                 
                 NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
@@ -1407,23 +1495,24 @@ int main (int argc, char *argv[])
             selecTableDiElMu.Fill(d,8,scaleFactor);
             
             MSPlot["NbOfVertices_AtLeastTwoJets_eem_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["DiLeptonInvMass_AtLeastTwoJets_eem_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDR_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDPhi_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystPt_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonSystDPhi_LeadingJet, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastTwoJets_eem_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
-            
-            if(selectedJets.size()>2) selecTableDiElMu.Fill(d,9,scaleFactor); //at least 3 jets
-            
+
             sort(selectedJets.begin(),selectedJets.end(),HighestCSVBtag());
-            MSPlot["HighestBdisc_eem_ch_CSV"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_CSV_AtLeastTwoJets_eem_ch"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
-            MSPlot["HighestBdisc_eem_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_JP_AtLeastTwoJets_eem_ch"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["NbOfSelectedBJets_AtLeastTwoJets_eem_ch_CSV"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["MET_AtLeastTwoJets_eem_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
             invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedMuons[0]).M();
             MSPlot["TriLeptonInvMass_eem_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-            
+
+            if(selectedJets.size()>2) selecTableDiElMu.Fill(d,9,scaleFactor); //at least 3 jets
+
             // Create TopFCNC_Evt object
             MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kMuon);
             MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedElectrons[idx_Z_1]);
@@ -1449,23 +1538,24 @@ int main (int argc, char *argv[])
             selecTableTriEl.Fill(d,8,scaleFactor);
             
             MSPlot["NbOfVertices_AtLeastTwoJets_eee_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["DiLeptonInvMass_AtLeastTwoJets_eee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDR_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonDPhi_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystPt_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonSystDPhi_LeadingJet, datasets[d], true, Luminosity*scaleFactor);
             MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastTwoJets_eee_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
-            
-            if(selectedJets.size()>2) selecTableTriEl.Fill(d,9,scaleFactor); //at least 3 jets
-            
+
             sort(selectedJets.begin(),selectedJets.end(),HighestCSVBtag());
-            MSPlot["HighestBdisc_eee_ch_CSV"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_CSV_AtLeastTwoJets_eee_ch"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
-            MSPlot["HighestBdisc_eee_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+            MSPlot["HighestBdisc_JP_AtLeastTwoJets_eee_ch"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["NbOfSelectedBJets_AtLeastTwoJets_eee_ch_CSV"]->Fill(selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size(),datasets[d], true, Luminosity*scaleFactor);
             MSPlot["MET_AtLeastTwoJets_eee_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
             invMass = (*selectedElectrons[idx_Z_1]+*selectedElectrons[idx_Z_2]+*selectedExtraElectrons[0]).M();
             MSPlot["TriLeptonInvMass_eee_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
             
+            if(selectedJets.size()>2) selecTableTriEl.Fill(d,9,scaleFactor); //at least 3 jets
+
             // Create TopFCNC_Evt object
             MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kElec,TopFCNC_Evt::kElec);
             MyTopFCNC_EvtCand->SetLepton1FromZ(*selectedElectrons[idx_Z_1]);
@@ -1478,7 +1568,7 @@ int main (int argc, char *argv[])
         }
       }
       else fourIsoLeptCounter++;
-
+      
       //__Fill the TopFCNC tree_________________________________________________________________
       if(MyTopFCNC_EvtCand){
         MyTopFCNC_EvtCand->SetEventID( event->eventId() );
@@ -1501,13 +1591,13 @@ int main (int argc, char *argv[])
     
     cout<<endl;
     cout<<"FYI ; nb of events with at least four isolated leptons = "<<fourIsoLeptCounter<<endl;
-
+    
     datasets[d]->eventTree()->PrintCacheStats();
     datasets[d]->runTree()->PrintCacheStats();
     
     //ps[d]->SaveAs(("aodperf_"+dataSetName+".root").c_str());
     //delete ps[d];
-
+    
     TTreeFile->cd();
     
     TTree *configTree = new TTree("configTree","configuration Tree");
@@ -2089,6 +2179,208 @@ double MuEffSF_Iso04_Run2012ABCD(double eta, double pt){
   }
 }
 
+double MuEff_Id_MC_Run2012(string period, double eta, double pt){
+  if(period.find("2012ABCD") != string::npos)
+    return MuEff_Id_MC_Run2012ABCD(eta,pt);
+  else if (period.find("2012AB") != string::npos)
+    return MuEff_Id_MC_Run2012AB(eta,pt);
+  else if (period.find("2012C") != string::npos)
+    return MuEff_Id_MC_Run2012C(eta,pt);
+  else{
+    cerr << "******MuEffSF_Id****** : Wrong period. Available periods are ABCD, AB or C" << endl;
+    exit(1);
+  }
+}
+double MuEff_Iso04_MC_Run2012(string period, double eta, double pt){
+  if(period.find("2012ABCD") != string::npos)
+    return MuEff_Iso04_MC_Run2012ABCD(eta,pt);
+  else if (period.find("2012AB") != string::npos)
+    return MuEff_Iso04_MC_Run2012AB(eta,pt);
+  else if (period.find("2012C") != string::npos)
+    return MuEff_Iso04_MC_Run2012C(eta,pt);
+  else{
+    cerr << "******MuEffSF_Iso04****** : Wrong period. Available periods are ABCD, AB or C" << endl;
+    exit(1);
+  }
+}
+
+double MuEff_Id_MC_Run2012AB(double eta, double pt){
+  return 1.;
+}
+double MuEff_Id_MC_Run2012C(double eta, double pt){
+  return 1.;
+}
+double MuEff_Id_MC_Run2012ABCD(double eta, double pt){
+  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
+    if( pt >= 10 && pt < 20)
+      return 0.961972;
+    else if( pt >= 20 && pt < 25)
+      return 0.963489;
+    else if( pt >= 25 && pt < 30)
+      return 0.96293;
+    else if( pt >= 30 && pt < 35)
+      return 0.962758;
+    else if( pt >= 35 && pt < 40)
+      return 0.962497;
+    else if( pt >= 40 && pt < 50)
+      return 0.962754;
+    else if( pt >= 50 && pt < 60)
+      return 0.963634;
+    else if( pt >= 60 && pt < 90)
+      return 0.964711;
+    else if( pt >= 90 && pt < 140)
+      return 0.966521;
+    else if( pt >= 140 && pt < 300)
+      return 0.948016;
+    else if( pt >= 300 && pt < 500)
+      return 1;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+    if( pt >= 10 && pt < 20)
+      return 0.959417;
+    else if( pt >= 20 && pt < 25)
+      return 0.965171;
+    else if( pt >= 25 && pt < 30)
+      return 0.96458;
+    else if( pt >= 30 && pt < 35)
+      return 0.96584;
+    else if( pt >= 35 && pt < 40)
+      return 0.965899;
+    else if( pt >= 40 && pt < 50)
+      return 0.965235;
+    else if( pt >= 50 && pt < 60)
+      return 0.963423;
+    else if( pt >= 60 && pt < 90)
+      return 0.96902;
+    else if( pt >= 90 && pt < 140)
+      return 0.96567;
+    else if( pt >= 140 && pt < 300)
+      return 0.960307;
+    else if( pt >= 300 && pt < 500)
+      return 1;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+    if( pt >= 10 && pt < 20)
+      return 0.954772;
+    else if( pt >= 20 && pt < 25)
+      return 0.953751;
+    else if( pt >= 25 && pt < 30)
+      return 0.953696;
+    else if( pt >= 30 && pt < 35)
+      return 0.953328;
+    else if( pt >= 35 && pt < 40)
+      return 0.952346;
+    else if( pt >= 40 && pt < 50)
+      return 0.951391;
+    else if( pt >= 50 && pt < 60)
+      return 0.951855;
+    else if( pt >= 60 && pt < 90)
+      return 0.952435;
+    else if( pt >= 90 && pt < 140)
+      return 0.952807;
+    else if( pt >= 140 && pt < 300)
+      return 0.954768;
+    else if( pt >= 300 && pt < 500)
+      return 0.999998;
+    else
+      return 1;
+  }
+  else return 1.;
+}
+
+double MuEff_Iso04_MC_Run2012AB(double eta, double pt){
+  return 1.;
+}
+double MuEff_Iso04_MC_Run2012C(double eta, double pt){
+  return 1.;
+}
+double MuEff_Iso04_MC_Run2012ABCD(double eta, double pt){
+  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
+    if( pt >= 10 && pt < 20)
+      return 0.823464;
+    else if( pt >= 20 && pt < 25)
+      return 0.901366;
+    else if( pt >= 25 && pt < 30)
+      return 0.937436;
+    else if( pt >= 30 && pt < 35)
+      return 0.961094;
+    else if( pt >= 35 && pt < 40)
+      return 0.976869;
+    else if( pt >= 40 && pt < 50)
+      return 0.989045;
+    else if( pt >= 50 && pt < 60)
+      return 0.992633;
+    else if( pt >= 60 && pt < 90)
+      return 0.992933;
+    else if( pt >= 90 && pt < 140)
+      return 0.993447;
+    else if( pt >= 140 && pt < 300)
+      return 0.993498;
+    else if( pt >= 300 && pt < 500)
+      return 0.989124;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+    if( pt >= 10 && pt < 20)
+      return 0.868769;
+    else if( pt >= 20 && pt < 25)
+      return 0.923185;
+    else if( pt >= 25 && pt < 30)
+      return 0.94599;
+    else if( pt >= 30 && pt < 35)
+      return 0.963448;
+    else if( pt >= 35 && pt < 40)
+      return 0.979633;
+    else if( pt >= 40 && pt < 50)
+      return 0.99106;
+    else if( pt >= 50 && pt < 60)
+      return 0.993719;
+    else if( pt >= 60 && pt < 90)
+      return 0.994329;
+    else if( pt >= 90 && pt < 140)
+      return 0.99588;
+    else if( pt >= 140 && pt < 300)
+      return 0.994675;
+    else if( pt >= 300 && pt < 500)
+      return 1;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+    if( pt >= 10 && pt < 20)
+      return 0.891694;
+    else if( pt >= 20 && pt < 25)
+      return 0.941519;
+    else if( pt >= 25 && pt < 30)
+      return 0.959011;
+    else if( pt >= 30 && pt < 35)
+      return 0.971288;
+    else if( pt >= 35 && pt < 40)
+      return 0.982912;
+    else if( pt >= 40 && pt < 50)
+      return 0.992894;
+    else if( pt >= 50 && pt < 60)
+      return 0.99485;
+    else if( pt >= 60 && pt < 90)
+      return 0.994932;
+    else if( pt >= 90 && pt < 140)
+      return 0.995011;
+    else if( pt >= 140 && pt < 300)
+      return 0.992611;
+    else if( pt >= 300 && pt < 500)
+      return 1;
+    else
+      return 1;
+  }
+  else return 1.;
+}
+
+
 double ElEffSF_Id_Run2012(string period, double eta, double pt){
   if(period.find("2012ABCD") != string::npos)
     return ElEffSF_Id_Run2012ABCD(eta,pt);
@@ -2115,13 +2407,93 @@ double ElEffSF_Iso04_Run2012(string period, double eta, double pt){
 }
 
 double ElEffSF_Id_Run2012AB(double eta, double pt){
-  return 1;
+  return 1.;
 }
 double ElEffSF_Id_Run2012C(double eta, double pt){
-  return 1;
+  return 1.;
 }
 double ElEffSF_Id_Run2012ABCD(double eta, double pt){
-  return 1.;
+  if( fabs(eta) >= 0.000 && fabs(eta) < 0.800 ){
+    if( pt >= 10 && pt < 15)
+      return 0.818;
+    else if( pt >= 15 && pt < 20)
+      return 0.928;
+    else if( pt >= 20 && pt < 30)
+      return 0.973;
+    else if( pt >= 30 && pt < 40)
+      return 0.979;
+    else if( pt >= 40 && pt < 50)
+      return 0.984;
+    else if( pt >= 50)// && pt < 200)
+      return 0.983;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 0.800 && fabs(eta) < 1.442 ){
+    if( pt >= 10 && pt < 15)
+      return 0.84;
+    else if( pt >= 15 && pt < 20)
+      return 0.914;
+    else if( pt >= 20 && pt < 30)
+      return 0.948;
+    else if( pt >= 30 && pt < 40)
+      return 0.961;
+    else if( pt >= 40 && pt < 50)
+      return 0.972;
+    else if( pt >= 50)// && pt < 200)
+      return 0.977;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 1.442 && fabs(eta) < 1.556 ){
+    if( pt >= 10 && pt < 15)
+      return 1.008;
+    else if( pt >= 15 && pt < 20)
+      return 0.877;
+    else if( pt >= 20 && pt < 30)
+      return 0.983;
+    else if( pt >= 30 && pt < 40)
+      return 0.983;
+    else if( pt >= 40 && pt < 50)
+      return 0.957;
+    else if( pt >= 50)// && pt < 200)
+      return 0.978;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 1.556 && fabs(eta) < 2.000 ){
+    if( pt >= 10 && pt < 15)
+      return 0.906;
+    else if( pt >= 15 && pt < 20)
+      return 0.907;
+    else if( pt >= 20 && pt < 30)
+      return 0.957;
+    else if( pt >= 30 && pt < 40)
+      return 0.962;
+    else if( pt >= 40 && pt < 50)
+      return 0.985;
+    else if( pt >= 50)// && pt < 200)
+      return 0.986;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 2.000 && fabs(eta) < 2.500 ){
+    if( pt >= 10 && pt < 15)
+      return 0.991;
+    else if( pt >= 15 && pt < 20)
+      return 0.939;
+    else if( pt >= 20 && pt < 30)
+      return 1.001;
+    else if( pt >= 30 && pt < 40)
+      return 1.002;
+    else if( pt >= 40 && pt < 50)
+      return 0.999;
+    else if( pt >= 50)// && pt < 200)
+      return 0.995;
+    else
+      return 1;
+  }
+  else return 1.;
 }
 
 double ElEffSF_Iso04_Run2012AB(double eta, double pt){
@@ -2131,159 +2503,98 @@ double ElEffSF_Iso04_Run2012C(double eta, double pt){
   return 1.;
 }
 double ElEffSF_Iso04_Run2012ABCD(double eta, double pt){
-  return 1.;
+  return 0.9912;
 }
 
-/*
-double MuEffSF_TrgMu8_Run2012(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.991061;
-    else if( pt >= 20 && pt < 25)
-      return 0.988522;
-    else if( pt >= 25 && pt < 30)
-      return 0.98938;
-    else if( pt >= 30 && pt < 35)
-      return 0.987832;
-    else if( pt >= 35 && pt < 40)
-      return 0.989023;
-    else if( pt >= 40 && pt < 50)
-      return 0.988155;
-    else if( pt >= 50 && pt < 60)
-      return 0.987275;
-    else if( pt >= 60 && pt < 90)
-      return 0.989316;
-    else if( pt >= 90 && pt < 140)
-      return 0.990073;
-    else if( pt >= 140 && pt < 500)
-      return 0.982128;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 1.00247;
-    else if( pt >= 20 && pt < 25)
-      return 0.98477;
-    else if( pt >= 25 && pt < 30)
-      return 0.985676;
-    else if( pt >= 30 && pt < 35)
-      return 0.983014;
-    else if( pt >= 35 && pt < 40)
-      return 0.983788;
-    else if( pt >= 40 && pt < 50)
-      return 0.983716;
-    else if( pt >= 50 && pt < 60)
-      return 0.985706;
-    else if( pt >= 60 && pt < 90)
-      return 0.982735;
-    else if( pt >= 90 && pt < 140)
-      return 0.982356;
-    else if( pt >= 140 && pt < 500)
-      return 0.963695;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 1.00883;
-    else if( pt >= 20 && pt < 25)
-      return 1.00035;
-    else if( pt >= 25 && pt < 30)
-      return 0.993731;
-    else if( pt >= 30 && pt < 35)
-      return 0.990587;
-    else if( pt >= 35 && pt < 40)
-      return 0.987497;
-    else if( pt >= 40 && pt < 50)
-      return 0.985698;
-    else if( pt >= 50 && pt < 60)
-      return 0.98527;
-    else if( pt >= 60 && pt < 90)
-      return 0.983774;
-    else if( pt >= 90 && pt < 140)
-      return 0.971552;
-    else if( pt >= 140 && pt < 500)
-      return 1.00464;
-    else
-      return 1;
-  }
+double ElEff_MC_Id_Run2012AB(double eta, double pt){
+  return 1.;
 }
-double MuEffSF_TrgMu17_Run2012(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.991061;
-    else if( pt >= 20 && pt < 25)
-      return 0.988522;
-    else if( pt >= 25 && pt < 30)
-      return 0.98938;
-    else if( pt >= 30 && pt < 35)
-      return 0.987832;
-    else if( pt >= 35 && pt < 40)
-      return 0.989023;
-    else if( pt >= 40 && pt < 50)
-      return 0.988155;
-    else if( pt >= 50 && pt < 60)
-      return 0.987275;
-    else if( pt >= 60 && pt < 90)
-      return 0.989316;
-    else if( pt >= 90 && pt < 140)
-      return 0.990073;
-    else if( pt >= 140 && pt < 500)
-      return 0.982128;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 1.00247;
-    else if( pt >= 20 && pt < 25)
-      return 0.98477;
-    else if( pt >= 25 && pt < 30)
-      return 0.985676;
-    else if( pt >= 30 && pt < 35)
-      return 0.983014;
-    else if( pt >= 35 && pt < 40)
-      return 0.983788;
-    else if( pt >= 40 && pt < 50)
-      return 0.983716;
-    else if( pt >= 50 && pt < 60)
-      return 0.985706;
-    else if( pt >= 60 && pt < 90)
-      return 0.982735;
-    else if( pt >= 90 && pt < 140)
-      return 0.982356;
-    else if( pt >= 140 && pt < 500)
-      return 0.963695;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 1.00883;
-    else if( pt >= 20 && pt < 25)
-      return 1.00035;
-    else if( pt >= 25 && pt < 30)
-      return 0.993731;
-    else if( pt >= 30 && pt < 35)
-      return 0.990587;
-    else if( pt >= 35 && pt < 40)
-      return 0.987497;
-    else if( pt >= 40 && pt < 50)
-      return 0.985698;
-    else if( pt >= 50 && pt < 60)
-      return 0.98527;
-    else if( pt >= 60 && pt < 90)
-      return 0.983774;
-    else if( pt >= 90 && pt < 140)
-      return 0.971552;
-    else if( pt >= 140 && pt < 500)
-      return 1.00464;
-    else
-      return 1;
-  }
+double ElEff_MC_Id_Run2012C(double eta, double pt){
+  return 1.;
 }
-*/
+double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
+  if( fabs(eta) >= 0.000 && fabs(eta) < 0.800 ){
+    if( pt >= 10 && pt < 15)
+      return 0.317;
+    else if( pt >= 15 && pt < 20)
+      return 0.516;
+    else if( pt >= 20 && pt < 30)
+      return 0.691;
+    else if( pt >= 30 && pt < 40)
+      return 0.794;
+    else if( pt >= 40 && pt < 50)
+      return 0.843;
+    else if( pt >= 50)// && pt < 200)
+      return 0.859;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 0.800 && fabs(eta) < 1.442 ){
+    if( pt >= 10 && pt < 15)
+      return 0.33;
+    else if( pt >= 15 && pt < 20)
+      return 0.485;
+    else if( pt >= 20 && pt < 30)
+      return 0.64;
+    else if( pt >= 30 && pt < 40)
+      return 0.77;
+    else if( pt >= 40 && pt < 50)
+      return 0.839;
+    else if( pt >= 50)// && pt < 200)
+      return 0.862;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 1.442 && fabs(eta) < 1.556 ){
+    if( pt >= 10 && pt < 15)
+      return 0.204;
+    else if( pt >= 15 && pt < 20)
+      return 0.274;
+    else if( pt >= 20 && pt < 30)
+      return 0.363;
+    else if( pt >= 30 && pt < 40)
+      return 0.519;
+    else if( pt >= 40 && pt < 50)
+      return 0.695;
+    else if( pt >= 50)// && pt < 200)
+      return 0.717;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 1.556 && fabs(eta) < 2.000 ){
+    if( pt >= 10 && pt < 15)
+      return 0.142;
+    else if( pt >= 15 && pt < 20)
+      return 0.268;
+    else if( pt >= 20 && pt < 30)
+      return 0.45;
+    else if( pt >= 30 && pt < 40)
+      return 0.584;
+    else if( pt >= 40 && pt < 50)
+      return 0.665;
+    else if( pt >= 50)// && pt < 200)
+      return 0.708;
+    else
+      return 1;
+  }
+  else if( fabs(eta) >= 2.000 && fabs(eta) < 2.500 ){
+    if( pt >= 10 && pt < 15)
+      return 0.142;
+    else if( pt >= 15 && pt < 20)
+      return 0.283;
+    else if( pt >= 20 && pt < 30)
+      return 0.45;
+    else if( pt >= 30 && pt < 40)
+      return 0.562;
+    else if( pt >= 40 && pt < 50)
+      return 0.637;
+    else if( pt >= 50)// && pt < 200)
+      return 0.672;
+    else
+      return 1;
+  }
+  else return 1.;
+}
 
 double MuonRelIso(TRootMuon* muon){
   double reliso = ( muon->chargedHadronIso() + max( 0.0, muon->neutralHadronIso() + muon->photonIso() - 0.5*muon->puChargedHadronIso() ) ) / muon->Pt();
