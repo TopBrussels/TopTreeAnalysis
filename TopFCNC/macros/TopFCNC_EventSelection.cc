@@ -147,11 +147,13 @@ int main (int argc, char *argv[])
   const double JetEtaCut    = 2.4;
 	bool applyAsymmJetPtCut   = true;
 	const double JetPtCuts[4] = {50.,30.,20.,20.};
+  bool applyLeptonSF        = false;
   
   cout << "*************************************************************" << endl;
   cout << " Beginning of the program for the FCNC search ! " << endl;
   cout << "*************************************************************" << endl;
   cout << " - Selection cuts " << endl;
+  cout << " -- Lepton ID&ISO SF: " << (applyLeptonSF ? "TRUE" : "FALSE" ) << endl;
   cout << " -- Muons: " << endl;
   cout << " --- pt: "  << MuPtCut << endl;
   cout << " --- eta: " << MuEtaCut << endl;
@@ -427,7 +429,7 @@ int main (int argc, char *argv[])
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",50,0,4);
   for (unsigned int d = 0; d < datasets.size(); d++){
-    histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()] = new TH1F(("ScaleFactors_"+datasets[d]->Name()).c_str(),";Total SF;#events",500,0,10);
+    histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()] = new TH1F(("ScaleFactors_"+datasets[d]->Name()).c_str(),";Total SF;#events",500,0,2);
   	histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),";d_{0};#phi",500,-0.02,0.02,500,0,4);
   	histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str(),";d_{0};#phi",500,-0.02,0.02,500,0,4);
   	histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()] = new TH2F(("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str(),";d_{z};#phi",500,-1,1,500,0,4);
@@ -1059,61 +1061,19 @@ int main (int argc, char *argv[])
 
       MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
       
-      //__Lepton selection________________________________________________________________________
-/*
-      if( (diMuon&&selectedMuons_NoIso.size()<2) || (diElectron&&selectedElectrons_NoIso.size()<2) ) continue;
-      
-      if(diMuon){
-        histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
-        histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->d0(),selectedMuons_NoIso[1]->Phi());
-        histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->dz(),selectedMuons_NoIso[0]->Phi());
-        histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[1]->dz(),selectedMuons_NoIso[1]->Phi());
-        for(unsigned int i=0;i<selectedMuons_NoIso.size();i++)
-          MSPlot["LeptonDzero"]->Fill(selectedMuons_NoIso[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
-        MSPlot["1stLeadingLeptonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-        MSPlot["2ndLeadingLeptonPt"]->Fill(selectedMuons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-        
-        float reliso1 = MuonRelIso(selectedMuons_NoIso[0]);
-        float reliso2 = MuonRelIso(selectedMuons_NoIso[1]);
-        
-        MSPlot["1stLeadingLeptonRelIsolation"]->Fill(reliso1, datasets[d], true, Luminosity*scaleFactor);
-        MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
-      }
-      else if(diElectron){
-        histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[0]->d0(),selectedElectrons_NoIso[0]->Phi());
-        histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[1]->d0(),selectedElectrons_NoIso[1]->Phi());
-        histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[0]->dz(),selectedElectrons_NoIso[0]->Phi());
-        histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[1]->dz(),selectedElectrons_NoIso[1]->Phi());
-        MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-        MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons_NoIso[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-        
-        float reliso1 = ElectronRelIso(selectedElectrons_NoIso[0], event);
-        float reliso2 = ElectronRelIso(selectedElectrons_NoIso[1], event);
-        
-        MSPlot["1stLeadingLeptonRelIsolation"]->Fill(reliso1, datasets[d], true, Luminosity*scaleFactor);
-        MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
-      }
-*/
-      
       //__Lepton ID&&ISO SF_____________________________________________________________________________
-      if(!isData){
-        //double addScaleFactor = 1.;
+      if(!isData && applyLeptonSF){
         for(unsigned int i=0;i<selectedMuons.size();i++){
-          //addScaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Id SF
-          //addScaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Iso SF
           scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Id SF
           scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Iso SF
         }
         for(unsigned int i=0;i<selectedElectrons.size();i++){
-          //addScaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Id SF
-          //addScaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
           scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Id SF
           scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
         }
-        MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-        MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-        //addScaleFactor = 1.;
       }
+      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
       histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
 
       //__Dilepton selection_________________________________________________________________
@@ -1157,6 +1117,8 @@ int main (int argc, char *argv[])
         histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[1]->d0(),selectedElectrons[1]->Phi());
         histo2D[("dz_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[0]->dz(),selectedElectrons[0]->Phi());
         histo2D[("dz_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[1]->dz(),selectedElectrons[1]->Phi());
+        for(unsigned int i=0;i<selectedElectrons.size();i++)
+          MSPlot["LeptonDzero"]->Fill(selectedElectrons[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
         MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
         MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
         
@@ -2427,7 +2389,7 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.983;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 0.800 && fabs(eta) < 1.442 ){
     if( pt >= 10 && pt < 15)
@@ -2443,7 +2405,7 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.977;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 1.442 && fabs(eta) < 1.556 ){
     if( pt >= 10 && pt < 15)
@@ -2459,7 +2421,7 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.978;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 1.556 && fabs(eta) < 2.000 ){
     if( pt >= 10 && pt < 15)
@@ -2475,7 +2437,7 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.986;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 2.000 && fabs(eta) < 2.500 ){
     if( pt >= 10 && pt < 15)
@@ -2491,7 +2453,7 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.995;
     else
-      return 1;
+      return 1.;
   }
   else return 1.;
 }
@@ -2527,7 +2489,7 @@ double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.859;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 0.800 && fabs(eta) < 1.442 ){
     if( pt >= 10 && pt < 15)
@@ -2543,7 +2505,7 @@ double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.862;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 1.442 && fabs(eta) < 1.556 ){
     if( pt >= 10 && pt < 15)
@@ -2559,7 +2521,7 @@ double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.717;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 1.556 && fabs(eta) < 2.000 ){
     if( pt >= 10 && pt < 15)
@@ -2575,7 +2537,7 @@ double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.708;
     else
-      return 1;
+      return 1.;
   }
   else if( fabs(eta) >= 2.000 && fabs(eta) < 2.500 ){
     if( pt >= 10 && pt < 15)
@@ -2591,7 +2553,7 @@ double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
     else if( pt >= 50)// && pt < 200)
       return 0.672;
     else
-      return 1;
+      return 1.;
   }
   else return 1.;
 }
