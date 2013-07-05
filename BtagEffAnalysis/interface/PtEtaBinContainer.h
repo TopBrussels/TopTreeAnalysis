@@ -72,7 +72,7 @@ class PtEtaBinContainer{
   void MeasureEff(bool);
   void MeasureEffLR(bool);
   void MeasureEffRR(bool);
-    void MeasureMistagEffRR(bool,string chi2, string data_postfix,int nSystematic);
+    void MeasureMistagEffRR(bool,string chi2, string data_postfix,int nSystematic,bool pseudoexp);
 
   void GetWPEff(bool, bool, double, int, double*, bool, bool, int, int, bool, double);
   void CoutWPEff(bool, bool, double, int, double*, bool, bool, int, int, bool, double);

@@ -3552,7 +3552,7 @@ void PtEtaBin::writeTemplates(string chi2cut,int mode, string data_postfix){
     a="TH1Bkg_TTbar_bTagM"; histContainer[a]=copyTemplate(histo1D["TH1Bkg_Var0_TTbar_bTagM"],a);
     a="TH1Bkg_TTbar_bTagT"; histContainer[a]=copyTemplate(histo1D["TH1Bkg_Var0_TTbar_bTagT"],a);
 
-    if (fitMode == 0) {  // MLJ TEMPLATES      
+    if (fitMode == 0 || fitMode == 3) {  // MLJ TEMPLATES
     
         // test smoothing -> simple smoothing by taking the shape before btagging and scaling it to the rate after btagging
         
@@ -3748,7 +3748,7 @@ vector<double> PtEtaBin::doMLJTemplateFit(string chi2cut,int mode, string data_p
     loadTemplates(fitHistos,templateLumi_,chi2cut,mode,data_postfix);
     
     // now prepare the "data" histo
-    if (fitMode==0) {
+    if (fitMode==0  || fitMode == 3) {
         fitHistos["TH1Data"]=copyTemplate(TH1Data_Var0_XS,"TH1Data");
         fitHistos["TH1Data_bTagL"]=copyTemplate(histo1D["TH1Data_Var0_bTagL"],"TH1Data_bTagL");
         fitHistos["TH1Data_bTagM"]=copyTemplate(histo1D["TH1Data_Var0_bTagM"],"TH1Data_bTagM");
@@ -4089,7 +4089,7 @@ void PtEtaBin::MeasureEffRR(bool doSCreweigh){
 
 }
 
-void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic){
+void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic,bool pseudoexp){
     
     GiveName(&titleData_MistagEffMeasuredRR_); titleData_MistagEffMeasuredRR_+="TH1Data_MistagEffMeasuredRR";
     GiveName(&titleData_MistagMeasuredRR_); titleData_MistagMeasuredRR_+="TH1Data_MistagMeasuredRR";
@@ -4124,7 +4124,7 @@ void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_post
     
     double scale=TH1Sng_BtagAll->Integral()/TH1Data_BtagMeasuredRR->Integral();
     
-    cout << "PtEtaBin::MeasureMistagEffRR - scale before: " << scale << endl;
+    if (debug_ > 0) cout << "PtEtaBin::MeasureMistagEffRR - scale before: " << scale << endl;
     
     TString outname, outnameR;
     GiveName(&outname); outname="./mistagscale/"+outname+"BtagShapeScale_Chi2Cut_"+chi2+"_channel"+data_postfix+".txt";
@@ -4134,7 +4134,7 @@ void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_post
     
     ifstream check(outname);
     
-    if (nSystematic == 0) write=true;
+    if ((nSystematic == 0 || nSystematic == 32) && !pseudoexp) write=true;
     
     if (TH1Sng_BtagAll->Integral() > 0 && write) {
         
@@ -4142,14 +4142,14 @@ void PtEtaBin::MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_post
         
         if (write) {
 
-            cout << "PtEtaBin::MeasureMistagEffRR - writing scale to "+outname << endl;
+            if (debug_ > 0) cout << "PtEtaBin::MeasureMistagEffRR - writing scale to "+outname << endl;
             fstream out(outname, ios::out);
             out << scale << endl;
             out.close();
             
             // write measured btag distribution to file
             
-            cout << "PtEtaBin::MeasureMistagEffRR - writing shape to "+outnameR << endl;
+            if (debug_ > 0) cout << "PtEtaBin::MeasureMistagEffRR - writing shape to "+outnameR << endl;
 
             TFile* outR = new TFile(outnameR,"RECREATE");
             
@@ -6637,29 +6637,13 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
     
     double tmpttbar =fttb*data->Integral();
     
-    /*if (PrefixPlot == "Fit_bTagMCut") {
-        
-        cout << "Data lumi " << lumi_ << endl;
-        cout << "MC lumi " << templateLumi_ << endl << endl;
-        
-        cout << "TESTJE ttbar " << ttbar->Integral() << endl;
-        cout << "TESTJE Bkg " << vvmc->Integral() << endl;
-        cout << "TESTJE Data " << data->Integral() << endl;
-        
-        cout << "TESTJE ttbar " << ttbar->Integral()*(lumi_/templateLumi_) << endl;
-        cout << "TESTJE Bkg " << vvmc->Integral()*(lumi_/templateLumi_) << endl;
-        
+    if (fitMode == 3) {
         double ndata=data->Integral();
         double bkg=vvmc->Integral()*(lumi_/templateLumi_);
-                     
-        tmpttbar = ndata-(bkg*1.5);
-    }*/
+        tmpttbar = ndata-(bkg);
+    }
     
-    /*double ndata=data->Integral();
-    double bkg=vvmc->Integral()*(lumi_/templateLumi_);
-    
-    tmpttbar = ndata-(bkg);
-    */
+    //cout << fitMode << endl; exit(1);
     
 	//results.push_back(fttb*data->Integral());
     results.push_back(tmpttbar);
@@ -6682,7 +6666,23 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         
         stringstream sys; sys << nSystematic_;
         stringstream fitm; fitm << fitMode;
-                
+        
+        if (nSystematic_ == -2) {
+            
+            mkdir("Fractions",0777);
+
+            TString fracfile;
+            GiveName(&fracfile);
+            
+            fracfile="Fractions/nSystematic_"+sys.str()+"_"+fracfile+"_fractions_channel"+data_postfix_+"_fitMode"+fitm.str()+"_"+PrefixPlot+".txt";
+            
+            ofstream fracfileH(fracfile,ios::out | ios::trunc);
+            
+            fracfileH << data->Integral() << " " << fttb << " " << fbkg << endl;
+            
+            fracfileH.close();
+        }
+
         crosscheck="FitOutput/nSystematic_"+sys.str()+"_"+crosscheck+"_actual_fithistos_channel"+data_postfix_+"_fitMode"+fitm.str()+"_"+PrefixPlot+".root";
         
         TFile* fcross = new TFile(crosscheck,"RECREATE");
@@ -6694,7 +6694,19 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         if (vvdata) vvdata->Write();
 		data->Write();
         
+        TH1D* counts = new TH1D("counts","counts",4,-0.5,3.5);
+        
+        counts->SetBinContent(1,results[0]);
+        counts->SetBinError(1,results[1]);
+        
+        counts->SetBinContent(2,results[2]);
+        counts->SetBinError(2,results[3]);
+        
+        counts->Write();
+        
         fcross->Close();
+        
+        //delete counts;
         
 		string savePath = ("FitOutput/"+(string)dir+"/");
 		
@@ -6716,6 +6728,7 @@ vector<float> PtEtaBin::doTemplateFit (TH1D* ttbar, TH1D* vvmc, TH1D* vvdata,TH1
         double bkgscale = vvmc->Integral()*(lumi_/templateLumi_);
         vvmc->Scale((data->Integral()*fbkg)/vvmc->Integral());
         cout << "SF(bkg) = " << vvmc->Integral()/bkgscale << endl;
+        
 
         if (fitQCD) vvdata->Scale((data->Integral()*fqcd)/vvdata->Integral());
         

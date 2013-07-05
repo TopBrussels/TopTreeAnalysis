@@ -22,6 +22,7 @@
 #include "../interface/PtEtaBin.h"
 #include "../interface/WorkingPointBin.h"
 #include "../interface/MakerJetOrigin.h"
+#include "../interface/LeptonTools.h"
 
 #include "TopTreeAnalysisBase/Content/interface/Dataset.h"
 #include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
@@ -173,11 +174,11 @@ private:
 	double matchChiSquareCut_;
 	
 	int nWP;
-	double eff[18];
-	double effVal[18];
-	double effMCVal[18];
-	double effRRVal[18];
-	double effRRMCVal[18];
+	double eff[39];
+	double effVal[39];
+	double effMCVal[39];
+	double effRRVal[39];
+	double effRRMCVal[39];
 	double FMCVal;
 	double FVal;
 	double FMCerrVal;

@@ -117,7 +117,7 @@ void GetLeftRightPars(double*, double*, double*);
   void MeasureEffLR(bool);
     void MeasureEffRR(bool);
 
-    void MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic);
+    void MeasureMistagEffRR(bool doSCreweigh,string chi2, string data_postfix,int nSystematic,bool pseudoexp);
 
   void GetWPEff(bool, bool, double, double*, bool, bool, double);
   void CoutWPEff(bool, bool, double, double*, bool, bool, int, int, double);
