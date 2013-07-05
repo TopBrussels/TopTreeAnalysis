@@ -51,40 +51,14 @@ struct HighestCSVBtag{
 double MuEffSF_Id_Run2012(string period, double eta, double pt);
 double MuEffSF_Iso04_Run2012(string period, double eta, double pt);
 
-double MuEffSF_Id_Run2012AB(double eta, double pt);
-double MuEffSF_Id_Run2012C(double eta, double pt);
 double MuEffSF_Id_Run2012ABCD(double eta, double pt);
-
-double MuEffSF_Iso04_Run2012AB(double eta, double pt);
-double MuEffSF_Iso04_Run2012C(double eta, double pt);
 double MuEffSF_Iso04_Run2012ABCD(double eta, double pt);
-
-double MuEff_Id_MC_Run2012(string period, double eta, double pt);
-double MuEff_Iso04_MC_Run2012(string period, double eta, double pt);
-
-double MuEff_Id_MC_Run2012AB(double eta, double pt);
-double MuEff_Id_MC_Run2012C(double eta, double pt);
-double MuEff_Id_MC_Run2012ABCD(double eta, double pt);
-
-double MuEff_Iso04_MC_Run2012AB(double eta, double pt);
-double MuEff_Iso04_MC_Run2012C(double eta, double pt);
-double MuEff_Iso04_MC_Run2012ABCD(double eta, double pt);
 
 double ElEffSF_Id_Run2012(string period, double eta, double pt);
 double ElEffSF_Iso04_Run2012(string period, double eta, double pt);
 
-double ElEffSF_Id_Run2012AB(double eta, double pt);
-double ElEffSF_Id_Run2012C(double eta, double pt);
 double ElEffSF_Id_Run2012ABCD(double eta, double pt);
-
-double ElEffSF_Iso04_Run2012AB(double eta, double pt);
-double ElEffSF_Iso04_Run2012C(double eta, double pt);
 double ElEffSF_Iso04_Run2012ABCD(double eta, double pt);
-
-double ElEff_MC_Id_Run2012AB(double eta, double pt);
-double ElEff_MC_Id_Run2012C(double eta, double pt);
-double ElEff_MC_Id_Run2012ABCD(double eta, double pt);
-
 //double MuEffSF_TrgMu8_Run2012(double eta, double pt);
 //double MuEffSF_TrgMu17_Run2012(double eta, double pt);
 
@@ -596,10 +570,13 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   string PileUpFile = "";
-  if( comments.find("2012ABCD") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012ABCD_22Jan2013_TopTreeID_3490_3495_PileupHistogram.root" : "../pileup/XXX.root");
+  string PileUpSyst = ( doPUShift==0 ? "" : ( doPUShift==1 ? "_Systematic_Down_5perc" : "_Systematic_Up_5perc" ) );
+  if( comments.find("2012ABCD") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012ABCD_22Jan2013_TopTreeID_3490_3495_PileupHistogram"+PileUpSyst+".root" : "../pileup/XXX.root");
+/*
   else if( comments.find("2012AB")   != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012AB_22Jan2013_TopTreeID_3494_3495_PileupHistogram.root" : "../pileup/XXX.root");
   else if( comments.find("2012C")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012C_Promptv2_TopTreeID_2226_PileupHistogram.root" : "../pileup/XXX.root");
   else if( comments.find("2012D")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012D_Promptv1_TopTreeID_2218_PileupHistogram.root" : "../pileup/XXX.root");
+*/
   else{
     cerr << "Cannot determine which pile up root should be used. Make sure the string comment is filled correctly." << endl;
     exit(1);
@@ -1661,719 +1638,180 @@ int main (int argc, char *argv[])
 double MuEffSF_Id_Run2012(string period, double eta, double pt){
   if(period.find("2012ABCD") != string::npos)
     return MuEffSF_Id_Run2012ABCD(eta,pt);
-  else if (period.find("2012AB") != string::npos)
-    return MuEffSF_Id_Run2012AB(eta,pt);
-  else if (period.find("2012C") != string::npos)
-    return MuEffSF_Id_Run2012C(eta,pt);
-  else{
-    cerr << "******MuEffSF_Id****** : Wrong period. Available periods are ABCD, AB or C" << endl;
-    exit(1);
-  }
+  else
+    return 1.;
 }
 double MuEffSF_Iso04_Run2012(string period, double eta, double pt){
   if(period.find("2012ABCD") != string::npos)
     return MuEffSF_Iso04_Run2012ABCD(eta,pt);
-  else if (period.find("2012AB") != string::npos)
-    return MuEffSF_Iso04_Run2012AB(eta,pt);
-  else if (period.find("2012C") != string::npos)
-    return MuEffSF_Iso04_Run2012C(eta,pt);
-  else{
-    cerr << "******MuEffSF_Iso04****** : Wrong period. Available periods are ABCD, AB or C" << endl;
-    exit(1);
-  }
+  else
+    return 1.;
 }
 
-double MuEffSF_Id_Run2012AB(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.981239;
-    else if( pt >= 20 && pt < 25)
-      return 0.98043;
-    else if( pt >= 25 && pt < 30)
-      return 0.991182;
-    else if( pt >= 30 && pt < 35)
-      return 0.988984;
-    else if( pt >= 35 && pt < 40)
-      return 0.990422;
-    else if( pt >= 40 && pt < 50)
-      return 0.988821;
-    else if( pt >= 50 && pt < 60)
-      return 0.989954;
-    else if( pt >= 60 && pt < 90)
-      return 0.989478;
-    else if( pt >= 90 && pt < 140)
-      return 1.00023;
-    else if( pt >= 140 && pt < 500)
-      return 0.985242;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.936552;
-    else if( pt >= 20 && pt < 25)
-      return 0.995381;
-    else if( pt >= 25 && pt < 30)
-      return 0.991899;
-    else if( pt >= 30 && pt < 35)
-      return 0.990177;
-    else if( pt >= 35 && pt < 40)
-      return 0.990865;
-    else if( pt >= 40 && pt < 50)
-      return 0.986703;
-    else if( pt >= 50 && pt < 60)
-      return 0.990343;
-    else if( pt >= 60 && pt < 90)
-      return 0.985462;
-    else if( pt >= 90 && pt < 140)
-      return 0.999933;
-    else if( pt >= 140 && pt < 500)
-      return 0.922726;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 1.00304;
-    else if( pt >= 20 && pt < 25)
-      return 0.998942;
-    else if( pt >= 25 && pt < 30)
-      return 0.996901;
-    else if( pt >= 30 && pt < 35)
-      return 0.997486;
-    else if( pt >= 35 && pt < 40)
-      return 0.994566;
-    else if( pt >= 40 && pt < 50)
-      return 0.996159;
-    else if( pt >= 50 && pt < 60)
-      return 0.997451;
-    else if( pt >= 60 && pt < 90)
-      return 0.996516;
-    else if( pt >= 90 && pt < 140)
-      return 1.03286;
-    else if( pt >= 140 && pt < 500)
-      return 1.05323;
-    else
-      return 1;
-  }
-}
-double MuEffSF_Id_Run2012C(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.988164;
-    else if( pt >= 20 && pt < 25)
-      return 0.991657;
-    else if( pt >= 25 && pt < 30)
-      return 0.993626;
-    else if( pt >= 30 && pt < 35)
-      return 0.995009;
-    else if( pt >= 35 && pt < 40)
-      return 0.994813;
-    else if( pt >= 40 && pt < 50)
-      return 0.993125;
-    else if( pt >= 50 && pt < 60)
-      return 0.990789;
-    else if( pt >= 60 && pt < 90)
-      return 0.991305;
-    else if( pt >= 90 && pt < 140)
-      return 1.00039;
-    else if( pt >= 140 && pt < 500)
-      return 1.00427;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.990385;
-    else if( pt >= 20 && pt < 25)
-      return 0.991006;
-    else if( pt >= 25 && pt < 30)
-      return 0.992512;
-    else if( pt >= 30 && pt < 35)
-      return 0.990182;
-    else if( pt >= 35 && pt < 40)
-      return 0.989602;
-    else if( pt >= 40 && pt < 50)
-      return 0.989993;
-    else if( pt >= 50 && pt < 60)
-      return 0.9904;
-    else if( pt >= 60 && pt < 90)
-      return 0.985321;
-    else if( pt >= 90 && pt < 140)
-      return 1.01878;
-    else if( pt >= 140 && pt < 500)
-      return 1.03629;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 1.0043;
-    else if( pt >= 20 && pt < 25)
-      return 1.00105;
-    else if( pt >= 25 && pt < 30)
-      return 1.00013;
-    else if( pt >= 30 && pt < 35)
-      return 0.99898;
-    else if( pt >= 35 && pt < 40)
-      return 0.997324;
-    else if( pt >= 40 && pt < 50)
-      return 0.998192;
-    else if( pt >= 50 && pt < 60)
-      return 0.997411;
-    else if( pt >= 60 && pt < 90)
-      return 0.996805;
-    else if( pt >= 90 && pt < 140)
-      return 1.01162;
-    else if( pt >= 140 && pt < 500)
-      return 1.04441;
-    else
-      return 1;
-  }
-}
 double MuEffSF_Id_Run2012ABCD(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.984868;
+      return 0.975506;
     else if( pt >= 20 && pt < 25)
-      return 0.988681;
+      return 0.986202;
     else if( pt >= 25 && pt < 30)
-      return 0.993889;
+      return 0.99337;
     else if( pt >= 30 && pt < 35)
-      return 0.994164;
+      return 0.996769;
     else if( pt >= 35 && pt < 40)
-      return 0.994084;
+      return 0.997442;
     else if( pt >= 40 && pt < 50)
-      return 0.99247;
+      return 0.998198;
     else if( pt >= 50 && pt < 60)
-      return 0.990978;
+      return 0.995042;
     else if( pt >= 60 && pt < 90)
-      return 0.990444;
+      return 0.987628;
     else if( pt >= 90 && pt < 140)
-      return 1.00385;
+      return 0.998926;
     else if( pt >= 140 && pt < 300)
-      return 1.02798;
-    else if( pt >= 300 && pt < 500)
-      return 1;
+      return 1.00231;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 0.986855;
+      return 1.00453;
     else if( pt >= 20 && pt < 25)
-      return 0.987375;
+      return 0.999235;
     else if( pt >= 25 && pt < 30)
-      return 0.994212;
+      return 0.998903;
     else if( pt >= 30 && pt < 35)
-      return 0.990593;
+      return 0.997493;
     else if( pt >= 35 && pt < 40)
-      return 0.990353;
+      return 0.998633;
     else if( pt >= 40 && pt < 50)
-      return 0.989641;
+      return 0.998107;
     else if( pt >= 50 && pt < 60)
-      return 0.991311;
+      return 0.997018;
     else if( pt >= 60 && pt < 90)
-      return 0.98631;
+      return 0.989447;
     else if( pt >= 90 && pt < 140)
-      return 1.01191;
+      return 1.00105;
     else if( pt >= 140 && pt < 300)
-      return 0.955563;
-    else if( pt >= 300 && pt < 500)
-      return 1;
+      return 1.00431;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 1.01235;
+      return 1.00221;
     else if( pt >= 20 && pt < 25)
-      return 1.00155;
+      return 1.00319;
     else if( pt >= 25 && pt < 30)
-      return 0.999149;
+      return 0.998141;
     else if( pt >= 30 && pt < 35)
-      return 0.997573;
+      return 0.998023;
     else if( pt >= 35 && pt < 40)
-      return 0.996585;
+      return 0.99822;
     else if( pt >= 40 && pt < 50)
-      return 0.997431;
+      return 0.99835;
     else if( pt >= 50 && pt < 60)
-      return 0.997521;
+      return 0.994846;
     else if( pt >= 60 && pt < 90)
-      return 0.993942;
+      return 0.984053;
     else if( pt >= 90 && pt < 140)
-      return 1.01922;
+      return 1.0043;
     else if( pt >= 140 && pt < 300)
-      return 1.01648;
-    else if( pt >= 300 && pt < 500)
-      return 0.608799;
+      return 0.985374;
     else
-      return 1;
+      return 1.;
   }
-}
-
-double MuEffSF_Iso04_Run2012AB(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.922624;
-    else if( pt >= 20 && pt < 25)
-      return 0.976962;
-    else if( pt >= 25 && pt < 30)
-      return 0.997654;
-    else if( pt >= 30 && pt < 35)
-      return 0.997849;
-    else if( pt >= 35 && pt < 40)
-      return 0.998674;
-    else if( pt >= 40 && pt < 50)
-      return 0.998288;
-    else if( pt >= 50 && pt < 60)
-      return 0.998246;
-    else if( pt >= 60 && pt < 90)
-      return 0.99948;
-    else if( pt >= 90 && pt < 140)
-      return 1.00003;
-    else if( pt >= 140 && pt < 500)
-      return 0.996181;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.948552;
-    else if( pt >= 20 && pt < 25)
-      return 0.981943;
-    else if( pt >= 25 && pt < 30)
-      return 0.996887;
-    else if( pt >= 30 && pt < 35)
-      return 0.999591;
-    else if( pt >= 35 && pt < 40)
-      return 1.00033;
-    else if( pt >= 40 && pt < 50)
-      return 0.999218;
-    else if( pt >= 50 && pt < 60)
-      return 0.998999;
-    else if( pt >= 60 && pt < 90)
-      return 0.99905;
-    else if( pt >= 90 && pt < 140)
-      return 0.997391;
-    else if( pt >= 140 && pt < 500)
-      return 1.00422;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 0.970175;
-    else if( pt >= 20 && pt < 25)
-      return 0.989697;
-    else if( pt >= 25 && pt < 30)
-      return 1.0003;
-    else if( pt >= 30 && pt < 35)
-      return 1.00058;
-    else if( pt >= 35 && pt < 40)
-      return 1.00088;
-    else if( pt >= 40 && pt < 50)
-      return 0.999595;
-    else if( pt >= 50 && pt < 60)
-      return 0.999906;
-    else if( pt >= 60 && pt < 90)
-      return 0.999467;
-    else if( pt >= 90 && pt < 140)
-      return 0.997148;
-    else if( pt >= 140 && pt < 500)
-      return 0.997978;
-    else
-      return 1;
-  }
-}
-double MuEffSF_Iso04_Run2012C(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.956014;
-    else if( pt >= 20 && pt < 25)
-      return 0.986051;
-    else if( pt >= 25 && pt < 30)
-      return 1.00101;
-    else if( pt >= 30 && pt < 35)
-      return 0.999659;
-    else if( pt >= 35 && pt < 40)
-      return 0.998627;
-    else if( pt >= 40 && pt < 50)
-      return 0.99868;
-    else if( pt >= 50 && pt < 60)
-      return 0.999148;
-    else if( pt >= 60 && pt < 90)
-      return 1.00068;
-    else if( pt >= 90 && pt < 140)
-      return 1.00148;
-    else if( pt >= 140 && pt < 500)
-      return 1.00193;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.969312;
-    else if( pt >= 20 && pt < 25)
-      return 0.991352;
-    else if( pt >= 25 && pt < 30)
-      return 1.00392;
-    else if( pt >= 30 && pt < 35)
-      return 1.00192;
-    else if( pt >= 35 && pt < 40)
-      return 1.00029;
-    else if( pt >= 40 && pt < 50)
-      return 1.00042;
-    else if( pt >= 50 && pt < 60)
-      return 0.999686;
-    else if( pt >= 60 && pt < 90)
-      return 1.00091;
-    else if( pt >= 90 && pt < 140)
-      return 0.999988;
-    else if( pt >= 140 && pt < 500)
-      return 1.00517;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 0.986523;
-    else if( pt >= 20 && pt < 25)
-      return 0.997202;
-    else if( pt >= 25 && pt < 30)
-      return 1.00478;
-    else if( pt >= 30 && pt < 35)
-      return 1.004;
-    else if( pt >= 35 && pt < 40)
-      return 1.00207;
-    else if( pt >= 40 && pt < 50)
-      return 1.00024;
-    else if( pt >= 50 && pt < 60)
-      return 1.00007;
-    else if( pt >= 60 && pt < 90)
-      return 1.00071;
-    else if( pt >= 90 && pt < 140)
-      return 1.00124;
-    else if( pt >= 140 && pt < 500)
-      return 0.997063;
-    else
-      return 1;
-  }
+  else return 1.;
 }
 double MuEffSF_Iso04_Run2012ABCD(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.958892;
+      return 0.963644;
     else if( pt >= 20 && pt < 25)
-      return 0.987445;
+      return 0.988643;
     else if( pt >= 25 && pt < 30)
-      return 1.00085;
+      return 0.999383;
     else if( pt >= 30 && pt < 35)
-      return 0.999167;
+      return 0.998656;
     else if( pt >= 35 && pt < 40)
-      return 0.998584;
+      return 0.998344;
     else if( pt >= 40 && pt < 50)
-      return 0.998391;
+      return 0.99817;
     else if( pt >= 50 && pt < 60)
-      return 0.99882;
+      return 0.999064;
     else if( pt >= 60 && pt < 90)
-      return 1.00088;
+      return 1.00044;
     else if( pt >= 90 && pt < 140)
-      return 1.00078;
+      return 1.0008;
     else if( pt >= 140 && pt < 300)
-      return 1.00133;
-    else if( pt >= 300 && pt < 500)
-      return 1.011;
+      return 1.00188;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 0.966043;
+      return 0.963851;
     else if( pt >= 20 && pt < 25)
-      return 0.992279;
+      return 0.9879;
     else if( pt >= 25 && pt < 30)
-      return 1.00362;
+      return 1.00148;
     else if( pt >= 30 && pt < 35)
+      return 1.00213;
+    else if( pt >= 35 && pt < 40)
+      return 1.00105;
+    else if( pt >= 40 && pt < 50)
+      return 1.00005;
+    else if( pt >= 50 && pt < 60)
+      return 0.999964;
+    else if( pt >= 60 && pt < 90)
+      return 1.00101;
+    else if( pt >= 90 && pt < 140)
+      return 1.00153;
+    else if( pt >= 140 && pt < 300)
+      return 0.998248;
+    else
+      return 1.;
+  }
+  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+    if( pt >= 10 && pt < 20)
+      return 0.977632;
+    else if( pt >= 20 && pt < 25)
+      return 0.994509;
+    else if( pt >= 25 && pt < 30)
       return 1.00207;
-    else if( pt >= 35 && pt < 40)
-      return 1.00142;
-    else if( pt >= 40 && pt < 50)
-      return 0.999835;
-    else if( pt >= 50 && pt < 60)
-      return 1.00014;
-    else if( pt >= 60 && pt < 90)
-      return 1.00032;
-    else if( pt >= 90 && pt < 140)
-      return 0.999194;
-    else if( pt >= 140 && pt < 300)
-      return 0.999715;
-    else if( pt >= 300 && pt < 500)
-      return 1;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 0.983887;
-    else if( pt >= 20 && pt < 25)
-      return 0.999508;
-    else if( pt >= 25 && pt < 30)
-      return 1.00564;
     else if( pt >= 30 && pt < 35)
-      return 1.00485;
+      return 1.00289;
     else if( pt >= 35 && pt < 40)
-      return 1.00241;
+      return 1.00185;
     else if( pt >= 40 && pt < 50)
-      return 1.00027;
+      return 1.;
     else if( pt >= 50 && pt < 60)
-      return 1.00035;
+      return 1.00011;
     else if( pt >= 60 && pt < 90)
-      return 1.00056;
+      return 1.00037;
     else if( pt >= 90 && pt < 140)
-      return 1.00012;
+      return 0.99977;
     else if( pt >= 140 && pt < 300)
-      return 1.00175;
-    else if( pt >= 300 && pt < 500)
-      return 1;
+      return 0.997083;
     else
-      return 1;
-  }
-}
-
-double MuEff_Id_MC_Run2012(string period, double eta, double pt){
-  if(period.find("2012ABCD") != string::npos)
-    return MuEff_Id_MC_Run2012ABCD(eta,pt);
-  else if (period.find("2012AB") != string::npos)
-    return MuEff_Id_MC_Run2012AB(eta,pt);
-  else if (period.find("2012C") != string::npos)
-    return MuEff_Id_MC_Run2012C(eta,pt);
-  else{
-    cerr << "******MuEffSF_Id****** : Wrong period. Available periods are ABCD, AB or C" << endl;
-    exit(1);
-  }
-}
-double MuEff_Iso04_MC_Run2012(string period, double eta, double pt){
-  if(period.find("2012ABCD") != string::npos)
-    return MuEff_Iso04_MC_Run2012ABCD(eta,pt);
-  else if (period.find("2012AB") != string::npos)
-    return MuEff_Iso04_MC_Run2012AB(eta,pt);
-  else if (period.find("2012C") != string::npos)
-    return MuEff_Iso04_MC_Run2012C(eta,pt);
-  else{
-    cerr << "******MuEffSF_Iso04****** : Wrong period. Available periods are ABCD, AB or C" << endl;
-    exit(1);
-  }
-}
-
-double MuEff_Id_MC_Run2012AB(double eta, double pt){
-  return 1.;
-}
-double MuEff_Id_MC_Run2012C(double eta, double pt){
-  return 1.;
-}
-double MuEff_Id_MC_Run2012ABCD(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.961972;
-    else if( pt >= 20 && pt < 25)
-      return 0.963489;
-    else if( pt >= 25 && pt < 30)
-      return 0.96293;
-    else if( pt >= 30 && pt < 35)
-      return 0.962758;
-    else if( pt >= 35 && pt < 40)
-      return 0.962497;
-    else if( pt >= 40 && pt < 50)
-      return 0.962754;
-    else if( pt >= 50 && pt < 60)
-      return 0.963634;
-    else if( pt >= 60 && pt < 90)
-      return 0.964711;
-    else if( pt >= 90 && pt < 140)
-      return 0.966521;
-    else if( pt >= 140 && pt < 300)
-      return 0.948016;
-    else if( pt >= 300 && pt < 500)
-      return 1;
-    else
-      return 1;
-  }
-  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.959417;
-    else if( pt >= 20 && pt < 25)
-      return 0.965171;
-    else if( pt >= 25 && pt < 30)
-      return 0.96458;
-    else if( pt >= 30 && pt < 35)
-      return 0.96584;
-    else if( pt >= 35 && pt < 40)
-      return 0.965899;
-    else if( pt >= 40 && pt < 50)
-      return 0.965235;
-    else if( pt >= 50 && pt < 60)
-      return 0.963423;
-    else if( pt >= 60 && pt < 90)
-      return 0.96902;
-    else if( pt >= 90 && pt < 140)
-      return 0.96567;
-    else if( pt >= 140 && pt < 300)
-      return 0.960307;
-    else if( pt >= 300 && pt < 500)
-      return 1;
-    else
-      return 1;
-  }
-  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 0.954772;
-    else if( pt >= 20 && pt < 25)
-      return 0.953751;
-    else if( pt >= 25 && pt < 30)
-      return 0.953696;
-    else if( pt >= 30 && pt < 35)
-      return 0.953328;
-    else if( pt >= 35 && pt < 40)
-      return 0.952346;
-    else if( pt >= 40 && pt < 50)
-      return 0.951391;
-    else if( pt >= 50 && pt < 60)
-      return 0.951855;
-    else if( pt >= 60 && pt < 90)
-      return 0.952435;
-    else if( pt >= 90 && pt < 140)
-      return 0.952807;
-    else if( pt >= 140 && pt < 300)
-      return 0.954768;
-    else if( pt >= 300 && pt < 500)
-      return 0.999998;
-    else
-      return 1;
+      return 1.;
   }
   else return 1.;
 }
-
-double MuEff_Iso04_MC_Run2012AB(double eta, double pt){
-  return 1.;
-}
-double MuEff_Iso04_MC_Run2012C(double eta, double pt){
-  return 1.;
-}
-double MuEff_Iso04_MC_Run2012ABCD(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.823464;
-    else if( pt >= 20 && pt < 25)
-      return 0.901366;
-    else if( pt >= 25 && pt < 30)
-      return 0.937436;
-    else if( pt >= 30 && pt < 35)
-      return 0.961094;
-    else if( pt >= 35 && pt < 40)
-      return 0.976869;
-    else if( pt >= 40 && pt < 50)
-      return 0.989045;
-    else if( pt >= 50 && pt < 60)
-      return 0.992633;
-    else if( pt >= 60 && pt < 90)
-      return 0.992933;
-    else if( pt >= 90 && pt < 140)
-      return 0.993447;
-    else if( pt >= 140 && pt < 300)
-      return 0.993498;
-    else if( pt >= 300 && pt < 500)
-      return 0.989124;
-    else
-      return 1;
-  }
-  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.868769;
-    else if( pt >= 20 && pt < 25)
-      return 0.923185;
-    else if( pt >= 25 && pt < 30)
-      return 0.94599;
-    else if( pt >= 30 && pt < 35)
-      return 0.963448;
-    else if( pt >= 35 && pt < 40)
-      return 0.979633;
-    else if( pt >= 40 && pt < 50)
-      return 0.99106;
-    else if( pt >= 50 && pt < 60)
-      return 0.993719;
-    else if( pt >= 60 && pt < 90)
-      return 0.994329;
-    else if( pt >= 90 && pt < 140)
-      return 0.99588;
-    else if( pt >= 140 && pt < 300)
-      return 0.994675;
-    else if( pt >= 300 && pt < 500)
-      return 1;
-    else
-      return 1;
-  }
-  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 0.891694;
-    else if( pt >= 20 && pt < 25)
-      return 0.941519;
-    else if( pt >= 25 && pt < 30)
-      return 0.959011;
-    else if( pt >= 30 && pt < 35)
-      return 0.971288;
-    else if( pt >= 35 && pt < 40)
-      return 0.982912;
-    else if( pt >= 40 && pt < 50)
-      return 0.992894;
-    else if( pt >= 50 && pt < 60)
-      return 0.99485;
-    else if( pt >= 60 && pt < 90)
-      return 0.994932;
-    else if( pt >= 90 && pt < 140)
-      return 0.995011;
-    else if( pt >= 140 && pt < 300)
-      return 0.992611;
-    else if( pt >= 300 && pt < 500)
-      return 1;
-    else
-      return 1;
-  }
-  else return 1.;
-}
-
 
 double ElEffSF_Id_Run2012(string period, double eta, double pt){
   if(period.find("2012ABCD") != string::npos)
     return ElEffSF_Id_Run2012ABCD(eta,pt);
-  else if (period.find("2012AB") != string::npos)
-    return ElEffSF_Id_Run2012AB(eta,pt);
-  else if (period.find("2012C") != string::npos)
-    return ElEffSF_Id_Run2012C(eta,pt);
-  else{
-    cerr << "******ElEffSF_Id****** : Wrong period. Available periods are ABCD, AB or C" << endl;
-    exit(1);
-  }
+  else
+    return 1.;
 }
 double ElEffSF_Iso04_Run2012(string period, double eta, double pt){
   if(period.find("2012ABCD") != string::npos)
     return ElEffSF_Iso04_Run2012ABCD(eta,pt);
-  else if (period.find("2012AB") != string::npos)
-    return ElEffSF_Iso04_Run2012AB(eta,pt);
-  else if (period.find("2012C") != string::npos)
-    return ElEffSF_Iso04_Run2012C(eta,pt);
-  else{
-    cerr << "******ElEffSF_Iso04****** : Wrong period. Available periods are ABCD, AB or C" << endl;
-    exit(1);
-  }
+  else
+    return 1.;
 }
 
-double ElEffSF_Id_Run2012AB(double eta, double pt){
-  return 1.;
-}
-double ElEffSF_Id_Run2012C(double eta, double pt){
-  return 1.;
-}
 double ElEffSF_Id_Run2012ABCD(double eta, double pt){
   if( fabs(eta) >= 0.000 && fabs(eta) < 0.800 ){
     if( pt >= 10 && pt < 15)
@@ -2457,105 +1895,8 @@ double ElEffSF_Id_Run2012ABCD(double eta, double pt){
   }
   else return 1.;
 }
-
-double ElEffSF_Iso04_Run2012AB(double eta, double pt){
-  return 1.;
-}
-double ElEffSF_Iso04_Run2012C(double eta, double pt){
-  return 1.;
-}
 double ElEffSF_Iso04_Run2012ABCD(double eta, double pt){
   return 0.9912;
-}
-
-double ElEff_MC_Id_Run2012AB(double eta, double pt){
-  return 1.;
-}
-double ElEff_MC_Id_Run2012C(double eta, double pt){
-  return 1.;
-}
-double ElEff_MC_Id_Run2012ABCD(double eta, double pt){
-  if( fabs(eta) >= 0.000 && fabs(eta) < 0.800 ){
-    if( pt >= 10 && pt < 15)
-      return 0.317;
-    else if( pt >= 15 && pt < 20)
-      return 0.516;
-    else if( pt >= 20 && pt < 30)
-      return 0.691;
-    else if( pt >= 30 && pt < 40)
-      return 0.794;
-    else if( pt >= 40 && pt < 50)
-      return 0.843;
-    else if( pt >= 50)// && pt < 200)
-      return 0.859;
-    else
-      return 1.;
-  }
-  else if( fabs(eta) >= 0.800 && fabs(eta) < 1.442 ){
-    if( pt >= 10 && pt < 15)
-      return 0.33;
-    else if( pt >= 15 && pt < 20)
-      return 0.485;
-    else if( pt >= 20 && pt < 30)
-      return 0.64;
-    else if( pt >= 30 && pt < 40)
-      return 0.77;
-    else if( pt >= 40 && pt < 50)
-      return 0.839;
-    else if( pt >= 50)// && pt < 200)
-      return 0.862;
-    else
-      return 1.;
-  }
-  else if( fabs(eta) >= 1.442 && fabs(eta) < 1.556 ){
-    if( pt >= 10 && pt < 15)
-      return 0.204;
-    else if( pt >= 15 && pt < 20)
-      return 0.274;
-    else if( pt >= 20 && pt < 30)
-      return 0.363;
-    else if( pt >= 30 && pt < 40)
-      return 0.519;
-    else if( pt >= 40 && pt < 50)
-      return 0.695;
-    else if( pt >= 50)// && pt < 200)
-      return 0.717;
-    else
-      return 1.;
-  }
-  else if( fabs(eta) >= 1.556 && fabs(eta) < 2.000 ){
-    if( pt >= 10 && pt < 15)
-      return 0.142;
-    else if( pt >= 15 && pt < 20)
-      return 0.268;
-    else if( pt >= 20 && pt < 30)
-      return 0.45;
-    else if( pt >= 30 && pt < 40)
-      return 0.584;
-    else if( pt >= 40 && pt < 50)
-      return 0.665;
-    else if( pt >= 50)// && pt < 200)
-      return 0.708;
-    else
-      return 1.;
-  }
-  else if( fabs(eta) >= 2.000 && fabs(eta) < 2.500 ){
-    if( pt >= 10 && pt < 15)
-      return 0.142;
-    else if( pt >= 15 && pt < 20)
-      return 0.283;
-    else if( pt >= 20 && pt < 30)
-      return 0.45;
-    else if( pt >= 30 && pt < 40)
-      return 0.562;
-    else if( pt >= 40 && pt < 50)
-      return 0.637;
-    else if( pt >= 50)// && pt < 200)
-      return 0.672;
-    else
-      return 1.;
-  }
-  else return 1.;
 }
 
 double MuonRelIso(TRootMuon* muon){
