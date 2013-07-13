@@ -133,7 +133,7 @@ int main (int argc, char *argv[])
 	string postfix = ""; // to relabel the names of the output trees  
 	postfix = postfix+"_"+systematic;
 */
-	string Treespath = "VLQTrees_Summer12_PBS";
+	string Treespath = "VLQTrees_Summer12_v5_PBS";
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -327,16 +327,8 @@ int main (int argc, char *argv[])
   // PileUp Reweighting //
   ////////////////////////
 
-  //cout << Luminosity << endl;
+  //moved to VLQTreeAnalyzer.cc
 
-  /*LumiReWeighting LumiWeights, LumiWeightsUp, LumiWeightsDown;
-
-  LumiWeights = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_2012Data53X_UpToRun208357/nominal.root", "pileup", "pileup");
-  LumiWeightsUp = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_up.root", "pileup", "pileup");
-  LumiWeightsDown = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_2012Data53X_UpToRun208357/sys_down.root", "pileup", "pileup");
-
-  cout << " Initialized LumiReWeighting stuff" << endl;
-  */
 	
   ////////////////////////////////////
   //	Loop on datasets
@@ -383,23 +375,27 @@ int main (int argc, char *argv[])
     /////////////////////////////////////
    	    
     vector<JetCorrectorParameters> vCorrParam;
-
-    /*JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/Summer12_V3_MC_L3Absolute_AK5PFchs.txt");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/Summer12_V3_MC_L2Relative_AK5PFchs.txt");
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/Summer12_V3_MC_L1FastJet_AK5PFchs.txt");
-    
-    //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
-    vCorrParam.push_back(*L1JetPar);
-    vCorrParam.push_back(*L2JetPar);
-    vCorrParam.push_back(*L3JetPar);
-
-    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // DATA!
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/Summer12_V3_DATA_L2L3Residual_AK5PFchs.txt");
-      vCorrParam.push_back(*ResJetCorPar);
-      }*/
-    
-    //JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+    if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
+    {
+      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt");
+      vCorrParam.push_back(*L1JetCorPar);
+      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt");
+      vCorrParam.push_back(*L2JetCorPar);
+      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt");
+      vCorrParam.push_back(*L3JetCorPar);
+      JetCorrectorParameters *L2L3ResJetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L2L3Residual_AK5PFchs.txt");
+      vCorrParam.push_back(*L2L3ResJetCorPar);
+    }
+    else
+    {
+      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
+      vCorrParam.push_back(*L1JetCorPar);
+      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_L2Relative_AK5PFchs.txt");
+      vCorrParam.push_back(*L2JetCorPar);
+      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
+      vCorrParam.push_back(*L3JetCorPar);
+    }
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");  
 
     // true means redo also the L1
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
@@ -494,12 +490,18 @@ int main (int argc, char *argv[])
       // Apply Jet Corrections on-the-fly //   
       //////////////////////////////////////
 
-      // not needed for now, GT contains good stuff
-      /*if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) {
-      	//jetTools->correctJets(init_jets_corrected,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
-      } else {
-	jetTools->correctJets(init_jets_corrected,event->kt6PFJets_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-	}*/
+      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) 
+			{
+      	  jetTools->unCorrectMETTypeOne(init_jets_corrected, mets[0], true);
+          jetTools->correctJets(init_jets_corrected, event->kt6PFJets_rho(), true); //last boolean: isData (needed for L2L3Residual...)
+          jetTools->correctMETTypeOne(init_jets_corrected, mets[0], true);
+      } 
+			else 
+			{
+	        jetTools->unCorrectMETTypeOne(init_jets_corrected, mets[0], false);
+          jetTools->correctJets(init_jets_corrected, event->kt6PFJets_rho(), false); //last boolean: isData (needed for L2L3Residual...)
+          jetTools->correctMETTypeOne(init_jets_corrected, mets[0], false);
+	    }
 
       // PU reweighting
 
@@ -727,7 +729,7 @@ int main (int argc, char *argv[])
       unsigned int SelectednLeptons = 0, SelectednMu = 0, SelectednEl = 0;
 			
 			bool eventselected = false;
-
+    
       // selection with mu
       if (triggedSemiMu) {
 				if (isGoodPV) {
@@ -736,9 +738,8 @@ int main (int argc, char *argv[])
 					   selectedJets = selectedJetsNoMu;
 					   selectedJetsLargeEtaRange = selectedJetsLargeEtaRangeNoMu;
 					}
-	  				
 					if(selectedJetsLargeEtaRange.size() >= 2)
-					{					
+					{	
 						/*//the electrons should not be from a conversion! -> ok, apparently now (in 53X) done in selection class...
 						vector<TRootElectron*> selectedElectrons_noconversions;
 						for(unsigned int iEl=0; iEl<selectedElectrons.size(); iEl++)
@@ -770,7 +771,6 @@ int main (int argc, char *argv[])
 						  //    }
 	            //  }
 	            //}
-							
 							if(SelectednEl == 0 && (selectedLooseElectrons.size() == 0) )
 							{
 							     eventselected = true;
@@ -785,7 +785,7 @@ int main (int argc, char *argv[])
 							}
 							else if(SelectednEl == 3 && (selectedLooseElectrons.size() == 3 || ( dataSetName.find("InvIso") != string::npos && selectedLooseElectrons.size() == 0 )))
 							{
-							     eventselected = true;									 
+							     eventselected = true;								 
 							}
 							else if(SelectednEl >= 4 && (selectedLooseElectrons.size() >=  4 || ( dataSetName.find("InvIso") != string::npos && selectedLooseElectrons.size() == 0 )) )
 							{
@@ -963,6 +963,7 @@ int main (int argc, char *argv[])
 		 SelectednLeptons = SelectednMu + SelectednEl;
      
 		 if (!eventselected) continue;
+		 
      vector<float> SelectedJets_bTagCSV, SelectedForwardJets_bTagCSV;
 		 vector<int> SelectedJets_partonFlavour, SelectedForwardJets_partonFlavour;
      vector<TLorentzVector> mcParticlesTLV, SelectedJetsTLV, SelectedForwardJetsTLV, SelectedMuonsTLV, SelectedElectronsTLV;
@@ -980,6 +981,7 @@ int main (int argc, char *argv[])
 		 }*/
      for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++)
      {
+		        //cout<<"jet "<<iJet<<" Pt = "<<selectedJets[iJet]->Pt()<<endl;
             SelectedJetsTLV.push_back( *selectedJets[iJet] );
             SelectedJets_bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
 						SelectedJets_partonFlavour.push_back(selectedJets[iJet]->partonFlavour());
@@ -1025,7 +1027,6 @@ int main (int argc, char *argv[])
 		 myBranch_selectedEvents->setSelectedJets_bTagCSV( SelectedJets_bTagCSV );
 		 myBranch_selectedEvents->setSelectedJets_partonFlavour( SelectedJets_partonFlavour );
 		 myBranch_selectedEvents->setSelectedForwardJets( SelectedForwardJetsTLV );
-		 myBranch_selectedEvents->setSelectedForwardJets_bTagCSV( SelectedForwardJets_bTagCSV );
 		 myBranch_selectedEvents->setSelectedForwardJets_partonFlavour( SelectedForwardJets_partonFlavour );
 		 myBranch_selectedEvents->setMuons( SelectedMuonsTLV );
      myBranch_selectedEvents->setElectrons( SelectedElectronsTLV );
