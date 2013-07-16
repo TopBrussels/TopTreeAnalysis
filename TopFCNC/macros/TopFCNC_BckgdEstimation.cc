@@ -594,8 +594,8 @@ int main (int argc, char *argv[])
             exit(1);
           }
         }
-        cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
-        cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
+        //cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
+        //cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
 	    } //end previousRun != currentRun
       
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -818,7 +818,7 @@ int main (int argc, char *argv[])
       int NbOfBtagged = 0;
       
       // Select events based on the presence of *exactly one* extra isolated lepton
-      if(selectedExtraMuons.size()==0 && selectedElectrons.size()==0){
+      if(selectedExtraMuons.size()==0 && selectedExtraElectrons.size()==0){
         selecTableMuEl.Fill(d,6,scaleFactor);
         MSPlot["NbOfSelectedJets_me_ch"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
         if(selectedJets.size()>0){ //at least 1 jet
@@ -923,8 +923,8 @@ int main (int argc, char *argv[])
   cout << " - Writing outputs to the files ..." << endl;
   
   //Selection tables
-  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
-  selecTableMuEl.TableCalculator(false, true, true, true, true);
+  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass)
+  selecTableMuEl.TableCalculator(false, true, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
   selecTableMuEl.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_MuEl.tex",    true,true,true,true,false,false,true);
   
