@@ -1885,7 +1885,7 @@ bool ZCandInvMass(vector<TRootMuon*>& muons, int& idx_Z_1, int& idx_Z_2, double&
   TRootMuon* mu1 = 0;
   TRootMuon* mu2 = 0;
   //bool foundZ = false;
-  double invMass_tmp = 9999999;
+  double invMass_tmp = 0;
   for(unsigned int i=0;i<muons.size()-1;i++)
   {
     for(unsigned int j=i+1;j<muons.size();j++)
@@ -1924,6 +1924,7 @@ bool ZCandInvMass(vector<TRootElectron*>& electrons, int& idx_Z_1, int& idx_Z_2,
   TRootElectron* el1 = 0;
   TRootElectron* el2 = 0;
 //  bool foundZ = false;
+  double invMass_tmp = 0;
   for(unsigned int i=0;i<electrons.size()-1;i++)
   {
     for(unsigned int j=i+1;j<electrons.size();j++)
