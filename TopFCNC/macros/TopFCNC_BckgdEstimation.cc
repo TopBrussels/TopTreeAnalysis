@@ -168,9 +168,9 @@ int main (int argc, char *argv[])
   if(domisTagEffShift == 2)
     postfix= postfix+"_misTagPlus";
   
-  string channelpostfix = "_MuElTrigger";
-  string comments = "_Run2012ABCD_Skim2Mu_3Jets";
-  string xmlFileName = "../config/myTopFCNCconfig_MuEl.xml";
+  string channelpostfix = "_MuEGTrigger";
+  string comments = "_Run2012ABCD_SkimMuEG_3Jets";
+  string xmlFileName = "../config/TopFCNCconfig_EventSelection_MuEG_SkimMuEG3Jets.xml";
 
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;
