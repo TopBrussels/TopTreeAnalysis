@@ -286,6 +286,7 @@ int main (int argc, char *argv[])
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",50,0,4);
   for (unsigned int d = 0; d < datasets.size(); d++){
+    histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()] = new TH1F(("ScaleFactors_"+datasets[d]->Name()).c_str(),";Total SF;#events",500,0,2);
   	histo2D[("d0_vs_phi_1stleadingmuon_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadingmuon_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
   	histo2D[("d0_vs_phi_1stleadingelec_"+datasets[d]->Name()).c_str()] = new TH2F(("d0_vs_phi_1stleadingelec_"+datasets[d]->Name()).c_str(),"d_{0}:#phi",500,-0.02,0.02,500,0,4);
   }
