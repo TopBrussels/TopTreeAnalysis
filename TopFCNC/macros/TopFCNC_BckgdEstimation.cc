@@ -251,11 +251,13 @@ int main (int argc, char *argv[])
   MSPlot["DiLeptonInvMass_me_ch"]            = new MultiSamplePlot(datasets, "DiLeptonInvMass_me_ch", 400, 50, 130, "m_{ll}");
   MSPlot["DiLeptonSystPt_me_ch"]             = new MultiSamplePlot(datasets, "DiLeptonSystPt_me_ch", 400, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonDR_me_ch"]                 = new MultiSamplePlot(datasets, "DiLeptonDR_me_ch", 400, 0, 10, "#Delta R(l^{+}l^{-})");
-
+  MSPlot["DiLeptonDPhi_me_ch"]               = new MultiSamplePlot(datasets, "DiLeptonDPhi_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}l^{-})");
+  
   MSPlot["DiLeptonInvMass_AtLeastFourJets_me_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastFourJets_me_ch", 400, 50, 130, "m_{ll}");
   MSPlot["DiLeptonDR_AtLeastFourJets_me_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastFourJets_me_ch", 100, 0, 5, "#Delta R(l^{+}l^{-})");
   MSPlot["DiLeptonDPhi_AtLeastFourJets_me_ch"]   = new MultiSamplePlot(datasets, "DiLeptonDPhi_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}l^{-})");
   MSPlot["DiLeptonSystPt_AtLeastFourJets_me_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_me_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
+  MSPlot["DiLeptonSystDPhi_JetSyst_me_ch"]       = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_JetSyst_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
   
   MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch"]   = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
   MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch"]      = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
