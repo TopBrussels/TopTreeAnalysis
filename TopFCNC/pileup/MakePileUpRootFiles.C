@@ -8,22 +8,27 @@ using namespace std;
 void MakePileUpRootFiles()
 {
   
-  const int NbOfFiles = 3;
+  const int NbOfFiles = 4;
+  string comment = "";
+  //string comment = "_Systematic_Up_5perc";
+  //string comment = "_Systematic_Down_5perc";
   string filenames[NbOfFiles] = {
-    "DoubleMu_Run2012A_13Jul_TopTreeID_2219_PileupHistogram.root",
-    "DoubleMu_Run2012A_06Aug_TopTreeID_2204_PileupHistogram.root",
-    "DoubleMu_Run2012B_13Jul_TopTreeID_2235_PileupHistogram.root"//,
-    //"DoubleMu_Run2012C_24Aug_TopTreeID_2203_PileupHistogram.root",
-    //"DoubleMu_Run2012C_Promptv2_TopTreeID_2226_PileupHistogram.root",
-    //"DoubleMu_Run2012D_Promptv1_TopTreeID_2218_PileupHistogram.root"
+    "DoubleMu_Run2012A_22Jan2013_TopTreeID_3495_1372688083_PileupHistogram"+comment+".root",
+    "DoubleMu_Run2012B_22Jan2013_TopTreeID_3494_1372688071_PileupHistogram"+comment+".root",
+    "DoubleMu_Run2012C_22Jan2013_TopTreeID_3493_1372689333_PileupHistogram"+comment+".root",
+    "DoubleMu_Run2012D_22Jan2013_TopTreeID_3490_1372689340_PileupHistogram"+comment+".root"
+    /*
+    "MuEG_Run2012A_22Jan2013_TopTreeID_3497_1372750900_PileupHistogram"+comment+".root",
+    "MuEG_Run2012B_22Jan2013_TopTreeID_3496_1372687900_PileupHistogram"+comment+".root",
+    "MuEG_Run2012C_22Jan2013_TopTreeID_3498_1372751025_PileupHistogram"+comment+".root",
+    "MuEG_Run2012D_22Jan2013_TopTreeID_3499_1372751043_PileupHistogram"+comment+".root"
+    */
   };
   const double IntLumi[NbOfFiles] = {
-    800.342,
-    80.074,
-    4315//,
-    //495.003,
-    //6392,
-    //6767
+    866.6,//863.8,
+    4380.7,//4375,
+    7102,//7146,
+    7277//7292
   };
 
   TFile *files[NbOfFiles];

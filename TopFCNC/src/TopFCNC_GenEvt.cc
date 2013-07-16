@@ -2,7 +2,7 @@
 
 //ClassImp(TopFCNC_GenEvt);
 
-void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles, bool debug){
+bool TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParticles, bool debug){
 
   wLeptonicChannel_ = kNone;
   zLeptonicChannel_ = kNone;
@@ -15,7 +15,7 @@ void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParti
 		  else if( fabs(mcParticles[i]->dauOneId()) == 23 || fabs(mcParticles[i]->dauTwoId()) == 23 || fabs(mcParticles[i]->dauThreeId()) == 23 || fabs(mcParticles[i]->dauFourId()) == 23) { fcncDecayTop_ = *mcParticles[i]; continue; }
 		  else {
 		  	cerr << "Cannot assign top quark according to its decay..." << endl;
-		  	exit(1);
+		  	return false;
 		  }
   	}
 
@@ -109,9 +109,15 @@ void TopFCNC_GenEvt::ReconstructEvt(const std::vector<TRootMCParticle*> &mcParti
   	}
   }
   //if(debug) cout<<(*this)<<endl;
+  if(zLeptonicChannel_ == kNone){
+    cerr << "Cannot assign the Z leptonic decay channel." << endl;
+    return false;
+  }
+  
+  return true;
 }
 
-void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
+int TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist, const bool print){
 	if(zLeptonicChannel_ == kNone)
 	{
 		cerr << "Cannot find the Z leptonic decay channel. Use the method ReconstructEvt first." << endl;
@@ -125,7 +131,7 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 	{
 		tljets.push_back((TLorentzVector)*jets[i]);
 	}
-
+/*
 	if(wLeptonicChannel_ == kNone)// dileptonic event tt->Wb+Zq->qqb+llq
 	{
 		partons.push_back(quark1FromW_);
@@ -138,9 +144,14 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 		partons.push_back(B_);
 		partons.push_back(Q_);
 	}
-	
+*/
+	if(quark1FromW_.E()>0)  partons.push_back(quark1FromW_);
+  if(quark2FromW_.E()>0)  partons.push_back(quark2FromW_);
+  if(B_.E()>0)  partons.push_back(B_);
+  if(Q_.E()>0)  partons.push_back(Q_);
+
 	JetPartonMatching myJetPartonMatcher = JetPartonMatching(partons,tljets,algorithm,useMaxDist,useDeltaR,maxDist);
-	//myJetPartonMatcher.print();
+	if(print) myJetPartonMatcher.print();
 
 	if(wLeptonicChannel_ == kNone){ // dileptonic event tt->Wb+Zq->qqb+llq
 	  HadQ1Idx_ = myJetPartonMatcher.getMatchForParton(0,0);
@@ -160,6 +171,7 @@ void TopFCNC_GenEvt::MatchJetsToPartons(const std::vector<TRootJet*> &jets, cons
 		if(HadBIdx_  != -1 ) matchedB_           = *jets[HadBIdx_];
 		if(HadQIdx_  != -1 ) matchedQ_           = *jets[HadQIdx_];
 	}
+  return myJetPartonMatcher.getNumberOfUnmatchedPartons();
 }
 
 void TopFCNC_GenEvt::MatchLeptonsToZ(const std::vector<TRootMuon*> &leptons, const int algorithm, const bool useMaxDist, const bool useDeltaR, const double maxDist){
