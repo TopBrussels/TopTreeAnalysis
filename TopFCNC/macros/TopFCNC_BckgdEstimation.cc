@@ -237,13 +237,13 @@ int main (int argc, char *argv[])
   MSPlot["NbOfVertices"]                      = new MultiSamplePlot(datasets, "NbOfVertices", 30, 0, 30, "Nb. of vertices");
   
   MSPlot["MuonDzero"]                         = new MultiSamplePlot(datasets, "MuonDzero", 500, -0.02, 0.02, "d_{0} [cm]");
-  MSPlot["ElectronDzero"]                     = new MultiSamplePlot(datasets, "ElectronDzero", 500, -0.02, 0.02, "d_{0} [cm]");
+  MSPlot["ElecDzero"]                         = new MultiSamplePlot(datasets, "ElecDzero", 500, -0.02, 0.02, "d_{0} [cm]");
   
   MSPlot["1stLeadingMuonPt"]                  = new MultiSamplePlot(datasets, "1stLeadingMuonPt", 300, 0, 150, "p_{T} [GeV/c]");
-  MSPlot["1stLeadingElectronPt"]              = new MultiSamplePlot(datasets, "1stLeadingElectronPt", 300, 0, 150, "p_{T} [GeV/c]");
+  MSPlot["1stLeadingElecPt"]                  = new MultiSamplePlot(datasets, "1stLeadingElecPt", 300, 0, 150, "p_{T} [GeV/c]");
   
   MSPlot["1stLeadingMuonRelIso"]              = new MultiSamplePlot(datasets, "1stLeadingMuonRelIso", 100, 0, 0.5, "RelIso");
-  MSPlot["1stLeadingElectronRelIso"]          = new MultiSamplePlot(datasets, "1stLeadingElectronRelIso", 100, 0, 0.5, "RelIso");
+  MSPlot["1stLeadingElecRelIso"]              = new MultiSamplePlot(datasets, "1stLeadingElecRelIso", 100, 0, 0.5, "RelIso");
   
   MSPlot["NbOfIsolatedMuons"]                 = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]             = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -744,8 +744,8 @@ int main (int argc, char *argv[])
       }
 
       MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
 
       //__Dilepton selection_________________________________________________________________
@@ -765,9 +765,6 @@ int main (int argc, char *argv[])
       float reliso_el = ElecRelIso(selectedElectrons[0], event);
       MSPlot["1stLeadingMuonRelIso"]->Fill(reliso_mu, datasets[d], true, Luminosity*scaleFactor);
       MSPlot["1stLeadingElecRelIso"]->Fill(reliso_el, datasets[d], true, Luminosity*scaleFactor);
-      
-      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       
       selecTableMuEl.Fill(d,4,scaleFactor);
       
