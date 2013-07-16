@@ -67,7 +67,7 @@ bool ZCandInvMass(vector<TRootMuon*>& muons, vector<TRootElectron*>& electrons, 
 int main (int argc, char *argv[])
 {
   clock_t start = clock();
-
+  
   int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
   
@@ -139,7 +139,7 @@ int main (int argc, char *argv[])
   cout << " --- threshold: " << btagCut << endl;
   cout << " -- Z boson mass = " << Zmass<< endl;
   cout << " -- Z boson mass window = " << Zwindowsize<< endl;
-    
+  
   cout << "*************************************************************" << endl;
   cout << " Beginning of the program for the FCNC search ! " << endl;
   cout << "*************************************************************" << endl;
@@ -171,7 +171,7 @@ int main (int argc, char *argv[])
   string channelpostfix = "_MuEGTrigger";
   string comments = "_Run2012ABCD_SkimMuEG_3Jets";
   string xmlFileName = "../config/TopFCNCconfig_EventSelection_MuEG_SkimMuEG3Jets.xml";
-
+  
   const char *xmlfile = xmlFileName.c_str();
   cout << "used config file: " << xmlfile << endl;
   
@@ -258,6 +258,7 @@ int main (int argc, char *argv[])
   MSPlot["DiLeptonDPhi_AtLeastFourJets_me_ch"]   = new MultiSamplePlot(datasets, "DiLeptonDPhi_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}l^{-})");
   MSPlot["DiLeptonSystPt_AtLeastFourJets_me_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_me_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonSystDPhi_JetSyst_me_ch"]       = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_JetSyst_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
+  MSPlot["DiLeptonSystPt_Over_JetSystPt_me_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_me_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   
   MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch"]   = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
   MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch"]      = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
@@ -277,7 +278,7 @@ int main (int argc, char *argv[])
   
   MSPlot["HighestBdisc_me_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_CVS", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_me_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_JP" , 50, 0, 1, "JP b-disc.");
-
+  
   MSPlot["MET_AtLeastFourJets_me_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_me_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   
   MSPlot["NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV"]= new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV",  10, 0, 10, "Nb. of b-tagged jets (CSVM)");
@@ -333,7 +334,7 @@ int main (int argc, char *argv[])
   SelectionTable selecTableMuEl(CutsSelecTableMuEl, datasets);
   selecTableMuEl.SetLuminosity(Luminosity);
   selecTableMuEl.SetPrecision(1);
-    
+  
   cout << " - SelectionTable instantiated ..." << endl;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -479,7 +480,7 @@ int main (int argc, char *argv[])
       vector<TRootGenJet*> genjets;
       if(!isData)
 		    genjets = treeLoader.LoadGenJet(ievt,false);
-
+      
       //cout << "run: " << event->runId() << "  lumi: " << event->lumiBlockId() << "  event: " << event->eventId() << endl;
       
       // check which file in the dataset it is to have the HLTInfo right
@@ -516,7 +517,7 @@ int main (int argc, char *argv[])
           }
           else if (currentRun >= 191695 && currentRun <= 193621){
             itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6"), currentRun, iFile);
-            itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6"), currentRun, iFile);
+            if(currentRun >= 191718)itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6"), currentRun, iFile);
             // int. lumi = 384.511/pb
           }
 				  /*------------------------------------------------------------------
@@ -535,7 +536,7 @@ int main (int argc, char *argv[])
            Sub-Total integrated luminosity = 4375(/pb)
            Total integrated luminosity = 5238.8(/pb)
            -----------------------------------------------------------------*/
-
+          
 				  /*------------------------------------------------------------------
            Dataset : MuEG/Run2012C-22Jan2013-v1
            -------------------------------------------------------------------
@@ -544,7 +545,7 @@ int main (int argc, char *argv[])
            Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9 available for runs 199698-203742
            Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8 available for runs 198049-199608
            Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9 available for runs 199698-203742
-
+           
            ------------------------------------------------------------------*/
           else if (currentRun >= 198049 && currentRun <= 199608){
             itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8"), currentRun, iFile);
@@ -560,7 +561,7 @@ int main (int argc, char *argv[])
            Sub-Total integrated luminosity = 7146(/pb)
            Total integrated luminosity = 12384.8(/pb)
            -----------------------------------------------------------------*/
-
+          
 				  /*------------------------------------------------------------------
            Dataset : MuEG/Run2012D-22Jan2013-v1
            --------------------------------------------------------------------
@@ -576,7 +577,7 @@ int main (int argc, char *argv[])
            Sub-Total integrated luminosity = 7292(/pb)
            Total integrated luminosity = 19676.8(/pb)
            -----------------------------------------------------------------*/
-
+          
           if(itrigger1 == 9999 && itrigger2 == 9999)
           {
             cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
@@ -592,9 +593,9 @@ int main (int argc, char *argv[])
             cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
             exit(1);
           }
-          cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
-          cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
         }
+        cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
+        cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
 	    } //end previousRun != currentRun
       
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -745,25 +746,25 @@ int main (int argc, char *argv[])
           scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
         }
       }
-
+      
       MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
-
+      
       //__Dilepton selection_________________________________________________________________
       if( selectedMuons.size()<1 || selectedElectrons.size()<1 ) continue;
-
+      
       histo2D[("d0_vs_phi_1stleadingmuon_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[0]->d0(),selectedMuons[0]->Phi());
       histo2D[("d0_vs_phi_1stleadingelec_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[0]->d0(),selectedElectrons[0]->Phi());
       for(unsigned int i=0;i<selectedMuons.size();i++)
         MSPlot["MuonDzero"]->Fill(selectedMuons[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
       for(unsigned int i=0;i<selectedElectrons.size();i++)
         MSPlot["ElecDzero"]->Fill(selectedElectrons[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
-
+      
       MSPlot["1stLeadingMuonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["1stLeadingElecPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-
+      
       float reliso_mu = MuonRelIso(selectedMuons[0]);
       float reliso_el = ElecRelIso(selectedElectrons[0], event);
       MSPlot["1stLeadingMuonRelIso"]->Fill(reliso_mu, datasets[d], true, Luminosity*scaleFactor);
@@ -773,7 +774,7 @@ int main (int argc, char *argv[])
       
       //__Z candidate selection_________________________________________________________________
       bool foundZ = false;
-      int idx_Z_mu = -1, idx_Z_el = -1;
+      int idx_Z_mu = 0, idx_Z_el = 0;
       double invMass = 0;
       // Calculate the invariant mass for each isolated lepton pairs
       // - return true if the mass is the Z boson mass window
@@ -784,7 +785,7 @@ int main (int argc, char *argv[])
       if(!foundZ)
         continue;
       selecTableMuEl.Fill(d,5,scaleFactor);
-
+      
       float DiLeptonSystPt = (*selectedMuons[idx_Z_mu] + *selectedElectrons[idx_Z_el]).Pt();
       float DiLeptonDR     =   selectedMuons[idx_Z_mu]->DeltaR(*selectedElectrons[idx_Z_el]);
       float DiLeptonDPhi   =   selectedMuons[idx_Z_mu]->DeltaPhi(*selectedElectrons[idx_Z_el]);
@@ -796,7 +797,7 @@ int main (int argc, char *argv[])
       float DiLeptonSystDPhi_JetSyst = (*selectedMuons[idx_Z_mu] + *selectedElectrons[idx_Z_el]).DeltaPhi(JetSyst);
       float DiLeptonSystDPhi_LeadingJet = 0;
       if(selectedJets.size()>0) DiLeptonSystDPhi_LeadingJet = (*selectedMuons[idx_Z_mu] + *selectedElectrons[idx_Z_el]).DeltaPhi(*selectedJets[0]);
-
+      
       MSPlot["DiLeptonSystPt_me_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonDR_me_ch"]    ->Fill(DiLeptonDR,     datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonDPhi_me_ch"]  ->Fill(DiLeptonDPhi,   datasets[d], true, Luminosity*scaleFactor);
@@ -815,7 +816,7 @@ int main (int argc, char *argv[])
       MyTopFCNC_EvtCand = 0;
       double highestbtagdisc = 0;
       int NbOfBtagged = 0;
-
+      
       // Select events based on the presence of *exactly one* extra isolated lepton
       if(selectedExtraMuons.size()==0 && selectedElectrons.size()==0){
         selecTableMuEl.Fill(d,6,scaleFactor);
@@ -836,7 +837,7 @@ int main (int argc, char *argv[])
                 MSPlot["FourthLeadingJetPt_me_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
                 if(applyAsymmJetPtCut && selectedJets[3]->Pt()<JetPtCuts[3]) continue;
                 selecTableMuEl.Fill(d,10,scaleFactor);
-
+                
                 MSPlot["NbOfVertices_AtLeastFourJets_me_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonInvMass_AtLeastFourJets_me_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDR_AtLeastFourJets_me_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
@@ -845,13 +846,13 @@ int main (int argc, char *argv[])
                 MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystDPhi_LeadingJet, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystPt/JetSystPt, datasets[d], true, Luminosity*scaleFactor);
-
+                
                 sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
                 MSPlot["HighestBdisc_me_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
                 highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
                 sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
                 MSPlot["HighestBdisc_me_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
- 
+                
                 MSPlot["MET_AtLeastFourJets_me_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
                 
                 NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
@@ -870,7 +871,7 @@ int main (int argc, char *argv[])
           }
         }
       }
-
+      
       if(MyTopFCNC_EvtCand){
         MyTopFCNC_EvtCand->SetEventID( event->eventId() );
         MyTopFCNC_EvtCand->SetRunID( event->runId() );
@@ -922,11 +923,11 @@ int main (int argc, char *argv[])
   cout << " - Writing outputs to the files ..." << endl;
   
   //Selection tables
-  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)	
+  //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)
   selecTableMuEl.TableCalculator(false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
   selecTableMuEl.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_MuEl.tex",    true,true,true,true,false,false,true);
-
+  
   //MultiSample plots
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
