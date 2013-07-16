@@ -59,11 +59,9 @@ double ElEffSF_Iso04_Run2012(string period, double eta, double pt);
 
 double ElEffSF_Id_Run2012ABCD(double eta, double pt);
 double ElEffSF_Iso04_Run2012ABCD(double eta, double pt);
-//double MuEffSF_TrgMu8_Run2012(double eta, double pt);
-//double MuEffSF_TrgMu17_Run2012(double eta, double pt);
 
 double MuonRelIso(TRootMuon* muon);
-double ElectronRelIso(TRootElectron* elec, TRootEvent* event);
+double ElecRelIso(TRootElectron* elec, TRootEvent* event);
 
 bool ZCandInvMass(vector<TRootMuon*>& muons, int& idx_Z_1, int& idx_Z_2, double& invMass, double Zmass, double Zwindowsize);
 bool ZCandInvMass(vector<TRootElectron*>& electrons, int& idx_Z_1, int& idx_Z_2, double& invMass, double Zmass, double Zwindowsize);
@@ -120,8 +118,8 @@ int main (int argc, char *argv[])
   const double JetPtCut     = 20;
   const double JetEtaCut    = 2.4;
 	bool applyAsymmJetPtCut   = true;
-	const double JetPtCuts[4] = {50.,30.,20.,20.};
-  bool applyLeptonSF        = false;
+	const double JetPtCuts[4] = {50.,40.,30.,20.};
+  bool applyLeptonSF        = true;
   
   cout << "*************************************************************" << endl;
   cout << " Beginning of the program for the FCNC search ! " << endl;
@@ -245,8 +243,6 @@ int main (int argc, char *argv[])
   
   //Global variable
   TRootEvent* event = 0;
-  Float_t     LeptIdSF = 0;
-  Float_t     LeptIsoSF= 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -275,8 +271,8 @@ int main (int argc, char *argv[])
   
   MSPlot["1stLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "1stLeadingMuonRelIsolation", 30, 0, 0.3, "RelIso");
   MSPlot["3rdLeadingMuonRelIsolation"]        = new MultiSamplePlot(datasets, "3rdLeadingMuonRelIsolation", 30, 0, 0.3, "RelIso");
-  MSPlot["1stLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "1stLeadingElectronRelIsolation", 30, 0, 0.3, "RelIso");
-  MSPlot["3rdLeadingElectronRelIsolation"]    = new MultiSamplePlot(datasets, "3rdLeadingElectronRelIsolation", 30, 0, 0.3, "RelIso");
+  MSPlot["1stLeadingElecRelIsolation"]    = new MultiSamplePlot(datasets, "1stLeadingElecRelIsolation", 30, 0, 0.3, "RelIso");
+  MSPlot["3rdLeadingElecRelIsolation"]    = new MultiSamplePlot(datasets, "3rdLeadingElecRelIsolation", 30, 0, 0.3, "RelIso");
   
   MSPlot["NbOfIsolatedMuons"]                 = new MultiSamplePlot(datasets, "NbOfIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfIsolatedElectrons"]             = new MultiSamplePlot(datasets, "NbOfIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -425,9 +421,9 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   char zmasscutname[100];
-  sprintf(zmasscutname,"$|m_{ll}-m_Z|<%f$ GeV",Zwindowsize);
+  sprintf(zmasscutname,"$|m_{ll}-m_Z|<%.0f$ GeV",Zwindowsize);
   char btagcutname[100];
-  sprintf(btagcutname,"$\\geq 1$ b-tagged jet (CSV disc: $%f$)",btagCut);
+  sprintf(btagcutname,"$\\geq 1$ b-tagged jet (CSV disc: $%1.3f$)",btagCut);
   
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : µµ  ////////////////////////////////
@@ -571,7 +567,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   string PileUpFile = "";
   string PileUpSyst = ( doPUShift==0 ? "" : ( doPUShift==1 ? "_Systematic_Down_5perc" : "_Systematic_Up_5perc" ) );
-  if( comments.find("2012ABCD") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012ABCD_22Jan2013_TopTreeID_3490_3495_PileupHistogram"+PileUpSyst+".root" : "../pileup/XXX.root");
+  if( comments.find("2012ABCD") != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012ABCD_22Jan2013_TopTreeID_3490to3495_PileupHistogram"+PileUpSyst+".root" : "../pileup/XXX.root");
 /*
   else if( comments.find("2012AB")   != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012AB_22Jan2013_TopTreeID_3494_3495_PileupHistogram.root" : "../pileup/XXX.root");
   else if( comments.find("2012C")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012C_Promptv2_TopTreeID_2226_PileupHistogram.root" : "../pileup/XXX.root");
@@ -741,8 +737,8 @@ int main (int argc, char *argv[])
 					    itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v9"), currentRun, iFile);
 					  }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 884,2(/pb)
-             Total integrated luminosity = 884,2(/pb)
+             Sub-Total integrated luminosity = 866,6(/pb)
+             Total integrated luminosity = 866,6(/pb)
              ------------------------------------------------------------------*/
             
 				    /*------------------------------------------------------------------
@@ -754,16 +750,16 @@ int main (int argc, char *argv[])
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v10"), currentRun, iFile);
             }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 3493(/pb)
-             Total integrated luminosity = 4377,2(/pb)
+             Sub-Total integrated luminosity = 3430(/pb)
+             Total integrated luminosity = 4296,6(/pb)
              ------------------------------------------------------------------*/
             else if (currentRun >= 196046 && currentRun <= 196531){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v18"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v11"), currentRun, iFile);
             }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 951.1(/pb)
-             Total integrated luminosity = 5328.2(/pb)
+             Sub-Total integrated luminosity = 950.7(/pb)
+             Total integrated luminosity = 5247.3(/pb)
              ------------------------------------------------------------------*/
             
 				    /*------------------------------------------------------------------
@@ -776,15 +772,15 @@ int main (int argc, char *argv[])
             }
 				    /*--------------------------------------------------------------------
              Sub-Total integrated luminosity = 1773(/pb)
-             Total integrated luminosity = 7001.2(/pb)
+             Total integrated luminosity = 7020.3(/pb)
              ------------------------------------------------------------------*/
             else if (currentRun >= 199698 && currentRun <= 203742){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v21"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v13"), currentRun, iFile);
             }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = 7102(/pb)
-             Total integrated luminosity = 12540.2(/pb)
+             Sub-Total integrated luminosity = 5329(/pb)
+             Total integrated luminosity = 12349.3(/pb)
              ------------------------------------------------------------------*/
             
 				    /*------------------------------------------------------------------
@@ -795,13 +791,17 @@ int main (int argc, char *argv[])
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v21"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v13"), currentRun, iFile);
             }
+				    /*--------------------------------------------------------------------
+             Sub-Total integrated luminosity = 1530(/pb)
+             Total integrated luminosity = 13879.3(/pb)
+             ------------------------------------------------------------------*/
             else if (currentRun >= 205303 && currentRun <= 208686){
               itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Mu8_v22"), currentRun, iFile);
               itrigger2 = treeLoader.iTrigger (string ("HLT_Mu17_TkMu8_v14"), currentRun, iFile);
             }
 				    /*--------------------------------------------------------------------
-             Sub-Total integrated luminosity = XXXX(/pb)
-             Total integrated luminosity = XXXX(/pb)
+             Sub-Total integrated luminosity = 5747(/pb)
+             Total integrated luminosity = 19626.3(/pb)
              ------------------------------------------------------------------*/
             
   		      if(itrigger1 == 9999 && itrigger2 == 9999)
@@ -918,22 +918,19 @@ int main (int argc, char *argv[])
       
       // scale factor for the event
       float scaleFactor = 1.;
-      /*
-       if(isData)
-       {
-       // Apply the scraping veto. (Is it still needed?)
-       bool isBeamBG = true;
-       if(event->nTracks() > 10)
-       {
-       if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
-       isBeamBG = false;
-       }
-       if(isBeamBG) continue;
-       }
-       else{
-       */
-      if(!isData)
+
+      if(isData)
       {
+        // Apply the scraping veto. (Is it still needed?)
+        bool isBeamBG = true;
+        if(event->nTracks() > 10)
+        {
+          if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
+            isBeamBG = false;
+        }
+        if(isBeamBG) continue;
+      }
+      else{
         // Apply pile-up reweighting
         double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
         scaleFactor *= lumiWeight;
@@ -998,7 +995,6 @@ int main (int argc, char *argv[])
       
       //__Selection instances_________________________________________________________________
       Selection selection(init_jets, init_muons, init_electrons, mets, event->kt6PFJets_rho()); //mets can also be corrected...
-      //Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
 
       // Specify the correction to be applied to the electron isolation
       selection.setElectronIsoCorrType(1); // 0: no corr, 1: EA corr, 2: dB corr
@@ -1007,10 +1003,8 @@ int main (int argc, char *argv[])
       selection.setJetCuts(JetPtCut,JetEtaCut,0.01,1.,0.98,0.3,0.1);
       
       selection.setDiElectronCuts(ElPtCut,ElEtaCut,ElRelIsoCut,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
-      //selection.setLooseElectronCuts(15,2.5,0.2);
       
       selection.setDiMuonCuts(MuPtCut,MuEtaCut,MuRelIsoCut,999.); //Et,Eta,RelIso,d0
-      //selection.setLooseMuonCuts(15,2.4,0.2);
       
       //__Object selection_________________________________________________________________
       //vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedDiElectrons(ElPtCut,ElEtaCut,999.); //Et,Eta,RelIso
@@ -1023,9 +1017,6 @@ int main (int argc, char *argv[])
       
       vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
       
-      //vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
-      //vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
-      
       //__Primary vertex selection_________________________________________________________________
       bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
       if(!isGoodPV) continue;
@@ -1035,8 +1026,6 @@ int main (int argc, char *argv[])
       selecTableDiEl.Fill(d,3,scaleFactor);
       selecTableTriEl.Fill(d,3,scaleFactor);
       selecTableDiElMu.Fill(d,3,scaleFactor);
-
-      MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
       
       //__Lepton ID&&ISO SF_____________________________________________________________________________
       if(!isData && applyLeptonSF){
@@ -1049,30 +1038,14 @@ int main (int argc, char *argv[])
           scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
         }
       }
-      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+      MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
 
       //__Dilepton selection_________________________________________________________________
       if( (diMuon && selectedMuons.size()<2) || (diElectron && selectedElectrons.size()<2) ) continue;
-/*
-      //__Lepton ID&&ISO SF_____________________________________________________________________________
 
-      if(!isData && diMuon){
-        scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Id SF
-        scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Id SF
-        
-        scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
-        scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[1]->Eta(), selectedMuons[1]->Pt());// Iso SF
-      }
-      else if(!isData && diElectron){
-        scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Id SF
-        scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[1]->Eta(), selectedElectrons[1]->Pt());// Id SF
-        
-        scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Iso SF
-        scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[1]->Eta(), selectedElectrons[1]->Pt());// Iso SF
-      }
-*/
       if(diMuon){
         histo2D[("d0_vs_phi_1stleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[0]->d0(),selectedMuons[0]->Phi());
         histo2D[("d0_vs_phi_2ndleadinglepton_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[1]->d0(),selectedMuons[1]->Phi());
@@ -1099,8 +1072,8 @@ int main (int argc, char *argv[])
         MSPlot["1stLeadingLeptonPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
         MSPlot["2ndLeadingLeptonPt"]->Fill(selectedElectrons[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
         
-        float reliso1 = ElectronRelIso(selectedElectrons[0], event);
-        float reliso2 = ElectronRelIso(selectedElectrons[1], event);
+        float reliso1 = ElecRelIso(selectedElectrons[0], event);
+        float reliso2 = ElecRelIso(selectedElectrons[1], event);
         
         MSPlot["1stLeadingLeptonRelIsolation"]->Fill(reliso1, datasets[d], true, Luminosity*scaleFactor);
         MSPlot["2ndLeadingLeptonRelIsolation"]->Fill(reliso2, datasets[d], true, Luminosity*scaleFactor);
@@ -1175,16 +1148,12 @@ int main (int argc, char *argv[])
       // Erase Z boson lepton candidates
       if(diMuon){
         if(selectedMuons.size()>2){
-          //addScaleFactor  = MuEffSF_Id_Run2012(comments, selectedMuons[2]->Eta(), selectedMuons[2]->Pt());// Id SF
-          //addScaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[2]->Eta(), selectedMuons[2]->Pt());// Iso SF
-          MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-          MSPlot["3rdLeadingMuonRelIsolation"]->Fill(MuonRelIso(selectedMuons[2]), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+          MSPlot["3rdLeadingMuonPt"]->Fill(selectedMuons[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+          MSPlot["3rdLeadingMuonRelIsolation"]->Fill(MuonRelIso(selectedMuons[2]), datasets[d], true, Luminosity*scaleFactor);
         }
         if(selectedElectrons.size()>0){
-          //addScaleFactor  = ElEffSF_Id_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Id SF
-          //addScaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[0]->Eta(), selectedElectrons[0]->Pt());// Iso SF
-          MSPlot["1stLeadingElectronPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-          MSPlot["1stLeadingElectronRelIsolation"]->Fill(ElectronRelIso(selectedElectrons[0], event), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+          MSPlot["1stLeadingElectronPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+          MSPlot["1stLeadingElecRelIsolation"]->Fill(ElecRelIso(selectedElectrons[0], event), datasets[d], true, Luminosity*scaleFactor);
         }
         selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_2);
         selectedExtraMuons.erase(selectedExtraMuons.begin()+idx_Z_1);
@@ -1196,29 +1165,14 @@ int main (int argc, char *argv[])
         }
         if(selectedElectrons.size()>2){
           MSPlot["3rdLeadingElectronPt"]->Fill(selectedElectrons[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-          MSPlot["3rdLeadingElectronRelIsolation"]->Fill(ElectronRelIso(selectedElectrons[2], event), datasets[d], true, Luminosity*scaleFactor);
+          MSPlot["3rdLeadingElecRelIsolation"]->Fill(ElecRelIso(selectedElectrons[2], event), datasets[d], true, Luminosity*scaleFactor);
         }
         selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_2);
         selectedExtraElectrons.erase(selectedExtraElectrons.begin()+idx_Z_1);
         
       }
-/*
-      addScaleFactor = 1.;
-      for(unsigned int i=0;i<selectedExtraMuons.size();i++){
-        addScaleFactor *= MuEffSF_Id_Run2012(comments, selectedExtraMuons[i]->Eta(), selectedExtraMuons[i]->Pt());// Id SF
-        addScaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedExtraMuons[i]->Eta(), selectedExtraMuons[i]->Pt());// Iso SF
-      }
-*/
-      MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedExtraMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-/*
-      addScaleFactor = 1.;
-      for(unsigned int i=0;i<selectedExtraElectrons.size();i++){
-        addScaleFactor *= ElEffSF_Id_Run2012(comments, selectedExtraElectrons[i]->Eta(), selectedExtraElectrons[i]->Pt());// Id SF
-        addScaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedExtraElectrons[i]->Eta(), selectedExtraElectrons[i]->Pt());// Iso SF
-      }
-*/
-      MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedExtraElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
-//    addScaleFactor = 1.;
+      MSPlot["NbOfExtraIsolatedMuons"]->Fill(selectedExtraMuons.size(), datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedExtraElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       
       MSPlot["NbOfSelectedJets_Before3rdLeptCut"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
       
@@ -1904,7 +1858,7 @@ double MuonRelIso(TRootMuon* muon){
   return reliso;
 }
 
-double ElectronRelIso(TRootElectron* elec, TRootEvent* event){
+double ElecRelIso(TRootElectron* elec, TRootEvent* event){
   if(!elec){
     cerr << "Pointer to electron is NULL" << endl;
     exit(1);
@@ -1930,7 +1884,8 @@ double ElectronRelIso(TRootElectron* elec, TRootEvent* event){
 bool ZCandInvMass(vector<TRootMuon*>& muons, int& idx_Z_1, int& idx_Z_2, double& invMass, double Zmass, double Zwindowsize){
   TRootMuon* mu1 = 0;
   TRootMuon* mu2 = 0;
-  bool foundZ = false;
+  //bool foundZ = false;
+  double invMass_tmp = 9999999;
   for(unsigned int i=0;i<muons.size()-1;i++)
   {
     for(unsigned int j=i+1;j<muons.size();j++)
@@ -1938,6 +1893,7 @@ bool ZCandInvMass(vector<TRootMuon*>& muons, int& idx_Z_1, int& idx_Z_2, double&
       mu1 = (TRootMuon*) muons[i];
       mu2 = (TRootMuon*) muons[j];
       if(mu1->charge() == mu2->charge()) continue;
+/*
       invMass = (*mu1 + *mu2).M();
       if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
       {
@@ -1945,25 +1901,37 @@ bool ZCandInvMass(vector<TRootMuon*>& muons, int& idx_Z_1, int& idx_Z_2, double&
         idx_Z_2 = j;
         foundZ = true;
       }
+*/
+      invMass_tmp = (*mu1 + *mu2).M();
+      if(fabs(invMass_tmp-Zmass)<fabs(invMass-Zmass)){
+        idx_Z_1 = i;
+        idx_Z_2 = j;
+        invMass = invMass_tmp;
+      }
     }
   }
-  if(foundZ)
-    invMass = (*muons[idx_Z_1]+*muons[idx_Z_2]).M();
+//  if(foundZ)
+//    invMass = (*muons[idx_Z_1]+*muons[idx_Z_2]).M();
+  if(fabs(invMass-Zmass)<Zwindowsize)
+    return true;
+  else
+    return false;
   
-  return foundZ;
+  //return foundZ;
 }
 
 bool ZCandInvMass(vector<TRootElectron*>& electrons, int& idx_Z_1, int& idx_Z_2, double& invMass, double Zmass, double Zwindowsize){
-  TRootElectron* mu1 = 0;
-  TRootElectron* mu2 = 0;
-  bool foundZ = false;
+  TRootElectron* el1 = 0;
+  TRootElectron* el2 = 0;
+//  bool foundZ = false;
   for(unsigned int i=0;i<electrons.size()-1;i++)
   {
     for(unsigned int j=i+1;j<electrons.size();j++)
     {
-      mu1 = (TRootElectron*) electrons[i];
-      mu2 = (TRootElectron*) electrons[j];
-      if(mu1->charge() == mu2->charge()) continue;
+      el1 = (TRootElectron*) electrons[i];
+      el2 = (TRootElectron*) electrons[j];
+      if(el1->charge() == el2->charge()) continue;
+/*
       invMass = (*mu1 + *mu2).M();
       if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
       {
@@ -1971,10 +1939,21 @@ bool ZCandInvMass(vector<TRootElectron*>& electrons, int& idx_Z_1, int& idx_Z_2,
         idx_Z_2 = j;
         foundZ = true;
       }
+*/
+      invMass_tmp = (*el1 + *el2).M();
+      if(fabs(invMass_tmp-Zmass)<fabs(invMass-Zmass)){
+        idx_Z_1 = i;
+        idx_Z_2 = j;
+        invMass = invMass_tmp;
+      }
     }
   }
-  if(foundZ)
-    invMass = (*electrons[idx_Z_1]+*electrons[idx_Z_2]).M();
+//  if(foundZ)
+//    invMass = (*electrons[idx_Z_1]+*electrons[idx_Z_2]).M();
+  if(fabs(invMass-Zmass)<Zwindowsize)
+    return true;
+  else
+    return false;
   
-  return foundZ;
+//  return foundZ;
 }
