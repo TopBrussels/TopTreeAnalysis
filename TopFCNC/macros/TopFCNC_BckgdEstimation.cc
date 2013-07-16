@@ -9,21 +9,21 @@
 //user code
 #include "TopTreeProducer/interface/TRootRun.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
-#include "../../Selection/interface/SelectionTable.h"
-#include "../../Content/interface/AnalysisEnvironment.h"
-#include "../../Content/interface/Dataset.h"
-#include "../../Tools/interface/JetTools.h"
-//#include "../../Tools/interface/PlottingTools.h"
-#include "../../Tools/interface/MultiSamplePlot.h"
-#include "../../Tools/interface/TTreeLoader.h"
-#include "../../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../../Reconstruction/interface/JetCorrectorParameters.h"
-//#include "../../Reconstruction/interface/JetCorrectionUncertainty.h"
-//#include "../../Reconstruction/interface/MakeBinning.h"
-#include "../../MCInformation/interface/LumiReWeighting.h"
-#include "../interface/TopFCNC_Evt.h"
+#include "TopTreeAnalysisBase/Selection/interface/SelectionTable.h"
+#include "TopTreeAnalysisBase/Content/interface/AnalysisEnvironment.h"
+#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
+#include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
+//#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
+#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Tools/interface/TTreeLoader.h"
+#include "TopTreeAnalysisBase/Tools/interface/AnalysisEnvironmentLoader.h"
+#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectorParameters.h"
+//#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectionUncertainty.h"
+//#include "TopTreeAnalysisBase/Reconstruction/interface/MakeBinning.h"
+#include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
+#include "TopTreeAnalysis/TopFCNC/interface/TopFCNC_Evt.h"
 
-#include "../../macros/Style.C"
+//#include "../../macros/Style.C"
 
 using namespace std;
 using namespace reweight;
@@ -47,13 +47,27 @@ struct HighestCVSBtag{
   }
 };
 
-double MuEffSF_Id_Run2012(double eta, double pt);
-double MuEffSF_Iso04_Run2012(double eta, double pt);
-double MuEffSF_TrgMu8_Run2012(double eta, double pt);
-double MuEffSF_TrgMu17_Run2012(double eta, double pt);
+double MuEffSF_Id_Run2012(string period, double eta, double pt);
+double MuEffSF_Iso04_Run2012(string period, double eta, double pt);
+
+double MuEffSF_Id_Run2012ABCD(double eta, double pt);
+double MuEffSF_Iso04_Run2012ABCD(double eta, double pt);
+
+double ElEffSF_Id_Run2012(string period, double eta, double pt);
+double ElEffSF_Iso04_Run2012(string period, double eta, double pt);
+
+double ElEffSF_Id_Run2012ABCD(double eta, double pt);
+double ElEffSF_Iso04_Run2012ABCD(double eta, double pt);
+
+double MuonRelIso(TRootMuon* muon);
+double ElecRelIso(TRootElectron* elec, TRootEvent* event);
+
+bool ZCandInvMass(vector<TRootMuon*>& muons, vector<TRootElectron*>& electrons, int& idx_Z_1, int& idx_Z_2, double& invMass, double Zmass, double Zwindowsize);
 
 int main (int argc, char *argv[])
 {
+  clock_t start = clock();
+
   int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
   
@@ -69,6 +83,12 @@ int main (int argc, char *argv[])
   int doPUShift = 0; //0: off (except nominal PU reweighting) 1: minus 2: plus
   cout << "doPUShift: " << doPUShift << endl;
   
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////// Configuration ////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
   /*https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
    Tagger name  	            WP name WP Discr cut
    TrackCountingHighPur 	    TCHPT 	3.41
@@ -79,21 +99,54 @@ int main (int argc, char *argv[])
    CombinedSecondaryVertex 	CSVM 	  0.679
    CombinedSecondaryVertex 	CSVT 	  0.898
    */
-  float btagcut     = 0.679;
-	float Zmass       = 91.2;
-	float Zwindowsize = 30.;
-	bool applyAsymmJetPtCut = true;
-	float JetPtCuts[4]={50.,30.,20.,20.};
+  int   btagAlgo     = 6; //CSV
+  string btagName[8] = {"TCHE","TCHP","JP","JBP","SVHE","SVHP","CSV","CSV_MVA"};
+  float btagCut      = 0.679;
+	const double Zmass        = 91.2;
+	const double Zwindowsize  = 30.;
+  const double MuPtCut      = 20.;
+  const double MuEtaCut     = 2.4;
+  const double MuRelIsoCut  = 0.20;
+  const double ElPtCut      = 20.;
+  const double ElEtaCut     = 2.5;
+  const double ElRelIsoCut  = 0.15;
+  const double JetPtCut     = 20;
+  const double JetEtaCut    = 2.4;
+	bool applyAsymmJetPtCut   = true;
+	const double JetPtCuts[4] = {50.,40.,30.,20.};
+  bool applyLeptonSF        = true;
   
-  clock_t start = clock();
-  
+  cout << "*************************************************************" << endl;
+  cout << " Beginning of the program for the FCNC search ! " << endl;
+  cout << "*************************************************************" << endl;
+  cout << " - Selection cuts " << endl;
+  cout << " -- Lepton ID&ISO SF: " << (applyLeptonSF ? "TRUE" : "FALSE" ) << endl;
+  cout << " -- Muons: " << endl;
+  cout << " --- pt: "  << MuPtCut << endl;
+  cout << " --- eta: " << MuEtaCut << endl;
+  cout << " --- iso: " << MuRelIsoCut << endl;
+  cout << " -- Electrons: " << endl;
+  cout << " --- pt: "  << ElPtCut << endl;
+  cout << " --- eta: " << ElEtaCut << endl;
+  cout << " --- iso: " << ElRelIsoCut << endl;
+  cout << " -- Jets: " << endl;
+  cout << " --- lower pt cut : " << JetPtCut << endl;
+  cout << " --- eta: " << JetEtaCut << endl;
+  cout << " --- asymmetric pt cuts ? " << (applyAsymmJetPtCut ? "TRUE" : "FALSE" ) << endl;
+  cout << " --- pt: " << JetPtCuts[0] << " / " << JetPtCuts[1] << " / " << JetPtCuts[2] << " / " << JetPtCuts[3] << endl;
+  cout << " -- B-tagging: " << endl;
+  cout << " --- algorithm: " << btagName[btagAlgo] << endl;
+  cout << " --- threshold: " << btagCut << endl;
+  cout << " -- Z boson mass = " << Zmass<< endl;
+  cout << " -- Z boson mass window = " << Zwindowsize<< endl;
+    
   cout << "*************************************************************" << endl;
   cout << " Beginning of the program for the FCNC search ! " << endl;
   cout << "*************************************************************" << endl;
   
   //SetStyle if needed
   //setTDRStyle();
-  setGregStyle();
+  //setGregStyle();
   //setMyStyle();
   
   string postfix = "_BckgdEstimation"; // to relabel the names of the output file
@@ -115,14 +168,8 @@ int main (int argc, char *argv[])
   if(domisTagEffShift == 2)
     postfix= postfix+"_misTagPlus";
   
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////// Configuration ////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
   string channelpostfix = "_MuElTrigger";
-  string comments = "_Run2012A";
+  string comments = "_Run2012ABCD_Skim2Mu_3Jets";
   string xmlFileName = "../config/myTopFCNCconfig_MuEl.xml";
 
   const char *xmlfile = xmlFileName.c_str();
@@ -176,9 +223,6 @@ int main (int argc, char *argv[])
   
   //Global variable
   TRootEvent* event = 0;
-  Float_t rho = 0;
-//  Float_t     LeptIdSF = 0;
-//  Float_t     LeptIsoSF= 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -207,9 +251,15 @@ int main (int argc, char *argv[])
   MSPlot["DiLeptonInvMass_me_ch"]            = new MultiSamplePlot(datasets, "DiLeptonInvMass_me_ch", 400, 50, 130, "m_{ll}");
   MSPlot["DiLeptonSystPt_me_ch"]             = new MultiSamplePlot(datasets, "DiLeptonSystPt_me_ch", 400, 0, 400, "p_{T}^{ll} [GeV/c]");
   MSPlot["DiLeptonDR_me_ch"]                 = new MultiSamplePlot(datasets, "DiLeptonDR_me_ch", 400, 0, 10, "#Delta R(l^{+}l^{-})");
-  
+
+  MSPlot["DiLeptonInvMass_AtLeastFourJets_me_ch"]= new MultiSamplePlot(datasets, "DiLeptonInvMass_AtLeastFourJets_me_ch", 400, 50, 130, "m_{ll}");
+  MSPlot["DiLeptonDR_AtLeastFourJets_me_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastFourJets_me_ch", 100, 0, 5, "#Delta R(l^{+}l^{-})");
+  MSPlot["DiLeptonDPhi_AtLeastFourJets_me_ch"]   = new MultiSamplePlot(datasets, "DiLeptonDPhi_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}l^{-})");
   MSPlot["DiLeptonSystPt_AtLeastFourJets_me_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_AtLeastFourJets_me_ch", 100, 0, 400, "p_{T}^{ll} [GeV/c]");
-  MSPlot["DiLeptonDR_AtLeastFourJets_me_ch"]     = new MultiSamplePlot(datasets, "DiLeptonDR_AtLeastFourJets_me_ch", 100, 0, 10, "#Delta R(l^{+}l^{-})");
+  
+  MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch"]   = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
+  MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch"]      = new MultiSamplePlot(datasets, "DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch", 70, 0, 3.5, "#Delta #Phi(l^{+}+l^{-},#Sigma jet))");
+  MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_me_ch"] = new MultiSamplePlot(datasets, "DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_me_ch", 500, 0, 10, "p_{T}^{ll}/p_{T}^{#Sigma jets}");
   
   MSPlot["NbOfExtraIsolatedMuons"]            = new MultiSamplePlot(datasets, "NbOfExtraIsolatedMuons", 5, 0, 5, "Nb. of isolated muons");
   MSPlot["NbOfExtraIsolatedElectrons"]        = new MultiSamplePlot(datasets, "NbOfExtraIsolatedElectrons", 5, 0, 5, "Nb. of isolated electrons");
@@ -224,8 +274,11 @@ int main (int argc, char *argv[])
   MSPlot["NbOfVertices_AtLeastFourJets_me_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_me_ch", 30, 0, 30, "Nb. of vertices");
   
   MSPlot["HighestBdisc_me_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_CVS", 50, 0, 1, "CSV b-disc.");
+  MSPlot["HighestBdisc_me_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_JP" , 50, 0, 1, "JP b-disc.");
+
+  MSPlot["MET_AtLeastFourJets_me_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_me_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
   
-  MSPlot["MET_me_ch"]                         = new MultiSamplePlot(datasets, "MET_me_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV"]= new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV",  10, 0, 10, "Nb. of b-tagged jets (CSVM)");
   
   ////////////////////////////////////////////////////////////////////
   ////////////////// 1D histograms  //////////////////////////////////
@@ -252,9 +305,9 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   char zmasscutname[100];
-  sprintf(zmasscutname,"$|m_{ll}-m_Z|<%f$ GeV",Zwindowsize);
+  sprintf(zmasscutname,"$|m_{ll}-m_Z|<%.0f$ GeV",Zwindowsize);
   char btagcutname[100];
-  sprintf(btagcutname,"$b\\texttt{-}disc \\geq %f$ (CSV)",btagcut);
+  sprintf(btagcutname,"$b\\texttt{-}disc \\geq %1.3f$ (CSV)",btagCut);
   
   ////////////////////////////////////////////////////////////////////
   ///////////////////// Channel : µe  ////////////////////////////////
@@ -286,9 +339,21 @@ int main (int argc, char *argv[])
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
-  LumiReWeighting LumiWeights = LumiReWeighting("../pileup/pileup_MC_S10.root", "../pileup/MuEG_Run2012A_13Jul_TopTreeID_2009_PileupHistogram.root", "pileup", "pileup");
+  string PileUpFile = "";
+  string PileUpSyst = ( doPUShift==0 ? "" : ( doPUShift==1 ? "_Systematic_Down_5perc" : "_Systematic_Up_5perc" ) );
+  if( comments.find("2012ABCD") != string::npos ) PileUpFile = "../pileup/MuEG_Run2012ABCD_22Jan2013_TopTreeID_3496to3499_PileupHistogram"+PileUpSyst+".root";
+  /*
+   else if( comments.find("2012AB")   != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012AB_22Jan2013_TopTreeID_3494_3495_PileupHistogram.root" : "../pileup/XXX.root");
+   else if( comments.find("2012C")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012C_Promptv2_TopTreeID_2226_PileupHistogram.root" : "../pileup/XXX.root");
+   else if( comments.find("2012D")    != string::npos ) PileUpFile = (diMuon ? "../pileup/DoubleMu_Run2012D_Promptv1_TopTreeID_2218_PileupHistogram.root" : "../pileup/XXX.root");
+   */
+  else{
+    cerr << "Cannot determine which pile up root should be used. Make sure the string comment is filled correctly." << endl;
+    exit(1);
+  }
+  LumiReWeighting LumiWeights = LumiReWeighting("../pileup/pileup_MC_S10.root", PileUpFile, "pileup", "pileup");
   
-  cout << " - Initialized LumiReWeighting stuff" << endl;
+  cout << " - Initialized LumiReWeighting with file : " << PileUpFile << endl;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +379,10 @@ int main (int argc, char *argv[])
     string previousFilename = "";
     int iFile = -1;
     
+    bool isData = false;
     string dataSetName = datasets[d]->Name();
+    if(dataSetName.find("Data")!=string::npos || dataSetName.find("data")!=string::npos || dataSetName.find("DATA")!=string::npos)
+      isData = true;
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////// Initialize JEC factors /////////////////////////////////////////////////////////
@@ -324,21 +392,31 @@ int main (int argc, char *argv[])
     
     // Create the JetCorrectorParameter objects, the order does not matter.
     // YYYY is the first part of the txt files: usually the global tag from which they are retrieved
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("../../macros/JECFiles/Jec11V2_db_AK5PFchs_L1FastJet.txt");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("../../macros/JECFiles/Jec11V2_db_AK5PFchs_L2Relative.txt");
-    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("../../macros/JECFiles/Jec11V2_db_AK5PFchs_L3Absolute.txt");
+    
+    string CalibPath = "../../../TopTreeAnalysisBase/Calibrations/JECFiles/";
+    
+    string L1Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt":"START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
+    string L2Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt":"START53_V23_Summer13_L2Relative_AK5PFchs.txt");
+    string L3Corr = (isData?"FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt":"START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
+    string L2L3Rs = (isData?"FT_53_V21_AN4_Summer13_Data_L2L3Residual_AK5PFchs.txt":"START53_V23_Summer13_L2L3Residual_AK5PFchs.txt");
+    string JECUnc = (isData?"FT_53_V21_AN4_Summer13_Data_Uncertainty_AK5PFchs.txt":"START53_V23_Summer13_Uncertainty_AK5PFchs.txt");
+    
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters(CalibPath+L1Corr);
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters(CalibPath+L2Corr);
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters(CalibPath+L3Corr);
     
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
     vCorrParam.push_back(*L1JetPar);
     vCorrParam.push_back(*L2JetPar);
     vCorrParam.push_back(*L3JetPar);
-    if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
+    if(isData) // Data!
     {
-      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../../macros/JECFiles/Jec11V2_db_AK5PFchs_L2L3Residual.txt");
+      JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters(CalibPath+L2L3Rs);
       vCorrParam.push_back(*ResJetCorPar);
     }
     
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../../macros/JECFiles/Jec11V2_db_AK5PFchs_Uncertainty.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(CalibPath+JECUnc);
+    
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true); // last boolean ('startFromRaw') = false!
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -369,6 +447,23 @@ int main (int argc, char *argv[])
     
     if (verbose > 1) cout << " - Loop over events " << endl;
     
+    // Set cache size.
+    Int_t cachesize=10000000; // 10 MB = 10000000
+    
+    datasets[d]->eventTree()->SetCacheSize(cachesize);
+    datasets[d]->eventTree()->SetCacheEntryRange(start,end);
+    datasets[d]->eventTree()->AddBranchToCache("*",kTRUE);
+    //  datasets[d]->eventTree()->SetBranchStatus("*",0);
+    datasets[d]->eventTree()->StopCacheLearningPhase();
+    
+    datasets[d]->runTree()->SetCacheSize(cachesize);
+    datasets[d]->runTree()->SetCacheEntryRange(start,end);
+    datasets[d]->runTree()->AddBranchToCache("*",kTRUE);
+    //  datasets[d]->runTree()->SetBranchStatus("*",0);
+    datasets[d]->runTree()->StopCacheLearningPhase();
+    
+    //ps[d] = new TTreePerfStats(("ioperf_"+dataSetName).c_str(),datasets[d]->eventTree());
+    
     for (unsigned int ievt = start; ievt < end; ievt++)
     {
       
@@ -379,10 +474,9 @@ int main (int argc, char *argv[])
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
       
       vector<TRootGenJet*> genjets;
-      if(! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) )
-	    {
+      if(!isData)
 		    genjets = treeLoader.LoadGenJet(ievt,false);
-	    }
+
       //cout << "run: " << event->runId() << "  lumi: " << event->lumiBlockId() << "  event: " << event->eventId() << endl;
       
       // check which file in the dataset it is to have the HLTInfo right
@@ -402,60 +496,84 @@ int main (int argc, char *argv[])
       if(previousRun != currentRun)
       {
         previousRun = currentRun;
-        if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
+        if(isData)
         {
           /*------------------------------------------------------------------
-           Dataset : MuEG/Run2012A-13Jul2012-v1
-           --------------------------------------------------------------------
-           Will search for runs with trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v* available
-           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v4 available for runs 190645-190738
-           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5 available for runs 191043-191411
-           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6 available for runs 191695-193621
-           ------------------------------------------------------------------
-           Will search for runs with trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v* available
-           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v4 available for runs 190645-190738
-           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5 available for runs 191043-191411
-           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6 available for runs 191695-193621
+           Dataset : MuEG/Run2012A-22Jan2013-v1
            ------------------------------------------------------------------*/
           if(currentRun >= 190645 && currentRun <= 190738){
             itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v4"), currentRun, iFile);
 					  itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v4"), currentRun, iFile);
-            // int. lumi = XXX/pb
+            // int. lumi = 94.005/pb
 					}
-          else if (currentRun >= 191043 && currentRun <= 191411){
+          else if (currentRun >= 190782 && currentRun <= 191367){
             itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5"), currentRun, iFile);
             itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5"), currentRun, iFile);
-            // int. lumi = XXX/pb
+            // int. lumi = 385.304/pb
           }
           else if (currentRun >= 191695 && currentRun <= 193621){
             itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6"), currentRun, iFile);
             itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6"), currentRun, iFile);
-            // int. lumi = XXX/pb
+            // int. lumi = 384.511/pb
           }
-				  /*--------------------------------------------------------------------
-           Sub-Total integrated luminosity = 778,2(/pb)
-           Total integrated luminosity = 778,2(/pb)
+				  /*------------------------------------------------------------------
+           Sub-Total integrated luminosity = 863.8(/pb)
+           Total integrated luminosity = 863.8(/pb)
            ------------------------------------------------------------------*/
           
 				  /*------------------------------------------------------------------
-           Dataset : MuEG/Run2012B-13Jul2012-v1
-           --------------------------------------------------------------------
-           Will search for runs with trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v* available
-           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7 available for runs 193834-196531
-           ------------------------------------------------------------------
-           Will search for runs with trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v* available
-           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7 available for runs 193834-196531
+           Dataset : MuEG/Run2012B-22Jan2013-v1
            ------------------------------------------------------------------*/
           else if (currentRun >= 193806 && currentRun <= 196531){
             itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"), currentRun, iFile);
             itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"), currentRun, iFile);
-            // int. lumi = XXX/pb
           }
-          /*--------------------------------------------------------------------
-            Sub-Total integrated luminosity = XXX(/pb)
-            Total integrated luminosity = XXX(/pb)
-            ------------------------------------------------------------------*/
-            
+          /*------------------------------------------------------------------
+           Sub-Total integrated luminosity = 4375(/pb)
+           Total integrated luminosity = 5238.8(/pb)
+           -----------------------------------------------------------------*/
+
+				  /*------------------------------------------------------------------
+           Dataset : MuEG/Run2012C-22Jan2013-v1
+           -------------------------------------------------------------------
+           Will search for runs with trigger HLT_Mu*_Ele*_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v* available
+           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8 available for runs 198049-199608
+           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9 available for runs 199698-203742
+           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8 available for runs 198049-199608
+           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9 available for runs 199698-203742
+
+           ------------------------------------------------------------------*/
+          else if (currentRun >= 198049 && currentRun <= 199608){
+            itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8"), currentRun, iFile);
+            itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8"), currentRun, iFile);
+            // int. lumi = 1783/pb
+          }
+          else if (currentRun >= 199698 && currentRun <= 203742){
+            itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9"), currentRun, iFile);
+            itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9"), currentRun, iFile);
+            // int. lumi = 5363/pb
+          }
+          /*------------------------------------------------------------------
+           Sub-Total integrated luminosity = 7146(/pb)
+           Total integrated luminosity = 12384.8(/pb)
+           -----------------------------------------------------------------*/
+
+				  /*------------------------------------------------------------------
+           Dataset : MuEG/Run2012D-22Jan2013-v1
+           --------------------------------------------------------------------
+           Will search for runs with trigger HLT_Mu*_Ele*_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v* available
+           Trigger HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9 available for runs 203777-208686
+           Trigger HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9 available for runs 203777-208686
+           ------------------------------------------------------------------*/
+          else if (currentRun >= 203777 && currentRun <= 208686){
+            itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9"), currentRun, iFile);
+            itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9"), currentRun, iFile);
+          }
+          /*------------------------------------------------------------------
+           Sub-Total integrated luminosity = 7292(/pb)
+           Total integrated luminosity = 19676.8(/pb)
+           -----------------------------------------------------------------*/
+
           if(itrigger1 == 9999 && itrigger2 == 9999)
           {
             cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (DATA) IN RUN " << event->runId() << endl;
@@ -464,42 +582,40 @@ int main (int argc, char *argv[])
           //trigged = treeLoader.EventTrigged (itrigger);
         }
         else{
-          itrigger1 = -1;
-          itrigger2 = -1;
+          itrigger1 = treeLoader.iTrigger (string ("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"), currentRun, iFile);
+          itrigger2 = treeLoader.iTrigger (string ("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7"), currentRun, iFile);
+          if(itrigger1 == 9999 || itrigger2 == 9999)
+          {
+            cerr << "NO VALID TRIGGER FOUND FOR THIS EVENT (" << dataSetName << ") IN RUN " << event->runId() << endl;
+            exit(1);
+          }
+          cout<<"Trigger1 bit nr : "<<itrigger1<<endl;
+          cout<<"Trigger2 bit nr : "<<itrigger2<<endl;
         }
 	    } //end previousRun != currentRun
       
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	    //////////////////////////////////////////// Jet energy scale corrections     /////////////////////////////////////////////////////////////
+	    //////////////////////////////////////////// Jet energy scale corrections /////////////////////////////////////////////////////////////////
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
 	    // Apply Jet Corrections on-the-fly
 	    //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
-      /*
-       if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-       jetTools->correctJets(init_jets,event->kt6PFJets_rho(),true); //last boolean: isData (needed for L2L3Residual...)
-       else
-       jetTools->correctJets(init_jets,event->kt6PFJets_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
-       
-       */
+      jetTools->correctJets(init_jets,event->kt6PFJets_rho(),isData); //last boolean: isData (needed for L2L3Residual...)
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
+      
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    //////////////////////////////////////////// Type I MET corrections: (Only for |eta| <=4.7 ) //////////////////////////////////////////////
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      /*
-       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
-       if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-       jetTools->correctMETTypeOne(init_jets,mets[0],true);
-       else
-       jetTools->correctMETTypeOne(init_jets,mets[0],false);
-       //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-       */
+      
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");
+      jetTools->correctMETTypeOne(init_jets,mets[0],isData);
+      //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
+      
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////////////////// Jet energy smearing and systematic uncertainty ///////////////////////////////////////////////
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
-      //if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-      if(! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 ) )
+      if(!isData)
       {
         // JER systematic!
         if(doJERShift == 1)
@@ -518,7 +634,6 @@ int main (int argc, char *argv[])
           jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
         
         //coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction:");
-        
       }
       
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -527,33 +642,26 @@ int main (int argc, char *argv[])
       
       // scale factor for the event
       float scaleFactor = 1.;
-      /*
-       if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA")
-       {
-       
-       // Apply the scraping veto. (Is it still needed?)
-       bool isBeamBG = true;
-       if(event->nTracks() > 10)
-       {
-       if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
-       isBeamBG = false;
-       }
-       if(isBeamBG) continue;
-       
-       }
-       else{
-       */
-      if(dataSetName != "Data" && dataSetName != "data" && dataSetName != "DATA")
+      
+      if(isData)
       {
+        // Apply the scraping veto. (Is it still needed?)
+        bool isBeamBG = true;
+        if(event->nTracks() > 10)
+        {
+          if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
+            isBeamBG = false;
+        }
+        if(isBeamBG) continue;
+      }
+      else{
         // Apply pile-up reweighting
         double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
         scaleFactor *= lumiWeight;
       }
       
       histo1D["lumiWeights"]->Fill(scaleFactor);
-      
-      rho = event->kt6PFJets_rho();
-      MSPlot["RhoCorrection"]->Fill(rho, datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["RhoCorrection"]->Fill(event->kt6PFJets_rho(), datasets[d], true, Luminosity*scaleFactor);
 			
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       ////////////////////////////////////////////////////////// Event selection ////////////////////////////////////////////////////////////////
@@ -562,117 +670,138 @@ int main (int argc, char *argv[])
       selecTableMuEl.Fill(d,0, 1.);
       selecTableMuEl.Fill(d,1,scaleFactor);
       
-      // Apply trigger selection
-      if (itrigger1 == -1 && itrigger2 == -1) {
-        trigged = true;
-      }
-      else {
-        trigged = (treeLoader.EventTrigged (itrigger1) || treeLoader.EventTrigged (itrigger2));
+      //__Trigger selection_________________________________________________________________
+      //      if (itrigger1 == -1 && itrigger2 == -1)
+      //        trigged = true;
+      //      else
+      trigged = (treeLoader.EventTrigged (itrigger1) || treeLoader.EventTrigged (itrigger2));
+      if(!trigged) continue;
+      
+      //__Trigger SF_______________________________________________________________________
+      if(!isData){
+        if(comments.find("2012ABCD") != string::npos){
+          scaleFactor *= 1.; // To be modified
+        }
+        else if(comments.find("2012AB") != string::npos){
+          scaleFactor *= 1.; // To be modified
+        }
+        else if(comments.find("2012C") != string::npos){
+          scaleFactor *= 1.; // To be modified
+        }
+        else{
+          cerr << "__Lepton trigger SF: wrong period." << endl;
+          exit(1);
+        }
       }
       
-      if(!trigged) continue;
       selecTableMuEl.Fill(d,2,scaleFactor);
       
-      // Declare selection instance
-      Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
-      /*
-       vector<TRootMCParticle*> mcParticles;
-       if(dataSetName.find("ttbar_fcnc") == 0)
-       {
-       treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);
-       sort(mcParticles.begin(),mcParticles.end(),HighestPt());
-       }
-       */
-      // Define object selection cuts
-      selection.setJetCuts(20.,2.5,0.01,1.,0.98,0.3,0.1);
+      //__Selection instances_________________________________________________________________
+      Selection selection(init_jets, init_muons, init_electrons, mets, event->kt6PFJets_rho()); //mets can also be corrected...
+      //Selection selection(init_jets, init_muons, init_electrons, mets); //mets can also be corrected...
       
-      selection.setDiElectronCuts(20,2.5,0.15,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
+      // Specify the correction to be applied to the electron isolation
+      selection.setElectronIsoCorrType(1); // 0: no corr, 1: EA corr, 2: dB corr
+      
+      //__Object election cuts_________________________________________________________________
+      selection.setJetCuts(JetPtCut,JetEtaCut,0.01,1.,0.98,0.3,0.1);
+      
+      selection.setDiElectronCuts(ElPtCut,ElEtaCut,ElRelIsoCut,0.04,0.,1,0.3,1); //Et,Eta,RelIso,d0,MVAId,DistVzPVz,DRJets,MaxMissHits
       //selection.setLooseElectronCuts(15,2.5,0.2);
       
-      selection.setDiMuonCuts(20,2.4,0.20,999.); //Et,Eta,RelIso,d0
+      selection.setDiMuonCuts(MuPtCut,MuEtaCut,MuRelIsoCut,999.); //Et,Eta,RelIso,d0
       //selection.setLooseMuonCuts(15,2.4,0.2);
       
-      //Select objects
-      vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedDiElectrons(20,2.5,999.); //Et,Eta,RelIso
-      vector<TRootElectron*> selectedElectrons       = selection.GetSelectedDiElectrons(20,2.5,0.15);//,rho);
+      //__Object selection_________________________________________________________________
+      //vector<TRootElectron*> selectedElectrons_NoIso = selection.GetSelectedDiElectrons(ElPtCut,ElEtaCut,999.); //Et,Eta,RelIso
+      vector<TRootElectron*> selectedElectrons       = selection.GetSelectedDiElectrons();
       vector<TRootElectron*> selectedExtraElectrons;
       
-      vector<TRootMuon*>     selectedMuons_NoIso = selection.GetSelectedDiMuons(20,2.4,999.); //Et,Eta,RelIso
+      //vector<TRootMuon*>     selectedMuons_NoIso = selection.GetSelectedDiMuons(MuPtCut,MuEtaCut,999.); //Et,Eta,RelIso
       vector<TRootMuon*>     selectedMuons       = selection.GetSelectedDiMuons();
       vector<TRootMuon*>     selectedExtraMuons;
       
       vector<TRootJet*>      selectedJets        = selection.GetSelectedJets(true); // ApplyJetId
       
-      // Apply primary vertex selection
+      //vector<TRootMuon*>     looseMuons     = selection.GetSelectedLooseMuons();
+      //vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseElectrons(true); // VBTF Id
+      
+      //__Primary vertex selection_________________________________________________________________
       bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
       if(!isGoodPV) continue;
       selecTableMuEl.Fill(d,3,scaleFactor);
       
-      // Select events with at exactly one muon and one electron and apply muon Id/Iso SF
-      // TO_DO : - appply electron Id/Iso SF
-      //         - apply cross-trigger MuEG SF
-
-      if(selectedMuons_NoIso.size()<1 && selectedElectrons_NoIso.size()<1) continue;
-      scaleFactor *= MuEffSF_Id_Run2012(selectedMuons_NoIso[0]->Eta(), selectedMuons_NoIso[0]->Pt());// Muon Id SF
-      // Elec Id SF
+      //__Lepton ID&&ISO SF_____________________________________________________________________________
+      if(!isData && applyLeptonSF){
+        for(unsigned int i=0;i<selectedMuons.size();i++){
+          scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Id SF
+          scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Iso SF
+        }
+        for(unsigned int i=0;i<selectedElectrons.size();i++){
+          scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Id SF
+          scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
+        }
+      }
 
       MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-      
-      histo2D[("d0_vs_phi_1stleadingmuon_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons_NoIso[0]->d0(),selectedMuons_NoIso[0]->Phi());
-      histo2D[("d0_vs_phi_1stleadingelec_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons_NoIso[1]->d0(),selectedElectrons_NoIso[1]->Phi());
-      for(unsigned int i=0;i<selectedMuons_NoIso.size();i++)
-        MSPlot["MuonDzero"]->Fill(selectedMuons_NoIso[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
-      for(unsigned int i=0;i<selectedElectrons_NoIso.size();i++)
-        MSPlot["ElecDzero"]->Fill(selectedElectrons_NoIso[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+      MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);//*addScaleFactor);
+      histo1D[("scaleFactors_"+datasets[d]->Name()).c_str()]->Fill(scaleFactor);
 
+      //__Dilepton selection_________________________________________________________________
+      if( selectedMuons.size()<1 || selectedElectrons.size()<1 ) continue;
 
-      MSPlot["1stLeadingMuonPt"]->Fill(selectedMuons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["1stLeadingMuonRelIso"]->Fill(selectedMuons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
-      
-      MSPlot["1stLeadingElecPt"]->Fill(selectedElectrons_NoIso[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["1stLeadingElecRelIso"]->Fill(selectedElectrons_NoIso[0]->relativePfIso(), datasets[d], true, Luminosity*scaleFactor);
+      histo2D[("d0_vs_phi_1stleadingmuon_"+datasets[d]->Name()).c_str()]->Fill(selectedMuons[0]->d0(),selectedMuons[0]->Phi());
+      histo2D[("d0_vs_phi_1stleadingelec_"+datasets[d]->Name()).c_str()]->Fill(selectedElectrons[0]->d0(),selectedElectrons[0]->Phi());
+      for(unsigned int i=0;i<selectedMuons.size();i++)
+        MSPlot["MuonDzero"]->Fill(selectedMuons[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
+      for(unsigned int i=0;i<selectedElectrons.size();i++)
+        MSPlot["ElecDzero"]->Fill(selectedElectrons[i]->d0(), datasets[d], true, Luminosity*scaleFactor);
+
+      MSPlot["1stLeadingMuonPt"]->Fill(selectedMuons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["1stLeadingElecPt"]->Fill(selectedElectrons[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+
+      float reliso_mu = MuonRelIso(selectedMuons[0]);
+      float reliso_el = ElecRelIso(selectedElectrons[0], event);
+      MSPlot["1stLeadingMuonRelIso"]->Fill(reliso_mu, datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["1stLeadingElecRelIso"]->Fill(reliso_el, datasets[d], true, Luminosity*scaleFactor);
       
       MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       
-      // Select events with at least one isolated muon and one isolated electron
-      if(selectedMuons.size()<1 && selectedElectrons.size()<1) continue;
-      scaleFactor *= MuEffSF_Iso04_Run2012(selectedMuons[0]->Eta(), selectedMuons[0]->Pt());// Iso SF
-      
       selecTableMuEl.Fill(d,4,scaleFactor);
       
+      //__Z candidate selection_________________________________________________________________
       bool foundZ = false;
       int idx_Z_mu = -1, idx_Z_el = -1;
+      double invMass = 0;
       // Calculate the invariant mass for each isolated lepton pairs
       // - return true if the mass is the Z boson mass window
       // - return the indices of the lepton candidates
-      for(unsigned int i=0;i<selectedMuons.size();i++)
-      {
-        for(unsigned int j=0;j<selectedElectrons.size();j++)
-        {
-          TRootMuon*     mu = (TRootMuon*)    selectedMuons[i];
-          TRootElectron* el = (TRootElectron*) selectedElectrons[j];
-          if(mu->charge() == el->charge()) continue;
-          double invMass = (*mu + *el).M();
-          MSPlot["DiLeptonInvMass_me_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
-          if( invMass >= (Zmass-Zwindowsize) && invMass <= (Zmass+Zwindowsize) )
-          {
-            idx_Z_mu = i;
-            idx_Z_el = j;
-            foundZ = true;
-          }
-        }
-      }
+      foundZ = ZCandInvMass(selectedMuons, selectedElectrons, idx_Z_mu, idx_Z_el, invMass, Zmass, Zwindowsize);
+      MSPlot["DiLeptonInvMass_me_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
       // Select events with at least one pair of opposite charge leptons with |mll-mz|<windowsize
       if(!foundZ)
         continue;
-      
+      selecTableMuEl.Fill(d,5,scaleFactor);
+
       float DiLeptonSystPt = (*selectedMuons[idx_Z_mu] + *selectedElectrons[idx_Z_el]).Pt();
       float DiLeptonDR     =   selectedMuons[idx_Z_mu]->DeltaR(*selectedElectrons[idx_Z_el]);
+      float DiLeptonDPhi   =   selectedMuons[idx_Z_mu]->DeltaPhi(*selectedElectrons[idx_Z_el]);
+      TLorentzVector JetSyst; // initialized by (0.,0.,0.,0.)
+      for(unsigned int i=0; i<selectedJets.size();i++){
+        JetSyst += *selectedJets[i];
+      }
+      float JetSystPt = JetSyst.Pt();
+      float DiLeptonSystDPhi_JetSyst = (*selectedMuons[idx_Z_mu] + *selectedElectrons[idx_Z_el]).DeltaPhi(JetSyst);
+      float DiLeptonSystDPhi_LeadingJet = 0;
+      if(selectedJets.size()>0) DiLeptonSystDPhi_LeadingJet = (*selectedMuons[idx_Z_mu] + *selectedElectrons[idx_Z_el]).DeltaPhi(*selectedJets[0]);
+
       MSPlot["DiLeptonSystPt_me_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
       MSPlot["DiLeptonDR_me_ch"]    ->Fill(DiLeptonDR,     datasets[d], true, Luminosity*scaleFactor);
-      
-      selecTableMuEl.Fill(d,5,scaleFactor);
+      MSPlot["DiLeptonDPhi_me_ch"]  ->Fill(DiLeptonDPhi,   datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["DiLeptonSystDPhi_JetSyst_me_ch"]     ->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["DiLeptonSystPt_Over_JetSystPt_me_ch"]->Fill(DiLeptonSystPt/JetSystPt, datasets[d], true, Luminosity*scaleFactor);
       
       selectedExtraMuons = selectedMuons;
       selectedExtraElectrons = selectedElectrons;
@@ -684,8 +813,9 @@ int main (int argc, char *argv[])
       MSPlot["NbOfExtraIsolatedElectrons"]->Fill(selectedExtraElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
       
       MyTopFCNC_EvtCand = 0;
-      double invMass = 0;
       double highestbtagdisc = 0;
+      int NbOfBtagged = 0;
+
       // Select events based on the presence of *exactly one* extra isolated lepton
       if(selectedExtraMuons.size()==0 && selectedElectrons.size()==0){
         selecTableMuEl.Fill(d,6,scaleFactor);
@@ -700,20 +830,34 @@ int main (int argc, char *argv[])
             selecTableMuEl.Fill(d,8,scaleFactor);
             if(selectedJets.size()>2){ //at least 3 jets
               MSPlot["ThirdLeadingJetPt_me_ch"]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+              if(applyAsymmJetPtCut && selectedJets[2]->Pt()<JetPtCuts[2]) continue;
               selecTableMuEl.Fill(d,9,scaleFactor);
               if(selectedJets.size()>3){ //at least 4 jets
-                selecTableMuEl.Fill(d,10,scaleFactor);
-                
                 MSPlot["FourthLeadingJetPt_me_ch"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
+                if(applyAsymmJetPtCut && selectedJets[3]->Pt()<JetPtCuts[3]) continue;
+                selecTableMuEl.Fill(d,10,scaleFactor);
+
                 MSPlot["NbOfVertices_AtLeastFourJets_me_ch"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["DiLeptonInvMass_AtLeastFourJets_me_ch"]->Fill(invMass, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonDR_AtLeastFourJets_me_ch"]->Fill(DiLeptonDR, datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["DiLeptonDPhi_AtLeastFourJets_me_ch"]->Fill(DiLeptonDPhi, datasets[d], true, Luminosity*scaleFactor);
                 MSPlot["DiLeptonSystPt_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystPt, datasets[d], true, Luminosity*scaleFactor);
-                
+                MSPlot["DiLeptonSystDPhi_LeadingJet_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystDPhi_LeadingJet, datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["DiLeptonSystDPhi_JetSyst_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystDPhi_JetSyst, datasets[d], true, Luminosity*scaleFactor);
+                MSPlot["DiLeptonSystPt_Over_JetSystPt_AtLeastFourJets_me_ch"]->Fill(DiLeptonSystPt/JetSystPt, datasets[d], true, Luminosity*scaleFactor);
+
                 sort(selectedJets.begin(),selectedJets.end(),HighestCVSBtag());
                 MSPlot["HighestBdisc_me_ch_CVS"]->Fill(selectedJets[0]->btag_combinedSecondaryVertexBJetTags(),datasets[d], true, Luminosity*scaleFactor);
                 highestbtagdisc = selectedJets[0]->btag_combinedSecondaryVertexBJetTags();
                 sort(selectedJets.begin(),selectedJets.end(),HighestJPBtag());
                 MSPlot["HighestBdisc_me_ch_JP"]->Fill(selectedJets[0]->btag_jetProbabilityBJetTags(),datasets[d], true, Luminosity*scaleFactor);
+ 
+                MSPlot["MET_AtLeastFourJets_me_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
+                
+                NbOfBtagged = selection.GetSelectedBJets(selectedJets, btagAlgo, btagCut).size();
+                MSPlot["NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV"]->Fill(NbOfBtagged, datasets[d], true, Luminosity*scaleFactor);
+                if(NbOfBtagged>=1)
+                  selecTableMuEl.Fill(d,11,scaleFactor);
                 
                 // Create TopFCNC_Evt object
                 MyTopFCNC_EvtCand = new TopFCNC_Evt(TopFCNC_Evt::kMuon);
@@ -721,11 +865,6 @@ int main (int argc, char *argv[])
                 MyTopFCNC_EvtCand->SetLepton2FromZ(*selectedElectrons[idx_Z_el]);
                 MyTopFCNC_EvtCand->SetSelectedJets(selectedJets);
                 MyTopFCNC_EvtCand->SetMET(*mets[0]);
-                
-                if(highestbtagdisc>btagcut){
-                  selecTableMuEl.Fill(d,11,scaleFactor);
-                  MSPlot["MET_me_ch"]->Fill(mets[0]->Et(),datasets[d], true, Luminosity*scaleFactor);
-                }
               }
             }
           }
@@ -775,18 +914,20 @@ int main (int argc, char *argv[])
   //Once everything is filled ...
   cout << " We ran over all the data ;-)" << endl;
   
-  ///////////////////
-  // Writing
-  //////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////// Writing histograms //////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   cout << " - Writing outputs to the files ..." << endl;
   
   //Selection tables
-
   //(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST)	
   selecTableMuEl.TableCalculator(false, true, true, true, true);
   //Options : WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-  selecTableMuEl.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_DiMu.tex",    true,true,true,true,false,false,true);
+  selecTableMuEl.Write("TopFCNC"+postfix+channelpostfix+comments+"_SelectionTable_MuEl.tex",    true,true,true,true,false,false,true);
 
+  //MultiSample plots
   fout->cd();
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
   {
@@ -829,299 +970,320 @@ int main (int argc, char *argv[])
   
   return 0;
 }
-double MuEffSF_Id_Run2012(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.981239;
-    else if( pt >= 20 && pt < 25)
-      return 0.98043;
-    else if( pt >= 25 && pt < 30)
-      return 0.991182;
-    else if( pt >= 30 && pt < 35)
-      return 0.988984;
-    else if( pt >= 35 && pt < 40)
-      return 0.990422;
-    else if( pt >= 40 && pt < 50)
-      return 0.988821;
-    else if( pt >= 50 && pt < 60)
-      return 0.989954;
-    else if( pt >= 60 && pt < 90)
-      return 0.989478;
-    else if( pt >= 90 && pt < 140)
-      return 1.00023;
-    else if( pt >= 140 && pt < 500)
-      return 0.985242;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.936552;
-    else if( pt >= 20 && pt < 25)
-      return 0.995381;
-    else if( pt >= 25 && pt < 30)
-      return 0.991899;
-    else if( pt >= 30 && pt < 35)
-      return 0.990177;
-    else if( pt >= 35 && pt < 40)
-      return 0.990865;
-    else if( pt >= 40 && pt < 50)
-      return 0.986703;
-    else if( pt >= 50 && pt < 60)
-      return 0.990343;
-    else if( pt >= 60 && pt < 90)
-      return 0.985462;
-    else if( pt >= 90 && pt < 140)
-      return 0.999933;
-    else if( pt >= 140 && pt < 500)
-      return 0.922726;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 1.00304;
-    else if( pt >= 20 && pt < 25)
-      return 0.998942;
-    else if( pt >= 25 && pt < 30)
-      return 0.996901;
-    else if( pt >= 30 && pt < 35)
-      return 0.997486;
-    else if( pt >= 35 && pt < 40)
-      return 0.994566;
-    else if( pt >= 40 && pt < 50)
-      return 0.996159;
-    else if( pt >= 50 && pt < 60)
-      return 0.997451;
-    else if( pt >= 60 && pt < 90)
-      return 0.996516;
-    else if( pt >= 90 && pt < 140)
-      return 1.03286;
-    else if( pt >= 140 && pt < 500)
-      return 1.05323;
-    else
-      return 1;
-  }
+
+double MuEffSF_Id_Run2012(string period, double eta, double pt){
+  if(period.find("2012ABCD") != string::npos)
+    return MuEffSF_Id_Run2012ABCD(eta,pt);
+  else
+    return 1.;
 }
-double MuEffSF_Iso04_Run2012(double eta, double pt){
-  if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
-    if( pt >= 10 && pt < 20)
-      return 0.922624;
-    else if( pt >= 20 && pt < 25)
-      return 0.976962;
-    else if( pt >= 25 && pt < 30)
-      return 0.997654;
-    else if( pt >= 30 && pt < 35)
-      return 0.997849;
-    else if( pt >= 35 && pt < 40)
-      return 0.998674;
-    else if( pt >= 40 && pt < 50)
-      return 0.998288;
-    else if( pt >= 50 && pt < 60)
-      return 0.998246;
-    else if( pt >= 60 && pt < 90)
-      return 0.99948;
-    else if( pt >= 90 && pt < 140)
-      return 1.00003;
-    else if( pt >= 140 && pt < 500)
-      return 0.996181;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
-    if( pt >= 10 && pt < 20)
-      return 0.948552;
-    else if( pt >= 20 && pt < 25)
-      return 0.981943;
-    else if( pt >= 25 && pt < 30)
-      return 0.996887;
-    else if( pt >= 30 && pt < 35)
-      return 0.999591;
-    else if( pt >= 35 && pt < 40)
-      return 1.00033;
-    else if( pt >= 40 && pt < 50)
-      return 0.999218;
-    else if( pt >= 50 && pt < 60)
-      return 0.998999;
-    else if( pt >= 60 && pt < 90)
-      return 0.99905;
-    else if( pt >= 90 && pt < 140)
-      return 0.997391;
-    else if( pt >= 140 && pt < 500)
-      return 1.00422;
-    else
-      return 1;
-  }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
-    if( pt >= 10 && pt < 20)
-      return 0.970175;
-    else if( pt >= 20 && pt < 25)
-      return 0.989697;
-    else if( pt >= 25 && pt < 30)
-      return 1.0003;
-    else if( pt >= 30 && pt < 35)
-      return 1.00058;
-    else if( pt >= 35 && pt < 40)
-      return 1.00088;
-    else if( pt >= 40 && pt < 50)
-      return 0.999595;
-    else if( pt >= 50 && pt < 60)
-      return 0.999906;
-    else if( pt >= 60 && pt < 90)
-      return 0.999467;
-    else if( pt >= 90 && pt < 140)
-      return 0.997148;
-    else if( pt >= 140 && pt < 500)
-      return 0.997978;
-    else
-      return 1;
-  }
+double MuEffSF_Iso04_Run2012(string period, double eta, double pt){
+  if(period.find("2012ABCD") != string::npos)
+    return MuEffSF_Iso04_Run2012ABCD(eta,pt);
+  else
+    return 1.;
 }
-double MuEffSF_TrgMu8_Run2012(double eta, double pt){
+
+double MuEffSF_Id_Run2012ABCD(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.991061;
+      return 0.975506;
     else if( pt >= 20 && pt < 25)
-      return 0.988522;
+      return 0.986202;
     else if( pt >= 25 && pt < 30)
-      return 0.98938;
+      return 0.99337;
     else if( pt >= 30 && pt < 35)
-      return 0.987832;
+      return 0.996769;
     else if( pt >= 35 && pt < 40)
-      return 0.989023;
+      return 0.997442;
     else if( pt >= 40 && pt < 50)
-      return 0.988155;
+      return 0.998198;
     else if( pt >= 50 && pt < 60)
-      return 0.987275;
+      return 0.995042;
     else if( pt >= 60 && pt < 90)
-      return 0.989316;
+      return 0.987628;
     else if( pt >= 90 && pt < 140)
-      return 0.990073;
-    else if( pt >= 140 && pt < 500)
-      return 0.982128;
+      return 0.998926;
+    else if( pt >= 140 && pt < 300)
+      return 1.00231;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 1.00247;
+      return 1.00453;
     else if( pt >= 20 && pt < 25)
-      return 0.98477;
+      return 0.999235;
     else if( pt >= 25 && pt < 30)
-      return 0.985676;
+      return 0.998903;
     else if( pt >= 30 && pt < 35)
-      return 0.983014;
+      return 0.997493;
     else if( pt >= 35 && pt < 40)
-      return 0.983788;
+      return 0.998633;
     else if( pt >= 40 && pt < 50)
-      return 0.983716;
+      return 0.998107;
     else if( pt >= 50 && pt < 60)
-      return 0.985706;
+      return 0.997018;
     else if( pt >= 60 && pt < 90)
-      return 0.982735;
+      return 0.989447;
     else if( pt >= 90 && pt < 140)
-      return 0.982356;
-    else if( pt >= 140 && pt < 500)
-      return 0.963695;
+      return 1.00105;
+    else if( pt >= 140 && pt < 300)
+      return 1.00431;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 1.00883;
+      return 1.00221;
     else if( pt >= 20 && pt < 25)
-      return 1.00035;
+      return 1.00319;
     else if( pt >= 25 && pt < 30)
-      return 0.993731;
+      return 0.998141;
     else if( pt >= 30 && pt < 35)
-      return 0.990587;
+      return 0.998023;
     else if( pt >= 35 && pt < 40)
-      return 0.987497;
+      return 0.99822;
     else if( pt >= 40 && pt < 50)
-      return 0.985698;
+      return 0.99835;
     else if( pt >= 50 && pt < 60)
-      return 0.98527;
+      return 0.994846;
     else if( pt >= 60 && pt < 90)
-      return 0.983774;
+      return 0.984053;
     else if( pt >= 90 && pt < 140)
-      return 0.971552;
-    else if( pt >= 140 && pt < 500)
-      return 1.00464;
+      return 1.0043;
+    else if( pt >= 140 && pt < 300)
+      return 0.985374;
     else
-      return 1;
+      return 1.;
   }
+  else return 1.;
 }
-double MuEffSF_TrgMu17_Run2012(double eta, double pt){
+double MuEffSF_Iso04_Run2012ABCD(double eta, double pt){
   if( fabs(eta) >= 0 && fabs(eta) < 0.9 ){
     if( pt >= 10 && pt < 20)
-      return 0.991061;
+      return 0.963644;
     else if( pt >= 20 && pt < 25)
-      return 0.988522;
+      return 0.988643;
     else if( pt >= 25 && pt < 30)
-      return 0.98938;
+      return 0.999383;
     else if( pt >= 30 && pt < 35)
-      return 0.987832;
+      return 0.998656;
     else if( pt >= 35 && pt < 40)
-      return 0.989023;
+      return 0.998344;
     else if( pt >= 40 && pt < 50)
-      return 0.988155;
+      return 0.99817;
     else if( pt >= 50 && pt < 60)
-      return 0.987275;
+      return 0.999064;
     else if( pt >= 60 && pt < 90)
-      return 0.989316;
+      return 1.00044;
     else if( pt >= 90 && pt < 140)
-      return 0.990073;
-    else if( pt >= 140 && pt < 500)
-      return 0.982128;
+      return 1.0008;
+    else if( pt >= 140 && pt < 300)
+      return 1.00188;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
+  else if( fabs(eta) >= 0.9 && fabs(eta) < 1.2 ){
     if( pt >= 10 && pt < 20)
-      return 1.00247;
+      return 0.963851;
     else if( pt >= 20 && pt < 25)
-      return 0.98477;
+      return 0.9879;
     else if( pt >= 25 && pt < 30)
-      return 0.985676;
+      return 1.00148;
     else if( pt >= 30 && pt < 35)
-      return 0.983014;
+      return 1.00213;
     else if( pt >= 35 && pt < 40)
-      return 0.983788;
+      return 1.00105;
     else if( pt >= 40 && pt < 50)
-      return 0.983716;
+      return 1.00005;
     else if( pt >= 50 && pt < 60)
-      return 0.985706;
+      return 0.999964;
     else if( pt >= 60 && pt < 90)
-      return 0.982735;
+      return 1.00101;
     else if( pt >= 90 && pt < 140)
-      return 0.982356;
-    else if( pt >= 140 && pt < 500)
-      return 0.963695;
+      return 1.00153;
+    else if( pt >= 140 && pt < 300)
+      return 0.998248;
     else
-      return 1;
+      return 1.;
   }
-  if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
+  else if( fabs(eta) >= 1.2 && fabs(eta) < 2.1 ){
     if( pt >= 10 && pt < 20)
-      return 1.00883;
+      return 0.977632;
     else if( pt >= 20 && pt < 25)
-      return 1.00035;
+      return 0.994509;
     else if( pt >= 25 && pt < 30)
-      return 0.993731;
+      return 1.00207;
     else if( pt >= 30 && pt < 35)
-      return 0.990587;
+      return 1.00289;
     else if( pt >= 35 && pt < 40)
-      return 0.987497;
+      return 1.00185;
     else if( pt >= 40 && pt < 50)
-      return 0.985698;
+      return 1.;
     else if( pt >= 50 && pt < 60)
-      return 0.98527;
+      return 1.00011;
     else if( pt >= 60 && pt < 90)
-      return 0.983774;
+      return 1.00037;
     else if( pt >= 90 && pt < 140)
-      return 0.971552;
-    else if( pt >= 140 && pt < 500)
-      return 1.00464;
+      return 0.99977;
+    else if( pt >= 140 && pt < 300)
+      return 0.997083;
     else
-      return 1;
+      return 1.;
   }
+  else return 1.;
+}
+
+double ElEffSF_Id_Run2012(string period, double eta, double pt){
+  if(period.find("2012ABCD") != string::npos)
+    return ElEffSF_Id_Run2012ABCD(eta,pt);
+  else
+    return 1.;
+}
+double ElEffSF_Iso04_Run2012(string period, double eta, double pt){
+  if(period.find("2012ABCD") != string::npos)
+    return ElEffSF_Iso04_Run2012ABCD(eta,pt);
+  else
+    return 1.;
+}
+
+double ElEffSF_Id_Run2012ABCD(double eta, double pt){
+  if( fabs(eta) >= 0.000 && fabs(eta) < 0.800 ){
+    if( pt >= 10 && pt < 15)
+      return 0.818;
+    else if( pt >= 15 && pt < 20)
+      return 0.928;
+    else if( pt >= 20 && pt < 30)
+      return 0.973;
+    else if( pt >= 30 && pt < 40)
+      return 0.979;
+    else if( pt >= 40 && pt < 50)
+      return 0.984;
+    else if( pt >= 50)// && pt < 200)
+      return 0.983;
+    else
+      return 1.;
+  }
+  else if( fabs(eta) >= 0.800 && fabs(eta) < 1.442 ){
+    if( pt >= 10 && pt < 15)
+      return 0.84;
+    else if( pt >= 15 && pt < 20)
+      return 0.914;
+    else if( pt >= 20 && pt < 30)
+      return 0.948;
+    else if( pt >= 30 && pt < 40)
+      return 0.961;
+    else if( pt >= 40 && pt < 50)
+      return 0.972;
+    else if( pt >= 50)// && pt < 200)
+      return 0.977;
+    else
+      return 1.;
+  }
+  else if( fabs(eta) >= 1.442 && fabs(eta) < 1.556 ){
+    if( pt >= 10 && pt < 15)
+      return 1.008;
+    else if( pt >= 15 && pt < 20)
+      return 0.877;
+    else if( pt >= 20 && pt < 30)
+      return 0.983;
+    else if( pt >= 30 && pt < 40)
+      return 0.983;
+    else if( pt >= 40 && pt < 50)
+      return 0.957;
+    else if( pt >= 50)// && pt < 200)
+      return 0.978;
+    else
+      return 1.;
+  }
+  else if( fabs(eta) >= 1.556 && fabs(eta) < 2.000 ){
+    if( pt >= 10 && pt < 15)
+      return 0.906;
+    else if( pt >= 15 && pt < 20)
+      return 0.907;
+    else if( pt >= 20 && pt < 30)
+      return 0.957;
+    else if( pt >= 30 && pt < 40)
+      return 0.962;
+    else if( pt >= 40 && pt < 50)
+      return 0.985;
+    else if( pt >= 50)// && pt < 200)
+      return 0.986;
+    else
+      return 1.;
+  }
+  else if( fabs(eta) >= 2.000 && fabs(eta) < 2.500 ){
+    if( pt >= 10 && pt < 15)
+      return 0.991;
+    else if( pt >= 15 && pt < 20)
+      return 0.939;
+    else if( pt >= 20 && pt < 30)
+      return 1.001;
+    else if( pt >= 30 && pt < 40)
+      return 1.002;
+    else if( pt >= 40 && pt < 50)
+      return 0.999;
+    else if( pt >= 50)// && pt < 200)
+      return 0.995;
+    else
+      return 1.;
+  }
+  else return 1.;
+}
+double ElEffSF_Iso04_Run2012ABCD(double eta, double pt){
+  return 0.9912;
+}
+
+double MuonRelIso(TRootMuon* muon){
+  double reliso = ( muon->chargedHadronIso() + max( 0.0, muon->neutralHadronIso() + muon->photonIso() - 0.5*muon->puChargedHadronIso() ) ) / muon->Pt();
+  return reliso;
+}
+
+double ElecRelIso(TRootElectron* elec, TRootEvent* event){
+  if(!elec){
+    cerr << "Pointer to electron is NULL" << endl;
+    exit(1);
+  }
+  // HCP 2012 updated for electron conesize = 0.3
+  // Taken from http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/EGamma/EGammaAnalysisTools/interface/ElectronEffectiveArea.h?revision=1.4&view=markup
+  double EffectiveArea = 0.;
+  if (fabs(elec->superClusterEta()) >= 0.0   && fabs(elec->superClusterEta()) < 1.0   ) EffectiveArea = 0.130;
+  if (fabs(elec->superClusterEta()) >= 1.0   && fabs(elec->superClusterEta()) < 1.479 ) EffectiveArea = 0.137;
+  if (fabs(elec->superClusterEta()) >= 1.479 && fabs(elec->superClusterEta()) < 2.0   ) EffectiveArea = 0.067;
+  if (fabs(elec->superClusterEta()) >= 2.0   && fabs(elec->superClusterEta()) < 2.2   ) EffectiveArea = 0.089;
+  if (fabs(elec->superClusterEta()) >= 2.2   && fabs(elec->superClusterEta()) < 2.3   ) EffectiveArea = 0.107;
+  if (fabs(elec->superClusterEta()) >= 2.3   && fabs(elec->superClusterEta()) < 2.4   ) EffectiveArea = 0.110;
+  if (fabs(elec->superClusterEta()) >= 2.4) EffectiveArea = 0.138;
+  
+  double isocorr = EffectiveArea*event->kt6PFJets_rho();
+  
+  double reliso = (elec->chargedHadronIso() + max(0.0 , elec->neutralHadronIso() + elec->photonIso() - isocorr) )/ elec->Pt();
+  
+  return reliso;
+}
+
+bool ZCandInvMass(vector<TRootMuon*>& muons, vector<TRootElectron*>& electrons, int& idx_Z_mu, int& idx_Z_el, double& invMass, double Zmass, double Zwindowsize){
+  TRootMuon* mu = 0;
+  TRootElectron* el = 0;
+  double invMass_tmp = 0;
+  for(unsigned int i=0;i<muons.size();i++)
+  {
+    for(unsigned int j=0;j<electrons.size();j++)
+    {
+      mu = (TRootMuon*) muons[i];
+      el = (TRootElectron*) electrons[j];
+      if(mu->charge() == el->charge()) continue;
+      invMass_tmp = (*mu + *el).M();
+      if(fabs(invMass_tmp-Zmass)<fabs(invMass-Zmass)){
+        idx_Z_mu = i;
+        idx_Z_el = j;
+        invMass = invMass_tmp;
+      }
+    }
+  }
+  if(fabs(invMass-Zmass)<Zwindowsize)
+    return true;
+  else
+    return false;
 }
