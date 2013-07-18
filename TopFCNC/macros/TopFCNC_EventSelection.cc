@@ -16,6 +16,7 @@
 #include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
 //#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
 #include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
+#include "TopTreeAnalysisBase/Tools/interface/MuScleFitCorrector.h"
 #include "TopTreeAnalysisBase/Tools/interface/TTreeLoader.h"
 #include "TopTreeAnalysisBase/Tools/interface/AnalysisEnvironmentLoader.h"
 #include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectorParameters.h"
@@ -243,6 +244,11 @@ int main (int argc, char *argv[])
   
   //Global variable
   TRootEvent* event = 0;
+  
+  // Muon momentum corrector
+  MuScleFitCorrector* mucorrectorABC = 0;
+  MuScleFitCorrector* mucorrectorD   = 0;
+  MuScleFitCorrector* mucorrectorMC  = 0;
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////// Histograms /////////////////////////////////////////////////////////////////////
@@ -613,6 +619,14 @@ int main (int argc, char *argv[])
       isData = true;
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////// Initialize Muon Momentum Corrections //////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    string mucorrfilepath = "/Users/ghammad/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/doc/";
+    mucorrectorABC = new MuScleFitCorrector(mucorrfilepath+"MuScleFit_2012ABC_DATA_ReReco_53X.txt");
+    mucorrectorD   = new MuScleFitCorrector(mucorrfilepath+"MuScleFit_2012D_DATA_ReReco_53X.txt");
+    mucorrectorMC  = new MuScleFitCorrector(mucorrfilepath+"MuScleFit_2012_MC_53X_smearReReco.txt");
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////// Initialize JEC factors /////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -967,7 +981,7 @@ int main (int argc, char *argv[])
       //__Trigger SF_______________________________________________________________________
       if(!isData && diMuon){
         if(comments.find("2012ABCD") != string::npos){
-          scaleFactor *= 0.9773; //Cf. Piet's number. // Cf. ttbar dilepton analysis 8 TeV AN-2012-389
+          scaleFactor *= 0.966; //Cf. Piet's presentation 27/06/2013 Dimuon trigger efficiency for Loose ID
         }
         else if(comments.find("2012AB") != string::npos){
           scaleFactor *= 0.9725; //Cf. Piet's number. // Cf. ttbar dilepton analysis 8 TeV AN-2012-389
@@ -1027,17 +1041,26 @@ int main (int argc, char *argv[])
       selecTableTriEl.Fill(d,3,scaleFactor);
       selecTableDiElMu.Fill(d,3,scaleFactor);
       
-      //__Lepton ID&&ISO SF_____________________________________________________________________________
+      //__Lepton ID&ISO SF and muon momentum corrections ___________________________________________
       if(!isData && applyLeptonSF){
         for(unsigned int i=0;i<selectedMuons.size();i++){
           scaleFactor *= MuEffSF_Id_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Id SF
           scaleFactor *= MuEffSF_Iso04_Run2012(comments, selectedMuons[i]->Eta(), selectedMuons[i]->Pt());// Iso SF
+          mucorrectorMC->applyPtCorrection(*selectedMuons[i],selectedMuons[i]->charge());
+          mucorrectorMC->applyPtSmearing(*selectedMuons[i],selectedMuons[i]->charge(),false);
         }
         for(unsigned int i=0;i<selectedElectrons.size();i++){
           scaleFactor *= ElEffSF_Id_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Id SF
           scaleFactor *= ElEffSF_Iso04_Run2012(comments, selectedElectrons[i]->Eta(), selectedElectrons[i]->Pt());// Iso SF
         }
       }
+      else{
+        if (currentRun < 203777)
+          for(unsigned int i=0;i<selectedMuons.size();i++) mucorrectorABC->applyPtCorrection(*selectedMuons[i],selectedMuons[i]->charge());
+        else
+          for(unsigned int i=0;i<selectedMuons.size();i++) mucorrectorD->applyPtCorrection(*selectedMuons[i],selectedMuons[i]->charge());
+      }
+
       MSPlot["NbOfVertices"]->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedMuons"]->Fill(selectedMuons.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfIsolatedElectrons"]->Fill(selectedElectrons.size(), datasets[d], true, Luminosity*scaleFactor);
