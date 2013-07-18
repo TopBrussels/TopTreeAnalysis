@@ -373,18 +373,18 @@ int main (int argc, char *argv[])
   
   MSPlot["HighestBdisc_CSV_AtLeastFourJets_mm_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastFourJets_mm_ch", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_CSV_AtLeastFourJets_ee_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastFourJets_ee_ch", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_JP_AtLeastFourJets_mm_ch"]             = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastFourJets_mm_ch",  50, 0, 1, "JP b-disc.");
-  MSPlot["HighestBdisc_JP_AtLeastFourJets_ee_ch"]             = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastFourJets_ee_ch",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastFourJets_mm_ch"]             = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastFourJets_mm_ch", 200, 0, 4, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastFourJets_ee_ch"]             = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastFourJets_ee_ch", 200, 0, 4, "JP b-disc.");
   
   MSPlot["HighestBdisc_CSV_AtLeastTwoJets_mmm_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_mmm_ch", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_CSV_AtLeastTwoJets_eem_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_eem_ch", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_JP_AtLeastTwoJets_mmm_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_mmm_ch",  50, 0, 1, "JP b-disc.");
-  MSPlot["HighestBdisc_JP_AtLeastTwoJets_eem_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_eem_ch",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_mmm_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_mmm_ch", 200, 0, 4, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_eem_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_eem_ch", 200, 0, 4, "JP b-disc.");
   
   MSPlot["HighestBdisc_CSV_AtLeastTwoJets_mme_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_mme_ch", 50, 0, 1, "CSV b-disc.");
   MSPlot["HighestBdisc_CSV_AtLeastTwoJets_eee_ch"]           = new MultiSamplePlot(datasets, "HighestBdisc_CSV_AtLeastTwoJets_eee_ch", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_JP_AtLeastTwoJets_mme_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_mme_ch",  50, 0, 1, "JP b-disc.");
-  MSPlot["HighestBdisc_JP_AtLeastTwoJets_eee_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_eee_ch",  50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_mme_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_mme_ch", 200, 0, 4, "JP b-disc.");
+  MSPlot["HighestBdisc_JP_AtLeastTwoJets_eee_ch"]            = new MultiSamplePlot(datasets, "HighestBdisc_JP_AtLeastTwoJets_eee_ch", 200, 0, 4, "JP b-disc.");
   
   MSPlot["MET_AtLeastFourJets_mm_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_mm_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
   MSPlot["MET_AtLeastFourJets_ee_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_ee_ch", 50, 0, 200, "\\slashE_{T} [GeV]");
