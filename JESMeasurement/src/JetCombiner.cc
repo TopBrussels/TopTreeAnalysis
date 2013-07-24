@@ -217,19 +217,20 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
       //cout << i << ":  status: " << mcParticles[i]->status() << "  pdgId: " << mcParticles[i]->type()
       //  << "  motherPdgId: " << mcParticles[i]->motherType() << "  grannyPdgId: " << mcParticles[i]->grannyType() << endl;
       if( mcParticles[i]->status() != 3) continue;
+      if( mcParticles[i]->Pt() < 0.001) continue; // Herwig contains pt 0 stuff, giving lots of ROOT TLorentzVector warnings
 
       if( mcParticles[i]->type() == pdgID_top )
         topQuark = *mcParticles[i];
       else if( mcParticles[i]->type() == -pdgID_top )
         antiTopQuark = *mcParticles[i];
           
-      if( mcParticles[i]->type() == 13 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -pdgID_top )
+      if( mcParticles[i]->type() == 13 && mcParticles[i]->motherType() == -24 ) // && mcParticles[i]->grannyType() == -pdgID_top )
         muMinusFromTop = true;
-      if( mcParticles[i]->type() == -13 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top )
+      if( mcParticles[i]->type() == -13 && mcParticles[i]->motherType() == 24 ) // && mcParticles[i]->grannyType() == pdgID_top )
         muPlusFromTop = true;
-      if( mcParticles[i]->type() == 11 && mcParticles[i]->motherType() == -24 && mcParticles[i]->grannyType() == -pdgID_top )
+      if( mcParticles[i]->type() == 11 && mcParticles[i]->motherType() == -24 ) // && mcParticles[i]->grannyType() == -pdgID_top )
         elMinusFromTop = true;
-      if( mcParticles[i]->type() == -11 && mcParticles[i]->motherType() == 24 && mcParticles[i]->grannyType() == pdgID_top )
+      if( mcParticles[i]->type() == -11 && mcParticles[i]->motherType() == 24 ) // && mcParticles[i]->grannyType() == pdgID_top )
         elPlusFromTop = true;
 				
       //if( (fabs(mcParticles[i]->type()) < 6 && fabs(mcParticles[i]->motherType()) == 24 && fabs(mcParticles[i]->grannyType()) == pdgID_top) || (fabs(mcParticles[i]->type()) == 5 && fabs(mcParticles[i]->motherType()) == pdgID_top)) //this if statement to be in sync with other processevent method
@@ -293,8 +294,8 @@ void JetCombiner::ProcessEvent(Dataset* dataSet, const vector<TRootMCParticle*> 
           
       if( fabs(mcParticlesMatching_[j]->type()) < 6 ) //light/b quarks, 6 should stay hardcoded
       {
-        if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticlesMatching_[j]->motherType() == -24 && mcParticlesMatching_[j]->grannyType() == -pdgID_top )
-          || ( ( muMinusFromTop || elMinusFromTop ) && mcParticlesMatching_[j]->motherType() == 24 && mcParticlesMatching_[j]->grannyType() == pdgID_top ) )
+        if( ( ( muPlusFromTop || elPlusFromTop ) && mcParticlesMatching_[j]->motherType() == -24 ) /*&& mcParticlesMatching_[j]->grannyType() == -pdgID_top )*/
+          || ( ( muMinusFromTop || elMinusFromTop ) && mcParticlesMatching_[j]->motherType() == 24 ) /*&& mcParticlesMatching_[j]->grannyType() == pdgID_top )*/ )
         {
           if(hadronicWJet1_.first == 9999)
 		        hadronicWJet1_ = JetPartonPair[i];

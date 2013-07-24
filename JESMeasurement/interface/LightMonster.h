@@ -54,6 +54,7 @@ class LightMonster : public TObject
     ,MET_()
     ,selectedJets_()
     ,bTagCSV_()
+    ,partonFlavour_()
     ,lepton_()
     ,leptonCharge_(0)
     ,leptonPFRelIso_(-9999.)
@@ -102,6 +103,7 @@ class LightMonster : public TObject
   vector<TLorentzVector> selectedJets() const { return selectedJets_; }
   TLorentzVector selectedJet(int i) const { return selectedJets_[i]; }
   vector<float> bTagCSV() const { return bTagCSV_; }
+  vector<int> partonFlavour() const { return partonFlavour_; }
   TLorentzVector lepton() const { return lepton_; }
   int leptonCharge() const { return leptonCharge_; }
   float leptonPFRelIso() const { return leptonPFRelIso_; }
@@ -161,6 +163,7 @@ class LightMonster : public TObject
   void setMET(TLorentzVector MET) { MET_ = MET; }
   void setSelectedJets(vector<TLorentzVector> selectedJets) { selectedJets_ = selectedJets; }
   void setBTagCSV(vector<float> bTagCSV) { bTagCSV_ = bTagCSV; }
+  void setPartonFlavour(vector<int> partonFlavour) { partonFlavour_ = partonFlavour; }
   void setLepton(TLorentzVector lepton) { lepton_ = lepton; }
   void setLeptonCharge(int leptonCharge) { leptonCharge_ = leptonCharge; }
   void setLeptonPFRelIso(float leptonPFRelIso) { leptonPFRelIso_ = leptonPFRelIso; }
@@ -207,6 +210,7 @@ class LightMonster : public TObject
   TLorentzVector MET_;
   vector<TLorentzVector> selectedJets_; // all selected jets
   vector<float> bTagCSV_; // indices like selectedJets indices
+  vector<int> partonFlavour_; // indices like selectedJets indices
   TLorentzVector lepton_;
   int leptonCharge_;
   float leptonPFRelIso_;
