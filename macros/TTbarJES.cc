@@ -68,7 +68,7 @@ int main (int argc, char *argv[])
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used:  " << systematic << endl;
-  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus" || systematic == "bVSbbarJES" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "bVSbbarTag") )
+  if( ! (systematic == "Nominal" || systematic == "InvertedIso" || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "AlignPlus" || systematic == "AlignMinus" || systematic == "bVSbbarJES" || systematic == "bVSbbarJESPtDep" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "bVSbbarTag" || systematic == "mWdiff" || systematic == "mWdiffSmall" || systematic == "mWdiffSmaller") )
   {
     cout << "Unknown systematic!!!" << endl;
     cout << "Possible options are: Nominal, InvertedIso, JESPlus, JESMinus, JERPlus, JERMinus" << endl;
@@ -190,6 +190,7 @@ int main (int argc, char *argv[])
   histo1D["FourthJetPtTriggered"] = new TH1F("FourthJetPtTriggered","FourthJetPtTriggered",100,0,100);
   histo1D["AlignSystSF"] = new TH1F("AlignSystSF","AlignSystSF",200,-.001,.001);
   
+  histo1D["mWGen"] = new TH1F("mWGen","mWGen",100,60,100);
   histo1D["mTop"] = new TH1F("mTop","mTop",100,100,250);
   histo1D["mTop_genJet"] = new TH1F("mTop_genJet","mTop_genJet",100,100,250);
   histo1D["nJets"] = new TH1F("nJets","nJets",7,3.5,10.5);
@@ -346,13 +347,13 @@ int main (int argc, char *argv[])
   else
   {
     resFitLightJets = new ResolutionFit("LightJet");
-    resFitLightJets->LoadResolutions("resolutions/lightJetReso_PtTopRew.root");
+    resFitLightJets->LoadResolutions("resolutions/lightJetReso.root");
     resFitLightJetsL7 = new ResolutionFit("LightJetL7");
-    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_PtTopRew_AfterL7.root");
+    resFitLightJetsL7->LoadResolutions("resolutions/lightJetReso_AfterL7.root");
     resFitBJets = new ResolutionFit("BJet");
-    resFitBJets->LoadResolutions("resolutions/bJetReso_PtTopRew.root");
+    resFitBJets->LoadResolutions("resolutions/bJetReso.root");
     resFitBJetsL7 = new ResolutionFit("BJetL7");
-    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_PtTopRew_AfterL7.root");
+    resFitBJetsL7->LoadResolutions("resolutions/bJetReso_AfterL7.root");
   }
   if (verbose > 0)
     cout << " - ResolutionFit instantiated ..." << endl;
@@ -659,15 +660,32 @@ int main (int argc, char *argv[])
         }
       }
       
-      if(systematic == "bVSbbarJES")
+      if(systematic == "bVSbbarJES" || systematic == "bVSbbarJESPtDep")
       {
         // Scale PFJets up/down according to their flavour (b or bbar)
         for(unsigned int iJet=0; iJet<init_jets_corrected.size(); iJet++)
         {
+          float factor = 0.000779 / 2.; // divide by two, to scale b-jets up by half of the effect, and bbar ets down by half of the effect
+          if(systematic == "bVSbbarJESPtDep") // Pt dependent!
+          {
+            float jetPt = init_jets_corrected[iJet]->Pt();
+            if(jetPt > 30 && jetPt < 40) factor = 0.00139575 / 2.;
+            else if(jetPt > 40 && jetPt < 50) factor = 0.00319358 / 2.;
+            else if(jetPt > 50 && jetPt < 60) factor = 0.001213 / 2.;
+            else if(jetPt > 60 && jetPt < 70) factor = 0.00148661 / 2.;
+            else if(jetPt > 70 && jetPt < 80) factor = 0.00125843 / 2.;
+            else if(jetPt > 80 && jetPt < 90) factor = 0.00124397 / 2.;
+            else if(jetPt > 90 && jetPt < 100) factor = -0.00253308 / 2.;
+            else if(jetPt > 100 && jetPt < 120) factor = 0.000311997 / 2.;
+            else if(jetPt > 120 && jetPt < 150) factor = -0.000796185 / 2.;
+            else if(jetPt > 150 && jetPt < 250) factor = -0.000396841 / 2.;
+            else if(jetPt > 250) factor = -0.00129253 / 2.;
+          }
+          
           if(init_jets_corrected[iJet]->partonFlavour() == 5)
-            init_jets_corrected[iJet]->SetPxPyPzE(init_jets_corrected[iJet]->Px()*(1+0.01), init_jets_corrected[iJet]->Py()*(1+0.01), init_jets_corrected[iJet]->Pz()*(1+0.01), init_jets_corrected[iJet]->E()*(1+0.01));
+            init_jets_corrected[iJet]->SetPxPyPzE(init_jets_corrected[iJet]->Px()*(1+factor), init_jets_corrected[iJet]->Py()*(1+factor), init_jets_corrected[iJet]->Pz()*(1+factor), init_jets_corrected[iJet]->E()*(1+factor));
           else if(init_jets_corrected[iJet]->partonFlavour() == -5)
-            init_jets_corrected[iJet]->SetPxPyPzE(init_jets_corrected[iJet]->Px()*(1-0.01), init_jets_corrected[iJet]->Py()*(1-0.01), init_jets_corrected[iJet]->Pz()*(1-0.01), init_jets_corrected[iJet]->E()*(1-0.01));
+            init_jets_corrected[iJet]->SetPxPyPzE(init_jets_corrected[iJet]->Px()*(1-factor), init_jets_corrected[iJet]->Py()*(1-factor), init_jets_corrected[iJet]->Pz()*(1-factor), init_jets_corrected[iJet]->E()*(1-factor));
         }
       }
       
@@ -877,20 +895,21 @@ int main (int argc, char *argv[])
         int nBtags = 0;
         vector<float> bTagCSV;
         vector<TLorentzVector> otherSelectedJets;
+        vector<int> partonFlavour;
         double bTagCutValue = 0.679; // nominal: 0.679
-        if(systematic == "bTagPlus") bTagCutValue = 0.63; // absolute change in eff: 1.389 % 
-        else if(systematic == "bTagMinus") bTagCutValue = 0.727; // absolute change in eff: -1.393 %
+        if(systematic == "bTagPlus") bTagCutValue = 0.6427; // absolute change in eff: 1.001 % 
+        else if(systematic == "bTagMinus") bTagCutValue = 0.7155; // absolute change in eff: -1.003 %
         else if(systematic == "bVSbbarTag")
         {
           if(eventSelectedSemiMu)
           {
-            if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.653; // abs change: 0.6981 %
-            else bTagCutValue = 0.705; // abs change:  -0.7015 %
+            if(selectedMuons[0]->charge() > 0) bTagCutValue = 0.6000; // abs change: 2.2727 %
+            else bTagCutValue = 0.7532; // abs change:  -2.2725%
           }
           else
           {
-            if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.653;
-            else bTagCutValue = 0.705;
+            if(selectedElectrons[0]->charge() > 0) bTagCutValue = 0.6000;
+            else bTagCutValue = 0.7532;
           }
         }
         
@@ -898,6 +917,7 @@ int main (int argc, char *argv[])
         {
           otherSelectedJets.push_back( *selectedJets[iJet] );
           bTagCSV.push_back(selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags());
+          partonFlavour.push_back( selectedJets[iJet]->partonFlavour() );
           if( selectedJets[iJet]->btag_combinedSecondaryVertexBJetTags() > bTagCutValue )
           {
             nBtags++;
@@ -909,6 +929,8 @@ int main (int argc, char *argv[])
         }
         
         if(nBtags < 1) continue;
+        
+//        continue;
         
         //get the MC matched jet combination, not the MVA best matched
 	      vector<unsigned int> mcJetCombi = jetCombiner->GetGoodJetCombination();
@@ -1149,7 +1171,25 @@ int main (int argc, char *argv[])
           if(measureTopMassDifference)
           {
             vector<float> tmp;
-            float* res = kinFit->EstimateTopMass(event, 80.4, false, iCombi, correctCombi);
+            float* res = 0;
+            if(systematic == "mWdiff" || systematic == "mWdiffSmall" || systematic == "mWdiffSmaller")
+            {
+              double dMw = 0.3;
+              if(systematic == "mWdiffSmall") dMw = 0.2;
+              else if(systematic == "mWdiffSmaller") dMw = 0.1;
+              if(eventSelectedSemiMu)
+              {
+                if(selectedMuons[0]->charge() > 0) res = kinFit->EstimateTopMass(event, 80.4-dMw, false, iCombi, correctCombi);
+                else res = kinFit->EstimateTopMass(event, 80.4+dMw, false, iCombi, correctCombi);
+              }
+              else
+              {
+                if(selectedElectrons[0]->charge() > 0) res = kinFit->EstimateTopMass(event, 80.4-dMw, false, iCombi, correctCombi);
+                else res = kinFit->EstimateTopMass(event, 80.4+dMw, false, iCombi, correctCombi);
+              }
+            }
+            else res = kinFit->EstimateTopMass(event, 80.4, false, iCombi, correctCombi);
+            
             tmp.push_back(res[0]);
             tmp.push_back(res[1]);
             tmp.push_back(res[2]);
@@ -1195,6 +1235,8 @@ int main (int argc, char *argv[])
                 topDecayedLept = true;
               else if( mcParticles[iPart]->type() == -11 && mcParticles[iPart]->motherType() == 24 && mcParticles[iPart]->grannyType() == 6 )
                 topDecayedLept = true;
+              if( fabs( mcParticles[iPart]->type() ) == 24 )
+                histo1D["mWGen"]->Fill( mcParticles[iPart]->M() );
             }
           }
           
@@ -1232,6 +1274,7 @@ int main (int argc, char *argv[])
           lightMonster->setMET( *mets[0] );
           lightMonster->setSelectedJets( otherSelectedJets );
           lightMonster->setBTagCSV(bTagCSV);
+          lightMonster->setPartonFlavour(partonFlavour);
           vector<TLorentzVector> triggerLeptons;
           std::map<std::string, std::vector<TopTree::triggeredObject> > trigFilters = event->getTriggerFilters();
           if( eventSelectedSemiMu )
@@ -1437,7 +1480,9 @@ int main (int argc, char *argv[])
     temp->Draw(false, name, true, true, true, true, true);
     temp->Write(fout, name, true, pathPNG+"MSPlot/");
   }
-
+  
+//void Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false, bool mergeVVV = false, bool mergeSameSignWW = false);
+  
   //Write histograms
   fout->cd();
   th1dir->cd();
