@@ -426,20 +426,26 @@ int main (int argc, char *argv[])
       JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
       vCorrParam.push_back(*L3JetCorPar);
     }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");
-//    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
-//    JetCorrectionUncertainty *jecUncTotal = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+//    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
     
-    JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
+    JetTools *jetTools = new JetTools(vCorrParam, "JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "JECFiles/flavourFractions.root", true, true); // JetTools(vCorrParam, jecUnc, true);
     
     histo2D["jesUnc"] = new TH2F("jesUnc", "jesUnc", 101, 29.5, 130.5, 25, -0.05, 2.45);
     graph2D["jesUnc_graph2D"] = new TGraph2D(101*25);
-    
     histo1D["jesUncPt30"] = new TH1F("jesUncPt30", "jesUncPt30", 25, -0.05, 2.45);
     histo1D["jesUncPt40"] = new TH1F("jesUncPt40", "jesUncPt40", 25, -0.05, 2.45);
     histo1D["jesUncPt50"] = new TH1F("jesUncPt50", "jesUncPt50", 25, -0.05, 2.45);
     histo1D["jesUncPt60"] = new TH1F("jesUncPt60", "jesUncPt60", 25, -0.05, 2.45);
     histo1D["jesUncPt70"] = new TH1F("jesUncPt70", "jesUncPt70", 25, -0.05, 2.45);
+    
+    histo2D["jesUnc_NEW"] = new TH2F("jesUnc_NEW", "jesUnc_NEW", 101, 29.5, 130.5, 25, -0.05, 2.45);
+    graph2D["jesUnc_graph2D_NEW"] = new TGraph2D(101*25);
+    histo1D["jesUncPt30_NEW"] = new TH1F("jesUncPt30_NEW", "jesUncPt30_NEW", 25, -0.05, 2.45);
+    histo1D["jesUncPt40_NEW"] = new TH1F("jesUncPt40_NEW", "jesUncPt40_NEW", 25, -0.05, 2.45);
+    histo1D["jesUncPt50_NEW"] = new TH1F("jesUncPt50_NEW", "jesUncPt50_NEW", 25, -0.05, 2.45);
+    histo1D["jesUncPt60_NEW"] = new TH1F("jesUncPt60_NEW", "jesUncPt60_NEW", 25, -0.05, 2.45);
+    histo1D["jesUncPt70_NEW"] = new TH1F("jesUncPt70_NEW", "jesUncPt70_NEW", 25, -0.05, 2.45);
     
     int iP=0;
     for(float jetPt=30; jetPt<=130; jetPt++)
@@ -459,10 +465,20 @@ int main (int argc, char *argv[])
         else if(jetPt == 50) histo1D["jesUncPt50"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
         else if(jetPt == 60) histo1D["jesUncPt60"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
         else if(jetPt == 70) histo1D["jesUncPt70"]->Fill(jetEta, 0.5*(uncPos+uncNeg));
+        
+        //new JESunc stuff
+        float unc_NEW = 0.5*(jetTools->calculateJESUnc(jetEta, jetPt, "plus") + jetTools->calculateJESUnc(jetEta, jetPt, "minus"));
+        histo2D["jesUnc_NEW"]->Fill(jetPt, jetEta, unc_NEW);
+        graph2D["jesUnc_graph2D_NEW"]->SetPoint(iP, jetPt, jetEta, unc_NEW);
+        if(jetPt == 30) histo1D["jesUncPt30_NEW"]->Fill(jetEta, unc_NEW);
+        else if(jetPt == 40) histo1D["jesUncPt40_NEW"]->Fill(jetEta, unc_NEW);
+        else if(jetPt == 50) histo1D["jesUncPt50_NEW"]->Fill(jetEta, unc_NEW);
+        else if(jetPt == 60) histo1D["jesUncPt60_NEW"]->Fill(jetEta, unc_NEW);
+        else if(jetPt == 70) histo1D["jesUncPt70_NEW"]->Fill(jetEta, unc_NEW);
         iP++;
       }
     }
-
+    
     ////////////////////////////////
     // LOAD THE FULLKINFIT OBJECT //
     ////////////////////////////////
