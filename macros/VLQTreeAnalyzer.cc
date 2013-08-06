@@ -138,12 +138,12 @@ int main (int argc, char *argv[])
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
   //string Treespath = "VLQTrees_Summer12_PBS_24June2013"; //v4
-	string Treespath = "VLQTrees_Summer12_v5_PBS";
+	string Treespath = "VLQTrees_Summer12_PBS_v5";
   Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_24June2013_CSVL";
+	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_1Aug2013";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 		
@@ -169,6 +169,8 @@ int main (int argc, char *argv[])
 	float LeadingJetPtCut = 200., SubLeadingJetPtCut = 100.; //subleading jet pt cut only for the pair production signal boxes...
 	bool doBtagging = true; //Higgs->bbar decay
 	bool doAntiBtagging = true; //all other jets
+	bool doMETcut = true; //only in Wqq categories (i.e. single lepton with only 1 high-Pt jet)
+	float METcut = 70.;
   
   ////////////////////////////////////
   /// AnalysisEnvironment  
@@ -1055,6 +1057,8 @@ int main (int argc, char *argv[])
 						{
 						  if(!doAntiBtagging || (doAntiBtagging && nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0))
 							{
+							 if(!doMETcut || (doMETcut && met>METcut))
+							 {
 					  	   //Wqq category						
 							   ST = ST + selectedForwardJets[0].Pt();
 							   MSPlot["MS_St_boxWqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
@@ -1069,7 +1073,8 @@ int main (int argc, char *argv[])
 								 {
 								    MSPlot["MS_St_boxWminusqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
 								 }
-								 else cout<<"WARNING: muon charge "<<selectedMuonsCharge[1]<<" does not make sense!"<<endl;		 								 
+								 else cout<<"WARNING: muon charge "<<selectedMuonsCharge[1]<<" does not make sense!"<<endl;	
+							 }	 								 
 							}
 						}				
 				  }
@@ -1306,6 +1311,8 @@ int main (int argc, char *argv[])
 				     { 
 						    if(!doAntiBtagging || (doAntiBtagging && nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0))
 							  {
+								 if(!doMETcut || (doMETcut && met>METcut))
+							   {
 				           //Wqq category
 						       ST = ST + selectedForwardJets[0].Pt();
 						       MSPlot["MS_St_boxWqq_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
@@ -1319,6 +1326,7 @@ int main (int argc, char *argv[])
 								      MSPlot["MS_St_boxWminusqq_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
 								   }
 								   else cout<<"WARNING: electron charge "<<selectedElectronsCharge[1]<<" does not make sense!"<<endl;
+								 }
 								}
 						 }
 				  }

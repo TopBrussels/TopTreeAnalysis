@@ -133,7 +133,7 @@ int main (int argc, char *argv[])
 	string postfix = ""; // to relabel the names of the output trees  
 	postfix = postfix+"_"+systematic;
 */
-	string Treespath = "VLQTrees_Summer12_v5_PBS";
+	string Treespath = "VLQTrees_Summer12_PBS"; //VLQTrees_Summer12_PBS if you use the PBB_VLQTreeCreator.py script (since it's hardcoded)!!
   Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -377,25 +377,25 @@ int main (int argc, char *argv[])
     vector<JetCorrectorParameters> vCorrParam;
     if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
     {
-      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt");
+      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L1FastJet_AK5PFchs.txt");
       vCorrParam.push_back(*L1JetCorPar);
-      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt");
+      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L2Relative_AK5PFchs.txt");
       vCorrParam.push_back(*L2JetCorPar);
-      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt");
+      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L3Absolute_AK5PFchs.txt");
       vCorrParam.push_back(*L3JetCorPar);
-      JetCorrectorParameters *L2L3ResJetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/FT_53_V21_AN4_Summer13_Data_L2L3Residual_AK5PFchs.txt");
+      JetCorrectorParameters *L2L3ResJetCorPar = new JetCorrectorParameters("JECFiles/FT_53_V21_AN4_Summer13_Data_L2L3Residual_AK5PFchs.txt");
       vCorrParam.push_back(*L2L3ResJetCorPar);
     }
     else
     {
-      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
+      JetCorrectorParameters *L1JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L1FastJet_AK5PFchs.txt");
       vCorrParam.push_back(*L1JetCorPar);
-      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_L2Relative_AK5PFchs.txt");
+      JetCorrectorParameters *L2JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L2Relative_AK5PFchs.txt");
       vCorrParam.push_back(*L2JetCorPar);
-      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
+      JetCorrectorParameters *L3JetCorPar = new JetCorrectorParameters("JECFiles/START53_V23_Summer13_L3Absolute_AK5PFchs.txt");
       vCorrParam.push_back(*L3JetCorPar);
     }
-    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("../../TopTreeAnalysisBase/Calibrations/JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");  
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");  
 
     // true means redo also the L1
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, true);
