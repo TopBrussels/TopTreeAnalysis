@@ -27,6 +27,8 @@ class VLQTree : public TObject
     ,lumiBlockID_(0)
     ,nPV_(0)
     ,nTruePU_(0)
+		,MuTrigged_(0)
+		,ElTrigged_(0)
     ,SelectednLeptons_(0)
 		,SelectednMu_(0)
 		,SelectednEl_(0)
@@ -36,7 +38,6 @@ class VLQTree : public TObject
     ,selectedJets_bTagCSV_()
 		,selectedJets_partonFlavour_()
 		,selectedForwardJets_()
-		,selectedForwardJets_bTagCSV_()
 		,selectedForwardJets_partonFlavour_()
     ,selectedMuons_()
 		,selectedElectrons_()
@@ -56,16 +57,17 @@ class VLQTree : public TObject
   unsigned int lumiBlockID() const { return lumiBlockID_; }
   unsigned int nPV() const { return nPV_; }
   unsigned int nTruePU() const { return nTruePU_; }
+	bool MuTrigged() const { return MuTrigged_; }
+	bool ElTrigged() const { return ElTrigged_; }
   unsigned int SelectednLeptons() const { return SelectednLeptons_; }
 	unsigned int SelectednMu() const { return SelectednMu_; }
 	unsigned int SelectednEl() const { return SelectednEl_; }	
   float eventWeight() { return eventWeight_; }
-	TLorentzVector met() const { return MET_; }
+	TLorentzVector met() const { return MET_; }  //to be adapted, only float!!
   vector<TLorentzVector> selectedJets() const { return selectedJets_; }
   vector<float> selectedJets_bTagCSV() const { return selectedJets_bTagCSV_; }
 	vector<int> selectedJets_partonFlavour() const { return selectedJets_partonFlavour_; }
 	vector<TLorentzVector> selectedForwardJets() const { return selectedForwardJets_; }
-	vector<float> selectedForwardJets_bTagCSV() const { return selectedForwardJets_bTagCSV_; }
 	vector<int> selectedForwardJets_partonFlavour() const { return selectedForwardJets_partonFlavour_; }
 	vector<TLorentzVector> selectedMuons() const { return selectedMuons_; }
   vector<TLorentzVector> selectedElectrons() const { return selectedElectrons_; }
@@ -82,6 +84,8 @@ class VLQTree : public TObject
   void setLumiBlockID(unsigned int lumiBlockID) { lumiBlockID_ = lumiBlockID; }  
   void setNPV(unsigned int nPV) { nPV_ = nPV; }
   void setNTruePU(unsigned int nTruePU) { nTruePU_ = nTruePU; }
+	void setMuTrigged(bool MuTrigged) { MuTrigged_ = MuTrigged; }
+	void setElTrigged(bool ElTrigged) { ElTrigged_ = ElTrigged; }
 	void setSelectednLeptons(unsigned int SelectednLeptons) { SelectednLeptons_ = SelectednLeptons; }
 	void setSelectednMu(unsigned int SelectednMu) { SelectednMu_ = SelectednMu; }
 	void setSelectednEl(unsigned int SelectednEl) { SelectednEl_ = SelectednEl; }
@@ -91,7 +95,6 @@ class VLQTree : public TObject
   void setSelectedJets_bTagCSV(vector<float> selectedJets_bTagCSV) { selectedJets_bTagCSV_ = selectedJets_bTagCSV; }
 	void setSelectedJets_partonFlavour(vector<int> selectedJets_partonFlavour) { selectedJets_partonFlavour_ = selectedJets_partonFlavour; }
 	void setSelectedForwardJets(vector<TLorentzVector> selectedForwardJets) { selectedForwardJets_ = selectedForwardJets; }
-	void setSelectedForwardJets_bTagCSV(vector<float> selectedForwardJets_bTagCSV) { selectedForwardJets_bTagCSV_ = selectedForwardJets_bTagCSV; }
 	void setSelectedForwardJets_partonFlavour(vector<int> selectedForwardJets_partonFlavour) { selectedForwardJets_partonFlavour_ = selectedForwardJets_partonFlavour; }
 	void setMuons(vector<TLorentzVector> selectedMuons) { selectedMuons_ = selectedMuons; }
 	void setElectrons(vector<TLorentzVector> selectedElectrons) { selectedElectrons_ = selectedElectrons; }
@@ -110,6 +113,8 @@ class VLQTree : public TObject
   unsigned int lumiBlockID_;
   unsigned int nPV_;
   unsigned int nTruePU_;
+	bool MuTrigged_;
+	bool ElTrigged_;
   unsigned int SelectednLeptons_;
   unsigned int SelectednMu_;
 	unsigned int SelectednEl_;
@@ -119,7 +124,6 @@ class VLQTree : public TObject
 	vector<float> selectedJets_bTagCSV_; // indices like selectedJets indices
 	vector<int> selectedJets_partonFlavour_;
 	vector<TLorentzVector> selectedForwardJets_; // all selected forward jet
-	vector<float> selectedForwardJets_bTagCSV_; // indices like selectedForwardJets indices
 	vector<int> selectedForwardJets_partonFlavour_;
 	vector<TLorentzVector> selectedMuons_;
 	vector<TLorentzVector> selectedElectrons_;
@@ -131,7 +135,7 @@ class VLQTree : public TObject
   //float chargeMisIdRateEndcap_;
 	//vector<TLorentzVector> mcQuarksForMatching_;
 	
-	ClassDef (VLQTree,1);
+	ClassDef (VLQTree,3);
 };
 
 #endif
