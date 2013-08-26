@@ -5,6 +5,8 @@
 #include "TStyle.h"
 #include "TF2.h"
 #include "TGraph2D.h"
+#include "TProfile.h"
+#include "TGraph.h"
 #include <cmath>
 #include <fstream>
 #include <sstream>
@@ -40,10 +42,12 @@ using namespace reweight;
 
 map<string,TGraphAsymmErrors*> graphAsymmErr;
 map<string,TGraphErrors*> graphErr;
+map<string,TGraph*> graph;
 map<string,TH1F*> histo1D;
 map<string,TH2F*> histo2D;
 map<string,MultiSamplePlot*> MSPlot;
 map<string,TGraph2D*> graph2D;
+map<string,TProfile*> profile;
 
 int main (int argc, char *argv[])
 {
@@ -84,7 +88,7 @@ int main (int argc, char *argv[])
   
   //Output ROOT file
   string rootFileName ("TTbarJES.root");
- 	const char *rootfile = rootFileName.c_str();  
+ 	const char *rootfile = rootFileName.c_str();
   
   //Configuration output format
   TTree *configTree = new TTree("configTree","configuration Tree");
@@ -274,10 +278,184 @@ int main (int argc, char *argv[])
     histo1D["bJetResp_nPart_"+ss.str()] = new TH1F(("bJetResp_nPart_"+ss.str()).c_str(),("bJetResp_nPart_"+ss.str()).c_str(),100,0.,2.);
   }
   
+  // JES plots
+  profile["JetResp_Raw_0to10PV"] = new TProfile("JetResp_Raw_0to10PV","JetResp_Raw_0to10PV",200,5,505);
+  profile["JetResp_Raw_10to15PV"] = new TProfile("JetResp_Raw_10to15PV","JetResp_Raw_10to15PV",200,5,505);
+  profile["JetResp_Raw_15to20PV"] = new TProfile("JetResp_Raw_15to20PV","JetResp_Raw_15to20PV",200,5,505);
+  profile["JetResp_Raw_20to25PV"] = new TProfile("JetResp_Raw_20to25PV","JetResp_Raw_20to25PV",200,5,505);
+  profile["JetResp_Raw_25to30PV"] = new TProfile("JetResp_Raw_25to30PV","JetResp_Raw_25to30PV",200,5,505);
+  profile["JetResp_Raw_30PlusPV"] = new TProfile("JetResp_Raw_30PlusPV","JetResp_Raw_30PlusPV",200,5,505);
+  
+  profile["JetResp_L1_0to10PV"] = new TProfile("JetResp_L1_0to10PV","JetResp_L1_0to10PV",200,5,505);
+  profile["JetResp_L1_10to15PV"] = new TProfile("JetResp_L1_10to15PV","JetResp_L1_10to15PV",200,5,505);
+  profile["JetResp_L1_15to20PV"] = new TProfile("JetResp_L1_15to20PV","JetResp_L1_15to20PV",200,5,505);
+  profile["JetResp_L1_20to25PV"] = new TProfile("JetResp_L1_20to25PV","JetResp_L1_20to25PV",200,5,505);
+  profile["JetResp_L1_25to30PV"] = new TProfile("JetResp_L1_25to30PV","JetResp_L1_25to30PV",200,5,505);
+  profile["JetResp_L1_30PlusPV"] = new TProfile("JetResp_L1_30PlusPV","JetResp_L1_30PlusPV",200,5,505);
+  
+  profile["JetResp_L1L2L3_0to10PV"] = new TProfile("JetResp_L1L2L3_0to10PV","JetResp_L1L2L3_0to10PV",200,5,505);
+  profile["JetResp_L1L2L3_10to15PV"] = new TProfile("JetResp_L1L2L3_10to15PV","JetResp_L1L2L3_10to15PV",200,5,505);
+  profile["JetResp_L1L2L3_15to20PV"] = new TProfile("JetResp_L1L2L3_15to20PV","JetResp_L1L2L3_15to20PV",200,5,505);
+  profile["JetResp_L1L2L3_20to25PV"] = new TProfile("JetResp_L1L2L3_20to25PV","JetResp_L1L2L3_20to25PV",200,5,505);
+  profile["JetResp_L1L2L3_25to30PV"] = new TProfile("JetResp_L1L2L3_25to30PV","JetResp_L1L2L3_25to30PV",200,5,505);
+  profile["JetResp_L1L2L3_30PlusPV"] = new TProfile("JetResp_L1L2L3_30PlusPV","JetResp_L1L2L3_30PlusPV",200,5,505);
+  
+  profile["JetResp_L1L2L3_Incl"] = new TProfile("JetResp_L1L2L3_Incl","JetResp_L1L2L3_Incl",200,5,505);
+  profile["JetResp_L1L2L3_smallEta_Incl"] = new TProfile("JetResp_L1L2L3_smallEta_Incl","JetResp_smallEta_L1L2L3_Incl",200,5,505);
+  profile["JetResp_L1L2L3_mediumEta_Incl"] = new TProfile("JetResp_L1L2L3_mediumEta_Incl","JetResp_L1L2L3_mediumEta_Incl",200,5,505);
+  profile["JetResp_L1L2L3_largeEta_Incl"] = new TProfile("JetResp_L1L2L3_largeEta_Incl","JetResp_L1L2L3_largeEta_Incl",200,5,505);
+  
+  profile["JetResp_L1L2L3_gluon"] = new TProfile("JetResp_L1L2L3_gluon","JetResp_L1L2L3_gluon",200,5,505);
+  profile["JetResp_L1L2L3_uds"] = new TProfile("JetResp_L1L2L3_uds","JetResp_L1L2L3_uds",200,5,505);
+  profile["JetResp_L1L2L3_c"] = new TProfile("JetResp_L1L2L3_c","JetResp_L1L2L3_c",200,5,505);
+  profile["JetResp_L1L2L3_b"] = new TProfile("JetResp_L1L2L3_b","JetResp_L1L2L3_b",200,5,505);
+  profile["JetResp_L1L2L3_unm"] = new TProfile("JetResp_L1L2L3_unm","JetResp_L1L2L3_unm",200,5,505);
+  
+  profile["JetResp_L1L2L3_smallEta_gluon"] = new TProfile("JetResp_L1L2L3_smallEta_gluon","JetResp_smallEta_L1L2L3_gluon",200,5,505);
+  profile["JetResp_L1L2L3_smallEta_uds"] = new TProfile("JetResp_L1L2L3_smallEta_uds","JetResp_smallEta_L1L2L3_uds",200,5,505);
+  profile["JetResp_L1L2L3_smallEta_c"] = new TProfile("JetResp_L1L2L3_smallEta_c","JetResp_L1L2L3_smallEta_c",200,5,505);
+  profile["JetResp_L1L2L3_smallEta_b"] = new TProfile("JetResp_L1L2L3_smallEta_b","JetResp_L1L2L3_smallEta_b",200,5,505);
+  profile["JetResp_L1L2L3_smallEta_unm"] = new TProfile("JetResp_L1L2L3_smallEta_unm","JetResp_L1L2L3_smallEta_unm",200,5,505);
+  
+  // JES unc plots
+  graph["JecUnc_Pt30_PileUp"] = new TGraph(5000);
+  graph["JecUnc_Pt30_PileUp"]->SetNameTitle("JecUnc_Pt30_PileUp","JecUnc_Pt30_PileUp");
+  graph["JecUnc_Pt30_Relative"] = new TGraph(5000);
+  graph["JecUnc_Pt30_Relative"]->SetNameTitle("JecUnc_Pt30_Relative","JecUnc_Pt30_Relative");
+  graph["JecUnc_Pt30_Time"] = new TGraph(5000);
+  graph["JecUnc_Pt30_Time"]->SetNameTitle("JecUnc_Pt30_Time","JecUnc_Pt30_Time");
+  graph["JecUnc_Pt30_Flavour"] = new TGraph(5000);
+  graph["JecUnc_Pt30_Flavour"]->SetNameTitle("JecUnc_Pt30_Flavour","JecUnc_Pt30_Flavour");
+  graph["JecUnc_Pt30_Absolute"] = new TGraph(5000);
+  graph["JecUnc_Pt30_Absolute"]->SetNameTitle("JecUnc_Pt30_Absolute","JecUnc_Pt30_Absolute");
+  graph["JecUnc_Pt30_Total"] = new TGraph(5000);
+  graph["JecUnc_Pt30_Total"]->SetNameTitle("JecUnc_Pt30_Total","JecUnc_Pt30_Total");
+  
+  graph["JecUnc_Pt50_PileUp"] = new TGraph(5000);
+  graph["JecUnc_Pt50_PileUp"]->SetNameTitle("JecUnc_Pt50_PileUp","JecUnc_Pt50_PileUp");
+  graph["JecUnc_Pt50_Relative"] = new TGraph(5000);
+  graph["JecUnc_Pt50_Relative"]->SetNameTitle("JecUnc_Pt50_Relative","JecUnc_Pt50_Relative");
+  graph["JecUnc_Pt50_Time"] = new TGraph(5000);
+  graph["JecUnc_Pt50_Time"]->SetNameTitle("JecUnc_Pt50_Time","JecUnc_Pt50_Time");
+  graph["JecUnc_Pt50_Flavour"] = new TGraph(5000);
+  graph["JecUnc_Pt50_Flavour"]->SetNameTitle("JecUnc_Pt50_Flavour","JecUnc_Pt50_Flavour");
+  graph["JecUnc_Pt50_Absolute"] = new TGraph(5000);
+  graph["JecUnc_Pt50_Absolute"]->SetNameTitle("JecUnc_Pt50_Absolute","JecUnc_Pt50_Absolute");
+  graph["JecUnc_Pt50_Total"] = new TGraph(5000);
+  graph["JecUnc_Pt50_Total"]->SetNameTitle("JecUnc_Pt50_Total","JecUnc_Pt50_Total");
+  
+  graph["JecUnc_Pt70_PileUp"] = new TGraph(5000);
+  graph["JecUnc_Pt70_PileUp"]->SetNameTitle("JecUnc_Pt70_PileUp","JecUnc_Pt70_PileUp");
+  graph["JecUnc_Pt70_Relative"] = new TGraph(5000);
+  graph["JecUnc_Pt70_Relative"]->SetNameTitle("JecUnc_Pt70_Relative","JecUnc_Pt70_Relative");
+  graph["JecUnc_Pt70_Time"] = new TGraph(5000);
+  graph["JecUnc_Pt70_Time"]->SetNameTitle("JecUnc_Pt70_Time","JecUnc_Pt70_Time");
+  graph["JecUnc_Pt70_Flavour"] = new TGraph(5000);
+  graph["JecUnc_Pt70_Flavour"]->SetNameTitle("JecUnc_Pt70_Flavour","JecUnc_Pt70_Flavour");
+  graph["JecUnc_Pt70_Absolute"] = new TGraph(5000);
+  graph["JecUnc_Pt70_Absolute"]->SetNameTitle("JecUnc_Pt70_Absolute","JecUnc_Pt70_Absolute");
+  graph["JecUnc_Pt70_Total"] = new TGraph(5000);
+  graph["JecUnc_Pt70_Total"]->SetNameTitle("JecUnc_Pt70_Total","JecUnc_Pt70_Total");
+  
+  graph["JecUnc_Eta0_PileUp"] = new TGraph(1921);
+  graph["JecUnc_Eta0_PileUp"]->SetNameTitle("JecUnc_Eta0_PileUp","JecUnc_Eta0_PileUp");
+  graph["JecUnc_Eta0_Relative"] = new TGraph(1921);
+  graph["JecUnc_Eta0_Relative"]->SetNameTitle("JecUnc_Eta0_Relative","JecUnc_Eta0_Relative");
+  graph["JecUnc_Eta0_Time"] = new TGraph(1921);
+  graph["JecUnc_Eta0_Time"]->SetNameTitle("JecUnc_Eta0_Time","JecUnc_Eta0_Time");
+  graph["JecUnc_Eta0_Flavour"] = new TGraph(1921);
+  graph["JecUnc_Eta0_Flavour"]->SetNameTitle("JecUnc_Eta0_Flavour","JecUnc_Eta0_Flavour");
+  graph["JecUnc_Eta0_Absolute"] = new TGraph(1921);
+  graph["JecUnc_Eta0_Absolute"]->SetNameTitle("JecUnc_Eta0_Absolute","JecUnc_Eta0_Absolute");
+  graph["JecUnc_Eta0_Total"] = new TGraph(1921);
+  graph["JecUnc_Eta0_Total"]->SetNameTitle("JecUnc_Eta0_Total","JecUnc_Eta0_Total");
+  
+  graph["JecUnc_Eta1p2_PileUp"] = new TGraph(1921);
+  graph["JecUnc_Eta1p2_PileUp"]->SetNameTitle("JecUnc_Eta1p2_PileUp","JecUnc_Eta1p2_PileUp");
+  graph["JecUnc_Eta1p2_Relative"] = new TGraph(1921);
+  graph["JecUnc_Eta1p2_Relative"]->SetNameTitle("JecUnc_Eta1p2_Relative","JecUnc_Eta1p2_Relative");
+  graph["JecUnc_Eta1p2_Time"] = new TGraph(1921);
+  graph["JecUnc_Eta1p2_Time"]->SetNameTitle("JecUnc_Eta1p2_Time","JecUnc_Eta1p2_Time");
+  graph["JecUnc_Eta1p2_Flavour"] = new TGraph(1921);
+  graph["JecUnc_Eta1p2_Flavour"]->SetNameTitle("JecUnc_Eta1p2_Flavour","JecUnc_Eta1p2_Flavour");
+  graph["JecUnc_Eta1p2_Absolute"] = new TGraph(1921);
+  graph["JecUnc_Eta1p2_Absolute"]->SetNameTitle("JecUnc_Eta1p2_Absolute","JecUnc_Eta1p2_Absolute");
+  graph["JecUnc_Eta1p2_Total"] = new TGraph(1921);
+  graph["JecUnc_Eta1p2_Total"]->SetNameTitle("JecUnc_Eta1p2_Total","JecUnc_Eta1p2_Total");
+  
+  graph["JecUnc_Eta2p3_PileUp"] = new TGraph(1921);
+  graph["JecUnc_Eta2p3_PileUp"]->SetNameTitle("JecUnc_Eta2p3_PileUp","JecUnc_Eta2p3_PileUp");
+  graph["JecUnc_Eta2p3_Relative"] = new TGraph(1921);
+  graph["JecUnc_Eta2p3_Relative"]->SetNameTitle("JecUnc_Eta2p3_Relative","JecUnc_Eta2p3_Relative");
+  graph["JecUnc_Eta2p3_Time"] = new TGraph(1921);
+  graph["JecUnc_Eta2p3_Time"]->SetNameTitle("JecUnc_Eta2p3_Time","JecUnc_Eta2p3_Time");
+  graph["JecUnc_Eta2p3_Flavour"] = new TGraph(1921);
+  graph["JecUnc_Eta2p3_Flavour"]->SetNameTitle("JecUnc_Eta2p3_Flavour","JecUnc_Eta2p3_Flavour");
+  graph["JecUnc_Eta2p3_Absolute"] = new TGraph(1921);
+  graph["JecUnc_Eta2p3_Absolute"]->SetNameTitle("JecUnc_Eta2p3_Absolute","JecUnc_Eta2p3_Absolute");
+  graph["JecUnc_Eta2p3_Total"] = new TGraph(1921);
+  graph["JecUnc_Eta2p3_Total"]->SetNameTitle("JecUnc_Eta2p3_Total","JecUnc_Eta2p3_Total");
+  
+  graph["FlavUnc_Eta0_gluon"] = new TGraph(1921);
+  graph["FlavUnc_Eta0_gluon"]->SetNameTitle("FlavUnc_Eta0_gluon","FlavUnc_Eta0_gluon");
+  graph["FlavUnc_Eta0_uds"] = new TGraph(1921);
+  graph["FlavUnc_Eta0_uds"]->SetNameTitle("FlavUnc_Eta0_uds","FlavUnc_Eta0_uds");
+  graph["FlavUnc_Eta0_c"] = new TGraph(1921);
+  graph["FlavUnc_Eta0_c"]->SetNameTitle("FlavUnc_Eta0_c","FlavUnc_Eta0_c");
+  graph["FlavUnc_Eta0_b"] = new TGraph(1921);
+  graph["FlavUnc_Eta0_b"]->SetNameTitle("FlavUnc_Eta0_b","FlavUnc_Eta0_b");
+  
+  graph["FlavUnc_Eta1p9_gluon"] = new TGraph(1921);
+  graph["FlavUnc_Eta1p9_gluon"]->SetNameTitle("FlavUnc_Eta1p9_gluon","FlavUnc_Eta1p9_gluon");
+  graph["FlavUnc_Eta1p9_uds"] = new TGraph(1921);
+  graph["FlavUnc_Eta1p9_uds"]->SetNameTitle("FlavUnc_Eta1p9_uds","FlavUnc_Eta1p9_uds");
+  graph["FlavUnc_Eta1p9_c"] = new TGraph(1921);
+  graph["FlavUnc_Eta1p9_c"]->SetNameTitle("FlavUnc_Eta1p9_c","FlavUnc_Eta1p9_c");
+  graph["FlavUnc_Eta1p9_b"] = new TGraph(1921);
+  graph["FlavUnc_Eta1p9_b"]->SetNameTitle("FlavUnc_Eta1p9_b","FlavUnc_Eta1p9_b");
+  
+  graph["FlavUnc_Eta2p3_gluon"] = new TGraph(1921);
+  graph["FlavUnc_Eta2p3_gluon"]->SetNameTitle("FlavUnc_Eta2p3_gluon","FlavUnc_Eta2p3_gluon");
+  graph["FlavUnc_Eta2p3_uds"] = new TGraph(1921);
+  graph["FlavUnc_Eta2p3_uds"]->SetNameTitle("FlavUnc_Eta2p3_uds","FlavUnc_Eta2p3_uds");
+  graph["FlavUnc_Eta2p3_c"] = new TGraph(1921);
+  graph["FlavUnc_Eta2p3_c"]->SetNameTitle("FlavUnc_Eta2p3_c","FlavUnc_Eta2p3_c");
+  graph["FlavUnc_Eta2p3_b"] = new TGraph(1921);
+  graph["FlavUnc_Eta2p3_b"]->SetNameTitle("FlavUnc_Eta2p3_b","FlavUnc_Eta2p3_b");
+  
+  // some b-tag plots
+  histo1D["CSV_b"] = new TH1F("CSV_b","CSV_b",100,0.,1.);
+  histo1D["CSV_c"] = new TH1F("CSV_c","CSV_c",100,0.,1.);
+  histo1D["CSV_uds"] = new TH1F("CSV_uds","CSV_uds",100,0.,1.);
+  histo1D["CSV_g"] = new TH1F("CSV_g","CSV_g",100,0.,1.);
+  histo1D["CSV_unm"] = new TH1F("CSV_unm","CSV_unm",100,0.,1.);
+  
+  // some EleId plots
+  histo1D["ElIdMVA_matched"] = new TH1F("ElIdMVA_matched","ElIdMVA_matched",100,-1,1);
+  histo1D["ElIdMVA_unmatched"] = new TH1F("ElIdMVA_unmatched","ElIdMVA_unmatched",100,-1,1);
+  histo1D["ElIso_matched"] = new TH1F("ElIso_matched","ElIso_matched",100,0,0.4);
+  histo1D["ElIso_unmatched"] = new TH1F("ElIso_unmatched","ElIso_unmatched",100,0,0.4);
+  
+  // some MuId plots
+  histo1D["MuIso_matched"] = new TH1F("MuIso_matched","MuIso_matched",100,0,0.2);
+  histo1D["MuIso_unmatched"] = new TH1F("MuIso_unmatched","MuIso_unmatched",100,0,0.2);
+  histo1D["MuNPixelHits_matched"] = new TH1F("MuNPixelHits_matched","MuNPixelHits_matched",10,-0.5,9.5);
+  histo1D["MuNPixelHits_unmatched"] = new TH1F("MuNPixelHits_unmatched","MuNPixelHits_unmatched",10,-0.5,9.5);
+  histo1D["Mud0_matched"] = new TH1F("Mud0_matched","Mud0_matched",100,-0.05,0.05);
+  histo1D["Mud0_unmatched"] = new TH1F("Mud0_unmatched","Mud0_unmatched",100,-0.05,0.05);
+  histo1D["MuChi2_matched"] = new TH1F("MuChi2_matched","MuChi2_matched",100,0,50);
+  histo1D["MuChi2_unmatched"] = new TH1F("MuChi2_unmatched","MuChi2_unmatched",100,0,50);
+  histo1D["MuDZ_matched"] = new TH1F("MuDZ_matched","MuDZ_matched",100,-2,2);
+  histo1D["MuDZ_unmatched"] = new TH1F("MuDZ_unmatched","MuDZ_unmatched",100,-2,2);
+  histo1D["MuNsegm_matched"] = new TH1F("MuNsegm_matched","MuNsegm_matched",20,-0.5,19.5);
+  histo1D["MuNsegm_unmatched"] = new TH1F("MuNsegm_unmatched","MuNsegm_unmatched",20,-0.5,19.5);
+  histo1D["MuNTrackLayers_matched"] = new  TH1F("MuNTrackLayers_matched","MuNTrackLayers_matched",30,-0.5,29.5);
+  histo1D["MuNTrackLayers_unmatched"] = new  TH1F("MuNTrackLayers_unmatched","MuNTrackLayers_unmatched",30,-0.5,29.5);
+  
   ////////////////////////////////////
   /// Selection table
   ////////////////////////////////////
-
+  
   vector<string> CutsSelecTableSemiMu;
   CutsSelecTableSemiMu.push_back(string("preselected"));
   CutsSelecTableSemiMu.push_back(string("trigged"));
@@ -429,7 +607,9 @@ int main (int argc, char *argv[])
 //    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty("JECFiles/START53_V23_Summer13_Uncertainty_AK5PFchs.txt");
     JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalMC")));
     
-    JetTools *jetTools = new JetTools(vCorrParam, "JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "JECFiles/flavourFractions.root", true, true); // JetTools(vCorrParam, jecUnc, true);
+    JetTools *jetTools = new JetTools(vCorrParam, "JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "JECFiles/flavourFractions_4OrMoreJets.root", true, true); // JetTools(vCorrParam, jecUnc, true);
+    
+    JetTools *jetTools_Exact4 = new JetTools(vCorrParam, "JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "JECFiles/flavourFractions_Exact4Jets.root", true, true); // JetTools(vCorrParam, jecUnc, true);
     
     histo2D["jesUnc"] = new TH2F("jesUnc", "jesUnc", 101, 29.5, 130.5, 25, -0.05, 2.45);
     graph2D["jesUnc_graph2D"] = new TGraph2D(101*25);
@@ -446,6 +626,14 @@ int main (int argc, char *argv[])
     histo1D["jesUncPt50_NEW"] = new TH1F("jesUncPt50_NEW", "jesUncPt50_NEW", 25, -0.05, 2.45);
     histo1D["jesUncPt60_NEW"] = new TH1F("jesUncPt60_NEW", "jesUncPt60_NEW", 25, -0.05, 2.45);
     histo1D["jesUncPt70_NEW"] = new TH1F("jesUncPt70_NEW", "jesUncPt70_NEW", 25, -0.05, 2.45);
+    
+    histo2D["jesUnc_NEW_Exact4"] = new TH2F("jesUnc_NEW_Exact4", "jesUnc_NEW_Exact4", 101, 29.5, 130.5, 25, -0.05, 2.45);
+    graph2D["jesUnc_graph2D_NEW_Exact4"] = new TGraph2D(101*25);
+    histo1D["jesUncPt30_NEW_Exact4"] = new TH1F("jesUncPt30_NEW_Exact4", "jesUncPt30_NEW_Exact4", 25, -0.05, 2.45);
+    histo1D["jesUncPt40_NEW_Exact4"] = new TH1F("jesUncPt40_NEW_Exact4", "jesUncPt40_NEW_Exact4", 25, -0.05, 2.45);
+    histo1D["jesUncPt50_NEW_Exact4"] = new TH1F("jesUncPt50_NEW_Exact4", "jesUncPt50_NEW_Exact4", 25, -0.05, 2.45);
+    histo1D["jesUncPt60_NEW_Exact4"] = new TH1F("jesUncPt60_NEW_Exact4", "jesUncPt60_NEW_Exact4", 25, -0.05, 2.45);
+    histo1D["jesUncPt70_NEW_Exact4"] = new TH1F("jesUncPt70_NEW_Exact4", "jesUncPt70_NEW_Exact4", 25, -0.05, 2.45);
     
     int iP=0;
     for(float jetPt=30; jetPt<=130; jetPt++)
@@ -475,7 +663,145 @@ int main (int argc, char *argv[])
         else if(jetPt == 50) histo1D["jesUncPt50_NEW"]->Fill(jetEta, unc_NEW);
         else if(jetPt == 60) histo1D["jesUncPt60_NEW"]->Fill(jetEta, unc_NEW);
         else if(jetPt == 70) histo1D["jesUncPt70_NEW"]->Fill(jetEta, unc_NEW);
+        
+        float unc_NEW_Exact4 = 0.5*(jetTools_Exact4->calculateJESUnc(jetEta, jetPt, "plus") + jetTools_Exact4->calculateJESUnc(jetEta, jetPt, "minus"));
+        histo2D["jesUnc_NEW_Exact4"]->Fill(jetPt, jetEta, unc_NEW_Exact4);
+        graph2D["jesUnc_graph2D_NEW_Exact4"]->SetPoint(iP, jetPt, jetEta, unc_NEW_Exact4);
+        if(jetPt == 30) histo1D["jesUncPt30_NEW_Exact4"]->Fill(jetEta, unc_NEW_Exact4);
+        else if(jetPt == 40) histo1D["jesUncPt40_NEW_Exact4"]->Fill(jetEta, unc_NEW_Exact4);
+        else if(jetPt == 50) histo1D["jesUncPt50_NEW_Exact4"]->Fill(jetEta, unc_NEW_Exact4);
+        else if(jetPt == 60) histo1D["jesUncPt60_NEW_Exact4"]->Fill(jetEta, unc_NEW_Exact4);
+        else if(jetPt == 70) histo1D["jesUncPt70_NEW_Exact4"]->Fill(jetEta, unc_NEW_Exact4);
         iP++;
+      }
+    }
+    
+    if(true) // Make JES unc plots for 8 TeV
+    {
+      JetCorrectionUncertainty *jecUnc_PuDataMC = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "PileUpDataMC")));
+      JetCorrectionUncertainty *jecUnc_PuBias = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "PileUpBias")));
+      
+      JetCorrectionUncertainty *jecUnc_Rel = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "SubTotalRelative")));
+      
+      JetCorrectionUncertainty *jecUnc_Time = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "Time")));
+      
+      JetCorrectionUncertainty *jecUnc_Abs = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "Absolute")));
+      JetCorrectionUncertainty *jecUnc_HighPtExtra = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "HighPtExtra")));
+      JetCorrectionUncertainty *jecUnc_SinglePiECAL = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "SinglePionECAL")));
+      JetCorrectionUncertainty *jecUnc_SinglePiHCAL = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "SinglePionHCAL")));
+      
+      JetCorrectionUncertainty *jecUnc_gluon = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "FlavorPureGluon")));
+      JetCorrectionUncertainty *jecUnc_uds = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "FlavorPureQuark")));
+      JetCorrectionUncertainty *jecUnc_c = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "FlavorPureCharm")));
+      JetCorrectionUncertainty *jecUnc_b = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JECFiles/Summer13_V4_DATA_UncertaintySources_AK5PFchs.txt", "FlavorPureBottom")));
+      
+//      jetTools->getJECunc(eta, pt, jesUnc);
+      int i;
+      for(float eta = -2.5, i = 0; eta <= 2.5; eta += 0.001, i++)
+      {
+        float uncPU = sqrt( pow( jetTools->getJECunc(eta, 30, jecUnc_PuDataMC) ,2) + pow( jetTools->getJECunc(eta, 30, jecUnc_PuBias) ,2) );
+        float uncRel = jetTools->getJECunc(eta, 30, jecUnc_Rel);
+        float uncTime = jetTools->getJECunc(eta, 30, jecUnc_Time);
+        float uncAbs = sqrt( pow( jetTools->getJECunc(eta, 30, jecUnc_Abs) ,2) + pow( jetTools->getJECunc(eta, 30, jecUnc_HighPtExtra) ,2) + pow( jetTools->getJECunc(eta, 30, jecUnc_SinglePiECAL) ,2) + pow( jetTools->getJECunc(eta, 30, jecUnc_SinglePiHCAL) ,2) );
+        float uncFlav = jetTools->calculateJESUnc(eta, 30, "plus", "onlyFlavour");
+        float uncTotal = sqrt( uncPU*uncPU + uncRel*uncRel + uncTime*uncTime + uncAbs*uncAbs + uncFlav*uncFlav );
+        
+        graph["JecUnc_Pt30_PileUp"]->SetPoint(i, eta, uncPU);
+        graph["JecUnc_Pt30_Relative"]->SetPoint(i, eta, uncRel);
+        graph["JecUnc_Pt30_Time"]->SetPoint(i, eta, uncTime);
+        graph["JecUnc_Pt30_Flavour"]->SetPoint(i, eta, uncFlav);
+        graph["JecUnc_Pt30_Absolute"]->SetPoint(i, eta, uncAbs);
+        graph["JecUnc_Pt30_Total"]->SetPoint(i, eta, uncTotal);
+        
+        uncPU = sqrt( pow( jetTools->getJECunc(eta, 50, jecUnc_PuDataMC) ,2) + pow( jetTools->getJECunc(eta, 50, jecUnc_PuBias) ,2) );
+        uncRel = jetTools->getJECunc(eta, 50, jecUnc_Rel);
+        uncTime = jetTools->getJECunc(eta, 50, jecUnc_Time);
+        uncAbs = sqrt( pow( jetTools->getJECunc(eta, 50, jecUnc_Abs) ,2) + pow( jetTools->getJECunc(eta, 50, jecUnc_HighPtExtra) ,2) + pow( jetTools->getJECunc(eta, 50, jecUnc_SinglePiECAL) ,2) + pow( jetTools->getJECunc(eta, 50, jecUnc_SinglePiHCAL) ,2) );
+        uncFlav = jetTools->calculateJESUnc(eta, 50, "plus", "onlyFlavour");
+        uncTotal = sqrt( uncPU*uncPU + uncRel*uncRel + uncTime*uncTime + uncAbs*uncAbs + uncFlav*uncFlav );
+        
+        graph["JecUnc_Pt50_PileUp"]->SetPoint(i, eta, uncPU);
+        graph["JecUnc_Pt50_Relative"]->SetPoint(i, eta, uncRel);
+        graph["JecUnc_Pt50_Time"]->SetPoint(i, eta, uncTime);
+        graph["JecUnc_Pt50_Flavour"]->SetPoint(i, eta, uncFlav);
+        graph["JecUnc_Pt50_Absolute"]->SetPoint(i, eta, uncAbs);
+        graph["JecUnc_Pt50_Total"]->SetPoint(i, eta, uncTotal);
+        
+        uncPU = sqrt( pow( jetTools->getJECunc(eta, 70, jecUnc_PuDataMC) ,2) + pow( jetTools->getJECunc(eta, 70, jecUnc_PuBias) ,2) );
+        uncRel = jetTools->getJECunc(eta, 70, jecUnc_Rel);
+        uncTime = jetTools->getJECunc(eta, 70, jecUnc_Time);
+        uncAbs = sqrt( pow( jetTools->getJECunc(eta, 70, jecUnc_Abs) ,2) + pow( jetTools->getJECunc(eta, 70, jecUnc_HighPtExtra) ,2) + pow( jetTools->getJECunc(eta, 70, jecUnc_SinglePiECAL) ,2) + pow( jetTools->getJECunc(eta, 70, jecUnc_SinglePiHCAL) ,2) );
+        uncFlav = jetTools->calculateJESUnc(eta, 70, "plus", "onlyFlavour");
+        uncTotal = sqrt( uncPU*uncPU + uncRel*uncRel + uncTime*uncTime + uncAbs*uncAbs + uncFlav*uncFlav );
+        
+        graph["JecUnc_Pt70_PileUp"]->SetPoint(i, eta, uncPU);
+        graph["JecUnc_Pt70_Relative"]->SetPoint(i, eta, uncRel);
+        graph["JecUnc_Pt70_Time"]->SetPoint(i, eta, uncTime);
+        graph["JecUnc_Pt70_Flavour"]->SetPoint(i, eta, uncFlav);
+        graph["JecUnc_Pt70_Absolute"]->SetPoint(i, eta, uncAbs);
+        graph["JecUnc_Pt70_Total"]->SetPoint(i, eta, uncTotal);
+      }
+      
+      for(float pt = 20, i=0; pt <= 500; pt += 0.25, i++)
+      {
+        float uncPU = sqrt( pow( jetTools->getJECunc(0, pt, jecUnc_PuDataMC) ,2) + pow( jetTools->getJECunc(0, pt, jecUnc_PuBias) ,2) );
+        float uncRel = jetTools->getJECunc(0, pt, jecUnc_Rel);
+        float uncTime = jetTools->getJECunc(0, pt, jecUnc_Time);
+        float uncAbs = sqrt( pow( jetTools->getJECunc(0, pt, jecUnc_Abs) ,2) + pow( jetTools->getJECunc(0, pt, jecUnc_HighPtExtra) ,2) + pow( jetTools->getJECunc(0, pt, jecUnc_SinglePiECAL) ,2) + pow( jetTools->getJECunc(0, pt, jecUnc_SinglePiHCAL) ,2) );
+        float uncFlav = jetTools->calculateJESUnc(0, pt, "plus", "onlyFlavour");
+        float uncTotal = sqrt( uncPU*uncPU + uncRel*uncRel + uncTime*uncTime + uncAbs*uncAbs + uncFlav*uncFlav );
+        
+        graph["JecUnc_Eta0_PileUp"]->SetPoint(i, pt, uncPU);
+        graph["JecUnc_Eta0_Relative"]->SetPoint(i, pt, uncRel);
+        graph["JecUnc_Eta0_Time"]->SetPoint(i, pt, uncTime);
+        graph["JecUnc_Eta0_Flavour"]->SetPoint(i, pt, uncFlav);
+        graph["JecUnc_Eta0_Absolute"]->SetPoint(i, pt, uncAbs);
+        graph["JecUnc_Eta0_Total"]->SetPoint(i, pt, uncTotal);
+        
+        uncPU = sqrt( pow( jetTools->getJECunc(1.2, pt, jecUnc_PuDataMC) ,2) + pow( jetTools->getJECunc(1.2, pt, jecUnc_PuBias) ,2) );
+        uncRel = jetTools->getJECunc(1.2, pt, jecUnc_Rel);
+        uncTime = jetTools->getJECunc(1.2, pt, jecUnc_Time);
+        uncAbs = sqrt( pow( jetTools->getJECunc(1.2, pt, jecUnc_Abs) ,2) + pow( jetTools->getJECunc(1.2, pt, jecUnc_HighPtExtra) ,2) + pow( jetTools->getJECunc(1.2, pt, jecUnc_SinglePiECAL) ,2) + pow( jetTools->getJECunc(1.2, pt, jecUnc_SinglePiHCAL) ,2) );
+        uncFlav = jetTools->calculateJESUnc(1.2, pt, "plus", "onlyFlavour");
+        uncTotal = sqrt( uncPU*uncPU + uncRel*uncRel + uncTime*uncTime + uncAbs*uncAbs + uncFlav*uncFlav );
+        
+        graph["JecUnc_Eta1p2_PileUp"]->SetPoint(i, pt, uncPU);
+        graph["JecUnc_Eta1p2_Relative"]->SetPoint(i, pt, uncRel);
+        graph["JecUnc_Eta1p2_Time"]->SetPoint(i, pt, uncTime);
+        graph["JecUnc_Eta1p2_Flavour"]->SetPoint(i, pt, uncFlav);
+        graph["JecUnc_Eta1p2_Absolute"]->SetPoint(i, pt, uncAbs);
+        graph["JecUnc_Eta1p2_Total"]->SetPoint(i, pt, uncTotal);
+        
+        uncPU = sqrt( pow( jetTools->getJECunc(2.3, pt, jecUnc_PuDataMC) ,2) + pow( jetTools->getJECunc(2.3, pt, jecUnc_PuBias) ,2) );
+        uncRel = jetTools->getJECunc(2.3, pt, jecUnc_Rel);
+        uncTime = jetTools->getJECunc(2.3, pt, jecUnc_Time);
+        uncAbs = sqrt( pow( jetTools->getJECunc(2.3, pt, jecUnc_Abs) ,2) + pow( jetTools->getJECunc(2.3, pt, jecUnc_HighPtExtra) ,2) + pow( jetTools->getJECunc(2.3, pt, jecUnc_SinglePiECAL) ,2) + pow( jetTools->getJECunc(2.3, pt, jecUnc_SinglePiHCAL) ,2) );
+        uncFlav = jetTools->calculateJESUnc(2.3, pt, "plus", "onlyFlavour");
+        uncTotal = sqrt( uncPU*uncPU + uncRel*uncRel + uncTime*uncTime + uncAbs*uncAbs + uncFlav*uncFlav );
+        
+        graph["JecUnc_Eta2p3_PileUp"]->SetPoint(i, pt, uncPU);
+        graph["JecUnc_Eta2p3_Relative"]->SetPoint(i, pt, uncRel);
+        graph["JecUnc_Eta2p3_Time"]->SetPoint(i, pt, uncTime);
+        graph["JecUnc_Eta2p3_Flavour"]->SetPoint(i, pt, uncFlav);
+        graph["JecUnc_Eta2p3_Absolute"]->SetPoint(i, pt, uncAbs);
+        graph["JecUnc_Eta2p3_Total"]->SetPoint(i, pt, uncTotal);
+        
+        graph["FlavUnc_Eta0_gluon"]->SetPoint(i, pt, fabs(jetTools->getJECunc(0, pt, jecUnc_gluon)));
+        graph["FlavUnc_Eta0_uds"]->SetPoint(i, pt, fabs(jetTools->getJECunc(0, pt, jecUnc_uds)));
+        graph["FlavUnc_Eta0_c"]->SetPoint(i, pt, fabs(jetTools->getJECunc(0, pt, jecUnc_c)));
+        graph["FlavUnc_Eta0_b"]->SetPoint(i, pt, fabs(jetTools->getJECunc(0, pt, jecUnc_b)));
+        
+        graph["FlavUnc_Eta1p9_gluon"]->SetPoint(i, pt, fabs(jetTools->getJECunc(1.9, pt, jecUnc_gluon)));
+        graph["FlavUnc_Eta1p9_uds"]->SetPoint(i, pt, fabs(jetTools->getJECunc(1.9, pt, jecUnc_uds)));
+        graph["FlavUnc_Eta1p9_c"]->SetPoint(i, pt, fabs(jetTools->getJECunc(1.9, pt, jecUnc_c)));
+        graph["FlavUnc_Eta1p9_b"]->SetPoint(i, pt, fabs(jetTools->getJECunc(1.9, pt, jecUnc_b)));
+        
+//        cout << "i:  " << i << "  pt: " << pt << "  unc: " << fabs(jetTools->getJECunc(2.3, pt, jecUnc_gluon)) << endl;
+        
+        graph["FlavUnc_Eta2p3_gluon"]->SetPoint(i, pt, fabs(jetTools->getJECunc(2.3, pt, jecUnc_gluon)));
+        graph["FlavUnc_Eta2p3_uds"]->SetPoint(i, pt, fabs(jetTools->getJECunc(2.3, pt, jecUnc_uds)));
+        graph["FlavUnc_Eta2p3_c"]->SetPoint(i, pt, fabs(jetTools->getJECunc(2.3, pt, jecUnc_c)));
+        graph["FlavUnc_Eta2p3_b"]->SetPoint(i, pt, fabs(jetTools->getJECunc(2.3, pt, jecUnc_b)));
       }
     }
     
@@ -529,8 +855,8 @@ int main (int argc, char *argv[])
     if (verbose > 1)
       cout << "	Loop over events " << endl;
     
-    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
-//    for (unsigned int ievt = 0; ievt < 10; ievt++)
+//    for (unsigned int ievt = 0; ievt < datasets[d]->NofEvtsToRunOver(); ievt++)
+    for (unsigned int ievt = 0; ievt < 10; ievt++)
     {
       nEvents[d]++;
       if(ievt%1000 == 0)
@@ -650,7 +976,251 @@ int main (int argc, char *argv[])
           jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "plus");
         else if(systematic == "JESMinus")
           jetTools->correctJetJESUnc(init_jets_corrected, mets[0], "minus");
+        
+        // Make JES correction plots, first match PFJets with genJets
+        vector< pair<size_t, size_t> > indexVector; //first index = RecoJet, second index = GenJet
+        vector<bool> mLock(genjets.size(),false);   // when locked, genJet is already matched to a recoJet
+        for(size_t i=0; i<init_jets_corrected.size(); i++)
+        {
+          pair<size_t, size_t> tmpIndex;
+          float minDR = 9999.;
+          for(size_t j=0; j<genjets.size(); j++)
+          {
+            if( ! mLock[j] )
+            {
+              if( init_jets_corrected[i]->DeltaR(*genjets[j]) < 0.4 && init_jets_corrected[i]->DeltaR(*genjets[j]) < minDR )
+              {
+                minDR = init_jets_corrected[i]->DeltaR(*genjets[j]);
+                tmpIndex = pair<size_t, size_t>(i,j);
+              }
+            }
+          }
+          if(minDR < 999.)
+          {
+            mLock[tmpIndex.second] = true;
+            indexVector.push_back(tmpIndex);
+          }
+        }
+        
+        // Nr. of good PV
+        int nPV = 0;
+        for(size_t i=0; i<vertex.size(); i++)
+        {
+          float Rho = sqrt(vertex[i]->x()*vertex[i]->x()+vertex[i]->y()*vertex[i]->y());
+          if(!vertex[i]->isFake() && vertex[i]->ndof()>4 && abs(vertex[0]->z())<24 && Rho<2)
+            nPV++;
+        }
+        
+        // Now loop over matched combis and fill the plots
+        for(size_t i=0; i<indexVector.size(); i++)
+        {
+          // First some preselection
+          if( fabs(init_jets_corrected[indexVector[i].first]->Eta()) > 2.4 ) continue;
+          
+          // inJets[indexVector[i].first], inGenJets[indexVector[i].second]
+          float PtRaw = init_jets_corrected[indexVector[i].first]->Pt() / init_jets_corrected[indexVector[i].first]->getJetCorrFactor("L1FastJetL2L3");
+          float PtL1 = PtRaw * init_jets_corrected[indexVector[i].first]->getJetCorrFactor("L1FastJet");
+          float responseRaw = PtRaw / genjets[indexVector[i].second]->Pt();
+          float responseL1 = PtL1 / genjets[indexVector[i].second]->Pt();
+          float response = init_jets_corrected[indexVector[i].first]->Pt() / genjets[indexVector[i].second]->Pt();
+          
+          int partFlav = init_jets_corrected[indexVector[i].first]->partonFlavour();
+          
+          if(response > 0 && response < 2)  //TODO: Change to 50 bins within 0 and 2 ??
+          {
+            profile["JetResp_L1L2L3_Incl"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            float eta = init_jets_corrected[indexVector[i].first]->Eta();
+            if( fabs(eta) < 0.8 )
+              profile["JetResp_L1L2L3_smallEta_Incl"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            else if( fabs(eta) < 1.6 )
+              profile["JetResp_L1L2L3_mediumEta_Incl"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            else if( fabs(eta) < 2.4 )
+              profile["JetResp_L1L2L3_largeEta_Incl"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            
+            if(nPV <= 10)
+            {
+              profile["JetResp_Raw_0to10PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseRaw);
+              profile["JetResp_L1_0to10PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseL1);
+              profile["JetResp_L1L2L3_0to10PV"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if(nPV <= 15)
+            {
+              profile["JetResp_Raw_10to15PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseRaw);
+              profile["JetResp_L1_10to15PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseL1);
+              profile["JetResp_L1L2L3_10to15PV"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if(nPV <= 20)
+            {
+              profile["JetResp_Raw_15to20PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseRaw);
+              profile["JetResp_L1_15to20PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseL1);
+              profile["JetResp_L1L2L3_15to20PV"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if(nPV <= 25)
+            {
+              profile["JetResp_Raw_20to25PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseRaw);
+              profile["JetResp_L1_20to25PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseL1);
+              profile["JetResp_L1L2L3_20to25PV"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if(nPV <= 30)
+            {
+              profile["JetResp_Raw_25to30PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseRaw);
+              profile["JetResp_L1_25to30PV"]->Fill(genjets[indexVector[i].second]->Pt(), responseL1);
+              profile["JetResp_L1L2L3_25to30PV"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else
+            {
+              profile["JetResp_Raw_30PlusPV"]->Fill(genjets[indexVector[i].second]->Pt(), responseRaw);
+              profile["JetResp_L1_30PlusPV"]->Fill(genjets[indexVector[i].second]->Pt(), responseL1);
+              profile["JetResp_L1L2L3_30PlusPV"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            
+            if( partFlav == 21 )
+            {
+              profile["JetResp_L1L2L3_gluon"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+              if( fabs(init_jets_corrected[indexVector[i].first]->Eta()) < 1.3 )
+                profile["JetResp_L1L2L3_smallEta_gluon"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if( fabs(partFlav) != 0 && fabs(partFlav) < 4 )
+            {
+              profile["JetResp_L1L2L3_uds"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+              if( fabs(init_jets_corrected[indexVector[i].first]->Eta()) < 1.3 )
+                profile["JetResp_L1L2L3_smallEta_uds"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if( fabs(partFlav) == 4 )
+            {
+              profile["JetResp_L1L2L3_c"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+              if( fabs(init_jets_corrected[indexVector[i].first]->Eta()) < 1.3 )
+                profile["JetResp_L1L2L3_smallEta_c"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else if( fabs(partFlav) == 5 )
+            {
+              profile["JetResp_L1L2L3_b"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+              if( fabs(init_jets_corrected[indexVector[i].first]->Eta()) < 1.3 )
+                profile["JetResp_L1L2L3_smallEta_b"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+            else
+            {
+              profile["JetResp_L1L2L3_unm"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+              if( fabs(init_jets_corrected[indexVector[i].first]->Eta()) < 1.3 )
+                profile["JetResp_L1L2L3_smallEta_unm"]->Fill(genjets[indexVector[i].second]->Pt(), response);
+            }
+          }
+        }
+        
+        // Make some b-tagging plots
+        for(size_t i=0; i<init_jets_corrected.size(); i++)
+        {
+          if( fabs(init_jets_corrected[i]->Eta()) >= 2.4 || init_jets_corrected[i]->Pt() <= 30 )
+            continue;
+          
+          int partFlav = init_jets_corrected[i]->partonFlavour();
+          if(fabs(partFlav) == 5)
+            histo1D["CSV_b"]->Fill( init_jets_corrected[i]->btag_combinedSecondaryVertexBJetTags() );
+          else if(fabs(partFlav) == 4)
+            histo1D["CSV_c"]->Fill( init_jets_corrected[i]->btag_combinedSecondaryVertexBJetTags() );
+          else if(fabs(partFlav) == 3 || fabs(partFlav) == 2 || fabs(partFlav) == 1)
+            histo1D["CSV_uds"]->Fill( init_jets_corrected[i]->btag_combinedSecondaryVertexBJetTags() );
+          else if(fabs(partFlav) == 21)
+            histo1D["CSV_g"]->Fill( init_jets_corrected[i]->btag_combinedSecondaryVertexBJetTags() );
+          else
+            histo1D["CSV_unm"]->Fill( init_jets_corrected[i]->btag_combinedSecondaryVertexBJetTags() );
+        }
+        
+        
+        // Do matching with leptons
+        int muonMatchIndex = -1, electronMatchIndex = -1;
+        vector<TRootMCParticle*> mcParticles;
+        mcParticles = treeLoader.LoadMCPart(ievt);
+        for(size_t i=0; i<mcParticles.size(); i++)
+        {
+          if(mcParticles[i]->status() == 3 && fabs(mcParticles[i]->type()) == 11 && fabs(mcParticles[i]->motherType()) == 24)
+          {
+            // Look for the closest electron
+            float minDr = 9999;
+            for(size_t j=0; j<init_electrons.size(); j++)
+            {
+              float DR = init_electrons[j]->DeltaR(*mcParticles[i]);
+              if(DR < 0.1 && DR < minDr)
+              {
+                minDr = DR;
+                electronMatchIndex = j;
+              }
+            }
+          }
+          else if(mcParticles[i]->status() == 3 && fabs(mcParticles[i]->type()) == 13 && fabs(mcParticles[i]->motherType()) == 24)
+          {
+            // Look for the closes muon
+            float minDr = 9999;
+            for(size_t j=0; j<init_muons.size(); j++)
+            {
+              float DR = init_muons[j]->DeltaR(*mcParticles[i]);
+              if(DR < 0.1 && DR < minDr)
+              {
+                minDr = DR;
+                muonMatchIndex = j;
+              }
+            }
+          }
+        }
+        
+        // Make electron Id plots
+        for(size_t j=0; j<init_electrons.size(); j++)
+        {
+          double EffectiveArea = 0.;
+          double SCeta = fabs(init_electrons[j]->superClusterEta());
+          // HCP 2012 updated for electron conesize = 0.3, taken from http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/EGamma/EGammaAnalysisTools/interface/ElectronEffectiveArea.h?revision=1.4&view=markup
+          if      (SCeta >= 0.0   && SCeta < 1.0   ) EffectiveArea = 0.130;
+          else if (SCeta >= 1.0   && SCeta < 1.479 ) EffectiveArea = 0.137;
+          else if (SCeta >= 1.479 && SCeta < 2.0   ) EffectiveArea = 0.067;
+          else if (SCeta >= 2.0   && SCeta < 2.2   ) EffectiveArea = 0.089;
+          else if (SCeta >= 2.2   && SCeta < 2.3   ) EffectiveArea = 0.107;
+          else if (SCeta >= 2.3   && SCeta < 2.4   ) EffectiveArea = 0.110;
+          else if (SCeta >= 2.4) EffectiveArea = 0.138;
+          float reliso = (init_electrons[j]->chargedHadronIso() + max( init_electrons[j]->neutralHadronIso() + init_electrons[j]->photonIso()  - event->kt6PFJets_rho()*EffectiveArea, 0.) )/ init_electrons[j]->Pt(); // EffectiveArea corrected
+          
+          if(j == electronMatchIndex)
+          {
+            histo1D["ElIdMVA_matched"]->Fill(init_electrons[j]->mvaTrigId());
+            histo1D["ElIso_matched"]->Fill(reliso);
+          }
+          else
+          {
+            histo1D["ElIdMVA_unmatched"]->Fill(init_electrons[j]->mvaTrigId());
+            histo1D["ElIso_unmatched"]->Fill(reliso);
+          }
+        }
+        
+        // Make mu Id plots
+        for(size_t j=0; j<init_muons.size(); j++)
+        {
+          float reliso = (init_muons[j]->chargedHadronIso() + max( 0.0, init_muons[j]->neutralHadronIso() + init_muons[j]->photonIso() - 0.5*init_muons[j]->puChargedHadronIso() ) ) / init_muons[j]->Pt(); // dBeta corrected
+          
+          if(j == muonMatchIndex)
+          {
+            histo1D["MuIso_matched"]->Fill( reliso );
+            histo1D["MuNPixelHits_matched"]->Fill( init_muons[j]->nofValidPixelHits() );
+            histo1D["Mud0_matched"]->Fill( init_muons[j]->d0() );
+            
+            histo1D["MuChi2_matched"]->Fill( init_muons[j]->chi2() );
+            histo1D["MuDZ_matched"]->Fill( init_muons[j]->dz() );
+            histo1D["MuNsegm_matched"]->Fill( init_muons[j]->nofMatchedStations() );
+            histo1D["MuNTrackLayers_matched"]->Fill( init_muons[j]->nofTrackerLayersWithMeasurement() );
+          }
+          else
+          {
+            histo1D["MuIso_unmatched"]->Fill( reliso );
+            histo1D["MuNPixelHits_unmatched"]->Fill( init_muons[j]->nofValidPixelHits() );
+            histo1D["Mud0_unmatched"]->Fill( init_muons[j]->d0() );
+            
+            histo1D["MuChi2_unmatched"]->Fill( init_muons[j]->chi2() );
+            histo1D["MuDZ_unmatched"]->Fill( init_muons[j]->dz() );
+            histo1D["MuNsegm_unmatched"]->Fill( init_muons[j]->nofMatchedStations() );
+            histo1D["MuNTrackLayers_unmatched"]->Fill( init_muons[j]->nofTrackerLayersWithMeasurement() );
+          }
+        }
       }
+      
+//      continue; // For plotting
       
       for(unsigned i=0; i<init_muons.size(); i++)
         MSPlot["AllMuonsRelPFIso"]->Fill((init_muons[i]->chargedHadronIso()+init_muons[i]->neutralHadronIso()+init_muons[i]->photonIso())/init_muons[i]->Pt(), datasets[d], true, Luminosity*scaleFactor);
@@ -1204,7 +1774,11 @@ int main (int argc, char *argv[])
                 else res = kinFit->EstimateTopMass(event, 80.4+dMw, false, iCombi, correctCombi);
               }
             }
-            else res = kinFit->EstimateTopMass(event, 80.4, false, iCombi, correctCombi);
+            else // Nominal !!
+            {
+              if(correctCombi) res = kinFit->EstimateTopMass(event, 80.4, true, iCombi, correctCombi);
+              else res = kinFit->EstimateTopMass(event, 80.4, false, iCombi, correctCombi);
+            }
             
             tmp.push_back(res[0]);
             tmp.push_back(res[1]);
@@ -1539,6 +2113,16 @@ int main (int argc, char *argv[])
 	  temp->Write();
 	}
 	
+	fout->cd();
+	//Write TProfile
+	for(map<string,TProfile*>::const_iterator it = profile.begin(); it != profile.end(); it++)
+	{
+	  TProfile *temp = it->second;
+	  temp->Write();
+	  TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+		tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+	}
+	
   fout->cd();
   //add configuration info
   fout->cd();
@@ -1550,6 +2134,16 @@ int main (int argc, char *argv[])
   for(map<string,TGraphErrors*>::const_iterator it = graphErr.begin(); it != graphErr.end(); it++)
   {
     TGraphErrors *temp = it->second;
+    temp->Write();
+    TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+    tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+  }
+  
+  //Write TGraph
+  fout->cd();
+  for(map<string,TGraph*>::const_iterator it = graph.begin(); it != graph.end(); it++)
+  {
+    TGraph *temp = it->second;
     temp->Write();
     TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
     tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
