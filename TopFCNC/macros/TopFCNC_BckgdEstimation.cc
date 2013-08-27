@@ -277,9 +277,9 @@ int main (int argc, char *argv[])
   MSPlot["NbOfVertices_AtLeastFourJets_me_ch"]= new MultiSamplePlot(datasets, "NbOfVertices_AtLeastFourJets_me_ch", 30, 0, 30, "Nb. of vertices");
   
   MSPlot["HighestBdisc_me_ch_CVS"]            = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_CVS", 50, 0, 1, "CSV b-disc.");
-  MSPlot["HighestBdisc_me_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_JP" , 50, 0, 1, "JP b-disc.");
+  MSPlot["HighestBdisc_me_ch_JP"]             = new MultiSamplePlot(datasets, "HighestBdisc_me_ch_JP" ,200, 0, 4, "JP b-disc.");
   
-  MSPlot["MET_AtLeastFourJets_me_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_me_ch",  50, 0, 200, "\\slashE_{T} [GeV]");
+  MSPlot["MET_AtLeastFourJets_me_ch"]         = new MultiSamplePlot(datasets, "MET_AtLeastFourJets_me_ch",  100, 0, 400, "Missing E_{T} [GeV]");
   
   MSPlot["NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV"]= new MultiSamplePlot(datasets, "NbOfSelectedBJets_AtLeastFourJets_me_ch_CSV",  10, 0, 10, "Nb. of b-tagged jets (CSVM)");
   
