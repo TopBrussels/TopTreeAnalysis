@@ -141,8 +141,8 @@ class TopFCNC_Evt : public TObject
 	  
 		Bool_t isDiLeptonic()  const {return isDiLeptonic_;}
 		Bool_t isTriLeptonic() const {return isTriLeptonic_;}
-		Bool_t isDiLeptonic(LeptonType t)                 const { return (zLeptonicChannel_==t ? true : false); }
-		Bool_t isTriLeptonic(LeptonType t1,LeptonType t2) const { return((wLeptonicChannel_==t1 && zLeptonicChannel_==t2) ? true : false);}
+		Bool_t isDiLeptonic(LeptonType t)                 const { return isDiLeptonic_ &&(zLeptonicChannel_==t ? true : false); }
+		Bool_t isTriLeptonic(LeptonType t1,LeptonType t2) const { return isTriLeptonic_&&((wLeptonicChannel_==t1 && zLeptonicChannel_==t2) ? true : false);}
 
 		const TRootParticle leptonFromW()   const { return leptonFromW_;}
 		const TRootParticle neutrino()      const { return neutrino_;}
