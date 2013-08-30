@@ -63,10 +63,6 @@ int main (int argc, char *argv[])
   //string treepath = "$HOME/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeAnalysis/TopFCNC/macros/TopFCNC_EventSelection_DiMuTrigger_Run2012A_Trees/";
   string resopath = "$HOME/AnalysisCode/CMSSW_53X/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/";
   //string resopath = "$HOME/CMSSW_5_3_3_patch3/src/TopBrussels/TopTreeAnalysis/TopFCNC/macros/ResolutionFiles/";
-  
-  Float_t Luminosity = -1.;
-  Float_t NormFactor = 1.;
-  Float_t EventWeight = 1.;
 
   //vector<Dataset*> dataSets; // needed for MSPlots
   string bckgdName("Z_4Jets");
@@ -104,12 +100,6 @@ int main (int argc, char *argv[])
   "Z_3Jets"
   "Z_4Jets"
 */
-
-  if( Luminosity<0 ) Luminosity = 19626;
-  cout<<"Executing analysis for an integrated luminosity of " << Luminosity << " pb^-1" << endl;
-  
-  TFile      *fout  = new TFile (rootFileName.c_str(), "RECREATE");
-  TDirectory *myDir = 0;
 
   ResolutionFit *resFitLeptons = 0;
   if(UseMuChannel){
@@ -177,6 +167,10 @@ int main (int argc, char *argv[])
 
   string dataSetName = dataSet->Name();
   
+  float EventWeight = 1.;
+  float NormFactor = dataSet->NormFactor();
+  float Luminosity = -1.;
+  
   cout << "Processing DataSet: " << dataSetName << endl;
   
   if(dataSetName.find("Data") == string::npos && dataSetName.find("data") == string::npos && dataSetName.find("DATA") == string::npos )
@@ -184,7 +178,12 @@ int main (int argc, char *argv[])
   else
     IsData = true;
   
-  NormFactor = dataSet->NormFactor();
+  if(IsData)
+    Luminosity = dataSet->EquivalentLumi();
+  else
+    Luminosity = 19626;
+
+  cout<<"Executing analysis for an integrated luminosity of " << Luminosity << "/pb" << endl;
   
   // Input tree
   TTree* inTree = (TTree*)   inFile->Get("Tree");
@@ -195,6 +194,7 @@ int main (int argc, char *argv[])
   m_br->SetAutoDelete(kTRUE);
   
   // Output trees
+  TFile *outFile  = new TFile (rootFileName.c_str(), "RECREATE");
   TTree *oTree = inTree->CloneTree(0);
   TTree *oConfigTree = inConfigTree->CloneTree();
   
@@ -333,12 +333,12 @@ int main (int argc, char *argv[])
   cout << "/********************************************************/" <<endl;
 
   //MultiSample plots
-  fout->cd();
+  outFile->cd();
   oConfigTree->Write();
   oTree->Write();
 
   //TH1X histograms
-  TDirectory* th1dir = fout->mkdir("Histos1D");
+  TDirectory* th1dir = outFile->mkdir("Histos1D");
   th1dir->cd();
   for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
   {
@@ -346,7 +346,7 @@ int main (int argc, char *argv[])
     temp->Write();
   }
   //TH2X histograms
-  TDirectory* th2dir = fout->mkdir("Histos2D");
+  TDirectory* th2dir = outFile->mkdir("Histos2D");
   th2dir->cd();
   for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
   {
@@ -355,8 +355,8 @@ int main (int argc, char *argv[])
   }
   
   //delete
-  delete fout;
   delete inFile;
+  delete outFile;
   
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
   
