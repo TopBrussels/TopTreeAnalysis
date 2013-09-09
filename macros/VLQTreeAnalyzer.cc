@@ -138,12 +138,12 @@ int main (int argc, char *argv[])
 	string inputpostfix= inputpostfixOld+"_"+systematic;		
 
   //string Treespath = "VLQTrees_Summer12_PBS_24June2013"; //v4
-	string Treespath = "VLQTrees_Summer12_PBS_v5";
+	string Treespath = "VLQTrees_Summer12_PBS_v5_21Aug13";
   Treespath = Treespath + "/"; 		
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_1Aug2013";
+	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_21Aug13";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 		
@@ -169,8 +169,9 @@ int main (int argc, char *argv[])
 	float LeadingJetPtCut = 200., SubLeadingJetPtCut = 100.; //subleading jet pt cut only for the pair production signal boxes...
 	bool doBtagging = true; //Higgs->bbar decay
 	bool doAntiBtagging = true; //all other jets
-	bool doMETcut = true; //only in Wqq categories (i.e. single lepton with only 1 high-Pt jet)
-	float METcut = 70.;
+	bool doMETcut = false; //would only be in Wqq categories (i.e. single lepton with only 1 high-Pt jet)
+	float METcut = 70.; //problem: QCD gets mostly rejected with this, but it is also cutting away quite a lot of signal!!
+	bool applyLeptonSF = false;
   
   ////////////////////////////////////
   /// AnalysisEnvironment  
@@ -328,6 +329,7 @@ int main (int argc, char *argv[])
   MSPlot["MS_MET_singleMu_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
 	//jets (not forward)
 	MSPlot["MS_JetMultiplicity_mu"] = new MultiSamplePlot(datasetsMu, "JetMultiplicity", 10, -0.5, 9.5, "jet multiplicity");
+	MSPlot["MS_JetMultiplicity_singleMu_mu"] = new MultiSamplePlot(datasetsMu, "JetMultiplicity", 10, -0.5, 9.5, "jet multiplicity");
 	MSPlot["MS_Pt_alljets_mu"] = new MultiSamplePlot(datasetsMu,"Pt_alljets", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_Pt_jet1_mu"] = new MultiSamplePlot(datasetsMu,"Pt_jet1", 50, 0, 300, "Pt of jet 1 (GeV)");
 	MSPlot["MS_Pt_jet2_mu"] = new MultiSamplePlot(datasetsMu,"Pt_jet2", 50, 0, 300, "Pt of jet 2 (GeV)");
@@ -393,6 +395,7 @@ int main (int argc, char *argv[])
 	MSPlot["MS_MET_singleEl_el"] = new MultiSamplePlot(datasetsEl,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
 	//jets (not forward)
 	MSPlot["MS_JetMultiplicity_el"] = new MultiSamplePlot(datasetsEl, "JetMultiplicity", 10, -0.5, 9.5, "jet multiplicity");
+	MSPlot["MS_JetMultiplicity_singleEl_el"] = new MultiSamplePlot(datasetsEl, "JetMultiplicity", 10, -0.5, 9.5, "jet multiplicity");
 	MSPlot["MS_Pt_alljets_el"] = new MultiSamplePlot(datasetsEl,"Pt_alljets", 50, 0, 300, "Pt of all jets (GeV)");
 	MSPlot["MS_Pt_jet1_el"] = new MultiSamplePlot(datasetsEl,"Pt_jet1", 50, 0, 300, "Pt of jet 1 (GeV)");
 	MSPlot["MS_Pt_jet2_el"] = new MultiSamplePlot(datasetsEl,"Pt_jet2", 50, 0, 300, "Pt of jet 2 (GeV)");
@@ -657,6 +660,18 @@ int main (int argc, char *argv[])
     cout << " - Loop over events " << endl;      
     //cout<<"start = "<<start<<"end = "<<end<<endl;
 		
+		
+		
+		
+		/*
+		//////////////////WARNING: JUST  FOR Vjets CHECKS!!!!!
+		if((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)) end = 2000;
+		///////////////////////////////////////////////////////
+		*/
+		
+		
+		
+		
     for (int ievt = start; ievt < end; ievt++)
     {        
 
@@ -736,7 +751,7 @@ int main (int argc, char *argv[])
       // up syst -> lumiWeight = LumiWeightsUp.ITweight( (int) myBranch_selectedEvents->nTruePU() );
       // down syst -> lumiWeight = LumiWeightsDown.ITweight( (int) myBranch_selectedEvents->nTruePU() );
 
-      scaleFactor = scaleFactor*lumiWeight;
+      if(doPUreweighting) scaleFactor = scaleFactor*lumiWeight;
       histo1D["lumiWeights"]->Fill(scaleFactor);
 			   
 
@@ -780,14 +795,17 @@ int main (int argc, char *argv[])
 			  //lepton scale factor; apply on MC
 				if(!((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			  {
-				   scaleFactor = scaleFactor*leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt()); //note: this is assuming the leading muon is the trigged one...
-					 for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
-			     {
-					    if(iMu!=0 && (selectedMuons[iMu].Pt() > 30)) scaleFactor = scaleFactor*leptonTools->getMuonidisoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt()); //apply id*iso scale factor for non-leading muons. WARNING: no SF yet for leptons<30GeV!!
-					 }
-					 for(unsigned int iEl = 0; iEl < selectedElectrons.size(); iEl++)
-			     {
-					    if(selectedElectrons[iEl].Pt() > 30) scaleFactor = scaleFactor*leptonTools->getElectronidSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply id scale factor for electrons. WARNING: no SF yet for leptons<30GeV!!
+				   if(applyLeptonSF)
+					 {
+					   scaleFactor = scaleFactor*leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt()); //note: this is assuming the leading muon is the trigged one...
+					   for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
+			       {
+					     if(iMu!=0 && (selectedMuons[iMu].Pt() > 30)) scaleFactor = scaleFactor*leptonTools->getMuonidisoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt()); //apply id*iso scale factor for non-leading muons. WARNING: no SF yet for leptons<30GeV!!
+					   }
+					   for(unsigned int iEl = 0; iEl < selectedElectrons.size(); iEl++)
+			       {
+					     if(selectedElectrons[iEl].Pt() > 30) scaleFactor = scaleFactor*leptonTools->getElectronidSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply id scale factor for electrons. WARNING: no SF yet for leptons<30GeV!!
+					   }
 					 }					 
 				}
 				 
@@ -802,7 +820,10 @@ int main (int argc, char *argv[])
 				if(SelectednMu == 1 && SelectednEl == 0) 
 				{
 				   if(selectedJets[0].Pt() >= LeadingJetPtCut*0.5)
+					 {
 					    MSPlot["MS_MET_singleMu_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
+					    MSPlot["MS_JetMultiplicity_singleMu_mu"]->Fill(selectedJets.size(),datasets[d], true, LuminosityMu*scaleFactor);
+					 }
 				}
 				
 				if(selectedJets.size() == 4)
@@ -905,14 +926,17 @@ int main (int argc, char *argv[])
 			  //lepton scale factor; apply on MC
 				if(!((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			  {
-				   scaleFactor = scaleFactor*leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()); //note: this is assuming the leading electron is the trigged one...
-					 for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
-			     {
-					    if(selectedMuons[iMu].Pt() > 30) scaleFactor = scaleFactor*leptonTools->getMuonidisoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt()); //apply id*iso scale factor for muons. WARNING: no SF yet for leptons<30GeV!!
-					 }
-					 for(unsigned int iEl = 0; iEl < selectedElectrons.size(); iEl++)
-			     {
-					    if(iEl!=0 && (selectedElectrons[iEl].Pt() > 30)) scaleFactor = scaleFactor*leptonTools->getElectronidSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply id scale factor for non-leading electrons. WARNING: no SF yet for leptons<30GeV!!
+				   if(applyLeptonSF)
+					 {
+				     scaleFactor = scaleFactor*leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()); //note: this is assuming the leading electron is the trigged one...
+					   for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
+			       {
+					     if(selectedMuons[iMu].Pt() > 30) scaleFactor = scaleFactor*leptonTools->getMuonidisoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt()); //apply id*iso scale factor for muons. WARNING: no SF yet for leptons<30GeV!!
+					   }
+					   for(unsigned int iEl = 0; iEl < selectedElectrons.size(); iEl++)
+			       {
+					     if(iEl!=0 && (selectedElectrons[iEl].Pt() > 30)) scaleFactor = scaleFactor*leptonTools->getElectronidSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply id scale factor for non-leading electrons. WARNING: no SF yet for leptons<30GeV!!
+					   }
 					 }	
 				}
 				
@@ -927,7 +951,10 @@ int main (int argc, char *argv[])
 				if(SelectednEl == 1 && SelectednMu == 0)
 				{
 				   if(selectedJets[0].Pt() >= LeadingJetPtCut*0.5)
+					 {
 				        MSPlot["MS_MET_singleEl_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
+								MSPlot["MS_JetMultiplicity_singleEl_el"]->Fill(selectedJets.size(),datasets[d], true, LuminosityEl*scaleFactor);
+					 }
 				}
 				
 				if(selectedJets.size() == 4)

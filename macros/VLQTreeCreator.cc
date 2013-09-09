@@ -133,8 +133,9 @@ int main (int argc, char *argv[])
 	string postfix = ""; // to relabel the names of the output trees  
 	postfix = postfix+"_"+systematic;
 */
-	string Treespath = "VLQTrees_Summer12_PBS"; //VLQTrees_Summer12_PBS if you use the PBB_VLQTreeCreator.py script (since it's hardcoded)!!
-  Treespath = Treespath +"/";
+	//string Treespath = "VLQTrees_Summer12_PBS_v5_21Aug13"; //VLQTrees_Summer12_PBS if you use the PBB_VLQTreeCreator.py script (since it's hardcoded in there)!!
+  string Treespath = "VLQTrees_Summer12_PBS";
+	Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
 
@@ -466,6 +467,7 @@ int main (int argc, char *argv[])
       }
 
 
+
       /////////////////////////////////
       // DETERMINE EVENT SCALEFACTOR //
       /////////////////////////////////
@@ -722,6 +724,121 @@ int main (int argc, char *argv[])
         treeLoader.LoadMCEvent(ievt, 0, 0, mcParticles,false);  
         sort(mcParticles.begin(),mcParticles.end(),HighestPt()); // HighestPt() is included from the Selection class
       }
+
+
+
+
+
+/*
+      /////////////////////////////////
+      //TESTING MC particles 
+			unsigned int nQD = 0, nQU = 0;
+			unsigned int nQTojW = 0, nQTojZ = 0, nQTojH = 0;
+      for(unsigned int u=0; u<mcParticles.size(); u++)
+			{
+				 unsigned int pdgidQD = 4000001;
+				 unsigned int pdgidQU = 4000002;
+			   if(abs(mcParticles[u]->type()) == pdgidQD)
+				 {
+	          nQD++;
+						if(abs(mcParticles[u]->dauOneId()) == 24 || abs(mcParticles[u]->dauTwoId()) == 24)
+						{
+						   nQTojW++;
+						}
+						if(abs(mcParticles[u]->dauOneId()) == 23 || abs(mcParticles[u]->dauTwoId()) == 23)
+						{
+						   nQTojZ++;
+						}
+						if(abs(mcParticles[u]->dauOneId()) == 25 || abs(mcParticles[u]->dauTwoId()) == 25)
+						{
+						   nQTojH++;
+						}
+						//cout<<"       number of daughters = "<<mcParticles[u]->nDau()<<"; daughters pdg id: "<<mcParticles[u]->dauOneId()<<", "<<mcParticles[u]->dauTwoId()<<", "<<mcParticles[u]->dauThreeId()<<", "<<mcParticles[u]->dauFourId()<<", "<<endl;
+				 }
+				 if(abs(mcParticles[u]->type()) == pdgidQU)
+				 {
+            nQU++;
+						if(abs(mcParticles[u]->dauOneId()) == 24 || abs(mcParticles[u]->dauTwoId()) == 24)
+						{
+						   nQTojW++;
+						}
+						if(abs(mcParticles[u]->dauOneId()) == 23 || abs(mcParticles[u]->dauTwoId()) == 23)
+						{
+						   nQTojZ++;
+						}
+						if(abs(mcParticles[u]->dauOneId()) == 25 || abs(mcParticles[u]->dauTwoId()) == 25)
+						{
+						   nQTojH++;
+						}
+				 }
+				 
+			}				
+			
+      if(nQD!=0 || nQU!=0) cout<<"   number of QD quarks in event = "<<nQD<<", number of QU quarks in event = "<<nQU<<endl;
+			if(nQD!=0)
+			{
+			   if(nQD==1)
+				 {
+				    if(nQTojW==1)
+				       cout<<"     --> QDTojW event"<<endl;
+						else if(nQTojZ==1)
+				       cout<<"     --> QDTojZ event"<<endl;
+						else
+						   cout<<"     --> WARNING: event not identified!!"<<endl;				 
+				 }
+				 else if(nQD==2)
+				 {
+				    if(nQTojW==2)
+				       cout<<"     --> QDQDTojWjW event"<<endl;
+						else if(nQTojZ==2)
+				       cout<<"     --> QDQDTojZjZ event"<<endl;
+						else if(nQTojW==1 && nQTojZ==1)
+				       cout<<"     --> QDQDTojWjZ event"<<endl;
+						else if(nQTojW==1 && nQTojH==1)
+				       cout<<"     --> QDQDTojWjH event"<<endl;
+						else if(nQTojZ==1 && nQTojH==1)
+				       cout<<"     --> QDQDTojZjH event"<<endl;  
+						else
+						   cout<<"     --> WARNING: event not identified!!"<<endl;				 
+				 }
+				 else
+				    cout<<"     --> WARNING: event not identified!!"<<endl;					
+			}
+			else if(nQU!=0)
+			{
+			   if(nQU==1)
+				 {
+				    if(nQTojW==1)
+				       cout<<"     --> QUTojW event"<<endl;
+						else if(nQTojZ==1)
+				       cout<<"     --> QUTojZ event"<<endl;
+						else
+						   cout<<"     --> WARNING: event not identified!!"<<endl;				 
+				 }
+				 else if(nQU==2)
+				 {
+				    //no QU pair events generated...
+				    if(nQTojW==2)
+				       cout<<"     --> QUQUTojWjW event"<<endl;
+						else if(nQTojZ==2)
+				       cout<<"     --> QUQUTojZjZ event"<<endl;
+						else if(nQTojW==1 && nQTojZ==1)
+				       cout<<"     --> QUQUTojWjZ event"<<endl;
+						else if(nQTojW==1 && nQTojH==1)
+				       cout<<"     --> QUQUTojWjH event"<<endl;
+						else if(nQTojZ==1 && nQTojH==1)
+				       cout<<"     --> QUQUTojZjH event"<<endl;  
+						else
+						   cout<<"     --> WARNING: event not identified!!"<<endl;				 
+				 }
+				 else
+				    cout<<"     --> WARNING: event not identified!!"<<endl;					
+			}
+*/
+
+
+
+
 
       bool eventselectedSemiMu = false;
       bool eventselectedSemiEl = false;
