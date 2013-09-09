@@ -134,7 +134,7 @@ int main (int argc, char *argv[])
 	postfix = postfix+"_"+systematic;
 */
 	//string Treespath = "VLQTrees_Summer12_PBS_v5_21Aug13"; //VLQTrees_Summer12_PBS if you use the PBB_VLQTreeCreator.py script (since it's hardcoded in there)!!
-  string Treespath = "VLQTrees_Summer12_PBS";
+  string Treespath = "VLQTrees_Summer12_PBS_GITTEST";
 	Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
