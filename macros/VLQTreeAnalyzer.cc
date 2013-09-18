@@ -50,6 +50,7 @@
 #include "TopTreeAnalysisBase/Tools/interface/MVAComputer.h"
 #include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
 #include "TopTreeAnalysisBase/Tools/interface/LeptonTools.h"
+#include "TopTreeAnalysisBase/Tools/interface/BTagWeightTools.h"
 #include "TopTreeAnalysisBase/Reconstruction/interface/MakeBinning.h"
 #include "TopTreeAnalysisBase/Reconstruction/interface/TTreeObservables.h"
 #include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
@@ -109,7 +110,7 @@ int main (int argc, char *argv[])
   }	  
 
   //maybe not used in analysis at all
-  string btagger = "CSVM", antibtagger = "CSVL";
+  string btagger = "CSVM", antibtagger = "CSVM"; //string btagger = "CSVM", antibtagger = "CSVL"
   float btagWP = 9999, antibtagWP = 9999; //{1.7,3.3,10.2}; trackcountinghighefficiency working points: loose, medium, tight
   if(btagger == "CSVL")
      btagWP = 0.244 ;
@@ -143,7 +144,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_21Aug13";
+	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_METcut_13Sept13_BTagSFtest";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 		
@@ -169,10 +170,32 @@ int main (int argc, char *argv[])
 	float LeadingJetPtCut = 200., SubLeadingJetPtCut = 100.; //subleading jet pt cut only for the pair production signal boxes...
 	bool doBtagging = true; //Higgs->bbar decay
 	bool doAntiBtagging = true; //all other jets
+	bool applyBtagSF = true;
+	bool useBtagInfoFromFile = true;
+	int syst_btag = 0; //-1 for SF up, +1 for SF down
 	bool doMETcut = false; //would only be in Wqq categories (i.e. single lepton with only 1 high-Pt jet)
 	float METcut = 70.; //problem: QCD gets mostly rejected with this, but it is also cutting away quite a lot of signal!!
 	bool applyLeptonSF = false;
-  
+	
+	//particular signal model (not only for the overlay mass point, but for all mass points, for consistency. Make sure you don't forget this in the scanning later on!!)
+	float BF_W = 0.5, BF_Z = 0.25;
+	float BF_H = 1.0 - BF_W - BF_Z;
+	float kappatilde_W = 1.;
+	float kappatilde_Z = kappatilde_W * sqrt( 2 * BF_Z / BF_W);  
+	//normalization factors for the different signal samples
+	//pair production
+	float F_QQTojWjW = BF_W*BF_W;
+	float F_QQTojWjZ = 2*BF_W*BF_Z;
+	float F_QQTojWjH = 2*BF_W*BF_H;
+	float F_QQTojZjZ = BF_Z*BF_Z;
+	float F_QQTojZjH = 2*BF_Z*BF_H;
+	//single EW production
+	float F_QTojW_CC = kappatilde_W*kappatilde_W*BF_W;
+	float F_QTojW_NC = kappatilde_Z*kappatilde_Z*BF_W;
+	float F_QTojZ_CC = kappatilde_W*kappatilde_W*BF_Z;
+	float F_QTojZ_NC = kappatilde_Z*kappatilde_Z*BF_Z;
+	
+	
   ////////////////////////////////////
   /// AnalysisEnvironment  
   ////////////////////////////////////
@@ -313,7 +336,6 @@ int main (int argc, char *argv[])
   
 	MSPlot["MS_MET_nobtag"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
   MSPlot["MS_LeptonPt_nobtag"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");*/
-	
 	
 	
 	
@@ -528,17 +550,29 @@ int main (int argc, char *argv[])
   //cout << Luminosity << endl;
 
   //For Run2012A+B_C_D (rereco) SingleMu
-  LumiReWeighting LumiWeights_mu = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../PileupHistos/Run2012ABCDrereco_SingleMu/nominal.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsUp_mu = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../PileupHistos/Run2012ABCDrereco_SingleMu/sys_up.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsDown_mu = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../PileupHistos/Run2012ABCDrereco_SingleMu/sys_down.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_mu = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/Run2012ABCDrereco_SingleMu/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsUp_mu = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/Run2012ABCDrereco_SingleMu/sys_up.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsDown_mu = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/Run2012ABCDrereco_SingleMu/sys_down.root", "pileup", "pileup");
   //For Run2012A+B_C_D (rereco) SingleElectron
-  LumiReWeighting LumiWeights_el = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../PileupHistos/Run2012ABCDrereco_SingleElectron/nominal.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsUp_el = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../PileupHistos/Run2012ABCDrereco_SingleElectron/sys_up.root", "pileup", "pileup");
-  LumiReWeighting LumiWeightsDown_el = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../PileupHistos/Run2012ABCDrereco_SingleElectron/sys_down.root", "pileup", "pileup");
+  LumiReWeighting LumiWeights_el = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/Run2012ABCDrereco_SingleElectron/nominal.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsUp_el = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/Run2012ABCDrereco_SingleElectron/sys_up.root", "pileup", "pileup");
+  LumiReWeighting LumiWeightsDown_el = LumiReWeighting("../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/pileup_MC_Summer12_S10.root", "../../TopTreeAnalysisBase/Calibrations/PileUpReweighting/Run2012ABCDrereco_SingleElectron/sys_down.root", "pileup", "pileup");
 
 
   cout << " Initialized LumiReWeighting stuff" << endl;
 	  
+		
+  ////////////////////////////////////
+	//  Initialise BTag ScaleFactors  //
+	////////////////////////////////////
+	//will use method 1a) of https://twiki.cern.ch/twiki/bin/view/CMS/BTagSFMethods
+	
+	BTagWeightTools *bTool_M = new BTagWeightTools("../../TopTreeAnalysisBase/Calibrations/BTagging/SFb-pt_WITHttbar_payload_EPS13_noCSVSL.txt","CSVM","EPS2013"); //for b-tagging for H->bbar and anti-b-tagging... method to be confirmed
+	if(!useBtagInfoFromFile) bTool_M->InitializeMCEfficiencyHistos(15,30.,340.,2); //NofPtBins,PtMin,PtMax,NofEtaBins
+	else if(useBtagInfoFromFile) bTool_M->ReadMCEfficiencyHistos("PlotsForBtagWeights.root");
+		
+		
+		
   // initialize lepton SF
   LeptonTools* leptonTools = new LeptonTools(false);
   leptonTools->readMuonSF("../../TopTreeAnalysisBase/Calibrations/LeptonSF/Muon_ID_iso_Efficiencies_Run_2012ABCD_53X.root", "../../TopTreeAnalysisBase/Calibrations/LeptonSF/MuonEfficiencies_Run_2012A_2012B_53X.root", "../../TopTreeAnalysisBase/Calibrations/LeptonSF/MuonEfficiencies_Run_2012C_53X.root", "../../TopTreeAnalysisBase/Calibrations/LeptonSF/TriggerMuonEfficiencies_Run_2012D_53X.root");
@@ -694,6 +728,7 @@ int main (int argc, char *argv[])
 						
 			float met = (myBranch_selectedEvents->met()).Pt();  //Pt instead of Et, because the Et is not corrected when applying JEC or systematic shifts
       vector<TLorentzVector> selectedJets = myBranch_selectedEvents->selectedJets();
+			vector<int> selectedJets_partonFlavour = myBranch_selectedEvents->selectedJets_partonFlavour();
 			vector<TLorentzVector> selectedForwardJets = myBranch_selectedEvents->selectedForwardJets();
 			vector<TLorentzVector> selectedMuons = myBranch_selectedEvents->selectedMuons();
 			vector<TLorentzVector> selectedElectrons = myBranch_selectedEvents->selectedElectrons();
@@ -787,15 +822,62 @@ int main (int argc, char *argv[])
         Luminosity = LuminosityEl;
       } */
 
+
+
+      //signal sample scale factors to scale with particular point in the BF triangle (and kappa parameter)
+			if(dataSetName.find("NP") == 0)
+			{			
+        if(dataSetName.find("QDQDTojWjW") != string::npos)
+			  {
+			     scaleFactor = scaleFactor*F_QQTojWjW;
+			  }
+			  else if(dataSetName.find("QDQDTojWjZ") != string::npos)
+			  {
+			     scaleFactor = scaleFactor*F_QQTojWjZ;
+			  }
+			  else if(dataSetName.find("QDQDTojWjH") != string::npos)
+			  {
+			     scaleFactor = scaleFactor*F_QQTojWjH;
+			  }
+			  else if(dataSetName.find("QDQDTojZjZ") != string::npos)
+			  {
+			     scaleFactor = scaleFactor*F_QQTojZjZ;
+			  }
+			  else if(dataSetName.find("QDQDTojZjH") != string::npos)
+			  {
+			     scaleFactor = scaleFactor*F_QQTojZjH;
+			  }
+			  else if((dataSetName.find("QDTojW") != string::npos) && (dataSetName.find("CC") != string::npos))
+			  {
+			     scaleFactor = scaleFactor*F_QTojW_CC;
+			  }
+			  else if((dataSetName.find("QDTojW") != string::npos) && (dataSetName.find("NC") != string::npos))
+			  {
+			     scaleFactor = scaleFactor*F_QTojW_NC;
+			  }
+				else if((dataSetName.find("QDTojZ") != string::npos) && (dataSetName.find("CC") != string::npos))
+			  {
+			     scaleFactor = scaleFactor*F_QTojZ_CC;
+			  }
+			  else if((dataSetName.find("QDTojZ") != string::npos) && (dataSetName.find("NC") != string::npos))
+			  {
+			     scaleFactor = scaleFactor*F_QTojZ_NC;
+			  }
+			}
+
+
+
+
       //'muon channel'
       //if(SelectednMu >= 1) //not anymore
 			if(MuTrigged)
 			{
-			
+        					
 			  //lepton scale factor; apply on MC
 				if(!((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			  {
-				   if(applyLeptonSF)
+								
+				   /*if(applyLeptonSF)
 					 {
 					   scaleFactor = scaleFactor*leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt()); //note: this is assuming the leading muon is the trigged one...
 					   for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
@@ -806,7 +888,7 @@ int main (int argc, char *argv[])
 			       {
 					     if(selectedElectrons[iEl].Pt() > 30) scaleFactor = scaleFactor*leptonTools->getElectronidSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply id scale factor for electrons. WARNING: no SF yet for leptons<30GeV!!
 					   }
-					 }					 
+					 }*/					 
 				}
 				 
 			  //MSPlot["MS_nPV_noPUreweighting_mu"]->Fill(nPV,datasets[d], true, LuminosityMu*scaleFactor / lumiWeight);	
@@ -926,7 +1008,7 @@ int main (int argc, char *argv[])
 			  //lepton scale factor; apply on MC
 				if(!((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			  {
-				   if(applyLeptonSF)
+				   /*if(applyLeptonSF)
 					 {
 				     scaleFactor = scaleFactor*leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()); //note: this is assuming the leading electron is the trigged one...
 					   for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
@@ -937,7 +1019,7 @@ int main (int argc, char *argv[])
 			       {
 					     if(iEl!=0 && (selectedElectrons[iEl].Pt() > 30)) scaleFactor = scaleFactor*leptonTools->getElectronidSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply id scale factor for non-leading electrons. WARNING: no SF yet for leptons<30GeV!!
 					   }
-					 }	
+					 }	*/
 				}
 				
 			  //cout<<"d = "<<d<<endl;
@@ -1069,6 +1151,8 @@ int main (int argc, char *argv[])
 						    ST = ST + selectedElectrons[iEl].Pt();
 			}
 			
+			float BtagMCWeight = 1.;
+			
 					
 			//define the 'boxes'
 			//'muon channel'
@@ -1082,8 +1166,21 @@ int main (int argc, char *argv[])
 			    {
 					  if(selectedJets[0].Pt() >= LeadingJetPtCut)
 						{
-						  if(!doAntiBtagging || (doAntiBtagging && nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0))
+						  if(!useBtagInfoFromFile) bTool_M->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);  //to determine MC b-tag efficiency. Double-check if right place to put it
+						  
+							if(!doAntiBtagging || (doAntiBtagging && nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0))
 							{
+							
+							 
+							 //apply b-tag SF on MC; taken from LightStopSearch.cc and https://twiki.cern.ch/twiki/bin/view/CMS/BTagSFMethods
+							 if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			         {
+							   BtagMCWeight = bTool_M->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+								 //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								 scaleFactor = 	scaleFactor*BtagMCWeight; 
+							 }
+							 
+							
 							 if(!doMETcut || (doMETcut && met>METcut))
 							 {
 					  	   //Wqq category						
@@ -1624,10 +1721,18 @@ int main (int argc, char *argv[])
      //delete outfile; 
     }*/
 		
+		
 		inFile->Close();
 		delete inFile;
 
   } //loop on 'datasets'
+	
+	
+	
+	if (!useBtagInfoFromFile) bTool_M->WriteMCEfficiencyHistos("PlotsForBtagWeights.root");
+	
+	
+	
 	
 	if(systematic=="Nominal") myfile1.close();
 	if(systematic=="Nominal") myfile2.close();
