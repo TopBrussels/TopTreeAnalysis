@@ -139,6 +139,7 @@ int main(int argc, char *argv[]){
   	vector < TRootElectron* > init_electrons;
   	vector < TRootJet* >      init_jets;
   	vector < TRootMET* >      mets;
+	
 	//Define an event (global variable)
 	TRootEvent* event = 0;
 	
@@ -192,6 +193,7 @@ int main(int argc, char *argv[]){
 	SelectionTable Selectiontable(CutsSelectionTable, datasets);
 	// give it the rescaled luminosity 
 	Selectiontable.SetLuminosity(luminosity); 
+	Selectiontable.SetPrecision(1);
 	
 	 
 	 
@@ -207,14 +209,93 @@ int main(int argc, char *argv[]){
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
-	//                START LOOPING OVER THE EVENTS          //
+	//                START LOOPING OVER THE DATASETS        //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	cout << "[PROCES]	Looping over the datasets:  " << datasets.size()<< " datasets" << endl;
+	for(unsigned int d = 0; d < datasets.size();d++)
+	{
+		//Load datasets
+		treeLoader.LoadDataset(datasets[d], anaEnv); 
+		string datasetName = datasets[d]->Name(); 
 		
-
-
-
+		if(verbose > 1)
+		{
+			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title () << endl;
+      			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << endl;
+      			cout << "[INFO]	IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
+      			cout << "[INFO]	Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
+		
+		}
+		
+		
+		///////////////////////////////////////////////////////////
+		//                START LOOPING OVER THE EVENTS          //
+		///////////////////////////////////////////////////////////
+		
+		if(verbose > 1) cout << "[PROCES]	looping over the events: " << datasets[d]->NofEvtsToRunOver() << " events." << endl; 
+		for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++)
+		{
+			if(ievent%1000 == 0)
+			{
+				// << flush << "\r" means this line will be overwritten next time 
+				std::cout << "[PROCES]	Processing the " << ievent << "th event" << flush << "\r";  
+			}      
+			
+			//Load the event 
+			event = treeLoader.LoadEvent (ievent, vertex, init_muons, init_electrons, init_jets, mets);
+			
+			
+			//Fill the selection table
+			Selectiontable.SetLuminosity(luminosity);
+			Selectiontable.Fill(d,0,1);  // Fill the initial number of events in the table on row 0
+			
+			
+			//Make a selection 
+			Selection selection(init_jets, init_muons,init_electrons,mets);
+			//define selection cuts --> have to be validated!!!
+			// From the class Selection the following functions are used: 
+				// 	void Selection::setJetCuts(float Pt, float Eta, float EMF, float n90Hits, float fHPD, float dRJetElectron, float dRJetMuon)
+				//	void Selection::setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId, float DistVzPVz, float DRJets, int MaxMissingHits) 
+				//	void Selection::setLooseDiElectronCuts(float Et, float Eta, float RelIso) 
+				//	void Selection::setDiMuonCuts(float Pt, float Eta, float RelIso, float d0) 
+				// 	void Selection::setLooseMuonCuts(float Pt, float Eta, float RelIso) 
+			selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
+			selection.setDiMuonCuts(20.,2.4,0.20,999.);
+              		selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.5,1,0.3,1); 
+              		selection.setLooseMuonCuts(10.,2.5,0.2);
+              		selection.setLooseDiElectronCuts(15.0,2.5,0.2,0.5); 
+			
+			//select the right objects and put them in a vector
+			vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
+			vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
+	      		vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
+	      		vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
+	      		vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
+			
+			
+			//order the jets according to the Pt 
+			sort(selectedJets.begin(),selectedJets.end(),HighestPt()); //order jets wrt Pt.                                                                    
+    			
+	
+	
+		}
+		
+		///////////////////////////////////////////////////////////
+		//                END LOOPING OVER THE EVENTS            //
+		///////////////////////////////////////////////////////////
+		
+	
+	
+	}
+	cout << "[PROCES]	End of looping over the datasets:  " << datasets.size()<< " datasets" << endl;
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//                END LOOPING OVER THE DATASETS          //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	
+	
 	std::cout << "******************************************"<<std::endl; 
 	std::cout << " End of the program for the FCNC selection " << std::endl; 
 	std::cout << "******************************************"<<std::endl;
