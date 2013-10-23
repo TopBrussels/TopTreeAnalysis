@@ -9,7 +9,6 @@
 #include <sstream>
 #include <sys/stat.h>
 
-//user code
 #include "../../TopTreeProducer/interface/TRootRun.h"
 #include "../../TopTreeProducer/interface/TRootEvent.h"
 
@@ -54,17 +53,58 @@ int main(int argc, char *argv[]){
 
 
 	//see how long the program takes to run with a clock 
-	//clock_t start = clock(); 
+	clock_t start = clock(); 
+
+	std::cout << "******************************************"<<std::endl; 
+	std::cout << " Beginning of the program for the FCNC selection " << std::endl; 
+	std::cout << "******************************************"<<std::endl; 
+
+        //set the xml file
+	string xmlfile = "FCNC_config.xml";     //place of the xml file 
+	std::cout << "Used configuration file: " << xmlfile << endl; 
+
+	//Load the analysisenvironment
+	AnalysisEnvironment anaEnv; 
+	std::cout << "Loading the analysisenvironment" << endl; 
+	AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile.c_str());    //load via the xml file the environment
+	//new ((*tcAnaEnv)[0]) AnalysisEnvironment(anaEnv);     //what does this do? 
+	
+	//Load the datasets
+	TTreeLoader treeLoader; 
+	vector <Dataset*> datasets; //vector that will contain all datasets
+	std::cout << "Loading the datasets " << endl; 
+	treeLoader.LoadDatasets(datasets, xmlfile.c_str()); //put datasets via xmlfile in the dataset vector
 
 
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//            BEGIN RUNNING OVER THE DATASETS            //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	for(unsigned int d = 0; d < datasets.size(); d++){
+	
+	
+	
+	
+	
+	
+	
+	
+	}
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//            END RUNNING OVER THE DATASETS            //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
 
-
-
-
-
+	std::cout << "******************************************"<<std::endl; 
+	std::cout << " End of the program for the FCNC selection " << std::endl; 
+	std::cout << "******************************************"<<std::endl;
 
 	// display how long it took for the program to run
-	//std::cout << " ******************************************" << endl; 
-	//std::cout << " It took the program " << clock() - start /CLOCKS_PER_SEC << " to run. " << endl; 
+	std::cout << " ******************************************" << std::endl; 
+	std::cout << " It took the program " << ((double)clock() - start) /CLOCKS_PER_SEC << " to run. " << endl; 
+	
+	return 0; 
 	
 }
