@@ -99,8 +99,10 @@ int main(int argc, char *argv[]){
 	
 	
 	// - HLT 
-	bool runHLT = false; 
+	bool runHLT = true; 
 	
+	// - data or MC
+	bool isData = false; 
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -185,7 +187,12 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 
-
+	// lepton efficiency scalefactors, these are dependend on the channels
+	float LeptonEff =1;
+	if(channel.find("3gamma")!=string::npos)	LeptonEff =0.9;
+	if(channel.find("3L")!=string::npos)		LeptonEff =0.8*0.8*0.8;
+	if(channel.find("1L3B")!=string::npos)		LeptonEff =0.8;
+	if(channel.find("SSdilepton")!=string::npos)	LeptonEff =0.8*0.8;
 
 
 	//Initialize PUreweighting
@@ -220,6 +227,7 @@ int main(int argc, char *argv[]){
 		{
 			luminosity = datasets[d]->EquivalentLumi();
 			reweighPU = false; 
+			isData = true; 
 			break; 
 		}
 		
@@ -308,6 +316,11 @@ int main(int argc, char *argv[]){
 	CutsSelectionTable_3L.push_back(string("initial"));
 	CutsSelectionTable_1L3B.push_back(string("initial"));
 	CutsSelectionTable_SSdilepton.push_back(string("initial"));
+	//set the first row of the selection table for the number of evts with trigger eff
+	CutsSelectionTable_3gamma.push_back(string("Trigger Efficiency"));
+	CutsSelectionTable_3L.push_back(string("Trigger Efficiency"));
+	CutsSelectionTable_1L3B.push_back(string("Trigger Efficiency"));
+	CutsSelectionTable_SSdilepton.push_back(string("Trigger Efficiency"));
 	
 	//Define a selection table with the previously defined kin. cuts and the given datasets
 	SelectionTable Selectiontable_3gamma(CutsSelectionTable_3gamma, datasets);
@@ -350,6 +363,7 @@ int main(int argc, char *argv[]){
 		treeLoader.LoadDataset(datasets[d], anaEnv); 
 		string datasetName = datasets[d]->Name(); 
 		
+		
 		//if(verbose > 1)
 		//{
 			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
@@ -380,12 +394,42 @@ int main(int argc, char *argv[]){
 			//Load the event 
 			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
 			
+			// define a scalefactor for the event that will depend on efficiencies and reweighting factors
+			float ScaleFactor = 1. ; 
 			
 			//Fill the selection table
-			if(channel.find("3gamma")!=string::npos)	Selectiontable_3gamma.Fill(d,0,1);  // Fill the initial number of events in the cutflow table on row 0
-			if(channel.find("3L")!=string::npos)		Selectiontable_3L.Fill(d,0,1); 
-			if(channel.find("1L3B")!=string::npos)		Selectiontable_1L3B.Fill(d,0,1); 
-			if(channel.find("SSdilepton")!=string::npos)	Selectiontable_SSdilepton.Fill(d,0,1); 
+			if(channel.find("3gamma")!=string::npos)	Selectiontable_3gamma.Fill(d,0,ScaleFactor);  // Fill the initial number of events in the cutflow table on row 0
+			if(channel.find("3L")!=string::npos)		Selectiontable_3L.Fill(d,0,ScaleFactor); 
+			if(channel.find("1L3B")!=string::npos)		Selectiontable_1L3B.Fill(d,0,ScaleFactor); 
+			if(channel.find("SSdilepton")!=string::npos)	Selectiontable_SSdilepton.Fill(d,0,ScaleFactor); 
+			
+			
+			bool trigged = false; 
+			if(runHLT)
+			{
+				int currentRun = event->runId(); 
+				//the HLT is only applied on data  and is dependend on the modes because the HLT consists of several modules
+				if(isData)
+				{
+					if(channel.find("3gamma")!=string::npos)	trigged = true; 
+					if(channel.find("3L")!=string::npos)		trigged = true;	
+					if(channel.find("1L3B")!=string::npos)		trigged = true;
+					if(channel.find("SSdilepton")!=string::npos)	trigged = true;
+				}
+				else
+				{
+					trigged = true;
+					ScaleFactor *= LeptonEff;
+				}
+			}
+			
+			
+			//Fill the selection table
+			if(channel.find("3gamma")!=string::npos)	Selectiontable_3gamma.Fill(d,1,ScaleFactor);  // Fill the number of events with trigger eff accounted for in the cutflow table on row 1
+			if(channel.find("3L")!=string::npos)		Selectiontable_3L.Fill(d,1,ScaleFactor); 
+			if(channel.find("1L3B")!=string::npos)		Selectiontable_1L3B.Fill(d,1,ScaleFactor); 
+			if(channel.find("SSdilepton")!=string::npos)	Selectiontable_SSdilepton.Fill(d,1,ScaleFactor); 
+			
 			
 			//Make a selection 
 			Selection selection(init_jets, init_muons,init_electrons,mets);
@@ -430,6 +474,45 @@ int main(int argc, char *argv[]){
 	//                END LOOPING OVER THE DATASETS          //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
+	
+	
+	if(channel.find("3gamma")!=string::npos)
+	{
+		//Calculate the selection table
+		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
+		Selectiontable_3gamma.TableCalculator(true,true,true,true,true,true,true,true);  
+		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+		Selectiontable_3gamma.Write("FCNC_SelectionTable_3gamma.tex",false,true,false,true,true,true);
+	}
+	if(channel.find("3L")!=string::npos)	
+	{
+		//Calculate the selection table
+		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
+		Selectiontable_3L.TableCalculator(true,true,true,true,true,true,true,true);  
+		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+		Selectiontable_3L.Write("FCNC_SelectionTable_3L.tex",false,true,false,true,true,true);	
+	}	
+	if(channel.find("1L3B")!=string::npos)	
+	{
+		//Calculate the selection table
+		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
+		Selectiontable_1L3B.TableCalculator(true,true,true,true,true,true,true,true);  
+		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+		Selectiontable_1L3B.Write("FCNC_SelectionTable_1L3B.tex",false,true,false,true,true,true);
+	}	
+	if(channel.find("SSdilepton")!=string::npos)	
+	{
+		//Calculate the selection table
+		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
+		Selectiontable_SSdilepton.TableCalculator(true,true,true,true,true,true,true,true);  
+		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
+		Selectiontable_SSdilepton.Write("FCNC_SelectionTable_SSdilepton.tex",false,true,false,true,true,true);
+	}
+	
+	
+	outputFile->cd();
+	outputFile->Write();
+	outputFile->Close(); 
 	
 	
 	std::cout << "******************************************"<<std::endl; 
