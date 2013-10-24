@@ -61,48 +61,34 @@ int main(int argc, char *argv[]){
 	std::cout << " Beginning of the program for the FCNC selection " << std::endl; 
 	std::cout << "******************************************"<<std::endl; 
 
-	
-	//set the channel by default on 3gamma
-	string channel = "3gamma";
-
+	// bool for debugging
+	bool debug = false; 
+	bool warnings = true; 
+	bool information = true; 
 
         //set the xml file
 	string xmlfile = "FCNC_config.xml";     //place of the xml file 
 	
+	//set the channel 
+	string channel = "undefined";
+	
 	
 	//set a default luminosity in pb^-1
 	float luminosity = 100000; 
+	float NofEvts = 10000;
 
 	//Load the analysisenvironment
 	AnalysisEnvironment anaEnv; 
-	std::cout << "[PROCES]	Loading the analysisenvironment" << endl; 
+	if(debug) std::cout << "[PROCES]	Loading the analysisenvironment" << endl; 
 	AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile.c_str());    //load via the xml file the environment
-	//int verbose = 2; // why do we need this? 
+	
 	
 	//Load the datasets
 	TTreeLoader treeLoader; 
 	vector <Dataset*> datasets; //vector that will contain all datasets
-	std::cout << "[PROCES]	Loading the datasets " << endl; 
+	if(debug) std::cout << "[PROCES]	Loading the datasets " << endl; 
 	treeLoader.LoadDatasets(datasets, xmlfile.c_str()); //put datasets via xmlfile in the dataset vector
 
-
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//             systematics   booleans                    //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	// - PU reweighing
-	bool reweighPU = false; 
-	
-	// - naked option for raw data 
-	bool isRAW = false; 
-	
-	
-	// - HLT 
-	bool runHLT = true; 
-	
-	// - data or MC
-	bool isData = false; 
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -118,22 +104,25 @@ int main(int argc, char *argv[]){
 		
         	if(argval=="--help" || argval =="--h")
 		{
+			cout << "--xml myxml.xml: change Xml file" << endl; 
 			cout << "--3gamma: use the 3 gamma channel" << endl; 
 			cout << "--1L3B: use the 1 lepton + 3 b-tags channel" << endl; 
 			cout << "--SSdilepton: use the same sign dilepton channel" << endl; 
-			cout << "--3L: use the channel with at least 3 leptons" << endl; 
-                	cout << "--NoPU: Do not apply pileup re-weighting" << endl;
-                	// cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
-			cout << "--xml myxml.xml: change Xml file" << endl; 
-			cout << "--noHLT: Do not apply HLT" << endl;
+			cout << "--3L: use the channel with at least 3 leptons" << endl;
                 	return 0;
         	}
+		if (argval=="--xml") {
+			iarg++;
+			tempxml = argv[iarg];
+			foundxml = true; 
+		}
 		if (argval=="--3gamma") {
                 	channel = "3gamma";
 			xmlfile = "FCNC_3gamma_config.xml";
         	}
 		if (argval=="--1L3B") {
                 	channel = "1L3B";
+			xmlfile = "FCNC_1L3B_config.xml";
         	}
 		if (argval=="--SSdilepton") {
                 	channel = "SSdilepton";
@@ -142,118 +131,47 @@ int main(int argc, char *argv[]){
 		if (argval=="--3L") {
                 	channel = "3L";
 			xmlfile = "FCNC_3L_config.xml";
-			xmlfile = "FCNC_1L3B_config.xml";
         	}
-        	if (argval=="--NoPU") {
-                	reweighPU = false;
-        	}
-                //if (argval=="--RAW") {
-                //	reweighPU = false;  
-                //	isRAW = true;
-        	//}
-       		if (argval=="--xml") {
-                	iarg++;
-			tempxml = argv[iarg];
-			foundxml = true; 
-        	}
-		if (argval=="--noHLT") {
-                	runHLT = false; 
-        	}
+
     	} 
 	
     	if (foundxml)
 	{
 		xmlfile = tempxml; 
 	}
-	std::cout << "[INFO]	Used configuration file: " << xmlfile << endl;
-	std::cout << "[INFO]	Used channel: " << channel << endl; 
+	if(information)	std::cout << "[INFO]	Used configuration file: " << xmlfile << endl;
+	if(information)	std::cout << "[INFO]	Used channel: " << channel << endl;
+	if(channel.find("undefined")!=string::npos && warnings) std:cout << "[WARNING]	No channel was defined" << endl; 
 	
-	if(!reweighPU ||isRAW ||!runHLT)
-	{	
-		cout << "[INFO]	You are using NON standard options:" << endl;
-		if(!reweighPU)	cout << "[INFO]	- You are NOT applying PU reweighting" << endl; 
-		if(isRAW)	cout << "[INFO]	- You are using raw data" << endl; 
-		if(!runHLT)	cout << "[INFO]	- You are NOT applying HLT " << endl; 
-	
-	}
-	else
-	{
-		cout << "[INFO]	Using standard set up" << endl; 
-	}
-
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	//   end different options for executing this macro      //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 
-	// lepton efficiency scalefactors, these are dependend on the channels
-	float LeptonEff =1;
-	if(channel.find("3gamma")!=string::npos)	LeptonEff =0.9;
-	if(channel.find("3L")!=string::npos)		LeptonEff =0.8*0.8*0.8;
-	if(channel.find("1L3B")!=string::npos)		LeptonEff =0.8;
-	if(channel.find("SSdilepton")!=string::npos)	LeptonEff =0.8*0.8;
 
 
-	//Initialize PUreweighting
-	LumiReWeighting LumiWeights; 
-	cout << "[PROCES]	Initialized PU reweighting" << endl; 
-
-
-
-
-
-
-
-
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//            BEGIN REWEIGHTING THE DATASETS            //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	for(unsigned int d = 0; d < datasets.size(); d++){
-		//Take the dataset on place d in the datasetvector with the given
-		//analysis environment
-		treeLoader.LoadDataset(datasets[d], anaEnv); 
-		string datasetName = datasets[d]->Name(); 
-		
-		//define a reweighting weight for the MC sample, 1 means no reweighting 
-		// the equivalent luminosity is given with the dataset in the xml file, where the equiv lumi is defined as the #evts before skimming (this you get from the TT) divided 
-		// by the cross-section of that event. For data, the equivalent lumi is the real lumi of the experiment. 
-		std::cout<< "[INFO]	Found dataset " << datasetName << " with an equivalent luminosity of " << datasets[d]->EquivalentLumi() << " pb^-1"<< std::endl;  
-		
-		
-		if(datasetName.find("data")!=string::npos || datasetName.find("Data")!=string::npos || datasetName.find("DATA")!=string::npos)
-		{
-			luminosity = datasets[d]->EquivalentLumi();
-			reweighPU = false; 
-			isData = true; 
-			break; 
-		}
-		
-		std::cout<<"[INFO]	Rescaling to an integrated luminosity of " << luminosity << " pb^-1" << endl; 
-	
-
-		
-
-	}
-	std::cout<<"[INFO]	Rescaled to an integrated luminosity of " << luminosity << " pb^-1"<< std::endl; 
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//            END REWEIGHTING THE DATASETS               //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
 	
 	
 	
 	// Set an output rootfile
-	string OutputRootFile("Output_FCNC_Selection.root"); 
-	// Open the created rootfile and RECREATE:  create a new file, if the file already exists it will be overwritten.
-	TFile *outputFile = new TFile(OutputRootFile.c_str(),"RECREATE"); 
+	string OutputRootFile_3gamma("Output_FCNC_Selection_3gamma.root"); 
+	string OutputRootFile_3L("Output_FCNC_Selection_3L.root"); 
+	string OutputRootFile_1L3B("Output_FCNC_Selection_1L3B.root"); 
+	string OutputRootFile_SSdilepton("Output_FCNC_Selection_SSdilepton.root"); 
 	
+	// Open the created rootfile and RECREATE:  create a new file, if the file already exists it will be overwritten.
+	TFile *outputFile_3gamma;
+	TFile *outputFile_3L;
+	TFile *outputFile_1L3B ;
+	TFile *outputFile_SSdilepton;
+	if(channel.find("3gamma")!=string::npos)	outputFile_3gamma = new TFile(OutputRootFile_3gamma.c_str(),"RECREATE"); 
+	if(channel.find("3L")!=string::npos)		outputFile_3L = new TFile(OutputRootFile_3L.c_str(),"RECREATE");
+	if(channel.find("1L3B")!=string::npos)		outputFile_1L3B = new TFile(OutputRootFile_1L3B.c_str(),"RECREATE");
+	if(channel.find("SSdilepton")!=string::npos)	outputFile_SSdilepton = new TFile(OutputRootFile_SSdilepton.c_str(),"RECREATE");
 	
 	// Declare variables: 
-	cout << "[PROCES]	Variable declaration  "<< endl;
+	if(debug) cout << "[PROCES]	Variable declaration  "<< endl;
   	vector < TRootVertex* >   vertex;
   	vector < TRootMuon* >     init_muons;
   	vector < TRootElectron* > init_electrons;
@@ -266,97 +184,29 @@ int main(int argc, char *argv[]){
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
-	//            DEFINING THE MULTISAMPLEPLOTS             //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////	
-	//cout << "[PROCES]	MSplot declaration  "<< endl;
-	
-	
-	
+	//                Cut flow histograms		        //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
-	//      END OF DEFINING THE MULTISAMPLEPLOTS             //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////	
+		
 	
+	TH1F* cutflow_3gamma = new TH1F("cutflow_3gamma", "The cutflow for 3 gamma", 6, -0.5,5.5); 
+	cutflow_3gamma->Sumw2();
 	
-
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//                   DEFINING THE 1D PLOTS               //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////	
-	//cout << "[PROCES]	1D plot declaration  "<< endl;
+	TH1F* cutflow_3L = new TH1F("cutflow_3L", "The cutflow for >3L", 6, -0.5,5.5); 
+	cutflow_3L->Sumw2(); 
 	
+	TH1F* cutflow_1L3B = new TH1F("cutflow_1L3B", "The cutflow for 1lepton + 3 bjets", 6, -0.5,5.5); 
+	cutflow_1L3B->Sumw2(); 
 	
-	
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//          END OF DEFINING THE 1D PLOTS                 //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	
-	
-	
-	
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//                    SELECTIONTABLES                    //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	cout << "[PROCES]	Selection table declaration  "<< endl;	
-	//Define a table where all kinematic cuts are stored eg > 2jets  to make at the end a cutflow table)
-	vector<string> CutsSelectionTable_3gamma;
-	vector<string> CutsSelectionTable_3L;
-	vector<string> CutsSelectionTable_1L3B;
-	vector<string> CutsSelectionTable_SSdilepton;
-	
-	//set the first row of the selection table for the initial number of evts
-	CutsSelectionTable_3gamma.push_back(string("initial"));
-	CutsSelectionTable_3L.push_back(string("initial"));
-	CutsSelectionTable_1L3B.push_back(string("initial"));
-	CutsSelectionTable_SSdilepton.push_back(string("initial"));
-	//set the first row of the selection table for the number of evts with trigger eff
-	CutsSelectionTable_3gamma.push_back(string("Trigger Efficiency"));
-	CutsSelectionTable_3L.push_back(string("Trigger Efficiency"));
-	CutsSelectionTable_1L3B.push_back(string("Trigger Efficiency"));
-	CutsSelectionTable_SSdilepton.push_back(string("Trigger Efficiency"));
-	
-	//Define a selection table with the previously defined kin. cuts and the given datasets
-	SelectionTable Selectiontable_3gamma(CutsSelectionTable_3gamma, datasets);
-	SelectionTable Selectiontable_3L(CutsSelectionTable_3L, datasets);
-	SelectionTable Selectiontable_1L3B(CutsSelectionTable_1L3B, datasets);
-	SelectionTable Selectiontable_SSdilepton(CutsSelectionTable_SSdilepton, datasets);
-	
-	// give it the rescaled luminosity such that the number of events corresponds with the right luminosity 
-	Selectiontable_3gamma.SetLuminosity(luminosity); 
-	Selectiontable_3L.SetLuminosity(luminosity); 
-	Selectiontable_1L3B.SetLuminosity(luminosity); 
-	Selectiontable_SSdilepton.SetLuminosity(luminosity); 
-	
-	// set the precision at 1 decimal 
-	Selectiontable_3gamma.SetPrecision(1);
-	Selectiontable_3L.SetPrecision(1);
-	Selectiontable_1L3B.SetPrecision(1);
-	Selectiontable_SSdilepton.SetPrecision(1);
-	 
-	 
-	
-	
-	
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//                END OF SELECTIONTABLES                 //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	
+	TH1F* cutflow_SSdilepton = new TH1F("cutflow_SSdilepton", "The cutflow for SS dilepton", 6, -0.5,5.5); 
+	cutflow_SSdilepton->Sumw2();  
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	//                START LOOPING OVER THE DATASETS        //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
-	cout << "[PROCES]	Looping over the datasets:  " << datasets.size()<< " datasets" << endl;
+	if(information)	cout << "[PROCES]	Looping over the datasets:  " << datasets.size()<< " datasets" << endl;
 	for(unsigned int d = 0; d < datasets.size();d++)
 	{
 		//Load datasets
@@ -364,28 +214,25 @@ int main(int argc, char *argv[]){
 		string datasetName = datasets[d]->Name(); 
 		
 		
-		//if(verbose > 1)
-		//{
+		if(information)
+		{
 			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
       			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << " pb" << endl;
-      			cout << "[INFO]	IntLumi = " << datasets[d]->EquivalentLumi() << " pb^-1" << "  NormFactor = " << datasets[d]->NormFactor() << endl;
       			cout << "[INFO]	Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
 		
-		//}
+		}
 		
 		
 		///////////////////////////////////////////////////////////
 		//                START LOOPING OVER THE EVENTS          //
 		///////////////////////////////////////////////////////////
+
+		if(information) cout << "[PROCES]	looping over " << NofEvts <<" events "<< endl; 
 		
-		//if(verbose > 1)
-		//{
-			cout << "[PROCES]	looping over the events: " << datasets[d]->NofEvtsToRunOver() << " events." << endl; 
-		//}
 		
-		for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++)
+		for(int ievent = 0; ievent < 10000; ievent++)
 		{
-			if(ievent%1000 == 0)
+			if(ievent%1000 == 0 && information)
 			{
 				// << flush << "\r" means this line will be overwritten next time 
 				std::cout << "[PROCES]	Processing the " << ievent << "th event" << flush << "\r";  
@@ -394,41 +241,13 @@ int main(int argc, char *argv[]){
 			//Load the event 
 			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
 			
-			// define a scalefactor for the event that will depend on efficiencies and reweighting factors
-			float ScaleFactor = 1. ; 
 			
-			//Fill the selection table
-			if(channel.find("3gamma")!=string::npos)	Selectiontable_3gamma.Fill(d,0,ScaleFactor);  // Fill the initial number of events in the cutflow table on row 0
-			if(channel.find("3L")!=string::npos)		Selectiontable_3L.Fill(d,0,ScaleFactor); 
-			if(channel.find("1L3B")!=string::npos)		Selectiontable_1L3B.Fill(d,0,ScaleFactor); 
-			if(channel.find("SSdilepton")!=string::npos)	Selectiontable_SSdilepton.Fill(d,0,ScaleFactor); 
+
 			
-			
-			bool trigged = false; 
-			if(runHLT)
-			{
-				int currentRun = event->runId(); 
-				//the HLT is only applied on data  and is dependend on the modes because the HLT consists of several modules
-				if(isData)
-				{
-					if(channel.find("3gamma")!=string::npos)	trigged = true; 
-					if(channel.find("3L")!=string::npos)		trigged = true;	
-					if(channel.find("1L3B")!=string::npos)		trigged = true;
-					if(channel.find("SSdilepton")!=string::npos)	trigged = true;
-				}
-				else
-				{
-					trigged = true;
-					ScaleFactor *= LeptonEff;
-				}
-			}
-			
-			
-			//Fill the selection table
-			if(channel.find("3gamma")!=string::npos)	Selectiontable_3gamma.Fill(d,1,ScaleFactor);  // Fill the number of events with trigger eff accounted for in the cutflow table on row 1
-			if(channel.find("3L")!=string::npos)		Selectiontable_3L.Fill(d,1,ScaleFactor); 
-			if(channel.find("1L3B")!=string::npos)		Selectiontable_1L3B.Fill(d,1,ScaleFactor); 
-			if(channel.find("SSdilepton")!=string::npos)	Selectiontable_SSdilepton.Fill(d,1,ScaleFactor); 
+			if(channel.find("3gamma")!=string::npos)	cutflow_3gamma->Fill(1);
+			if(channel.find("3L")!=string::npos)		cutflow_3L->Fill(1);
+			if(channel.find("1L3B")!=string::npos)		cutflow_1L3B->Fill(1);
+			if(channel.find("SSdilepton")!=string::npos)	cutflow_SSdilepton->Fill(1);
 			
 			
 			//Make a selection 
@@ -442,20 +261,145 @@ int main(int argc, char *argv[]){
 				// 	void Selection::setLooseMuonCuts(float Pt, float Eta, float RelIso) 
 			selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
 			selection.setDiMuonCuts(20.,2.4,0.20,999.);
-              		selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.5,1,0.3,1); 
-              		selection.setLooseMuonCuts(10.,2.5,0.2);
-              		selection.setLooseDiElectronCuts(15.0,2.5,0.2,0.5); 
+			selection.setDiElectronCuts(20.,2.5,0.15,0.04,0.5,1,0.3,1); 
+			selection.setLooseMuonCuts(10.,2.5,0.2);
+			selection.setLooseDiElectronCuts(15.0,2.5,0.2,0.5); 
 			
 			//select the right objects and put them in a vector
 			vector<TRootJet*> selectedJets = selection.GetSelectedJets(true);
 			vector<TRootMuon*> selectedMuons = selection.GetSelectedDiMuons();
-	      		vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
-	      		vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
-	      		vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
+			vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
+			vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
+			vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
 			
 			
 			//order the jets according to the Pt 
-			sort(selectedJets.begin(),selectedJets.end(),HighestPt()); //order jets wrt Pt.                                                                    
+			sort(selectedJets.begin(),selectedJets.end(),HighestPt()); //order jets wrt Pt.  
+			
+			
+			
+			//Create a vector containing all the bjets (since it is simulation, I can know this)
+			vector <int> mcParticlesTLV,selectedJetsTLV;
+			float bjets = 0;
+			
+					
+			mcParticlesTLV.clear(); //make sure nothing is inside this vector
+			selectedJetsTLV.clear();
+			
+					
+      			for(unsigned int iJet=0;iJet<selectedJets.size(); iJet++){
+				TRootJet* tempJet = (TRootJet*) selectedJets[iJet];
+						
+				int pdgID = tempJet->partonFlavour();
+						
+				selectedJetsTLV.push_back(iJet);
+				mcParticlesTLV.push_back(pdgID);
+				
+				if(fabs(pdgID) == 5)
+				{
+	      				bjets++;
+								
+	 			}
+			
+			} 
+
+			
+			if(debug) cout << "looseElectrons.size() = " << looseElectrons.size() << endl; 
+			if(debug) cout << "looseMuons.size() = " << looseMuons.size() << endl; 
+			
+			//more than 3 leptons
+			if(channel.find("3L")!=string::npos)
+			{
+				if(debug) cout << "in 3L channel" << endl;
+				if(looseElectrons.size() > 2  || looseMuons.size() > 2)
+				{ 
+					if(debug) cout << "fill 3L" << endl;
+					cutflow_3L->Fill(2);
+					if(debug) cout << "filled 3L" << endl;
+				}
+				if(debug)	cout << "out fill 3L loop" << endl; 
+			}
+			//1 lepton + 3 b-jets
+			if(channel.find("1L3B")!=string::npos)
+			{
+				if(debug) cout << "in 1L3B channel" << endl;
+				if(looseElectrons.size() > 0 || looseMuons.size() > 0)
+				{
+					if(debug) cout << "in fill 1l3b loop" << endl;
+					cutflow_1L3B->Fill(2);
+					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
+					if(selectedJets.size() > 2)
+					{
+						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
+						cutflow_1L3B->Fill(3);
+						if(bjets > 2)
+						{
+							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
+							cutflow_1L3B->Fill(4);
+						}
+					}
+				
+					if(debug) cout << "out fill 1l3b loop" << endl;
+				}
+			}
+			if(channel.find("SSdilepton")!=string::npos)
+			{
+				if(debug) cout << "in SSdilepton channel" << endl;
+				if(looseElectrons.size() > 1 || looseMuons.size() > 1)
+				{
+					if(debug) cout << "in fill SS dilepton " << endl; 
+					cutflow_SSdilepton->Fill(2);
+				
+					bool electron = false; 
+					bool muon = false; 
+		  			TRootElectron* electron0 = 0;
+					TRootElectron* electron1 = 0;
+					TRootMuon* muon0 = 0;
+					TRootMuon* muon1 = 0;
+				
+					if(looseElectrons.size() > 1)
+					{
+						for(unsigned int i = 0; i<looseElectrons.size()-1; i++)
+						{
+							for(unsigned int j = i+1;j<looseElectrons.size();j++)
+							{
+								if(debug) cout << "in fill SS dilepton: electronloop " << endl;
+								electron0 = (TRootElectron*) looseElectrons[i];
+								electron1 = (TRootElectron*) looseElectrons[j];
+							}
+						}
+						if(electron0->charge()*electron1->charge()>0) electron = true; 
+						if(debug) cout << "Electron boolean defined" << endl; 
+					}
+				
+					if(looseMuons.size() > 1)
+					{
+						for(unsigned int i = 0; i<looseMuons.size()-1; i++)
+						{
+							for(unsigned int j = i+1;j<looseMuons.size();j++)
+							{
+								if(debug) cout << "in fill SS dilepton: muonloop " << endl;
+								muon0 = (TRootMuon*) looseMuons[i];
+								muon1 = (TRootMuon*) looseMuons[j];
+							}
+						}
+						if(muon0->charge()== muon1->charge()) muon = true; 
+					}
+				
+					if(muon || electron)
+					{
+						if(debug) cout << "in fill SS dilepton: same sign " << endl;
+						cutflow_SSdilepton->Fill(3);
+					}
+					if(debug) cout << "out fill SS dilepton " << endl;
+				}
+			}
+			if(channel.find("3gamma")!=string::npos)
+			{
+				if(debug) cout << "in fill 3gamma " << endl;
+				if(debug) cout << "out fill 3gamma " << endl;
+			}
+			                                                                  
     			
 	
 	
@@ -468,7 +412,7 @@ int main(int argc, char *argv[]){
 	
 	
 	}
-	cout << "[PROCES]	End of looping over the datasets:  " << datasets.size()<< " datasets" << endl;
+	if(information)	cout << "[PROCES]	End of looping over the datasets:  " << datasets.size()<< " datasets" << endl;
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	//                END LOOPING OVER THE DATASETS          //
@@ -476,45 +420,15 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	
 	
-	if(channel.find("3gamma")!=string::npos)
-	{
-		//Calculate the selection table
-		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
-		Selectiontable_3gamma.TableCalculator(true,true,true,true,true,true,true,true);  
-		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-		Selectiontable_3gamma.Write("FCNC_SelectionTable_3gamma.tex",false,true,false,true,true,true);
-	}
-	if(channel.find("3L")!=string::npos)	
-	{
-		//Calculate the selection table
-		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
-		Selectiontable_3L.TableCalculator(true,true,true,true,true,true,true,true);  
-		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-		Selectiontable_3L.Write("FCNC_SelectionTable_3L.tex",false,true,false,true,true,true);	
-	}	
-	if(channel.find("1L3B")!=string::npos)	
-	{
-		//Calculate the selection table
-		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
-		Selectiontable_1L3B.TableCalculator(true,true,true,true,true,true,true,true);  
-		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-		Selectiontable_1L3B.Write("FCNC_SelectionTable_1L3B.tex",false,true,false,true,true,true);
-	}	
-	if(channel.find("SSdilepton")!=string::npos)	
-	{
-		//Calculate the selection table
-		//Options: bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergeTTV, bool NP_mass
-		Selectiontable_SSdilepton.TableCalculator(true,true,true,true,true,true,true,true);  
-		//Options : Name,WithError (false), writeMerged (true), useBookTabs (false), addRawNumbers (false), addEfficiencies (false), addTotalEfficiencies (false), writeLandscape (false)
-		Selectiontable_SSdilepton.Write("FCNC_SelectionTable_SSdilepton.tex",false,true,false,true,true,true);
-	}
+	/*
 	
 	
-	outputFile->cd();
-	outputFile->Write();
-	outputFile->Close(); 
+	if(channel.find("3gamma")!=string::npos) outputFile_3gamma->Write(); outputFile_3gamma->Close(); 
+	if(channel.find("3gamma")!=string::npos) outputFile_3L->Write(); outputFile_3L->Close();
+	if(channel.find("3gamma")!=string::npos) outputFile_1L3B->Write(); outputFile_1L3B->Close();
+	if(channel.find("3gamma")!=string::npos) outputFile_SSdilepton->Write(); outputFile_SSdilepton->Close();
 	
-	
+	*/
 	std::cout << "******************************************"<<std::endl; 
 	std::cout << " End of the program for the FCNC selection " << std::endl; 
 	std::cout << "******************************************"<<std::endl;
