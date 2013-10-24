@@ -33,7 +33,6 @@
 #include "../../TopTreeAnalysisBase/MCInformation/interface/MCWeighter.h"
 #include "../../TopTreeAnalysisBase/MCInformation/interface/ResolutionFit.h"
 #include "../../TopTreeAnalysisBase/MCInformation/interface/JetPartonMatching.h"
-#include "../../TopTreeAnalysisBase/MCInformation/interface/Lumi3DReWeighting.h"
 #include "../../TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
 
 #include "../../TopTreeAnalysisBase/Reconstruction/interface/JetCorrectorParameters.h"
@@ -43,8 +42,9 @@
 
 #include "Style.C"
 
-using namespace std;
-using namespace TopTree;
+using namespace std;	//needed for cout and stuff
+using namespace TopTree;	//needed for TT
+using namespace reweight;  //needed for PUreweighting
 
 
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
 
         //set the xml file
 	string xmlfile = "FCNC_config.xml";     //place of the xml file 
-	std::cout << "[INFO]	Used configuration file: " << xmlfile << endl; 
+	
 	
 	//set a default luminosity in pb^-1
 	float luminosity = 100000; 
@@ -84,8 +84,94 @@ int main(int argc, char *argv[]){
 	treeLoader.LoadDatasets(datasets, xmlfile.c_str()); //put datasets via xmlfile in the dataset vector
 
 
-
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//             systematics   booleans                    //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	// - PU reweighing
+	bool reweighPU = false; 
 	
+	// - naked option for raw data 
+	bool isRAW = false; 
+	
+	
+	// - HLT 
+	bool runHLT = false; 
+	
+	
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//   different options for executing this macro          //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	std::string tempxml; 
+	bool foundxml = false; 
+    
+    	for(int iarg = 0; iarg < argc && argc>1 ; iarg++)
+	{
+        	std::string argval=argv[iarg];
+		
+        	if(argval=="--help" || argval =="--h")
+		{
+                	cout << "--NoPU: Do not apply pileup re-weighting" << endl;
+                	// cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
+			cout << "--xml myxml.xml: change Xml file" << endl; 
+			cout << "--noHLT: Do not apply HLT" << endl;
+                	return 0;
+        	}
+        	if (argval=="--NoPU") {
+                	reweighPU = false;
+        	}
+                //if (argval=="--RAW") {
+                //	reweighPU = false;  
+                //	isRAW = true;
+        	//}
+       		if (argval=="--xml") {
+                	iarg++;
+			tempxml = argv[iarg];
+			foundxml = true; 
+        	}
+		if (argval=="--noHLT") {
+                	runHLT = false; 
+        	}
+    	}   
+    
+    	if (foundxml)
+	{
+		xmlfile = tempxml; 
+	}
+	std::cout << "[INFO]	Used configuration file: " << xmlfile << endl; 
+	
+	if(!reweighPU ||isRAW ||!runHLT)
+	{	
+		cout << "[INFO]	You are using NON standard options:" << endl;
+		if(!reweighPU)	cout << "[INFO]	- You are NOT applying PU reweighting" << endl; 
+		if(isRAW)	cout << "[INFO]	- You are using raw data" << endl; 
+		if(!runHLT)	cout << "[INFO]	- You are NOT applying HLT " << endl; 
+	
+	}
+	else
+	{
+		cout << "[INFO]	Using standard set up" << endl; 
+	}
+
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//   end different options for executing this macro      //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+
+
+
+
+	//Initialize PUreweighting
+	LumiReWeighting LumiWeights; 
+	cout << "[PROCES]	Initialized PU reweighting" << endl; 
+
+
+
+
 
 
 
@@ -110,6 +196,7 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("data")!=string::npos || datasetName.find("Data")!=string::npos || datasetName.find("DATA")!=string::npos)
 		{
 			luminosity = datasets[d]->EquivalentLumi();
+			reweighPU = false; 
 			break; 
 		}
 		
@@ -224,7 +311,7 @@ int main(int argc, char *argv[]){
 		
 		//if(verbose > 1)
 		//{
-			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title () << endl;
+			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
       			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << endl;
       			cout << "[INFO]	IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
       			cout << "[INFO]	Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
