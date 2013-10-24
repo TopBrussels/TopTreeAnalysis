@@ -61,7 +61,9 @@ int main(int argc, char *argv[]){
 	std::cout << " Beginning of the program for the FCNC selection " << std::endl; 
 	std::cout << "******************************************"<<std::endl; 
 
-
+	
+	//set the channel by default on 3gamma
+	string channel = "3gamma";
 
 
         //set the xml file
@@ -114,11 +116,31 @@ int main(int argc, char *argv[]){
 		
         	if(argval=="--help" || argval =="--h")
 		{
+			cout << "--3gamma: use the 3 gamma channel" << endl; 
+			cout << "--1L3B: use the 1 lepton + 3 b-tags channel" << endl; 
+			cout << "--SSdilepton: use the same sign dilepton channel" << endl; 
+			cout << "--3L: use the channel with at least 3 leptons" << endl; 
                 	cout << "--NoPU: Do not apply pileup re-weighting" << endl;
                 	// cout << "--RAW: Do not apply pileup re-weighting or b-tag scale factor" << endl;
 			cout << "--xml myxml.xml: change Xml file" << endl; 
 			cout << "--noHLT: Do not apply HLT" << endl;
                 	return 0;
+        	}
+		if (argval=="--3gamma") {
+                	channel = "3gamma";
+			xmlfile = "FCNC_3gamma_config.xml";
+        	}
+		if (argval=="--1L3B") {
+                	channel = "1L3B";
+        	}
+		if (argval=="--SSdilepton") {
+                	channel = "SSdilepton";
+			xmlfile = "FCNC_SSdilepton_config.xml";
+        	}
+		if (argval=="--3L") {
+                	channel = "3L";
+			xmlfile = "FCNC_3L_config.xml";
+			xmlfile = "FCNC_1L3B_config.xml";
         	}
         	if (argval=="--NoPU") {
                 	reweighPU = false;
@@ -135,13 +157,14 @@ int main(int argc, char *argv[]){
 		if (argval=="--noHLT") {
                 	runHLT = false; 
         	}
-    	}   
-    
+    	} 
+	
     	if (foundxml)
 	{
 		xmlfile = tempxml; 
 	}
-	std::cout << "[INFO]	Used configuration file: " << xmlfile << endl; 
+	std::cout << "[INFO]	Used configuration file: " << xmlfile << endl;
+	std::cout << "[INFO]	Used channel: " << channel << endl; 
 	
 	if(!reweighPU ||isRAW ||!runHLT)
 	{	
@@ -275,16 +298,34 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	cout << "[PROCES]	Selection table declaration  "<< endl;	
 	//Define a table where all kinematic cuts are stored eg > 2jets  to make at the end a cutflow table)
-	vector<string> CutsSelectionTable;
-	CutsSelectionTable.push_back(string("initial"));
+	vector<string> CutsSelectionTable_3gamma;
+	vector<string> CutsSelectionTable_3L;
+	vector<string> CutsSelectionTable_1L3B;
+	vector<string> CutsSelectionTable_SSdilepton;
+	
+	//set the first row of the selection table for the initial number of evts
+	CutsSelectionTable_3gamma.push_back(string("initial"));
+	CutsSelectionTable_3L.push_back(string("initial"));
+	CutsSelectionTable_1L3B.push_back(string("initial"));
+	CutsSelectionTable_SSdilepton.push_back(string("initial"));
 	
 	//Define a selection table with the previously defined kin. cuts and the given datasets
-	SelectionTable Selectiontable(CutsSelectionTable, datasets);
-	// give it the rescaled luminosity such that the number of events corresponds with the right luminosity 
-	Selectiontable.SetLuminosity(luminosity); 
-	// set the precision at 1 decimal 
-	Selectiontable.SetPrecision(1);
+	SelectionTable Selectiontable_3gamma(CutsSelectionTable_3gamma, datasets);
+	SelectionTable Selectiontable_3L(CutsSelectionTable_3L, datasets);
+	SelectionTable Selectiontable_1L3B(CutsSelectionTable_1L3B, datasets);
+	SelectionTable Selectiontable_SSdilepton(CutsSelectionTable_SSdilepton, datasets);
 	
+	// give it the rescaled luminosity such that the number of events corresponds with the right luminosity 
+	Selectiontable_3gamma.SetLuminosity(luminosity); 
+	Selectiontable_3L.SetLuminosity(luminosity); 
+	Selectiontable_1L3B.SetLuminosity(luminosity); 
+	Selectiontable_SSdilepton.SetLuminosity(luminosity); 
+	
+	// set the precision at 1 decimal 
+	Selectiontable_3gamma.SetPrecision(1);
+	Selectiontable_3L.SetPrecision(1);
+	Selectiontable_1L3B.SetPrecision(1);
+	Selectiontable_SSdilepton.SetPrecision(1);
 	 
 	 
 	
@@ -312,8 +353,8 @@ int main(int argc, char *argv[]){
 		//if(verbose > 1)
 		//{
 			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
-      			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << endl;
-      			cout << "[INFO]	IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
+      			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << " pb" << endl;
+      			cout << "[INFO]	IntLumi = " << datasets[d]->EquivalentLumi() << " pb^-1" << "  NormFactor = " << datasets[d]->NormFactor() << endl;
       			cout << "[INFO]	Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
 		
 		//}
@@ -341,9 +382,10 @@ int main(int argc, char *argv[]){
 			
 			
 			//Fill the selection table
-			Selectiontable.SetLuminosity(luminosity);
-			Selectiontable.Fill(d,0,1);  // Fill the initial number of events in the cutflow table on row 0
-			
+			if(channel.find("3gamma")!=string::npos)	Selectiontable_3gamma.Fill(d,0,1);  // Fill the initial number of events in the cutflow table on row 0
+			if(channel.find("3L")!=string::npos)		Selectiontable_3L.Fill(d,0,1); 
+			if(channel.find("1L3B")!=string::npos)		Selectiontable_1L3B.Fill(d,0,1); 
+			if(channel.find("SSdilepton")!=string::npos)	Selectiontable_SSdilepton.Fill(d,0,1); 
 			
 			//Make a selection 
 			Selection selection(init_jets, init_muons,init_electrons,mets);

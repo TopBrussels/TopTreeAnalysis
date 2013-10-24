@@ -7,7 +7,7 @@
  
   
  
-  <d name="tt_2lep" title="mc" add="1" color="413" EquivalentLumi="100" xsection="400" ls="1"  lw="2" normf="1" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJets_FullLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v2/22042013_211043/TOPTREE/*.root"/> 
+  <d name="tW_dimuon" title="mc" add="1" color="413" EqLumi="44534" xsection="11.1"  normf="1" filenames="dcap:////pnfs/iihe/cms/store/user/ghammad/Skimmed-TopTrees//pnfs/iihe/cms/store/user/ghammad/TopSkim_DoubleMuPt20_T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_22042013_165842_TOPTREE/21062013_165913/*.root"/> 
   
  
   
