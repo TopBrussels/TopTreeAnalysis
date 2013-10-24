@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
 	AnalysisEnvironment anaEnv; 
 	std::cout << "[PROCES]	Loading the analysisenvironment" << endl; 
 	AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile.c_str());    //load via the xml file the environment
-	int verbose = 2;
+	//int verbose = 2; // why do we need this? 
 	
 	//Load the datasets
 	TTreeLoader treeLoader; 
@@ -102,7 +102,9 @@ int main(int argc, char *argv[]){
 		string datasetName = datasets[d]->Name(); 
 		
 		//define a reweighting weight for the MC sample, 1 means no reweighting 
-		std::cout<< "[INFO]	Found dataset " << datasetName << " with an equivalent luminosity of " << datasets[d]->EquivalentLumi() << std::endl;  
+		// the equivalent luminosity is given with the dataset in the xml file, where the equiv lumi is defined as the #evts before skimming (this you get from the TT) divided 
+		// by the cross-section of that event. For data, the equivalent lumi is the real lumi of the experiment. 
+		std::cout<< "[INFO]	Found dataset " << datasetName << " with an equivalent luminosity of " << datasets[d]->EquivalentLumi() << " pb^-1"<< std::endl;  
 		
 		
 		if(datasetName.find("data")!=string::npos || datasetName.find("Data")!=string::npos || datasetName.find("DATA")!=string::npos)
@@ -117,7 +119,7 @@ int main(int argc, char *argv[]){
 		
 
 	}
-	std::cout<<"[INFO]	Rescaled to an integrated luminosity of " << luminosity << std::endl; 
+	std::cout<<"[INFO]	Rescaled to an integrated luminosity of " << luminosity << " pb^-1"<< std::endl; 
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	//            END REWEIGHTING THE DATASETS               //
@@ -149,7 +151,7 @@ int main(int argc, char *argv[]){
 	//            DEFINING THE MULTISAMPLEPLOTS             //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////	
-	cout << "[PROCES]	MSplot declaration  "<< endl;
+	//cout << "[PROCES]	MSplot declaration  "<< endl;
 	
 	
 	
@@ -166,7 +168,7 @@ int main(int argc, char *argv[]){
 	//                   DEFINING THE 1D PLOTS               //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////	
-	cout << "[PROCES]	1D plot declaration  "<< endl;
+	//cout << "[PROCES]	1D plot declaration  "<< endl;
 	
 	
 	
@@ -185,14 +187,15 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	cout << "[PROCES]	Selection table declaration  "<< endl;	
-	//Define a table where all kinematic cuts are stored eg > 2jets)
+	//Define a table where all kinematic cuts are stored eg > 2jets  to make at the end a cutflow table)
 	vector<string> CutsSelectionTable;
 	CutsSelectionTable.push_back(string("initial"));
 	
 	//Define a selection table with the previously defined kin. cuts and the given datasets
 	SelectionTable Selectiontable(CutsSelectionTable, datasets);
-	// give it the rescaled luminosity 
+	// give it the rescaled luminosity such that the number of events corresponds with the right luminosity 
 	Selectiontable.SetLuminosity(luminosity); 
+	// set the precision at 1 decimal 
 	Selectiontable.SetPrecision(1);
 	
 	 
@@ -219,21 +222,25 @@ int main(int argc, char *argv[]){
 		treeLoader.LoadDataset(datasets[d], anaEnv); 
 		string datasetName = datasets[d]->Name(); 
 		
-		if(verbose > 1)
-		{
+		//if(verbose > 1)
+		//{
 			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title () << endl;
       			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << endl;
       			cout << "[INFO]	IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
       			cout << "[INFO]	Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
 		
-		}
+		//}
 		
 		
 		///////////////////////////////////////////////////////////
 		//                START LOOPING OVER THE EVENTS          //
 		///////////////////////////////////////////////////////////
 		
-		if(verbose > 1) cout << "[PROCES]	looping over the events: " << datasets[d]->NofEvtsToRunOver() << " events." << endl; 
+		//if(verbose > 1)
+		//{
+			cout << "[PROCES]	looping over the events: " << datasets[d]->NofEvtsToRunOver() << " events." << endl; 
+		//}
+		
 		for(int ievent = 0; ievent < datasets[d]->NofEvtsToRunOver(); ievent++)
 		{
 			if(ievent%1000 == 0)
@@ -243,12 +250,12 @@ int main(int argc, char *argv[]){
 			}      
 			
 			//Load the event 
-			event = treeLoader.LoadEvent (ievent, vertex, init_muons, init_electrons, init_jets, mets);
+			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
 			
 			
 			//Fill the selection table
 			Selectiontable.SetLuminosity(luminosity);
-			Selectiontable.Fill(d,0,1);  // Fill the initial number of events in the table on row 0
+			Selectiontable.Fill(d,0,1);  // Fill the initial number of events in the cutflow table on row 0
 			
 			
 			//Make a selection 
