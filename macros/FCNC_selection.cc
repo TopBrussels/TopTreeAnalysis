@@ -264,6 +264,9 @@ int main(int argc, char *argv[]){
 			cutflow->Fill(1);
 			cutflow_total->Fill(1);
 			
+			cutflow_total->GetXaxis()->SetBinLabel(2, "initial");
+			cutflow->GetXaxis()->SetBinLabel(2, "initial");
+			
 			//Make a selection 
 			Selection selection(init_jets, init_muons,init_electrons,mets);
 			//define selection cuts --> have to be validated!!!
@@ -331,6 +334,8 @@ int main(int argc, char *argv[]){
 					if(debug) cout << "fill 3L" << endl;
 					cutflow_total->Fill(2);
 					cutflow->Fill(2);
+					cutflow_total->GetXaxis()->SetBinLabel(3, "3L");
+					cutflow->GetXaxis()->SetBinLabel(3, "3L");
 					if(debug) cout << "filled 3L" << endl;
 				}
 				if(debug)	cout << "out fill 3L loop" << endl; 
@@ -344,17 +349,23 @@ int main(int argc, char *argv[]){
 					if(debug) cout << "in fill 1l3b loop" << endl;
 					cutflow_total->Fill(2);
 					cutflow->Fill(2);
+					cutflow_total->GetXaxis()->SetBinLabel(3, "1L");
+					cutflow->GetXaxis()->SetBinLabel(3, "1L");
 					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
 					if(selectedJets.size() > 2)
 					{
 						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
 						cutflow_total->Fill(3);
 						cutflow->Fill(3);
+						cutflow_total->GetXaxis()->SetBinLabel(4, "3jets");
+						cutflow->GetXaxis()->SetBinLabel(4, "3jets");
 						if(bjets > 2)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
 							cutflow_total->Fill(4);
 							cutflow->Fill(4);
+							cutflow_total->GetXaxis()->SetBinLabel(5, "3 bjets");
+							cutflow->GetXaxis()->SetBinLabel(5, "3 bjets");
 						}
 					}
 				
@@ -369,6 +380,9 @@ int main(int argc, char *argv[]){
 					if(debug) cout << "in fill SS dilepton " << endl; 
 					cutflow_total->Fill(2);
 					cutflow->Fill(2);
+					
+					cutflow_total->GetXaxis()->SetBinLabel(3, "2L");
+					cutflow->GetXaxis()->SetBinLabel(3, "2L");
 					
 					bool electron = false; 
 					bool muon = false; 
@@ -411,6 +425,8 @@ int main(int argc, char *argv[]){
 						if(debug) cout << "in fill SS dilepton: same sign " << endl;
 						cutflow_total->Fill(3);
 						cutflow->Fill(3);
+						cutflow_total->GetXaxis()->SetBinLabel(4, "2 SS L");
+						cutflow->GetXaxis()->SetBinLabel(4, "2 SS L");
 					}
 					if(debug) cout << "out fill SS dilepton " << endl;
 				}
@@ -428,6 +444,9 @@ int main(int argc, char *argv[]){
 					if(debug) cout << "in fill 3 gamma: selected photons loop " << endl;
 					cutflow->Fill(2);
 					cutflow_total->Fill(2)
+					
+					cutflow_total->GetXaxis()->SetBinLabel(3, "3 photons");
+					cutflow->GetXaxis()->SetBinLabel(3, "3 photons");
 				}	
 				if(debug) cout << "out fill 3gamma " << endl;
 			*/
