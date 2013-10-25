@@ -78,17 +78,7 @@ int main(int argc, char *argv[]){
 	float luminosity = 100000; 
 	float NofEvts = 10000;
 
-	//Load the analysisenvironment
-	AnalysisEnvironment anaEnv; 
-	if(debug) std::cout << "[PROCES]	Loading the analysisenvironment" << endl; 
-	AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile.c_str());    //load via the xml file the environment
 	
-	
-	//Load the datasets
-	TTreeLoader treeLoader; 
-	vector <Dataset*> datasets; //vector that will contain all datasets
-	if(debug) std::cout << "[PROCES]	Loading the datasets " << endl; 
-	treeLoader.LoadDatasets(datasets, xmlfile.c_str()); //put datasets via xmlfile in the dataset vector
 
 	
 	///////////////////////////////////////////////////////////
@@ -150,7 +140,17 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 
-
+	//Load the analysisenvironment
+	AnalysisEnvironment anaEnv; 
+	if(debug) std::cout << "[PROCES]	Loading the analysisenvironment" << endl; 
+	AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile.c_str());    //load via the xml file the environment
+	
+	
+	//Load the datasets
+	TTreeLoader treeLoader; 
+	vector <Dataset*> datasets; //vector that will contain all datasets
+	if(debug) std::cout << "[PROCES]	Loading the datasets " << endl; 
+	treeLoader.LoadDatasets(datasets, xmlfile.c_str()); //put datasets via xmlfile in the dataset vector
 
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -214,16 +214,19 @@ int main(int argc, char *argv[]){
 		//Load datasets
 		treeLoader.LoadDataset(datasets[d], anaEnv); 
 		string datasetName = datasets[d]->Name(); 
+		
 		char datasetNamechar[900];
-		if(datasetName.find("tW_dimuon")!=string::npos) sprintf(datasetNamechar,"tW_dimuon");
+		if(datasetName.find("ttbar")!=string::npos) {sprintf(datasetNamechar,"ttbar");}
+		if(datasetName.find("Wjets")!=string::npos) {sprintf(datasetNamechar,"wjets");}
+		if(datasetName.find("ttt")!=string::npos) {sprintf(datasetNamechar,"ttt");}
+		if(datasetName.find("ttW")!=string::npos) {sprintf(datasetNamechar,"ttw");}
+		if(datasetName.find("WZ")!=string::npos) {sprintf(datasetNamechar,"wz");}
+		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
+		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
 		
-		if(information)
-		{
-			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
-      			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << " pb" << endl;
-      			cout << "[INFO]	Nb of events: " << datasets[d]->NofEvtsToRunOver() << endl;
 		
-		}
+		if(information) cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
+      			
 		
 		
 		// Define different plots for each channel and dataset
@@ -251,7 +254,8 @@ int main(int argc, char *argv[]){
 			{
 				// << flush << "\r" means this line will be overwritten next time 
 				std::cout << "[PROCES]	Processing the " << ievent << "th event" << flush << "\r";  
-			}      
+			}    
+			
 			
 			//Load the event 
 			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
