@@ -1,6 +1,7 @@
 // isis.marina.van.parijs@cern.ch 
 // 2013
-// This is a program that runs over the toptrees
+// This is a program that runs over the toptrees and calculates the 
+// efficiencies of certain cuts in the datasamples. 
 
 #include "TStyle.h"
 #include "TH3F.h"
@@ -151,24 +152,30 @@ int main(int argc, char *argv[]){
 
 
 
-	
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//                       output stuff                    //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
 	
 	
 	// Set an output rootfile
-	string OutputRootFile_3gamma("Output_FCNC_Selection_3gamma.root"); 
-	string OutputRootFile_3L("Output_FCNC_Selection_3L.root"); 
-	string OutputRootFile_1L3B("Output_FCNC_Selection_1L3B.root"); 
-	string OutputRootFile_SSdilepton("Output_FCNC_Selection_SSdilepton.root"); 
+	char rootFileName[900];
+	char channelchar[900];
+	if(channel.find("3gamma")!=string::npos)	sprintf(channelchar, "3gamma");
+	if(channel.find("3L")!=string::npos)		sprintf(channelchar, "3L");	
+	if(channel.find("1L3B")!=string::npos)		sprintf(channelchar, "1L3B");
+	if(channel.find("SSdilepton")!=string::npos)	sprintf(channelchar, "SSdilepton");
 	
-	// Open the created rootfile and RECREATE:  create a new file, if the file already exists it will be overwritten.
-	TFile *outputFile_3gamma;
-	TFile *outputFile_3L;
-	TFile *outputFile_1L3B ;
-	TFile *outputFile_SSdilepton;
-	if(channel.find("3gamma")!=string::npos)	outputFile_3gamma = new TFile(OutputRootFile_3gamma.c_str(),"RECREATE"); 
-	if(channel.find("3L")!=string::npos)		outputFile_3L = new TFile(OutputRootFile_3L.c_str(),"RECREATE");
-	if(channel.find("1L3B")!=string::npos)		outputFile_1L3B = new TFile(OutputRootFile_1L3B.c_str(),"RECREATE");
-	if(channel.find("SSdilepton")!=string::npos)	outputFile_SSdilepton = new TFile(OutputRootFile_SSdilepton.c_str(),"RECREATE");
+	sprintf(rootFileName,"Output_FCNC_selection_%s.root",channelchar);
+	TFile *fout = new TFile (rootFileName, "RECREATE");
+	if(debug) cout << "[PROCES]	Declared output rootfiles  "<< endl;
+	
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//                        end output stuff               //
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
 	
 	// Declare variables: 
 	if(debug) cout << "[PROCES]	Variable declaration  "<< endl;
@@ -188,18 +195,13 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 		
+	char plotTitle_total[900];
+	sprintf(plotTitle_total,"The total cutflow for %s channel",channelchar); 
 	
-	TH1F* cutflow_3gamma = new TH1F("cutflow_3gamma", "The cutflow for 3 gamma", 6, -0.5,5.5); 
-	cutflow_3gamma->Sumw2();
+	TH1F* cutflow_total = new TH1F("cutflow_total", plotTitle_total, 6, -0.5,5.5); 
+	cutflow_total->Sumw2();
 	
-	TH1F* cutflow_3L = new TH1F("cutflow_3L", "The cutflow for >3L", 6, -0.5,5.5); 
-	cutflow_3L->Sumw2(); 
-	
-	TH1F* cutflow_1L3B = new TH1F("cutflow_1L3B", "The cutflow for 1lepton + 3 bjets", 6, -0.5,5.5); 
-	cutflow_1L3B->Sumw2(); 
-	
-	TH1F* cutflow_SSdilepton = new TH1F("cutflow_SSdilepton", "The cutflow for SS dilepton", 6, -0.5,5.5); 
-	cutflow_SSdilepton->Sumw2();  
+	if(debug) cout << "[PROCES]	Declared total cutflow histogram  "<< endl;
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -212,15 +214,28 @@ int main(int argc, char *argv[]){
 		//Load datasets
 		treeLoader.LoadDataset(datasets[d], anaEnv); 
 		string datasetName = datasets[d]->Name(); 
-		
+		char datasetNamechar[900];
+		if(datasetName.find("tW_dimuon")!=string::npos) sprintf(datasetNamechar,"tW_dimuon");
 		
 		if(information)
 		{
 			cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
       			cout << "[INFO]	Cross section = " << datasets[d]->Xsection() << " pb" << endl;
-      			cout << "[INFO]	Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
+      			cout << "[INFO]	Nb of events: " << datasets[d]->NofEvtsToRunOver() << endl;
 		
 		}
+		
+		
+		// Define different plots for each channel and dataset
+		char plotTitle[900];
+		char NamePlot[900];
+		sprintf(plotTitle,"The cutflow for %s channel: %s dataset",channelchar,datasetNamechar); 
+		sprintf(NamePlot,"cutflow_%s",datasetNamechar);
+	
+		TH1F* cutflow = new TH1F(NamePlot, plotTitle, 6, -0.5,5.5); 
+		cutflow->Sumw2();
+	
+		if(debug) cout << "[PROCES]	Declared cutflow histogram  "<< endl;
 		
 		
 		///////////////////////////////////////////////////////////
@@ -242,13 +257,8 @@ int main(int argc, char *argv[]){
 			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
 			
 			
-
-			
-			if(channel.find("3gamma")!=string::npos)	cutflow_3gamma->Fill(1);
-			if(channel.find("3L")!=string::npos)		cutflow_3L->Fill(1);
-			if(channel.find("1L3B")!=string::npos)		cutflow_1L3B->Fill(1);
-			if(channel.find("SSdilepton")!=string::npos)	cutflow_SSdilepton->Fill(1);
-			
+			cutflow->Fill(1);
+			cutflow_total->Fill(1);
 			
 			//Make a selection 
 			Selection selection(init_jets, init_muons,init_electrons,mets);
@@ -271,6 +281,7 @@ int main(int argc, char *argv[]){
 			vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 			vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 			vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
+			// vector<TRootPhoton*> selectedPhotons = selection.GetSelecetedPhotons(); Photons not yet included in the selection class!!!!
 			
 			
 			//order the jets according to the Pt 
@@ -314,7 +325,8 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() > 2  || looseMuons.size() > 2)
 				{ 
 					if(debug) cout << "fill 3L" << endl;
-					cutflow_3L->Fill(2);
+					cutflow_total->Fill(2);
+					cutflow->Fill(2);
 					if(debug) cout << "filled 3L" << endl;
 				}
 				if(debug)	cout << "out fill 3L loop" << endl; 
@@ -326,16 +338,19 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() > 0 || looseMuons.size() > 0)
 				{
 					if(debug) cout << "in fill 1l3b loop" << endl;
-					cutflow_1L3B->Fill(2);
+					cutflow_total->Fill(2);
+					cutflow->Fill(2);
 					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
 					if(selectedJets.size() > 2)
 					{
 						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
-						cutflow_1L3B->Fill(3);
+						cutflow_total->Fill(3);
+						cutflow->Fill(3);
 						if(bjets > 2)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
-							cutflow_1L3B->Fill(4);
+							cutflow_total->Fill(4);
+							cutflow->Fill(4);
 						}
 					}
 				
@@ -348,8 +363,9 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() > 1 || looseMuons.size() > 1)
 				{
 					if(debug) cout << "in fill SS dilepton " << endl; 
-					cutflow_SSdilepton->Fill(2);
-				
+					cutflow_total->Fill(2);
+					cutflow->Fill(2);
+					
 					bool electron = false; 
 					bool muon = false; 
 		  			TRootElectron* electron0 = 0;
@@ -389,15 +405,28 @@ int main(int argc, char *argv[]){
 					if(muon || electron)
 					{
 						if(debug) cout << "in fill SS dilepton: same sign " << endl;
-						cutflow_SSdilepton->Fill(3);
+						cutflow_total->Fill(3);
+						cutflow->Fill(3);
 					}
 					if(debug) cout << "out fill SS dilepton " << endl;
 				}
 			}
 			if(channel.find("3gamma")!=string::npos)
 			{
-				if(debug) cout << "in fill 3gamma " << endl;
+				cout << "Photons are not yet included in selection class !!! " << endl; 
+			/*	if(debug) cout << "in fill 3gamma " << endl;
+				TRootPhoton* photon0 = 0;
+				TRootPhoton* photon1 = 0;
+				TRootPhoton* photon3 = 0;
+				
+				if(selectedPhotons.size() > 2)
+				{
+					if(debug) cout << "in fill 3 gamma: selected photons loop " << endl;
+					cutflow->Fill(2);
+					cutflow_total->Fill(2)
+				}	
 				if(debug) cout << "out fill 3gamma " << endl;
+			*/
 			}
 			                                                                  
     			
@@ -409,7 +438,7 @@ int main(int argc, char *argv[]){
 		//                END LOOPING OVER THE EVENTS            //
 		///////////////////////////////////////////////////////////
 		
-	
+		
 	
 	}
 	if(information)	cout << "[PROCES]	End of looping over the datasets:  " << datasets.size()<< " datasets" << endl;
@@ -418,17 +447,10 @@ int main(int argc, char *argv[]){
 	//                END LOOPING OVER THE DATASETS          //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
+	fout ->Write(); 
+	fout->Close();
 	
 	
-	/*
-	
-	
-	if(channel.find("3gamma")!=string::npos) outputFile_3gamma->Write(); outputFile_3gamma->Close(); 
-	if(channel.find("3gamma")!=string::npos) outputFile_3L->Write(); outputFile_3L->Close();
-	if(channel.find("3gamma")!=string::npos) outputFile_1L3B->Write(); outputFile_1L3B->Close();
-	if(channel.find("3gamma")!=string::npos) outputFile_SSdilepton->Write(); outputFile_SSdilepton->Close();
-	
-	*/
 	std::cout << "******************************************"<<std::endl; 
 	std::cout << " End of the program for the FCNC selection " << std::endl; 
 	std::cout << "******************************************"<<std::endl;
