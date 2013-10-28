@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<datasets>
+
+
+  
+   
+ 
+  
+ 
+  <d name="ttW" title="ttbar + W + jets" add="1"   filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTWJets_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_131723/TOPTREE/*.root"/> 
+  <d name="ttt" title="ttt" add="1"       filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTTT_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/29052013_111633/TOPTREE/*.root"/> 
+  
+ 
+  
+</datasets>
+
+<analysis>
+
+<a type="Collections" PVCollection="PrimaryVertex" JetType="2" JetCollection="PFJets_selectedPatJetsPF2PAT" METType="2" METCollection="PFMET_patType1CorrectedPFMetPF2PAT" MuonCollection="Muons_selectedPatMuonsPF2PAT" ElectronCollection="Electrons_selectedPatElectronsPF2PAT" loadGenJetCollection="1" GenJetCollection="GenJets_ak5GenJetsNoNu" loadGenEventCollection="0" GenEventCollection="GenEvent" loadNPGenEventCollection="0" NPGenEventCollection="NPGenEvent" loadMCParticles="0" MCParticlesCollection="MCParticles" TrackMETCollection="" loadTrackMET="0"/>
+
+
+</analysis>
+
