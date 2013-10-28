@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
 	
 	//set a default luminosity in pb^-1
 	float luminosity = 100000; 
-	float NofEvts = 10000;
+	float NofEvts = 100000;
 
 	
 
@@ -245,10 +245,19 @@ int main(int argc, char *argv[]){
 		//                START LOOPING OVER THE EVENTS          //
 		///////////////////////////////////////////////////////////
 
-		if(information) cout << "[PROCES]	looping over " << NofEvts <<" events "<< endl; 
+		float NofRuns = 0; 
+		if( NofEvts > datasets[d]->NofEvtsToRunOver()) 
+		{
+			NofRuns = datasets[d]->NofEvtsToRunOver(); 
+		}
+		else
+		{
+			NofRuns = NofEvts; 
+		} 
 		
+		if(information) cout << "[PROCES]	looping over " << NofRuns <<" events "<< endl;
 		
-		for(int ievent = 0; ievent < 10000; ievent++)
+		for(int ievent = 0; ievent <NofRuns; ievent++)
 		{
 			if(ievent%1000 == 0 && information)
 			{
