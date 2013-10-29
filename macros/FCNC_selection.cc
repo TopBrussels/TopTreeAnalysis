@@ -338,7 +338,7 @@ int main(int argc, char *argv[]){
 			if(channel.find("3L")!=string::npos)
 			{
 				if(debug) cout << "in 3L channel" << endl;
-				if(looseElectrons.size() > 2  || looseMuons.size() > 2)
+				if(looseElectrons.size() + looseMuons.size() ==3)
 				{ 
 					if(debug) cout << "fill 3L" << endl;
 					cutflow_total->Fill(2);
