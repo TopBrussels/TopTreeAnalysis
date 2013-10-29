@@ -9,7 +9,8 @@
  
   <d name="ttW" title="ttbar + W + jets" add="1"   filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTWJets_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_131723/TOPTREE/*.root"/> 
   <d name="ttt" title="ttt" add="1"       filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTTT_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/29052013_111633/TOPTREE/*.root"/> 
-  
+  <d name="ttZ" title="ttbar + Z + jets" add="1"       filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTZJets_8TeV-madgraph_v2/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_144733/TOPTREE/*.root"/>
+  <d name="WZ" title="WZ(inclusive)" add="1"       filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/WZ_TuneZ2star_8TeV_pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/04062013_201713/TOPTREE/*.root"/>
  
   
 </datasets>
