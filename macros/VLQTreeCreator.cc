@@ -134,7 +134,7 @@ int main (int argc, char *argv[])
 	postfix = postfix+"_"+systematic;
 */
 	//string Treespath = "VLQTrees_Summer12_PBS_v5_21Aug13"; //VLQTrees_Summer12_PBS if you use the PBB_VLQTreeCreator.py script (since it's hardcoded in there)!!
-  string Treespath = "VLQTrees_Summer12_PBS_GITTEST2";
+  string Treespath = "VLQTrees_Summer12_PBS_ExclusiveTTbarSamples";
 	Treespath = Treespath +"/";
   mkdir(Treespath.c_str(),0777);
 	bool savePNG = false;
@@ -158,7 +158,7 @@ int main (int argc, char *argv[])
   string rootFileName("VLQTreeCreator_Plots_"+postfix+".root"); //some output, maybe dummy
 	
   //xml file
-  string xmlFileName ="../config/myVLQConfig.xml";	
+  string xmlFileName ="../config/myVLQConfig_forexclusivettbar.xml";	
 
   //if (systematic == 8)
   //  xmlFileName ="../config/myBTAGconfig_ttjetsyst.xml";
@@ -640,7 +640,9 @@ int main (int argc, char *argv[])
       //Declare selection instance    
       Selection selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho());
 			Selection nonstandard_selection(init_jets_corrected, init_muons, init_electrons, mets, event->kt6PFJets_rho()); //mets can also be corrected... 
-      selection.setJetCuts(30,2.5,0.01,1.,0.98,0.3,0.1);
+      selection.cutHFHadronEnergyFraction();
+			nonstandard_selection.cutHFHadronEnergyFraction();
+			selection.setJetCuts(30,2.4,0.01,1.,0.98,0.3,0.1); //was 2.5, but adapted to 2.4 for b-tagging... correct?
 			nonstandard_selection.setJetCuts(30.,4.7,0.01,1.,0.98,0.3,0.1); //only difference: larger eta acceptance 
       selection.setMuonCuts(20,2.1,0.12,0.2,0.3,1,0.5,5,0); //Pt 20 GeV! later on, higher for leading lepton at least
       selection.setElectronCuts(20,2.5,0.1,0.02,0.5,0.3,0); //was pt 32... //Pt 20 GeV! later on, higher for leading lepton at least
@@ -707,7 +709,7 @@ int main (int argc, char *argv[])
 				 selectedJetsLargeEtaRange = nonstandard_selection.GetSelectedJets(true);
 				 for(unsigned int i = 0; i<selectedJetsLargeEtaRange.size(); i++)
       	 {
-	    		  if(fabs(selectedJetsLargeEtaRange[i]->Eta()) > 2.5)
+	    		  if(fabs(selectedJetsLargeEtaRange[i]->Eta()) > 2.4) //was 2.5, but adapted to 2.4 for b-tagging... correct?
 	      		  selectedForwardJets.push_back(selectedJetsLargeEtaRange[i]);
       	 }
 
@@ -1259,7 +1261,7 @@ int main (int argc, char *argv[])
     // Write out the plots //
     /////////////////////////
     
-    mkdir("VLQDemoPlots",0777);
+/*    mkdir("VLQDemoPlots",0777);
    
     for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
     {
@@ -1268,7 +1270,7 @@ int main (int argc, char *argv[])
 	      temp->Draw(false, name, true, true, true, true, true, 1, false);
 	      temp->Write(fout, name, true, "VLQDemoPlots/");
     }
-    
+*/    
 
   
     //Selection tables
