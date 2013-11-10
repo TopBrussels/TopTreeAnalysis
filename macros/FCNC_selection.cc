@@ -282,7 +282,7 @@ int main(int argc, char *argv[]){
 			// From the class Selection the following functions are used: 
 				// 	void Selection::setJetCuts(float Pt, float Eta, float EMF, float n90Hits, float fHPD, float dRJetElectron, float dRJetMuon)
 				//	void Selection::setDiElectronCuts(float Et, float Eta, float RelIso, float d0, float MVAId, float DistVzPVz, float DRJets, int MaxMissingHits) 
-				//	void Selection::setLooseDiElectronCuts(float Et, float Eta, float RelIso) 
+				//	void Selection::setLooseDiElectronCuts(float ptt, float Eta, float RelIso, MVAid) 
 				//	void Selection::setDiMuonCuts(float Pt, float Eta, float RelIso, float d0) 
 				// 	void Selection::setLooseMuonCuts(float Pt, float Eta, float RelIso) 
 			selection.setJetCuts(20.,5.,0.01,1.,0.98,0.3,0.1);
@@ -338,7 +338,7 @@ int main(int argc, char *argv[]){
 			if(channel.find("3L")!=string::npos)
 			{
 				if(debug) cout << "in 3L channel" << endl;
-				if(looseElectrons.size() > 2  || looseMuons.size() > 2)
+				if(looseElectrons.size() + looseMuons.size() ==3)
 				{ 
 					if(debug) cout << "fill 3L" << endl;
 					cutflow_total->Fill(2);
@@ -353,7 +353,7 @@ int main(int argc, char *argv[]){
 			if(channel.find("1L3B")!=string::npos)
 			{
 				if(debug) cout << "in 1L3B channel" << endl;
-				if(looseElectrons.size() > 0 || looseMuons.size() > 0)
+				if(looseElectrons.size() +  looseMuons.size() == 1)
 				{
 					if(debug) cout << "in fill 1l3b loop" << endl;
 					cutflow_total->Fill(2);
@@ -361,14 +361,14 @@ int main(int argc, char *argv[]){
 					cutflow_total->GetXaxis()->SetBinLabel(3, "1L");
 					cutflow->GetXaxis()->SetBinLabel(3, "1L");
 					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
-					if(selectedJets.size() > 2)
+					if(selectedJets.size() == 3)
 					{
 						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
 						cutflow_total->Fill(3);
 						cutflow->Fill(3);
 						cutflow_total->GetXaxis()->SetBinLabel(4, "3jets");
 						cutflow->GetXaxis()->SetBinLabel(4, "3jets");
-						if(bjets > 2)
+						if(bjets == 3)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
 							cutflow_total->Fill(4);
@@ -384,7 +384,7 @@ int main(int argc, char *argv[]){
 			if(channel.find("SSdilepton")!=string::npos)
 			{
 				if(debug) cout << "in SSdilepton channel" << endl;
-				if(looseElectrons.size() > 1 || looseMuons.size() > 1)
+				if(looseElectrons.size() + looseMuons.size() == 2)
 				{
 					if(debug) cout << "in fill SS dilepton " << endl; 
 					cutflow_total->Fill(2);
@@ -482,6 +482,10 @@ int main(int argc, char *argv[]){
 	fout ->Write(); 
 	fout->Close();
 	
+	
+	
+	
+	 
 	
 	std::cout << "******************************************"<<std::endl; 
 	std::cout << " End of the program for the FCNC selection " << std::endl; 
