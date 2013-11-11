@@ -76,8 +76,21 @@ int main(int argc, char *argv[]){
 	
 	//set a default luminosity in pb^-1
 	float luminosity = 100000; 
-	float NofEvts = 100000;
+	float NofEvts = 1000;
 
+
+
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	// Controll flags for scale factor shifts etc.. ///////////
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	
+	int dobTagEffShift = 0; //0: off (except nominal scalefactor for btag eff) 1: minus 2: plus
+  	cout << "dobTagEffShift: " << dobTagEffShift << endl;
+
+  	int domisTagEffShift = 0; //0: off (except nominal scalefactor for mistag eff) 1: minus 2: plus
+  	cout << "domisTagEffShift: " << domisTagEffShift << endl;
 	
 
 	
@@ -139,6 +152,56 @@ int main(int argc, char *argv[]){
 	//   end different options for executing this macro      //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
+	
+	
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	// Options for b-tagging, stolen from James' analysis /////
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	//Choose which b-tag algorithm will be used.
+	string btagger = "CSVM";
+	
+	// b-tag scalefactor => TCHEL: data/MC scalefactor = 0.95 +- 0.10, TCHEM: data/MC scalefactor = 0.94 +- 0.09
+	// mistag scalefactor => TCHEL: data/MC scalefactor = 1.11 +- 0.12, TCHEM: data/MC scalefactor = 1.21 +- 0.17
+ 	 float scalefactorbtageff, mistagfactor;
+  	if(btagger == "TCHPM" || btagger == "TCHET" || btagger == "SSV" ){
+    	cout<<"This tagger ("<< btagger <<")is not commisioned in 2012, please use CSV, TCHP or JetProb"<<endl;
+    	exit(1);
+	}
+  	else if(btagger == "TCHEM") //redundant for now (these values need updating), but will use as skeleton for CSVM
+  	{
+           if(dobTagEffShift == 0)
+                scalefactorbtageff = 0.94;
+         if(dobTagEffShift == 1)
+                scalefactorbtageff = 0.85;
+         if(dobTagEffShift == 2)
+                scalefactorbtageff = 1.03;
+                
+         if(domisTagEffShift == 0)
+                mistagfactor = 1.21;
+         if(domisTagEffShift == 1)
+                mistagfactor = 1.04;
+         if(domisTagEffShift == 2)
+                mistagfactor = 1.38;
+  	}
+    
+  	float workingpointvalue = 9999; //working points updated to 2012 BTV-POG recommendations.
+ 
+  	if(btagger == "TCHPM" || btagger == "TCHET" || btagger == "SSV" ){
+    	cout<<"This tagger ("<< btagger <<")is not commisioned in 2012, please use CSV, TCHP or JetProb"<<endl;
+    	exit(1);
+  	}
+   	else if(btagger == "CSVL")
+     	workingpointvalue = .244;        
+  	else if(btagger == "CSVM")
+    	workingpointvalue = .679;
+  	else if(btagger == "CSVT")
+    	workingpointvalue = .898;
+	
+	/////////////////////////////////////////////////////////
+	// End b-tagging working points etc. ////////////////////
+	/////////////////////////////////////////////////////////
 
 	//Load the analysisenvironment
 	AnalysisEnvironment anaEnv; 
@@ -308,13 +371,14 @@ int main(int argc, char *argv[]){
 			//Create a vector containing all the bjets (since it is simulation, I can know this)
 			vector <int> mcParticlesTLV,selectedJetsTLV;
 			float bjets = 0;
+			int nTags = 0;
 			
 					
 			mcParticlesTLV.clear(); //make sure nothing is inside this vector
 			selectedJetsTLV.clear();
 			
 					
-      			for(unsigned int iJet=0;iJet<selectedJets.size(); iJet++){
+      			for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++){
 				TRootJet* tempJet = (TRootJet*) selectedJets[iJet];
 						
 				int pdgID = tempJet->partonFlavour();
@@ -327,6 +391,7 @@ int main(int argc, char *argv[]){
 	      				bjets++;
 								
 	 			}
+				if (tempJet->btag_combinedSecondaryVertexBJetTags() > workingpointvalue)  nTags++;
 			
 			} 
 
@@ -361,20 +426,21 @@ int main(int argc, char *argv[]){
 					cutflow_total->GetXaxis()->SetBinLabel(3, "1L");
 					cutflow->GetXaxis()->SetBinLabel(3, "1L");
 					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
-					if(selectedJets.size() == 3)
+					
+					if(selectedJets.size() >= 3)
 					{
 						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
 						cutflow_total->Fill(3);
 						cutflow->Fill(3);
-						cutflow_total->GetXaxis()->SetBinLabel(4, "3jets");
+						cutflow_total->GetXaxis()->SetBinLabel(4, ">= 3jets");
 						cutflow->GetXaxis()->SetBinLabel(4, "3jets");
-						if(bjets == 3)
+						if(nTags == 3)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
 							cutflow_total->Fill(4);
 							cutflow->Fill(4);
-							cutflow_total->GetXaxis()->SetBinLabel(5, "3 bjets");
-							cutflow->GetXaxis()->SetBinLabel(5, "3 bjets");
+							cutflow_total->GetXaxis()->SetBinLabel(5, "== 3 bjets");
+							cutflow->GetXaxis()->SetBinLabel(5, "== 3 bjets");
 						}
 					}
 				
