@@ -1,4 +1,5 @@
 // isis.marina.van.parijs@cern.ch 
+// kevin.deroover@cern.ch
 // 2013
 // This is a program that runs over the toptrees and calculates the 
 // efficiencies of certain cuts in the datasamples. 
@@ -48,7 +49,8 @@ using namespace TopTree;	//needed for TT
 using namespace reweight;  //needed for PUreweighting
 
 
-
+/// MultiSamplePlot
+map<string,MultiSamplePlot*> MSPlot;
 
 int main(int argc, char *argv[]){
 	//Make plots nicer: color, style, ... 
@@ -75,7 +77,7 @@ int main(int argc, char *argv[]){
 	
 	
 	//set a default luminosity in pb^-1
-	float luminosity = 100000; 
+	float Luminosity = 100000; 
 	float NofEvts = 1000;
 
 
@@ -156,7 +158,7 @@ int main(int argc, char *argv[]){
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
-	// Options for b-tagging, stolen from James' analysis /////
+	// Options for b-tagging			      /////
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	//Choose which b-tag algorithm will be used.
@@ -251,6 +253,22 @@ int main(int argc, char *argv[]){
 	//Define an event (global variable)
 	TRootEvent* event = 0;
 	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////// MultiSample plots: convenient class which combines multiple MC and DATA histograms into single plots. //////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	MSPlot["NbOfSelectedJets"] = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0, 15, "Nb. of jets");
+    	MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0, 10, "Nb. of jets");
+    	MSPlot["NbOfSelectedBJets"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0, 8, "Nb. of jets");
+    	MSPlot["JetEta"] = new MultiSamplePlot(datasets, "JetEta", 30,-3, 3, "Jet #eta");
+    	MSPlot["JetPhi"] = new MultiSamplePlot(datasets, "JetPhi", 50, -4,4 , "Jet #phi");
+	MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 40, 0, 700, "MET");
+	
+
+  	//Defining a directory in which .png files of all the plots created will be stored.
+  	string pathPNG = "FCNC_%s";
+  	pathPNG += "_MSPlots_MCStudy/";
+  	mkdir(pathPNG.c_str(),0777);
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -373,6 +391,37 @@ int main(int argc, char *argv[]){
 			float bjets = 0;
 			int nTags = 0;
 			
+			
+			
+			// scale factor for the event
+        		float scaleFactor = 1.;
+
+        /*	THE FOLLOWING PIECE NEEDS TO BE CHECKED IF STILL NECESSARY AND ONLY HAS TO BE APPLIED WHEN INCLUDING DATA AND PILE-UP REWEIGHTING
+	
+	
+	
+        		//A simple filter to remove events which arise from the interaction LHC beam with
+        		// the beampipe known as "beam scraping events".
+        		if(datasetName == "Data" || datasetName == "data" || datasetName == "DATA")
+        		{
+                	// Apply the scraping veto. (Is it still needed?)
+                	bool isBeamBG = true;
+                	if(event->nTracks() > 10)
+                	{
+                        	if( ( (float) event->nHighPurityTracks() ) / ( (float) event->nTracks() ) > 0.25 )
+                        	isBeamBG = false;
+                	}
+                      		if(isBeamBG) continue;
+        		}
+        		else{
+        		double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
+        		double lumiWeightOLD=lumiWeight;
+        		if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
+         		lumiWeight=1;
+        		scaleFactor = scaleFactor*lumiWeight;
+        
+        		}
+	*/		
 					
 			mcParticlesTLV.clear(); //make sure nothing is inside this vector
 			selectedJetsTLV.clear();
@@ -529,6 +578,12 @@ int main(int argc, char *argv[]){
 			                                                                  
     			
 	
+
+			//////////////////////////////////////////////////////////////////////////////////
+			// Filling histograms 							//////////
+			//////////////////////////////////////////////////////////////////////////////////
+			MSPlot["NbOfSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
+	
 	
 		}
 		
@@ -548,8 +603,25 @@ int main(int argc, char *argv[]){
 	fout ->Write(); 
 	fout->Close();
 	
-	
-	
+	fout->cd();
+	for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
+    	{
+        
+      
+        	MultiSamplePlot *temp = it->second;
+        	TH1F *tempHisto_data;
+        	TH1F *tempHisto_TTTT;
+        	//        temp->addText("CMS preliminary");
+        	string name = it->first;
+		temp->Draw(false, name, true, true, true, true, true, 1, true, true, true, true); // merge TT/QCD/W/Z/ST/
+        	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
+      
+      	cout <<" looping plots..., name ... "<< name<<endl;
+        
+        	temp->Write(fout, name, true, pathPNG, "pdf");
+        	cout <<" written...."<<endl;
+
+  	}
 	
 	 
 	
