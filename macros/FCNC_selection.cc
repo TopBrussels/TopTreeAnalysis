@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
 	
 	
 	//set a default luminosity in pb^-1
-	float Luminosity = 100000; 
+	float Luminosity = 20; 
 	float NofEvts = 1000;
 
 
@@ -248,6 +248,8 @@ int main(int argc, char *argv[]){
   	vector < TRootElectron* > init_electrons;
   	vector < TRootJet* >      init_jets;
   	vector < TRootMET* >      mets;
+	vector<TRootJet*> selectedBJets; // B-Jets
+    	vector<TRootJet*> selectedLightJets; // light-Jets
 	
 	//Define an event (global variable)
 	TRootEvent* event = 0;
@@ -356,6 +358,7 @@ int main(int argc, char *argv[]){
 			cutflow_total->GetXaxis()->SetBinLabel(2, "initial");
 			cutflow->GetXaxis()->SetBinLabel(2, "initial");
 			
+			
 			//Make a selection 
 			Selection selection(init_jets, init_muons,init_electrons,mets);
 			//define selection cuts --> have to be validated!!!
@@ -443,6 +446,12 @@ int main(int argc, char *argv[]){
 			
 			} 
 
+			
+			//filling vector of b-jets
+        		for (Int_t seljet =0; seljet < selectedJets.size(); seljet++ ){
+         			if( selectedJets[seljet]->btag_combinedSecondaryVertexBJetTags() > workingpointvalue) selectedBJets.push_back(selectedJets[seljet]);
+         			else selectedLightJets.push_back(selectedJets[seljet]);
+        		}
 			
 			if(debug) cout << "looseElectrons.size() = " << looseElectrons.size() << endl; 
 			if(debug) cout << "looseMuons.size() = " << looseMuons.size() << endl; 
@@ -584,10 +593,10 @@ int main(int argc, char *argv[]){
 			MSPlot["NbOfSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 			MSPlot["NbOfSelectedLightJets"]->Fill(selectedLightJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		        MSPlot["NbOfSelectedBJets"]->Fill(selectedBJets.size(), datasets[d], true, Luminosity*scaleFactor);
-			MSPlot["MET"]->Fill(mets[0]->E(), datasets[d], true, luminosity*scaleFactor);
+			MSPlot["MET"]->Fill(mets[0]->E(), datasets[d], true, Luminosity*scaleFactor);
 		
 
-			for (Int_t seljet1 =0; seljet1 < selectedLightJets.size(); seljet1++ ){
+			for (Int_t seljet1 =0; seljet1 < selectedJets.size(); seljet1++ ){
 
 				MSPlot["JetEta"]->Fill(selectedJets[seljet1]->Eta() , datasets[d], true, Luminosity*scaleFactor);
                  		MSPlot["JetPhi"]->Fill(selectedJets[seljet1]->Phi() , datasets[d], true, Luminosity*scaleFactor);
@@ -608,6 +617,8 @@ int main(int argc, char *argv[]){
 	//                END LOOPING OVER THE DATASETS          //
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
+	
+	
 	fout ->Write(); 
 	//fout->Close();
 	
