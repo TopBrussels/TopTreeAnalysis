@@ -81,7 +81,6 @@ int main(int argc, char *argv[]){
 	float NofEvts = 1000;
 
 
-
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	// Controll flags for scale factor shifts etc.. ///////////
@@ -257,12 +256,12 @@ int main(int argc, char *argv[]){
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////////// MultiSample plots: convenient class which combines multiple MC and DATA histograms into single plots. //////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	MSPlot["NbOfSelectedJets"] = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0, 15, "Nb. of jets");
-    	MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0, 10, "Nb. of jets");
-    	MSPlot["NbOfSelectedBJets"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0, 8, "Nb. of jets");
-    	MSPlot["JetEta"] = new MultiSamplePlot(datasets, "JetEta", 30,-3, 3, "Jet #eta");
-    	MSPlot["JetPhi"] = new MultiSamplePlot(datasets, "JetPhi", 50, -4,4 , "Jet #phi");
-	MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 40, 0, 700, "MET");
+	MSPlot["NbOfSelectedJets"] = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0., 15., "Nb. of jets");
+    	MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0., 10., "Nb. of jets");
+    	MSPlot["NbOfSelectedBJets"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0., 8., "Nb. of jets");
+    	MSPlot["JetEta"] = new MultiSamplePlot(datasets, "JetEta", 30,-3., 3., "Jet #eta");
+    	MSPlot["JetPhi"] = new MultiSamplePlot(datasets, "JetPhi", 50, -4., 4., "Jet #phi");
+	MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 40, 0., 700., "MET");
 	
 
   	//Defining a directory in which .png files of all the plots created will be stored.
@@ -583,7 +582,16 @@ int main(int argc, char *argv[]){
 			// Filling histograms 							//////////
 			//////////////////////////////////////////////////////////////////////////////////
 			MSPlot["NbOfSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
-	
+			MSPlot["NbOfSelectedLightJets"]->Fill(selectedLightJets.size(), datasets[d], true, Luminosity*scaleFactor);
+		        MSPlot["NbOfSelectedBJets"]->Fill(selectedBJets.size(), datasets[d], true, Luminosity*scaleFactor);
+			MSPlot["MET"]->Fill(mets[0]->E(), datasets[d], true, luminosity*scaleFactor);
+		
+
+			for (Int_t seljet1 =0; seljet1 < selectedLightJets.size(); seljet1++ ){
+
+				MSPlot["JetEta"]->Fill(selectedJets[seljet1]->Eta() , datasets[d], true, Luminosity*scaleFactor);
+                 		MSPlot["JetPhi"]->Fill(selectedJets[seljet1]->Phi() , datasets[d], true, Luminosity*scaleFactor);
+			}
 	
 		}
 		
@@ -601,7 +609,7 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	fout ->Write(); 
-	fout->Close();
+	//fout->Close();
 	
 	fout->cd();
 	for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
@@ -613,12 +621,12 @@ int main(int argc, char *argv[]){
         	TH1F *tempHisto_TTTT;
         	//        temp->addText("CMS preliminary");
         	string name = it->first;
-		temp->Draw(false, name, true, true, true, true, true, 1, true, true, true, true); // merge TT/QCD/W/Z/ST/
+		temp->Draw( name, 0, false, false, false, 1);
         	//Draw(bool addRandomPseudoData = false, string label = string("CMSPlot"), bool mergeTT = false, bool mergeQCD = false, bool mergeW = false, bool mergeZ = false, bool mergeST = false, int scaleNPSignal = 1, bool addRatio = false, bool mergeVV = false, bool mergeTTV = false);
       
       	cout <<" looping plots..., name ... "<< name<<endl;
         
-        	temp->Write(fout, name, true, pathPNG, "pdf");
+        	temp->Write(fout, name, false/*, pathPNG, "pdf"*/);
         	cout <<" written...."<<endl;
 
   	}
