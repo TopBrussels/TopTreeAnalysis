@@ -52,6 +52,14 @@ using namespace reweight;  //needed for PUreweighting
 /// MultiSamplePlot
 map<string,MultiSamplePlot*> MSPlot;
 
+
+/// Normal Plots (TH1F* and TH2F*)
+map<string,TH1F*> histo1D;
+
+
+
+
+
 int main(int argc, char *argv[]){
 	//Make plots nicer: color, style, ... 
 	setMyStyle();
@@ -77,9 +85,7 @@ int main(int argc, char *argv[]){
 	
 	
 	//set a default luminosity in pb^-1
-	float Luminosity = 20; 
-	float NofEvts = 100000;
-
+	float Luminosity = 20;
 
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -201,7 +207,7 @@ int main(int argc, char *argv[]){
     	workingpointvalue = .898;
 	
 	/////////////////////////////////////////////////////////
-	// End b-tagging working points etc. ////////////////////
+	// End b-tagging working points      ////////////////////
 	/////////////////////////////////////////////////////////
 
 	//Load the analysisenvironment
@@ -259,31 +265,59 @@ int main(int argc, char *argv[]){
         ////////////////// MultiSample plots: convenient class which combines multiple MC and DATA histograms into single plots. //////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	MSPlot["NbOfSelectedJets"] = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0., 15., "Nb. of jets");
-    	MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0., 10., "Nb. of jets");
+    	MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0., 10, "Nb. of jets");
     	MSPlot["NbOfSelectedBJets"] = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0., 8., "Nb. of jets");
     	MSPlot["JetEta"] = new MultiSamplePlot(datasets, "JetEta", 30,-3., 3., "Jet #eta");
     	MSPlot["JetPhi"] = new MultiSamplePlot(datasets, "JetPhi", 50, -4., 4., "Jet #phi");
 	MSPlot["MET"] = new MultiSamplePlot(datasets, "MET", 40, 0., 700., "MET");
 	
-
-  	//Defining a directory in which .png files of all the plots created will be stored.
-  	string pathPNG = "FCNC_%s";
-  	pathPNG += "_MSPlots_MCStudy/";
-  	mkdir(pathPNG.c_str(),0777);
 	
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-	//                Cut flow histograms		        //
-	///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////
-		
+
+	//////////////////  Cut flow histograms	/////////////////////////////
 	char plotTitle_total[900];
 	sprintf(plotTitle_total,"The total cutflow for %s channel",channelchar); 
 	
-	TH1F* cutflow_total = new TH1F("cutflow_total", plotTitle_total, 6, -0.5,5.5); 
-	cutflow_total->Sumw2();
+	histo1D["cutflow_total"] = new TH1F("cutflow_total", plotTitle_total, 6, -0.5,5.5); 
+	histo1D["cutflow_total"]->Sumw2();
+
+	// Define different cutflow plots for each channel and dataset	
+	for(unsigned int d = 0; d < datasets.size();d++){ //loop over datasets in order to pre-define cutflow histograms for every process
+		
+		//Load datasets
+		treeLoader.LoadDataset(datasets[d], anaEnv); 
+		string datasetName = datasets[d]->Name(); 
+		
+		char datasetNamechar[900];
+		if(datasetName.find("ttbar")!=string::npos) {sprintf(datasetNamechar,"ttbar");}
+		if(datasetName.find("Wjets")!=string::npos) {sprintf(datasetNamechar,"wjets");}
+		if(datasetName.find("ttt")!=string::npos) {sprintf(datasetNamechar,"ttt");}
+		if(datasetName.find("ttW")!=string::npos) {sprintf(datasetNamechar,"ttw");}
+		if(datasetName.find("WZ")!=string::npos) {sprintf(datasetNamechar,"wz");}
+		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
+		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
+
+
+		// Define different plots for each channel and dataset
+		char plotTitle[900];
+		char NamePlot[900];
+		sprintf(plotTitle,"The cutflow for %s channel: %s dataset",channelchar,datasetNamechar); 
+		sprintf(NamePlot,"cutflow_%s",datasetNamechar);
+				
+		string Process_cutflow = "cutflow_";
+		Process_cutflow +=datasetNamechar;
+		
+		histo1D[Process_cutflow] = new TH1F(NamePlot, plotTitle, 6, -0.5,5.5); 
+		histo1D[Process_cutflow]->Sumw2();
+	}
 	
-	if(debug) cout << "[PROCES]	Declared total cutflow histogram  "<< endl;
+	
+	if(debug) cout << "[PROCES]	Declared cutflow histograms  "<< endl;
+  	
+	//Defining a directory in which .png files of all the plots created will be stored.
+  	string pathPNG = "FCNC_%s";
+  	pathPNG += "_MSPlots_MCStudy/";
+  	mkdir(pathPNG.c_str(),0777);	
+	
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -306,26 +340,17 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
 		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
 		
+		string Process_cutflow = "cutflow_";
+		Process_cutflow += datasetNamechar;
 		
 		if(information) cout << "[INFO]	Dataset " << d << " name : " << datasetName << " / title : " << datasets[d]->Title() << endl;
-      			
-		
-		
-		// Define different plots for each channel and dataset
-		char plotTitle[900];
-		char NamePlot[900];
-		sprintf(plotTitle,"The cutflow for %s channel: %s dataset",channelchar,datasetNamechar); 
-		sprintf(NamePlot,"cutflow_%s",datasetNamechar);
-	
-		TH1F* cutflow = new TH1F(NamePlot, plotTitle, 6, -0.5,5.5); 
-		cutflow->Sumw2();
-	
-		if(debug) cout << "[PROCES]	Declared cutflow histogram  "<< endl;
 		
 		
 		///////////////////////////////////////////////////////////
 		//                START LOOPING OVER THE EVENTS          //
 		///////////////////////////////////////////////////////////
+
+		float NofEvts = 1000;
 
 		float NofRuns = 0; 
 		if( NofEvts > datasets[d]->NofEvtsToRunOver()) 
@@ -352,11 +377,11 @@ int main(int argc, char *argv[]){
 			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
 			
 			
-			cutflow->Fill(1);
-			cutflow_total->Fill(1);
+			histo1D[Process_cutflow]->Fill(1);
+			histo1D["cutflow_total"]->Fill(1);
 			
-			cutflow_total->GetXaxis()->SetBinLabel(2, "initial");
-			cutflow->GetXaxis()->SetBinLabel(2, "initial");
+			histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(2, "initial");
+			histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(2, "initial");
 			
 			
 			//Make a selection 
@@ -463,10 +488,10 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() + looseMuons.size() ==3)
 				{ 
 					if(debug) cout << "fill 3L" << endl;
-					cutflow_total->Fill(2);
-					cutflow->Fill(2);
-					cutflow_total->GetXaxis()->SetBinLabel(3, "3L");
-					cutflow->GetXaxis()->SetBinLabel(3, "3L");
+					histo1D["cutflow_total"]->Fill(2);
+					histo1D[Process_cutflow]->Fill(2);
+					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "3L");
+					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "3L");
 					if(debug) cout << "filled 3L" << endl;
 				}
 				if(debug)	cout << "out fill 3L loop" << endl; 
@@ -478,26 +503,26 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() +  looseMuons.size() == 1)
 				{
 					if(debug) cout << "in fill 1l3b loop" << endl;
-					cutflow_total->Fill(2);
-					cutflow->Fill(2);
-					cutflow_total->GetXaxis()->SetBinLabel(3, "1L");
-					cutflow->GetXaxis()->SetBinLabel(3, "1L");
+					histo1D["cutflow_total"]->Fill(2);
+					histo1D[Process_cutflow]->Fill(2);
+					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "1L");
+					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "1L");
 					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
 					
 					if(selectedJets.size() >= 3)
 					{
 						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
-						cutflow_total->Fill(3);
-						cutflow->Fill(3);
-						cutflow_total->GetXaxis()->SetBinLabel(4, ">= 3jets");
-						cutflow->GetXaxis()->SetBinLabel(4, "3jets");
+						histo1D["cutflow_total"]->Fill(3);
+						histo1D[Process_cutflow]->Fill(3);
+						histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(4, ">= 3jets");
+						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "3jets");
 						if(nTags == 3)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
-							cutflow_total->Fill(4);
-							cutflow->Fill(4);
-							cutflow_total->GetXaxis()->SetBinLabel(5, "== 3 bjets");
-							cutflow->GetXaxis()->SetBinLabel(5, "== 3 bjets");
+							histo1D["cutflow_total"]->Fill(4);
+							histo1D[Process_cutflow]->Fill(4);
+							histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
+							histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
 						}
 					}
 				
@@ -510,11 +535,11 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() + looseMuons.size() == 2)
 				{
 					if(debug) cout << "in fill SS dilepton " << endl; 
-					cutflow_total->Fill(2);
-					cutflow->Fill(2);
+					histo1D["cutflow_total"]->Fill(2);
+					histo1D[Process_cutflow]->Fill(2);
 					
-					cutflow_total->GetXaxis()->SetBinLabel(3, "2L");
-					cutflow->GetXaxis()->SetBinLabel(3, "2L");
+					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "2L");
+					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "2L");
 					
 					bool electron = false; 
 					bool muon = false; 
@@ -555,10 +580,10 @@ int main(int argc, char *argv[]){
 					if(muon || electron)
 					{
 						if(debug) cout << "in fill SS dilepton: same sign " << endl;
-						cutflow_total->Fill(3);
-						cutflow->Fill(3);
-						cutflow_total->GetXaxis()->SetBinLabel(4, "2 SS L");
-						cutflow->GetXaxis()->SetBinLabel(4, "2 SS L");
+						histo1D["cutflow_total"]->Fill(3);
+						histo1D[Process_cutflow]->Fill(3);
+						histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(4, "2 SS L");
+						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "2 SS L");
 					}
 					if(debug) cout << "out fill SS dilepton " << endl;
 				}
@@ -574,11 +599,11 @@ int main(int argc, char *argv[]){
 				if(selectedPhotons.size() > 2)
 				{
 					if(debug) cout << "in fill 3 gamma: selected photons loop " << endl;
-					cutflow->Fill(2);
-					cutflow_total->Fill(2)
+					histo1D[Process_cutflow]->Fill(2);
+					histo1D["cutflow_total"]->Fill(2)
 					
-					cutflow_total->GetXaxis()->SetBinLabel(3, "3 photons");
-					cutflow->GetXaxis()->SetBinLabel(3, "3 photons");
+					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "3 photons");
+					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "3 photons");
 				}	
 				if(debug) cout << "out fill 3gamma " << endl;
 			*/
@@ -619,7 +644,7 @@ int main(int argc, char *argv[]){
 	///////////////////////////////////////////////////////////
 	
 	
-	fout ->Write(); 
+	//fout ->Write(); 
 	//fout->Close();
 	
 	fout->cd();
@@ -642,7 +667,17 @@ int main(int argc, char *argv[]){
 
   	}
 	
-	 
+	TDirectory* th1dir = fout->mkdir("Histos1D_cutflows");
+  	th1dir->cd();
+  	for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
+  	{
+
+    
+        	TH1F *temp = it->second;
+        	temp->Write();
+        	//TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
+        	//tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
+  	}
 	
 	std::cout << "******************************************"<<std::endl; 
 	std::cout << " End of the program for the FCNC selection " << std::endl; 
