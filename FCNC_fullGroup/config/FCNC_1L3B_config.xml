@@ -7,9 +7,10 @@
  
   
  
-  <d name="ttbar" title="ttbar" add="1"  color="633" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJets_SemiLeptMGDecays_TuneP11_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V19-v1/04072013_095642/TOPTREE/*.root"/> 
-  <d name="Wjets" title="W(l,nu) + 2 b-jets" add="1"   color="413"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/WbbJetsToLNu_Massive_TuneZ2star_8TeV-madgraph-pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/03072013_005623/TOPTREE/*.root"/> 
+  <d name="ttbar" title="ttbar" 		add="1"   color="46"  ls="1"  lw="2" normf="1"  EqLumi="76141.56" xsection="157.5"   PreselEff="0.0" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJets_SemiLeptMGDecays_TuneP11_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V19-v1/04072013_095642/TOPTREE/*.root"/> 
   
+  <d name="Wjets" title="W(l,nu) + 2 b-jets" 	add="1"   color="46"  ls="1"  lw="2" normf="1"  EqLumi="11691.11" xsection="1750"   PreselEff="0.0" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/WbbJetsToLNu_Massive_TuneZ2star_8TeV-madgraph-pythia6_tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/03072013_005623/TOPTREE/*.root"/> 
+  <!-- WATCH OUT, NOT SURE ABOUT THIS CROSS SECTION, because I didn't find any for Wbb specific, so I took W + 2 jets -->
  
   
 </datasets>

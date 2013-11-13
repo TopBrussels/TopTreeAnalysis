@@ -7,11 +7,15 @@
  
   
  
-  <d name="ttW" title="ttbar + W + jets" add="1"  color="46" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTWJets_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_131723/TOPTREE/*.root"/> 
-  <d name="ttbar" title="ttbar" add="1"   color="633"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJets_FullLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v2/22042013_211043/TOPTREE/*.root"/> 
-  <d name="WZ" title="W(l,nu) Z(l,l)" add="1"   color="5"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/WZJetsTo3LNu_TuneZ2_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/23062013_152453/TOPTREE/*.root"/>
-  <d name="ZZ" title="Z(l,l) Z(l,l)" add="1"   color="220"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/ZZJetsTo4L_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/21062013_132341/TOPTREE/*.root"/>
-  <d name="ttZ" title="ttbar + Z + jets" add="1"   color="6"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTZJets_8TeV-madgraph_v2/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_144733/TOPTREE/*.root"/>
+  <d name="ttW" title="ttbar + W + jets"	add="1"   color="46"  ls="1"  lw="2" normf="1"  EqLumi="912690.875" xsection="0.2148"   PreselEff="0.0" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTWJets_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_131723/TOPTREE/*.root"/> 
+  
+  <d name="ttbar" title="ttbar" 		add="1"   color="633"  ls="1"  lw="2" normf="1"  EqLumi="483940.81" xsection="24.82"   PreselEff="0.0"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJets_FullLeptMGDecays_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v2/22042013_211043/TOPTREE/*.root"/> 
+  
+  <d name="WZ" title="W(l,nu) Z(l,l)" 		add="1"   color="5"  ls="1"  lw="2" normf="1"  EqLumi="2326464.15" xsection="0.8674"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/WZJetsTo3LNu_TuneZ2_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/23062013_152453/TOPTREE/*.root"/>
+  
+  <d name="ZZ" title="Z(l,l) Z(l,l)" 		add="1"   color="220"  ls="1"  lw="2" normf="1"  EqLumi="37097885.8" xsection="0.1296"   PreselEff="0.0"   filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/ZZJetsTo4L_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7A-v1/21062013_132341/TOPTREE/*.root"/>
+  
+  <d name="ttZ" title="ttbar + Z + jets" 	add="1"   color="6"  ls="1"  lw="2" normf="1"  EqLumi="1221848.84" xsection="0.172"   PreselEff="0.0"    filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTZJets_8TeV-madgraph_v2/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_144733/TOPTREE/*.root"/>
 
 </datasets>
 
