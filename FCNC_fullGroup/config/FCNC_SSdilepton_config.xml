@@ -4,7 +4,13 @@
 
 
  
-  
+  <d name="TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR" title="tcH (H->WW)"	add="1"   color="14"  ls="1"  lw="2" normf="1"  EqLumi="7073" xsection="1"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR_TuneZ2star_8TeV-madgraph-tauola_Summer12/jdhondt-TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR_TuneZ2star_8TeV-madgraph-tauola_Summer12-8132d4a0c87c4982c80015223c5f35f5/07112013_170501/TOPTREE/*.root"/> 
+
+  <d name="TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL" title="tcH (H->WW)"	add=""   color="14"  ls="1"  lw="2" normf="1"  EqLumi="9898" xsection="1"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL_TuneZ2star_8TeV-madgraph-tauola_Summer12/jdhondt-TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL_TuneZ2star_8TeV-madgraph-tauola_Summer12-8132d4a0c87c4982c80015223c5f35f5/12112013_173636/TOPTREE/*.root"/> 
+
+  <d name="TTJetsTocHbW_HToWW_WToLNuL_HctL" title="tcH (H->WW)"	add="0"   color="14"  ls="1"  lw="2" normf="1"  EqLumi="3980" xsection="1"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocHbW_HToWW_WToLNuL_HctL_TuneZ2star_8TeV-madgraph-tauola_Summer12/jdhondt-TTJetsTocHbW_HToWW_WToLNuL_HctL_TuneZ2star_8TeV-madgraph-tauola_Summer12-8132d4a0c87c4982c80015223c5f35f5/07112013_173512/TOPTREE/*.root"/> 
+
+  <d name="TTJetsTocHbW_HToWW_WToLNuL_HctR" title="tcH (H->WW)"	add="0"   color="14"  ls="1"  lw="2" normf="1"  EqLumi="11814" xsection="1"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocHbW_HToWW_WToLNuL_HctR_TuneZ2star_8TeV-madgraph-tauola_Summer12/jdhondt-TTJetsTocHbW_HToWW_WToLNuL_HctR_TuneZ2star_8TeV-madgraph-tauola_Summer12-8132d4a0c87c4982c80015223c5f35f5/07112013_180517/TOPTREE/*.root"/> 
  
   <d name="ttW" title="ttbar + W + jets"	add="1"   color="46"  ls="1"  lw="2" normf="1"  EqLumi="912690.875" xsection="0.2148"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTWJets_8TeV-madgraph/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_131723/TOPTREE/*.root"/> 
   <!--
