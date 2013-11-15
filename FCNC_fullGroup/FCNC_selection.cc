@@ -294,9 +294,11 @@ int main(int argc, char *argv[]){
 	//////////////////  Cut flow histograms	/////////////////////////////
 	char plotTitle_total[900];
 	sprintf(plotTitle_total,"The total cutflow for %s channel",channelchar); 
-	
-	histo1D["cutflow_total"] = new TH1F("cutflow_total", plotTitle_total, 6, -0.5,5.5); 
-	histo1D["cutflow_total"]->Sumw2();
+	histo1D["cutflow_total"] = new TH1F("cutflow_total", plotTitle_total, 6, -0.5,5.5);
+	//histo1D["cutflow_total"]->Sumw2();
+	histo1D["cutflow_total"]->GetYaxis()->SetTitle("Eff.");
+
+
 
 	// Define different cutflow plots for each channel and dataset	
 	for(unsigned int d = 0; d < datasets.size();d++){ //loop over datasets in order to pre-define cutflow histograms for every process
@@ -324,8 +326,9 @@ int main(int argc, char *argv[]){
 		string Process_cutflow = "cutflow_";
 		Process_cutflow +=datasetNamechar;
 		
-		histo1D[Process_cutflow] = new TH1F(NamePlot, plotTitle, 6, -0.5,5.5); 
-		histo1D[Process_cutflow]->Sumw2();
+		histo1D[Process_cutflow] = new TH1F(NamePlot, plotTitle, 6, -0.5,5.5);
+		//histo1D[Process_cutflow]->Sumw2();
+		histo1D[Process_cutflow]->GetYaxis()->SetTitle("Eff.");
 	}
 	
 	
@@ -368,7 +371,7 @@ int main(int argc, char *argv[]){
 		//                START LOOPING OVER THE EVENTS          //
 		///////////////////////////////////////////////////////////
 
-		int NofEvts = 100000;
+		int NofEvts = 1000;
 
 		int NofRuns = 0; 
 		if( NofEvts > datasets[d]->NofEvtsToRunOver()) 
@@ -650,8 +653,8 @@ int main(int argc, char *argv[]){
 				if(selectedPhotons.size() == 1)
 				{
 					if(debug) cout << "in fill 1 gamma: selected photons loop " << endl;
-					histo1D[Process_cutflow]->Fill(2);
-					histo1D["cutflow_total"]->Fill(2)
+					histo1D[Process_cutflow]->Fill(100/NofRuns);
+					histo1D["cutflow_total"]->Fill(100/NofRuns)
 					
 					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "1 photons");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "1 photons");
