@@ -292,12 +292,17 @@ int main(int argc, char *argv[]){
 	
 
 	//////////////////  Cut flow histograms	/////////////////////////////
-	char plotTitle_total[900];
-	sprintf(plotTitle_total,"The total cutflow for %s channel",channelchar); 
-	histo1D["cutflow_total"] = new TH1F("cutflow_total", plotTitle_total, 6, -0.5,5.5);
-	//histo1D["cutflow_total"]->Sumw2();
-	histo1D["cutflow_total"]->GetYaxis()->SetTitle("Eff.");
+	char plotTitle_total_B[900];
+	sprintf(plotTitle_total_B,"The total cutflow for %s channel (B)",channelchar); 
+	histo1D["cutflow_total_B"] = new TH1F("cutflow_total_B", plotTitle_total_B, 6, -0.5,5.5);
+	//histo1D["cutflow_total_B"]->Sumw2();
+	histo1D["cutflow_total_B"]->GetYaxis()->SetTitle("Eff.");
 
+	char plotTitle_total_S[900];
+	sprintf(plotTitle_total_S,"The total cutflow for %s channel (S)",channelchar); 
+	histo1D["cutflow_total_S"] = new TH1F("cutflow_total_S", plotTitle_total_S, 6, -0.5,5.5);
+	//histo1D["cutflow_total_S"]->Sumw2();
+	histo1D["cutflow_total_S"]->GetYaxis()->SetTitle("Eff.");
 
 
 	// Define different cutflow plots for each channel and dataset	
@@ -315,6 +320,11 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("WZ")!=string::npos) {sprintf(datasetNamechar,"wz");}
 		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
 		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
+		
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR");}
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL");}
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctL");}
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctR");}
 
 
 		// Define different plots for each channel and dataset
@@ -348,6 +358,7 @@ int main(int argc, char *argv[]){
 	if(information)	cout << "[PROCES]	Looping over the datasets:  " << datasets.size()<< " datasets" << endl;
 	for(unsigned int d = 0; d < datasets.size();d++)
 	{
+	bool is_signal = false;
 		//Load datasets
 		treeLoader.LoadDataset(datasets[d], anaEnv); 
 		string datasetName = datasets[d]->Name(); 
@@ -360,6 +371,24 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("WZ")!=string::npos) {sprintf(datasetNamechar,"wz");}
 		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
 		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
+		
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_HctL")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctL");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_HctR")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctR");
+			is_signal = true;
+		}
+		
 		
 		string Process_cutflow = "cutflow_";
 		Process_cutflow += datasetNamechar;
@@ -396,12 +425,14 @@ int main(int argc, char *argv[]){
 			
 			//Load the event 
 			event = treeLoader.LoadEvent(ievent, vertex, init_muons, init_electrons, init_jets, mets);
-			
+
 			
 			histo1D[Process_cutflow]->Fill(1);
-			histo1D["cutflow_total"]->Fill(1);
+			histo1D["cutflow_total_B"]->Fill(1);
+			if(is_signal) histo1D["cutflow_total_S"]->Fill(1);
 			
-			histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(2, "initial");
+			histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(2, "initial");
+			if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(2, "initial");
 			histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(2, "initial");
 			
 			
@@ -500,9 +531,11 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() + looseMuons.size() ==3)
 				{ 
 					if(debug) cout << "fill 3L" << endl;
-					histo1D["cutflow_total"]->Fill(2);
+					histo1D["cutflow_total_B"]->Fill(2);
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(2);
 					histo1D[Process_cutflow]->Fill(2);
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "3L");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "3L");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "3L");		
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "3L");
 					if(debug) cout << "filled 3L" << endl;
 				}
@@ -515,9 +548,11 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() + looseMuons.size() > 3)
 				{ 
 					if(debug) cout << "fill 4L" << endl;
-					histo1D["cutflow_total"]->Fill(2);
+					histo1D["cutflow_total_B"]->Fill(2);
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(2);
 					histo1D[Process_cutflow]->Fill(2);
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "4L");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "4L");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "4L");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "4L");
 					if(debug) cout << "filled 4L" << endl;
 				}
@@ -530,25 +565,31 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() +  looseMuons.size() == 1)
 				{
 					if(debug) cout << "in fill 1l3b loop" << endl;
-					histo1D["cutflow_total"]->Fill(2);
+					histo1D["cutflow_total_B"]->Fill(2);
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(2);
 					histo1D[Process_cutflow]->Fill(2);
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "1L");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "1L");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "1L");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "1L");
 					if(debug) cout << "selectedJets.size() = " << selectedJets.size() << endl;
 					
 					if(selectedJets.size() >= 3)
 					{
 						if(debug) cout << "in fill 1l3b loop: 3jets" << endl;
-						histo1D["cutflow_total"]->Fill(3);
+						histo1D["cutflow_total_B"]->Fill(3);
+						if(is_signal) histo1D["cutflow_total_S"]->Fill(3);
 						histo1D[Process_cutflow]->Fill(3);
-						histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(4, ">= 3jets");
+						histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(4, ">= 3jets");
+						if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(4, ">= 3jets");
 						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "3jets");
 						if(nTags == 3)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
-							histo1D["cutflow_total"]->Fill(4);
+							histo1D["cutflow_total_B"]->Fill(4);
+							if(is_signal) histo1D["cutflow_total_S"]->Fill(4);
 							histo1D[Process_cutflow]->Fill(4);
-							histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
+							histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
+							if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
 							histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
 						}
 					}
@@ -562,10 +603,12 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() + looseMuons.size() == 2)
 				{
 					if(debug) cout << "in fill SS dilepton " << endl; 
-					histo1D["cutflow_total"]->Fill(2);
+					histo1D["cutflow_total_B"]->Fill(2);
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(2);
 					histo1D[Process_cutflow]->Fill(2);
 					
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "2L");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "2L");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "2L");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "2L");
 					
 					bool electron = false; 
@@ -592,9 +635,11 @@ int main(int argc, char *argv[]){
 					if(muon || electron || EMu)
 					{
 						if(debug) cout << "in fill SS dilepton: same sign " << endl;
-						histo1D["cutflow_total"]->Fill(3);
+						histo1D["cutflow_total_B"]->Fill(3);
+						if(is_signal) histo1D["cutflow_total_S"]->Fill(3);
 						histo1D[Process_cutflow]->Fill(3);
-						histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(4, "2 SS L");
+						histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(4, "2 SS L");
+						if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(4, "2 SS L");
 						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "2 SS L");
 					}
 					if(debug) cout << "out fill SS dilepton " << endl;
@@ -606,10 +651,12 @@ int main(int argc, char *argv[]){
 				if(looseElectrons.size() + looseMuons.size() == 2)
 				{
 					if(debug) cout << "in fill OS dilepton " << endl; 
-					histo1D["cutflow_total"]->Fill(2);
+					histo1D["cutflow_total_B"]->Fill(2);
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(2);
 					histo1D[Process_cutflow]->Fill(2);
 					
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "2L");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "2L");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "2L");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "2L");
 					
 					bool electron = false; 
@@ -636,9 +683,11 @@ int main(int argc, char *argv[]){
 					if(muon || electron || EMu)
 					{
 						if(debug) cout << "in fill OS dilepton: same sign " << endl;
-						histo1D["cutflow_total"]->Fill(3);
+						histo1D["cutflow_total_B"]->Fill(3);
+						if(is_signal) histo1D["cutflow_total_S"]->Fill(3);
 						histo1D[Process_cutflow]->Fill(3);
-						histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(4, "2 OS L");
+						histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(4, "2 OS L");
+						if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(4, "2 OS L");
 						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "2 OS L");
 					}
 					if(debug) cout << "out fill OS dilepton " << endl;
@@ -654,9 +703,11 @@ int main(int argc, char *argv[]){
 				{
 					if(debug) cout << "in fill 1 gamma: selected photons loop " << endl;
 					histo1D[Process_cutflow]->Fill(100/NofRuns);
-					histo1D["cutflow_total"]->Fill(100/NofRuns)
+					histo1D["cutflow_total_B"]->Fill(100/NofRuns)
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(100/NofRuns)
 					
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "1 photons");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "1 photons");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "1 photons");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "1 photons");
 				}	
 				if(debug) cout << "out fill 1gamma " << endl;
@@ -671,9 +722,11 @@ int main(int argc, char *argv[]){
 				{
 					if(debug) cout << "in fill 2 gamma: selected photons loop " << endl;
 					histo1D[Process_cutflow]->Fill(2);
-					histo1D["cutflow_total"]->Fill(2)
+					histo1D["cutflow_total_B"]->Fill(2)
+					if(is_signal) histo1D["cutflow_total_S"]->Fill(2)
 					
-					histo1D["cutflow_total"]->GetXaxis()->SetBinLabel(3, "2 photons");
+					histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(3, "2 photons");
+					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "2 photons");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "2 photons");
 				}	
 				if(debug) cout << "out fill 2gamma " << endl;
