@@ -272,8 +272,7 @@ int main(int argc, char *argv[]){
   	vector < TRootElectron* > init_electrons;
   	vector < TRootJet* >      init_jets;
   	vector < TRootMET* >      mets;
-	vector<TRootJet*> selectedBJets; // B-Jets, to be filled after b-tagging
-    	vector<TRootJet*> selectedLightJets; // light-Jets, to be filled afer b-tagging
+
 	
 	//Define an event (global variable)
 	TRootEvent* event = 0;
@@ -325,6 +324,15 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL");}
 		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctL");}
 		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctR");}
+		if(datasetName.find("TTJetsTocHbW_HToBB_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToBB_HctL");}
+		if(datasetName.find("TTJetsTocHbW_HToBB_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToBB_HctR");}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctL");}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctR");}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctL");}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctR");}		
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctL");}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctR");}
+
 
 
 		// Define different plots for each channel and dataset
@@ -388,7 +396,40 @@ int main(int argc, char *argv[]){
 			sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_HctR");
 			is_signal = true;
 		}
-		
+		if(datasetName.find("TTJetsTocHbW_HToBB_HctL")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToBB_HctL");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToBB_HctR")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToBB_HctR");
+			is_signal = true;
+		}		
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctL")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctL");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctR")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToBB_ZToLL_HctR");
+			is_signal = true;
+		}		
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctL")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctL");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctR")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToJetsUDC_ZToLL_HctR");
+			is_signal = true;
+		}		
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctL")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctL");
+			is_signal = true;
+		}
+		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctR")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctR");
+			is_signal = true;
+		}		
+
+
 		
 		string Process_cutflow = "cutflow_";
 		Process_cutflow += datasetNamechar;
@@ -400,7 +441,7 @@ int main(int argc, char *argv[]){
 		//                START LOOPING OVER THE EVENTS          //
 		///////////////////////////////////////////////////////////
 
-		int NofEvts = 1000;
+		int NofEvts = 100000;
 
 		int NofRuns = 0; 
 		if( NofEvts > datasets[d]->NofEvtsToRunOver()) 
@@ -457,6 +498,8 @@ int main(int argc, char *argv[]){
 			vector<TRootMuon*> looseMuons = selection.GetSelectedLooseMuons();
 			vector<TRootElectron*> selectedElectrons = selection.GetSelectedDiElectrons();
 			vector<TRootElectron*> looseElectrons = selection.GetSelectedLooseDiElectrons();
+			vector<TRootJet*> selectedBJets; // B-Jets, to be filled after b-tagging
+    			vector<TRootJet*> selectedLightJets; // light-Jets, to be filled afer b-tagging
 			// vector<TRootPhoton*> selectedPhotons = selection.GetSelecetedPhotons(); Photons not yet included in the selection class!!!!
 			
 			
@@ -467,7 +510,7 @@ int main(int argc, char *argv[]){
 			
 			int bjets = 0;
 			int nTags = 0;
-			
+			float Passed_selection = false;
 			
 			
 			// scale factor for the event
@@ -502,8 +545,6 @@ int main(int argc, char *argv[]){
 			
 					
       			for(unsigned int iJet=0; iJet<selectedJets.size(); iJet++){
-				TRootJet* tempJet = (TRootJet*) selectedJets[iJet];
-						
 				int pdgID = selectedJets[iJet]->partonFlavour();
 				
 				if(fabs(pdgID) == 5 && datasetName != "Data" && datasetName != "data" && datasetName != "DATA")
@@ -538,6 +579,8 @@ int main(int argc, char *argv[]){
 					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "3L");		
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "3L");
 					if(debug) cout << "filled 3L" << endl;
+					
+					Passed_selection = true;
 				}
 				if(debug)	cout << "out fill 3L loop" << endl; 
 			}
@@ -555,6 +598,8 @@ int main(int argc, char *argv[]){
 					if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(3, "4L");
 					histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(3, "4L");
 					if(debug) cout << "filled 4L" << endl;
+					
+					Passed_selection = true;
 				}
 				if(debug)	cout << "out fill 4L loop" << endl; 
 			}
@@ -581,7 +626,7 @@ int main(int argc, char *argv[]){
 						histo1D[Process_cutflow]->Fill(3);
 						histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(4, ">= 3jets");
 						if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(4, ">= 3jets");
-						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "3jets");
+						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, ">=3jets");
 						if(nTags == 3)
 						{
 							if(debug) cout << "in fill 1l3b loop: 3bjets" << endl;
@@ -591,6 +636,8 @@ int main(int argc, char *argv[]){
 							histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
 							if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
 							histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(5, "== 3 bjets");
+							
+							Passed_selection = true;
 						}
 					}
 				
@@ -618,18 +665,18 @@ int main(int argc, char *argv[]){
 					if(looseElectrons.size() == 2)
 					{
 						if(looseElectrons[0]->charge() == looseElectrons[1]->charge()) electron = true; 
-						if(debug) cout << "Electron boolean defined" << endl; 
+						if(debug) cout << "Electron boolean defined" << endl;
 					}
 				
 					if(looseMuons.size() == 2)
 					{
 						if(looseMuons[0]->charge() == looseMuons[1]->charge()) muon = true; 
-						if(debug) cout << "Muon boolean defined" << endl; 
+						if(debug) cout << "Muon boolean defined" << endl;
 					}
 					if(looseMuons.size() == 1 && looseElectrons.size() == 1)
 					{
 						if(looseMuons[0]->charge() == looseElectrons[0]->charge()) EMu = true; 
-						if(debug) cout << "EMu boolean defined" << endl; 
+						if(debug) cout << "EMu boolean defined" << endl;
 					}
 				
 					if(muon || electron || EMu)
@@ -641,6 +688,8 @@ int main(int argc, char *argv[]){
 						histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(4, "2 SS L");
 						if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(4, "2 SS L");
 						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "2 SS L");
+						
+						Passed_selection = true;
 					}
 					if(debug) cout << "out fill SS dilepton " << endl;
 				}
@@ -666,7 +715,7 @@ int main(int argc, char *argv[]){
 					if(looseElectrons.size() == 2)
 					{
 						if(looseElectrons[0]->charge() != looseElectrons[1]->charge()) electron = true; 
-						if(debug) cout << "Electron boolean defined" << endl; 
+						if(debug) cout << "Electron boolean defined" << endl;
 					}
 				
 					if(looseMuons.size() == 2)
@@ -689,6 +738,8 @@ int main(int argc, char *argv[]){
 						histo1D["cutflow_total_B"]->GetXaxis()->SetBinLabel(4, "2 OS L");
 						if(is_signal) histo1D["cutflow_total_S"]->GetXaxis()->SetBinLabel(4, "2 OS L");
 						histo1D[Process_cutflow]->GetXaxis()->SetBinLabel(4, "2 OS L");
+						
+						Passed_selection = true;
 					}
 					if(debug) cout << "out fill OS dilepton " << endl;
 				}
@@ -731,13 +782,14 @@ int main(int argc, char *argv[]){
 				}	
 				if(debug) cout << "out fill 2gamma " << endl;
 			*/
-			}			                                                                  
+			}                                                                
     			
 	
 
 			//////////////////////////////////////////////////////////////////////////////////
 			// Filling histograms 							//////////
 			//////////////////////////////////////////////////////////////////////////////////
+			if(Passed_selection){
 			MSPlot["NbOfSelectedJets"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
 			MSPlot["NbOfSelectedLightJets"]->Fill(selectedLightJets.size(), datasets[d], true, Luminosity*scaleFactor);
 		        MSPlot["NbOfSelectedBJets"]->Fill(selectedBJets.size(), datasets[d], true, Luminosity*scaleFactor);
@@ -748,6 +800,7 @@ int main(int argc, char *argv[]){
 
 				MSPlot["JetEta"]->Fill(selectedJets[seljet1]->Eta() , datasets[d], true, Luminosity*scaleFactor);
                  		MSPlot["JetPhi"]->Fill(selectedJets[seljet1]->Phi() , datasets[d], true, Luminosity*scaleFactor);
+			}
 			}
 	
 		}
