@@ -11,7 +11,9 @@
   <d name="TTJetsTocHbW_HToBB_HctL" title="tcH (H->bb)"	add="1"   color="14"  ls="1"  lw="2" normf="1"  EqLumi="19918.32" xsection="0.5632"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocHbW_HToBB_HctL_TuneZ2star_8TeV-madgraph-tauola_Summer12/jdhondt-TTJetsTocHbW_HToBB_HctL_TuneZ2star_8TeV-madgraph-tauola_Summer12-8132d4a0c87c4982c80015223c5f35f5/12112013_110534/TOPTREE/*.root"/> 
 
   <d name="TTJetsTocHbW_HToBB_HctR" title="tcH (H->bb)"	add="1"   color="2"  ls="1"  lw="2" normf="1"  EqLumi="12226.56" xsection="0.5632"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocHbW_HToBB_HctR_TuneZ2star_8TeV-madgraph-tauola_Summer12/jdhondt-TTJetsTocHbW_HToBB_HctR_TuneZ2star_8TeV-madgraph-tauola_Summer12-8132d4a0c87c4982c80015223c5f35f5/07112013_170451/TOPTREE/*.root"/> 
-  
+
+  <d name="TTJetsTocZbW" title="tcZ"	add="1"   color="2"  ls="1"  lw="2" normf="1"  EqLumi="6139365" xsection="0.1575"   PreselEff="0.0"  filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJetsTocZbW_TuneZ2star_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V7C-v1/21062013_162346/TOPTREE/*.root"/> 
+ 
  
   <d name="ttbar" title="ttbar" 		add="1"   color="46"  ls="1"  lw="2" normf="1"  EqLumi="76141.56" xsection="157.5"   PreselEff="0.0" filenames="dcap:///pnfs/iihe/cms/store/user/dhondt/TTJets_SemiLeptMGDecays_TuneP11_8TeV-madgraph-tauola/Summer12_DR53X-PU_S10_START53_V19-v1/04072013_095642/TOPTREE/*.root"/> 
   
