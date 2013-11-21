@@ -319,6 +319,7 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("WZ")!=string::npos) {sprintf(datasetNamechar,"wz");}
 		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
 		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
+		if(datasetName.find("Zjets")!=string::npos) {sprintf(datasetNamechar,"Zjets");}
 		
 		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR");}
 		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctL");}
@@ -334,6 +335,7 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToNuL_ZToLL_HctR");}
 		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToLL_HctL")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToLL_HctL");}
 		if(datasetName.find("TTJetsTocHbW_HToZZ_ZToLL_HctR")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToLL_HctR");}
+		if(datasetName.find("TTJetsTocZbW")!=string::npos) {sprintf(datasetNamechar,"TTJetsTocZbW");}
 
 
 		// Define different plots for each channel and dataset
@@ -383,7 +385,8 @@ int main(int argc, char *argv[]){
 		if(datasetName.find("WZ")!=string::npos) {sprintf(datasetNamechar,"wz");}
 		if(datasetName.find("ZZ")!=string::npos) {sprintf(datasetNamechar,"zz");}
 		if(datasetName.find("ttZ")!=string::npos) {sprintf(datasetNamechar,"ttz");}
-		
+		if(datasetName.find("Zjets")!=string::npos) {sprintf(datasetNamechar,"Zjets");}
+				
 		if(datasetName.find("TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR")!=string::npos) {
 			sprintf(datasetNamechar,"TTJetsTocHbW_HToWW_WToLNuL_WToJets_HctR");
 			is_signal = true;
@@ -440,7 +443,10 @@ int main(int argc, char *argv[]){
 			sprintf(datasetNamechar,"TTJetsTocHbW_HToZZ_ZToLL_HctR");
 			is_signal = true;
 		}
-
+		if(datasetName.find("TTJetsTocZbW")!=string::npos) {
+			sprintf(datasetNamechar,"TTJetsTocZbW");
+			is_signal = true;
+		}
 		
 		string Process_cutflow = "cutflow_";
 		Process_cutflow += datasetNamechar;
