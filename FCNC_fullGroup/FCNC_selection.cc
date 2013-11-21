@@ -354,10 +354,13 @@ int main(int argc, char *argv[]){
 	if(debug) cout << "[PROCES]	Declared cutflow histograms  "<< endl;
   	
 	//Defining a directory in which .png files of all the plots created will be stored.
-  	string pathPNG = "FCNC_%s";
-  	pathPNG += "_MSPlots_MCStudy/";
-  	mkdir(pathPNG.c_str(),0777);	
-	
+	char pathPNG[900];
+	sprintf(pathPNG,"FCNC_%s_MSPlots_MCStudy/",channelchar);
+  	//string pathPNG = "FCNC_%s";
+  	//pathPNG += "_MSPlots_MCStudy/";
+  	//mkdir(pathPNG.c_str(),0777);	
+	mkdir(pathPNG,0777);
+	if(debug) cout << "[PROCES]	Declared PNG directory  "<< endl;
 	
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
