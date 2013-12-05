@@ -300,20 +300,6 @@ int main (int argc, char *argv[])
 //  CutsSelecTableSemiEl.push_back(string("Veto 2nd electron from Z-decay"));
   CutsSelecTableSemiEl.push_back(string("Conversion veto"));
   
-/*  char LabelNJets[100];
-  sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets-3);
-  CutsSelecTableSemiMu.push_back(string(LabelNJets));
-  CutsSelecTableSemiEl.push_back(string(LabelNJets));
-  sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets-2);
-  CutsSelecTableSemiMu.push_back(string(LabelNJets));
-  CutsSelecTableSemiEl.push_back(string(LabelNJets));
-  sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets-1);
-  CutsSelecTableSemiMu.push_back(string(LabelNJets));
-  CutsSelecTableSemiEl.push_back(string(LabelNJets));
-  sprintf(LabelNJets,"$\\geq$ %d jets", anaEnv.NofJets);
-  CutsSelecTableSemiMu.push_back(string(LabelNJets));
-  CutsSelecTableSemiEl.push_back(string(LabelNJets));
-*/
   if (verbose > 0)
     cout << " - CutsSelectionTable instantiated ..." << endl;
   SelectionTable selecTableSemiMu(CutsSelecTableSemiMu, datasets);
@@ -475,19 +461,6 @@ int main (int argc, char *argv[])
       // scale factor for the event
       float scaleFactor = 1.;
       
-      // Load the GenEvent and calculate the branching ratio correction
-      /*if(dataSetName.find("TTbarJets") == 0)
-	      {
-	         //cout << "LOADING GenEvent" << endl;
-	         TRootGenEvent* genEvt = treeLoader.LoadGenEvent(ievt,false);
-	         if( genEvt->isSemiLeptonic() )
-	            scaleFactor *= (0.108*9.)*(0.676*1.5);
-	         else if( genEvt->isFullHadronic() )
-	            scaleFactor *= (0.676*1.5)*(0.676*1.5);
-	         else if( genEvt->isFullLeptonic() )
-	            scaleFactor *= (0.108*9.)*(0.108*9.);
-      }*/
-      
       //////////////////////////////////////
       // Apply Jet Corrections on-the-fly //   
       //////////////////////////////////////
@@ -505,20 +478,7 @@ int main (int argc, char *argv[])
           jetTools->correctMETTypeOne(init_jets_corrected, mets[0], false);
 	    }
 
-      // PU reweighting
 
-      // old method
-/*
-      double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
-
-      if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0)
-	lumiWeight=1;
-      
-      // up syst -> lumiWeight = LumiWeightsUp.ITweight( (int)event->nTruePU() );
-      // down syst -> lumiWeight = LumiWeightsDown.ITweight( (int)event->nTruePU() );
-
-      scaleFactor = scaleFactor*lumiWeight;
-*/
       ///////////////////
       // TRIGGER SETUP //
       ///////////////////
@@ -1156,71 +1116,7 @@ int main (int argc, char *argv[])
 		 //if( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) ) myBranch_selectedEvents->setmcQuarksForMatching( mcParticlesTLV );		 
 		 myVLQTree->Fill();		 
 		 		 
-		 delete myBranch_selectedEvents;
-		 
-		 
-		 
-     
-     //if (eventselectedSemiMu)
-     //  selectedLepton = (TLorentzVector*)selectedMuons[0];
-     //else if (eventselectedSemiEl)
-     //  selectedLepton = (TLorentzVector*)selectedElectrons[0];
-     
-
-/*
-     //-----------------//
-     // do some data-mc //
-     //-----------------//
-     
-     // when running both electron and muon data, pick the right dataset vector and lumi for the MSPlots
-     
-     if (!foundMu && !foundEl)
-       datasetsPlot = datasets;
-     else if (eventselectedSemiMu) {
-       datasetsPlot = datasetsMu;
-       Luminosity = LuminosityMu;
-     }
-     else if (eventselectedSemiEl) {
-       datasetsPlot = datasetsEl;
-       Luminosity = LuminosityEl;
-     }
-     
-     string leptonFlav="_other";
-     
-     if (eventselectedSemiMu)
-       leptonFlav="_mu";
-     else if (eventselectedSemiEl)
-       leptonFlav="_el";
-     
-     if (MSPlot.find("Selected_Events_pT_jet1"+leptonFlav) == MSPlot.end()){
-       MSPlot["Selected_Events_pT_jet1"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet1"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
-       MSPlot["Selected_Events_pT_jet2"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet2"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
-       MSPlot["Selected_Events_pT_jet3"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet3"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
-       MSPlot["Selected_Events_pT_jet4"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet4"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
-       //MSPlot["Selected_Events_pT_jet4"] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_jet4", 30, 0, 600, "p_{T} (GeV)");
-       MSPlot["Selected_Events_pT_4leadingjets"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_4leadingjets"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
-       MSPlot["Selected_Events_pT_alljets"+leptonFlav] = new MultiSamplePlot(datasetsPlot, "Selected_Events_pT_alljets"+leptonFlav, 30, 0, 600, "p_{T} (GeV)");
-     }
-     
-     MSPlot["Selected_Events_pT_jet1"+leptonFlav]->Fill(selectedJets[0]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-     MSPlot["Selected_Events_pT_jet2"+leptonFlav]->Fill(selectedJets[1]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-     MSPlot["Selected_Events_pT_jet3"+leptonFlav]->Fill(selectedJets[2]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-     MSPlot["Selected_Events_pT_jet4"+leptonFlav]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-     
-     for (unsigned int q=0; q<selectedJets.size(); q++) {
-       
-       MSPlot["Selected_Events_pT_alljets"+leptonFlav]->Fill(selectedJets[q]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-       
-       if (q<4)
-	 MSPlot["Selected_Events_pT_4leadingjets"+leptonFlav]->Fill(selectedJets[q]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-       
-     }
-*/
-
-     ///////////////////////////////////////
-     // END OF EVENT REMOVING SOME STUFF //
-     //////////////////////////////////////
-     
+		 delete myBranch_selectedEvents;     
     }			//loop on events
 
     cout<<endl;
@@ -1256,21 +1152,7 @@ int main (int argc, char *argv[])
     //Once everything is filled ...
     if (verbose > 0)
       cout << " We ran over all the data ;-)" << endl;
- 
-    /////////////////////////
-    // Write out the plots //
-    /////////////////////////
-    
-/*    mkdir("VLQDemoPlots",0777);
-   
-    for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++)
-    {
-	      MultiSamplePlot *temp = it->second;
-	      string name = it->first;
-	      temp->Draw(false, name, true, true, true, true, true, 1, false);
-	      temp->Write(fout, name, true, "VLQDemoPlots/");
-    }
-*/    
+
 
   
     //Selection tables
