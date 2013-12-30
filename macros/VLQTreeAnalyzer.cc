@@ -95,6 +95,15 @@ unsigned int nNonBjetsPresent(vector < float > btagvalues, float btagWP);
 */
 //float calculateMEz(TLorentzVector lepton, TLorentzvector metvector);
 
+bool hasEnding (std::string const &fullString, std::string const &ending)
+{
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
+
 int main (int argc, char *argv[])
 {	
 	cout<<"The arguments passed to the executable are: "<<endl;
@@ -109,10 +118,10 @@ int main (int argc, char *argv[])
   if (argc >= 2)
 		systematic = string(argv[1]);
   cout << "Systematic to be used: " << systematic << endl;
-  if( ! (systematic == "Nominal"  || systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus" || systematic == "bTagPlus" || systematic == "bTagMinus" || systematic == "misTagPlus" || systematic == "misTagMinus" || systematic == "PUPlus" || systematic == "PUMinus"))
+  if( ! (systematic == "Nominal"  || systematic == "JESMinus" || systematic == "JESPlus" || systematic == "METUnClusteredEnergyMinus" || systematic == "METUnClusteredEnergyPlus" || systematic == "JERMinus" || systematic == "JERPlus" || systematic == "bTagMinus" || systematic == "bTagPlus" || systematic == "misTagMinus" || systematic == "misTagPlus" || systematic == "PUMinus" || systematic == "PUPlus" || systematic == "MuonSFMinus" || systematic == "MuonSFPlus" || systematic == "ElectronSFMinus" || systematic == "ElectronSFPlus" ))
   {
     cout << "Unknown systematic!!!" << endl;
-    cout << "Possible options are: Nominal JESPlus JESMinus JERPlus JERMinus bTagPlus bTagMinus misTagPlus misTagMinus PUPlus PUMinus" << endl;
+    cout << "Possible options are: Nominal JESMinus JESPlus METUnClusteredEnergyMinus METUnClusteredEnergyPlus JERMinus JERPlus bTagMinus bTagPlus misTagMinus misTagPlus PUMinus PUPlus" << endl;
     exit(-1);
   }	  
 
@@ -151,7 +160,7 @@ int main (int argc, char *argv[])
 	bool savePNG = false;
 	string outputpostfix = "";
 	outputpostfix = outputpostfix+"_"+systematic;
-	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_5Dec13_LeptonSF_signal700";
+	string Outputpath = "OutputFiles_VLQAnalyzer_withoutQCDestimation_29Dec13_signal500overlay_newboxSemiLepZZqqWZqq_chargereqs"; //"OutputFiles_VLQAnalyzer_InvIsoABCD_26Dec13"; //"OutputFiles_VLQAnalyzer_withoutQCDestimation_24Dec13_signal500overlay_moreplots_newMultiLepSelection";
 	Outputpath = Outputpath + "/";
 	mkdir(Outputpath.c_str(),0777);
 		
@@ -178,15 +187,31 @@ int main (int argc, char *argv[])
 	bool doBtagging = true; //Higgs->bbar decay
 	bool doAntiBtagging = true; //all other jets
 	bool applyBtagSF = true;
-	bool useBtagInfoFromFile = true;
-	int syst_btag = 0; //-1 for SF up, +1 for SF down
-	bool doMETcutboxWqq = false; //would only be in Wqq categories (i.e. single lepton with only 1 high-Pt jet)
+	bool useBtagInfoFromFile = true;	
+	bool doMETcutboxWqq = true; //would only be in Wqq categories (i.e. single lepton with only 1 high-Pt jet)
 	float METcutboxWqq = 60.; //problem: QCD gets mostly rejected with this, but it is also cutting away quite a lot of signal!!
 	bool doMTcut = true;//would only be in Wqq categories (i.e. single lepton with only 1 high-Pt jet), instead of MET cut...
 	float MTcut = 40.;
 	bool doMETcutboxWWqq = true; //would only be in WWqq categories (i.e. double lepton)
 	float METcutboxWWqq = 60.;
 	bool applyLeptonSF = true;
+	
+	//b-tag systematics
+	int syst_btag = 0; //-1 for SF up, +1 for SF down -> wait what? it's -1 for down and +1 for up, right??
+	if(systematic == "bTagMinus") syst_btag = -1;
+	else if(systematic == "bTagPlus") syst_btag = 1;
+	int syst_mistag = 0; //-1 for SF up, +1 for SF down -> wait what? it's -1 for down and +1 for up, right??
+	if(systematic == "misTagMinus") syst_mistag = -1;
+	else if(systematic == "misTagPlus") syst_mistag = 1;
+	
+	//lepton SF systematics
+	string syst_muonSF = "Nominal";
+	if(systematic == "MuonSFMinus") syst_muonSF = "Minus";
+	else if(systematic == "MuonSFPlus") syst_muonSF = "Plus";
+	string syst_electronSF = "Nominal";
+	if(systematic == "ElectronSFMinus") syst_electronSF = "Minus";
+	else if(systematic == "ElectronSFPlus") syst_electronSF = "Plus";
+	
 	
 	//particular signal model (not only for the overlay mass point, but for all mass points, for consistency. Make sure you don't forget this in the scanning later on!!)
 	bool doModelScaling = true; //to reweight according to given Branching Fractions and kappatilde values or not
@@ -207,6 +232,10 @@ int main (int argc, char *argv[])
 	float F_QTojZ_CC = kappatilde_W*kappatilde_W*BF_Z;
 	float F_QTojZ_NC = kappatilde_Z*kappatilde_Z*BF_Z;
 	
+	bool doWjetsScaling = false;
+	float WjetsScale = 0.8869; //result from fit in mu channel (fit in el channel maybe not so safe as long as you don't have a QCD estimation: I fit there something like 0.92, a bit higher, consistent with QCD presence pushing the data a bit up?)
+
+
 	
   ////////////////////////////////////
   /// AnalysisEnvironment  
@@ -217,7 +246,7 @@ int main (int argc, char *argv[])
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile);
   int verbose = anaEnv.Verbose;
   float anaEnvLuminosity = anaEnv.Luminosity;	// in 1/pb 
-  cout << "analysis environment luminosity for rescaling (if not run on data) "<< anaEnvLuminosity << endl;
+//  cout << "analysis environment luminosity for rescaling (if not run on data) "<< anaEnvLuminosity << endl;
 
   /////////////////////
   // Load Datasets
@@ -231,10 +260,10 @@ int main (int argc, char *argv[])
   cout << " - Loading datasets ..." << endl;
   treeLoader.LoadDatasets (datasets, xmlfile);
   
-  float Luminosity = anaEnvLuminosity;
+  //float Luminosity = anaEnvLuminosity;
 
-  float LuminosityMu = anaEnvLuminosity;
-  float LuminosityEl = anaEnvLuminosity;
+  float LuminosityMu = 19600.84; //anaEnvLuminosity;
+  float LuminosityEl = 19629.525; //anaEnvLuminosity;
 
   bool foundMu = false;
   bool foundEl = false;
@@ -242,7 +271,7 @@ int main (int argc, char *argv[])
 	vector<string> inputTrees; //fill with the tree files you want to read!!!
 	for (unsigned int d = 0; d < datasets.size(); d++) //d < datasets.size()
   {				
-    cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;    
+    cout << "  Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;    
     string dataSetName = datasets[d]->Name();
 		
 		if(dataSetName.find("Data_Mu") == 0 || dataSetName.find("data_Mu") == 0 || dataSetName.find("DATA_Mu") == 0) {
@@ -254,17 +283,17 @@ int main (int argc, char *argv[])
       foundEl=true;  
     } 
 		
-		if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // when only using one channel
-      Luminosity = datasets[d]->EquivalentLumi();
-    } 
+		//if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) { // when only using one channel
+    //  Luminosity = datasets[d]->EquivalentLumi();
+    //} 
 		
 		string inputTreeFileName; //should follow convention of TreeFileName in VLQTreeCreator.cc
-		if(systematic == "JESPlus" || systematic == "JESMinus" || systematic == "JERPlus" || systematic == "JERMinus")
+		if(systematic == "JESMinus" || systematic == "JESPlus"|| systematic == "METUnClusteredEnergyMinus" || systematic == "METUnClusteredEnergyPlus" || systematic == "JERMinus" || systematic == "JERPlus")
 		{
-				if ( ! (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) )
+				if ( dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0 )
 				{
 					inputTreeFileName = Treespath+"VLQTree_"+dataSetName+inputpostfixOld+"_Nominal"+".root"; //is actually dummy
-					cout<<"  Running systematics: data will be skipped later on"<<endl;
+					cout<<"   Running systematics: data will be skipped later on"<<endl;
 				}
 				else
 					inputTreeFileName = Treespath+"VLQTree_"+dataSetName+inputpostfix+".root";		
@@ -281,11 +310,11 @@ int main (int argc, char *argv[])
 		inputTrees.push_back(inputTreeFileName);
 	}
 	
-	if(!foundMu && !foundEl && Luminosity != anaEnvLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
-  else {
+	//if(!foundMu && !foundEl && Luminosity != anaEnvLuminosity) cout << "changed analysis environment luminosity to "<< Luminosity << endl;
+  //else {
     if(LuminosityMu != anaEnvLuminosity) cout << "Muon PD: changed analysis environment luminosity to "<< LuminosityMu << endl;
     if(LuminosityEl != anaEnvLuminosity) cout << "Electron PD: changed analysis environment luminosity to "<< LuminosityEl << endl;
-  }
+  //}
 	
 //  if (foundMu)
 //	{
@@ -320,41 +349,6 @@ int main (int argc, char *argv[])
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
 
-  
-  /*string multileptons[7] = {"SSElEl","SSElMu","SSMuMu","ElElEl","ElElMu","ElMuMu","MuMuMu"};
-  string histoName,histo_dataset;
-  for(int i = 0; i<7; i++)
-  {
-		histoName = "NbEvents_"+multileptons[i];
-		for(unsigned int d = 0; d < datasets.size (); d++){
-			histo_dataset = histoName+(datasets[d]->Name()).c_str(); 
-			histo1D[histo_dataset.c_str()] = new TH1F(histo_dataset.c_str(),histo_dataset.c_str(), 1, 0.5, 1.5);
-		}
-  }*/
-	
-  /*MSPlot["MS_NbSSevents"] = new MultiSamplePlot(datasets,"# events with SS leptons", 1, 0.5, 1.5, "");
-  MSPlot["MS_NbSSElElevents"] = new MultiSamplePlot(datasets,"# events with SS electrons", 1, 0.5, 1.5, "");
-  MSPlot["MS_NbSSElMuevents"] = new MultiSamplePlot(datasets,"# events with SS electron+muon", 1, 0.5, 1.5, "");
-  MSPlot["MS_NbSSMuMuevents"] = new MultiSamplePlot(datasets,"# events with SS muons", 1, 0.5, 1.5, "");
-  MSPlot["MS_NbTrievents"] = new MultiSamplePlot(datasets,"# events with 3 leptons", 1, 0.5, 1.5, "");
-  MSPlot["MS_MET"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
-  MSPlot["MS_LeptonPt"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
-  MSPlot["MS_nPV_beforePUreweighting"] = new MultiSamplePlot(datasets, "nPrimaryVertices_beforePUreweighting", 21, -0.5, 20.5, "Nr. of primary vertices");
-	MSPlot["MS_nPV"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
-  MSPlot["MS_JetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicity", 10, -0.5, 9.5, "Jet Multiplicity");
-  MSPlot["MS_BtaggedJetMultiplicity_SingleLepton"] = new MultiSamplePlot(datasets, "BtaggedJetMultiplicity", 7, -0.5, 6.5, "b-tagged jet multiplicity");
-	MSPlot["MS_JetMultiplicityAtleast1Btag_SingleLepton"] = new MultiSamplePlot(datasets, "JetMultiplicityAtleast1Btag", 10, -0.5, 9.5, "Jet multiplicity (>=1 b-tag)");
-  MSPlot["MS_Reliso_Lepton"] = new MultiSamplePlot(datasets, "Lepton reliso", 40, 0, 0.25, "Lepton reliso");
-
-  MSPlot["MS_JetPt_all_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
-	MSPlot["MS_JetPt_btagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
-	MSPlot["MS_JetPt_nonbtagged_SingleLepton"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
-  
-	MSPlot["MS_MET_nobtag"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
-  MSPlot["MS_LeptonPt_nobtag"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");*/
-	
-	
-	
 	//'mu channel' = when at least one muon is trigged 
 	MSPlot["MS_nPV_noPUreweighting_mu"] = new MultiSamplePlot(datasetsMu, "nPrimaryVertices before PU reweighting", 36, -0.5, 35.5, "Nr. of primary vertices");
   MSPlot["MS_nPV_mu"] = new MultiSamplePlot(datasetsMu, "nPrimaryVertices", 36, -0.5, 35.5, "Nr. of primary vertices");  //after PU reweighting
@@ -364,7 +358,8 @@ int main (int argc, char *argv[])
 	MSPlot["MS_nMuons_mu"] = new MultiSamplePlot(datasetsMu,"number of muons", 6, -0.5, 5.5, "number of muons");
 	MSPlot["MS_nElectrons_mu"] = new MultiSamplePlot(datasetsMu,"number of electrons", 6, -0.5, 5.5, "number of electrons");
 	MSPlot["MS_MET_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
-  MSPlot["MS_MET_singleMu_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
+	MSPlot["MS_MET_singleMu_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
+	MSPlot["MS_MET_singleMu_Bveto_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
 	MSPlot["MS_METoverST_mu"] = new MultiSamplePlot(datasetsMu,"METoverST", 100, 0, 1, "Missing transverse energy / S_{T}");
 	MSPlot["MS_MTleptonmet_preboxWqq_mu"] = new MultiSamplePlot(datasetsMu,"MT(lepton,MET)", 40, 0, 300, "Transverse mass(lepton,MET) (GeV)");
 	MSPlot["MS_HT_mu"] = new MultiSamplePlot(datasetsMu,"HT", 200, 0, 2000, "HT (GeV)");
@@ -409,6 +404,13 @@ int main (int argc, char *argv[])
 	MSPlot["MS_Eta_el1_mu"] = new MultiSamplePlot(datasetsMu,"Eta_el1", 50, -2.5 , 2.5, "Eta of electron 1");
 	MSPlot["MS_Eta_el2_mu"] = new MultiSamplePlot(datasetsMu,"Eta_el2", 50, -2.5 , 2.5, "Eta of electron 2");
 	MSPlot["MS_Eta_el3_mu"] = new MultiSamplePlot(datasetsMu,"Eta_el3", 50, -2.5 , 2.5, "Eta of electron 3");
+	//ttbar-selection plots
+	MSPlot["MS_MET_singleMu_ttbarsel1btag_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
+	MSPlot["MS_MuonPt_singleMu_ttbarsel1btag_mu"] = new MultiSamplePlot(datasetsMu,"MuonPt", 50, 0, 300, "Muon Pt (GeV)");
+	MSPlot["MS_MuonEta_singleMu_ttbarsel1btag_mu"] = new MultiSamplePlot(datasetsMu,"MuonEta", 50, -2.5 , 2.5, "Muon Eta");
+	MSPlot["MS_MET_singleMu_ttbarsel2btag_mu"] = new MultiSamplePlot(datasetsMu,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
+	MSPlot["MS_MuonPt_singleMu_ttbarsel2btag_mu"] = new MultiSamplePlot(datasetsMu,"MuonPt", 50, 0, 300, "Muon Pt (GeV)");
+	MSPlot["MS_MuonEta_singleMu_ttbarsel2btag_mu"] = new MultiSamplePlot(datasetsMu,"MuonEta", 50, -2.5 , 2.5, "Muon Eta");	
 	//MSPlot["MS_Eta_el4_mu"] = new MultiSamplePlot(datasetsMu,"Eta_el4", 50, -2.5 , 2.5, "Eta of muon 4");
 	//'boxes'
 	MSPlot["MS_St_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"ST (box Wqq)", 50, 200, 1500, "S_{T} (GeV)");
@@ -428,10 +430,10 @@ int main (int argc, char *argv[])
 	MSPlot["MS_MQ_boxZHqq_mu"] = new MultiSamplePlot(datasetsMu,"Mass Q (box ZHqq)", 15, 0, 1500, "Mass(lepton,lepton,highptjet) (GeV)");
 	////MSPlot["MS_MHq_boxZHqq_mu"] = new MultiSamplePlot(datasetsMu,"Mass Hq (box ZHqq)", 15, 0, 1500, "Mass(H,highptjet) (GeV)");
 	MSPlot["MS_St_boxWWqq_mu"] = new MultiSamplePlot(datasetsMu,"ST (box WWqq)", 15, 200, 1700, "S_{T} (GeV)");
-//	MSPlot["MS_AveragePseudoMQ_boxWWqq_mu"] = new MultiSamplePlot(datasetsMu,"Average Pseudomass Q (box WWqq)", 40, 200, 1500, "Average Pseudomass(lepton,neutrino,jet) (GeV)");
 	MSPlot["MS_nEvts_boxWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Number of events (box WZqq)", 1, 0.5, 1.5, "");
 	MSPlot["MS_nEvts_boxZZqq_mu"] = new MultiSamplePlot(datasetsMu,"Number of events (box ZZqq)", 1, 0.5, 1.5, "");
 	MSPlot["MS_nEvts_boxWZqqZZqq_mu"] = new MultiSamplePlot(datasetsMu,"Number of events (box WZqq+ZZqq)", 1, 0.5, 1.5, "");
+	MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_mu"] = new MultiSamplePlot(datasetsMu,"Number of events (box WZqq+ZZqq)", 1, 0.5, 1.5, "");
 	//btag or antibtag MC event weights in 'boxes'
 	MSPlot["MS_BtagWeight_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"BtagWeight (box Wqq)", 80, 0.8, 1.2, "weight");
 	MSPlot["MS_BtagWeight_boxWHqq_mu"] = new MultiSamplePlot(datasetsMu,"BtagWeight (box WHqq)", 80, 0.8, 1.2, "weight");
@@ -449,9 +451,96 @@ int main (int argc, char *argv[])
 	////MSPlot["MS_nJets_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"nJets (box Wqq)", 9, -0.5, 8.5, "Number of jets (GeV)");
 	////MSPlot["MS_nJets_preboxWqq_noBveto_mu"] = new MultiSamplePlot(datasetsMu,"nJets (prebox Wqq)", 9, -0.5, 8.5, "Number of Jets (GeV)");
 	MSPlot["MS_MET_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"MET (box Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
-	MSPlot["MS_MET_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
-	MSPlot["MS_MET_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+ 	MSPlot["MS_MTleptonmet_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"MT(lepton,MET)", 40, 0, 300, "Transverse mass(lepton,MET) (GeV)");
+	MSPlot["MS_HT_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"HT (box Wqq)", 50, 200, 1500, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (box Wqq)", 50, 0, 400, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (box Wqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (box Wqq)", 50, 0, 400, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (box Wqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_ForwardJetPt_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Forward jet Pt (box Wqq)", 50, 0, 300, "forward-jet Pt (GeV)");
+	MSPlot["MS_ForwardJetEta_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Forward jet Eta (box Wqq)", 100, -5 , 5, "forward-jet Eta");
+	MSPlot["MS_nJets_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"nJets (box Wqq)", 4, -0.5, 3.5, "number of central jets");
+	MSPlot["MS_MuonPt_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Muon Pt (box Wqq)", 50, 0, 300, "muon Pt (GeV)");
+	MSPlot["MS_MuonEta_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"Muon Eta (box Wqq)", 50, -2.5 , 2.5, "muon Eta");
+	MSPlot["MS_MCeventWeight_boxWqq_mu"] = new MultiSamplePlot(datasetsMu,"MCeventWeight (box Wqq)", 50, 0, 10, "MC event weight");
 	MSPlot["MS_MET_preboxWqq_noBveto_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+	MSPlot["MS_MET_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+	MSPlot["MS_HT_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"HT (prebox Wqq)", 50, 200, 1500, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (prebox Wqq)", 50, 0, 600, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (prebox Wqq)", 50, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_ForwardJetPt_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Forward jet Pt (prebox Wqq)", 50, 0, 300, "forward-jet Pt (GeV)");
+	MSPlot["MS_ForwardJetEta_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Forward jet Eta (prebox Wqq)", 100, -5 , 5, "forward-jet Eta");
+	MSPlot["MS_nJets_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"nJets (prebox Wqq)", 4, -0.5, 3.5, "number of central jets");
+	MSPlot["MS_MuonPt_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Muon Pt (prebox Wqq)", 50, 0, 300, "muon Pt (GeV)");	
+	MSPlot["MS_MuonEta_preboxWqq_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"Muon Eta (prebox Wqq)", 50, -2.5 , 2.5, "muon Eta");
+	MSPlot["MS_MET_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+	MSPlot["MS_HT_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"HT (prebox Wqq)", 50, 0, 1300, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (prebox Wqq)", 50, 0, 600, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (prebox Wqq)", 50, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_ForwardJetPt_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"Forward jet Pt (prebox Wqq)", 50, 0, 300, "forward-jet Pt (GeV)");
+	MSPlot["MS_ForwardJetEta_preboxWqq_noleadingjetcut_mu"] = new MultiSamplePlot(datasetsMu,"Forward jet Eta (prebox Wqq)", 100, -5 , 5, "forward-jet Eta");
+	//MSPlot["MS_MET_preboxWqq_noforwardjetreq_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (prebox Wqq)", 20, 150, 200, "leading-jet Pt (GeV)");
+  MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (prebox Wqq)", 20, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_HT_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"HT (prebox Wqq)", 20, 150, 1000, "HT (GeV)");
+  MSPlot["MS_ST_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"ST (prebox Wqq)", 20, 150, 1000, "ST (GeV)");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_MuonPt_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"Muon Pt (prebox Wqq)", 20, 0, 300, "muon Pt (GeV)");
+	MSPlot["MS_MuonEta_preboxWqq_leadingjet150-200_METcut_mu"] = new MultiSamplePlot(datasetsMu,"Muon Eta (prebox Wqq)", 20, -2.5 , 2.5, "muon Eta");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+	//Wqq prebox with all cuts except forward-jet requirement and leading jet pt cut (only 150-200)
+	MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (prebox Wqq)", 20, 150, 200, "leading-jet Pt (GeV)");
+  MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (prebox Wqq)", 20, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_HT_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"HT (prebox Wqq)", 20, 150, 1000, "HT (GeV)");
+  MSPlot["MS_ST_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"ST (prebox Wqq)", 20, 150, 1000, "ST (GeV)");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+  MSPlot["MS_MTleptonmet_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"MT(lepton,MET)", 40, 0, 300, "Transverse mass(lepton,MET) (GeV)");
+	MSPlot["MS_MuonPt_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Muon Pt (prebox Wqq)", 20, 0, 300, "muon Pt (GeV)");
+	MSPlot["MS_MuonEta_preboxWqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Muon Eta (prebox Wqq)", 20, -2.5 , 2.5, "muon Eta");
+  MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_mu"] = new MultiSamplePlot(datasetsMu,"nJets (prebox Wqq)", 8, -0.5, 7.5, "number of central jets");
+	MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noNumberCentralJetCut_mu"] = new MultiSamplePlot(datasetsMu,"nJets (prebox Wqq)", 8, -0.5, 7.5, "number of central jets");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_noMETMTcut_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");	
+	//other boxes
+	MSPlot["MS_Mleptons_preboxZqq_mu"] = new MultiSamplePlot(datasetsMu,"M(leptons) (prebox Zqq/ZHqq)", 50, 0, 200, "M(leptons) (GeV)");
+	MSPlot["MS_MET_boxZHqq_mu"] = new MultiSamplePlot(datasetsMu,"MET (box ZHqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_MQ_boxZHqq_noBtagSF_mu"] = new MultiSamplePlot(datasetsMu,"Mass Q (box ZHqq)", 15, 0, 1500, "Mass(lepton,lepton,highptjet) (GeV)");
+	MSPlot["MS_MQ_boxSemiLepZZqqWZqq_noBtagSF_mu"] = new MultiSamplePlot(datasetsMu,"Mass Q (box SemiLepZZqqWZqq)", 40, 200, 1500, "Mass(lepton,lepton,leadingjet) (GeV)");
+	//Zqq prebox with all cuts except forward-jet requirement
+	MSPlot["MS_LeadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (prebox Zqq)", 20, 150, 200, "leading-jet Pt (GeV)");
+  MSPlot["MS_LeadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (prebox Zqq)", 20, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubleadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (prebox Zqq)", 20, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubleadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (prebox Zqq)", 20, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_HT_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"HT (prebox Zqq)", 20, 150, 1000, "HT (GeV)");
+  MSPlot["MS_ST_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"ST (prebox Zqq)", 20, 150, 1000, "ST (GeV)");
+	MSPlot["MS_MET_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"MET (prebox Zqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_Muon1Pt_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Muon 1 Pt (prebox Zqq)", 20, 0, 300, "muon 1 Pt (GeV)");
+	MSPlot["MS_Muon1Eta_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Muon 1 Eta (prebox Zqq)", 20, -2.5 , 2.5, "muon 1 Eta");
+  MSPlot["MS_Muon2Pt_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Muon 2 Pt (prebox Zqq)", 20, 0, 300, "muon 2 Pt (GeV)");
+	MSPlot["MS_Muon2Eta_preboxZqq_leadingjet150-200_noForwardJet_mu"] = new MultiSamplePlot(datasetsMu,"Muon 2 Eta (prebox Zqq)", 20, -2.5 , 2.5, "muon 2 Eta");
+	MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_mu"] = new MultiSamplePlot(datasetsMu,"nJets (prebox Zqq)", 8, -0.5, 7.5, "number of central jets");
+	MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noNumberCentralJetCut_mu"] = new MultiSamplePlot(datasetsMu,"nJets (prebox Zqq)", 8, -0.5, 7.5, "number of central jets");
+  //box SemiLepZZqqWZqq
+	MSPlot["MS_MQ_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Mass Q (box SemiLepZZqqWZqq)", 40, 200, 1500, "Mass(lepton,lepton,leadingjet) (GeV)");
+	MSPlot["MS_MET_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"MET (box SemiLepZZqqWZqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_St_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"ST (box SemiLepZZqqWZqq)", 50, 200, 1700, "S_{T} (GeV)");
+	MSPlot["MS_HT_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"HT (box SemiLepZZqqWZqq)", 50, 200, 1500, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Pt (box SemiLepZZqqWZqq)", 50, 0, 400, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Leading jet Eta (box SemiLepZZqqWZqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Pt (box SemiLepZZqqWZqq)", 50, 0, 400, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Subleading jet Eta (box SemiLepZZqqWZqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_nJets_boxSemiLepZZqqWZqq_mu"]  = new MultiSamplePlot(datasetsMu,"nJets (box SemiLepZZqqWZqq)", 8, -0.5, 7.5, "number of central jets");
+  MSPlot["MS_Muon1Pt_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Muon 1 Pt (box SemiLepZZqqWZqq)", 20, 0, 300, "muon 1 Pt (GeV)");
+	MSPlot["MS_Muon1Eta_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Muon 1 Eta (box SemiLepZZqqWZqq)", 20, -2.5 , 2.5, "muon 1 Eta");
+  MSPlot["MS_Muon2Pt_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Muon 2 Pt (box SemiLepZZqqWZqq)", 20, 0, 300, "muon 2 Pt (GeV)");
+	MSPlot["MS_Muon2Eta_boxSemiLepZZqqWZqq_mu"] = new MultiSamplePlot(datasetsMu,"Muon 2 Eta (box SemiLepZZqqWZqq)", 20, -2.5 , 2.5, "muon 2 Eta");
 	
 	//'el channel' = when NO muon is trigged, and at least one electron
 	MSPlot["MS_nPV_noPUreweighting_el"] = new MultiSamplePlot(datasetsEl, "nPrimaryVertices before PU reweighting", 36, -0.5, 35.5, "Nr. of primary vertices");
@@ -463,6 +552,7 @@ int main (int argc, char *argv[])
 	MSPlot["MS_nElectrons_el"] = new MultiSamplePlot(datasetsEl,"number of electrons", 6, -0.5, 5.5, "number of electrons");
 	MSPlot["MS_MET_el"] = new MultiSamplePlot(datasetsEl,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");  
 	MSPlot["MS_MET_singleEl_el"] = new MultiSamplePlot(datasetsEl,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
+	MSPlot["MS_MET_singleEl_Bveto_el"] = new MultiSamplePlot(datasetsEl,"MET", 200, 0, 1000, "Missing transverse energy (GeV)");
 	MSPlot["MS_METoverST_el"] = new MultiSamplePlot(datasetsEl,"METoverST", 100, 0, 1, "Missing transverse energy / S_{T}");
 	MSPlot["MS_MTleptonmet_preboxWqq_el"] = new MultiSamplePlot(datasetsEl,"MT(lepton,MET)", 40, 0, 300, "Transverse mass(lepton,MET) (GeV)");
 	MSPlot["MS_HT_el"] = new MultiSamplePlot(datasetsEl,"HT", 200, 0, 2000, "HT (GeV)");
@@ -529,6 +619,7 @@ int main (int argc, char *argv[])
 	MSPlot["MS_nEvts_boxWZqq_el"] = new MultiSamplePlot(datasetsEl,"Number of events (box WZqq)", 1, 0.5, 1.5, "");
 	MSPlot["MS_nEvts_boxZZqq_el"] = new MultiSamplePlot(datasetsEl,"Number of events (box ZZqq)", 1, 0.5, 1.5, "");
 	MSPlot["MS_nEvts_boxWZqqZZqq_el"] = new MultiSamplePlot(datasetsEl,"Number of events (box WZqq+ZZqq)", 1, 0.5, 1.5, "");
+	MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_el"] = new MultiSamplePlot(datasetsEl,"Number of events (box WZqq+ZZqq)", 1, 0.5, 1.5, "");
 	//btag or antibtag MC event weights in 'boxes'
 	MSPlot["MS_BtagWeight_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"BtagWeight (box Wqq)", 80, 0.8, 1.2, "weight");
 	MSPlot["MS_BtagWeight_boxWHqq_el"] = new MultiSamplePlot(datasetsEl,"BtagWeight (box WHqq)", 80, 0.8, 1.2, "weight");
@@ -546,36 +637,104 @@ int main (int argc, char *argv[])
 	////MSPlot["MS_nJets_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"nJets (box Wqq)", 9, -0.5, 8.5, "Number of jets (GeV)");
 	////MSPlot["MS_nJets_preboxWqq_noBveto_el"] = new MultiSamplePlot(datasetsEl,"nJets (prebox Wqq)", 9, -0.5, 8.5, "Number of Jets (GeV)");
 	MSPlot["MS_MET_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"MET (box Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
-	MSPlot["MS_MET_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
-	MSPlot["MS_MET_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+	MSPlot["MS_MTleptonmet_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"MT(lepton,MET)", 40, 0, 300, "Transverse mass(lepton,MET) (GeV)");
+	MSPlot["MS_HT_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"HT (box Wqq)", 50, 200, 1500, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (box Wqq)", 50, 0, 300, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (box Wqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (box Wqq)", 50, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (box Wqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_ForwardJetPt_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Forward jet Pt (box Wqq)", 50, 0, 300, "forward-jet Pt (GeV)");
+	MSPlot["MS_ForwardJetEta_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Forward jet Eta (box Wqq)", 100, -5 , 5, "forward-jet Eta");
+	MSPlot["MS_nJets_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"nJets (box Wqq)", 4, -0.5, 3.5, "number of central jets");
+	MSPlot["MS_ElectronPt_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Electron Pt (box Wqq)", 50, 0, 300, "electron Pt (GeV)");
+	MSPlot["MS_ElectronEta_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"Electron Eta (box Wqq)", 50, -2.5 , 2.5, "electron Eta");
+	MSPlot["MS_MCeventWeight_boxWqq_el"] = new MultiSamplePlot(datasetsEl,"MCeventWeight (box Wqq)", 50, 0, 10, "MC event weight");
 	MSPlot["MS_MET_preboxWqq_noBveto_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
-
+	MSPlot["MS_MET_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+	MSPlot["MS_HT_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"HT (prebox Wqq)", 50, 200, 1500, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (prebox Wqq)", 50, 0, 600, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (prebox Wqq)", 50, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_ForwardJetPt_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Forward jet Pt (prebox Wqq)", 50, 0, 300, "forward-jet Pt (GeV)");
+	MSPlot["MS_ForwardJetEta_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Forward jet Eta (prebox Wqq)", 100, -5 , 5, "forward-jet Eta");
+	MSPlot["MS_nJets_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"nJets (prebox Wqq)", 4, -0.5, 3.5, "number of central jets");
+	MSPlot["MS_ElectronPt_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Electron Pt (prebox Wqq)", 50, 0, 300, "electron Pt (GeV)");	
+	MSPlot["MS_ElectronEta_preboxWqq_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"Electron Eta (prebox Wqq)", 50, -2.5 , 2.5, "electron Eta");
+	MSPlot["MS_MET_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+	MSPlot["MS_HT_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"HT (prebox Wqq)", 50, 0, 1300, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (prebox Wqq)", 50, 0, 600, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (prebox Wqq)", 50, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (prebox Wqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_ForwardJetPt_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"Forward jet Pt (prebox Wqq)", 50, 0, 300, "forward-jet Pt (GeV)");
+	MSPlot["MS_ForwardJetEta_preboxWqq_noleadingjetcut_el"] = new MultiSamplePlot(datasetsEl,"Forward jet Eta (prebox Wqq)", 100, -5 , 5, "forward-jet Eta");
+	//MSPlot["MS_MET_preboxWqq_noforwardjetreq_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 50, 0, 500, "Missing transverse energy (GeV)");
+  MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (prebox Wqq)", 20, 150, 200, "leading-jet Pt (GeV)");
+  MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (prebox Wqq)", 20, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_HT_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"HT (prebox Wqq)", 20, 150, 1000, "HT (GeV)");
+  MSPlot["MS_ST_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"ST (prebox Wqq)", 20, 150, 1000, "ST (GeV)");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_ElectronPt_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"Electron Pt (prebox Wqq)", 20, 0, 300, "electron Pt (GeV)");
+	MSPlot["MS_ElectronEta_preboxWqq_leadingjet150-200_METcut_el"] = new MultiSamplePlot(datasetsEl,"Electron Eta (prebox Wqq)", 20, -2.5 , 2.5, "electron Eta");
+  MSPlot["MS_MET_preboxWqq_leadingjet150-200_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+  //Wqq prebox with all cuts except forward-jet requirement
+	MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (prebox Wqq)", 20, 150, 200, "leading-jet Pt (GeV)");
+  MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (prebox Wqq)", 20, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (prebox Wqq)", 20, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_HT_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"HT (prebox Wqq)", 20, 150, 1000, "HT (GeV)");
+  MSPlot["MS_ST_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"ST (prebox Wqq)", 20, 150, 1000, "ST (GeV)");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+  MSPlot["MS_MTleptonmet_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"MT(lepton,MET)", 40, 0, 300, "Transverse mass(lepton,MET) (GeV)");
+	MSPlot["MS_ElectronPt_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Electron Pt (prebox Wqq)", 20, 0, 300, "electron Pt (GeV)");
+	MSPlot["MS_ElectronEta_preboxWqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Electron Eta (prebox Wqq)", 20, -2.5 , 2.5, "electron Eta");
+	MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_el"] = new MultiSamplePlot(datasetsEl,"nJets (prebox Wqq)", 8, -0.5, 7.5, "number of central jets");
+  MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noNumberCentralJetCut_el"] = new MultiSamplePlot(datasetsEl,"nJets (prebox Wqq)", 8, -0.5, 7.5, "number of central jets");
+	MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_noMETMTcut_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Wqq)", 20, 0, 300, "MET (GeV)");
+	//other boxes
+	MSPlot["MS_Mleptons_preboxZqq_el"] = new MultiSamplePlot(datasetsEl,"M(leptons) (prebox Zqq/ZHqq)", 50, 0, 200, "M(leptons) (GeV)");
+	MSPlot["MS_MET_boxZHqq_el"] = new MultiSamplePlot(datasetsEl,"MET (box ZHqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_MQ_boxZHqq_noBtagSF_el"] = new MultiSamplePlot(datasetsEl,"Mass Q (box ZHqq)", 15, 0, 1500, "Mass(lepton,lepton,highptjet) (GeV)");
+	MSPlot["MS_MQ_boxSemiLepZZqqWZqq_noBtagSF_el"] = new MultiSamplePlot(datasetsEl,"Mass Q (box SemiLepZZqqWZqq)", 40, 200, 1500, "Mass(lepton,lepton,leadingjet) (GeV)");
+  //Zqq prebox with all cuts except forward-jet requirement
+	MSPlot["MS_LeadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (prebox Zqq)", 20, 150, 200, "leading-jet Pt (GeV)");
+  MSPlot["MS_LeadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (prebox Zqq)", 20, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubleadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (prebox Zqq)", 20, 0, 300, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubleadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (prebox Zqq)", 20, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_HT_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"HT (prebox Zqq)", 20, 150, 1000, "HT (GeV)");
+  MSPlot["MS_ST_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"ST (prebox Zqq)", 20, 150, 1000, "ST (GeV)");
+	MSPlot["MS_MET_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"MET (prebox Zqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_Electron1Pt_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Electron 1 Pt (prebox Zqq)", 20, 0, 300, "electron Pt (GeV)");
+	MSPlot["MS_Electron1Eta_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Electron 1 Eta (prebox Zqq)", 20, -2.5 , 2.5, "electron Eta");
+  MSPlot["MS_Electron2Pt_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Electron 2 Pt (prebox Zqq)", 20, 0, 300, "electron Pt (GeV)");
+	MSPlot["MS_Electron2Eta_preboxZqq_leadingjet150-200_noForwardJet_el"] = new MultiSamplePlot(datasetsEl,"Electron 2 Eta (prebox Zqq)", 20, -2.5 , 2.5, "electron Eta");
+	MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_el"] = new MultiSamplePlot(datasetsEl,"nJets (prebox Zqq)", 8, -0.5, 7.5, "number of central jets");
+	MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noNumberCentralJetCut_el"] = new MultiSamplePlot(datasetsEl,"nJets (prebox Zqq)", 8, -0.5, 7.5, "number of central jets");
+  //box SemiLepZZqqWZqq
+	MSPlot["MS_MQ_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Mass Q (box SemiLepZZqqWZqq)", 40, 200, 1500, "Mass(lepton,lepton,leadingjet) (GeV)");
+	MSPlot["MS_MET_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"MET (box SemiLepZZqqWZqq)", 20, 0, 300, "MET (GeV)");
+	MSPlot["MS_St_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"ST (box SemiLepZZqqWZqq)", 50, 200, 1700, "S_{T} (GeV)");
+	MSPlot["MS_HT_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"HT (box SemiLepZZqqWZqq)", 50, 200, 1500, "H_{T} (GeV)");
+	MSPlot["MS_LeadingJetPt_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Pt (box SemiLepZZqqWZqq)", 50, 0, 400, "leading-jet Pt (GeV)");
+	MSPlot["MS_LeadingJetEta_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Leading jet Eta (box SemiLepZZqqWZqq)", 50, -2.5 , 2.5, "leading-jet Eta");
+	MSPlot["MS_SubLeadingJetPt_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Pt (box SemiLepZZqqWZqq)", 50, 0, 400, "subleading-jet Pt (GeV)");
+	MSPlot["MS_SubLeadingJetEta_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Subleading jet Eta (box SemiLepZZqqWZqq)", 50, -2.5 , 2.5, "subleading-jet Eta");
+	MSPlot["MS_nJets_boxSemiLepZZqqWZqq_el"]  = new MultiSamplePlot(datasetsEl,"nJets (box SemiLepZZqqWZqq)", 8, -0.5, 7.5, "number of central jets");
+  MSPlot["MS_Electron1Pt_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Electron 1 Pt (box SemiLepZZqqWZqq)", 20, 0, 300, "electron 1 Pt (GeV)");
+	MSPlot["MS_Electron1Eta_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Electron 1 Eta (box SemiLepZZqqWZqq)", 20, -2.5 , 2.5, "electron 1 Eta");
+  MSPlot["MS_Electron2Pt_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Electron 2 Pt (box SemiLepZZqqWZqq)", 20, 0, 300, "electron 2 Pt (GeV)");
+	MSPlot["MS_Electron2Eta_boxSemiLepZZqqWZqq_el"] = new MultiSamplePlot(datasetsEl,"Electron 2 Eta (box SemiLepZZqqWZqq)", 20, -2.5 , 2.5, "electron 2 Eta");
 	
-	/*MSPlot["MS_JetPt_all_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
-	MSPlot["MS_JetPt_btagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_btagged", 50, 0, 300, "Pt of b-tagged jets (GeV)");
-	MSPlot["MS_JetPt_nonbtagged_SingleLepton_nobtag"] = new MultiSamplePlot(datasets,"JetPt_nonbtagged", 50, 0, 300, "Pt of non b-tagged jets (GeV)");
-  MSPlot["MS_Reliso_Lepton_nobtag"] = new MultiSamplePlot(datasets, "Lepton reliso", 40, 0, 0.25, "Lepton reliso");
-
-  //4 jets, no b-tag requirement yet
-  MSPlot["MS_MET_nobtag_4jets"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
-  MSPlot["MS_LeptonPt_nobtag_4jets"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
-  MSPlot["MS_JetPt_all_SingleLepton_nobtag_4jets"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");
-	//4 jets, with b-tag requirement
-  MSPlot["MS_MET_4jets"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
-  MSPlot["MS_LeptonPt_4jets"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
-  MSPlot["MS_JetPt_all_SingleLepton_4jets"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
-
-  //for the events that are actually used
-	MSPlot["MS_MET_used"] = new MultiSamplePlot(datasets,"MET", 75, 0, 200, "Missing transverse energy (GeV)");
-  MSPlot["MS_LeptonPt_used"] = new MultiSamplePlot(datasets,"lepton pt", 75, 0, 250, "Pt lepton (GeV)");
-  MSPlot["MS_JetPt_all_used"] = new MultiSamplePlot(datasets,"JetPt_all", 50, 0, 300, "Pt of all jets (GeV)");	
-	MSPlot["MS_JetHt_all_used"] = new MultiSamplePlot(datasets,"JetHt_all", 80, 0, 800, "Ht of all jets (GeV)");
-	MSPlot["MS_nPV_used"] = new MultiSamplePlot(datasets, "nPrimaryVertices", 21, -0.5, 20.5, "Nr. of primary vertices");
 	
+	/*	
 	histo2D["HTvsMTop_1B_2W_TTbarJets"] = new TH2F("HTvsMTop_1B_2W_TTbarJets","HTvsMTop_1B_2W_TTbarJets",400,0,1500,400,0,1500);
 	histo2D["HTvsMTop_2B_2W_TTbarJets"] = new TH2F("HTvsMTop_2B_2W_TTbarJets","HTvsMTop_2B_2W_TTbarJets",400,0,1500,400,0,1500);
 	histo2D["HTvsMTop_1B_2W_TprimeTprime"] = new TH2F("HTvsMTop_1B_2W_TprimeTprime","HTvsMTop_1B_2W_TprimeTprime",400,0,1500,400,0,1500);
-	histo2D["HTvsMTop_2B_2W_TprimeTprime"] = new TH2F("HTvsMTop_2B_2W_TprimeTprime","HTvsMTop_2B_2W_TprimeTprime",400,0,1500,400,0,1500);*/
+	histo2D["HTvsMTop_2B_2W_TprimeTprime"] = new TH2F("HTvsMTop_2B_2W_TprimeTprime","HTvsMTop_2B_2W_TprimeTprime",400,0,1500,400,0,1500);
+	*/
 	
 	cout << " - Declared histograms ..." <<  endl;
 
@@ -585,7 +744,7 @@ int main (int argc, char *argv[])
   ////////////////////////////////////
   /// Selection table   --> to be modified
   ////////////////////////////////////
-
+/*
   vector<string> CutsSelecTableLep; 
   CutsSelecTableLep.push_back(string("baseline selected")); //0
   CutsSelecTableLep.push_back(string("leading jet Pt > 200 GeV")); // semi-leptonic events in all the boxes together
@@ -596,10 +755,6 @@ int main (int argc, char *argv[])
 	CutsSelecTableMu.push_back(string("#jets>=2"));
 	CutsSelecTableMu.push_back(string("leading and subleading jet Pt cuts"));
 	CutsSelecTableMu.push_back(string("b-veto"));
-
-	
-	
-	
 
   vector<string> CutsSelecTableMultiLep;
   CutsSelecTableMultiLep.push_back(string("SS leptons: all")); //0
@@ -622,7 +777,7 @@ int main (int argc, char *argv[])
   selecTableMultiLep.SetPrecision(2);
   
   cout << " - SelectionTable instantiated ..." << endl;
-
+*/
   
 	////////////////////////
   // PileUp Reweighting //
@@ -745,9 +900,9 @@ int main (int argc, char *argv[])
 		//if(make2Dbinning && dataSetName != "TTbarJets_SemiMuon" && dataSetName != "TTbarJets_SemiElectron" && dataSetName != "TTbarJets_Other")
 		//	continue;
 			
-		if(systematic != "Nominal" && !(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0))
+		if(systematic != "Nominal" && (dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0))
 		{
-		  cout<<"  Running systematics: skipping data"<<endl;
+		  cout<<"  Running systematics: skipping data"<<endl;  //euhm, why is this? should be possible to plot data on top of systematic shifted samples... TO DO
 		  continue;
 		}	
 			
@@ -824,11 +979,9 @@ int main (int argc, char *argv[])
 		///////////////////////////////////////////////////////
 		*/
 		
-		
-		
-		
+	
     for (int ievt = start; ievt < end; ievt++)
-		//for (int ievt = start; ievt < 5000; ievt++)
+		//for (int ievt = start; ievt < 2000; ievt++)
     {        
 
       if(ievt%1000 == 0)
@@ -836,7 +989,7 @@ int main (int argc, char *argv[])
       systematicnew = "";
 			//load event
 			inVLQTree->GetEvent(ievt);
-	 
+
 	 
 	    //reading variables from the tree
 			unsigned int nPV = myBranch_selectedEvents->nPV();
@@ -849,7 +1002,7 @@ int main (int argc, char *argv[])
       unsigned int SelectednEl = myBranch_selectedEvents->SelectednEl();			
 						
 			TLorentzVector metvector = myBranch_selectedEvents->met();
-			float met = (myBranch_selectedEvents->met()).Pt();  //Pt instead of Et, because the Et is not corrected when applying JEC or systematic shifts
+			float met = (myBranch_selectedEvents->met()).Pt();  //Pt instead of Et, because the Et is not corrected when applying JEC or systematic shifts. update: it seems it is corrected, but not for unclustered MET?
       vector<TLorentzVector> selectedJets = myBranch_selectedEvents->selectedJets();
 			vector<int> selectedJets_partonFlavour = myBranch_selectedEvents->selectedJets_partonFlavour();
 			vector<TLorentzVector> selectedForwardJets = myBranch_selectedEvents->selectedForwardJets();
@@ -912,43 +1065,57 @@ int main (int argc, char *argv[])
 				    selectedOthertaggedJets.push_back(selectedJets[iJet]); //also non-taggable jets? (discr value -1 or -10)				 
 			}
 			
+			//for 3/4-lepton categories
+			vector<unsigned int> indicesMuPlus, indicesMuMinus, indicesElPlus, indicesElMinus;
+			for(unsigned int iMu=0; iMu<selectedMuonsCharge.size(); iMu++)
+			{
+			  if(selectedMuonsCharge[iMu]>0) indicesMuPlus.push_back(iMu);
+				else if (selectedMuonsCharge[iMu]<0) indicesMuMinus.push_back(iMu);
+			}
+			for(unsigned int iEl=0; iEl<selectedElectronsCharge.size(); iEl++)
+			{
+			  if(selectedElectronsCharge[iEl]>0) indicesElPlus.push_back(iEl);
+				else if (selectedElectronsCharge[iEl]<0) indicesElMinus.push_back(iEl);
+			}
 
-	 
+
+	    //cout<<"LOADED event with run = "<<myBranch_selectedEvents->runID()<<", lumiblock = "<<myBranch_selectedEvents->lumiBlockID()<<", event id = "<<myBranch_selectedEvents->eventID()<<endl;
+	    //cout<<"    => MuTrigged = "<<MuTrigged<<", ElTrigged = "<<ElTrigged<<", SelectednEl = "<<SelectednEl<<", SelectednMu = "<<SelectednMu<<", selectedJets[0].Pt() = "<<selectedJets[0].Pt()<<endl;
 	 
 	 
       // scale factor for the event
       float scaleFactor = 1.;
-      float lumiWeight = 1., lumiWeightUp = 1., lumiWeightDown = 1.;			
+      float lumiWeight = 1.;			
       if( ! (dataSetName.find("Data") == 0 || dataSetName.find("InvIso") != string::npos) )
 			{
 			  if(MuTrigged)
 				{	
 				  if ( dataSetName.find("NP_") == 0 && dataSetName.find("fullsim") == string::npos && dataSetName.find("NP_TprimeTprime") == string::npos)
 					{
-					   lumiWeight = LumiWeights_S7_mu.ITweight( (int) nTruePU );
-             lumiWeightUp = LumiWeightsUp_S7_mu.ITweight( (int) nTruePU );
-             lumiWeightDown = LumiWeightsDown_S7_mu.ITweight( (int) nTruePU );
+             if(systematic == "PUMinus") lumiWeight = LumiWeightsDown_S7_mu.ITweight( (int) nTruePU );
+						 else if(systematic == "PUPlus") lumiWeight = LumiWeightsUp_S7_mu.ITweight( (int) nTruePU );
+						 else lumiWeight = LumiWeights_S7_mu.ITweight( (int) nTruePU );
 					}
 					else
 					{			
-				     lumiWeight = LumiWeights_mu.ITweight( (int) nTruePU );
-             lumiWeightUp = LumiWeightsUp_mu.ITweight( (int) nTruePU );
-             lumiWeightDown = LumiWeightsDown_mu.ITweight( (int) nTruePU );
+					   if(systematic == "PUMinus") lumiWeight = LumiWeightsDown_mu.ITweight( (int) nTruePU );
+						 else if(systematic == "PUPlus") lumiWeight = LumiWeightsUp_mu.ITweight( (int) nTruePU );
+						 else lumiWeight = LumiWeights_mu.ITweight( (int) nTruePU );
 					}
 				}
 				else if(ElTrigged)
 				{
 				  if ( dataSetName.find("NP_") == 0 && dataSetName.find("fullsim") == string::npos && dataSetName.find("NP_TprimeTprime") == string::npos)
 					{
-					   lumiWeight = LumiWeights_S7_el.ITweight( (int) nTruePU );
-             lumiWeightUp = LumiWeightsUp_S7_el.ITweight( (int) nTruePU );
-             lumiWeightDown = LumiWeightsDown_S7_el.ITweight( (int) nTruePU );
+					   if(systematic == "PUMinus") lumiWeight = LumiWeightsDown_S7_el.ITweight( (int) nTruePU );
+						 else if(systematic == "PUPlus") lumiWeight = LumiWeightsUp_S7_el.ITweight( (int) nTruePU );
+						 else lumiWeight = LumiWeights_S7_el.ITweight( (int) nTruePU );
 					}
 					else
 					{
-				     lumiWeight = LumiWeights_el.ITweight( (int) nTruePU );
-             lumiWeightUp = LumiWeightsUp_el.ITweight( (int) nTruePU );
-             lumiWeightDown = LumiWeightsDown_el.ITweight( (int) nTruePU );
+					   if(systematic == "PUMinus") lumiWeight = LumiWeightsDown_el.ITweight( (int) nTruePU );
+						 else if(systematic == "PUPlus") lumiWeight = LumiWeightsUp_el.ITweight( (int) nTruePU );
+						 else lumiWeight = LumiWeights_el.ITweight( (int) nTruePU );
 					}
 				}
 			
@@ -983,8 +1150,11 @@ int main (int argc, char *argv[])
       // up syst -> lumiWeight = LumiWeightsUp.ITweight( (int) myBranch_selectedEvents->nTruePU() );
       // down syst -> lumiWeight = LumiWeightsDown.ITweight( (int) myBranch_selectedEvents->nTruePU() );
 
-      if(doPUreweighting) scaleFactor = scaleFactor*lumiWeight;
-      histo1D["lumiWeights"]->Fill(scaleFactor);
+      if(doPUreweighting)
+			{
+			   scaleFactor = scaleFactor*lumiWeight;
+         histo1D["lumiWeights"]->Fill(scaleFactor);
+			}
 			   
 
 			//jet Pt cut
@@ -1062,6 +1232,8 @@ int main (int argc, char *argv[])
 			  }
 			}
 
+      if(doWjetsScaling && dataSetName.find("WJets")==0) scaleFactor = scaleFactor*WjetsScale;
+
      
 		  float HT = 0; //scalar sum of jet pt
       float ST = met; //test search variable			
@@ -1082,7 +1254,7 @@ int main (int argc, char *argv[])
 
       //'muon channel'
       //if(SelectednMu >= 1) //not anymore
-			if(MuTrigged)
+			if(MuTrigged && selectedJets.size()>=1)
 			{
 			  //cout<<"**** Muon channel **** "<<endl;
 			  if(!useBtagInfoFromFile)
@@ -1093,28 +1265,28 @@ int main (int argc, char *argv[])
 				}
 				
 									
-			  //lepton scale factor; apply on MC
+			  //lepton scale factor; apply on MC --> WARNING: this might not be entirely correct, it should be applied on all the leptons that are part of your selection, not all leptons in the event!! -> to be adapted
 				if(!((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			  {								
 				   if(applyLeptonSF)
 					 {
 					   //cout<<"(selectedMuons[0].Eta(), selectedMuons[0].Pt()) = ("<<selectedMuons[0].Eta()<<","<< selectedMuons[0].Pt()<<")"<<endl;
-					   scaleFactor = scaleFactor*leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt()); //note: this is assuming the leading muon is the trigged one...
-					   //cout<<"leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt()) = "<<leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt())<<endl;
+					   scaleFactor = scaleFactor*leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt(),syst_muonSF); //note: this is assuming the leading muon is the trigged one...
+					   //cout<<"leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt()) = "<<leptonTools->getMuonSF(selectedMuons[0].Eta(), selectedMuons[0].Pt(),syst_muonSF)<<endl;
 						 for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
 			       {
 					     if(iMu!=0 && (selectedMuons[iMu].Pt()>=20))
 							 {
-							    scaleFactor = scaleFactor*leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt()); //apply id*iso scale factor for non-leading muons.
-							    //cout<<"   leptonTools->getMuonIdIsoSF(selectedMuons["<<iMu<<"].Eta(), selectedMuons["<<iMu<<"].Pt()) = "<<leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt())<<endl;
+							    scaleFactor = scaleFactor*leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt(),syst_muonSF); //apply id*iso scale factor for non-leading muons.
+							    //cout<<"   leptonTools->getMuonIdIsoSF(selectedMuons["<<iMu<<"].Eta(), selectedMuons["<<iMu<<"].Pt()) = "<<leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt(),syst_muonSF)<<endl;
 							 }
 					   }
 					   for(unsigned int iEl = 0; iEl < selectedElectrons.size(); iEl++)
 			       {
 					     if(selectedElectrons[iEl].Pt()>=20) 
 							 {
-							   scaleFactor = scaleFactor*leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply idiso scale factor for electrons
-					       //cout<<"   leptonTools->getElectronIdIsoSF(selectedElectrons["<<iEl<<"].Eta(), selectedElectrons["<<iEl<<"].Pt()) = "<<leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt())<<endl;
+							   scaleFactor = scaleFactor*leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt(),syst_electronSF); //apply idiso scale factor for electrons
+					       //cout<<"   leptonTools->getElectronIdIsoSF(selectedElectrons["<<iEl<<"].Eta(), selectedElectrons["<<iEl<<"].Pt()) = "<<leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt(),syst_electronSF)<<endl;
 						   }
 						 }
 					 }					 
@@ -1136,8 +1308,36 @@ int main (int argc, char *argv[])
 				   if(selectedJets[0].Pt() >= LeadingJetPtCut*0.5)
 					 {
 					    MSPlot["MS_MET_singleMu_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
-					    MSPlot["MS_JetMultiplicity_singleMu_mu"]->Fill(selectedJets.size(),datasets[d], true, LuminosityMu*scaleFactor);
+							if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							{
+							      float myBtagMCWeight = 1;
+										if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			              {
+							            myBtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> myBtagMCWeight = "<<myBtagMCWeight<<endl; 
+							      }
+										MSPlot["MS_MET_singleMu_Bveto_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor*myBtagMCWeight);
+							}
+							MSPlot["MS_JetMultiplicity_singleMu_mu"]->Fill(selectedJets.size(),datasets[d], true, LuminosityMu*scaleFactor);
 					 }
+					 if(selectedJets.size()>=4)
+					 { 
+					    //no b-tag SF applied here yet...
+					    if(selectedBtaggedJets.size()>=1)
+							{
+							   MSPlot["MS_MET_singleMu_ttbarsel1btag_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MuonPt_singleMu_ttbarsel1btag_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MuonEta_singleMu_ttbarsel1btag_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							}							
+              if(selectedBtaggedJets.size()>=2)
+							{
+							   MSPlot["MS_MET_singleMu_ttbarsel2btag_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MuonPt_singleMu_ttbarsel2btag_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MuonEta_singleMu_ttbarsel2btag_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							}
+					 }
+					 
+					 
 				}
 				
 				if(selectedJets.size() == 4)
@@ -1235,7 +1435,7 @@ int main (int argc, char *argv[])
 			
 			//'electron channel'
 			//if(SelectednMu == 0 && SelectednEl >= 1) //not anymore
-			else if(ElTrigged)  //or an 'if'??
+			else if(ElTrigged && selectedJets.size()>=1)  //or an 'if'??
 			{ 
 			  //cout<<"**** Electron channel **** "<<endl;
 			  if(!useBtagInfoFromFile)
@@ -1251,22 +1451,22 @@ int main (int argc, char *argv[])
 				   if(applyLeptonSF)
 					 {
 					   //cout<<"(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()) = ("<<selectedElectrons[0].Eta()<<","<< selectedElectrons[0].Pt()<<")"<<endl;
-				     scaleFactor = scaleFactor*leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()); //note: this is assuming the leading electron is the trigged one...
-					   //cout<<"leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()) = "<<leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt())<<endl;
+				     scaleFactor = scaleFactor*leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt(),syst_electronSF); //note: this is assuming the leading electron is the trigged one...
+					   //cout<<"leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt()) = "<<leptonTools->getElectronSF(selectedElectrons[0].Eta(), selectedElectrons[0].Pt(),syst_electronSF)<<endl;
 						 for(unsigned int iMu = 0; iMu < selectedMuons.size(); iMu++)
 			       {
 					     if(selectedMuons[iMu].Pt()>=20)
 							 {
-							    scaleFactor = scaleFactor*leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt()); //apply id*iso scale factor for muons.
-					   			//cout<<"  leptonTools->getMuonIdIsoSF(selectedMuons["<<iMu<<"].Eta(), selectedMuons["<<iMu<<"].Pt()) = "<<leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt())<<endl;
+							    scaleFactor = scaleFactor*leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt(),syst_muonSF); //apply id*iso scale factor for muons.
+					   			//cout<<"  leptonTools->getMuonIdIsoSF(selectedMuons["<<iMu<<"].Eta(), selectedMuons["<<iMu<<"].Pt()) = "<<leptonTools->getMuonIdIsoSF(selectedMuons[iMu].Eta(), selectedMuons[iMu].Pt(),syst_muonSF)<<endl;
                }
              }
 					   for(unsigned int iEl = 0; iEl < selectedElectrons.size(); iEl++)
 			       {
 					     if(iEl!=0 && (selectedElectrons[iEl].Pt()>=20))
 							 {
-							    scaleFactor = scaleFactor*leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt()); //apply idiso scale factor for non-leading electrons.
-               		//cout<<"  leptonTools->getElectronIdIsoSF(selectedElectrons["<<iEl<<"].Eta(), selectedElectrons["<<iEl<<"].Pt()) = "<<leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt())<<endl;
+							    scaleFactor = scaleFactor*leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt(),syst_electronSF); //apply idiso scale factor for non-leading electrons.
+               		//cout<<"  leptonTools->getElectronIdIsoSF(selectedElectrons["<<iEl<<"].Eta(), selectedElectrons["<<iEl<<"].Pt()) = "<<leptonTools->getElectronIdIsoSF(selectedElectrons[iEl].Eta(), selectedElectrons[iEl].Pt(),syst_electronSF)<<endl;
 							 }
 						 }
 					 }
@@ -1286,7 +1486,18 @@ int main (int argc, char *argv[])
 				{
 				   if(selectedJets[0].Pt() >= LeadingJetPtCut*0.5)
 					 {
+								//cout<<"   run = "<<myBranch_selectedEvents->runID()<<", lumiblock = "<<myBranch_selectedEvents->lumiBlockID()<<", event id = "<<myBranch_selectedEvents->eventID()<<endl;
 				        MSPlot["MS_MET_singleEl_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
+								if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							  {
+							      float myBtagMCWeight = 1;
+										if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			              {
+							            myBtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> myBtagMCWeight = "<<myBtagMCWeight<<endl; 
+							      }
+										MSPlot["MS_MET_singleEl_Bveto_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor*myBtagMCWeight);
+							  }
 								MSPlot["MS_JetMultiplicity_singleEl_el"]->Fill(selectedJets.size(),datasets[d], true, LuminosityEl*scaleFactor);
 					 }
 				}
@@ -1387,7 +1598,7 @@ int main (int argc, char *argv[])
 			
 			float massleptons = 9999.;
 			float Zmass = 91.1876; //could eventually be replaced by the mean of a fit of the Z peak?
-			float Zmasswindow = 15; //could eventually be replaced by the resolution of a fit of the Z peak (1 sigma)?
+			float Zmasswindow = 7.5; //could eventually be replaced by the resolution of a fit of the Z peak (1 sigma)?
 			
 			float BtagMCWeight = 1.;
 			
@@ -1396,21 +1607,95 @@ int main (int argc, char *argv[])
 			//'muon channel'
 			if(MuTrigged)
 			{
-			 selecTableMu.Fill(d,0,scaleFactor);
+//			 selecTableMu.Fill(d,0,scaleFactor);
 			 if(SelectednMu == 1)
 			 {
 			  if(SelectednEl == 0)
 				{
-			    if( (selectedJets.size() == 1 || selectedJets.size() == 2) && selectedForwardJets.size() == 1 )
+				
+				  //sort of control region
+					//cout<<"outside: selectedJets.size() = "<<selectedJets.size()<<", selectedForwardJets.size() = "<<selectedForwardJets.size()<<endl;
+				  if(selectedJets.size() >= 1)
+					{
+					    //cout<<"inside: selectedJets.size() = "<<selectedJets.size()<<endl;
+					    if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						  {
+							   float MT = sqrt(2*selectedMuons[0].Pt()*met*(1-cos(selectedMuons[0].DeltaPhi(metvector))));
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								    if((!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq)) && (!doMTcut || (doMTcut && MT>MTcut)))
+							      {
+										   float myBtagMCWeight = 1;
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            myBtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+							         }	
+											 //cout<<"completely inside: selectedJets.size() = "<<selectedJets.size()<<endl;
+											 if(selectedForwardJets.size() == 0) MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_mu"]->Fill(selectedJets.size(), datasets[d], true, LuminosityMu*scaleFactor*myBtagMCWeight);	 		 //when requiring selectedForwardJets.size() == 0 you will only select events with njets>=2 because of the skimming preselection							 
+										   else MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noNumberCentralJetCut_mu"]->Fill(selectedJets.size(), datasets[d], true, LuminosityMu*scaleFactor*myBtagMCWeight);										 
+										}
+								 }
+						  }
+				  }
+				
+			    if( (selectedJets.size() == 1 || selectedJets.size() == 2))
 			    {
+					 if(selectedForwardJets.size() == 1)
+					 {
 					  ST = ST + selectedForwardJets[0].Pt();
+						HT = HT + selectedForwardJets[0].Pt();
 					  MSPlot["MS_MET_preboxWqq_noleadingjetcut_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
-					  if(selectedJets[0].Pt() >= LeadingJetPtCut)
+					  MSPlot["MS_HT_preboxWqq_noleadingjetcut_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+						MSPlot["MS_LeadingJetPt_preboxWqq_noleadingjetcut_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+						MSPlot["MS_LeadingJetEta_preboxWqq_noleadingjetcut_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+						if(selectedJets.size()>1)
+						{
+								  MSPlot["MS_SubLeadingJetPt_preboxWqq_noleadingjetcut_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								  MSPlot["MS_SubLeadingJetEta_preboxWqq_noleadingjetcut_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+						}
+						
+						//some sort of 'control region' (to be checked if not too much signal in it, though)
+						if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						{
+						 if(!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq))
+						 {
+						  MSPlot["MS_MET_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(met, datasets[d], true, LuminosityMu*scaleFactor);
+						  MSPlot["MS_HT_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_ST_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
+						  MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							if(selectedJets.size()>1)
+							{
+							   MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							   MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							}
+							MSPlot["MS_MuonPt_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_MuonEta_preboxWqq_leadingjet150-200_METcut_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+						 }
+						 MSPlot["MS_MET_preboxWqq_leadingjet150-200_mu"]->Fill(met, datasets[d], true, LuminosityMu*scaleFactor);
+						}
+						
+						
+						if(selectedJets[0].Pt() >= LeadingJetPtCut)
 						{
 						  //if(!useBtagInfoFromFile) bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);
 						  float MT = sqrt(2*selectedMuons[0].Pt()*met*(1-cos(selectedMuons[0].DeltaPhi(metvector))));
 							MSPlot["MS_MTleptonmet_preboxWqq_mu"]->Fill(MT, datasets[d], true, LuminosityMu*scaleFactor);	
 							MSPlot["MS_MET_preboxWqq_noMETMTcut_mu"]->Fill(met, datasets[d], true, LuminosityMu*scaleFactor);	
+							MSPlot["MS_HT_preboxWqq_noMETMTcut_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_LeadingJetPt_preboxWqq_noMETMTcut_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_LeadingJetEta_preboxWqq_noMETMTcut_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							if(selectedJets.size()>1)
+							{
+								  MSPlot["MS_SubLeadingJetPt_preboxWqq_noMETMTcut_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								  MSPlot["MS_SubLeadingJetEta_preboxWqq_noMETMTcut_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							}
+							MSPlot["MS_ForwardJetPt_preboxWqq_noMETMTcut_mu"]->Fill(selectedForwardJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_ForwardJetEta_preboxWqq_noMETMTcut_mu"]->Fill(selectedForwardJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_nJets_preboxWqq_noMETMTcut_mu"]->Fill(selectedJets.size(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_MuonPt_preboxWqq_noMETMTcut_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							MSPlot["MS_MuonEta_preboxWqq_noMETMTcut_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
 							if((!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq)) && (!doMTcut || (doMTcut && MT>MTcut)))
 							{		
 							 MSPlot["MS_MET_preboxWqq_noBveto_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
@@ -1421,14 +1706,31 @@ int main (int argc, char *argv[])
 							   //apply b-tag SF on MC; taken from LightStopSearch.cc and https://twiki.cern.ch/twiki/bin/view/CMS/BTagSFMethods
 	               if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			           {
-							      BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							      BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								    //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 								    MSPlot["MS_BtagWeight_boxWqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								    scaleFactor = 	scaleFactor*BtagMCWeight; 
 							   }
 								 
 			 		       MSPlot["MS_MET_boxWqq_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MTleptonmet_boxWqq_mu"]->Fill(MT, datasets[d], true, LuminosityMu*scaleFactor);	
 							   MSPlot["MS_St_boxWqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_HT_boxWqq_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_LeadingJetPt_boxWqq_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_LeadingJetEta_boxWqq_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+								 if(selectedJets.size()>1)
+								 {
+								    MSPlot["MS_SubLeadingJetPt_boxWqq_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+										MSPlot["MS_SubLeadingJetEta_boxWqq_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+								 }
+								 MSPlot["MS_ForwardJetPt_boxWqq_mu"]->Fill(selectedForwardJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_ForwardJetEta_boxWqq_mu"]->Fill(selectedForwardJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_nJets_boxWqq_mu"]->Fill(selectedJets.size(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MuonPt_boxWqq_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MuonEta_boxWqq_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+								 MSPlot["MS_MCeventWeight_boxWqq_mu"]->Fill(LuminosityMu*scaleFactor*datasets[d]->NormFactor(),datasets[d], false, LuminosityMu*scaleFactor); //not scaling the events...
+								 								 
+								 
 								 //float MTQ = sqrt(2*selectedMuons[0].Pt()*met*(1-cos(selectedMuons[0].DeltaPhi(metvector))));			//that's a 2-body decay system of the W boson... not what we want					 
 								 float MTQ = sqrt(2*selectedMuons[0].Pt()*met*(1-cos(selectedMuons[0].DeltaPhi(metvector))) + 2*selectedMuons[0].Pt()*selectedJets[0].Pt()*(1-cos(selectedMuons[0].DeltaPhi(selectedJets[0]))) + 2*met*selectedJets[0].Pt()*(1-cos(metvector.DeltaPhi(selectedJets[0]))));
 								 MSPlot["MS_MTQ_boxWqq_mu"]->Fill(MTQ,datasets[d], true, LuminosityMu*scaleFactor);
@@ -1461,7 +1763,42 @@ int main (int argc, char *argv[])
 								 else cout<<"WARNING: muon charge "<<selectedMuonsCharge[1]<<" does not make sense!"<<endl;	
 							 }	 								 
 							}
-						}				
+						}
+					 }
+					 else if(selectedForwardJets.size() == 0)
+					 {
+					    //sort of control region
+							if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						  {
+							   float MT = sqrt(2*selectedMuons[0].Pt()*met*(1-cos(selectedMuons[0].DeltaPhi(metvector))));
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								    MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_noMETMTcut_mu"]->Fill(met, datasets[d], true, LuminosityMu*scaleFactor);
+								    if((!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq)) && (!doMTcut || (doMTcut && MT>MTcut)))
+							      {
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								          scaleFactor = 	scaleFactor*BtagMCWeight; 
+							         }
+											 MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(met, datasets[d], true, LuminosityMu*scaleFactor);
+											 MSPlot["MS_MTleptonmet_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(MT, datasets[d], true, LuminosityMu*scaleFactor);	
+						           MSPlot["MS_HT_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_ST_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
+						           MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							         if(selectedJets.size()>1)
+							         {
+							           MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+						        	   MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+					          	 }
+					          	 MSPlot["MS_MuonPt_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_MuonEta_preboxWqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+										}
+								 }
+						  }					 
+					 }				
 				  }
 				  else if((doAntiBtagging && selectedAntiBtaggedJets.size()>=2 && selectedJets.size() >= 3) || (!doAntiBtagging && selectedJets.size() >= 3)) //used to be just selectedJets.size() >= 3
 			    {
@@ -1484,7 +1821,7 @@ int main (int argc, char *argv[])
 								    if(verbosityBox) cout<<"category: WHqq (mu)"<<endl;
 							      if(doBtagging && doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			              {
-							           BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							           BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								         //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 											   MSPlot["MS_BtagWeight_boxWHqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								         scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -1565,9 +1902,7 @@ int main (int argc, char *argv[])
 // 										     float jet34mass = (selectedJets[2] + selectedJets[3]).M();
 // 	                       MSPlot["MS_Dijet34mass_boxWHqq_mu"]->Fill(jet34mass,datasets[d], true, LuminosityMu*scaleFactor);
 // 										  }
-									
-										
-				
+			
 								 //}
 							}	
 						}		
@@ -1579,149 +1914,28 @@ int main (int argc, char *argv[])
 				}
 				else if(SelectednEl == 1)
 				{
-				  selecTableMu.Fill(d,1,scaleFactor);
+//				  selecTableMu.Fill(d,1,scaleFactor);
 				  if( selectedJets.size() >= 2 )
 			    {
-					  selecTableMu.Fill(d,2,scaleFactor);
+//					  selecTableMu.Fill(d,2,scaleFactor);
 				    if((selectedJets[0].Pt() >= LeadingJetPtCut) && (selectedJets[1].Pt() >= SubLeadingJetPtCut))
 				    {
-						   selecTableMu.Fill(d,3,scaleFactor);
+//						   selecTableMu.Fill(d,3,scaleFactor);
 						   //if(!useBtagInfoFromFile) bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);						
 							 if(!doMETcutboxWWqq || (doMETcutboxWWqq && met>METcutboxWWqq))
 						   {				
 					      if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0)
 						    {
-							    selecTableMu.Fill(d,4,scaleFactor);
+//							    selecTableMu.Fill(d,4,scaleFactor);
 							    if(verbosityBox) cout<<"category: WWqq (mu)"<<endl; //(no need to check the invariant mass of the leptons, they should not come from a Z...)
 							    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			            {
-							         BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							         BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								       //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 											 MSPlot["MS_BtagWeight_boxWWqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								       scaleFactor = 	scaleFactor*BtagMCWeight; 
 							    }
 					        MSPlot["MS_St_boxWWqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);	
-									
-							/*		///////////Try to construct some mass variable (doesn't seem to improve much w.r.t ST on first sight)
-									//first split met vector in two parts which are equal in size, and are orthogonal
-									TLorentzVector metvector1, metvector2;
-									metvector1.SetPxPyPzE((metvector.Px()+metvector.Py())/2,(metvector.Py()-metvector.Px())/2,0,sqrt((pow(metvector.Px(),2)+pow(metvector.Py(),2))/2));
-									metvector2.SetPxPyPzE((metvector.Px()-metvector.Py())/2,(metvector.Py()+metvector.Px())/2,0,sqrt((pow(metvector.Px(),2)+pow(metvector.Py(),2))/2));
-									
-									TLorentzVector tmpneutrinosQ1[4],tmpneutrinosQ2[4];
-									//hypothesis A: assume metvector1 is associated to muon
-									MEzCalculator mezcalc1;
-								  mezcalc1.SetMuon(selectedMuons[0]);
-								  mezcalc1.SetMET(metvector1);
-									mezcalc1.Calculate(4);
-								  tmpneutrinosQ1[0] = mezcalc1.gettmpneutrino1();
-									tmpneutrinosQ1[1] = mezcalc1.gettmpneutrino2();
-									//cout<<" tmpneutrinosQ1[0].Eta() = "<<tmpneutrinosQ1[0].Eta()<<endl;
-									//cout<<" tmpneutrinosQ1[1].Eta() = "<<tmpneutrinosQ1[1].Eta()<<endl;
-									//metvector2 is associated to electron in that case
-									MEzCalculator mezcalc2;
-								  mezcalc2.SetEl(selectedElectrons[0]);
-								  mezcalc2.SetMET(metvector2);
-									mezcalc2.Calculate(4);
-								  tmpneutrinosQ2[0] = mezcalc2.gettmpneutrino1();
-									tmpneutrinosQ2[1] = mezcalc2.gettmpneutrino2();
-									//cout<<" tmpneutrinosQ2[0].Eta() = "<<tmpneutrinosQ2[0].Eta()<<endl;
-									//cout<<" tmpneutrinosQ2[1].Eta() = "<<tmpneutrinosQ2[1].Eta()<<endl;
-									
-									//hypothesis B: assume metvector1 is associated to electron
-									MEzCalculator mezcalc3;
-								  mezcalc3.SetEl(selectedElectrons[0]);
-								  mezcalc3.SetMET(metvector1);
-									mezcalc3.Calculate(4);
-								  tmpneutrinosQ1[2] = mezcalc3.gettmpneutrino1();
-									tmpneutrinosQ1[3] = mezcalc3.gettmpneutrino2();
-									//cout<<" tmpneutrinosQ1[2].Eta() = "<<tmpneutrinosQ1[2].Eta()<<endl;
-									//cout<<" tmpneutrinosQ1[3].Eta() = "<<tmpneutrinosQ1[3].Eta()<<endl;
-									//metvector2 is associated to muon in that case
-									MEzCalculator mezcalc4;
-								  mezcalc4.SetMuon(selectedMuons[0]);
-								  mezcalc4.SetMET(metvector2);
-									mezcalc4.Calculate(4);
-								  tmpneutrinosQ2[2] = mezcalc4.gettmpneutrino1();
-									tmpneutrinosQ2[3] = mezcalc4.gettmpneutrino2();
-									//cout<<" tmpneutrinosQ2[2].Eta() = "<<tmpneutrinosQ2[2].Eta()<<endl;
-									//cout<<" tmpneutrinosQ2[3].Eta() = "<<tmpneutrinosQ2[3].Eta()<<endl;
-																		
-									float maxaverageDeltaR_hypoA = -9999, maxaverageDeltaR_hypoB = -9999;
-									float MQaverage_hypoA = -9999, MQaverage_hypoB = -9999;
-									float MQdiff_hypoA = -9999, MQdiff_hypoB = -9999;
-									for(unsigned int inQ1=0;inQ1<2;inQ1++)
-									{
-									   for(unsigned int inQ2=0;inQ2<2;inQ2++)
-									   {
-										    float MQ1_option1 = (tmpneutrinosQ1[inQ1] + selectedMuons[0] + selectedJets[0]).M();
-										    float MQ2_option1 = (tmpneutrinosQ2[inQ2] + selectedElectrons[0] + selectedJets[1]).M();
-												float MQ1_option2 = (tmpneutrinosQ1[inQ1] + selectedMuons[0] + selectedJets[1]).M();
-										    float MQ2_option2 = (tmpneutrinosQ2[inQ2] + selectedElectrons[0] + selectedJets[0]).M();
-												
-												float averageDeltaR_option1 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[0]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[1]))/2;
-												float averageDeltaR_option2 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[1]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[0]))/2;
-												
-												if(averageDeltaR_option1 >= averageDeltaR_option2)
-												{
-												   if(averageDeltaR_option1 > maxaverageDeltaR_hypoA)
-													 {
-													    maxaverageDeltaR_hypoA = averageDeltaR_option1;
-															MQaverage_hypoA = (MQ1_option1 + MQ2_option1) / 2;
-															MQdiff_hypoA = fabs(MQ1_option1 - MQ2_option1);
-													 }
-												}
-												else
-												{
-												   if(averageDeltaR_option2 > maxaverageDeltaR_hypoA)
-													 {
-													    maxaverageDeltaR_hypoA = averageDeltaR_option2;
-															MQaverage_hypoA = (MQ1_option2 + MQ2_option2) / 2;
-															MQdiff_hypoA = fabs(MQ1_option2 - MQ2_option2);
-													 }												
-												}
-										 }
-									}
-									for(unsigned int inQ1=2;inQ1<4;inQ1++)
-									{
-									   for(unsigned int inQ2=2;inQ2<4;inQ2++)
-									   {
-										    float MQ1_option1 = (tmpneutrinosQ1[inQ1] + selectedElectrons[0] + selectedJets[0]).M();
-										    float MQ2_option1 = (tmpneutrinosQ2[inQ2] + selectedMuons[0] + selectedJets[1]).M();
-												float MQ1_option2 = (tmpneutrinosQ1[inQ1] + selectedElectrons[0] + selectedJets[1]).M();
-										    float MQ2_option2 = (tmpneutrinosQ2[inQ2] + selectedMuons[0] + selectedJets[0]).M();
-												
-												float averageDeltaR_option1 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[0]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[1]))/2;
-												float averageDeltaR_option2 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[1]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[0]))/2;
-												
-												if(averageDeltaR_option1 >= averageDeltaR_option2)
-												{
-												   if(averageDeltaR_option1 > maxaverageDeltaR_hypoB)
-													 {
-													    maxaverageDeltaR_hypoB = averageDeltaR_option1;
-															MQaverage_hypoB = (MQ1_option1 + MQ2_option1) / 2;
-															MQdiff_hypoB = fabs(MQ1_option1 - MQ2_option1);
-													}
-												}
-												else
-												{
-												   if(averageDeltaR_option2 > maxaverageDeltaR_hypoB)
-													 {
-													    maxaverageDeltaR_hypoB = averageDeltaR_option2;
-															MQaverage_hypoB = (MQ1_option2 + MQ2_option2) / 2;
-															MQdiff_hypoB = fabs(MQ1_option2 - MQ2_option2);
-													 }												
-												}
-										 }
-									}	
-									
-									//decide between hypothesis A and B via mass constraint...												
-									float MQaverage;
-									if(MQdiff_hypoA <= MQdiff_hypoB) MQaverage = MQaverage_hypoA;
-									else MQaverage = MQaverage_hypoB;
-									
-									MSPlot["MS_AveragePseudoMQ_boxWWqq_mu"]->Fill(MQaverage, datasets[d], true, LuminosityMu*scaleFactor);
-									*/
 						    }
 							 }
 					  }
@@ -1737,16 +1951,23 @@ int main (int argc, char *argv[])
 					    
 							if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0)
 						  {
+							 if(indicesElPlus.size()==1 && indicesElMinus.size()==1)
+							 {
 							   if(verbosityBox) cout<<"category: WZqq (mu)"<<endl;
 							   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			           {
-							         BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							         BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								       //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 											 MSPlot["MS_BtagWeight_boxWZqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								       scaleFactor = 	scaleFactor*BtagMCWeight; 
 							   }
 						     MSPlot["MS_nEvts_boxWZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
 						     MSPlot["MS_nEvts_boxWZqqZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+								 massleptons = (selectedElectrons[0] + selectedElectrons[1]).M();
+								 if(fabs(Zmass - massleptons) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+							 }
+								    
 						  }
 					  }
 					}
@@ -1774,21 +1995,48 @@ int main (int argc, char *argv[])
 			  if(SelectednEl == 0)
 				{
 			    massleptons = (selectedMuons[0] + selectedMuons[1]).M();
+					MSPlot["MS_Mleptons_preboxZqq_mu"]->Fill(massleptons,datasets[d], true, LuminosityMu*scaleFactor);	
 					
 					if( fabs(Zmass - massleptons) < Zmasswindow)
-					{					
-				     if( (selectedJets.size() == 1 || selectedJets.size() == 2) && selectedForwardJets.size() == 1 )
+					{				//sort of control region
+				  
+					   if(selectedJets.size() >= 1)
+					   {
+					     if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						   {
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								   if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+									 {
+								       float myBtagMCWeight = 1;
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            myBtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+							         }
+											 if(selectedForwardJets.size() == 0) MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_mu"]->Fill(selectedJets.size(), datasets[d], true, LuminosityMu*scaleFactor*myBtagMCWeight);
+										   else MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noNumberCentralJetCut_mu"]->Fill(selectedJets.size(), datasets[d], true, LuminosityMu*scaleFactor*myBtagMCWeight);
+								   }
+								 }
+						   }
+				     }
+						
+				     if( (selectedJets.size() == 1 || selectedJets.size() == 2))
 			       {
+						  if(selectedForwardJets.size() == 1)
+							{
 						   if(selectedJets[0].Pt() >= LeadingJetPtCut)
 				       {
 							    //if(!useBtagInfoFromFile) bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);
 							    
 									if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0
 						      {
+									 if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+									 {
 									   if(verbosityBox) cout<<"category: Zqq (mu)"<<endl;
 									   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			               {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxZqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -1798,8 +2046,43 @@ int main (int argc, char *argv[])
 									   //calculate mass of (two-lepton and leading jet)-system
 									   float massZq = (selectedMuons[0] + selectedMuons[1] + selectedJets[0]).M();
 									   MSPlot["MS_MQ_boxZqq_mu"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);
+									 }
 								  }
 							 }
+						  }
+							else if(selectedForwardJets.size() == 0)
+					    {
+					      //sort of control region
+							  if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						    {
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								     if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+										 {
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								          scaleFactor = 	scaleFactor*BtagMCWeight; 
+							         }
+											 MSPlot["MS_MET_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(met, datasets[d], true, LuminosityMu*scaleFactor);
+						           MSPlot["MS_HT_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_ST_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
+						           MSPlot["MS_LeadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_LeadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+							         if(selectedJets.size()>1)
+							         {
+							           MSPlot["MS_SubleadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+						        	   MSPlot["MS_SubleadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+					          	 }
+					          	 MSPlot["MS_Muon1Pt_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_Muon1Eta_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+											 MSPlot["MS_Muon2Pt_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedMuons[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+							         MSPlot["MS_Muon2Eta_preboxZqq_leadingjet150-200_noForwardJet_mu"]->Fill(selectedMuons[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+										}
+								 }
+						    }					 
+					    } 						 
 				     }
 				     else if((doAntiBtagging && selectedAntiBtaggedJets.size()>=2 && selectedJets.size() >= 3) || (!doAntiBtagging && selectedJets.size() >= 3)) //used to be just selectedJets.size() >= 3
 			       {
@@ -1813,28 +2096,63 @@ int main (int argc, char *argv[])
 									int nBtags = selectedBtaggedJets.size();	
 							    if(!doBtagging || (doBtagging && nBtags>=1)) //used to be nBjetsPresent(selectedJets_bTagCSV,btagWP)>=1
 							    {
-							      //  if(!doAntiBtagging || (doAntiBtagging && nNonBjetsPresent(selectedJets_bTagCSV,antibtagWP)==2)) //used to be nNonBjetsPresent(selectedJets_bTagCSV,antibtagWP)==2  //TO BE FIXED: >=2 non-b jets -> euhm I just changed it now from ==2 to >=2, is it fixed now?
-							      //  {
+									     if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+											 {
 											   if(verbosityBox) cout<<"category: ZHqq (mu)"<<endl;
-											   if(doBtagging && doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
-			                   {
-							              BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
-								            //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
-														MSPlot["MS_BtagWeight_boxZHqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
-								            scaleFactor = 	scaleFactor*BtagMCWeight; 
-							           }
-							           MSPlot["MS_St_boxZHqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
-												 
 												 float massZq;
 												 TLorentzVector Zcandidate = (selectedMuons[0] + selectedMuons[1]);
 												 if(Zcandidate.DeltaR(selectedAntiBtaggedJets[0]) > Zcandidate.DeltaR(selectedAntiBtaggedJets[1]))
 												    massZq = (selectedMuons[0] + selectedMuons[1] + selectedAntiBtaggedJets[0]).M();
 												 else
-												    massZq = (selectedMuons[0] + selectedMuons[1] + selectedAntiBtaggedJets[1]).M();												 
-												 MSPlot["MS_MQ_boxZHqq_mu"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);												 
+												    massZq = (selectedMuons[0] + selectedMuons[1] + selectedAntiBtaggedJets[1]).M();
+												 MSPlot["MS_MQ_boxZHqq_noBtagSF_mu"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);
+											   if(doBtagging && doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                   {
+							              BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								            //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+														MSPlot["MS_BtagWeight_boxZHqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
+								            scaleFactor = 	scaleFactor*BtagMCWeight; 
+							           }
+							           MSPlot["MS_St_boxZHqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
+												 MSPlot["MS_MET_boxZHqq_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);											 
+												 MSPlot["MS_MQ_boxZHqq_mu"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);
 												 
-										//	}
+											}												 
 									}
+									else if(nBtags == 0) //not the same as anti-b-tagging every jet
+									{
+									     if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+											 {
+									       if(verbosityBox) cout<<"category: semilep ZZqq and WZqq (mu)"<<endl; //only one of the Z's decays leptonically, the other Z or W hadronically
+												 float massZq;
+												 TLorentzVector Zcandidate = (selectedMuons[0] + selectedMuons[1]);
+												 if(Zcandidate.DeltaR(selectedAntiBtaggedJets[0]) > Zcandidate.DeltaR(selectedAntiBtaggedJets[1]))
+												    massZq = (selectedMuons[0] + selectedMuons[1] + selectedAntiBtaggedJets[0]).M();
+												 else
+												    massZq = (selectedMuons[0] + selectedMuons[1] + selectedAntiBtaggedJets[1]).M();
+												 MSPlot["MS_MQ_boxSemiLepZZqqWZqq_noBtagSF_mu"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);	
+												 
+												 if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                   {
+							              BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								            //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								            scaleFactor = 	scaleFactor*BtagMCWeight; 
+							           }
+												 MSPlot["MS_MET_boxSemiLepZZqqWZqq_mu"]->Fill(met,datasets[d], true, LuminosityMu*scaleFactor);
+							           MSPlot["MS_St_boxSemiLepZZqqWZqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_HT_boxSemiLepZZqqWZqq_mu"]->Fill(HT,datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_LeadingJetPt_boxSemiLepZZqqWZqq_mu"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_LeadingJetEta_boxSemiLepZZqqWZqq_mu"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_SubLeadingJetPt_boxSemiLepZZqqWZqq_mu"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_SubLeadingJetEta_boxSemiLepZZqqWZqq_mu"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_nJets_boxSemiLepZZqqWZqq_mu"]->Fill(selectedJets.size(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_Muon1Pt_boxSemiLepZZqqWZqq_mu"]->Fill(selectedMuons[0].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_Muon1Eta_boxSemiLepZZqqWZqq_mu"]->Fill(selectedMuons[0].Eta(),datasets[d], true, LuminosityMu*scaleFactor);
+												 MSPlot["MS_Muon2Pt_boxSemiLepZZqqWZqq_mu"]->Fill(selectedMuons[1].Pt(),datasets[d], true, LuminosityMu*scaleFactor);
+								         MSPlot["MS_Muon2Eta_boxSemiLepZZqqWZqq_mu"]->Fill(selectedMuons[1].Eta(),datasets[d], true, LuminosityMu*scaleFactor);												 
+												 MSPlot["MS_MQ_boxSemiLepZZqqWZqq_mu"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);	
+										   }											 									
+									}						
 							 }
 				     }
 						 else
@@ -1844,142 +2162,29 @@ int main (int argc, char *argv[])
 					}
 					else
 					{
-					  selecTableMu.Fill(d,1,scaleFactor);
+//					  selecTableMu.Fill(d,1,scaleFactor);
 					  if( selectedJets.size() >= 2 )
 			      {
-						   selecTableMu.Fill(d,2,scaleFactor);
+//						   selecTableMu.Fill(d,2,scaleFactor);
 					     if((selectedJets[0].Pt() >= LeadingJetPtCut) && (selectedJets[1].Pt() >= SubLeadingJetPtCut))
 				       {
-							    selecTableMu.Fill(d,3,scaleFactor);
+//							    selecTableMu.Fill(d,3,scaleFactor);
 							    //if(!useBtagInfoFromFile) bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);
                   if(!doMETcutboxWWqq || (doMETcutboxWWqq && met>METcutboxWWqq))
 						      {
 									 if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0
 						       {
-									   selecTableMu.Fill(d,4,scaleFactor);
+//									   selecTableMu.Fill(d,4,scaleFactor);
 									   if(verbosityBox) cout<<"category: WWqq (mu)"<<endl;
 									   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			               {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWWqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							       }
 									   //cout<<"ST = "<<ST<<", met = "<<met<<", selectedJets[0].Pt() = "<<selectedJets[0].Pt()<<", selectedJets.size() = "<<selectedJets.size()<<endl;
-						         MSPlot["MS_St_boxWWqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);
-										 
-							/*	  ///////////Try to construct some mass variable
-									//first split met vector in two parts which are equal in size, and are orthogonal
-									TLorentzVector metvector1, metvector2;
-									metvector1.SetPxPyPzE((metvector.Px()+metvector.Py())/2,(metvector.Py()-metvector.Px())/2,0,sqrt((pow(metvector.Px(),2)+pow(metvector.Py(),2))/2));
-									metvector2.SetPxPyPzE((metvector.Px()-metvector.Py())/2,(metvector.Py()+metvector.Px())/2,0,sqrt((pow(metvector.Px(),2)+pow(metvector.Py(),2))/2));
-									
-									TLorentzVector tmpneutrinosQ1[4],tmpneutrinosQ2[4];
-									//hypothesis A: assume metvector1 is associated to muon1
-									MEzCalculator mezcalc1;
-								  mezcalc1.SetMuon(selectedMuons[0]);
-								  mezcalc1.SetMET(metvector1);
-									mezcalc1.Calculate(4);
-								  tmpneutrinosQ1[0] = mezcalc1.gettmpneutrino1();
-									tmpneutrinosQ1[1] = mezcalc1.gettmpneutrino2();
-									//metvector2 is associated to muon2 in that case
-									MEzCalculator mezcalc2;
-								  mezcalc2.SetMuon(selectedMuons[1]);
-								  mezcalc2.SetMET(metvector2);
-									mezcalc2.Calculate(4);
-								  tmpneutrinosQ2[0] = mezcalc2.gettmpneutrino1();
-									tmpneutrinosQ2[1] = mezcalc2.gettmpneutrino2();
-									
-									//hypothesis B: assume metvector1 is associated to muon2
-									MEzCalculator mezcalc3;
-								  mezcalc3.SetMuon(selectedMuons[1]);
-								  mezcalc3.SetMET(metvector1);
-									mezcalc3.Calculate(4);
-								  tmpneutrinosQ1[2] = mezcalc3.gettmpneutrino1();
-									tmpneutrinosQ1[3] = mezcalc3.gettmpneutrino2();
-									//metvector2 is associated to muon in that case
-									MEzCalculator mezcalc4;
-								  mezcalc4.SetMuon(selectedMuons[0]);
-								  mezcalc4.SetMET(metvector2);
-									mezcalc4.Calculate(4);
-								  tmpneutrinosQ2[2] = mezcalc4.gettmpneutrino1();
-									tmpneutrinosQ2[3] = mezcalc4.gettmpneutrino2();
-																		
-									float maxaverageDeltaR_hypoA = -9999, maxaverageDeltaR_hypoB = -9999;
-									float MQaverage_hypoA = -9999, MQaverage_hypoB = -9999;
-									float MQdiff_hypoA = -9999, MQdiff_hypoB = -9999;
-									for(unsigned int inQ1=0;inQ1<2;inQ1++)
-									{
-									   for(unsigned int inQ2=0;inQ2<2;inQ2++)
-									   {
-										    float MQ1_option1 = (tmpneutrinosQ1[inQ1] + selectedMuons[0] + selectedJets[0]).M();
-										    float MQ2_option1 = (tmpneutrinosQ2[inQ2] + selectedMuons[1] + selectedJets[1]).M();
-												float MQ1_option2 = (tmpneutrinosQ1[inQ1] + selectedMuons[0] + selectedJets[1]).M();
-										    float MQ2_option2 = (tmpneutrinosQ2[inQ2] + selectedMuons[1] + selectedJets[0]).M();
-												
-												float averageDeltaR_option1 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[0]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[1]))/2;
-												float averageDeltaR_option2 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[1]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[0]))/2;
-												
-												if(averageDeltaR_option1 >= averageDeltaR_option2)
-												{
-												   if(averageDeltaR_option1 > maxaverageDeltaR_hypoA)
-													 {
-													    maxaverageDeltaR_hypoA = averageDeltaR_option1;
-															MQaverage_hypoA = (MQ1_option1 + MQ2_option1) / 2;
-															MQdiff_hypoA = fabs(MQ1_option1 - MQ2_option1);
-													 }
-												}
-												else
-												{
-												   if(averageDeltaR_option2 > maxaverageDeltaR_hypoA)
-													 {
-													    maxaverageDeltaR_hypoA = averageDeltaR_option2;
-															MQaverage_hypoA = (MQ1_option2 + MQ2_option2) / 2;
-															MQdiff_hypoA = fabs(MQ1_option2 - MQ2_option2);
-													 }												
-												}
-										 }
-									}
-									for(unsigned int inQ1=2;inQ1<4;inQ1++)
-									{
-									   for(unsigned int inQ2=2;inQ2<4;inQ2++)
-									   {
-										    float MQ1_option1 = (tmpneutrinosQ1[inQ1] + selectedMuons[1] + selectedJets[0]).M();
-										    float MQ2_option1 = (tmpneutrinosQ2[inQ2] + selectedMuons[0] + selectedJets[1]).M();
-												float MQ1_option2 = (tmpneutrinosQ1[inQ1] + selectedMuons[1] + selectedJets[1]).M();
-										    float MQ2_option2 = (tmpneutrinosQ2[inQ2] + selectedMuons[0] + selectedJets[0]).M();
-												
-												float averageDeltaR_option1 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[0]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[1]))/2;
-												float averageDeltaR_option2 = (tmpneutrinosQ1[inQ1].DeltaR(selectedJets[1]) + tmpneutrinosQ2[inQ2].DeltaR(selectedJets[0]))/2;
-												
-												if(averageDeltaR_option1 >= averageDeltaR_option2)
-												{
-												   if(averageDeltaR_option1 > maxaverageDeltaR_hypoB)
-													 {
-													    maxaverageDeltaR_hypoB = averageDeltaR_option1;
-															MQaverage_hypoB = (MQ1_option1 + MQ2_option1) / 2;
-															MQdiff_hypoB = fabs(MQ1_option1 - MQ2_option1);
-													}
-												}
-												else
-												{
-												   if(averageDeltaR_option2 > maxaverageDeltaR_hypoB)
-													 {
-													    maxaverageDeltaR_hypoB = averageDeltaR_option2;
-															MQaverage_hypoB = (MQ1_option2 + MQ2_option2) / 2;
-															MQdiff_hypoB = fabs(MQ1_option2 - MQ2_option2);
-													 }												
-												}
-										 }
-									}	
-									
-									//decide between hypothesis A and B via mass constraint...												
-									float MQaverage;
-									if(MQdiff_hypoA <= MQdiff_hypoB) MQaverage = MQaverage_hypoA;
-									else MQaverage = MQaverage_hypoB;
-									
-									MSPlot["MS_AveragePseudoMQ_boxWWqq_mu"]->Fill(MQaverage, datasets[d], true, LuminosityMu*scaleFactor);		
-									*/	
+						         MSPlot["MS_St_boxWWqq_mu"]->Fill(ST,datasets[d], true, LuminosityMu*scaleFactor);										 							
 								   }
 									}
 						   }		
@@ -1996,16 +2201,26 @@ int main (int argc, char *argv[])
 					     
 							 if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0
 						   {
+							  if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+								{
 							    if(verbosityBox) cout<<"category: WZqq (mu)"<<endl;
 							    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			            {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWZqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							    }
 					        MSPlot["MS_nEvts_boxWZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
 						      MSPlot["MS_nEvts_boxWZqqZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+									
+									if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+									{
+									   massleptons = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[0]]).M();
+									}
+								  if(fabs(Zmass - massleptons) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+								}
 						   }
 					  }
 					}					
@@ -2020,16 +2235,28 @@ int main (int argc, char *argv[])
 					     
 							 if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0
 						   {
+							  if((indicesMuPlus.size()==1 && indicesMuMinus.size()==1) && (indicesElPlus.size()==1 && indicesElMinus.size()==1))
+								{
 							    if(verbosityBox) cout<<"category: ZZqq (mu)"<<endl;
 							    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			            {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxZZqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							    }
 					        MSPlot["MS_nEvts_boxZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
 						      MSPlot["MS_nEvts_boxWZqqZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+									
+									float massleptons2 = 9999;
+									if((indicesMuPlus.size()==1 && indicesMuMinus.size()==1) && (indicesElPlus.size()==1 && indicesElMinus.size()==1))
+									{
+									  massleptons = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[1]]).M();
+										massleptons2 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[1]]).M();
+									}
+								  if(fabs(Zmass - massleptons) < Zmasswindow && fabs(Zmass - massleptons2) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+								}
 						   }
 					  }
 					}
@@ -2054,13 +2281,31 @@ int main (int argc, char *argv[])
 							    if(verbosityBox) cout<<"category: WZqq (mu)"<<endl;
 							    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			            {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWZqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							    }
 					        MSPlot["MS_nEvts_boxWZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
 						      MSPlot["MS_nEvts_boxWZqqZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+									
+									if(indicesMuPlus.size()==2 && indicesMuMinus.size()==1)
+									{
+									  float massleptons_opt1 = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[0]]).M(); 
+									  float massleptons_opt2 = (selectedMuons[indicesMuPlus[1]] + selectedMuons[indicesMuMinus[0]]).M(); 
+										if(massleptons_opt1 < massleptons_opt2) massleptons = massleptons_opt1;
+										else massleptons = massleptons_opt2;
+									}
+									else if(indicesMuPlus.size()==1 && indicesMuMinus.size()==2)
+									{
+									  float massleptons_opt1 = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[0]]).M(); 
+									  float massleptons_opt2 = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[1]]).M(); 
+										if(massleptons_opt1 < massleptons_opt2) massleptons = massleptons_opt1;
+										else massleptons = massleptons_opt2;
+									}								
+									
+								  if(fabs(Zmass - massleptons) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
 						   }
 					  }
 					}
@@ -2094,16 +2339,35 @@ int main (int argc, char *argv[])
 					    
 							if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size()))) //used to be nBjetsPresent(selectedJets_bTagCSV,antibtagWP)==0
 						  {
-							  if(verbosityBox) cout<<"category: ZZqq (mu)"<<endl;
-							  if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
-			          {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							 if((indicesMuPlus.size()==2 && indicesMuMinus.size()==2))
+							 {
+							   if(verbosityBox) cout<<"category: ZZqq (mu)"<<endl;
+							   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			           {
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxZZqq_mu"]->Fill(BtagMCWeight, datasets[d], true, LuminosityMu*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
-							  }
-					      MSPlot["MS_nEvts_boxZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
-						    MSPlot["MS_nEvts_boxWZqqZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+							   }
+					       MSPlot["MS_nEvts_boxZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+						     MSPlot["MS_nEvts_boxWZqqZZqq_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+								
+								 //events with 3 or 4 same-charge leptons not compatible with ZZ signal
+								 float massleptons2 = 9999;
+								 float massleptons_opt1 = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[0]]).M(); 
+								 float massleptons2_opt1 = (selectedMuons[indicesMuPlus[1]] + selectedMuons[indicesMuMinus[1]]).M(); 
+								 float massleptons_opt2 = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[1]]).M(); 
+								 float massleptons2_opt2 = (selectedMuons[indicesMuPlus[1]] + selectedMuons[indicesMuMinus[0]]).M(); 
+									  
+								 if(massleptons_opt1 < massleptons_opt2) massleptons = massleptons_opt1;
+								 else massleptons = massleptons_opt2;
+										
+								 if(massleptons2_opt1 < massleptons2_opt2) massleptons2 = massleptons2_opt1;
+								 else massleptons2 = massleptons2_opt2;										
+															
+								 if(fabs(Zmass - massleptons) < Zmasswindow && fabs(Zmass - massleptons2) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_mu"]->Fill(1,datasets[d], true, LuminosityMu*scaleFactor);
+							 }
 						  }
 					  }
 					}
@@ -2122,16 +2386,87 @@ int main (int argc, char *argv[])
 			 {
 			  if(SelectednEl == 1)
 				{	
-				  if( (selectedJets.size() == 1 || selectedJets.size() == 2) && selectedForwardJets.size() == 1 )
-			    { 
+								
+				  //sort of control region
+				  if(selectedJets.size() >= 1)
+					{
+					    if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						  {
+							   float MT = sqrt(2*selectedElectrons[0].Pt()*met*(1-cos(selectedElectrons[0].DeltaPhi(metvector))));
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								    if((!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq)) && (!doMTcut || (doMTcut && MT>MTcut)))
+							      {
+										   float myBtagMCWeight = 1;
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            myBtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+							         }	
+											 if(selectedForwardJets.size() == 0) MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_el"]->Fill(selectedJets.size(), datasets[d], true, LuminosityEl*scaleFactor*myBtagMCWeight);
+								       else MSPlot["MS_nJets_preboxWqq_leadingjet150-200_noNumberCentralJetCut_el"]->Fill(selectedJets.size(), datasets[d], true, LuminosityEl*scaleFactor*myBtagMCWeight);
+										}
+								 }
+						  }
+				  }
+				
+				
+				  if(selectedJets.size() == 1 || selectedJets.size() == 2)
+			    {
+					 if(selectedForwardJets.size() == 1)
+					 { 
 					   ST = ST + selectedForwardJets[0].Pt();
+						 HT = HT + selectedForwardJets[0].Pt();
 					   MSPlot["MS_MET_preboxWqq_noleadingjetcut_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
+					   MSPlot["MS_HT_preboxWqq_noleadingjetcut_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+						 MSPlot["MS_LeadingJetPt_preboxWqq_noleadingjetcut_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+						 MSPlot["MS_LeadingJetEta_preboxWqq_noleadingjetcut_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+						 if(selectedJets.size()>1)
+						 {
+								  MSPlot["MS_SubLeadingJetPt_preboxWqq_noleadingjetcut_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								  MSPlot["MS_SubLeadingJetEta_preboxWqq_noleadingjetcut_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+						 }
+						
+						 //some sort of 'control region' (to be checked if not too much signal in it, though)
+						 if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						 { 
+						  if(!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq))
+						  {
+						   MSPlot["MS_MET_preboxWqq_leadingjet150-200_METcut_el"]->Fill(met, datasets[d], true, LuminosityEl*scaleFactor);
+						   MSPlot["MS_HT_preboxWqq_leadingjet150-200_METcut_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+							 MSPlot["MS_ST_preboxWqq_leadingjet150-200_METcut_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
+						   MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_METcut_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							 MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_METcut_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							 if(selectedJets.size()>1)
+							 {
+							   MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_METcut_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							   MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_METcut_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							 }
+							 MSPlot["MS_ElectronPt_preboxWqq_leadingjet150-200_METcut_el"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							 MSPlot["MS_ElectronEta_preboxWqq_leadingjet150-200_METcut_el"]->Fill(selectedElectrons[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							}
+							MSPlot["MS_MET_preboxWqq_leadingjet150-200_el"]->Fill(met, datasets[d], true, LuminosityEl*scaleFactor);
+						 }
+
 					   if(selectedJets[0].Pt() >= LeadingJetPtCut)
 				     { 
 						    //if(!useBtagInfoFromFile) bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);
 								float MT = sqrt(2*selectedElectrons[0].Pt()*met*(1-cos(selectedElectrons[0].DeltaPhi(metvector))));
 								MSPlot["MS_MTleptonmet_preboxWqq_el"]->Fill(MT, datasets[d], true, LuminosityEl*scaleFactor);
 						    MSPlot["MS_MET_preboxWqq_noMETMTcut_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_HT_preboxWqq_noMETMTcut_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_LeadingJetPt_preboxWqq_noMETMTcut_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_LeadingJetEta_preboxWqq_noMETMTcut_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							  if(selectedJets.size()>1)
+							  {
+								  MSPlot["MS_SubLeadingJetPt_preboxWqq_noMETMTcut_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								  MSPlot["MS_SubLeadingJetEta_preboxWqq_noMETMTcut_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							  }
+							  MSPlot["MS_ForwardJetPt_preboxWqq_noMETMTcut_el"]->Fill(selectedForwardJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_ForwardJetEta_preboxWqq_noMETMTcut_el"]->Fill(selectedForwardJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_nJets_preboxWqq_noMETMTcut_el"]->Fill(selectedJets.size(),datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_ElectronPt_preboxWqq_noMETMTcut_el"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							  MSPlot["MS_ElectronEta_preboxWqq_noMETMTcut_el"]->Fill(selectedElectrons[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
 								if((!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq)) && (!doMTcut || (doMTcut && MT>MTcut)))
 							  {	
 								 MSPlot["MS_MET_preboxWqq_noBveto_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
@@ -2140,14 +2475,30 @@ int main (int argc, char *argv[])
 								    if(verbosityBox) cout<<"category: Wqq (el)"<<endl;
 								    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			              {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							      }
 								 
 								   MSPlot["MS_MET_boxWqq_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
+									 MSPlot["MS_MTleptonmet_boxWqq_el"]->Fill(MT, datasets[d], true, LuminosityEl*scaleFactor);	
 						       MSPlot["MS_St_boxWqq_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_HT_boxWqq_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_LeadingJetPt_boxWqq_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_LeadingJetEta_boxWqq_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								   if(selectedJets.size()>1)
+								   {
+								      MSPlot["MS_SubLeadingJetPt_boxWqq_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+										  MSPlot["MS_SubLeadingJetEta_boxWqq_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								   }
+								   MSPlot["MS_ForwardJetPt_boxWqq_el"]->Fill(selectedForwardJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_ForwardJetEta_boxWqq_el"]->Fill(selectedForwardJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_nJets_boxWqq_el"]->Fill(selectedJets.size(),datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_ElectronPt_boxWqq_el"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_ElectronEta_boxWqq_el"]->Fill(selectedElectrons[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								   MSPlot["MS_MCeventWeight_boxWqq_el"]->Fill(LuminosityEl*scaleFactor*datasets[d]->NormFactor(),datasets[d], false, LuminosityEl*scaleFactor); //not scaling the events...
+								 								 
 									 //float MTQ = sqrt(2*selectedElectrons[0].Pt()*met*(1-cos(selectedElectrons[0].DeltaPhi(metvector))));
 									 float MTQ = sqrt(2*selectedElectrons[0].Pt()*met*(1-cos(selectedElectrons[0].DeltaPhi(metvector))) + 2*selectedElectrons[0].Pt()*selectedJets[0].Pt()*(1-cos(selectedElectrons[0].DeltaPhi(selectedJets[0]))) + 2*met*selectedJets[0].Pt()*(1-cos(metvector.DeltaPhi(selectedJets[0]))));								 
 								   MSPlot["MS_MTQ_boxWqq_el"]->Fill(MTQ,datasets[d], true, LuminosityEl*scaleFactor);
@@ -2181,6 +2532,41 @@ int main (int argc, char *argv[])
 								 }
 								}
 						 }
+					 }
+					 else if(selectedForwardJets.size() == 0)
+					 {
+					    //sort of control region
+							if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						  {
+							   float MT = sqrt(2*selectedElectrons[0].Pt()*met*(1-cos(selectedElectrons[0].DeltaPhi(metvector))));
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								    MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_noMETMTcut_el"]->Fill(met, datasets[d], true, LuminosityEl*scaleFactor);
+								    if((!doMETcutboxWqq || (doMETcutboxWqq && met>METcutboxWqq)) && (!doMTcut || (doMTcut && MT>MTcut)))
+							      {
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								          scaleFactor = 	scaleFactor*BtagMCWeight; 
+							         }
+											 MSPlot["MS_MET_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(met, datasets[d], true, LuminosityEl*scaleFactor);
+											 MSPlot["MS_MTleptonmet_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(MT, datasets[d], true, LuminosityEl*scaleFactor);	
+						           MSPlot["MS_HT_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_ST_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
+						           MSPlot["MS_LeadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_LeadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							         if(selectedJets.size()>1)
+							         {
+							           MSPlot["MS_SubleadingJetPt_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+						        	   MSPlot["MS_SubleadingJetEta_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+					          	 }
+					          	 MSPlot["MS_ElectronPt_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_ElectronEta_preboxWqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedElectrons[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+										}
+								 }
+						  }					 
+					 }				 
 				  }
 				  else if((doAntiBtagging && selectedAntiBtaggedJets.size()>=2 && selectedJets.size() >= 3) || (!doAntiBtagging && selectedJets.size() >= 3))
 			    {
@@ -2198,7 +2584,7 @@ int main (int argc, char *argv[])
 									  if(verbosityBox) cout<<"category: WHqq (el)"<<endl;
 									  if(doBtagging && doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			              {
-							           BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							           BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								         //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 											   MSPlot["MS_BtagWeight_boxWHqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								         scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -2289,21 +2675,50 @@ int main (int argc, char *argv[])
 				else if(SelectednEl == 2)
 				{									
 					massleptons = (selectedElectrons[0] + selectedElectrons[1]).M();
+					MSPlot["MS_Mleptons_preboxZqq_el"]->Fill(massleptons,datasets[d], true, LuminosityEl*scaleFactor);	
 					
 					if( fabs(Zmass - massleptons) < Zmasswindow)
-					{					
-				     if( (selectedJets.size() == 1 || selectedJets.size() == 2) && selectedForwardJets.size() == 1 )
-			       {						 
+					{			
+					   
+						 //sort of control region
+				     if(selectedJets.size() >= 1)
+					   {
+					    if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						  {
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								   if((indicesElPlus.size()==1 && indicesElMinus.size()==1))
+							     {
+								       float myBtagMCWeight = 1;
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+							         }
+											 if(selectedForwardJets.size() == 0) MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noForwardJet_noNumberCentralJetCut_el"]->Fill(selectedJets.size(), datasets[d], true, LuminosityEl*scaleFactor*myBtagMCWeight);
+									     else MSPlot["MS_nJets_preboxZqq_leadingjet150-200_noNumberCentralJetCut_el"]->Fill(selectedJets.size(), datasets[d], true, LuminosityEl*scaleFactor*myBtagMCWeight);
+								   }
+								 }
+						  }
+				     }
+					
+							
+				     if( (selectedJets.size() == 1 || selectedJets.size() == 2))
+			       {
+						  if(selectedForwardJets.size() == 1 )
+						 	{					 
 						    if(selectedJets[0].Pt() >= LeadingJetPtCut)
 				        {
 								  //if(!useBtagInfoFromFile) bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);
 								  
 									if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
 						      {
+									 if((indicesElPlus.size()==1 && indicesElMinus.size()==1))
+							     {
 									  if(verbosityBox) cout<<"category: Zqq (el)"<<endl;
 									  if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			              {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxZqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -2313,13 +2728,51 @@ int main (int argc, char *argv[])
 									  //calculate mass of (two-lepton and leading jet)-system
 									  float massZq = (selectedElectrons[0] + selectedElectrons[1] + selectedJets[0]).M();
 									  MSPlot["MS_MQ_boxZqq_el"]->Fill(massZq,datasets[d], true, LuminosityMu*scaleFactor);
+									 }
 								  }
 								}
+							}
+							else if(selectedForwardJets.size() == 0)
+					    {
+					      //sort of control region
+							  if((selectedJets[0].Pt() >= 150) && (selectedJets[0].Pt() <= 200))
+						    {
+						     if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
+							   {	
+								   if((indicesElPlus.size()==1 && indicesElMinus.size()==1))
+							     {
+										   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                 {
+							            BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								          //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								          scaleFactor = 	scaleFactor*BtagMCWeight; 
+							         }
+											 MSPlot["MS_MET_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(met, datasets[d], true, LuminosityEl*scaleFactor);
+						           MSPlot["MS_HT_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_ST_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
+						           MSPlot["MS_LeadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_LeadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+							         if(selectedJets.size()>1)
+							         {
+							           MSPlot["MS_SubleadingJetPt_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+						        	   MSPlot["MS_SubleadingJetEta_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+					          	 }
+					          	 MSPlot["MS_Electron1Pt_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_Electron1Eta_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedElectrons[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+											 MSPlot["MS_Electron2Pt_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedElectrons[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+							         MSPlot["MS_Electron2Eta_preboxZqq_leadingjet150-200_noForwardJet_el"]->Fill(selectedElectrons[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								   }
+								 }
+						    }					 
+					    }		
 				     }
 				     else if((doAntiBtagging && selectedAntiBtaggedJets.size()>=2 && selectedJets.size() >= 3) || (!doAntiBtagging && selectedJets.size() >= 3))
 			       {
 						    if((doAntiBtagging && (selectedAntiBtaggedJets[0].Pt() >= LeadingJetPtCut) && (selectedAntiBtaggedJets[1].Pt() >= SubLeadingJetPtCut)) || (!doAntiBtagging && (selectedJets[0].Pt() >= LeadingJetPtCut) && (selectedJets[1].Pt() >= SubLeadingJetPtCut)))
-				        {			
+				        {
+								  if((indicesElPlus.size()==1 && indicesElMinus.size()==1))
+							    {
+											
 								   //if(!useBtagInfoFromFile)
 							     //{
 							     //    bTool_L->FillMCEfficiencyHistos(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV);
@@ -2332,9 +2785,17 @@ int main (int argc, char *argv[])
 							        //if(!doAntiBtagging || (doAntiBtagging && nNonBjetsPresent(selectedJets_bTagCSV,antibtagWP)==2))  //TO BE FIXED: >=2 non-b jets
 							        //{	
 											   if(verbosityBox) cout<<"category: ZHqq (el)"<<endl;
-											   if(doBtagging && doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+											   float massZq;
+												 TLorentzVector Zcandidate = (selectedElectrons[0] + selectedElectrons[1]);
+												 if(Zcandidate.DeltaR(selectedAntiBtaggedJets[0]) > Zcandidate.DeltaR(selectedAntiBtaggedJets[1]))
+												    massZq = (selectedElectrons[0] + selectedElectrons[1] + selectedAntiBtaggedJets[0]).M();
+												 else
+												    massZq = (selectedElectrons[0] + selectedElectrons[1] + selectedAntiBtaggedJets[1]).M();	
+												 MSPlot["MS_MQ_boxZHqq_noBtagSF_el"]->Fill(massZq,datasets[d], true, LuminosityEl*scaleFactor);
+												 
+												 if(doBtagging && doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			                   {
-							               BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							               BtagMCWeight = bTool_LT->getMCEventWeight_LT(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								             //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 														 MSPlot["MS_BtagWeight_boxZHqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								             scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -2343,17 +2804,43 @@ int main (int argc, char *argv[])
 							           //float massZq1 = (selectedElectrons[0] + selectedElectrons[1] + selectedJets[0]).M();
 							 
 							           MSPlot["MS_St_boxZHqq_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
+												 MSPlot["MS_MET_boxZHqq_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);											 
+												 MSPlot["MS_MQ_boxZHqq_el"]->Fill(massZq,datasets[d], true, LuminosityEl*scaleFactor);
 												 
+											//}
+									 }
+									 else if(nBtags == 0) //not the same as anti-b-tagging every jet
+									 {
+									       if(verbosityBox) cout<<"category: semilep ZZqq and WZqq (el)"<<endl; //only one of the Z's decays leptonically, the other Z or W hadronically
 												 float massZq;
 												 TLorentzVector Zcandidate = (selectedElectrons[0] + selectedElectrons[1]);
 												 if(Zcandidate.DeltaR(selectedAntiBtaggedJets[0]) > Zcandidate.DeltaR(selectedAntiBtaggedJets[1]))
 												    massZq = (selectedElectrons[0] + selectedElectrons[1] + selectedAntiBtaggedJets[0]).M();
 												 else
-												    massZq = (selectedElectrons[0] + selectedElectrons[1] + selectedAntiBtaggedJets[1]).M();												 
-												 MSPlot["MS_MQ_boxZHqq_el"]->Fill(massZq,datasets[d], true, LuminosityEl*scaleFactor);
+												    massZq = (selectedElectrons[0] + selectedElectrons[1] + selectedAntiBtaggedJets[1]).M();
+												 MSPlot["MS_MQ_boxSemiLepZZqqWZqq_noBtagSF_el"]->Fill(massZq,datasets[d], true, LuminosityEl*scaleFactor);
 												 
-											//}
+												 if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
+			                   {
+							              BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
+								            //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
+								            scaleFactor = 	scaleFactor*BtagMCWeight; 
+							           }
+												 MSPlot["MS_MET_boxSemiLepZZqqWZqq_el"]->Fill(met,datasets[d], true, LuminosityEl*scaleFactor);
+							           MSPlot["MS_St_boxSemiLepZZqqWZqq_el"]->Fill(ST,datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_HT_boxSemiLepZZqqWZqq_el"]->Fill(HT,datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_LeadingJetPt_boxSemiLepZZqqWZqq_el"]->Fill(selectedJets[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_LeadingJetEta_boxSemiLepZZqqWZqq_el"]->Fill(selectedJets[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_SubLeadingJetPt_boxSemiLepZZqqWZqq_el"]->Fill(selectedJets[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_SubLeadingJetEta_boxSemiLepZZqqWZqq_el"]->Fill(selectedJets[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_nJets_boxSemiLepZZqqWZqq_el"]->Fill(selectedJets.size(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_Electron1Pt_boxSemiLepZZqqWZqq_el"]->Fill(selectedElectrons[0].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_Electron1Eta_boxSemiLepZZqqWZqq_el"]->Fill(selectedElectrons[0].Eta(),datasets[d], true, LuminosityEl*scaleFactor);
+												 MSPlot["MS_Electron2Pt_boxSemiLepZZqqWZqq_el"]->Fill(selectedElectrons[1].Pt(),datasets[d], true, LuminosityEl*scaleFactor);
+								         MSPlot["MS_Electron2Eta_boxSemiLepZZqqWZqq_el"]->Fill(selectedElectrons[1].Eta(),datasets[d], true, LuminosityEl*scaleFactor);											 
+												 MSPlot["MS_MQ_boxSemiLepZZqqWZqq_el"]->Fill(massZq,datasets[d], true, LuminosityEl*scaleFactor);											 									
 									 }
+								  }
 								}
 					 
 				     }
@@ -2376,7 +2863,7 @@ int main (int argc, char *argv[])
 									   if(verbosityBox) cout<<"category: WWqq (el)"<<endl;
 									   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			               {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWWqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -2400,13 +2887,31 @@ int main (int argc, char *argv[])
 								   if(verbosityBox) cout<<"category: WZqq (el)"<<endl;
 								   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			             {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWZqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							     }
 					         MSPlot["MS_nEvts_boxWZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
 							     MSPlot["MS_nEvts_boxWZqqZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+									 
+									 if(indicesElPlus.size()==2 && indicesElMinus.size()==1)
+									 {
+									   float massleptons_opt1 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[0]]).M(); 
+									   float massleptons_opt2 = (selectedElectrons[indicesElPlus[1]] + selectedElectrons[indicesElMinus[0]]).M(); 
+										 if(massleptons_opt1 < massleptons_opt2) massleptons = massleptons_opt1;
+										 else massleptons = massleptons_opt2;
+									 }
+									 else if(indicesElPlus.size()==1 && indicesElMinus.size()==2)
+								   {
+									   float massleptons_opt1 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[0]]).M(); 
+									   float massleptons_opt2 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[1]]).M(); 
+										 if(massleptons_opt1 < massleptons_opt2) massleptons = massleptons_opt1;
+										 else massleptons = massleptons_opt2;
+									 }																	
+								   if(fabs(Zmass - massleptons) < Zmasswindow)
+								     MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+									 
 							  }	
 					   }
 					}							
@@ -2421,16 +2926,35 @@ int main (int argc, char *argv[])
 					      
 								if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
 						    {
+								  if(indicesElPlus.size()==2 && indicesElMinus.size()==2)
+								  {
 								   if(verbosityBox) cout<<"category: ZZqq (el)"<<endl;
 								   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			             {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxZZqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							     }
 					         MSPlot["MS_nEvts_boxZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
 							     MSPlot["MS_nEvts_boxWZqqZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+									 
+									 //events with 3 or 4 same-charge leptons not compatible with ZZ signal
+								   float massleptons2 = 9999;
+								   float massleptons_opt1 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[0]]).M(); 
+									 float massleptons2_opt1 = (selectedElectrons[indicesElPlus[1]] + selectedElectrons[indicesElMinus[1]]).M(); 
+									 float massleptons_opt2 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[1]]).M(); 
+									 float massleptons2_opt2 = (selectedElectrons[indicesElPlus[1]] + selectedElectrons[indicesElMinus[0]]).M(); 
+									  
+									 if(massleptons_opt1 < massleptons_opt2) massleptons = massleptons_opt1;
+									 else massleptons = massleptons_opt2;
+										
+									 if(massleptons2_opt1 < massleptons2_opt2) massleptons2 = massleptons2_opt1;
+									 else massleptons2 = massleptons2_opt2;																										
+								   if(fabs(Zmass - massleptons) < Zmasswindow && fabs(Zmass - massleptons2) < Zmasswindow)
+								      MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+									}
+									 
 							  }
 					   }
 					 }	
@@ -2456,7 +2980,7 @@ int main (int argc, char *argv[])
 							    if(verbosityBox) cout<<"category: WWqq (el)"<<endl; //(no need to check the invariant mass of the leptons, they should not come from a Z...)
 							    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			            {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWWqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
@@ -2477,16 +3001,23 @@ int main (int argc, char *argv[])
 					     
 							 if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
 						   {
+							  if(indicesElPlus.size()==1 && indicesElMinus.size()==1)
+								{
 							    if(verbosityBox) cout<<"category: WZqq (el)"<<endl;
 							    if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			            {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWZqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							    }
 					        MSPlot["MS_nEvts_boxWZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
 						      MSPlot["MS_nEvts_boxWZqqZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+									
+									massleptons = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[0]]).M();
+								  if(fabs(Zmass - massleptons) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+								}
 						   }
 					  }
 					}
@@ -2520,16 +3051,23 @@ int main (int argc, char *argv[])
 					    
 							if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
 						  {
+							  if(indicesMuPlus.size()==1 && indicesMuMinus.size()==1)
+								{
 							   if(verbosityBox) cout<<"category: WZqq (el)"<<endl;
 							   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			           {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxWZqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							   }
 					       MSPlot["MS_nEvts_boxWZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);	
 						     MSPlot["MS_nEvts_boxWZqqZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+								 
+								 massleptons = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[0]]).M();
+								 if(fabs(Zmass - massleptons) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+							  }
 						  }	
 				    }
 					}			
@@ -2544,16 +3082,25 @@ int main (int argc, char *argv[])
 					    
 							if(!doAntiBtagging || (doAntiBtagging && (selectedJets.size()==selectedAntiBtaggedJets.size())))
 						  {
+							 if((indicesMuPlus.size()==1 && indicesMuMinus.size()==1) && (indicesElPlus.size()==1 && indicesElMinus.size()==1))
+							 {
 							   if(verbosityBox) cout<<"category: ZZqq (el)"<<endl;
 							   if(doAntiBtagging && applyBtagSF && useBtagInfoFromFile && !((dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0) || (dataSetName.find("InvIso") != string::npos)))
 			           {
-							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag);
+							          BtagMCWeight = bTool_L->getMCEventWeight(selectedJets,selectedJets_partonFlavour,selectedJets_bTagCSV,syst_btag,syst_mistag);
 								        //cout << "   ---> BtagMCWeight = "<<BtagMCWeight<<endl;
 												MSPlot["MS_BtagWeight_boxZZqq_el"]->Fill(BtagMCWeight, datasets[d], true, LuminosityEl*scaleFactor);
 								        scaleFactor = 	scaleFactor*BtagMCWeight; 
 							   }
 					       MSPlot["MS_nEvts_boxZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
 						     MSPlot["MS_nEvts_boxWZqqZZqq_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+								 
+								 float massleptons2 = 9999;
+								 massleptons = (selectedMuons[indicesMuPlus[0]] + selectedMuons[indicesMuMinus[1]]).M();
+								 massleptons2 = (selectedElectrons[indicesElPlus[0]] + selectedElectrons[indicesElMinus[1]]).M();
+								 if(fabs(Zmass - massleptons) < Zmasswindow && fabs(Zmass - massleptons2) < Zmasswindow)
+								    MSPlot["MS_nEvts_boxWZqqZZqq_Zwindow_el"]->Fill(1,datasets[d], true, LuminosityEl*scaleFactor);
+							 }
 						  }
 					  }
 					}
@@ -2589,8 +3136,6 @@ int main (int argc, char *argv[])
      //cout << "done processing event" << endl;
 		}//loop on events
 
-    ////to test 'purity' of good jet combinations with a 'simple' method (not MVA). For the moment not supported
-    //myInclFourthGenSearchTools.PrintPurityGoodCombinations();
     
     cout<<endl;
     
@@ -2667,12 +3212,16 @@ int main (int argc, char *argv[])
     {
         MultiSamplePlot *temp = it->second;
         string name = it->first;
-				temp->showNumberEntries(false);
-				if(!foundMu && !foundEl)
-	          temp->setDataLumi(Luminosity);//if not run on data...	NARNING: I have to reconsider this; when running on muon-data only for example, the  luminosity in the electon plots still needs to be set like this...
-        //temp->Draw(false, name, true, true, true, true, true,5,false, true, true, true, true);// old way: (bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV, bool mergeVVV, bool mergeSameSignWW)
-        temp->setErrorBandFile("VLQSearch_ErrorBand/ErrorBandFile.root");
-				temp->Draw(name,0,false,false,false,5); //label, RatioType, addRatioErrorBand, addErrorBand, ErrorBandAroundTotalInput, scaleNPSignal
+				temp->showNumberEntries(true);
+				if(!foundMu && !foundEl) //warning, to be considered: what when you only run on e.g. mu data but not electron data
+				{
+				    if(hasEnding(name,"_mu")) temp->setDataLumi(LuminosityMu); //if not run on data...
+	          if(hasEnding(name,"_el")) temp->setDataLumi(LuminosityEl); //if not run on data...
+        }
+				//temp->Draw(false, name, true, true, true, true, true,5,false, true, true, true, true);// old way: (bool addRandomPseudoData, string label, bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST,int scaleNPsignal, bool addRatio, bool mergeVV, bool mergeTTV, bool mergeVVV, bool mergeSameSignWW)
+        temp->setErrorBandFile("VLQSearch_ErrorBand/ErrorBandFile_bugfix.root");
+				temp->Draw(name,2,false,false,false,5); //label, RatioType, addRatioErrorBand, addErrorBand, ErrorBandAroundTotalInput, scaleNPSignal
+				//temp->Draw(name,0,false,false,false,5); //for inviso
 				temp->Write(fout, name, savePNG, pathPNG+"MSPlot/");//bool savePNG
     }
     cout << "MultiSamplePlots written" << endl;
@@ -2710,10 +3259,11 @@ int main (int argc, char *argv[])
     fout->cd();
     
     //Selection tables
-    selecTableMu.TableCalculator(true, true, true, true, true, true, true,false);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
+/*    selecTableMu.TableCalculator(true, true, true, true, true, true, true,false);//(bool mergeTT, bool mergeQCD, bool mergeW, bool mergeZ, bool mergeST, bool mergeVV, bool mergettV, bool NP_mass)
     string selectiontableMu = "VLQSearch_SelectionTable_TreeAnalyzer_Mu";
     selectiontableMu = Outputpath+selectiontableMu+outputpostfix+".tex"; 	
     selecTableMu.Write(selectiontableMu.c_str(),false, true, false, false, false, false, false); //(filename, error, merged, lines, unscaled, eff, totaleff, landscape)
+*/
    /* 
 		selecTableMultiLep.TableCalculator(true, true, true, true, true, false, true, true);
     string selectiontableMultiLep = "InclFourthGenSearch_SelectionTable_TreeAnalyzer_MultiLepton";
