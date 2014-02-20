@@ -125,18 +125,36 @@ int analysis(string outname, string xmlfile, string pathPNG)
   MSPlot["NbOfVertices"]          = new MultiSamplePlot(datasets, "NbOfVertices", 40, 0, 40, "Nb. of vertices");
   // B-tagging discriminators
   //MSPlot["BdiscBJetCand_CSV"]     = new MultiSamplePlot(datasets, "HighestBdisc_CSV", 75, 0, 1, "CSV b-disc.");
-  // Jets
+
+  // Jet Numbers
   MSPlot["NbOfSelectedJets"]      = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0, 15, "Nb. of jets");
   MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0, 10, "Nb. of jets");
   MSPlot["NbOfSelectedBJets"]     = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0, 8, "Nb. of jets");
-  // Jet Kinematics
-  MSPlot["EtaJet1"]               = new MultiSamplePlot(datasets, "EtaJet1", 30,-4, 4, "Leading Jet #eta");
-  MSPlot["PhiJet1"]               = new MultiSamplePlot(datasets, "PhiJet1", 50, -4,4 ,"Leading Jet #phi");
-  MSPlot["PtJet1"]                = new MultiSamplePlot(datasets, "PtJet1",  200, 0, 1000 ,"Leading Jet p_{T}");
-  MSPlot["EtaJet2"]               = new MultiSamplePlot(datasets, "EtaJet2", 30,-4, 4, "Sub-Leading Jet #eta");
-  MSPlot["PhiJet2"]               = new MultiSamplePlot(datasets, "PhiJet2", 50, -4,4 ,"Sub-Leading Jet #phi");
-  MSPlot["PtJet2"]                = new MultiSamplePlot(datasets, "PtJet2",  200, 0, 1000 ,"Sub-Leading Jet p_{T}");
 
+  // Jet Variables
+  const int nJet=2;
+  string nameJet="";
+  string titleJet[nJet]={"Leading Jet", "Sub-Leading Jet"};
+
+  for(int iJ=0 ; iJ<nJet ; iJ++) {
+    nameJet=Form("_Jet%d",iJ+1);
+    cout << "--- nameJet=" << nameJet << endl;
+    
+    MSPlot["Eta"+nameJet] = new MultiSamplePlot(datasets, "Eta"+nameJet, 30,  -4, 4,     titleJet[iJ]+" #eta");
+    MSPlot["Phi"+nameJet] = new MultiSamplePlot(datasets, "Phi"+nameJet, 50,  -4, 4,     titleJet[iJ]+" #phi");
+    MSPlot["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJet, 200, 0,  1000,  titleJet[iJ]+" p_{T}");
+
+    MSPlot["chargedHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "chargedHad_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" charged had energy fraction");
+    MSPlot["neutralHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "neutralHad_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" neutral had energy fraction");
+    MSPlot["chargedEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedEm_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" charged EM  energy fraction");
+    MSPlot["chargedMu_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedMu_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" charged Mu  energy fraction");
+    MSPlot["neutralEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "neutralEm_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" neutral EM  energy fraction");
+    MSPlot["chargedMult"      +nameJet] = new MultiSamplePlot(datasets, "chargedMult"      +nameJet, 100, 0, 50,  titleJet[iJ]+" charged multiplicity");
+    MSPlot["neutralMult"      +nameJet] = new MultiSamplePlot(datasets, "neutralMult"      +nameJet, 100, 0, 50,  titleJet[iJ]+" neutral multiplicity");
+    MSPlot["muonMult"         +nameJet] = new MultiSamplePlot(datasets, "muonMult"         +nameJet, 100, 0, 50,  titleJet[iJ]+" muon multiplicity");
+
+  }
+  
   ///////////////////
   // Histograms
   ///////////////////
@@ -373,21 +391,33 @@ int analysis(string outname, string xmlfile, string pathPNG)
 
       // Event
       MSPlot["NbOfVertices"]         ->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
+
       // Jets
       MSPlot["NbOfSelectedJets"]     ->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfSelectedLightJets"]->Fill(selectedLightJets.size(), datasets[d], true, Luminosity*scaleFactor);
       MSPlot["NbOfSelectedBJets"]    ->Fill(selectedBJets.size(), datasets[d], true, Luminosity*scaleFactor);
-      // Jet Kinematics
-      if(selectedJetsPF.size()>0) {
-	MSPlot["EtaJet1"]->Fill(selectedJetsPF[0]->Eta(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["PhiJet1"]->Fill(selectedJetsPF[0]->Phi(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["PtJet1"] ->Fill(selectedJetsPF[0]->Pt(),  datasets[d], true, Luminosity*scaleFactor);
-	if(selectedJetsPF.size()>1) {
-	   MSPlot["EtaJet2"]->Fill(selectedJetsPF[1]->Eta(), datasets[d], true, Luminosity*scaleFactor);
-	   MSPlot["PhiJet2"]->Fill(selectedJetsPF[1]->Phi(), datasets[d], true, Luminosity*scaleFactor);
-	   MSPlot["PtJet2"] ->Fill(selectedJetsPF[1]->Pt(),  datasets[d], true, Luminosity*scaleFactor);
-	}
+
+      for(int iJ=0 ; iJ<nJet ; iJ++) {
+
+	if(selectedJetsPF.size()<=iJ) break;
+	
+	nameJet=Form("_Jet%d",iJ+1);
+
+	MSPlot["Eta"+nameJet]->Fill(selectedJetsPF[iJ]->Eta(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["Phi"+nameJet]->Fill(selectedJetsPF[iJ]->Phi(), datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["Pt"+nameJet] ->Fill(selectedJetsPF[iJ]->Pt(),  datasets[d], true, Luminosity*scaleFactor);
+
+	MSPlot["chargedHad_E_frac"+nameJet]->Fill(selectedJetsPF[iJ]->chargedHadronEnergyFraction(),  datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["neutralHad_E_frac"+nameJet]->Fill(selectedJetsPF[iJ]->neutralHadronEnergyFraction(),  datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["chargedEm_E_frac" +nameJet]->Fill(selectedJetsPF[iJ]->chargedEmEnergyFraction(),      datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["chargedMu_E_frac" +nameJet]->Fill(selectedJetsPF[iJ]->chargedMuEnergyFraction(),      datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["neutralEm_E_frac" +nameJet]->Fill(selectedJetsPF[iJ]->neutralEmEnergyFraction(),      datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["chargedMult"      +nameJet]->Fill(selectedJetsPF[iJ]->chargedMultiplicity(),          datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["neutralMult"      +nameJet]->Fill(selectedJetsPF[iJ]->neutralMultiplicity(),          datasets[d], true, Luminosity*scaleFactor);
+	MSPlot["muonMult"         +nameJet]->Fill(selectedJetsPF[iJ]->muonMultiplicity(),             datasets[d], true, Luminosity*scaleFactor);
+
       }
+
       //MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
       // Jets kinematics
       //MSPlot["JetEta"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
