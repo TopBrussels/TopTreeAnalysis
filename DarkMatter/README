@@ -1,0 +1,7 @@
+DarkMatter package (Nadir Daci)
+
+!!! do not forget to make a directory Results/  !!!
+mkdir Results/
+
+compile : ./make StudyJets.cc StudyJets
+execute : ./StudyJets
