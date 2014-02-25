@@ -177,8 +177,11 @@ int analysis(string outname, string xmlfile, string pathPNG)
   ////////////////////////////
   /// Loop over datasets  ////
   ////////////////////////////
+
+  u_int nDS=datasets.size();
+  cout << "NUMBER OF DATASETS : " << nDS << endl;
   
-  for (unsigned int d = 0; d < datasets.size(); d++) {
+  for (unsigned int d = 0; d < nDS; d++) {
     if (verbose > 1){
       cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;
       cout << " - Cross section = " << datasets[d]->Xsection() << endl;
@@ -365,8 +368,10 @@ int analysis(string outname, string xmlfile, string pathPNG)
       Selection selection(init_jets, init_muons, init_electrons, mets);
 
       // Define object selection cuts
-      //selection.setJetCuts(40.,2.5,0.01,1.,0.98,0,0);//Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
-      selection.setJetCuts(0.,5.,0.,0.,0.,0.,0.);//Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets //ND
+      // Jet cuts : Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
+      //selection.setJetCuts(40.,2.5,0.01,1.,0.98,0,0); // Jet ID
+      selection.setJetCuts(0.,2.5,0.01,1.,0.98,0,0); //ND Jet ID, no pT cut
+      //selection.setJetCuts(0.,5.,0.,0.,0.,0.,0.);//ND : No Jet ID
       
       vector<TRootJet*> selectedJets   = selection.GetSelectedJets(true); // ApplyJetId
 
@@ -578,7 +583,7 @@ int analysis(string outname, string xmlfile, string pathPNG)
     
   delete fout;
 
-  cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << " to run the program" << endl;
+  cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << "s to run the program" << endl;
   cout << "********************************************" << endl;
   cout << "           End of the program !!            " << endl;
   cout << "********************************************" << endl;

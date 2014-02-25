@@ -4,4 +4,9 @@ DarkMatter package (Nadir Daci)
 mkdir Results/
 
 compile : ./make StudyJets.cc StudyJets
-execute : ./StudyJets
+execute : ./StudyJets tree configQCD.xml Results/
+
+check files in configQCD.xml : 
+./checkFiles.sh > do_checkFiles.sh
+chmod u+x do_checkFiles.sh
+./do_checkFiles.sh

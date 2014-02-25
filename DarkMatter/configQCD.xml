@@ -7,13 +7,13 @@
 
 <datasets>
 
-<d name="QCD_HT_100_250" title="QCD_HT_100_250" add="1" color="4" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-100To250_TuneZ2star_8TeV-madgraph-pythia/Summer12_DR53X-PU_S10_START53_V7A-v1/12042013_210323/TOPTREE/12042013_210323_TOPTREE_173_2_P8i.root"/>
+<d name="QCD_HT_100_250" title="QCD_HT_100_250" add="1" color="418" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-100To250_TuneZ2star_8TeV-madgraph-pythia/Summer12_DR53X-PU_S10_START53_V7A-v1/12042013_210323/TOPTREE/12042013_210323_TOPTREE_173_2_P8i.root"/>
 
-<d name="QCD_HT_250_500" title="QCD_HT_250_500" add="1" color="5" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-250To500_TuneZ2star_8TeV-madgraph-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_151744/TOPTREE/06062013_151744_TOPTREE_879_3_PWV.root"/>
+<d name="QCD_HT_250_500" title="QCD_HT_250_500" add="1" color="619" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-250To500_TuneZ2star_8TeV-madgraph-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/13042013_125454/TOPTREE/13042013_125454_TOPTREE_1310_3_aH9.root"/>
 
-<d name="QCD_HT_500_1000" title="QCD_HT_500_1000" add="1" color="6" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-500To1000_TuneZ2star_8TeV-madgraph-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_151749/TOPTREE/06062013_151749_TOPTREE_1271_3_kZV.root"/>
+<d name="QCD_HT_500_1000" title="QCD_HT_500_1000" add="1" color="808" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-500To1000_TuneZ2star_8TeV-madgraph-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/13042013_004208/TOPTREE/13042013_004208_TOPTREE_1342_1_n1t.root"/>
 
-<d name="QCD_HT_1000_Inf" title="QCD_HT_1000_Inf" add="1" color="7" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-1000ToInf_TuneZ2star_8TeV-madgraph-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/06062013_151754/TOPTREE/06062013_151754_TOPTREE_683_3_D36.root"/>
+<d name="QCD_HT_1000_Inf" title="QCD_HT_1000_Inf" add="1" color="608" ls="1" lw="2" normf="1" xsection="1000" EqLumi="20000." filenames="/user/ndaci/Data/QCD/QCD_HT-1000ToInf_TuneZ2star_8TeV-madgraph-pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/12042013_210318/TOPTREE/12042013_210318_TOPTREE_530_1_nVg.root"/>
 
 </datasets>
 
