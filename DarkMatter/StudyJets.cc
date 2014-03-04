@@ -342,7 +342,9 @@ int analysis(string outname, string xmlfile, string pathPNG)
 	scaleFactor = scaleFactor*lumiWeight;	
       }
       histo1D["lumiWeights"]->Fill(scaleFactor);	
-      
+
+      scaleFactor=1; //ND REMOVE
+
       ///////////////////////////////////////////////////////////
       //   Event selection
       ///////////////////////////////////////////////////////////
@@ -368,12 +370,14 @@ int analysis(string outname, string xmlfile, string pathPNG)
       Selection selection(init_jets, init_muons, init_electrons, mets);
 
       // Define object selection cuts
+
       // Jet cuts : Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
       //selection.setJetCuts(40.,2.5,0.01,1.,0.98,0,0); // Jet ID
-      selection.setJetCuts(0.,2.5,0.01,1.,0.98,0,0); //ND Jet ID, no pT cut
-      //selection.setJetCuts(0.,5.,0.,0.,0.,0.,0.);//ND : No Jet ID
-      
-      vector<TRootJet*> selectedJets   = selection.GetSelectedJets(true); // ApplyJetId
+      //selection.setJetCuts(0.,2.5,0.01,1.,0.98,0,0); //ND Jet ID, no pT cut
+      selection.setJetCuts(0.,5.,0.,0.,0.,0.,0.);//ND : No Jet ID
+      //
+      // get jet collection without applying ID cuts
+      vector<TRootJet*> selectedJets   = selection.GetSelectedJets(false);
 
       //ND Select only events with at least 2 jets
       if(selectedJets.size()<2) continue;
@@ -553,7 +557,7 @@ int analysis(string outname, string xmlfile, string pathPNG)
       if(verbose>2) cout << "--- drawn!" << endl;
 
       if(verbose>2) cout << "--- write in pathPNG=" << pathPNG << endl;
-      temp->Write(fout, name, true, pathPNG, "png"); //ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
+      temp->Write(fout, name, true, pathPNG+"/", "png"); //ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
       //temp->Write(fout, name, false, pathPNG, "png");
       if(verbose>2) cout << "--- written!" << endl;
     }
