@@ -1,18 +1,22 @@
 #define _USE_MATH_DEFINES
 
-#include "TStyle.h"
-#include "TPaveText.h"
+// standard library
+#include <iostream>
+#include <map>
+#include <cstdlib> 
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <sys/stat.h>
+
+// root library
+#include "TStyle.h"
+#include "TPaveText.h"
 #include "TRandom3.h"
 #include "TRandom.h"
-#include <iostream>
-#include <map>
-#include <cstdlib> 
+#include "TMath.h"
 
-//user code
+// toptree library
 #include "TopTreeProducer/interface/TRootRun.h"
 #include "TopTreeProducer/interface/TRootEvent.h"
 #include "TopTreeAnalysisBase/Selection/interface/SelectionTable.h"
@@ -29,72 +33,78 @@
 #include "TopTreeAnalysisBase/Reconstruction/interface/MakeBinning.h"
 #include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
 #include "TopTreeAnalysisBase/Reconstruction/interface/MEzCalculator.h"
-
 #include "TopTreeAnalysisBase/Reconstruction/interface/TTreeObservables.h"
-
-//This header file is taken directly from the BTV wiki. It contains
-// to correctly apply an event level Btag SF. It is not yet on CVS
-// as I hope to merge the functionality into BTagWeigtTools.h
-//#include "TopTreeAnalysisBase/Tools/interface/BTagSFUtil.h"
 #include "TopTreeAnalysisBase/Tools/interface/BTagWeightTools.h"
-
 //#include "TopTreeAnalysisBase/Tools/interface/JetCombiner.h"
 #include "TopTreeAnalysisBase/Tools/interface/MVATrainer.h"
 #include "TopTreeAnalysisBase/Tools/interface/MVAComputer.h"
 
+// custom cms plot style (tdr-like ?)
 #include "TopTreeAnalysis/macros/Style.C"
 
 using namespace std;
 using namespace TopTree;
 using namespace reweight;
 
-int analysis(string, string, string, float, float, float, float, float, float);
+int analysis(string, TString, int, float, float, float, int, float, float);
 
 int main(int argc, char *argv[])
 {
 
-  string outname="tree";
-  string xmlfile="configLite.xml";
-  string pathpng="Results/";
+  string  xmlfile="configLite.xml";
+  TString path="test";
 
-  // legend
-  //float x1=0.45; float y1=0.63; float x2=0.97; float y2=0.94;
-  float x1=0.55; float y1=0.66; float x2=0.88; float y2=0.88;
+  int cut_nJets=0;
+  float cut_pt1=100;
+  float cut_pt2=100;
+  float cut_deltaphi=2;
+  int puweight=0;
+
   float magnify=1.3;
   float magnifyLog=1.5;
 
-  if(argc>1) outname=argv[1];
-  if(argc>2) xmlfile=argv[2];
-  if(argc>3) pathpng=argv[3];
+  if(argc>1) xmlfile   = argv[1];
+  if(argc>2) path      = argv[2];
+  if(argc>3) cut_nJets = (int)atof(argv[3]);
+  if(argc>4) cut_pt1   = atof(argv[4]);
+  if(argc>5) cut_pt2   = atof(argv[5]);
+  if(argc>6) cut_deltaphi = atof(argv[6]);
+  if(argc>7) puweight  = (int)atof(argv[7]);
 
-  if(argc==8) {
-    x1 = atof(argv[4]);
-    y1 = atof(argv[5]);
-    x2 = atof(argv[6]);
-    y2 = atof(argv[7]);
-  }
-
-  analysis(outname,xmlfile,pathpng,x1,y1,x2,y2,magnify,magnifyLog);
+  analysis(xmlfile, path, cut_nJets, cut_pt1, cut_pt2, cut_deltaphi, puweight, magnify, magnifyLog);
 
   return 0;
 
 }
 
-int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, float y1=0.63, float x2=0.97, float y2=0.94, float magnify=1.3, float magnifyLog=1.5)
+int analysis(string xmlfile, TString path, 
+	     int cut_nJets=2, float cut_pt1=100, float cut_pt2=100, float cut_deltaphi=2, int puweight=0, 
+	     float magnify=1.3, float magnifyLog=1.5)
 {
 
-  /////////////////////////////
-  /// AnalysisEnvironment
-  /////////////////////////////
+  /////////////////
+  // ENVIRONMENT //
+  /////////////////
   
-  //string pathPNG="Results/";
+  // Generic stuff
+  clock_t start = clock();
+  int verbose = 2;
+  string pathPNG = path.Data();
+  mkdir(pathPNG.c_str(),0777);
 
+  // TLegend coordinates
+  float x1=0.55; float y1=0.66; float x2=0.88; float y2=0.88;
+  
+  // Output ROOT file
+  TString foutname = path+"/results.root";
+  cout << "foutname=" << foutname << endl;
+  TFile *fout = new TFile (foutname, "RECREATE");
+
+  // Analysis environment
   AnalysisEnvironment anaEnv;
   cout << "- Loading environment : xmlfile=" << xmlfile << endl;
   AnalysisEnvironmentLoader anaLoad(anaEnv,xmlfile.c_str());
   cout << "-- env loaded !" << endl;
-  int verbose = 2;//anaEnv.Verbose;
-  clock_t start = clock();
 
   // Load datasets
   TTreeLoader treeLoader;
@@ -105,17 +115,17 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
 
   // PU Reweighting
   LumiReWeighting LumiWeights = LumiReWeighting("PUReweighting/pileup_MC_S10.root", "PUReweighting/PURewtoptree_id_2014_1350565897_PileupHistogram.root", "pileup", "pileup");
+  double lumiWeight=1;
+  double lumiWeightOLD=1;
 
   // Apply JES
   int doJESShift = 0; // 0: off 1: minus 2: plus
   cout << "doJESShift: " << doJESShift << endl;
 
-  // Output ROOT file
-  string foutname = pathPNG+"/"+outname+".root";
-  cout << "foutname=" << foutname << endl;
-  TFile *fout = new TFile (foutname.c_str(), "RECREATE");
+  // Global variable
+  TRootEvent* event = 0;
 
-  // Vector of objects
+  // Vectors of objects
   cout << " - Variable declaration ..." << endl;
   vector < TRootVertex* >   vertex;
   vector < TRootMuon* >     init_muons;
@@ -123,21 +133,28 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
   vector < TRootJet* >      init_jets;
   vector < TRootPFJet* >    init_jets_PF;
   vector < TRootMET* >      mets;
+  vector<TRootJet*>         selectedJets;
+  vector<TRootPFJet*>       selectedJetsPF;
 
-  // Global variable
-  TRootEvent* event = 0;
+  // jet variables
+  const int nJet=2;
+  Float_t tot_neutral_E_frac[nJet]={0,0};
+  Float_t tot_charged_E_frac[nJet]={0,0};
+  Float_t tot_chargedMult[nJet]={0,0};
+  Float_t jet_E[  nJet]={0,0};
+  Float_t jet_pt[ nJet]={0,0};
+  Float_t jet_phi[nJet]={0,0};
+  Float_t DeltaPhi=0;
 
-  ////////////////////////////
-  /// MultiSample plots  /////
-  ////////////////////////////
+  ///////////////////
+  // DECLARE PLOTS //
+  ///////////////////
 
   map<string,MultiSamplePlot*> MSPlot;
 
   // Event
   MSPlot["RhoCorrection"]         = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
   MSPlot["NbOfVertices"]          = new MultiSamplePlot(datasets, "NbOfVertices", 40, 0, 40, "Nb. of vertices");
-  // B-tagging discriminators
-  //MSPlot["BdiscBJetCand_CSV"]     = new MultiSamplePlot(datasets, "HighestBdisc_CSV", 75, 0, 1, "CSV b-disc.");
 
   // Jet Numbers
   MSPlot["NbOfSelectedJets"]      = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0, 15, "Nb. of jets");
@@ -145,9 +162,12 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
   MSPlot["NbOfSelectedBJets"]     = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0, 8, "Nb. of jets");
 
   // Jet Variables
-  const int nJet=2;
   string nameJet="";
   string titleJet[nJet]={"Leading Jet", "Sub-Leading Jet"};
+
+  MSPlot["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet", 100, 0, 1, "dijet charged energy fraction");
+  MSPlot["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet",    100, 0, 50,"dijet charged multiplicity");
+  MSPlot["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet",           1000, 0, 3000,"dijet mass (GeV)");
 
   for(int iJ=0 ; iJ<nJet ; iJ++) {
     nameJet=Form("_Jet%d",iJ+1);
@@ -173,11 +193,6 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
 
     MSPlot["tot_chargedMult"  +nameJet] = new MultiSamplePlot(datasets, "tot_chargedMult"  +nameJet, 100, 0, 50,  titleJet[iJ]+" total charged multiplicity");
   }
-
-  MSPlot["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet", 100, 0, 1, "dijet charged energy fraction");
-  MSPlot["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet",    100, 0, 50,"dijet charged multiplicity");
-  MSPlot["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet",           1000, 0, 3000,"dijet mass (GeV)");
-
   
   ///////////////////
   // Histograms
@@ -188,9 +203,9 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
   
   histo1D["lumiWeights"] = new TH1F("lumiWeights","lumiWeights;lumiWeight;#events",100,0,4);
 
-  ////////////////////////////
-  /// Loop over datasets  ////
-  ////////////////////////////
+  ////////////////////////
+  // LOOP OVER DATASETS //
+  ////////////////////////
 
   u_int nDS=datasets.size();
   cout << "NUMBER OF DATASETS : " << nDS << endl;
@@ -227,15 +242,18 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
     vCorrParam.push_back(*L3JetPar);
     
     if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") // Data!
-      {
-	JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
-	vCorrParam.push_back(*ResJetCorPar);
-      }
+    {
+    JetCorrectorParameters *ResJetCorPar = new JetCorrectorParameters("../macros/JECFiles/START42_V17_AK5PFchs_L2L3Residual.txt");
+    vCorrParam.push_back(*ResJetCorPar);
+    }
     */
     JetCorrectionUncertainty *jecUnc;// = new JetCorrectionUncertainty("../macros/JECFiles/START42_V17_AK5PFchs_Uncertainty.txt");
     JetTools *jetTools = new JetTools(vCorrParam, jecUnc, false); // last boolean ('startFromRaw') = false!
     
-    // LOOP OVER EVENTS
+    //////////////////////
+    // LOOP OVER EVENTS //
+    //////////////////////
+
     int itrigger = -1, previousRun = -1;
     int start = 0;
     unsigned int end = datasets[d]->NofEvtsToRunOver();
@@ -245,8 +263,9 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
     int event_start=0;
     double currentfrac =0.;
     double end_d = end;
-
-    for (unsigned int ievt = event_start; ievt <end_d ; ievt++) { // start loop
+    
+    // Start loop over events
+    for (unsigned int ievt = event_start; ievt <end_d ; ievt++) {
       
       double ievt_d = ievt;
       currentfrac = ievt_d/end_d;
@@ -276,69 +295,17 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
 	  iFile++;
 	  cout<<"File changed!!! => iFile = "<<iFile<<endl;
 	}
-      
 
-      ////////////////////////////////////////////////////////////////////////////////////
-      //  JES Corrections: The nominal corrections are already applied at PAT level     //
-      //    so these tools should only be used for studies of the effect of systematics //
-      ////////////////////////////////////////////////////////////////////////////////////
-      
-      // Apply Jet Corrections on-the-fly
-      /*
-	coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction on the fly:");
-      	if( dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),true); //last boolean: isData (needed for L2L3Residual...)
-      	else
-	jetTools->correctJets(init_jets,event->kt6PFJetsPF2PAT_rho(),false); //last boolean: isData (needed for L2L3Residual...)
-	coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JES correction on the fly:");
-      */      
-      
-      // JER smearing
-      /*
-	if( ! (dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" ) )
-        {
-	//JER
-	doJERShift == 0;
-	if(doJERShift == 1)
-	jetTools->correctJetJER(init_jets, genjets, mets[0], "minus");
-	else if(doJERShift == 2)
-	jetTools->correctJetJER(init_jets, genjets, mets[0], "plus");
-	else
-	jetTools->correctJetJER(init_jets, genjets, mets[0], "nominal");
-	  
-	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After JER correction:");
-          
-	// JES systematic!
-	if (doJESShift == 1)
-	jetTools->correctJetJESUnc(init_jets, mets[0], "minus");
-	else if (doJESShift == 2)
-	jetTools->correctJetJESUnc(init_jets, mets[0], "plus");
-            
-	//coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before JES correction:");
-	  
-        }
-      */
-
-      // Type I MET corrections: (Only for |eta| <=4.7 )
-      /*
-	coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"Before MET type I correction:");      
-	if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA" )
-      	jetTools->correctMETTypeOne(init_jets,mets[0],true);
-	else
-      	jetTools->correctMETTypeOne(init_jets,mets[0],false);
-	coutObjectsFourVector(init_muons,init_electrons,init_jets,mets,"After MET type I correction:");
-      */      
-
-      ////////////////////////////////////////
-      //  Beam scraping and PU reweighting
-      ////////////////////////////////////////
+      ///////////////////////////////////////
+      //  Beam scraping and PU reweighting //
+      ///////////////////////////////////////
 
       if(verbose>2) cout << "-- enter beam scraping and PU reweighting" << endl;
 
       // scale factor for the event
       float scaleFactor = 1.;
       
-      if(dataSetName == "Data" || dataSetName == "data" || dataSetName == "DATA") {
+      if(dataSetName.find("Data") != 0 || dataSetName.find("data") != 0 || dataSetName.find("DATA") != 0) {
 	// Apply the scraping veto. (Is it still needed?)
 	bool isBeamBG = true;
 	if(event->nTracks() > 10) {
@@ -347,17 +314,11 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
 	}
 	if(isBeamBG) continue;
       }
-      else{
-	double lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
-	double lumiWeightOLD=lumiWeight;
-        if(dataSetName.find("Data") == 0 || dataSetName.find("data") == 0 || dataSetName.find("DATA") == 0){
-	  lumiWeight=1;
-        }
+      else if(puweight!=0) {
+	lumiWeight = LumiWeights.ITweight( (int)event->nTruePU() );
 	scaleFactor = scaleFactor*lumiWeight;	
       }
       histo1D["lumiWeights"]->Fill(scaleFactor);	
-
-      scaleFactor=1; //ND REMOVE
 
       ///////////////////////////////////////////////////////////
       //   Event selection
@@ -367,77 +328,78 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
 
       // Trigger information
       /*
-      bool trigged = false;
-      //std::string filterName = "";
-      int currentRun = event->runId();
-      if(previousRun != currentRun) {
+	bool trigged = false;
+	//std::string filterName = "";
+	int currentRun = event->runId();
+	if(previousRun != currentRun) {
 	previousRun = currentRun;
 	itrigger = treeLoader.iTrigger (string ("HLT_IsoMu24_eta2p1_v11"), currentRun, iFile);
 	//filterName = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f24QL3crIsoFiltered10";
-      }				  
-      trigged = treeLoader.EventTrigged (itrigger);
-      if(verbose>2) cout << "triggered? Y/N?  " << trigged  << endl;
-      // if(!trigged) continue;
-      */
+	}				  
+	trigged = treeLoader.EventTrigged (itrigger);
+	if(verbose>2) cout << "triggered? Y/N?  " << trigged  << endl;
+	// if(!trigged) continue;
+	*/
+
+      //////////////////////
+      // OBJECT SELECTION //
+      //////////////////////
 
       // Declare selection instance    
       Selection selection(init_jets, init_muons, init_electrons, mets);
 
-      // Define object selection cuts
-
-      // Jet cuts : Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
+      // CaloJets selection (we should implement a PFJet selection in the Selection class)
+      // Pt, Eta, EMF, n90Hits, fHPD, dRJetElectron, DRJets
       //selection.setJetCuts(40.,2.5,0.01,1.,0.98,0,0); // Jet ID
-      //selection.setJetCuts(0.,2.5,0.01,1.,0.98,0,0); //ND Jet ID, no pT cut
       selection.setJetCuts(0.,5.,0.,0.,0.,0.,0.);//ND : No Jet ID
-      //
-      // get jet collection without applying ID cuts
-      vector<TRootJet*> selectedJets   = selection.GetSelectedJets(false);
 
-      //ND Select only events with at least 2 jets
-      if(selectedJets.size()<2) continue;
+      // get jet collection 
+      selectedJets   = selection.GetSelectedJets(false); // false : do not apply hardcoded ID
+      selectedJetsPF = jetTools->convertToPFJets(selectedJets); // convert TRootJet to TRootPFJet
+      sort(selectedJetsPF.begin(),selectedJetsPF.end(),HighestPt()); // order in pT
 
-      vector<TRootJet*>      selectedBJets; // B-Jets
-      vector<TRootJet*>      selectedLightJets; // light-Jets
-      vector<TRootJet*>      selectedCSVOrderedJets     = selection.GetSelectedJets(true); //CSV ordered Jet collection added by JH
+      /////////////////////
 
-      // ND CHECKS
-      if(verbose>2) cout << "-- selectedJets.size()=" << selectedJets.size() << endl;
+      /////////////////////
+      // EVENT SELECTION //
+      /////////////////////
 
-      // order jets wrt to Pt, then set bool corresponding to RefSel cuts.
-      sort(selectedJets.begin(),selectedJets.end(),HighestPt()); //order muons wrt Pt.                                                                    
-      //sort(selectedCSVOrderedJets.begin(), selectedCSVOrderedJets.end(), HighestCVSBtag()); //order Jets wrt CSVtag
-
-      // get PFJets from the sorted selected Jets
-      vector<TRootPFJet*> selectedJetsPF = jetTools->convertToPFJets(selectedJets);
-      
-      int JetCut =0;
-      //int nMu = selectedMuons.size();
-      //int nEl = selectedElectrons.size();
-
-      // Apply primary vertex selection
+      // Primary vertex
       bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
       if(!isGoodPV) continue;
 
-      // Applying baseline offline event selection here
-      //if (!(selectedJets.size() >= 2)) continue;
+      // JETS
 
-      //////////////////////////////////////
-      /// Filling histograms
-      //////////////////////////////////////
+      // number of jets
+      if(selectedJets.size()<cut_nJets) continue;
+      if(verbose>2) cout << "-- selectedJets.size()=" << selectedJets.size() << endl;
 
-      // Event
+      // leading jet pt
+      jet_pt[0]=selectedJets[0]->Pt();
+      if(jet_pt[0]<cut_pt1) continue;
+
+      // subleading jet pt
+      jet_pt[1]=selectedJets[1]->Pt();
+      if(jet_pt[1]<cut_pt2) continue;
+
+      // delta phi
+      jet_phi[0]=selectedJets[0]->Phi();
+      jet_phi[1]=selectedJets[1]->Phi();
+      DeltaPhi = TMath::Abs(selectedJets[0]->Phi() - selectedJets[1]->Phi());
+      if(DeltaPhi<cut_deltaphi) continue;
+
+      /////////////////////
+
+      //////////////////////
+      /// FILL HISTOGRAMS //
+      //////////////////////
+
+      // EVENT
       MSPlot["NbOfVertices"]         ->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
 
-      // Jets
-      MSPlot["NbOfSelectedJets"]     ->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["NbOfSelectedLightJets"]->Fill(selectedLightJets.size(), datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["NbOfSelectedBJets"]    ->Fill(selectedBJets.size(), datasets[d], true, Luminosity*scaleFactor);
+      // JETS
+      MSPlot["NbOfSelectedJets"]     ->Fill(selectedJetsPF.size(), datasets[d], true, Luminosity*scaleFactor);
 
-      Float_t tot_neutral_E_frac[nJet]={0,0};
-      Float_t tot_charged_E_frac[nJet]={0,0};
-      Float_t tot_chargedMult[nJet]={0,0};
-      Float_t jet_E[nJet]={0,0};
-      
       for(int iJ=0 ; iJ<nJet ; iJ++) { // loop over jets
 
 	if(selectedJetsPF.size()<=iJ) break;
@@ -456,10 +418,17 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
 	tot_chargedMult[iJ] = selectedJetsPF[iJ]->chargedMultiplicity() + selectedJetsPF[iJ]->muonMultiplicity();
 
 	MSPlot["Eta"+nameJet]->Fill(selectedJetsPF[iJ]->Eta(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["Phi"+nameJet]->Fill(selectedJetsPF[iJ]->Phi(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["Pt"+nameJet] ->Fill(selectedJetsPF[iJ]->Pt(),  datasets[d], true, Luminosity*scaleFactor);
 
-	MSPlot["E"+nameJet]  ->Fill(jet_E[iJ],   datasets[d], true, Luminosity*scaleFactor);
+	if(iJ>1) {
+	  MSPlot["Phi"+nameJet]->Fill(selectedJetsPF[iJ]->Phi(), datasets[d], true, Luminosity*scaleFactor);
+	  MSPlot["Pt"+nameJet] ->Fill(selectedJetsPF[iJ]->Pt(),  datasets[d], true, Luminosity*scaleFactor);
+	  MSPlot["E"+nameJet]  ->Fill(selectedJetsPF[iJ]->E(),   datasets[d], true, Luminosity*scaleFactor);
+	}
+	else {
+	  MSPlot["Phi"+nameJet]->Fill(jet_phi[iJ], datasets[d], true, Luminosity*scaleFactor);
+	  MSPlot["Pt"+nameJet] ->Fill(jet_pt[iJ],  datasets[d], true, Luminosity*scaleFactor);
+	  MSPlot["E"+nameJet]  ->Fill(jet_E[iJ],   datasets[d], true, Luminosity*scaleFactor);
+	}
 
 	MSPlot["chargedHad_E_frac"+nameJet]->Fill(selectedJetsPF[iJ]->chargedHadronEnergyFraction(),  datasets[d], true, Luminosity*scaleFactor);
 	MSPlot["chargedEm_E_frac" +nameJet]->Fill(selectedJetsPF[iJ]->chargedEmEnergyFraction(),      datasets[d], true, Luminosity*scaleFactor);
@@ -489,18 +458,6 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
       MSPlot["chargedMult_dijet"   ]->Fill(chargedMult_dijet,    datasets[d], true, Luminosity*scaleFactor);
       MSPlot["mass_dijet"          ]->Fill(mass_dijet,           datasets[d], true, Luminosity*scaleFactor);
 
-      //MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
-      // Jets kinematics
-      //MSPlot["JetEta"]->Fill(selectedJets.size(), datasets[d], true, Luminosity*scaleFactor);
-      //MSPlot["JetPhi"]
-      
-      // plots to to inspire staggered Jet Pt selection
-      /*
-	if (selectedJets.size()>=4) MSPlot["4thJetPt"]->Fill(selectedJets[3]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-	if (selectedJets.size()>=5) MSPlot["5thJetPt"]->Fill(selectedJets[4]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-	if (selectedJets.size()>=6) MSPlot["6thJetPt"]->Fill(selectedJets[5]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-	if (selectedJets.size()>=7) MSPlot["7thJetPt"]->Fill(selectedJets[6]->Pt(), datasets[d], true, Luminosity*scaleFactor);
-      */
 
     } // end loop over events
 
@@ -515,13 +472,9 @@ int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, floa
   //////////////////
 
   cout << "- Start writing output" << endl;
-
   fout->cd();
-  //  TString pathPNGJetCombi = pathPNG + "JetCombination/";
-  //  mkdir(pathPNGJetCombi,0777);
 
   cout << "-- Loop over MSPlots" << endl;
-
   for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++) {
     string name = it->first;
     cout << "--- name=" << name << endl;
