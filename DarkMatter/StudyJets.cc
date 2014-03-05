@@ -48,7 +48,7 @@ using namespace std;
 using namespace TopTree;
 using namespace reweight;
 
-int analysis(string, string, string);
+int analysis(string, string, string, float, float, float, float, float, float);
 
 int main(int argc, char *argv[])
 {
@@ -57,17 +57,30 @@ int main(int argc, char *argv[])
   string xmlfile="configLite.xml";
   string pathpng="Results/";
 
+  // legend
+  //float x1=0.45; float y1=0.63; float x2=0.97; float y2=0.94;
+  float x1=0.55; float y1=0.66; float x2=0.88; float y2=0.88;
+  float magnify=1.3;
+  float magnifyLog=1.5;
+
   if(argc>1) outname=argv[1];
   if(argc>2) xmlfile=argv[2];
   if(argc>3) pathpng=argv[3];
-  
-  analysis(outname,xmlfile,pathpng);
+
+  if(argc==8) {
+    x1 = atof(argv[4]);
+    y1 = atof(argv[5]);
+    x2 = atof(argv[6]);
+    y2 = atof(argv[7]);
+  }
+
+  analysis(outname,xmlfile,pathpng,x1,y1,x2,y2,magnify,magnifyLog);
 
   return 0;
 
 }
 
-int analysis(string outname, string xmlfile, string pathPNG)
+int analysis(string outname, string xmlfile, string pathPNG, float x1=0.45, float y1=0.63, float x2=0.97, float y2=0.94, float magnify=1.3, float magnifyLog=1.5)
 {
 
   /////////////////////////////
@@ -163,6 +176,7 @@ int analysis(string outname, string xmlfile, string pathPNG)
 
   MSPlot["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet", 100, 0, 1, "dijet charged energy fraction");
   MSPlot["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet",    100, 0, 50,"dijet charged multiplicity");
+  MSPlot["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet",           1000, 0, 3000,"dijet mass (GeV)");
 
   
   ///////////////////
@@ -424,7 +438,7 @@ int analysis(string outname, string xmlfile, string pathPNG)
       Float_t tot_chargedMult[nJet]={0,0};
       Float_t jet_E[nJet]={0,0};
       
-      for(int iJ=0 ; iJ<nJet ; iJ++) {
+      for(int iJ=0 ; iJ<nJet ; iJ++) { // loop over jets
 
 	if(selectedJetsPF.size()<=iJ) break;
 	
@@ -462,14 +476,18 @@ int analysis(string outname, string xmlfile, string pathPNG)
 	MSPlot["tot_chargedMult"  +nameJet]->Fill(tot_chargedMult[iJ], datasets[d], true, Luminosity*scaleFactor);
       }
 
-      Float_t charged_E_frac_dijet=0, chargedMult_dijet=0;
+      Float_t charged_E_frac_dijet=0, chargedMult_dijet=0, mass_dijet=0;
+      TRootPFJet dijet;
       if(selectedJetsPF.size()>=2) {
 	charged_E_frac_dijet = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_charged_E_frac[0]+jet_E[1]*tot_charged_E_frac[1]) / (jet_E[0]+jet_E[1]) : -999;
 	chargedMult_dijet = tot_chargedMult[0] + tot_chargedMult[1];
+	dijet = (*selectedJetsPF[0]) + (*selectedJetsPF[1]) ;
+	mass_dijet = dijet.M();
       }
 
       MSPlot["charged_E_frac_dijet"]->Fill(charged_E_frac_dijet, datasets[d], true, Luminosity*scaleFactor);
       MSPlot["chargedMult_dijet"   ]->Fill(chargedMult_dijet,    datasets[d], true, Luminosity*scaleFactor);
+      MSPlot["mass_dijet"          ]->Fill(mass_dijet,           datasets[d], true, Luminosity*scaleFactor);
 
       //MSPlot["RhoCorrection"]->Fill(event->kt6PFJetsPF2PAT_rho(), datasets[d], true, Luminosity*scaleFactor);
       // Jets kinematics
@@ -553,11 +571,18 @@ int analysis(string outname, string xmlfile, string pathPNG)
 
       // ND
       if(verbose>2) cout << "--- draw" << endl;
-      temp->Draw(name, 0, false, false, false, 0);
+      temp->Draw(name, 0, false, false, false, 0, x1, y1, x2, y2, magnify);
+      //temp->Draw(name, 0, false, false, false, 0);
       if(verbose>2) cout << "--- drawn!" << endl;
 
       if(verbose>2) cout << "--- write in pathPNG=" << pathPNG << endl;
-      temp->Write(fout, name, true, pathPNG+"/", "png"); //ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
+      float maxY = temp->getMaxY();
+      cout << "###############################" << endl 
+	   << "########## maxY=" << maxY << " ##########" << endl 
+	   << "###############################" << endl;
+      //temp->setMaxY(1000000*maxY);
+
+      temp->Write(fout, name, true, pathPNG+"/", "png", magnifyLog); //ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
       //temp->Write(fout, name, false, pathPNG, "png");
       if(verbose>2) cout << "--- written!" << endl;
     }
