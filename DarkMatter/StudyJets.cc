@@ -167,16 +167,16 @@ int analysis(string xmlfile, TString path,
 
   MSPlot["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet", 100, 0, 1, "dijet charged energy fraction");
   MSPlot["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet",    100, 0, 50,"dijet charged multiplicity");
-  MSPlot["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet",           1000, 0, 3000,"dijet mass (GeV)");
+  MSPlot["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet",           6000, 0, 3000,"dijet mass (GeV)");
 
   for(int iJ=0 ; iJ<nJet ; iJ++) {
     nameJet=Form("_Jet%d",iJ+1);
     cout << "--- nameJet=" << nameJet << endl;
     
-    MSPlot["Eta"+nameJet] = new MultiSamplePlot(datasets, "Eta"+nameJet, 30,  -4, 4,     titleJet[iJ]+" #eta");
+    MSPlot["Eta"+nameJet] = new MultiSamplePlot(datasets, "Eta"+nameJet, 30,  -5, 5,     titleJet[iJ]+" #eta");
     MSPlot["Phi"+nameJet] = new MultiSamplePlot(datasets, "Phi"+nameJet, 50,  -4, 4,     titleJet[iJ]+" #phi");
-    MSPlot["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJet, 200, 0,  1000,  titleJet[iJ]+" p_{T} (GeV)");
-    MSPlot["E" +nameJet]  = new MultiSamplePlot(datasets, "E"  +nameJet, 200, 0,  1000,  titleJet[iJ]+" E (GeV)");
+    MSPlot["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJet, 600, 0,  3000,  titleJet[iJ]+" p_{T} (GeV)");
+    MSPlot["E" +nameJet]  = new MultiSamplePlot(datasets, "E"  +nameJet, 600, 0,  3000,  titleJet[iJ]+" E (GeV)");
 
     MSPlot["chargedHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "chargedHad_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" charged had energy fraction");
     MSPlot["chargedEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedEm_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" charged EM  energy fraction");
@@ -274,6 +274,7 @@ int analysis(string xmlfile, TString path,
 
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
       float rho = event->kt6PFJets_rho();
+      MSPlot["RhoCorrection"]->Fill(rho, datasets[d], true, Luminosity);
 
       vector<TRootMCParticle*> mcParticles_flav;
       TRootGenEvent* genEvt_flav = 0;
