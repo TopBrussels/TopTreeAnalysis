@@ -1,0 +1,18 @@
+DarkMatter package (Nadir Daci)
+
+!!! do not forget to make a directory Results/  !!!
+mkdir Results/
+
+compile : ./make StudyJets.cc StudyJets
+execute : ./StudyJets configQCD_XS.xml Results/
+
+test various cuts :
+./StudyJets configQCD_XS.xml Results/R_NoID_XS_Dijet 2 0 0 0 0
+./StudyJets configQCD_XS.xml Results/R_NoID_XS_Dijet_Pt100 2 100 100 0 0
+./StudyJets configQCD_XS.xml Results/R_NoID_XS_Dijet_Dphi2 2 0 0 2 0
+./StudyJets configQCD_XS.xml Results/R_NoID_XS_Dijet_Pt100_Dphi2 2 100 100 2 0
+
+check files in configQCD.xml : 
+./checkFiles.sh > do_checkFiles.sh
+chmod u+x do_checkFiles.sh
+./do_checkFiles.sh
