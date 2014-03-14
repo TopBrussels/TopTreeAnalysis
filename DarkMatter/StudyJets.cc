@@ -1,52 +1,47 @@
-#define _USE_MATH_DEFINES
-
-// standard library
-#include <iostream>
-#include <map>
-#include <cstdlib> 
-#include <cmath>
-#include <fstream>
-#include <sstream>
-#include <sys/stat.h>
-
-// root library
-#include "TStyle.h"
-#include "TPaveText.h"
-#include "TRandom3.h"
-#include "TRandom.h"
-#include "TMath.h"
-
-// toptree library
-#include "TopTreeProducer/interface/TRootRun.h"
-#include "TopTreeProducer/interface/TRootEvent.h"
-#include "TopTreeAnalysisBase/Selection/interface/SelectionTable.h"
-#include "TopTreeAnalysisBase/Content/interface/AnalysisEnvironment.h"
-#include "TopTreeAnalysisBase/Content/interface/Dataset.h"
-#include "TopTreeAnalysisBase/Tools/interface/JetTools.h"
-#include "TopTreeAnalysisBase/Tools/interface/PlottingTools.h"
-#include "TopTreeAnalysisBase/Tools/interface/MultiSamplePlot.h"
-#include "TopTreeAnalysisBase/Tools/interface/MultiCutPlot.h"
-#include "TopTreeAnalysisBase/Tools/interface/TTreeLoader.h"
-#include "TopTreeAnalysisBase/Tools/interface/AnalysisEnvironmentLoader.h"
-#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectorParameters.h"
-#include "TopTreeAnalysisBase/Reconstruction/interface/JetCorrectionUncertainty.h"
-#include "TopTreeAnalysisBase/Reconstruction/interface/MakeBinning.h"
-#include "TopTreeAnalysisBase/MCInformation/interface/LumiReWeighting.h"
-#include "TopTreeAnalysisBase/Reconstruction/interface/MEzCalculator.h"
-#include "TopTreeAnalysisBase/Reconstruction/interface/TTreeObservables.h"
-#include "TopTreeAnalysisBase/Tools/interface/BTagWeightTools.h"
-//#include "TopTreeAnalysisBase/Tools/interface/JetCombiner.h"
-#include "TopTreeAnalysisBase/Tools/interface/MVATrainer.h"
-#include "TopTreeAnalysisBase/Tools/interface/MVAComputer.h"
-
-// custom cms plot style (tdr-like ?)
-#include "TopTreeAnalysis/macros/Style.C"
+#include "Headers.h"
 
 using namespace std;
 using namespace TopTree;
 using namespace reweight;
 
+typedef pair< string , vector< pair<string,float> > > MSIntegral;
+typedef map<string,MultiSamplePlot*> MapMSP;
+typedef map<string,MapMSP>           MapMapMSP;
+typedef map<string,bool>             MapAnaCut;
+
+///////////////////////
+// DECLARE FUNCTIONS //
+///////////////////////
+
 int analysis(string, TString, int, float, float, float, int, float, float);
+
+MSIntegral eval_msi(MultiSamplePlot*);
+
+int SelectCompute(TRootEvent* event, Selection selection, int verbose,
+		  vector<TRootVertex*> vertex , vector<TRootPFJet*> selectedJetsPF, 
+		  int cut_nJets, float cut_pt1, float cut_pt2, float cut_deltaphi,
+		  int m_nJet, float* jet_E, float* jet_pt, float* jet_phi, float* jet_eta,  
+		  float* neutral_had_E_frac, float* neutral_em_E_frac, float* charged_em_E_frac, float* charged_had_E_frac, float* charged_mu_E_frac,
+		  float* charged_mult, float* neutral_mult, float* muon_mult,
+		  float* tot_em_E_frac, float* tot_neutral_E_frac, float* tot_charged_E_frac, float* tot_chargedMult,
+		  float& charged_E_frac_dijet, float& chargedMult_dijet, float& mass_dijet, float& em_E_frac_dijet,
+		  float& rho, int& nVertices, int& nJetInEvt, float& DeltaPhi);
+
+int FillHistos(MapMSP MSPlot, string name_MSP,
+	       Dataset* dataset,
+	       int verbose, float Luminosity, float scaleFactor,
+	       int m_nJet, float* jet_E, float* jet_pt, float* jet_phi, float* jet_eta,  
+	       float* neutral_had_E_frac, float* neutral_em_E_frac, float* charged_em_E_frac, float* charged_had_E_frac, float* charged_mu_E_frac,
+	       float* charged_mult, float* neutral_mult, float* muon_mult,
+	       float* tot_em_E_frac, float* tot_neutral_E_frac, float* tot_charged_E_frac, float* tot_chargedMult,
+	       float charged_E_frac_dijet, float chargedMult_dijet, float mass_dijet, float em_E_frac_dijet,
+	       float rho, int nVertices, int nJetInEvt, float DeltaPhi);
+
+int LocalFill(MapMSP MSPlot, string name, float value, Dataset* dataset, bool scale, float Luminosity, float scaleFactor);
+
+//////////
+// MAIN //
+//////////
 
 int main(int argc, char *argv[])
 {
@@ -77,6 +72,10 @@ int main(int argc, char *argv[])
 
 }
 
+//////////////
+// ANALYSIS //
+//////////////
+
 int analysis(string xmlfile, TString path, 
 	     int cut_nJets=2, float cut_pt1=100, float cut_pt2=100, float cut_deltaphi=2, int puweight=0, 
 	     float magnify=1.3, float magnifyLog=1.5)
@@ -91,6 +90,9 @@ int analysis(string xmlfile, TString path,
   int verbose = 2;
   string pathPNG = path.Data();
   mkdir(pathPNG.c_str(),0777);
+
+  // Outlog
+  ofstream outlog(path+"/log.txt",ios::out);
 
   // TLegend coordinates
   float x1=0.55; float y1=0.66; float x2=0.88; float y2=0.88;
@@ -124,6 +126,9 @@ int analysis(string xmlfile, TString path,
 
   // Global variable
   TRootEvent* event = 0;
+  float rho=0;
+  int nVertices=0;
+  int nJetInEvt=0;
 
   // Vectors of objects
   cout << " - Variable declaration ..." << endl;
@@ -137,77 +142,102 @@ int analysis(string xmlfile, TString path,
   vector<TRootPFJet*>       selectedJetsPF;
 
   // jet variables
-  const int nJet=2;
-  //
-  Float_t jet_E[  nJet]={0,0};
-  Float_t jet_pt[ nJet]={0,0};
-  Float_t jet_phi[nJet]={0,0};
-  Float_t DeltaPhi=0;
-  //
-  Float_t neutral_had_E_frac[nJet]={0,0};
-  Float_t neutral_em_E_frac[ nJet]={0,0};
-  Float_t charged_had_E_frac[nJet]={0,0};
-  Float_t charged_em_E_frac[ nJet]={0,0};
-  Float_t charged_mu_E_frac[ nJet]={0,0};
-  //
-  Float_t charged_mult[nJet]={0,0};
-  Float_t neutral_mult[nJet]={0,0};
-  Float_t muon_mult[   nJet]={0,0};
-  //
-  Float_t tot_em_E_frac[     nJet]={0,0};
-  Float_t tot_neutral_E_frac[nJet]={0,0};
-  Float_t tot_charged_E_frac[nJet]={0,0};
-  Float_t tot_chargedMult[   nJet]={0,0};
+  const int m_nJet=2;
 
+  float jet_E[  m_nJet]={0,0};
+  float jet_pt[ m_nJet]={0,0};
+  float jet_phi[m_nJet]={0,0};
+  float jet_eta[m_nJet]={0,0};
+  float DeltaPhi=0;
+  //
+  float neutral_had_E_frac[m_nJet]={0,0};
+  float neutral_em_E_frac[ m_nJet]={0,0};
+  float charged_had_E_frac[m_nJet]={0,0};
+  float charged_em_E_frac[ m_nJet]={0,0};
+  float charged_mu_E_frac[ m_nJet]={0,0};
+  // zia
+  float charged_mult[m_nJet]={0,0};
+  float neutral_mult[m_nJet]={0,0};
+  float muon_mult[   m_nJet]={0,0};
+  //
+  float tot_em_E_frac[     m_nJet]={0,0};
+  float tot_neutral_E_frac[m_nJet]={0,0};
+  float tot_charged_E_frac[m_nJet]={0,0};
+  float tot_chargedMult[   m_nJet]={0,0};
+  //
+  float charged_E_frac_dijet=0, chargedMult_dijet=0, mass_dijet=0, em_E_frac_dijet=0;
+
+  // SelectCompute output
+  int outSelectCompute=-1;
+  int outfill=-1;
 
   ///////////////////
   // DECLARE PLOTS //
   ///////////////////
 
-  map<string,MultiSamplePlot*> MSPlot;
+  MapMapMSP MSPlot;
+  MapAnaCut AnaCuts;
 
-  // Event
-  MSPlot["RhoCorrection"]         = new MultiSamplePlot(datasets, "RhoCorrection", 100, 0, 100, "#rho");
-  MSPlot["NbOfVertices"]          = new MultiSamplePlot(datasets, "NbOfVertices", 40, 0, 40, "Nb. of vertices");
+  const int nMSP=13;
+  string name_MSP[nMSP]={"AnaCut_none",
+			 "AnaCut_jet1_emf0p2","AnaCut_jet2_emf0p2","AnaCut_pair_emf0p2","AnaCut_both_emf0p2",
+			 "AnaCut_jet1_chf0p1","AnaCut_jet2_chf0p1","AnaCut_pair_chf0p1","AnaCut_both_chf0p1",
+			 "AnaCut_jet1_chmult","AnaCut_jet2_chmult","AnaCut_pair_chmult","AnaCut_both_chmult"};
 
-  // Jet Numbers
-  MSPlot["NbOfSelectedJets"]      = new MultiSamplePlot(datasets, "NbOfSelectedJets", 15, 0, 15, "Nb. of jets");
-  MSPlot["NbOfSelectedLightJets"] = new MultiSamplePlot(datasets, "NbOfSelectedLightJets", 10, 0, 10, "Nb. of jets");
-  MSPlot["NbOfSelectedBJets"]     = new MultiSamplePlot(datasets, "NbOfSelectedBJets", 8, 0, 8, "Nb. of jets");
+  // Objects to compute background rejection
+  MSIntegral msi[nMSP];
+  float val_before=0, val_after=0, reduction=0;
+  string name_before="", name_after="";
+  //vector<float> reductions;
+  
+  for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
+    // analysis cuts within boolean map
+    AnaCuts[name_MSP[iMSP]] = false;
 
-  // Jet Variables
-  string nameJet="";
-  string titleJet[nJet]={"Leading Jet", "Sub-Leading Jet"};
+    // Event
+    MSPlot[name_MSP[iMSP]]["RhoCorrection"]         = new MultiSamplePlot(datasets, "RhoCorrection"+name_MSP[iMSP], 100, 0, 100, "#rho");
+    MSPlot[name_MSP[iMSP]]["NbOfVertices"]          = new MultiSamplePlot(datasets, "NbOfVertices"+name_MSP[iMSP], 40, 0, 40, "Nb. of vertices");
+    //
+    MSPlot[name_MSP[iMSP]]["NbOfSelectedJets"]      = new MultiSamplePlot(datasets, "NbOfSelectedJets"+name_MSP[iMSP], 15, 0, 15, "Nb. of jets");
 
-  MSPlot["em_E_frac_dijet"     ] = new MultiSamplePlot(datasets, "em_E_frac_dijet"     , 100, 0, 1, "dijet em energy fraction");
-  MSPlot["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet", 100, 0, 1, "dijet charged energy fraction");
-  MSPlot["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet",    100, 0, 100,"dijet charged multiplicity");
-  MSPlot["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet",           6000, 0, 3000,"dijet mass (GeV)");
+    // Jet Variables
+    string nameJet="";
+    string nameJetH="";
+    string titleJet[m_nJet]={"Leading Jet", "Sub-Leading Jet"};
 
-  for(int iJ=0 ; iJ<nJet ; iJ++) {
-    nameJet=Form("_Jet%d",iJ+1);
-    cout << "--- nameJet=" << nameJet << endl;
+    MSPlot[name_MSP[iMSP]]["em_E_frac_dijet"     ] = new MultiSamplePlot(datasets, "em_E_frac_dijet"+name_MSP[iMSP]     , 100, 0, 1, "dijet em energy fraction");
+    MSPlot[name_MSP[iMSP]]["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet"+name_MSP[iMSP], 100, 0, 1, "dijet charged energy fraction");
+    MSPlot[name_MSP[iMSP]]["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet"+name_MSP[iMSP],    100, 0, 100,"dijet charged multiplicity");
+    MSPlot[name_MSP[iMSP]]["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet"+name_MSP[iMSP],           6000, 0, 3000,"dijet mass (GeV)");
     
-    MSPlot["Eta"+nameJet] = new MultiSamplePlot(datasets, "Eta"+nameJet, 100,  -5, 5,     titleJet[iJ]+" #eta");
-    MSPlot["Phi"+nameJet] = new MultiSamplePlot(datasets, "Phi"+nameJet, 33,  -3.15, 3.15,titleJet[iJ]+" #phi");
-    MSPlot["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJet, 600, 0,  3000,  titleJet[iJ]+" p_{T} (GeV)");
-    MSPlot["E" +nameJet]  = new MultiSamplePlot(datasets, "E"  +nameJet, 600, 0,  3000,  titleJet[iJ]+" E (GeV)");
+    for(int iJ=0 ; iJ<m_nJet ; iJ++) {
 
-    MSPlot["chargedHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "chargedHad_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" charged had energy fraction");
-    MSPlot["chargedEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedEm_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" charged EM  energy fraction");
-    MSPlot["chargedMu_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedMu_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" charged Mu  energy fraction");
-    MSPlot["neutralEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "neutralEm_E_frac" +nameJet, 100, 0, 1,   titleJet[iJ]+" neutral EM  energy fraction");
-    MSPlot["neutralHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "neutralHad_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" neutral had energy fraction");    
+      nameJet  = Form("_Jet%d",iJ+1);
+      nameJetH = nameJet + "_" + name_MSP[iMSP];
 
-    MSPlot["em_E_frac"     +nameJet]= new MultiSamplePlot(datasets, "em_E_frac"     +nameJet, 100, 0, 1,   titleJet[iJ]+" tot EM energy fraction");
-    MSPlot["charged_E_frac"+nameJet]= new MultiSamplePlot(datasets, "charged_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" tot charged energy fraction");
-    MSPlot["neutral_E_frac"+nameJet]= new MultiSamplePlot(datasets, "neutral_E_frac"+nameJet, 100, 0, 1,   titleJet[iJ]+" tot neutral energy fraction");
+      cout << "--- nameJet=" << nameJet << endl;
+    
+      MSPlot[name_MSP[iMSP]]["Eta"+nameJet] = new MultiSamplePlot(datasets, "Eta"+nameJetH, 100,  -5, 5,     titleJet[iJ]+" #eta");
+      MSPlot[name_MSP[iMSP]]["Phi"+nameJet] = new MultiSamplePlot(datasets, "Phi"+nameJetH, 33,  -3.15, 3.15,titleJet[iJ]+" #phi");
+      MSPlot[name_MSP[iMSP]]["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJetH, 600, 0,  3000,  titleJet[iJ]+" p_{T} (GeV)");
+      MSPlot[name_MSP[iMSP]]["E" +nameJet]  = new MultiSamplePlot(datasets, "E"  +nameJetH, 600, 0,  3000,  titleJet[iJ]+" E (GeV)");
 
-    MSPlot["chargedMult"      +nameJet] = new MultiSamplePlot(datasets, "chargedMult"      +nameJet, 100, 0, 100,  titleJet[iJ]+" charged multiplicity");
-    MSPlot["neutralMult"      +nameJet] = new MultiSamplePlot(datasets, "neutralMult"      +nameJet, 100, 0, 100,  titleJet[iJ]+" neutral multiplicity");
-    MSPlot["muonMult"         +nameJet] = new MultiSamplePlot(datasets, "muonMult"         +nameJet, 100, 0, 100,  titleJet[iJ]+" muon multiplicity");
+      MSPlot[name_MSP[iMSP]]["chargedHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "chargedHad_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" charged had energy fraction");
+      MSPlot[name_MSP[iMSP]]["chargedEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedEm_E_frac" +nameJetH, 100, 0, 1,   titleJet[iJ]+" charged EM  energy fraction");
+      MSPlot[name_MSP[iMSP]]["chargedMu_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedMu_E_frac" +nameJetH, 100, 0, 1,   titleJet[iJ]+" charged Mu  energy fraction");
+      MSPlot[name_MSP[iMSP]]["neutralEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "neutralEm_E_frac" +nameJetH, 100, 0, 1,   titleJet[iJ]+" neutral EM  energy fraction");
+      MSPlot[name_MSP[iMSP]]["neutralHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "neutralHad_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" neutral had energy fraction");    
 
-    MSPlot["chargedMultTot"  +nameJet] = new MultiSamplePlot(datasets, "chargedMultTot"    +nameJet, 100, 0, 100,  titleJet[iJ]+" total charged multiplicity");
+      MSPlot[name_MSP[iMSP]]["em_E_frac"     +nameJet]= new MultiSamplePlot(datasets, "em_E_frac"     +nameJetH, 100, 0, 1,   titleJet[iJ]+" tot EM energy fraction");
+      MSPlot[name_MSP[iMSP]]["charged_E_frac"+nameJet]= new MultiSamplePlot(datasets, "charged_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" tot charged energy fraction");
+      MSPlot[name_MSP[iMSP]]["neutral_E_frac"+nameJet]= new MultiSamplePlot(datasets, "neutral_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" tot neutral energy fraction");
+
+      MSPlot[name_MSP[iMSP]]["chargedMult"      +nameJet] = new MultiSamplePlot(datasets, "chargedMult"      +nameJetH, 100, 0, 100,  titleJet[iJ]+" charged multiplicity");
+      MSPlot[name_MSP[iMSP]]["neutralMult"      +nameJet] = new MultiSamplePlot(datasets, "neutralMult"      +nameJetH, 100, 0, 100,  titleJet[iJ]+" neutral multiplicity");
+      MSPlot[name_MSP[iMSP]]["muonMult"         +nameJet] = new MultiSamplePlot(datasets, "muonMult"         +nameJetH, 100, 0, 100,  titleJet[iJ]+" muon multiplicity");
+
+      MSPlot[name_MSP[iMSP]]["chargedMultTot"  +nameJet] = new MultiSamplePlot(datasets, "chargedMultTot"    +nameJetH, 100, 0, 100,  titleJet[iJ]+" total charged multiplicity");
+    }
   }
   
   ///////////////////
@@ -289,8 +319,8 @@ int analysis(string xmlfile, TString path,
 	std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
 
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-      float rho = event->kt6PFJets_rho();
-      MSPlot["RhoCorrection"]->Fill(rho, datasets[d], true, Luminosity);
+//       float rho = event->kt6PFJets_rho();
+//       MSPlot["RhoCorrection"]->Fill(rho, datasets[d], true, Luminosity);
 
       vector<TRootMCParticle*> mcParticles_flav;
       TRootGenEvent* genEvt_flav = 0;
@@ -362,6 +392,8 @@ int analysis(string xmlfile, TString path,
       // OBJECT SELECTION //
       //////////////////////
 
+      if(verbose>2) cout << "-- enter object selection" << endl;
+
       // Declare selection instance    
       Selection selection(init_jets, init_muons, init_electrons, mets);
 
@@ -376,114 +408,64 @@ int analysis(string xmlfile, TString path,
       sort(selectedJetsPF.begin(),selectedJetsPF.end(),HighestPt()); // order in pT
 
       /////////////////////
+      
+      // Apply inclusive selection
+      // and use TRootPFJet methods to get members and put them within variables
+      if(verbose>2) cout << "-- Call SelectCompute on the map : " << "noAnaCut" << endl;
 
-      /////////////////////
-      // EVENT SELECTION //
-      /////////////////////
+      outSelectCompute = 
+	SelectCompute(event, selection, verbose,
+		      vertex , selectedJetsPF, 
+		      cut_nJets, cut_pt1, cut_pt2, cut_deltaphi,
+		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
+		      neutral_had_E_frac, neutral_em_E_frac, 
+		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
+		      charged_mult, neutral_mult, muon_mult,
+		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
+		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
+		      rho, nVertices, nJetInEvt, DeltaPhi);
 
-      // Primary vertex
-      bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
-      if(!isGoodPV) continue;
+      if(verbose>2 && ievt%1000==0) 
+	cout << "%% DIJET : " << charged_E_frac_dijet 
+	     << "  "          << chargedMult_dijet 
+	     << "  "          << mass_dijet 
+	     << "  "          << em_E_frac_dijet 
+	     << endl;
 
-      // JETS
+      if(outSelectCompute==2) continue;
+      
+      // Analysis selections
+      AnaCuts["AnaCut_none"] = true;
+      //
+      AnaCuts["AnaCut_jet1_emf0p2"] = tot_em_E_frac[0] < 0.2 ;
+      AnaCuts["AnaCut_jet2_emf0p2"] = tot_em_E_frac[1] < 0.2 ;
+      AnaCuts["AnaCut_pair_emf0p2"] = em_E_frac_dijet  < 0.2 ;
+      AnaCuts["AnaCut_both_emf0p2"] = AnaCuts["AnaCut_jet1_emf0p2"] && AnaCuts["AnaCut_jet2_emf0p2"] ;
+      //
+      AnaCuts["AnaCut_jet1_chf0p1"] = tot_charged_E_frac[0] < 0.1 ;
+      AnaCuts["AnaCut_jet2_chf0p1"] = tot_charged_E_frac[1] < 0.1 ;
+      AnaCuts["AnaCut_pair_chf0p1"] = charged_E_frac_dijet  < 0.1 ;
+      AnaCuts["AnaCut_both_chf0p1"] = AnaCuts["AnaCut_jet1_chf0p1"] && AnaCuts["AnaCut_jet2_chf0p1"] ;
+      //
+      AnaCuts["AnaCut_jet1_chmult"] = tot_chargedMult[0]==0 ;
+      AnaCuts["AnaCut_jet2_chmult"] = tot_chargedMult[1]==0 ;
+      AnaCuts["AnaCut_pair_chmult"] = chargedMult_dijet ==0;
+      AnaCuts["AnaCut_both_chmult"] = AnaCuts["AnaCut_jet1_chmult"] && AnaCuts["AnaCut_jet2_chmult"] ;
+      
+      // Fill various MapMSPlots depending on various selections
+      for(MapMapMSP::const_iterator iMSP=MSPlot.begin() ; iMSP!=MSPlot.end() ; iMSP++) {
 
-      // number of jets
-      if(selectedJets.size()<cut_nJets) continue;
-      if(verbose>2) cout << "-- selectedJets.size()=" << selectedJets.size() << endl;
-
-      // leading jet pt
-      jet_pt[0]=selectedJets[0]->Pt();
-      if(jet_pt[0]<cut_pt1) continue;
-
-      // subleading jet pt
-      jet_pt[1]=selectedJets[1]->Pt();
-      if(jet_pt[1]<cut_pt2) continue;
-
-      // delta phi
-      jet_phi[0]=selectedJets[0]->Phi();
-      jet_phi[1]=selectedJets[1]->Phi();
-      DeltaPhi = TMath::Abs(selectedJets[0]->Phi() - selectedJets[1]->Phi());
-      if(DeltaPhi<cut_deltaphi) continue;
-
-      /////////////////////
-
-      //////////////////////
-      /// FILL HISTOGRAMS //
-      //////////////////////
-
-      // EVENT
-      MSPlot["NbOfVertices"]         ->Fill(vertex.size(), datasets[d], true, Luminosity*scaleFactor);
-
-      // JETS
-      MSPlot["NbOfSelectedJets"]     ->Fill(selectedJetsPF.size(), datasets[d], true, Luminosity*scaleFactor);
-
-      for(int iJ=0 ; iJ<nJet ; iJ++) { // loop over jets
-
-	if(selectedJetsPF.size()<=iJ) break;
-	
-	nameJet=Form("_Jet%d",iJ+1);
-
-	jet_E[iJ]=selectedJetsPF[iJ]->E();
-
-	// subgroups
-	neutral_had_E_frac[iJ] = selectedJetsPF[iJ]->neutralHadronEnergyFraction();
-	neutral_em_E_frac[ iJ] = selectedJetsPF[iJ]->neutralEmEnergyFraction();
-	charged_had_E_frac[iJ] = selectedJetsPF[iJ]->chargedHadronEnergyFraction();
-	charged_em_E_frac[ iJ] = selectedJetsPF[iJ]->chargedEmEnergyFraction();
-	charged_mu_E_frac[ iJ] = selectedJetsPF[iJ]->chargedMuEnergyFraction();
-	charged_mult[      iJ] = selectedJetsPF[iJ]->chargedMultiplicity();
-	muon_mult[         iJ] = selectedJetsPF[iJ]->muonMultiplicity();
-	neutral_mult[      iJ] = selectedJetsPF[iJ]->neutralMultiplicity();
-
-	// sums
-	tot_neutral_E_frac[iJ] = neutral_had_E_frac[iJ] + neutral_em_E_frac[iJ];
-	tot_charged_E_frac[iJ] = charged_had_E_frac[iJ] + charged_em_E_frac[iJ] + charged_mu_E_frac[iJ];
-	tot_em_E_frac[     iJ] = neutral_em_E_frac[ iJ] + charged_em_E_frac[iJ];
-	tot_chargedMult[   iJ] = charged_mult[iJ] + muon_mult[iJ];
-
-	// fill plots
-	MSPlot["Eta"+nameJet]->Fill(selectedJetsPF[iJ]->Eta(), datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["E"+  nameJet]->Fill(jet_E[iJ],   datasets[d], true, Luminosity*scaleFactor);
-
-	if(iJ>1) {
-	  MSPlot["Phi"+nameJet]->Fill(selectedJetsPF[iJ]->Phi(), datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["Pt"+nameJet] ->Fill(selectedJetsPF[iJ]->Pt(),  datasets[d], true, Luminosity*scaleFactor);
-	}
-	else {
-	  MSPlot["Phi"+nameJet]->Fill(jet_phi[iJ], datasets[d], true, Luminosity*scaleFactor);
-	  MSPlot["Pt"+nameJet] ->Fill(jet_pt[iJ],  datasets[d], true, Luminosity*scaleFactor);
-	}
-
-	MSPlot["chargedHad_E_frac"+nameJet]->Fill(charged_had_E_frac[iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["chargedEm_E_frac" +nameJet]->Fill(charged_em_E_frac[ iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["chargedMu_E_frac" +nameJet]->Fill(charged_mu_E_frac[ iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["neutralEm_E_frac" +nameJet]->Fill(neutral_em_E_frac[ iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["neutralHad_E_frac"+nameJet]->Fill(neutral_had_E_frac[iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["neutral_E_frac"   +nameJet]->Fill(tot_neutral_E_frac[iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["charged_E_frac"   +nameJet]->Fill(tot_charged_E_frac[iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["em_E_frac"        +nameJet]->Fill(tot_em_E_frac[     iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["chargedMult"      +nameJet]->Fill(charged_mult[      iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["muonMult"         +nameJet]->Fill(muon_mult[         iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["chargedMultTot"   +nameJet]->Fill(tot_chargedMult[   iJ], datasets[d], true, Luminosity*scaleFactor);
-	MSPlot["neutralMult"      +nameJet]->Fill(neutral_mult[      iJ], datasets[d], true, Luminosity*scaleFactor);
+	if(AnaCuts[iMSP->first]) outfill = 
+	  FillHistos(iMSP->second, iMSP->first, 
+		     datasets[d],
+		     verbose, Luminosity, scaleFactor,
+		     m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
+		     neutral_had_E_frac, neutral_em_E_frac, charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
+		     charged_mult, neutral_mult, muon_mult,
+		     tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
+		     charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
+		     rho, nVertices, nJetInEvt, DeltaPhi);      
       }
-
-      // dijet
-      Float_t charged_E_frac_dijet=0, chargedMult_dijet=0, mass_dijet=0, em_E_frac_dijet=0;
-      TRootPFJet dijet;
-      if(selectedJetsPF.size()>=2) {
-	charged_E_frac_dijet = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_charged_E_frac[0]+jet_E[1]*tot_charged_E_frac[1]) / (jet_E[0]+jet_E[1]) : -999;
-	em_E_frac_dijet      = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_em_E_frac[0]+jet_E[1]*tot_em_E_frac[1])           / (jet_E[0]+jet_E[1]) : -999;
-	chargedMult_dijet = tot_chargedMult[0] + tot_chargedMult[1];
-	dijet = (*selectedJetsPF[0]) + (*selectedJetsPF[1]) ;
-	mass_dijet = dijet.M();
-      }
-
-      MSPlot["em_E_frac_dijet"     ]->Fill(em_E_frac_dijet,      datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["charged_E_frac_dijet"]->Fill(charged_E_frac_dijet, datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["chargedMult_dijet"   ]->Fill(chargedMult_dijet,    datasets[d], true, Luminosity*scaleFactor);
-      MSPlot["mass_dijet"          ]->Fill(mass_dijet,           datasets[d], true, Luminosity*scaleFactor);
-
 
     } // end loop over events
 
@@ -492,7 +474,52 @@ int analysis(string xmlfile, TString path,
     treeLoader.UnLoadDataset();
 
   } // end loop over datasets
+ 
+  //////////////////////////////////
+  // COMPUTE BACKGROUND REDUCTION //
+  //////////////////////////////////
+
+  // Reminder: typedef pair< string , vector< pair<string,float> > > MSIntegral;
+
+  for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
+    msi[iMSP] = eval_msi( MSPlot[name_MSP[iMSP]]["NbOfVertices"] );
+  }
+
+  outlog << endl
+	 << "$$$$$$$$$$$$$$$$$$$$$$$$$$" << endl
+	 << "$$ BACKGROUND REDUCTION $$" << endl;
   
+  for(u_int iS=0 ; iS<(msi[0].second).size() ; iS++) {
+
+    name_before = name_after = "";
+    val_before = val_after = reduction = 0;
+
+    name_before = ((msi[0].second)[iS]).first;  // name of the sample
+    val_before  = ((msi[0].second)[iS]).second; // integral of the sample
+
+    outlog << "$$ Sample #"   << iS << " " << name_before << " $$" << endl;
+    
+    for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
+      
+      if( (msi[iMSP].second).size() <= iS ) {
+	outlog << "Error: missing AFTER sample #" << iS << endl;
+	break;
+      }
+      
+      name_after  = ((msi[iMSP] .second)[iS]).first;
+      val_after   = ((msi[iMSP] .second)[iS]).second;
+      
+      reduction = val_after !=0 ? val_before / val_after : -999 ;
+
+      outlog << "Selection : " << name_MSP[iMSP]
+	     << " : before="   << val_before
+	     << " ; after="    << val_after
+	     << " ; reduction = " << reduction << " $$" << endl;
+    }
+  }
+  outlog   << "$$$$$$$$$$$$$$$$$$$$$$$$$$"
+	   << endl << endl;
+
   //////////////////
   // WRITE OUTPUT //
   //////////////////
@@ -501,71 +528,65 @@ int analysis(string xmlfile, TString path,
   fout->cd();
 
   cout << "-- Loop over MSPlots" << endl;
-  for(map<string,MultiSamplePlot*>::const_iterator it = MSPlot.begin(); it != MSPlot.end(); it++) {
-    string name = it->first;
-    cout << "--- name=" << name << endl;
-    
-    MultiSamplePlot *temp = it->second;
-    if(!temp) {
-      cout <<"--- error: no such MSPlot!" << endl;
-      continue;
-    }
 
-    TH1F *tempHisto_data;
-    TH1F *tempHisto_TTTT;
+  for(MapMapMSP::const_iterator itMap = MSPlot.begin() ; itMap != MSPlot.end(); itMap++) {
 
-    //Option to write ROOT files containing histograms with systematics varied +/-
-    //TFile * tempErrorFile;
-        
-    if (doJESShift == 1){
-      string filename = "ErrorBands/Error_"+name+".root";
-      TFile* tempErrorFile = new TFile(filename.c_str(),"UPDATE");
-      //TH1F * tempHisto = temp->getTH1F("TTJets");
-      //tempHisto->Write("Minus");
-      // tempErrorFile->Write();
-      //tempErrorFile->Close();
-    }
-    else if  (doJESShift ==2){
-            
-      string filename = "ErrorBands/Error_"+name+".root";
-      TFile* tempErrorFile = new TFile(filename.c_str(),"UPDATE");
-      //TH1F * tempHisto = temp->getTH1F("TTJets");
-      //tempHisto->Write("Plus");
-      //tempErrorFile->Write();
-      //tempErrorFile->Close();
+    cout << "--- MAP : " << itMap->first << endl;
 
-      if(verbose>2) cout <<"--- JES sys down"<<endl;
-            
-    }
-    else if  (doJESShift ==0){
-      if(verbose>2) cout <<"--- JES sys off "<<endl;
+    for( MapMSP::const_iterator it    = (itMap->second).begin() ; it    != (itMap->second).end(); it++) {
 
-      // MultiSamplePlot::Draw(std::string, unsigned int, bool, bool, bool, int)
-      // void MultiSamplePlot::Draw(string label, unsigned int RatioType, bool addRatioErrorBand, bool addErrorBand, bool ErrorBandAroundTotalInput, int scaleNPSignal)
+      string name = (it->first)+"_"+(itMap->first);
+      cout << "--- name=" << name << endl;
+      
+      MultiSamplePlot *temp = it->second;
+      if(!temp) {
+	cout <<"--- error: no such MSPlot!" << endl;
+	continue;
+      }
+      
+      TH1F *tempHisto_data;
+      TH1F *tempHisto_TTTT;
 
-      // MultiSamplePlot::Write(TFile*, std::string, bool, std::string, std::string)
-      // void MultiSamplePlot::Write(TFile* fout, string label, bool savePNG, string pathPNG, string ext) 
+      //Option to write ROOT files containing histograms with systematics varied +/-
+      //TFile * tempErrorFile;
+      
+      if (doJESShift == 1){
+	string filename = "ErrorBands/Error_"+name+".root";
+	TFile* tempErrorFile = new TFile(filename.c_str(),"UPDATE");
+	//TH1F * tempHisto = temp->getTH1F("TTJets");
+	//tempHisto->Write("Minus");
+	// tempErrorFile->Write();
+	//tempErrorFile->Close();
+      }
+      else if  (doJESShift ==2){
+	
+	string filename = "ErrorBands/Error_"+name+".root";
+	TFile* tempErrorFile = new TFile(filename.c_str(),"UPDATE");
+	//TH1F * tempHisto = temp->getTH1F("TTJets");
+	//tempHisto->Write("Plus");
+	//tempErrorFile->Write();
+	//tempErrorFile->Close();
+	
+	if(verbose>2) cout <<"--- JES sys down"<<endl;
+      }
+      else if  (doJESShift ==0){
+	if(verbose>2) cout <<"--- JES sys off "<<endl;
+	
+	// ND
+	if(verbose>2) cout << "--- draw" << endl;
+	temp->Draw(name, 0, false, false, false, 0, x1, y1, x2, y2, magnify);
 
-      // temp->addText("CMS preliminary");
+	if(verbose>2) cout << "--- write in pathPNG=" << pathPNG << endl;
+	float maxY = temp->getMaxY();
+	cout << "###############################"    << endl 
+	     << "########## maxY=" << maxY << " ###" << endl 
+	     << "###############################"    << endl;
 
-      // ND
-      if(verbose>2) cout << "--- draw" << endl;
-      temp->Draw(name, 0, false, false, false, 0, x1, y1, x2, y2, magnify);
-      //temp->Draw(name, 0, false, false, false, 0);
-      if(verbose>2) cout << "--- drawn!" << endl;
-
-      if(verbose>2) cout << "--- write in pathPNG=" << pathPNG << endl;
-      float maxY = temp->getMaxY();
-      cout << "###############################" << endl 
-	   << "########## maxY=" << maxY << " ##########" << endl 
-	   << "###############################" << endl;
-      //temp->setMaxY(1000000*maxY);
-
-      temp->Write(fout, name, true, pathPNG+"/", "png", magnifyLog); //ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
-      //temp->Write(fout, name, false, pathPNG, "png");
-      if(verbose>2) cout << "--- written!" << endl;
-    }
-  } // end loop over MSPlots
+	temp->Write(fout, name, true, pathPNG+"/", "png", magnifyLog); 
+	//ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
+      }
+    } // end loop over MSPlots
+  }
   cout << "-- end loop over MSPlots" << endl;
   
   TDirectory* th1dir = fout->mkdir("Histos1D");
@@ -598,4 +619,223 @@ int analysis(string xmlfile, TString path,
 
 
   return 0;
+}
+
+//////////////
+// EVAL_MSI //
+//////////////
+
+/** evaluate integrals of individual components in a MSPlot */
+
+MSIntegral eval_msi(MultiSamplePlot* plot)
+{
+  MSIntegral msi;
+  vector<float> integrals;
+  vector<string> names;
+  float integral=0;
+  float total=0;
+  TH1F* h=0;
+
+  // Error case
+  if(!plot) {
+    msi.first = "nothing";
+    cout << "ERROR in eval_msi : no input plot" << endl;
+    return msi;
+  }
+
+  // Fill the MSIntegral
+  msi.first = plot->getplotName();
+  names = plot->getTH1FNames();
+
+  for(u_int i=0 ; i<names.size() ; i++) {
+    h = plot->getTH1F(names[i]);
+    integral = h!=0 ? h->Integral() : 0;
+    (msi.second).push_back( make_pair(names[i],integral) );
+    total += integral;
+  }
+
+  (msi.second).push_back( make_pair("total",total) );
+
+  return msi;
+}
+
+/////////////
+// SelectCompute //
+/////////////
+
+/** Apply event and object selection then fill MSPlots. 
+    Called within a loop over events. 
+    Returns integers : 0 for correct execution, 
+    2 for sending a "continue" instruction within the loop over events.
+*/
+
+int SelectCompute(TRootEvent* event, Selection selection, int verbose,
+		  vector<TRootVertex*> vertex , vector<TRootPFJet*> selectedJetsPF, 
+		  int cut_nJets, float cut_pt1, float cut_pt2, float cut_deltaphi,
+		  int m_nJet, float* jet_E, float* jet_pt, float* jet_phi, float* jet_eta,  
+		  float* neutral_had_E_frac, float* neutral_em_E_frac, float* charged_em_E_frac, float* charged_had_E_frac, float* charged_mu_E_frac,
+		  float* charged_mult, float* neutral_mult, float* muon_mult,
+		  float* tot_em_E_frac, float* tot_neutral_E_frac, float* tot_charged_E_frac, float* tot_chargedMult,
+		  float& charged_E_frac_dijet, float& chargedMult_dijet, float& mass_dijet, float& em_E_frac_dijet,
+		  float& rho, int& nVertices, int& nJetInEvt, float& DeltaPhi)
+{
+
+  if(verbose>2) cout << "--- enter the function" << endl;
+
+  rho       = event->kt6PFJets_rho();
+  nVertices = vertex.size();
+
+  /////////////////////
+  // EVENT SELECTION //
+  /////////////////////
+
+  // Primary vertex
+  bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
+  if(!isGoodPV) return 2;
+
+  // JETS
+
+  // number of jets
+  nJetInEvt = selectedJetsPF.size();
+  if(nJetInEvt<cut_nJets) return 2;
+  if(verbose>2) if(verbose>2) cout << "-- selectedJetsPF.size()=" << selectedJetsPF.size() << endl;
+
+  // leading jet pt
+  jet_pt[0]=selectedJetsPF[0]->Pt();
+  if(jet_pt[0]<cut_pt1) return 2;
+
+  // subleading jet pt
+  jet_pt[1]=selectedJetsPF[1]->Pt();
+  if(jet_pt[1]<cut_pt2) return 2;
+
+  // delta phi
+  jet_phi[0]=selectedJetsPF[0]->Phi();
+  jet_phi[1]=selectedJetsPF[1]->Phi();
+  DeltaPhi = TMath::Abs(jet_phi[0] - jet_phi[1]);
+  if(DeltaPhi<cut_deltaphi) return 2;
+
+  // analysis cuts
+  //if() return 2;
+
+  //////////////////////
+  /// FILL HISTOGRAMS //
+  //////////////////////
+
+  if(verbose>2) cout << "--- look at jet pairs" << endl;
+
+  for(int iJ=0 ; iJ<m_nJet ; iJ++) { // loop over jets
+
+    if(selectedJetsPF.size()<=iJ) break;
+	
+    jet_E[  iJ]=selectedJetsPF[iJ]->E();
+    jet_eta[iJ]=selectedJetsPF[iJ]->Eta();
+
+    if(iJ>1) {
+      jet_pt[ iJ] = selectedJetsPF[iJ]->Pt();
+      jet_phi[iJ] = selectedJetsPF[iJ]->Phi();
+    }
+
+    // subgroups
+    neutral_had_E_frac[iJ] = selectedJetsPF[iJ]->neutralHadronEnergyFraction();
+    neutral_em_E_frac[ iJ] = selectedJetsPF[iJ]->neutralEmEnergyFraction();
+    charged_had_E_frac[iJ] = selectedJetsPF[iJ]->chargedHadronEnergyFraction();
+    charged_em_E_frac[ iJ] = selectedJetsPF[iJ]->chargedEmEnergyFraction();
+    charged_mu_E_frac[ iJ] = selectedJetsPF[iJ]->chargedMuEnergyFraction();
+    charged_mult[      iJ] = selectedJetsPF[iJ]->chargedMultiplicity();
+    muon_mult[         iJ] = selectedJetsPF[iJ]->muonMultiplicity();
+    neutral_mult[      iJ] = selectedJetsPF[iJ]->neutralMultiplicity();
+
+    // sums
+    tot_neutral_E_frac[iJ] = neutral_had_E_frac[iJ] + neutral_em_E_frac[iJ];
+    tot_charged_E_frac[iJ] = charged_had_E_frac[iJ] + charged_em_E_frac[iJ] + charged_mu_E_frac[iJ];
+    tot_em_E_frac[     iJ] = neutral_em_E_frac[ iJ] + charged_em_E_frac[iJ];
+    tot_chargedMult[   iJ] = charged_mult[iJ] + muon_mult[iJ];
+
+  } // end loop over jets
+
+  if(verbose>2) cout << "--- end loop over jets" << endl
+		     << "--- start building dijet quantities" << endl;
+
+  // dijet
+  TRootPFJet dijet;
+  charged_E_frac_dijet=0; chargedMult_dijet=0; mass_dijet=0; em_E_frac_dijet=0;
+
+  if(selectedJetsPF.size()>=2) {
+    charged_E_frac_dijet = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_charged_E_frac[0]+jet_E[1]*tot_charged_E_frac[1]) / (jet_E[0]+jet_E[1]) : -999;
+    em_E_frac_dijet      = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_em_E_frac[0]+jet_E[1]*tot_em_E_frac[1])           / (jet_E[0]+jet_E[1]) : -999;
+    chargedMult_dijet = tot_chargedMult[0] + tot_chargedMult[1];
+    dijet = (*selectedJetsPF[0]) + (*selectedJetsPF[1]) ;
+    mass_dijet = dijet.M();
+  }
+
+  return 0;
+}
+
+int FillHistos(MapMSP MSPlot, string name_MSP,
+	       Dataset* dataset,
+	       int verbose, float Luminosity, float scaleFactor,
+	       int m_nJet, float* jet_E, float* jet_pt, float* jet_phi, float* jet_eta,  
+	       float* neutral_had_E_frac, float* neutral_em_E_frac, float* charged_em_E_frac, float* charged_had_E_frac, float* charged_mu_E_frac,
+	       float* charged_mult, float* neutral_mult, float* muon_mult,
+	       float* tot_em_E_frac, float* tot_neutral_E_frac, float* tot_charged_E_frac, float* tot_chargedMult,
+	       float charged_E_frac_dijet, float chargedMult_dijet, float mass_dijet, float em_E_frac_dijet,
+	       float rho, int nVertices, int nJetInEvt, float DeltaPhi)
+{
+
+  if(verbose>2) cout << "--- fill histograms" << endl;
+  int outlocal=0;
+
+  // EVENT
+  outlocal=LocalFill(MSPlot, "NbOfVertices" , nVertices, dataset, true, Luminosity, scaleFactor);
+  outlocal=LocalFill(MSPlot, "RhoCorrection", rho,       dataset, true, Luminosity, scaleFactor);
+
+  // JETS
+  outlocal=LocalFill(MSPlot, "NbOfSelectedJets", nJetInEvt, dataset, true, Luminosity, scaleFactor);
+
+  outlocal=LocalFill(MSPlot, "em_E_frac_dijet"     , em_E_frac_dijet,      dataset, true, Luminosity, scaleFactor);
+  outlocal=LocalFill(MSPlot, "charged_E_frac_dijet", charged_E_frac_dijet, dataset, true, Luminosity, scaleFactor);
+  outlocal=LocalFill(MSPlot, "chargedMult_dijet"   , chargedMult_dijet,    dataset, true, Luminosity, scaleFactor);
+  outlocal=LocalFill(MSPlot, "mass_dijet"          , mass_dijet,           dataset, true, Luminosity, scaleFactor);
+
+  string nameJet="";
+
+  for(int iJ=0 ; iJ<m_nJet ; iJ++) { // loop over jets
+
+    if(nJetInEvt<=iJ) break;
+
+    nameJet=Form("_Jet%d",iJ+1);
+    //nameJet = nameJet + "_" + name_MSP;
+
+    outlocal=LocalFill(MSPlot, "Eta"+nameJet, jet_eta[iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "E"+  nameJet, jet_E[iJ],   dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "Phi"+nameJet, jet_phi[iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "Pt"+nameJet , jet_pt[iJ],  dataset, true, Luminosity, scaleFactor);
+
+    outlocal=LocalFill(MSPlot, "chargedHad_E_frac"+nameJet, charged_had_E_frac[iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "chargedEm_E_frac" +nameJet, charged_em_E_frac[ iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "chargedMu_E_frac" +nameJet, charged_mu_E_frac[ iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "neutralEm_E_frac" +nameJet, neutral_em_E_frac[ iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "neutralHad_E_frac"+nameJet, neutral_had_E_frac[iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "neutral_E_frac"   +nameJet, tot_neutral_E_frac[iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "charged_E_frac"   +nameJet, tot_charged_E_frac[iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "em_E_frac"        +nameJet, tot_em_E_frac[     iJ], dataset, true, Luminosity, scaleFactor);
+
+    outlocal=LocalFill(MSPlot, "chargedMult"      +nameJet, charged_mult[      iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "muonMult"         +nameJet, muon_mult[         iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "chargedMultTot"   +nameJet, tot_chargedMult[   iJ], dataset, true, Luminosity, scaleFactor);
+    outlocal=LocalFill(MSPlot, "neutralMult"      +nameJet, neutral_mult[      iJ], dataset, true, Luminosity, scaleFactor);
+  }
+
+  return 0;
+}
+
+int LocalFill(MapMSP MSPlot, string name, float value, Dataset* dataset, bool scale, float Luminosity, float scaleFactor)
+{
+  
+  if(MSPlot[name]) {
+    MSPlot[name]->Fill(value, dataset, true, Luminosity*scaleFactor);
+    return 0;
+  }
+  else return -1;
+
 }
