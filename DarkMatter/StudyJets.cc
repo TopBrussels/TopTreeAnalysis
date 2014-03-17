@@ -4,7 +4,7 @@ using namespace std;
 using namespace TopTree;
 using namespace reweight;
 
-typedef pair< string , vector< pair<string,float> > > MSIntegral;
+//typedef pair< string , vector< pair<string,float> > > MSIntegral;
 typedef map<string,MultiSamplePlot*> MapMSP;
 typedef map<string,MapMSP>           MapMapMSP;
 typedef map<string,bool>             MapAnaCut;
@@ -15,7 +15,7 @@ typedef map<string,bool>             MapAnaCut;
 
 int analysis(string, TString, int, float, float, float, int, float, float);
 
-MSIntegral eval_msi(MultiSamplePlot*);
+//MSIntegral eval_msi(MultiSamplePlot*);
 
 int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 		  vector<TRootVertex*> vertex , vector<TRootPFJet*> selectedJetsPF, 
@@ -185,7 +185,7 @@ int analysis(string xmlfile, TString path,
 			 "AnaCut_jet1_chmult","AnaCut_jet2_chmult","AnaCut_pair_chmult","AnaCut_both_chmult"};
 
   // Objects to compute background rejection
-  MSIntegral msi[nMSP];
+  MultiSamplePlot::MSIntegral msi[nMSP];
   float val_before=0, val_after=0, reduction=0;
   string name_before="", name_after="";
   //vector<float> reductions;
@@ -482,7 +482,8 @@ int analysis(string xmlfile, TString path,
   // Reminder: typedef pair< string , vector< pair<string,float> > > MSIntegral;
 
   for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
-    msi[iMSP] = eval_msi( MSPlot[name_MSP[iMSP]]["NbOfVertices"] );
+    //msi[iMSP] = eval_msi( MSPlot[name_MSP[iMSP]]["NbOfVertices"] );
+    msi[iMSP] = MSPlot[name_MSP[iMSP]]["NbOfVertices"] -> Integrate();
   }
 
   outlog << endl
@@ -578,9 +579,7 @@ int analysis(string xmlfile, TString path,
 
 	if(verbose>2) cout << "--- write in pathPNG=" << pathPNG << endl;
 	float maxY = temp->getMaxY();
-	cout << "###############################"    << endl 
-	     << "########## maxY=" << maxY << " ###" << endl 
-	     << "###############################"    << endl;
+	cout << "########## maxY=" << maxY << " ###" << endl;
 
 	temp->Write(fout, name, true, pathPNG+"/", "png", magnifyLog); 
 	//ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
@@ -626,7 +625,7 @@ int analysis(string xmlfile, TString path,
 //////////////
 
 /** evaluate integrals of individual components in a MSPlot */
-
+/*
 MSIntegral eval_msi(MultiSamplePlot* plot)
 {
   MSIntegral msi;
@@ -658,7 +657,7 @@ MSIntegral eval_msi(MultiSamplePlot* plot)
 
   return msi;
 }
-
+*/
 /////////////
 // SelectCompute //
 /////////////
