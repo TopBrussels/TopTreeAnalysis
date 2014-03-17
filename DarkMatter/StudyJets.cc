@@ -178,8 +178,8 @@ int analysis(string xmlfile, TString path,
   MapMapMSP MSPlot;
   MapAnaCut AnaCuts;
 
-  const int nMSP=13;
-  string name_MSP[nMSP]={"AnaCut_none",
+  const int nMSP=18;
+  string name_MSP[nMSP]={"AnaCut_none","AnaCut_2jets", "AnaCut_dphi", "AnaCut_pt1", "AnaCut_pt2", "AnaCut_kine",
 			 "AnaCut_jet1_emf0p2","AnaCut_jet2_emf0p2","AnaCut_pair_emf0p2","AnaCut_both_emf0p2",
 			 "AnaCut_jet1_chf0p1","AnaCut_jet2_chf0p1","AnaCut_pair_chf0p1","AnaCut_both_chf0p1",
 			 "AnaCut_jet1_chmult","AnaCut_jet2_chmult","AnaCut_pair_chmult","AnaCut_both_chmult"};
@@ -413,10 +413,22 @@ int analysis(string xmlfile, TString path,
       // and use TRootPFJet methods to get members and put them within variables
       if(verbose>2) cout << "-- Call SelectCompute on the map : " << "noAnaCut" << endl;
 
+//       outSelectCompute = 
+// 	SelectCompute(event, selection, verbose,
+// 		      vertex , selectedJetsPF, 
+// 		      cut_nJets, cut_pt1, cut_pt2, cut_deltaphi,
+// 		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
+// 		      neutral_had_E_frac, neutral_em_E_frac, 
+// 		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
+// 		      charged_mult, neutral_mult, muon_mult,
+// 		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
+// 		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
+// 		      rho, nVertices, nJetInEvt, DeltaPhi);
+
       outSelectCompute = 
 	SelectCompute(event, selection, verbose,
 		      vertex , selectedJetsPF, 
-		      cut_nJets, cut_pt1, cut_pt2, cut_deltaphi,
+		      -999, -999, -999, -999, // do no apply ANY cuts yet
 		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
 		      neutral_had_E_frac, neutral_em_E_frac, 
 		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
@@ -436,6 +448,13 @@ int analysis(string xmlfile, TString path,
       
       // Analysis selections
       AnaCuts["AnaCut_none"] = true;
+      //
+      AnaCuts["AnaCut_2jets"] = nJetInEvt >= cut_nJets ;
+      AnaCuts["AnaCut_dphi" ] = DeltaPhi  >= cut_deltaphi ;
+      AnaCuts["AnaCut_pt1"  ] = jet_pt[0] >= cut_pt1 ;
+      AnaCuts["AnaCut_pt2"  ] = jet_pt[1] >= cut_pt2 ;
+      AnaCuts["AnaCut_kine" ] = AnaCuts["AnaCut_2jets"] && AnaCuts["AnaCut_dphi"] 
+	&& AnaCuts["AnaCut_pt1"] && AnaCuts["AnaCut_pt2"];
       //
       AnaCuts["AnaCut_jet1_emf0p2"] = tot_em_E_frac[0] < 0.2 ;
       AnaCuts["AnaCut_jet2_emf0p2"] = tot_em_E_frac[1] < 0.2 ;
@@ -681,6 +700,8 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 
   if(verbose>2) cout << "--- enter the function" << endl;
 
+  bool exist_dijet=false;
+
   rho       = event->kt6PFJets_rho();
   nVertices = vertex.size();
 
@@ -696,25 +717,33 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 
   // number of jets
   nJetInEvt = selectedJetsPF.size();
+  if(nJetInEvt==0)        return 2;
   if(nJetInEvt<cut_nJets) return 2;
-  if(verbose>2) if(verbose>2) cout << "-- selectedJetsPF.size()=" << selectedJetsPF.size() << endl;
+  if(nJetInEvt>=2)        exist_dijet=true;
+  if(verbose>2) cout << "-- nJetInEvt=" << nJetInEvt << endl;
 
   // leading jet pt
   jet_pt[0]=selectedJetsPF[0]->Pt();
   if(jet_pt[0]<cut_pt1) return 2;
 
   // subleading jet pt
-  jet_pt[1]=selectedJetsPF[1]->Pt();
-  if(jet_pt[1]<cut_pt2) return 2;
+  if(exist_dijet) {
+    jet_pt[1]=selectedJetsPF[1]->Pt();
+    if(jet_pt[1]<cut_pt2) return 2;
+  }
+  else jet_pt[1]=-999;
 
   // delta phi
   jet_phi[0]=selectedJetsPF[0]->Phi();
-  jet_phi[1]=selectedJetsPF[1]->Phi();
-  DeltaPhi = TMath::Abs(jet_phi[0] - jet_phi[1]);
-  if(DeltaPhi<cut_deltaphi) return 2;
-
-  // analysis cuts
-  //if() return 2;
+  if(exist_dijet) {
+    jet_phi[1]=selectedJetsPF[1]->Phi();
+    DeltaPhi = TMath::Abs(jet_phi[0] - jet_phi[1]);
+    if(DeltaPhi<cut_deltaphi) return 2;
+  }
+  else {
+    jet_phi[2]=-999;
+    DeltaPhi  =-999;
+  }
 
   //////////////////////
   /// FILL HISTOGRAMS //
@@ -724,7 +753,7 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 
   for(int iJ=0 ; iJ<m_nJet ; iJ++) { // loop over jets
 
-    if(selectedJetsPF.size()<=iJ) break;
+    if(nJetInEvt<=iJ) break;
 	
     jet_E[  iJ]=selectedJetsPF[iJ]->E();
     jet_eta[iJ]=selectedJetsPF[iJ]->Eta();
@@ -759,7 +788,7 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
   TRootPFJet dijet;
   charged_E_frac_dijet=0; chargedMult_dijet=0; mass_dijet=0; em_E_frac_dijet=0;
 
-  if(selectedJetsPF.size()>=2) {
+  if(nJetInEvt>=2) {
     charged_E_frac_dijet = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_charged_E_frac[0]+jet_E[1]*tot_charged_E_frac[1]) / (jet_E[0]+jet_E[1]) : -999;
     em_E_frac_dijet      = (jet_E[0]+jet_E[1]!=0) ? (jet_E[0]*tot_em_E_frac[0]+jet_E[1]*tot_em_E_frac[1])           / (jet_E[0]+jet_E[1]) : -999;
     chargedMult_dijet = tot_chargedMult[0] + tot_chargedMult[1];
