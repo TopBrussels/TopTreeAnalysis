@@ -19,13 +19,13 @@ int analysis(string, TString, int, float, float, float, int, float, float);
 
 int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 		  vector<TRootVertex*> vertex , vector<TRootPFJet*> selectedJetsPF, 
-		  int cut_nJets, float cut_pt1, float cut_pt2, float cut_deltaphi,
+		  int cut_nJets, float cut_pt1, float cut_pt2, float cut_deltaphi, float cut_eta, bool cut_PV,
 		  int m_nJet, float* jet_E, float* jet_pt, float* jet_phi, float* jet_eta,  
 		  float* neutral_had_E_frac, float* neutral_em_E_frac, float* charged_em_E_frac, float* charged_had_E_frac, float* charged_mu_E_frac,
 		  float* charged_mult, float* neutral_mult, float* muon_mult,
 		  float* tot_em_E_frac, float* tot_neutral_E_frac, float* tot_charged_E_frac, float* tot_chargedMult,
 		  float& charged_E_frac_dijet, float& chargedMult_dijet, float& mass_dijet, float& em_E_frac_dijet,
-		  float& rho, int& nVertices, int& nJetInEvt, float& DeltaPhi);
+		  float& rho, int& nVertices, int& nJetInEvt, float& DeltaPhi, bool& isGoodPV);
 
 int FillHistos(MapMSP MSPlot, string name_MSP,
 	       Dataset* dataset,
@@ -87,7 +87,7 @@ int analysis(string xmlfile, TString path,
   
   // Generic stuff
   clock_t start = clock();
-  int verbose = 2;
+  int verbose = 1;
   string pathPNG = path.Data();
   mkdir(pathPNG.c_str(),0777);
 
@@ -129,6 +129,7 @@ int analysis(string xmlfile, TString path,
   float rho=0;
   int nVertices=0;
   int nJetInEvt=0;
+  bool isGoodPV=false;
 
   // Vectors of objects
   cout << " - Variable declaration ..." << endl;
@@ -178,11 +179,13 @@ int analysis(string xmlfile, TString path,
   MapMapMSP MSPlot;
   MapAnaCut AnaCuts;
 
-  const int nMSP=18;
-  string name_MSP[nMSP]={"AnaCut_none","AnaCut_2jets", "AnaCut_dphi", "AnaCut_pt1", "AnaCut_pt2", "AnaCut_kine",
+  const int nMSP=22;
+  string name_MSP[nMSP]={"AnaCut_none",  "AnaCut_PV",
+			 "AnaCut_2jets", "AnaCut_eta", "AnaCut_dphi", "AnaCut_pt1", "AnaCut_pt2", "AnaCut_kine",
 			 "AnaCut_jet1_emf0p2","AnaCut_jet2_emf0p2","AnaCut_pair_emf0p2","AnaCut_both_emf0p2",
 			 "AnaCut_jet1_chf0p1","AnaCut_jet2_chf0p1","AnaCut_pair_chf0p1","AnaCut_both_chf0p1",
-			 "AnaCut_jet1_chmult","AnaCut_jet2_chmult","AnaCut_pair_chmult","AnaCut_both_chmult"};
+			 "AnaCut_jet1_chmult","AnaCut_jet2_chmult","AnaCut_pair_chmult","AnaCut_both_chmult",
+			 "AnaCut_both_emf0p2_chmult","AnaCut_both_emf0p2_chf0p1"};
 
   // Objects to compute background rejection
   MultiSamplePlot::MSIntegral msi[nMSP];
@@ -196,19 +199,19 @@ int analysis(string xmlfile, TString path,
 
     // Event
     MSPlot[name_MSP[iMSP]]["RhoCorrection"]         = new MultiSamplePlot(datasets, "RhoCorrection"+name_MSP[iMSP], 100, 0, 100, "#rho");
-    MSPlot[name_MSP[iMSP]]["NbOfVertices"]          = new MultiSamplePlot(datasets, "NbOfVertices"+name_MSP[iMSP], 40, 0, 40, "Nb. of vertices");
+    MSPlot[name_MSP[iMSP]]["NbOfVertices"]          = new MultiSamplePlot(datasets, "NbOfVertices"+name_MSP[iMSP],   50, 0, 100, "Nb. of vertices");
     //
-    MSPlot[name_MSP[iMSP]]["NbOfSelectedJets"]      = new MultiSamplePlot(datasets, "NbOfSelectedJets"+name_MSP[iMSP], 15, 0, 15, "Nb. of jets");
+    MSPlot[name_MSP[iMSP]]["NbOfSelectedJets"]      = new MultiSamplePlot(datasets, "NbOfSelectedJets"+name_MSP[iMSP], 50, 0, 50, "Nb. of jets");
 
     // Jet Variables
     string nameJet="";
     string nameJetH="";
     string titleJet[m_nJet]={"Leading Jet", "Sub-Leading Jet"};
 
-    MSPlot[name_MSP[iMSP]]["em_E_frac_dijet"     ] = new MultiSamplePlot(datasets, "em_E_frac_dijet"+name_MSP[iMSP]     , 100, 0, 1, "dijet em energy fraction");
-    MSPlot[name_MSP[iMSP]]["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet"+name_MSP[iMSP], 100, 0, 1, "dijet charged energy fraction");
-    MSPlot[name_MSP[iMSP]]["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet"+name_MSP[iMSP],    100, 0, 100,"dijet charged multiplicity");
-    MSPlot[name_MSP[iMSP]]["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet"+name_MSP[iMSP],           6000, 0, 3000,"dijet mass (GeV)");
+    MSPlot[name_MSP[iMSP]]["em_E_frac_dijet"     ] = new MultiSamplePlot(datasets, "em_E_frac_dijet"+name_MSP[iMSP]     , 100, 0, 1,   "dijet em energy fraction");
+    MSPlot[name_MSP[iMSP]]["charged_E_frac_dijet"] = new MultiSamplePlot(datasets, "charged_E_frac_dijet"+name_MSP[iMSP], 100, 0, 1,   "dijet charged energy fraction");
+    MSPlot[name_MSP[iMSP]]["chargedMult_dijet"   ] = new MultiSamplePlot(datasets, "chargedMult_dijet"+name_MSP[iMSP],    150, 0, 150, "dijet charged multiplicity");
+    MSPlot[name_MSP[iMSP]]["mass_dijet"          ] = new MultiSamplePlot(datasets, "mass_dijet"+name_MSP[iMSP],           1000,0, 5000,"dijet mass (GeV)");
     
     for(int iJ=0 ; iJ<m_nJet ; iJ++) {
 
@@ -219,8 +222,8 @@ int analysis(string xmlfile, TString path,
     
       MSPlot[name_MSP[iMSP]]["Eta"+nameJet] = new MultiSamplePlot(datasets, "Eta"+nameJetH, 100,  -5, 5,     titleJet[iJ]+" #eta");
       MSPlot[name_MSP[iMSP]]["Phi"+nameJet] = new MultiSamplePlot(datasets, "Phi"+nameJetH, 33,  -3.15, 3.15,titleJet[iJ]+" #phi");
-      MSPlot[name_MSP[iMSP]]["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJetH, 600, 0,  3000,  titleJet[iJ]+" p_{T} (GeV)");
-      MSPlot[name_MSP[iMSP]]["E" +nameJet]  = new MultiSamplePlot(datasets, "E"  +nameJetH, 600, 0,  3000,  titleJet[iJ]+" E (GeV)");
+      MSPlot[name_MSP[iMSP]]["Pt" +nameJet] = new MultiSamplePlot(datasets, "Pt" +nameJetH, 500, 0,  2500,  titleJet[iJ]+" p_{T} (GeV)");
+      MSPlot[name_MSP[iMSP]]["E" +nameJet]  = new MultiSamplePlot(datasets, "E"  +nameJetH, 500, 0,  2500,  titleJet[iJ]+" E (GeV)");
 
       MSPlot[name_MSP[iMSP]]["chargedHad_E_frac"+nameJet] = new MultiSamplePlot(datasets, "chargedHad_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" charged had energy fraction");
       MSPlot[name_MSP[iMSP]]["chargedEm_E_frac" +nameJet] = new MultiSamplePlot(datasets, "chargedEm_E_frac" +nameJetH, 100, 0, 1,   titleJet[iJ]+" charged EM  energy fraction");
@@ -232,11 +235,11 @@ int analysis(string xmlfile, TString path,
       MSPlot[name_MSP[iMSP]]["charged_E_frac"+nameJet]= new MultiSamplePlot(datasets, "charged_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" tot charged energy fraction");
       MSPlot[name_MSP[iMSP]]["neutral_E_frac"+nameJet]= new MultiSamplePlot(datasets, "neutral_E_frac"+nameJetH, 100, 0, 1,   titleJet[iJ]+" tot neutral energy fraction");
 
-      MSPlot[name_MSP[iMSP]]["chargedMult"      +nameJet] = new MultiSamplePlot(datasets, "chargedMult"      +nameJetH, 100, 0, 100,  titleJet[iJ]+" charged multiplicity");
-      MSPlot[name_MSP[iMSP]]["neutralMult"      +nameJet] = new MultiSamplePlot(datasets, "neutralMult"      +nameJetH, 100, 0, 100,  titleJet[iJ]+" neutral multiplicity");
-      MSPlot[name_MSP[iMSP]]["muonMult"         +nameJet] = new MultiSamplePlot(datasets, "muonMult"         +nameJetH, 100, 0, 100,  titleJet[iJ]+" muon multiplicity");
+      MSPlot[name_MSP[iMSP]]["chargedMult"      +nameJet] = new MultiSamplePlot(datasets, "chargedMult"      +nameJetH, 150, 0, 150,  titleJet[iJ]+" charged multiplicity");
+      MSPlot[name_MSP[iMSP]]["neutralMult"      +nameJet] = new MultiSamplePlot(datasets, "neutralMult"      +nameJetH, 150, 0, 150,  titleJet[iJ]+" neutral multiplicity");
+      MSPlot[name_MSP[iMSP]]["muonMult"         +nameJet] = new MultiSamplePlot(datasets, "muonMult"         +nameJetH,  10, 0,  10,  titleJet[iJ]+" muon multiplicity");
 
-      MSPlot[name_MSP[iMSP]]["chargedMultTot"  +nameJet] = new MultiSamplePlot(datasets, "chargedMultTot"    +nameJetH, 100, 0, 100,  titleJet[iJ]+" total charged multiplicity");
+      MSPlot[name_MSP[iMSP]]["chargedMultTot"  +nameJet] = new MultiSamplePlot(datasets, "chargedMultTot"    +nameJetH, 150, 0, 150,  titleJet[iJ]+" total charged multiplicity");
     }
   }
   
@@ -257,16 +260,16 @@ int analysis(string xmlfile, TString path,
   cout << "NUMBER OF DATASETS : " << nDS << endl;
   
   for (unsigned int d = 0; d < nDS; d++) {
-    if (verbose > 1){
+    if (verbose > 0){
       cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;
       cout << " - Cross section = " << datasets[d]->Xsection() << endl;
       cout << " - IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
       cout << " - Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
     }
     // open files and load
-    cout << "- Load Dataset" << endl;
+    if (verbose > 0) cout << "- Load Dataset" << endl;
     treeLoader.LoadDataset (datasets[d], anaEnv);
-    cout << "- loaded!" << endl;
+    if (verbose > 0) cout << "- loaded!" << endl;
 
     string previousFilename = "";
     int iFile = -1;
@@ -412,30 +415,30 @@ int analysis(string xmlfile, TString path,
       // Apply inclusive selection
       // and use TRootPFJet methods to get members and put them within variables
       if(verbose>2) cout << "-- Call SelectCompute on the map : " << "noAnaCut" << endl;
-
-//       outSelectCompute = 
-// 	SelectCompute(event, selection, verbose,
-// 		      vertex , selectedJetsPF, 
-// 		      cut_nJets, cut_pt1, cut_pt2, cut_deltaphi,
-// 		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
-// 		      neutral_had_E_frac, neutral_em_E_frac, 
-// 		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
-// 		      charged_mult, neutral_mult, muon_mult,
-// 		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
-// 		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
-// 		      rho, nVertices, nJetInEvt, DeltaPhi);
-
+      /*
       outSelectCompute = 
 	SelectCompute(event, selection, verbose,
 		      vertex , selectedJetsPF, 
-		      -999, -999, -999, -999, // do no apply ANY cuts yet
+		      cut_nJets, cut_pt1, cut_pt2, cut_deltaphi, cut_eta, true,
 		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
 		      neutral_had_E_frac, neutral_em_E_frac, 
 		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
 		      charged_mult, neutral_mult, muon_mult,
 		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
 		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
-		      rho, nVertices, nJetInEvt, DeltaPhi);
+		      rho, nVertices, nJetInEvt, DeltaPhi, isGoodPV);
+      */
+      outSelectCompute = 
+	SelectCompute(event, selection, verbose,
+		      vertex , selectedJetsPF, 
+		      -999, -999, -999, -999, 999, false, // do no apply ANY cuts yet (kinematics) !!! CAREFUL +999 FOR ETA CUT !!!
+		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
+		      neutral_had_E_frac, neutral_em_E_frac, 
+		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
+		      charged_mult, neutral_mult, muon_mult,
+		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
+		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
+		      rho, nVertices, nJetInEvt, DeltaPhi, isGoodPV);
 
       if(verbose>2 && ievt%1000==0) 
 	cout << "%% DIJET : " << charged_E_frac_dijet 
@@ -449,12 +452,16 @@ int analysis(string xmlfile, TString path,
       // Analysis selections
       AnaCuts["AnaCut_none"] = true;
       //
+      AnaCuts["AnaCut_PV"]   = isGoodPV;
+      //
       AnaCuts["AnaCut_2jets"] = nJetInEvt >= cut_nJets ;
+      AnaCuts["AnaCut_eta"  ] = TMath::Abs(jet_eta[0]) <= 2.5 && TMath::Abs(jet_eta[1]) <= 2.5 ;
       AnaCuts["AnaCut_dphi" ] = DeltaPhi  >= cut_deltaphi ;
       AnaCuts["AnaCut_pt1"  ] = jet_pt[0] >= cut_pt1 ;
       AnaCuts["AnaCut_pt2"  ] = jet_pt[1] >= cut_pt2 ;
-      AnaCuts["AnaCut_kine" ] = AnaCuts["AnaCut_2jets"] && AnaCuts["AnaCut_dphi"] 
-	&& AnaCuts["AnaCut_pt1"] && AnaCuts["AnaCut_pt2"];
+      //
+      AnaCuts["AnaCut_kine" ] = AnaCuts["AnaCut_PV"] && AnaCuts["AnaCut_2jets"] && AnaCuts["AnaCut_eta"] 
+	&& AnaCuts["AnaCut_dphi"] && AnaCuts["AnaCut_pt1"] && AnaCuts["AnaCut_pt2"];
       //
       AnaCuts["AnaCut_jet1_emf0p2"] = tot_em_E_frac[0] < 0.2 ;
       AnaCuts["AnaCut_jet2_emf0p2"] = tot_em_E_frac[1] < 0.2 ;
@@ -470,6 +477,9 @@ int analysis(string xmlfile, TString path,
       AnaCuts["AnaCut_jet2_chmult"] = tot_chargedMult[1]==0 ;
       AnaCuts["AnaCut_pair_chmult"] = chargedMult_dijet ==0;
       AnaCuts["AnaCut_both_chmult"] = AnaCuts["AnaCut_jet1_chmult"] && AnaCuts["AnaCut_jet2_chmult"] ;
+      //
+      AnaCuts["AnaCut_both_emf0p2_chmult"] = AnaCuts["AnaCut_both_emf0p2"] && AnaCuts["AnaCut_both_chmult"];
+      AnaCuts["AnaCut_both_emf0p2_chf0p1"] = AnaCuts["AnaCut_both_emf0p2"] && AnaCuts["AnaCut_both_chf0p1"];
       
       // Fill various MapMSPlots depending on various selections
       for(MapMapMSP::const_iterator iMSP=MSPlot.begin() ; iMSP!=MSPlot.end() ; iMSP++) {
@@ -544,19 +554,19 @@ int analysis(string xmlfile, TString path,
   // WRITE OUTPUT //
   //////////////////
 
-  cout << "- Start writing output" << endl;
+  if(verbose>0) cout << "- Start writing output" << endl;
   fout->cd();
 
-  cout << "-- Loop over MSPlots" << endl;
+  if(verbose>0) cout << "-- Loop over MSPlots" << endl;
 
   for(MapMapMSP::const_iterator itMap = MSPlot.begin() ; itMap != MSPlot.end(); itMap++) {
 
-    cout << "--- MAP : " << itMap->first << endl;
+    if(verbose>0) cout << "--- MAP : " << itMap->first << endl;
 
     for( MapMSP::const_iterator it    = (itMap->second).begin() ; it    != (itMap->second).end(); it++) {
 
       string name = (it->first)+"_"+(itMap->first);
-      cout << "--- name=" << name << endl;
+      if(verbose>1) cout << "--- name=" << name << endl;
       
       MultiSamplePlot *temp = it->second;
       if(!temp) {
@@ -598,7 +608,11 @@ int analysis(string xmlfile, TString path,
 
 	if(verbose>2) cout << "--- write in pathPNG=" << pathPNG << endl;
 	float maxY = temp->getMaxY();
-	cout << "########## maxY=" << maxY << " ###" << endl;
+	if(verbose>1) cout << "--- maxY=" << maxY << " ###" << endl;
+	if(maxY<=0) {
+	  if(verbose>1) cout << "--- ERROR: NULL PLOT ! SWITCH TO NEXT PLOT !" << endl;
+	  continue;
+	}
 
 	temp->Write(fout, name, true, pathPNG+"/", "png", magnifyLog); 
 	//ND true => SaveAs the Canvas as image => seg fault probably caused by empty plots !
@@ -689,13 +703,13 @@ MSIntegral eval_msi(MultiSamplePlot* plot)
 
 int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 		  vector<TRootVertex*> vertex , vector<TRootPFJet*> selectedJetsPF, 
-		  int cut_nJets, float cut_pt1, float cut_pt2, float cut_deltaphi,
+		  int cut_nJets, float cut_pt1, float cut_pt2, float cut_deltaphi, float cut_eta, bool cut_PV,
 		  int m_nJet, float* jet_E, float* jet_pt, float* jet_phi, float* jet_eta,  
 		  float* neutral_had_E_frac, float* neutral_em_E_frac, float* charged_em_E_frac, float* charged_had_E_frac, float* charged_mu_E_frac,
 		  float* charged_mult, float* neutral_mult, float* muon_mult,
 		  float* tot_em_E_frac, float* tot_neutral_E_frac, float* tot_charged_E_frac, float* tot_chargedMult,
 		  float& charged_E_frac_dijet, float& chargedMult_dijet, float& mass_dijet, float& em_E_frac_dijet,
-		  float& rho, int& nVertices, int& nJetInEvt, float& DeltaPhi)
+		  float& rho, int& nVertices, int& nJetInEvt, float& DeltaPhi, bool& isGoodPV)
 {
 
   if(verbose>2) cout << "--- enter the function" << endl;
@@ -710,8 +724,8 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
   /////////////////////
 
   // Primary vertex
-  bool isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
-  if(!isGoodPV) return 2;
+  isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
+  if(cut_PV && !isGoodPV) return 2;
 
   // JETS
 
@@ -722,9 +736,16 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
   if(nJetInEvt>=2)        exist_dijet=true;
   if(verbose>2) cout << "-- nJetInEvt=" << nJetInEvt << endl;
 
-  // leading jet pt
-  jet_pt[0]=selectedJetsPF[0]->Pt();
-  if(jet_pt[0]<cut_pt1) return 2;
+  // subleading jet eta
+  if(exist_dijet) {
+    jet_eta[1]=selectedJetsPF[1]->Eta();
+    if(TMath::Abs(jet_eta[1])>cut_eta) return 2;
+  }
+  else jet_eta[1]=-999;
+
+  // leading jet eta
+  jet_eta[0]=selectedJetsPF[0]->Eta();
+  if(TMath::Abs(jet_eta[0])>cut_eta) return 2;
 
   // subleading jet pt
   if(exist_dijet) {
@@ -732,6 +753,10 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
     if(jet_pt[1]<cut_pt2) return 2;
   }
   else jet_pt[1]=-999;
+
+  // leading jet pt
+  jet_pt[0]=selectedJetsPF[0]->Pt();
+  if(jet_pt[0]<cut_pt1) return 2;
 
   // delta phi
   jet_phi[0]=selectedJetsPF[0]->Phi();
@@ -745,9 +770,9 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
     DeltaPhi  =-999;
   }
 
-  //////////////////////
-  /// FILL HISTOGRAMS //
-  //////////////////////
+  //////////////////
+  /// FILL ARRAYS //
+  //////////////////
 
   if(verbose>2) cout << "--- look at jet pairs" << endl;
 
@@ -756,11 +781,11 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
     if(nJetInEvt<=iJ) break;
 	
     jet_E[  iJ]=selectedJetsPF[iJ]->E();
-    jet_eta[iJ]=selectedJetsPF[iJ]->Eta();
 
     if(iJ>1) {
       jet_pt[ iJ] = selectedJetsPF[iJ]->Pt();
       jet_phi[iJ] = selectedJetsPF[iJ]->Phi();
+      jet_eta[iJ]=selectedJetsPF[iJ]->Eta();
     }
 
     // subgroups
