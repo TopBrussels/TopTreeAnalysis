@@ -1,10 +1,11 @@
 #include "Headers.h"
 
+bool inclusive=true;
+
 using namespace std;
 using namespace TopTree;
 using namespace reweight;
 
-//typedef pair< string , vector< pair<string,float> > > MSIntegral;
 typedef map<string,MultiSamplePlot*> MapMSP;
 typedef map<string,MapMSP>           MapMapMSP;
 typedef map<string,bool>             MapAnaCut;
@@ -13,9 +14,7 @@ typedef map<string,bool>             MapAnaCut;
 // DECLARE FUNCTIONS //
 ///////////////////////
 
-int analysis(string, TString, int, float, float, float, int, float, float);
-
-//MSIntegral eval_msi(MultiSamplePlot*);
+int analysis(string, TString, int, float, float, float, float, int, float, float);
 
 int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 		  vector<TRootVertex*> vertex , vector<TRootPFJet*> selectedJetsPF, 
@@ -49,10 +48,11 @@ int main(int argc, char *argv[])
   string  xmlfile="configLite.xml";
   TString path="test";
 
-  int cut_nJets=0;
+  int cut_nJets=2;
   float cut_pt1=100;
   float cut_pt2=100;
   float cut_deltaphi=2;
+  float cut_eta=2.5;
   int puweight=0;
 
   float magnify=1.3;
@@ -64,9 +64,10 @@ int main(int argc, char *argv[])
   if(argc>4) cut_pt1   = atof(argv[4]);
   if(argc>5) cut_pt2   = atof(argv[5]);
   if(argc>6) cut_deltaphi = atof(argv[6]);
-  if(argc>7) puweight  = (int)atof(argv[7]);
+  if(argc>7) cut_eta   = atof(argv[7]);
+  if(argc>8) puweight  = (int)atof(argv[8]);
 
-  analysis(xmlfile, path, cut_nJets, cut_pt1, cut_pt2, cut_deltaphi, puweight, magnify, magnifyLog);
+  analysis(xmlfile, path, cut_nJets, cut_pt1, cut_pt2, cut_deltaphi, cut_eta, puweight, magnify, magnifyLog);
 
   return 0;
 
@@ -77,8 +78,8 @@ int main(int argc, char *argv[])
 //////////////
 
 int analysis(string xmlfile, TString path, 
-	     int cut_nJets=2, float cut_pt1=100, float cut_pt2=100, float cut_deltaphi=2, int puweight=0, 
-	     float magnify=1.3, float magnifyLog=1.5)
+	     int cut_nJets=2, float cut_pt1=100, float cut_pt2=100, float cut_deltaphi=2, float cut_eta=2.5, 
+	     int puweight=0, float magnify=1.3, float magnifyLog=1.5)
 {
 
   /////////////////
@@ -189,9 +190,10 @@ int analysis(string xmlfile, TString path,
 
   // Objects to compute background rejection
   MultiSamplePlot::MSIntegral msi[nMSP];
-  float val_before=0, val_after=0, reduction=0;
+  Double_t ent_before=0, ent_after=0;
+  Double_t val_before=0, val_after=0, reduction=0;
+  Double_t err_before=0, err_after=0, err_reduc=0;
   string name_before="", name_after="";
-  //vector<float> reductions;
   
   for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
     // analysis cuts within boolean map
@@ -256,16 +258,46 @@ int analysis(string xmlfile, TString path,
   // LOOP OVER DATASETS //
   ////////////////////////
 
-  u_int nDS=datasets.size();
+  const u_int nDS=datasets.size();
   cout << "NUMBER OF DATASETS : " << nDS << endl;
-  
-  for (unsigned int d = 0; d < nDS; d++) {
+
+  u_int NofEvts = 0;
+  float NormFactor = 0;
+  vector<string> filenames[nDS];
+  int nFiles[nDS];
+
+  for (u_int d = 0; d < nDS; d++) {
+
+    filenames[d] = datasets[d]->Filenames();
+    nFiles[d]    = filenames[d].size();
+
+    NofEvts    = datasets[d]->NofEvtsToRunOver();
+    NormFactor = datasets[d]->NormFactor();
+    
     if (verbose > 0){
-      cout << "   Dataset " << d << " name : " << datasets[d]->Name () << " / title : " << datasets[d]->Title () << endl;
-      cout << " - Cross section = " << datasets[d]->Xsection() << endl;
-      cout << " - IntLumi = " << datasets[d]->EquivalentLumi() << "  NormFactor = " << datasets[d]->NormFactor() << endl;
-      cout << " - Nb of events : " << datasets[d]->NofEvtsToRunOver() << endl;
+      cout << "- Dataset "            << d         
+	   << " name : "              << datasets[d]->Name() 
+	   << " / title : "           << datasets[d]->Title()          << endl
+	   << "-- Nb of filenames = " << nFiles[d]                     << endl
+	   << "-- Cross section = "   << datasets[d]->Xsection()       << endl
+	   << "-- IntLumi = "         << datasets[d]->EquivalentLumi() << endl
+	   << "-- NormFactor = "      << NormFactor                    << endl
+	   << "-- Nb of events = "    << NofEvts                       << endl
+	   << "-- Constant weight = " << NormFactor*Luminosity         << endl
+	   << "-- Exp. integral = "   << NormFactor*Luminosity*NofEvts << endl;
+
+      outlog << "- Dataset "            << d         
+	     << " name : "              << datasets[d]->Name() 
+	     << " / title : "           << datasets[d]->Title()          << endl
+	     << "-- Nb of filenames = " << nFiles[d]                     << endl
+	     << "-- Cross section = "   << datasets[d]->Xsection()       << endl
+	     << "-- IntLumi = "         << datasets[d]->EquivalentLumi() << endl
+	     << "-- NormFactor = "      << NormFactor                    << endl
+	     << "-- Nb of events = "    << NofEvts                       << endl
+	     << "-- Constant weight = " << NormFactor*Luminosity         << endl
+	     << "-- Exp. integral = "   << NormFactor*Luminosity*NofEvts << endl;
     }
+
     // open files and load
     if (verbose > 0) cout << "- Load Dataset" << endl;
     treeLoader.LoadDataset (datasets[d], anaEnv);
@@ -303,27 +335,18 @@ int analysis(string xmlfile, TString path,
     // LOOP OVER EVENTS //
     //////////////////////
 
-    int itrigger = -1, previousRun = -1;
-    int start = 0;
-    unsigned int end = datasets[d]->NofEvtsToRunOver();
-    cout <<"Number of events = "<<  end  <<endl;    
-
-    bool debug = true;
-    int event_start=0;
-    double currentfrac =0.;
-    double end_d = end;
+    int itrigger = -1, previousRun = -1, start=0;
+    double currentfrac=0.;
     
     // Start loop over events
-    for (unsigned int ievt = event_start; ievt <end_d ; ievt++) {
+    for (u_int ievt = 0 ; ievt<NofEvts ; ievt++) {
       
-      double ievt_d = ievt;
-      currentfrac = ievt_d/end_d;
+      //double ievt_d = ievt;
+      currentfrac = ievt / ((float)NofEvts);
       if(ievt%1000 == 0)
-	std::cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(end-start)<<"%)"<<flush<<"\r";
+	cout<<"Processing the "<<ievt<<"th event, time = "<< ((double)clock() - start) / CLOCKS_PER_SEC << " ("<<100*(ievt-start)/(NofEvts-start)<<"%)"<<flush<<"\r";
 
       event = treeLoader.LoadEvent (ievt, vertex, init_muons, init_electrons, init_jets, mets);
-//       float rho = event->kt6PFJets_rho();
-//       MSPlot["RhoCorrection"]->Fill(rho, datasets[d], true, Luminosity);
 
       vector<TRootMCParticle*> mcParticles_flav;
       TRootGenEvent* genEvt_flav = 0;
@@ -379,7 +402,7 @@ int analysis(string xmlfile, TString path,
       // Trigger information
       /*
 	bool trigged = false;
-	//std::string filterName = "";
+	//string filterName = "";
 	int currentRun = event->runId();
 	if(previousRun != currentRun) {
 	previousRun = currentRun;
@@ -415,40 +438,48 @@ int analysis(string xmlfile, TString path,
       // Apply inclusive selection
       // and use TRootPFJet methods to get members and put them within variables
       if(verbose>2) cout << "-- Call SelectCompute on the map : " << "noAnaCut" << endl;
-      /*
-      outSelectCompute = 
-	SelectCompute(event, selection, verbose,
-		      vertex , selectedJetsPF, 
-		      cut_nJets, cut_pt1, cut_pt2, cut_deltaphi, cut_eta, true,
-		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
-		      neutral_had_E_frac, neutral_em_E_frac, 
-		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
-		      charged_mult, neutral_mult, muon_mult,
-		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
-		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
-		      rho, nVertices, nJetInEvt, DeltaPhi, isGoodPV);
-      */
-      outSelectCompute = 
-	SelectCompute(event, selection, verbose,
-		      vertex , selectedJetsPF, 
-		      -999, -999, -999, -999, 999, false, // do no apply ANY cuts yet (kinematics) !!! CAREFUL +999 FOR ETA CUT !!!
-		      m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
-		      neutral_had_E_frac, neutral_em_E_frac, 
-		      charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
-		      charged_mult, neutral_mult, muon_mult,
-		      tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
-		      charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
-		      rho, nVertices, nJetInEvt, DeltaPhi, isGoodPV);
 
-      if(verbose>2 && ievt%1000==0) 
+      if(inclusive) { // apply inclusive cuts before filling histos
+	outSelectCompute = 
+	  SelectCompute(event, selection, verbose,
+			vertex , selectedJetsPF, 
+			cut_nJets, cut_pt1, cut_pt2, cut_deltaphi, cut_eta, true,
+			m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
+			neutral_had_E_frac, neutral_em_E_frac, 
+			charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
+			charged_mult, neutral_mult, muon_mult,
+			tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
+			charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
+			rho, nVertices, nJetInEvt, DeltaPhi, isGoodPV);
+      }
+
+      else { // do no apply ANY cuts yet (kinematics) !!! CAREFUL +999 FOR ETA CUT !!!
+	outSelectCompute = 
+	  SelectCompute(event, selection, verbose,
+			vertex , selectedJetsPF, 
+			-999, -999, -999, -999, 999, false,
+			m_nJet, jet_E, jet_pt, jet_phi, jet_eta,  
+			neutral_had_E_frac, neutral_em_E_frac, 
+			charged_em_E_frac, charged_had_E_frac, charged_mu_E_frac,
+			charged_mult, neutral_mult, muon_mult,
+			tot_em_E_frac, tot_neutral_E_frac, tot_charged_E_frac, tot_chargedMult,
+			charged_E_frac_dijet, chargedMult_dijet, mass_dijet, em_E_frac_dijet,
+			rho, nVertices, nJetInEvt, DeltaPhi, isGoodPV);
+      }
+      if(verbose>2) cout << "--- returns : " << outSelectCompute << endl;
+      
+      if(verbose>1 && ievt%1000==0) 
 	cout << "%% DIJET : " << charged_E_frac_dijet 
 	     << "  "          << chargedMult_dijet 
 	     << "  "          << mass_dijet 
 	     << "  "          << em_E_frac_dijet 
 	     << endl;
 
-      if(outSelectCompute==2) continue;
-      
+      if(outSelectCompute==2) {
+	if(verbose>2) cout << "===> failed inclusive selection !!" << endl;
+	continue;
+      }
+
       // Analysis selections
       AnaCuts["AnaCut_none"] = true;
       //
@@ -483,7 +514,12 @@ int analysis(string xmlfile, TString path,
       
       // Fill various MapMSPlots depending on various selections
       for(MapMapMSP::const_iterator iMSP=MSPlot.begin() ; iMSP!=MSPlot.end() ; iMSP++) {
-
+	
+	if(inclusive) {
+	  for(int idxMSP=0 ; idxMSP<=7 ; idxMSP++)
+	    if(iMSP->first == name_MSP[idxMSP]) continue;
+	}
+	
 	if(AnaCuts[iMSP->first]) outfill = 
 	  FillHistos(iMSP->second, iMSP->first, 
 		     datasets[d],
@@ -508,26 +544,31 @@ int analysis(string xmlfile, TString path,
   // COMPUTE BACKGROUND REDUCTION //
   //////////////////////////////////
 
-  // Reminder: typedef pair< string , vector< pair<string,float> > > MSIntegral;
+  // typedef pair< string , vector< pair<string, pair< Double_t , pair<Double_t,Double_t> > > > > MSIntegral;
 
   for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
-    //msi[iMSP] = eval_msi( MSPlot[name_MSP[iMSP]]["NbOfVertices"] );
-    msi[iMSP] = MSPlot[name_MSP[iMSP]]["NbOfVertices"] -> Integrate();
+    msi[iMSP] = MSPlot[name_MSP[iMSP]]["NbOfVertices"] -> Integrate(0, -1);
   }
 
-  outlog << endl
-	 << "$$$$$$$$$$$$$$$$$$$$$$$$$$" << endl
-	 << "$$ BACKGROUND REDUCTION $$" << endl;
+  outlog << "BACKGROUND REDUCTION" << endl << endl
+	 << setw(25) << "Selection"
+	 << setw(40) << "Integral before selection [entries]"
+	 << setw(40) << "Integral after selection  [entries]"
+	 << setw(20) << "Reduction" 
+	 << endl<< endl;
   
   for(u_int iS=0 ; iS<(msi[0].second).size() ; iS++) {
 
     name_before = name_after = "";
-    val_before = val_after = reduction = 0;
+    val_before  = val_after  = reduction = 0;
+    err_before  = err_after  = err_reduc = 0;
+    
+    name_before = ((msi[0].second)[iS]).first;                // name of the sample
+    ent_before  = ((msi[0].second)[iS]).second.first;         // nEntries of the sample
+    val_before  = ((msi[0].second)[iS]).second.second.first;  // integral of the sample
+    err_before  = ((msi[0].second)[iS]).second.second.second; // error on the integral
 
-    name_before = ((msi[0].second)[iS]).first;  // name of the sample
-    val_before  = ((msi[0].second)[iS]).second; // integral of the sample
-
-    outlog << "$$ Sample #"   << iS << " " << name_before << " $$" << endl;
+    outlog << endl << "Sample #"   << iS << " " << name_before << endl << endl;
     
     for(u_int iMSP=0 ; iMSP<nMSP ; iMSP++) {
       
@@ -537,18 +578,23 @@ int analysis(string xmlfile, TString path,
       }
       
       name_after  = ((msi[iMSP] .second)[iS]).first;
-      val_after   = ((msi[iMSP] .second)[iS]).second;
+      ent_after   = ((msi[iMSP] .second)[iS]).second.first;
+      val_after   = ((msi[iMSP] .second)[iS]).second.second.first;
+      err_after   = ((msi[iMSP] .second)[iS]).second.second.second;
       
       reduction = val_after !=0 ? val_before / val_after : -999 ;
 
-      outlog << "Selection : " << name_MSP[iMSP]
-	     << " : before="   << val_before
-	     << " ; after="    << val_after
-	     << " ; reduction = " << reduction << " $$" << endl;
+      outlog << setw(25) << name_MSP[iMSP]
+	     << setw(15) << val_before
+	     << setw(15)  << "[" << ent_before << "]"
+	     << setw(15) <<  val_after
+	     << setw(15)  << "[" << ent_after << "]"
+	     << setw(15) <<  reduction  
+	     << endl;
+
     }
   }
-  outlog   << "$$$$$$$$$$$$$$$$$$$$$$$$$$"
-	   << endl << endl;
+  outlog << endl << endl;
 
   //////////////////
   // WRITE OUTPUT //
@@ -560,6 +606,17 @@ int analysis(string xmlfile, TString path,
   if(verbose>0) cout << "-- Loop over MSPlots" << endl;
 
   for(MapMapMSP::const_iterator itMap = MSPlot.begin() ; itMap != MSPlot.end(); itMap++) {
+
+    if(inclusive) {
+      bool skip=false;
+      for(int iMSP=0 ; iMSP<=7 ; iMSP++) {
+	if(itMap->first == name_MSP[iMSP]) {
+	  skip=true;
+	  break;
+	}
+      }
+      if(skip) continue;
+    }
 
     if(verbose>0) cout << "--- MAP : " << itMap->first << endl;
 
@@ -619,11 +676,13 @@ int analysis(string xmlfile, TString path,
       }
     } // end loop over MSPlots
   }
-  cout << "-- end loop over MSPlots" << endl;
-  
+
+  cout << "-- end loop over MSPlots" << endl
+       << "-- start loop over Histos1D" << endl;
+
   TDirectory* th1dir = fout->mkdir("Histos1D");
   th1dir->cd();
-  for(map<std::string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
+  for(map<string,TH1F*>::const_iterator it = histo1D.begin(); it != histo1D.end(); it++)
     {
       
       TH1F *temp = it->second;
@@ -631,9 +690,14 @@ int analysis(string xmlfile, TString path,
       //TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
       //tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
     }
+
+
+  cout << "-- end loop over Histos1D" << endl
+       << "-- start loop over Histos2D" << endl;
+
   TDirectory* th2dir = fout->mkdir("Histos2D");
   th2dir->cd();
-  for(map<std::string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
+  for(map<string,TH2F*>::const_iterator it = histo2D.begin(); it != histo2D.end(); it++)
     {
 
       TH2F *temp = it->second;
@@ -641,7 +705,16 @@ int analysis(string xmlfile, TString path,
       //TCanvas* tempCanvas = TCanvasCreator(temp, it->first);
       //tempCanvas->SaveAs( (pathPNG+it->first+".png").c_str() );
     }
-    
+
+  cout << "-- end loop over Histos2D" << endl
+       << "-- deletes fout" << endl;
+
+  /*
+  for(MapMapMSP::const_iterator itMap = MSPlot.begin() ; itMap != MSPlot.end(); itMap++)
+    for( MapMSP::const_iterator it    = (itMap->second).begin() ; it    != (itMap->second).end(); it++)
+      delete it;
+  */
+  
   delete fout;
 
   cout << "It took us " << ((double)clock() - start) / CLOCKS_PER_SEC << "s to run the program" << endl;
@@ -653,47 +726,10 @@ int analysis(string xmlfile, TString path,
   return 0;
 }
 
-//////////////
-// EVAL_MSI //
-//////////////
 
-/** evaluate integrals of individual components in a MSPlot */
-/*
-MSIntegral eval_msi(MultiSamplePlot* plot)
-{
-  MSIntegral msi;
-  vector<float> integrals;
-  vector<string> names;
-  float integral=0;
-  float total=0;
-  TH1F* h=0;
-
-  // Error case
-  if(!plot) {
-    msi.first = "nothing";
-    cout << "ERROR in eval_msi : no input plot" << endl;
-    return msi;
-  }
-
-  // Fill the MSIntegral
-  msi.first = plot->getplotName();
-  names = plot->getTH1FNames();
-
-  for(u_int i=0 ; i<names.size() ; i++) {
-    h = plot->getTH1F(names[i]);
-    integral = h!=0 ? h->Integral() : 0;
-    (msi.second).push_back( make_pair(names[i],integral) );
-    total += integral;
-  }
-
-  (msi.second).push_back( make_pair("total",total) );
-
-  return msi;
-}
-*/
-/////////////
+///////////////////
 // SelectCompute //
-/////////////
+///////////////////
 
 /** Apply event and object selection then fill MSPlots. 
     Called within a loop over events. 
@@ -725,7 +761,9 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
 
   // Primary vertex
   isGoodPV = selection.isPVSelected(vertex, 4, 24., 2);
+  if(verbose>2) cout << "--- isGoodPV : " << isGoodPV << endl;
   if(cut_PV && !isGoodPV) return 2;
+  if(verbose>2) cout << "--- passed PV cut" << endl;
 
   // JETS
 
@@ -734,18 +772,24 @@ int SelectCompute(TRootEvent* event, Selection selection, int verbose,
   if(nJetInEvt==0)        return 2;
   if(nJetInEvt<cut_nJets) return 2;
   if(nJetInEvt>=2)        exist_dijet=true;
-  if(verbose>2) cout << "-- nJetInEvt=" << nJetInEvt << endl;
+  if(verbose>2) cout << "--- nJetInEvt=" << nJetInEvt << endl;
 
   // subleading jet eta
   if(exist_dijet) {
     jet_eta[1]=selectedJetsPF[1]->Eta();
-    if(TMath::Abs(jet_eta[1])>cut_eta) return 2;
+    if(TMath::Abs(jet_eta[1])>cut_eta) {
+      if(verbose>2) cout << "--- failed subleading jet eta cut : " << cut_eta << endl;
+      return 2;
+    }
   }
   else jet_eta[1]=-999;
 
   // leading jet eta
   jet_eta[0]=selectedJetsPF[0]->Eta();
-  if(TMath::Abs(jet_eta[0])>cut_eta) return 2;
+  if(TMath::Abs(jet_eta[0])>cut_eta) {
+      if(verbose>2) cout << "--- failed leading jet eta cut" << endl;
+      return 2;
+  }
 
   // subleading jet pt
   if(exist_dijet) {
